@@ -37,7 +37,7 @@ The initial 94 issues were created as open planning items; #17 is now closed aft
 
 - [#17](https://github.com/rouslanbaranov/tycho/issues/17) closed after [PR #95](https://github.com/rouslanbaranov/tycho/pull/95) was merged and configured CI passed. A requirements/workload model, template, original fictional illustration and bounded research contract now exist. K30 as a whole is **not** complete.
 - Branch convention `feature/TYCHO-<issue-number>-<task-desc-slug>` and PR-time checks are implemented. Administrative branch protection remains unconfigured.
-- The next book-first step is [#23](https://github.com/rouslanbaranov/tycho/issues/23): propose a [question-driven structure](../book/PROPOSED-STRUCTURE.md) and three bounded initial research page families. The structure is not approved and no technical chapter has yet been written.
+- Book structure [#23](https://github.com/rouslanbaranov/tycho/issues/23) was delivered as a **proposal** through [PR #96](https://github.com/rouslanbaranov/tycho/pull/96) and closed; the five adjusted GitHub issue dependencies passed verification. Issue #24 now adds the [minimal editorial contract](EDITORIAL-CONTRACT.md) and page templates in a feature branch. Neither the outline nor the templates constitutes a researched technical chapter.
 - #18/#19 decision-support development should be refined from researched pilot content rather than treated as a precondition for beginning the book. Manual evidence checks remain mandatory during pilots while full validators are developed in parallel.
 
 ## Next action
