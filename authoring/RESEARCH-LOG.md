@@ -31,4 +31,4 @@ Bounded source inspection: public arc42 Section 1 (§1.1/§1.2), Google SRE Work
 
 Quality scope: independent-origin review of authored content, checks of example calculations and branch-name parsing, repository boundary checks, source inventory checks and PR workflow. These are mechanical validations and a bounded self-review, **not** a human-approved architecture, measured capacity, proven invariant or production-validated SLO.
 
-Next: verify all workflows against the issue branch, submit PR referring to #17, and retain the issue open until the intended acceptance review/merge. Subsequent #18/#19 work is not implemented here.
+Validation outcome: [PR #95](https://github.com/rouslanbaranov/tycho/pull/95) opened as draft; [branch convention CI](https://github.com/rouslanbaranov/tycho/actions/runs/39153497864) and [source boundary CI](https://github.com/rouslanbaranov/tycho/actions/runs/39153497829) both completed successfully. Local source-boundary scans also passed on the feature commits. No human approval or merge is claimed. Next: independent review and merge; issue remains open. Subsequent #18/#19 work is not implemented here.
