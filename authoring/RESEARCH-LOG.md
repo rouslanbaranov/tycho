@@ -101,3 +101,10 @@ This is partial original book content with bounded publication references, not e
 Authored three self-contained technical pages in `book/distributed`, each with original Mermaid diagrams, failure conditions and public-source ledgers, plus updated navigation. Specifically inspected: Lamport's 1978 **publication record/abstract only** (full PDF not inspected), Ongaro/Ousterhout's 2014 extended Raft report §§2, 5.1–5.4, PostgreSQL 17 §§13.2/13.5, Richardson's public Saga pattern and 2019 semantic-lock discussion, Fowler's 2005 *Event Sourcing* draft, Fowler's 2011 CQRS and 2017 event-driven taxonomy, Richardson's public CQRS pattern. The pre-existing outbox evidence page was reused by a canonical link rather than duplicated.
 
 No original research paper PDF, full commercial book, deployed consensus cluster, database isolation integration test, saga processor, event-sourced store, LLM answer-quality benchmark or independent human review has been performed for these pages. Material claims are bounded to the sources cited and synthetic illustrations. Full GitHub regression CI is deferred until the accepted milestone closes, pursuant to #104.
+
+
+## 2026-10-18 — TYCHO-81 integration and stream processing
+
+Authored three synthetic, version-bounded technical pages in `book/integration/`: Kafka 4.1 partitions/replication/producer/consumer offsets and transaction limits; RabbitMQ 4.3 queue publisher/consumer acknowledgements, NATS JetStream durable state, Pulsar 4.1 BookKeeper roles, abstract durable workflow state; and Kafka Streams 4.1 state stores, archived Flink 2.1 checkpoints/savepoints, PostgreSQL 17 logical replication and Debezium 3.6 outbox/CDC integration. Sources inspected from official public docs on 2026-10-18 with exact section scopes on each page. Mermaid diagrams and failure stories are original; no product ranking from measurements is claimed.
+
+No broker, stream processor, CDC connector or durable workflow instance was installed, no cross-system exactly-once proof or failover benchmark was run, and no independent human technical review is recorded. GitHub Actions remain milestone-only; do not claim an issue-level CI pass.
