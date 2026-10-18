@@ -42,7 +42,7 @@ The initial 94 issues were created as open planning items; #17 is now closed aft
 
 ## Next action
 
-Complete the question-driven structure review for #23 and the minimal authoring/pilot contracts (#24–#26), then prioritize writing the first three **evidence-backed** technical chapters (#38–#40). Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
+Complete the remaining minimal authoring/pilot contracts (#24–#26), then prioritize writing the first three **evidence-backed** technical chapters (#38–#40). Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
 
 ## Review limits
 
