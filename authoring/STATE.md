@@ -42,7 +42,7 @@ The initial 94 issues were created as open planning items; #17 is now closed aft
 
 ## Next action
 
-Editorial templates #24 were merged through PR #97. Complete research workflow #25 and pilot-contract scoping #26, then prioritize writing the first three **evidence-backed** technical chapters (#38–#40). Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
+Editorial templates #24 and research workflow #25 have been merged and closed. Issue #26 now specifies [three bounded pilot contracts](pilots/README.md), then prioritize writing the first three **evidence-backed** technical chapters (#38–#40). Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
 
 ## Review limits
 
