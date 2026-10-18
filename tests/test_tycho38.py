@@ -49,6 +49,16 @@ class QueueingArithmeticTests(unittest.TestCase):
         self.assertEqual(wrong_finite_estimate, 2)
         self.assertNotEqual(observed_occupancy, wrong_finite_estimate)
 
+    def test_mermaid_visuals_and_text_alternatives(self):
+        chapter = CHAPTER.read_text(encoding="utf-8")
+        landing = LANDING.read_text(encoding="utf-8")
+        self.assertGreaterEqual(chapter.count("```mermaid"), 3)
+        self.assertIn("flowchart LR", chapter)
+        self.assertIn("sequenceDiagram", chapter)
+        self.assertIn("Text alternative:", chapter)
+        self.assertIn("```mermaid", landing)
+        self.assertIn("Text alternative:", landing)
+
     def test_source_and_navigation_presence(self):
         text = CHAPTER.read_text(encoding="utf-8")
         landing = LANDING.read_text(encoding="utf-8")
