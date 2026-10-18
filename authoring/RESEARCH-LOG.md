@@ -85,3 +85,12 @@ Pilot-wave content exists as three bounded, separately owned chapters; this does
 ## 2026-10-18 — TYCHO-41 pilot quality gate
 
 Compiled 25 evidence-linked evaluation questions across fact, synthesis, trade-off, failure, change impact, contradiction and unanswerable categories. Ran a deterministic **author-created in-sample** lexical smoke on only the three pilot pages, observing 25/25 top-1 correct topic routes, not verified end-to-end answers or general ranking quality. Recorded an ADOPT/REVISE/REJECT author assessment; major gaps include independent human review, strict metadata/provenance, version-pinned sources, fuller corpus and actual agent/tool cost evaluation. No full-book acceptance implied.
+
+
+## 2026-10-18 — TYCHO-79 application architecture research
+
+Authored three source-grounded pages under `book/application/`: architecture quality drivers and views; modular monolith, bounded context, ports/adapters, SOA and microservices; and architecture evolution/service extraction. Added a Mermaid-based landing and mechanical document tests. Diagrams and scenario examples are independently authored and explicitly synthetic.
+
+Public passages inspected: Lewis/Fowler *Microservices* (2014), componentization, capabilities, decentralized data and SOA comparison; Fowler *Monolith First* (2015) with stated evidentiary caveats; Fowler *Bounded Context* (2014), model/language boundaries; Cockburn *Hexagonal Architecture* (2005), intent/solution/structure; OASIS SOA Reference Model 1.0 §§2.1, 3.2–3.3; public Spring Modulith 2.1.0 overview and 1.3.12 verification rules; arc42 Section 1 §§1.1–1.3; official C4 Introduction; public SRE Workbook Chapter 2, initial SLO process. The Evans DDD Reference PDF and comprehensive technical implementation sources were **not** read for this slice.
+
+This is partial original book content with bounded publication references, not empirical architecture research or proof of a deployable system. No executable domain service, load test, completed modernization or independent technical review is claimed. GitHub-hosted CI runs only at accepted milestone closure per #104; no issue-level pipeline should be reported as passed.
