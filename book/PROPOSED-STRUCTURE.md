@@ -219,7 +219,7 @@ Once #24–#26 provide **minimal** authoring/research contracts, initiate three 
 2. **End-to-end pilot — V04/C04–C05**: independent transactional state change, idempotency, outbox/event publication, duplicate/recovery boundaries (#39).
 3. **Recovery pilot — V08/C04–C07**: one synthetic failed deployment/failure domain with recovery checks and explicit unknowns (#40).
 
-The research topics are **candidate selections for #26**, not approved contracts. The pilot creates actual technical pages and evidence. The comprehensive decision-pattern corpus (#18/#19) is deliberately not a prerequisite for the first material: refine it from researched case studies rather than filling generic applicability cards first.
+The research topics are now selected as **bounded proposed contracts** by [#26](../authoring/PILOT-WAVE-01.md), with independent source-reading and chapter acceptance still pending. The structure itself remains a proposed table of contents. The pilot creates actual technical pages and evidence. The comprehensive decision-pattern corpus (#18/#19) is deliberately not a prerequisite for the first material: refine it from researched case studies rather than filling generic applicability cards first.
 
 ## Gaps and acceptance limits
 
