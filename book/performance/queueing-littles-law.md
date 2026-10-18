@@ -16,26 +16,20 @@ This page owns the mechanics of occupancy, rates and time. Other proposed chapte
 
 Consider a request passing through a fictional gateway and worker, possibly waiting for a downstream resource. Choose **one** boundary with ingress at admission and egress when a request exits *for any reason*. For example:
 
-```text
-offered clients
-    |
-    v
-[admission control] -- rejected --> client (counted separately)
-    |
-  accepted
-    v
-+-------------------------------------------------------+
-| measured boundary                                     |
-|    queue -> worker -> downstream call -> final exit   |
-|             |                        |                |
-|         processing                completion           |
-+-------------------------------------------------------+
-    |
-    v
-client success / error / timeout
+```mermaid
+flowchart LR
+    Clients["Offered client attempts"] --> Admit{"Admission control"}
+    Admit -->|Rejected before boundary| Reject["Rejection: counted separately"]
+    Admit -->|Accepted| Queue
+    subgraph Boundary["Measured admission-to-exit boundary"]
+        Queue["Waiting queue"] --> Worker["Worker / service"]
+        Worker --> Dependency["Downstream dependency"]
+        Dependency --> Exit["Exit: success, error or cancellation"]
+    end
+    Exit --> Outcome["User-visible result"]
 ```
 
-The arrows represent an **original illustrative model**, not a deployed system. Real systems may reject or cancel work at several places. The endpoint and termination rule must be documented before measuring time or concurrency.
+The Mermaid diagram is an **original synthetic model**, not an observed deployment. Text alternative: client attempts are either rejected before the boundary or accepted into a queue; accepted work passes through execution and a dependency to a recorded exit. The arrows represent an **original illustrative model**, not a deployed system. Real systems may reject or cancel work at several places. The endpoint and termination rule must be documented before measuring time or concurrency.
 
 | Quantity | Unit | Meaning and common mistake |
 |---|---|---|
@@ -110,6 +104,21 @@ The apparent mismatch is not a failure of Little's Law. The interval ends with u
 
 **Engineering consequence:** do not estimate a team's timeout, p99 or pool occupancy by slicing unrelated dashboards into arbitrary windows and substituting one mean for another. Record start/end backlog, arrival/exit counts, residence-time cohort, sampling, warmup and whether the window is stationary. A real finite-window estimator needs uncertainty analysis; a screenshot of three averaged metrics is not such an analysis.
 
+### Visualizing the finite-window edge effect
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Boundary as Measured system
+    Note over Client,Boundary: Observation window is [0,5) seconds
+    Client->>Boundary: Admit request at t=0
+    Note over Boundary: Work stays in system during [0,5)
+    Note over Boundary: Measurement ends t=5; request remains outstanding
+    Boundary-->>Client: Request exits at t=10 (outside window)
+```
+
+Text alternative: the only request enters at t=0, remains outstanding at t=5 when observation stops, and exits at t=10. Using its full eventual residence time in the five-second window mixes incompatible intervals and produces the counterexample above.
+
 ## Workload generators: closed feedback versus independent arrivals
 
 An apparently successful load test may be invalid for its stated demand assumption.
@@ -126,6 +135,24 @@ A simple invented illustration, **one request per iteration and no think time**:
 If the target slows under load, the closed scenario automatically offers fewer new operations. This can hide what would happen under independently arriving clients, while still being a valid model for some feedback-controlled interactive populations. A k6 iteration may perform multiple HTTP calls, so **iterations/s must not be relabelled RPS** without inspecting the script.
 
 An open-arrival generator can target 50 starts/s independently of completion, but that is still only a **target**: the generator itself can become resource-limited or drop scheduled starts. A valid experiment records planned and actually started iterations, offered/admitted/completed requests, generator health, refused connections, errors and end-to-end latency.
+
+### Visual comparison of offered work
+
+```mermaid
+flowchart TD
+    subgraph Closed["Closed session model"]
+        C1["Start iteration"] --> C2["Wait until iteration completes"]
+        C2 --> C3["Optional think time"]
+        C3 --> C1
+    end
+    subgraph Open["Open arrival model"]
+        O1["Independent arrival schedule"] --> O2["Start new iteration"]
+        O1 --> O3["Next scheduled arrival"]
+        O3 --> O2
+    end
+```
+
+Text alternative: a closed virtual user waits for its previous iteration (and think time) before issuing the next one. An open scheduler issues starts according to an external arrival plan rather than waiting for prior completion. Neither representation guarantees a healthy load generator.
 
 ### When a closed model is appropriate
 
@@ -144,6 +171,21 @@ Admitted and offered rate are equal, so **backlog grows by** `(200 - 150) × 30 
 Change the admission policy: if **50 operations/s** are rejected *before* they enter this boundary and the remaining **150/s** are completed, backlog need not grow. But legitimate rejected requests may harm user-level success SLOs, and the rejection path itself consumes resources.
 
 The public SRE *Handling Overload* chapter (2017 edition), specifically **Client-Side Throttling** and its final discussion of protecting backend tasks, describes why rejected calls can consume meaningful backend work and why distributed overload may require limiting work before it reaches an overloaded server. [E04] This is an author's described implementation and practice, **not** a measurement of the invented Tycho service.
+
+### Queue growth and admission control — synthetic flow
+
+```mermaid
+flowchart TD
+    Offer["Offered: 200/s"] --> Control{"Admission policy"}
+    Control -->|Admit 200/s| Full["Worker completions: 150/s"]
+    Full --> Backlog["Backlog grows by 50/s"]
+    Control -->|Reject 50/s| Shed["Admit 150/s"]
+    Shed --> Equal["Completions: 150/s"]
+    Equal --> Flat["Backlog may remain stable"]
+    Shed --> Cost["Rejected users still count for user-level outcomes"]
+```
+
+Text alternative: without pre-admission rejections, offered work exceeds completions by 50/s and accumulates. Rejecting 50/s before the boundary can balance arrivals and exits there but must not be interpreted as successful user-level service.
 
 | Situation | What the operator can observe | False inference to avoid | Next measurement / mitigation |
 |---|---|---|---|
