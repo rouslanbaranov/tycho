@@ -43,3 +43,8 @@ Drafted `book/PROPOSED-STRUCTURE.md`: audience, independent question-driven topi
 Planned the revised dependency chain: #23 (after completed #17) → #24 → #25 → #26 → #38–#40. Specific blockers for #18/#19 are moved downstream of evidence-backed pilot content; final accepted case-study methods will be reworked from those findings. #37 remains required validation infrastructure, developed in parallel, but it will not prevent writing the first material under manual source/claim and existing mechanical checks.
 
 The `scripts/apply_book_first_order.py` workflow is intentionally limited to five known Issues and will run after the #23 PR merges. Update the checkpoint after **verified** GitHub execution. This planning update does not execute source reading, publication of the book or generation of technical pages.
+
+
+## 2026-10-18 — TYCHO-26 pilot scope
+
+Selected three tightly bounded and complementary public-evidence research tasks: queueing and finite-window Little's Law (#38), transaction-to-event/outbox and duplicate effects (#39), and progressive release/compatibility/recovery (#40). Added three detailed research contracts and one authoring wave checklist. Each records source IDs, exact intended sections, uncertainty, negative cases, and acceptance; writing these contracts does **not** imply full reading of sources, empirical tests or completed technical chapters. Continue in issue-specific branches, verify exact public sources while authoring, and do not expand the whole corpus automatically.
