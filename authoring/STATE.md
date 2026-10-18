@@ -19,13 +19,17 @@ Discovery/entry-page inspection is complete for the first inventory pass. Commer
 
 The [architecture decision layer](architecture-decision-layer-plan.md) is now part of the roadmap: requirements/workload and legacy profiles, applicability cards, option comparison, ADRs, target/transition architecture and four decision-navigation routes. Only the plan is recorded; these models and their evaluation are not implemented.
 
+## Required knowledge-service delivery
+
+The [knowledge platform and MCP plan](knowledge-platform-and-mcp-plan.md) defines mandatory capabilities K01–K30: reproducible sources/provenance, automatic metadata and schemas, routing and validation, static code and curated graphs, ranked lexical retrieval, vector/hybrid evaluation, read-only MCP, generic onboarding, shared Rocinante integration, immutable snapshots, independent deployment, access controls, observability, quality/cost evaluation and maintenance. This is a plan, not a completed service. These capabilities are no longer deferred product scope.
+
 ## Not implemented
 
 Technical chapters; approved table of contents; formal JSON Schema; chapter frontmatter/index/link/anchor validation; evidence-backed graph; retrieval benchmark; semantic search; MCP delivery.
 
 ## Next action
 
-First define the models and templates in architecture-decision-layer-plan.md. Then use sources/READING-PLAN.md and sources/COVERAGE.md to propose a question-driven book structure and three bounded pilot contracts that exercise architecture selection and modernization reasoning. Pin relevant versions and exact source sections, establish minimal chapter metadata contracts, then research the pilots. The inventory is not an instruction to read every linked corpus in full or generate the entire book.
+Define the models/templates in architecture-decision-layer-plan.md together with the knowledge, graph, retrieval and MCP contracts in knowledge-platform-and-mcp-plan.md. Then use sources/READING-PLAN.md and sources/COVERAGE.md to propose a question-driven book structure and three bounded pilot contracts that exercise architecture selection and modernization reasoning. Pin relevant versions and exact source sections, establish minimal chapter metadata contracts, then research the pilots. The inventory is not an instruction to read every linked corpus in full or generate the entire book.
 
 ## Review limits
 

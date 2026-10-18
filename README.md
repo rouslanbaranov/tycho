@@ -1,6 +1,6 @@
 # Tycho
 
-An independent, self-contained System Design book for humans and AI agents.
+An independent, self-contained System Design book and planned MCP knowledge service for external AI agents.
 
 Tycho explains engineering principles, architectural trade-offs, failure modes, and practical design reasoning through independently sourced public knowledge and original synthetic examples. It is not a description of any employer's systems.
 
@@ -15,7 +15,8 @@ Read [the independence policy](governance/INDEPENDENCE.md) before contributing. 
 - [Book mission](book/README.md)
 - [Authoring methodology](authoring/METHODOLOGY.md)
 - [Current state and next action](authoring/STATE.md)
-- [Initial roadmap](authoring/ROADMAP.md)
+- [Roadmap](authoring/ROADMAP.md)
+- [Knowledge platform and MCP delivery plan](authoring/knowledge-platform-and-mcp-plan.md)
 - [Source catalogue](sources/CATALOG.md)
 - [Coverage and research questions](sources/COVERAGE.md)
 - [Implementation families](sources/IMPLEMENTATIONS.md)

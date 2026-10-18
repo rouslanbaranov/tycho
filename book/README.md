@@ -11,3 +11,7 @@ The book should develop engineering judgment rather than prescribe universal arc
 A reader can understand each chapter using the explanations and local links in this repository. Public citations support further verification. No private system knowledge or companion corpus is required.
 
 The initial table of contents is pending. No technical chapter is claimed complete.
+
+## Machine-readable knowledge product
+
+The book is also the canonical content for a planned read-only MCP knowledge service. External agents will discover its structure through onboarding, retrieve ranked sections, traverse evidence-backed graphs and verify provenance using versioned snapshots. A shared Rocinante integration package will carry the operating guidance. These are required roadmap outcomes; see the [knowledge-platform plan](../authoring/knowledge-platform-and-mcp-plan.md). They are not implemented yet. The book remains self-contained and locally navigable without MCP.

@@ -41,3 +41,7 @@ Before broad authoring, pilot one mechanism, one cross-component scenario, and o
 ## Planned architecture decision support
 
 The [decision-layer plan](architecture-decision-layer-plan.md) defines the next methodology extension: explicit requirements and legacy profiles, evidence-backed applicability and contraindications, comparison with alternatives, testable ADRs, and separate target/transition architecture. Integrate these conventions after model design and pilot evaluation. Recording the plan does not establish implemented decision support or authorize a broad rewrite.
+
+## Required machine-readable delivery
+
+The [knowledge-platform plan](knowledge-platform-and-mcp-plan.md) is the complete capability and release checklist. Authoring must support stable IDs/sections, generated metadata/indexes, exact provenance, independently reviewed graphs and Route → Read → Verify. Ranked retrieval, vector/hybrid evaluation, MCP onboarding, shared Rocinante integration guidance and snapshot/deployment evaluation are required workstreams. Keep authoring/deepening, source updates, indexing and serving separate; none silently triggers a whole-book rewrite. Record actual implementation and acceptance evidence against the capability matrix.
