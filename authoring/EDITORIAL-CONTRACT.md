@@ -43,7 +43,9 @@ The classification above is an **editorial distinction**, not a JSON Schema enum
 
 ## Diagrams, examples, snippets and tables
 
-Use diagrams when they explain ownership, timing, message direction, failure transitions, deployment domains or operational feedback loops. Text must explain assumptions and meaning; a diagram is not proof of runtime behavior. Label invented examples and separate them from cited source diagrams.
+**Mermaid-first visual policy:** use fenced `mermaid` in Markdown at volume, chapter and technical-page levels whenever a diagram materially clarifies topic relationships, state/data ownership, normal and failure sequences, deployment topology, rollback, or decisions. Use `flowchart` for architectural structure and reading paths, `sequenceDiagram` for messages/timing, `stateDiagram-v2` for lifecycle/recovery, and specialized forms only when meaningful. Choose the smallest legible diagram; do not require a diagram on a purely textual page, count diagrams as a quality metric, or manufacture decorative graphics.
+
+Diagrams must be original, editable Mermaid source inside the Markdown, not image-only renderings. Provide nearby prose and a compact text alternative for accessibility and agents unable to render diagrams. State scope, assumptions, synthetic versus observed status, and exact supporting source when portraying factual guarantees. Diagrams never substitute for evidence or imply that synthetic flows were tested. Keep Mermaid syntax simple, close code fences and check rendering where supported.
 
 - **Source code snippets:** quote only the smallest portion necessary to establish a precise fact or test case, subject to reuse/license terms. Prefer versioned upstream links and explanations to large mirrored code blocks.
 - **Synthetic examples:** define invented requirements and numbers explicitly; show arithmetic with units and assumptions. Do not imply observed benchmarks, production outcomes, or a real employer system.
