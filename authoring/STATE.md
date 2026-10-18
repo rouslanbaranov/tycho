@@ -87,3 +87,8 @@ Next corpus task: [#84](https://github.com/rouslanbaranov/tycho/issues/84). The 
 ## Scaling mechanisms research — Issue #84
 
 Three [scaling research chapters](../book/scaling/README.md) now cover shard-key/hotspot/resharding migration, connection budgets across HikariCP/PgBouncer/PostgreSQL, and local/shared-cache staleness/invalidation/stampede scenarios. Original Mermaid diagrams, synthetic counterexamples and source/version ledgers make scope explicit. No actual shard migration, application pool test, Redis installation, cache benchmark or independent review has occurred. CI remains milestone-only. Next planned content issue is [#85](https://github.com/rouslanbaranov/tycho/issues/85).
+
+
+## Search architecture research — Issue #85
+
+Three original evidence-based technical pages now cover [lexical/BM25/SQL FTS](../book/search/lexical-indexing-bm25-and-sql-fts.md), [exact/ANN vectors, pgvector and Faiss](../book/search/vector-hnsw-faiss-pgvector.md), and [hybrid ranking, typed graph traversal and answer-quality evaluation](../book/search/hybrid-ranking-graph-and-evaluation.md). A [question-driven landing](../book/search/README.md) links only existing canonical pages. These are **knowledge content**, not an implemented vector index, graph database, search API or shared Rocinante/MCP deployment. Human-relevance evaluation, retrieval benchmarks and exact source/index freshness checks remain planned; no GitHub PR pipeline is triggered under the milestone-only policy.
