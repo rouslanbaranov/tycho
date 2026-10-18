@@ -44,6 +44,10 @@ The original 94 issues formed the initial plan; #17, #23–#26 and #38–#40 wer
 
 Editorial templates #24 and research workflow #25 have been merged and closed. Issue #26 is closed after PR #99 merged the [three bounded pilot contracts](PILOT-WAVE-01.md). First technical pilot #38 is merged and closed via PR #100; the [queueing chapter](../book/performance/queueing-littles-law.md) is now in main. Pilots #38 and #39 are merged and closed through PRs #100/#101; researched [queueing](../book/performance/queueing-littles-law.md) and [outbox/idempotency](../book/distributed/transactional-outbox-and-idempotency.md) chapters are in main. Pilot #40 was merged through PR #102 and closed; [rollout and recovery](../book/delivery/safe-rollout-and-recovery.md) joins [queueing](../book/performance/queueing-littles-law.md) and [outbox](../book/distributed/transactional-outbox-and-idempotency.md) as the first three source-grounded technical pages. Issue #41 now evaluates these pilots against a [25-question set](../evaluation/pilot-questions.json) and [bounded methodology assessment](../evaluation/PILOT-ASSESSMENT.md). This does not imply whole-volume or whole-book completion. Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
 
+## Immediate expansion path
+
+Run the pilot methodology check in Issue #41 (author-only review and tiny in-sample retrieval smoke, not LLM answer acceptance). Then begin [#79 foundational architecture research](https://github.com/rouslanbaranov/tycho/issues/79) in its own feature branch. Full source pinning, structured metadata/validation, lexical/hybrid search and MCP are still required. The corpus is not complete.
+
 ## Review limits
 
 The private remote repository is established. Branch protection has not been configured. Discovery and mechanical checks do not establish technical truth or independent human review.
