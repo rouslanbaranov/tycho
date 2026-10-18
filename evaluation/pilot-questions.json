@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "scope": "First three Tycho evidence-backed pilots only; manually specified evaluation questions, not executed AI-agent or MCP benchmarks.",
+  "created": "2026-10-18",
+  "status": "human-independent question set; expected answer elements are author assertions requiring independent review",
+  "items": [
+    {
+      "id": "F01",
+      "category": "fact",
+      "question": "What is the precise boundary for L, lambda and W?",
+      "canonical_page": "book/performance/queueing-littles-law.md",
+      "expected_elements": "Mean in-boundary work equals completed/admitted steady flow times mean residence time; boundary and units required",
+      "evidence_basis": "Kim & Whitt 2013 §§1–2",
+      "forbidden_unsupported_claim": "Do not infer thread count"
+    },
+    {
+      "id": "F02",
+      "category": "fact",
+      "question": "Can p99 replace W in Little's Law?",
+      "canonical_page": "book/performance/queueing-littles-law.md",
+      "expected_elements": "No; W is a mean, not a percentile; include synthetic example",
+      "evidence_basis": "Kim & Whitt 2013 §1",
+      "forbidden_unsupported_claim": "Do not claim a p99 capacity"
+    },
+    {
+      "id": "F03",
+      "category": "fact",
+      "question": "What does the Debezium Outbox Event Router use for event ID and Kafka key by default?",
+      "canonical_page": "book/distributed/transactional-outbox-and-idempotency.md",
+      "expected_elements": "Unique event ID is header; aggregateid controls key; version-specific",
+      "evidence_basis": "Debezium 3.6 Basic outbox table",
+      "forbidden_unsupported_claim": "Do not equate event ID with business ID"
+    },
+    {
+      "id": "F04",
+      "category": "fact",
+      "question": "What does Kubernetes maxSurge configure?",
+      "canonical_page": "book/delivery/safe-rollout-and-recovery.md",
+      "expected_elements": "Extra replicas relative to desired count in a rolling deployment; may affect temporary capacity",
+      "evidence_basis": "Kubernetes Deployments: Rolling Update Deployment",
+      "forbidden_unsupported_claim": "Do not assert client success"
+    },
+    {
+      "id": "F05",
+      "category": "fact",
+      "question": "What is the distinction between RTO and RPO?",
+      "canonical_page": "book/delivery/safe-rollout-and-recovery.md",
+      "expected_elements": "RTO is tolerated restoration time, RPO tolerated data recovery point gap",
+      "evidence_basis": "AWS Disaster Recovery introduction",
+      "forbidden_unsupported_claim": "Do not claim these are measured"
+    },
+    {
+      "id": "S01",
+      "category": "synthesis",
+      "question": "Why can high user counts coexist with low request arrival rates?",
+      "canonical_page": "book/performance/queueing-littles-law.md",
+      "expected_elements": "Registered users, active sessions and request production are different; need behavior assumptions",
+      "evidence_basis": "Tycho requirements model plus queueing page",
+      "forbidden_unsupported_claim": "Do not derive RPS from registered users alone"
+    },
+    {
+      "id": "S02",
+      "category": "synthesis",
+      "question": "Why is the outbox not an exactly-once external business guarantee?",
+      "canonical_page": "book/distributed/transactional-outbox-and-idempotency.md",
+      "expected_elements": "Atomic source state/outbox commit stops at local database; relay and consumer need dedup/reconciliation",
+      "evidence_basis": "Debezium 3.6 outbox; PostgreSQL 17",
+      "forbidden_unsupported_claim": "Do not promise global exactly once"
+    },
+    {
+      "id": "S03",
+      "category": "synthesis",
+      "question": "Why can binary rollback fail after a deployment succeeds?",
+      "canonical_page": "book/delivery/safe-rollout-and-recovery.md",
+      "expected_elements": "N+1 may write incompatible persistent data; old N can no longer read; forward fix/restore needed",
+      "evidence_basis": "Kubernetes Deployment rollback plus Tycho synthetic sequence",
+      "forbidden_unsupported_claim": "Do not equate route reversal with DB rollback"
+    },
+    {
+      "id": "S04",
+      "category": "synthesis",
+      "question": "How do request idempotency keys differ from event IDs?",
+      "canonical_page": "book/distributed/transactional-outbox-and-idempotency.md",
+      "expected_elements": "Client logical command identity versus immutable event publication identity; scope, parameter matching and retention",
+      "evidence_basis": "RFC 9110 §9.2.2; AWS idempotent API essay",
+      "forbidden_unsupported_claim": "Do not assume HTTP method alone enforces application key"
+    },
+    {
+      "id": "T01",
+      "category": "tradeoff",
+      "question": "When is a closed load model preferable to an open model?",
+      "canonical_page": "book/performance/queueing-littles-law.md",
+      "expected_elements": "When fixed clients await completion/think time; depends on audience behavior",
+      "evidence_basis": "k6 Open and closed models",
+      "forbidden_unsupported_claim": "Do not rank models universally"
+    },
+    {
+      "id": "T02",
+      "category": "tradeoff",
+      "question": "When is polling an outbox preferable to CDC?",
+      "canonical_page": "book/distributed/transactional-outbox-and-idempotency.md",
+      "expected_elements": "Based on DB/connector constraints and complexity/latency; weigh scan overhead and replay",
+      "evidence_basis": "Debezium outbox docs; Tycho option table",
+      "forbidden_unsupported_claim": "Do not invent measured latencies"
+    },
+    {
+      "id": "T03",
+      "category": "tradeoff",
+      "question": "When might blue/green beat rolling deployment?",
+      "canonical_page": "book/delivery/safe-rollout-and-recovery.md",
+      "expected_elements": "Fast traffic switch and isolated preview; costs duplicate capacity, state compatibility still needed",
+      "evidence_basis": "Argo Rollouts BlueGreen",
+      "forbidden_unsupported_claim": "Do not claim data rollback"
+    },
+    {
+      "id": "T04",
+      "category": "tradeoff",
+      "question": "Does adding app threads or a larger connection pool solve backlog growth?",
+      "canonical_page": "book/performance/queueing-littles-law.md",
+      "expected_elements": "Not necessarily; requires downstream demand, queue and service measurements",
+      "evidence_basis": "Kim & Whitt 2013 and Tycho synthetic load",
+      "forbidden_unsupported_claim": "Do not choose specific pool size"
+    },
+    {
+      "id": "X01",
+      "category": "failure",
+      "question": "An HTTP reply is lost after a registration committed. What prevents a second reservation?",
+      "canonical_page": "book/distributed/transactional-outbox-and-idempotency.md",
+      "expected_elements": "Same request key/parameters and DB-enforced outcome replay, concurrency-safe dedup needed",
+      "evidence_basis": "AWS idempotency essay; PostgreSQL 17 transactions",
+      "forbidden_unsupported_claim": "Do not claim generic POST is idempotent"
+    },
+    {
+      "id": "X02",
+      "category": "failure",
+      "question": "A relay crashes after broker acknowledgement is lost. Can the event repeat?",
+      "canonical_page": "book/distributed/transactional-outbox-and-idempotency.md",
+      "expected_elements": "Yes, duplicate delivery is possible; consumer needs event-ID dedup in same local transaction as effect",
+      "evidence_basis": "Debezium 3.6 event ID field",
+      "forbidden_unsupported_claim": "Do not claim broker ack fixes consumer effect"
+    },
+    {
+      "id": "X03",
+      "category": "failure",
+      "question": "What happens to admitted backlog when offers=200/s and exits=150/s for 30s?",
+      "canonical_page": "book/performance/queueing-littles-law.md",
+      "expected_elements": "Under no rejection/abandonment and admitted=offered, grows by 1500 synthetic operations",
+      "evidence_basis": "Tycho queueing conservation",
+      "forbidden_unsupported_claim": "Do not treat burst as stationary"
+    },
+    {
+      "id": "X04",
+      "category": "failure",
+      "question": "A canary is ready but p99 client latency worsens. Is promotion safe?",
+      "canonical_page": "book/delivery/safe-rollout-and-recovery.md",
+      "expected_elements": "No evidence of user SLO; freeze progression, inspect client metrics, samples and invariants",
+      "evidence_basis": "Kubernetes Deployments; Argo analysis concept",
+      "forbidden_unsupported_claim": "Do not equate readiness with user-level quality"
+    },
+    {
+      "id": "C01",
+      "category": "change_impact",
+      "question": "A new app version removes a database column read by old instances. What changes?",
+      "canonical_page": "book/delivery/safe-rollout-and-recovery.md",
+      "expected_elements": "Mixed-version contract breaks; expand/contract or forward migration and tests needed",
+      "evidence_basis": "Tycho rollout compatibility matrix",
+      "forbidden_unsupported_claim": "Do not assume rollback restores old column"
+    },
+    {
+      "id": "C02",
+      "category": "change_impact",
+      "question": "What happens to outbox correctness when event keys switch from aggregate ID to random IDs?",
+      "canonical_page": "book/distributed/transactional-outbox-and-idempotency.md",
+      "expected_elements": "Per-aggregate partition ordering may be lost; key migration needs consumer compatibility/replay plan",
+      "evidence_basis": "Debezium 3.6 event key option",
+      "forbidden_unsupported_claim": "Do not claim global ordering"
+    },
+    {
+      "id": "C03",
+      "category": "change_impact",
+      "question": "A traffic peak becomes burstier but average RPS stays constant. Does Little's Law determine p99?",
+      "canonical_page": "book/performance/queueing-littles-law.md",
+      "expected_elements": "No; tail depends on variability/queueing; measure distribution and admission",
+      "evidence_basis": "Kim & Whitt finite windows; k6 models",
+      "forbidden_unsupported_claim": "Do not infer p99 from mean"
+    },
+    {
+      "id": "K01",
+      "category": "contradiction",
+      "question": "A dashboard shows λW=2 but observed mean N=1 during a five-second window. Is the law false?",
+      "canonical_page": "book/performance/queueing-littles-law.md",
+      "expected_elements": "No: unfinished edge customer counted across mismatched window; cite finite-window caveat",
+      "evidence_basis": "Kim & Whitt 2013 §§1.1,2.2",
+      "forbidden_unsupported_claim": "Do not call finite sample proof of theorem failure"
+    },
+    {
+      "id": "K02",
+      "category": "contradiction",
+      "question": "A deployment is Available but registration failures occur. Which status wins?",
+      "canonical_page": "book/delivery/safe-rollout-and-recovery.md",
+      "expected_elements": "Different measured scopes; service-level SLI fails despite controller health",
+      "evidence_basis": "Kubernetes Deployments: status",
+      "forbidden_unsupported_claim": "Do not collapse health into availability promise"
+    },
+    {
+      "id": "U01",
+      "category": "unanswerable",
+      "question": "An API has 100,000 registered users and p99=2s. Choose exact instance and database pool counts.",
+      "canonical_page": "book/performance/queueing-littles-law.md",
+      "expected_elements": "Insufficient evidence; demand mix, mean residence, capacity, failure headroom, test needed",
+      "evidence_basis": "Tycho queueing boundary and source",
+      "forbidden_unsupported_claim": "No exact sizing numbers"
+    },
+    {
+      "id": "U02",
+      "category": "unanswerable",
+      "question": "The system uses Debezium outbox. Prove external payments are applied exactly once.",
+      "canonical_page": "book/distributed/transactional-outbox-and-idempotency.md",
+      "expected_elements": "Insufficient evidence; external provider, dedup retention and reconciliation need validation",
+      "evidence_basis": "Debezium 3.6; AWS idempotency essay",
+      "forbidden_unsupported_claim": "No global exactly-once guarantee"
+    },
+    {
+      "id": "U03",
+      "category": "unanswerable",
+      "question": "The deployment controller reports success. Claim RPO=0 under region failure.",
+      "canonical_page": "book/delivery/safe-rollout-and-recovery.md",
+      "expected_elements": "Insufficient evidence; requires restore point, DR drills, actual data lag and user acceptance",
+      "evidence_basis": "AWS DR RPO/RTO; Kubernetes statuses",
+      "forbidden_unsupported_claim": "No fake DR measurement"
+    }
+  ]
+}
