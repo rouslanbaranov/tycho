@@ -1,15 +1,34 @@
-name: Source boundary
-on: [push, pull_request]
+name: Milestone verification
+
+# Batch all repository checks once, when an accepted GitHub milestone is closed.
+# Closing a milestone before its issues are done skips the runner.
+# No push, pull_request, schedule or manual triggers.
+on:
+  milestone:
+    types: [closed]
+
 permissions:
   contents: read
+
+concurrency:
+  group: tycho-milestone-verification
+  cancel-in-progress: false
+
 jobs:
-  boundary:
+  verify:
+    if: ${{ github.event.milestone.open_issues == 0 }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python3 scripts/check_boundary.py
-      - run: python3 scripts/validate_sources.py
-      - run: python3 scripts/source_catalog.py --check
+      - name: Check independent public-source boundary
+        run: python3 scripts/check_boundary.py
+      - name: Validate admitted source register and references
+        run: python3 scripts/validate_sources.py
+      - name: Verify generated source catalogue is current
+        run: python3 scripts/source_catalog.py --check
+      - name: Execute all Tycho regression checks
+        run: python3 -m unittest discover -s tests -p 'test_tycho*.py' -v
