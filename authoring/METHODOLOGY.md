@@ -37,3 +37,7 @@ Track research coverage, explanatory sufficiency, evidence support, review, and 
 A source change flags potential staleness of affected claims, pages, and graph relationships; it does not automatically invalidate them. Keep content verification dates distinct from formatting dates. Record the reviewer role and re-verification evidence required to close the flag.
 
 Before broad authoring, pilot one mechanism, one cross-component scenario, and one recovery scenario. Curate 20–30 evidence-grounded evaluation questions covering facts, synthesis, trade-offs, failure, change impact, contradictions, and unanswerable cases. Compare answer quality, traceability, uncertainty, navigation effort, and total agent cost. Do not fabricate baseline measurements.
+
+## Planned architecture decision support
+
+The [decision-layer plan](architecture-decision-layer-plan.md) defines the next methodology extension: explicit requirements and legacy profiles, evidence-backed applicability and contraindications, comparison with alternatives, testable ADRs, and separate target/transition architecture. Integrate these conventions after model design and pilot evaluation. Recording the plan does not establish implemented decision support or authorize a broad rewrite.
