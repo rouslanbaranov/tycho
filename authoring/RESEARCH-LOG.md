@@ -48,3 +48,17 @@ The `scripts/apply_book_first_order.py` workflow is intentionally limited to fiv
 ## 2026-10-18 — TYCHO-26 pilot scope
 
 Selected three tightly bounded and complementary public-evidence research tasks: queueing and finite-window Little's Law (#38), transaction-to-event/outbox and duplicate effects (#39), and progressive release/compatibility/recovery (#40). Added three detailed research contracts and one authoring wave checklist. Each records source IDs, exact intended sections, uncertainty, negative cases, and acceptance; writing these contracts does **not** imply full reading of sources, empirical tests or completed technical chapters. Continue in issue-specific branches, verify exact public sources while authoring, and do not expand the whole corpus automatically.
+
+
+## 2026-10-18 — TYCHO-38 first researched technical page (feature branch)
+
+Wrote the first bounded technical chapter, `book/performance/queueing-littles-law.md`, with `book/performance/README.md` as its navigable landing. This is original prose, diagrams and entirely synthetic examples, not copied source text, measured live capacity or a completed volume. The chapter covers unit/boundary definitions; Little's Law for steady means; a finite-window edge counterexample; mean-versus-p99; closed/open workload generation; admission/backlog dynamics; overload and recovery; alternatives, applicability and an explicit insufficient-evidence outcome.
+
+Actually inspected these independent public passages for this slice on 2026-10-18:
+- `src.little-law`: Kim & Whitt (2013), DOI 10.1287/opre.2013.1193, author PDF, Abstract, §§1, 1.1–1.2, §2.1 definitions and §2.2 finite-window edge effects.
+- `src.k6`: Grafana k6 official *Open and closed models*, online docs labelled v2.2.x; Closed Model, Drawbacks, Open model.
+- `src.sre-overload`: SRE public 2017 *Handling Overload*, Client-Side Throttling and closing remarks on per-task protection.
+
+The source register remains at its existing discovery-level status; this chapter's narrow claim ledger is the evidence location. No entire book, source repo or complete external documentation tree was read. No real workload was generated or benchmark recorded. Mechanical unit tests check the article's synthetic arithmetic and explicit counterexample. A green CI is not equivalent to a technical expert/human review, which remains unrecorded.
+
+Subsequent work belongs to independently researched end-to-end (#39) and recovery (#40) pilot branches, not an automatic full-book enrichment.
