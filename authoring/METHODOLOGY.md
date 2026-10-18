@@ -36,6 +36,10 @@ Every implementation/research sub-issue is developed in one dedicated branch fro
 
 Never commit issue delivery directly to `main`. Keep the branch limited to the bounded issue (including associated process rules explicitly requested during it). Open a PR to `main` labelled by the issue number and reference `Refs #17` rather than silently closing it. Document tests, evidence, unresolved unknowns and review status. Merge and close only after relevant checks and intended approval; keeping the issue open for review is correct. CI validates naming and issue alignment on PR; it does **not** replace repository branch protection or independent review.
 
+## Bounded evidence workflow
+
+Follow [the bounded research, deepening and readiness workflow](RESEARCH-WORKFLOW.md) to take one admitted public source/engineering question into a genuinely researched page. Discovery entries are not evidence of claims, and an authoring edit does not trigger global enrichment. Track independent research, mechanical validation, review and freshness states.
+
 ## Work cycle
 
 Route through the checkpoint and, once implemented, index. Initially load up to three directly relevant canonical pages; expand when evidence or the question requires. Admit public sources, investigate, write, review, validate, then update source register, research log, and checkpoint. Token savings must preserve correctness, exceptions, and uncertainty.
