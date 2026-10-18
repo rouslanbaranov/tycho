@@ -80,3 +80,8 @@ Authored `book/delivery/safe-rollout-and-recovery.md` plus accessible Mermaid na
 Actually inspected bounded public sections: Kubernetes online Deployments documentation in the v1.37 family (rolling strategy, status, failed deployment), Argo Rollouts stable Canary and BlueGreen concepts (precise operational version **not pinned**), AWS DR official whitepaper Introduction/DR options, and Google SRE Addressing Cascading Failures on overload and recovery. Version-specific claims must be narrowed in a future actual installed environment. The tests assert sample arithmetic and document scope only. No measured RTO/RPO, claimed rollback guarantee, certification or independent human approval.
 
 Pilot-wave content exists as three bounded, separately owned chapters; this does not equate to all proposed volume chapters, metadata, indexed retrieval or MCP completeness. Further book authoring requires independent admitted public-source reading.
+
+
+## 2026-10-18 — TYCHO-41 pilot quality gate
+
+Compiled 25 evidence-linked evaluation questions across fact, synthesis, trade-off, failure, change impact, contradiction and unanswerable categories. Ran a deterministic **author-created in-sample** lexical smoke on only the three pilot pages, observing 25/25 top-1 correct topic routes, not verified end-to-end answers or general ranking quality. Recorded an ADOPT/REVISE/REJECT author assessment; major gaps include independent human review, strict metadata/provenance, version-pinned sources, fuller corpus and actual agent/tool cost evaluation. No full-book acceptance implied.
