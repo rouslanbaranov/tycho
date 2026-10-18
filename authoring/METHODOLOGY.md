@@ -8,6 +8,10 @@ The minimal [editorial and navigation contract](EDITORIAL-CONTRACT.md) defines v
 
 Begin each bounded slice with a research contract: reader, primary question, practical significance, subquestions, exclusions, required evidence, and completion criteria. Apply depth according to consequences of error, coupling, and uncertainty. Word counts and diagram counts are not quality targets. Mermaid is the standard native diagram format for explanatory figures in volume introductions, chapter landings and technical pages where visualization clarifies real relationships. Diagrams need nearby plain-text explanations, provenance and applicability/assumption labels; they are optional when purely decorative.
 
+## Visual explanations with Mermaid
+
+For human readers, provide Mermaid diagrams in volume/chapter landings and technical pages **whenever system boundaries, normal execution, state transitions, failure/recovery, deployment or dependencies become clearer visually**. Prefer focused `flowchart`, `sequenceDiagram` or `stateDiagram-v2` illustrations embedded directly in Markdown. Describe assumptions, node ownership, ordering and limitations in accompanying prose. A conceptual diagram must not be mistaken for an observed deployment, measured result or formal proof. The [editorial contract](EDITORIAL-CONTRACT.md) defines diagram selection and review. No decorative charts and no fixed quota; omission when a useful diagram is obvious requires a reason during authoring review.
+
 ## Orientation → Architecture → Evidence
 
 Explain purpose and constraints before mechanisms. Each significant concept has one canonical owner; consumers retain enough local context to explain their particular consequences. Landing pages state Purpose and Mission, scope, reading routes, child-page questions, and unresolved work.
