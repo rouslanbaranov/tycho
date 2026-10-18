@@ -1,5 +1,9 @@
 # Authoring methodology
 
+## Editorial page contracts
+
+The minimal [editorial and navigation contract](EDITORIAL-CONTRACT.md) defines volume/chapter landing pages, researched question pages, link discipline, compact diagrams/source excerpts and review gates. Use its [volume landing](../templates/volume-landing.md), [chapter landing](../templates/chapter-landing.md) and [technical page](../templates/technical-page.md) templates only for bounded approved research slices; do not manufacture empty pages. Pattern cards and ADRs are separate later work, not substitutes for evidence-backed chapter explanations.
+
 ## Question before prose
 
 Begin each bounded slice with a research contract: reader, primary question, practical significance, subquestions, exclusions, required evidence, and completion criteria. Apply depth according to consequences of error, coupling, and uncertainty. Word counts and diagram counts are not quality targets.
