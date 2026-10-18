@@ -26,6 +26,12 @@ Before technical authoring, agree stable IDs, document kinds, parent/related lin
 
 Frontmatter will own document metadata; the routing index will be generated. A later curated directed multigraph will own explicit concept relationships and their evidence. Do not duplicate narrative claims into a mandatory per-sentence database. Introduce claim IDs only where traceability benefits justify maintenance. Graph generation and semantic relationship review are separate tasks. No graph or schema is implemented by this document.
 
+## Feature branches and review workflow
+
+Every implementation/research sub-issue is developed in one dedicated branch from `main`: `feature/TYCHO-<issue-number>-<task-desc-slug>`. The `<issue-number>` is the decimal GitHub issue number, not the epic/subtask code. Generate `<task-desc-slug>` from the sub-issue title **after** the `[E##-##]` prefix: ASCII lowercase alphanumeric words, joined by one hyphen, no leading/trailing hyphens. For example, issue #17 becomes `feature/TYCHO-17-requirements-and-workload-profile`. Reuse an existing matching issue branch instead of creating competing branches; a later corrective commit for the same issue belongs to that branch before merge.
+
+Never commit issue delivery directly to `main`. Keep the branch limited to the bounded issue (including associated process rules explicitly requested during it). Open a PR to `main` labelled by the issue number and reference `Refs #17` rather than silently closing it. Document tests, evidence, unresolved unknowns and review status. Merge and close only after relevant checks and intended approval; keeping the issue open for review is correct. CI validates naming and issue alignment on PR; it does **not** replace repository branch protection or independent review.
+
 ## Work cycle
 
 Route through the checkpoint and, once implemented, index. Initially load up to three directly relevant canonical pages; expand when evidence or the question requires. Admit public sources, investigate, write, review, validate, then update source register, research log, and checkpoint. Token savings must preserve correctness, exceptions, and uncertainty.
