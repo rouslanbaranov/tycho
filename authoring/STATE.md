@@ -71,3 +71,7 @@ Milestone-only CI remains the sole GitHub Actions trigger; issue PRs do **not** 
 ## Review limits
 
 The private remote repository is established. Branch protection has not been configured. Discovery and mechanical checks do not establish technical truth or independent human review.
+
+## Java execution research — Issue #82
+
+Three original public-source-grounded chapters now cover platform/virtual threads (JDK 21 and 24), Reactor/WebFlux/R2DBC, and Netty/Vert.x/Quarkus/Mutiny/RxJava. See [execution navigation](../book/execution/README.md). Version and evidence limitations are recorded in each page. No compilation, runtime measurement, independent review, full-book coverage or MCP implementation is claimed. Next content issue: #83. Milestone-only GitHub Actions policy remains unchanged.
