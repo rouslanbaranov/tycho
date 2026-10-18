@@ -73,11 +73,14 @@ def load_and_validate(repo, token):
         match = EPIC_RE.match(issue["title"])
         if not match:
             raise ValueError("Unexpected epic title #" + str(number))
-        if issue.get("parent_issue_url") != issue["url"].rsplit("/", 1)[0] + "/1":
-            raise ValueError("Epic #" + str(number) + " is not a child of program #1")
+        # Parent relationships are read from the authoritative sub-issues endpoint:
+        # issue-list payloads do not consistently include parent_issue_url.
         epics[match.group(1)] = issue
     if len(epics) != 15:
         raise ValueError("Expected 15 unique epic codes")
+    program_children = request(repo, "GET", "/issues/1/sub_issues?per_page=100", token)
+    if {item["number"] for item in program_children} != set(range(2, 17)):
+        raise ValueError("Program #1 does not contain the 15 expected epics")
 
     parents, dependencies = {}, {}
     for number in range(17, 95):
@@ -119,12 +122,19 @@ def load_and_validate(repo, token):
 
 
 def reconcile_parents(repo, token, numbers, parents, apply, delay):
+    current_ownership = {}
+    for epic in range(2, 17):
+        children = request(repo, "GET", "/issues/" + str(epic) +
+                           "/sub_issues?per_page=100", token)
+        for item in children:
+            if item["number"] in current_ownership:
+                raise ValueError("Multiple epic parents for #" + str(item["number"]))
+            current_ownership[item["number"]] = epic
     changes = []
     for child, parent in sorted(parents.items()):
-        found = numbers[child].get("parent_issue_url")
-        wanted = numbers[parent]["url"]
-        if found and found != wanted:
-            raise ValueError("Existing parent conflict for #" + str(child) + ": " + found)
+        found = current_ownership.get(child)
+        if found and found != parent:
+            raise ValueError("Existing parent conflict for #" + str(child))
         if not found:
             changes.append((child, parent))
     print("Missing parent links:", len(changes), flush=True)
