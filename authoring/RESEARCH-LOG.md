@@ -124,3 +124,10 @@ Authored three new source-grounded documents plus navigation and structural test
 ## 2026-10-19 — TYCHO-84 scale-out, pool and cache mechanisms
 
 Authored three original evidence-scoped technical pages in `book/scaling/` and an editable Mermaid landing. Inspected official public Vitess 24.0 Resharding guide, public VSchema reference, PostgreSQL 17 declarative partitioning and server connections, HikariCP README configuration, PgBouncer pool_mode/max_client_conn/default_pool_size, Caffeine Eviction/Refresh wiki, and Redis cache-aside and EXPIRE docs. Source provenance is exact at named public sections on each page. Synthetic hot-key, connection-count/hold-time and cache-fill race examples are not benchmarks. No Vitess resharding, production DB load measurement, pool compatibility test, or cache failover was run. Independent technical review and milestone-wide regression CI remain separate gates.
+
+
+## 2026-10-19 — TYCHO-85 lexical, vector, hybrid and graph retrieval
+
+Authored three original research chapters and Mermaid navigation in `book/search/`. Inspected PostgreSQL **17** full-text search §12.3 and text indexes, selected Apache Lucene **10.3.0** BM25Similarity API and core overview, official pgvector README (exact search, HNSW/IVFFlat, selective filtering, iterative scans), Faiss official index-family and index-factory wikis, Elasticsearch official reciprocal-rank-fusion score/reference, and Neo4j public graph concepts. Exact URL/section scopes and rolling-reference limitations are recorded in chapter evidence ledgers. Original RRF arithmetic and raw-FP32 vector size examples are not measured application performance.
+
+**No** Tycho lexical index, embeddings, ANN service, knowledge graph traversal runtime, MCP server, independent human judgments, answer correctness benchmark or token cost benchmark was built by this issue. These are future implementation/evaluation phases, and the content explicitly distinguishes them. GitHub Actions remains milestone-only; no per-PR CI pass asserted.
