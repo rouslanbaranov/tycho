@@ -15,7 +15,7 @@
 - **Evidence support:** source passages support only profile framing, SLI definition and arrival-process caution. All numerical values and business policies are newly invented thought-experiment inputs; they require no empirical attribution but cannot be presented as verified claims.
 - **Review scope:** self-check and automated structural checks only. No independent subject expert or human sign-off recorded.
 - **Version applicability and freshness:** public web sections inspected 2026-10-18; live documentation may change. Repository source register remains intentionally discovery-level because its current validator has no section-level read status.
-- **Validation performed:** record actual CI results in PR/issue after checks; do not mark planned checks complete here.
+- **Validation performed:** [Source boundary workflow](https://github.com/rouslanbaranov/tycho/actions/runs/39153497829) and [Feature branch convention + unit tests](https://github.com/rouslanbaranov/tycho/actions/runs/39153497864) passed on PR #95. These confirm configured lexical source boundaries, existing source inventory freshness, branch title match and synthetic arithmetic. They do not prove correctness, security, empirical performance or independent human review.
 - **Exact next action:** after review and merge, begin #18 legacy profile and #19 applicability cards; separately implement source evidence metadata and schema infrastructure in assigned later issues.
 
 ## Source-to-claim register for this bounded research
