@@ -26,7 +26,7 @@ The full capability inventory, current-state matrix, dependencies and acceptance
 
 ## Dependencies and boundaries
 
-Define semantics before schemas and graph/API encoding. Use validated pilot content to test retrieval. Design MCP/onboarding early; accept the service only after evidence, interoperability and operational checks. Research and authoring can progress without waiting for full hosting infrastructure.
+Define essential semantics for pilot authoring without blocking book content on a complete schema/graph/API. Use validated pilot content to test retrieval. Design MCP/onboarding early; accept the service only after evidence, interoperability and operational checks. Research and authoring can progress without waiting for full hosting infrastructure.
 
 Specific engine, hosting target, vector model and client adapters require evidence-based selection. Those choices do not make MCP delivery, onboarding, graphs or evaluation optional. The book remains locally usable without the hosted service.
 
