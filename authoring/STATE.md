@@ -52,6 +52,10 @@ Editorial templates #24 and research workflow #25 have been merged and closed. I
 
 Run the pilot methodology check in Issue #41 (author-only review and tiny in-sample retrieval smoke, not LLM answer acceptance). Then begin [#79 foundational architecture research](https://github.com/rouslanbaranov/tycho/issues/79) in its own feature branch. Full source pinning, structured metadata/validation, lexical/hybrid search and MCP are still required. The corpus is not complete.
 
+## Foundations corpus expansion — Issue #79
+
+Three original source-grounded pages now describe [quality-driven architecture views](../book/application/quality-drivers-and-architecture-views.md), [module and service styles](../book/application/architecture-styles-and-module-boundaries.md), and [architecture evolution](../book/application/architecture-evolution-and-extraction.md). A [navigation landing](../book/application/README.md) links them. These are bounded research chapters with original Mermaid diagrams and explicit limitations, not a complete System Design corpus, measured case study or independently reviewed architecture. Issue-level GitHub Actions checks are no longer triggered; verification is batched at milestone closure per [the current CI policy](MILESTONE-CI.md).
+
 ## Review limits
 
 The private remote repository is established. Branch protection has not been configured. Discovery and mechanical checks do not establish technical truth or independent human review.
