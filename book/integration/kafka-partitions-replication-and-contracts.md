@@ -48,7 +48,7 @@ Text alternative: producer records are routed to one of several partition logs. 
 
 ### A source-of-truth boundary
 
-A Kafka record is a durable log entry under a declared retention/replication policy, **not necessarily the authoritative business transaction**. A relational registration store might remain the authority while a transactional outbox relays a committed change into Kafka. The [outbox/idempotency page](transactional-outbox-and-idempotency.md) explains why a local database commit, Kafka publication, and consumer external side effect remain separate atomic boundaries.
+A Kafka record is a durable log entry under a declared retention/replication policy, **not necessarily the authoritative business transaction**. A relational registration store might remain the authority while a transactional outbox relays a committed change into Kafka. The [outbox/idempotency page](../distributed/transactional-outbox-and-idempotency.md) explains why a local database commit, Kafka publication, and consumer external side effect remain separate atomic boundaries.
 
 ## 3. Replicas, ISR and acknowledgement scope
 
