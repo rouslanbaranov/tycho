@@ -71,3 +71,12 @@ Authored `book/distributed/transactional-outbox-and-idempotency.md` plus its vol
 Actually examined public sections: Debezium **3.6 Outbox Event Router**, Basic outbox table/configuration, event key/ID/payload and SMT predicate details; PostgreSQL **17** Transaction Isolation, BEGIN and WAL introduction; **RFC 9110 §9.2.2** Idempotent Methods; AWS Builders' Library *Making retries safe with idempotent APIs* on side effects, semantic retries, late arrivals and same-token/different-intent. Specific product behaviors were not independently reproduced. No broker/database stack, benchmark, consumer replay or global exactly-once proof was executed. Tests assert presence, structure and source paths only; no integration-level correctness is claimed.
 
 Manuscript is under branch review; retain the separate K30 and book completion gates. The next independent chapter is #40 for deployment and recovery, not generic pattern-catalog generation.
+
+
+## 2026-10-18 — TYCHO-40 rollout, schema compatibility and recovery
+
+Authored `book/delivery/safe-rollout-and-recovery.md` plus accessible Mermaid navigation and deterministic document/arithmetic tests. This is original technical prose about target vs transition states, rolling/canary/blue-green, new/old schema coexistence, failed release behavior, restoration evidence, RPO/RTO and failure-domain load. Includes four Mermaid diagrams, synthetic N/N+1 compatibility matrix, and explicit cases in which binary rollback cannot reverse a new-format persisted record. No production deployment or recovery test was performed.
+
+Actually inspected bounded public sections: Kubernetes online Deployments documentation in the v1.37 family (rolling strategy, status, failed deployment), Argo Rollouts stable Canary and BlueGreen concepts (precise operational version **not pinned**), AWS DR official whitepaper Introduction/DR options, and Google SRE Addressing Cascading Failures on overload and recovery. Version-specific claims must be narrowed in a future actual installed environment. The tests assert sample arithmetic and document scope only. No measured RTO/RPO, claimed rollback guarantee, certification or independent human approval.
+
+Pilot-wave content exists as three bounded, separately owned chapters; this does not equate to all proposed volume chapters, metadata, indexed retrieval or MCP completeness. Further book authoring requires independent admitted public-source reading.
