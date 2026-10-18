@@ -2,6 +2,8 @@
 
 > Generated planning snapshot, 2026-10-18. GitHub Issues, native hierarchy and milestones are the tracking system of record; this document is navigation, not a second backlog. Regenerate when scopes change.
 
+**Verified GitHub structure (2026-10-18):** 15 epic links under Program #1, 78 native work-item links under the appropriate epics, and 112 native blocked-by relationships. [Reconciliation and verification succeeded](https://github.com/rouslanbaranov/tycho/actions/runs/39151315650). All work items remain open; no implementation completion is implied.
+
 ## Program
 
 - [#1 — Tycho book and MCP knowledge platform](https://github.com/rouslanbaranov/tycho/issues/1)
