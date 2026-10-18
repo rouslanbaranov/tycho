@@ -16,6 +16,9 @@ Read [the independence policy](governance/INDEPENDENCE.md) before contributing. 
 - [Authoring methodology](authoring/METHODOLOGY.md)
 - [Current state and next action](authoring/STATE.md)
 - [Initial roadmap](authoring/ROADMAP.md)
+- [Source catalogue](sources/CATALOG.md)
+- [Coverage and research questions](sources/COVERAGE.md)
+- [Implementation families](sources/IMPLEMENTATIONS.md)
 - [Source register](sources/register.json)
 - [Research contract template](templates/research-contract.md)
 
@@ -23,6 +26,6 @@ All repository content is written in English. Reading the book must not require 
 
 ## Current implementation
 
-This initial scaffold establishes governance, authoring rules, a source-register format, and a limited boundary scan. No technical chapters have been researched or validated. Metadata schemas, generated indexes, graph validators, and retrieval evaluation are planned, not implemented.
+The project contains governance, authoring rules, a curated public-source inventory, coverage and implementation maps, a generated catalogue and structural source checks. Research and authoring take place in the ChatGPT project; GitHub stores the book. No technical chapters have been researched or validated. Metadata schemas, generated indexes, graph validators, and retrieval evaluation are planned, not implemented.
 
 Run `python3 scripts/check_boundary.py` from the repository root. A successful scan detects none of the configured patterns; it does not certify independent origin or semantic correctness.

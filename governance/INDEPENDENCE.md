@@ -4,7 +4,7 @@ Status: mandatory. Effective: 2026-10-18.
 
 ## Absolute prohibition
 
-Tycho must never cite, link, ingest, copy, summarize, paraphrase, translate, reconstruct, or derive examples from employer-specific documents, sources, source code, internal technology choices, architectural solutions, decisions, component names, identifiers, diagrams, screenshots, logs, configurations, URLs, or operational information. Public availability of a employer-authored artifact does not make it admissible. Renaming or anonymizing restricted material does not make it admissible.
+Tycho must never cite, link, ingest, copy, summarize, paraphrase, translate, reconstruct, or derive examples from employer-specific documents, sources, source code, internal technology choices, architectural solutions, decisions, component names, identifiers, diagrams, screenshots, logs, configurations, URLs, or operational information. Public availability of an employer-authored artifact does not make it admissible. Renaming or anonymizing restricted material does not make it admissible.
 
 Employer names and abbreviations must not appear anywhere in the project, including governance, scanner configuration, examples, fixtures, metadata, and history. There are no exceptions for statements of this prohibition. Do not embed literal, encoded, or obfuscated organization identifiers in checks; use generic source-admissibility rules and independent-origin review.
 
