@@ -6,6 +6,18 @@ Status: **initial researched content**, not a completed volume. This landing pag
 
 Explain how workload, service demand, queueing, tail latency, saturation and failure affect software architecture selection. Readers and AI agents should be able to distinguish derived mathematical relationships, directly observed workload properties and unresolved resource-capacity questions before recommending scale-out or redistribution.
 
+## Research navigation map
+
+```mermaid
+flowchart LR
+    Demand["Arrivals and offered load"] --> Work["Queue, service and exits"]
+    Work --> Means["Mean work and residence time"]
+    Means --> Limits["Finite-window and tail-latency limits"]
+    Limits --> Experiments["Load tests and failure experiments"]
+```
+
+Text alternative: establish demand and work boundaries before interpreting mean occupancy; then examine sampling limitations and validate hypotheses through controlled experiments. This is a navigation map, not an assertion that all related chapters are complete.
+
 ## Available research
 
 | Reader question | Canonical researched page | Status / evidence |
