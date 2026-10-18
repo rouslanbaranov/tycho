@@ -6,7 +6,7 @@ The minimal [editorial and navigation contract](EDITORIAL-CONTRACT.md) defines v
 
 ## Question before prose
 
-Begin each bounded slice with a research contract: reader, primary question, practical significance, subquestions, exclusions, required evidence, and completion criteria. Apply depth according to consequences of error, coupling, and uncertainty. Word counts and diagram counts are not quality targets.
+Begin each bounded slice with a research contract: reader, primary question, practical significance, subquestions, exclusions, required evidence, and completion criteria. Apply depth according to consequences of error, coupling, and uncertainty. Word counts and diagram counts are not quality targets. Mermaid is the standard native diagram format for explanatory figures in volume introductions, chapter landings and technical pages where visualization clarifies real relationships. Diagrams need nearby plain-text explanations, provenance and applicability/assumption labels; they are optional when purely decorative.
 
 ## Orientation → Architecture → Evidence
 
