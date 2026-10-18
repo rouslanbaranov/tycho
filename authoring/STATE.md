@@ -27,9 +27,15 @@ The [knowledge platform and MCP plan](knowledge-platform-and-mcp-plan.md) define
 
 Technical chapters; approved table of contents; formal JSON Schema; chapter frontmatter/index/link/anchor validation; evidence-backed graph; retrieval benchmark; semantic search; MCP delivery.
 
+## GitHub delivery tracking
+
+Validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/issues/1) owns 15 native epic sub-issues (#2–#16), which own all 78 work items (#17–#94). Eight GitHub milestones (M1–M8) cover the epic and work-item acceptance stages. All 112 declared issue dependencies have native \`blocked by\` relationships, without cycles or unknown targets. [The delivery map](GITHUB-DELIVERY-MAP.md) provides navigable milestone → epic → issue references and the M1 entry point. The [reconciliation workflow](https://github.com/rouslanbaranov/tycho/actions/workflows/reconcile-delivery-hierarchy.yml) completed successfully.
+
+All 94 issues are open; this confirms a complete GitHub planning structure, **not** completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
+
 ## Next action
 
-Define the models/templates in architecture-decision-layer-plan.md together with the knowledge, graph, retrieval and MCP contracts in knowledge-platform-and-mcp-plan.md. Then use sources/READING-PLAN.md and sources/COVERAGE.md to propose a question-driven book structure and three bounded pilot contracts that exercise architecture selection and modernization reasoning. Pin relevant versions and exact source sections, establish minimal chapter metadata contracts, then research the pilots. The inventory is not an instruction to read every linked corpus in full or generate the entire book.
+Start M1 with [#17 — Requirements and workload profile](https://github.com/rouslanbaranov/tycho/issues/17) (no prerequisites). Complete it before its dependents #18 and #19; follow the recorded native blocking links throughout M1. Define the models/templates in architecture-decision-layer-plan.md together with the knowledge, graph, retrieval and MCP contracts in knowledge-platform-and-mcp-plan.md. Then use sources/READING-PLAN.md and sources/COVERAGE.md to propose a question-driven book structure and three bounded pilot contracts that exercise architecture selection and modernization reasoning. Pin relevant versions and exact source sections, establish minimal chapter metadata contracts, then research the pilots. The inventory is not an instruction to read every linked corpus in full or generate the entire book.
 
 ## Review limits
 
