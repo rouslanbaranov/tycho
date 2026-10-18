@@ -31,7 +31,7 @@ A complete multi-volume book corpus; finalized table of contents; formal JSON Sc
 
 Originally validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/issues/1) owns 15 native epic sub-issues (#2–#16), which own all 78 work items (#17–#94). Eight GitHub milestones (M1–M8) cover the epic and work-item acceptance stages. The initial dependency tree was revised for book-first delivery on 2026-10-18. The scoped revision of native GitHub dependencies completed successfully in the book-first workflow linked from Issue #23. The original count of 112 is superseded and should not be assumed to be the current count. [The delivery map](GITHUB-DELIVERY-MAP.md) provides navigable milestone → epic → issue references and the M1 entry point. The [reconciliation workflow](https://github.com/rouslanbaranov/tycho/actions/workflows/reconcile-delivery-hierarchy.yml) completed successfully.
 
-The original 94 issues formed the initial plan; #17 and #23–#26 are now closed after bounded deliverables were merged. The remaining backlog is not completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
+The original 94 issues formed the initial plan; #17, #23–#26, #38 and #39 were closed after bounded deliverables were merged. The remaining backlog is not completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
 
 ## Completed bounded work / current book priority
 
@@ -42,7 +42,7 @@ The original 94 issues formed the initial plan; #17 and #23–#26 are now closed
 
 ## Next action
 
-Editorial templates #24 and research workflow #25 have been merged and closed. Issue #26 is closed after PR #99 merged the [three bounded pilot contracts](PILOT-WAVE-01.md). First technical pilot #38 is merged and closed via PR #100; the [queueing chapter](../book/performance/queueing-littles-law.md) is now in main. The second technical pilot #39 adds a [source-grounded outbox and duplicate-effects chapter](../book/distributed/transactional-outbox-and-idempotency.md) in a feature branch; complete its CI/merge and then #40. Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
+Editorial templates #24 and research workflow #25 have been merged and closed. Issue #26 is closed after PR #99 merged the [three bounded pilot contracts](PILOT-WAVE-01.md). First technical pilot #38 is merged and closed via PR #100; the [queueing chapter](../book/performance/queueing-littles-law.md) is now in main. Pilots #38 and #39 are merged and closed through PRs #100/#101; researched [queueing](../book/performance/queueing-littles-law.md) and [outbox/idempotency](../book/distributed/transactional-outbox-and-idempotency.md) chapters are in main. Pilot #40 now drafts [rollout and recovery](../book/delivery/safe-rollout-and-recovery.md), subject to source-boundary/branch CI and merge. Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
 
 ## Review limits
 
