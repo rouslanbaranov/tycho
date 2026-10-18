@@ -41,9 +41,26 @@ The classification above is an **editorial distinction**, not a JSON Schema enum
 - Prefer **relative repository paths** for navigation and explicit public source URLs/revision paths for provenance. Keep stable citations in a future metadata/index model instead of hardcoding page numbers.
 - Every summary must be reversible to a canonical explanation and exact evidence. An agent should never have to infer a mechanism from title or taxonomy alone.
 
+## Mermaid diagrams for human comprehension
+
+Use **fenced Mermaid diagrams** in book pages, chapters and volume landing pages **wherever they materially improve human understanding**. Choose a diagram based on the actual question and add it near the explanation it supports:
+
+| Explanation | Appropriate Mermaid form | What the diagram must make explicit |
+|---|---|---|
+| Components, boundaries, dependencies or deployment | \`flowchart LR\` / \`flowchart TD\` | Ownership, direction, scope, external limits |
+| Request, transaction, message, retry, idempotency and recovery | \`sequenceDiagram\` | Participants, order, failures, acknowledgments and when state becomes durable |
+| State machines, rollouts or lifecycle | \`stateDiagram-v2\` | States, allowed transitions, rejection and rollback/forward-recovery guards |
+| Architecture/knowledge relationship navigation | \`flowchart\` | Canonical owners, dependent ideas and only links that genuinely exist |
+
+**Diagram acceptance:** (1) one clear reader question, (2) meaningful labels and stable unambiguous node IDs, (3) valid GitHub-compatible Mermaid code block, (4) explanatory paragraph with assumptions and omissions, (5) original schematic or source-backed status, (6) no implied runtime guarantees from a conceptual illustration. Link a claim to its exact evidence in prose rather than treating a diagram as proof. Keep each diagram bounded, readable on a phone and accessible from adjacent text. Large graphs belong in small related subdiagrams; do not squeeze a whole volume into a single unreadable chart.
+
+Volume pages may show a topic/reading roadmap, chapter landings may show an interaction or dependency overview, and technical pages may show several diagrams for independently significant flows (normal execution, failure, recovery). There is **no numerical quota**: a diagram is strongly preferred when useful and omitted when it would merely repeat text. Review diagram text and render appearance, not only Markdown fences. No made-up screenshots or externally copied protected artwork.
+
 ## Diagrams, examples, snippets and tables
 
-Use diagrams when they explain ownership, timing, message direction, failure transitions, deployment domains or operational feedback loops. Text must explain assumptions and meaning; a diagram is not proof of runtime behavior. Label invented examples and separate them from cited source diagrams.
+**Mermaid-first visual policy:** use fenced `mermaid` in Markdown at volume, chapter and technical-page levels whenever a diagram materially clarifies topic relationships, state/data ownership, normal and failure sequences, deployment topology, rollback, or decisions. Use `flowchart` for architectural structure and reading paths, `sequenceDiagram` for messages/timing, `stateDiagram-v2` for lifecycle/recovery, and specialized forms only when meaningful. Choose the smallest legible diagram; do not require a diagram on a purely textual page, count diagrams as a quality metric, or manufacture decorative graphics.
+
+Diagrams must be original, editable Mermaid source inside the Markdown, not image-only renderings. Provide nearby prose and a compact text alternative for accessibility and agents unable to render diagrams. State scope, assumptions, synthetic versus observed status, and exact supporting source when portraying factual guarantees. Diagrams never substitute for evidence or imply that synthetic flows were tested. Keep Mermaid syntax simple, close code fences and check rendering where supported.
 
 - **Source code snippets:** quote only the smallest portion necessary to establish a precise fact or test case, subject to reuse/license terms. Prefer versioned upstream links and explanations to large mirrored code blocks.
 - **Synthetic examples:** define invented requirements and numbers explicitly; show arithmetic with units and assumptions. Do not imply observed benchmarks, production outcomes, or a real employer system.

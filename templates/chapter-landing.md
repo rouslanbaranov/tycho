@@ -22,6 +22,20 @@ Explain the single canonical question this chapter owns, the applicability bound
 
 Use live links only once the target exists. Some chapters legitimately need one page; others split by coherent question/ownership. Numbers above are *examples*, not mandatory page-count quotas.
 
+## Chapter reasoning map (when the route is nontrivial)
+
+Adapt these **generic placeholders** to actual page relationships. Remove the figure when the chapter is self-explanatory.
+
+```mermaid
+flowchart TD
+    P["Problem and context"] --> M["Mechanism"]
+    M --> F["Failure and recovery"]
+    F --> V["Validation and evidence"]
+    V --> A["Alternatives and decision limits"]
+```
+
+Text alternative: establish the bounded problem and mechanism, then examine its failure behavior, supporting evidence and alternative solutions.
+
 ## Important distinctions and alternatives
 
 | Commonly confused concept | Canonical explanation owned where | Chapter-specific consequence |

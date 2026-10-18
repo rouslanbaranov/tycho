@@ -25,13 +25,13 @@ The [knowledge platform and MCP plan](knowledge-platform-and-mcp-plan.md) define
 
 ## Not implemented
 
-Technical chapters; finalized table of contents; formal JSON Schema; chapter frontmatter/index/link/anchor validation; evidence-backed graph; retrieval benchmark; semantic search; MCP delivery.
+More than the first technical pilot chapter; finalized table of contents; formal JSON Schema; chapter frontmatter/index/link/anchor validation; evidence-backed graph; retrieval benchmark; semantic search; MCP delivery.
 
 ## GitHub delivery tracking
 
-Originally validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/issues/1) owns 15 native epic sub-issues (#2–#16), which own all 78 work items (#17–#94). Eight GitHub milestones (M1–M8) cover the epic and work-item acceptance stages. The original 112 declared issue dependencies had native `blocked by` relationships without cycles. A book-first dependency revision is planned under #23 and must be validated again before this count is treated as current. [The delivery map](GITHUB-DELIVERY-MAP.md) provides navigable milestone → epic → issue references and the M1 entry point. The [reconciliation workflow](https://github.com/rouslanbaranov/tycho/actions/workflows/reconcile-delivery-hierarchy.yml) completed successfully.
+Originally validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/issues/1) owns 15 native epic sub-issues (#2–#16), which own all 78 work items (#17–#94). Eight GitHub milestones (M1–M8) cover the epic and work-item acceptance stages. The initial dependency tree was revised for book-first delivery on 2026-10-18. The scoped revision of native GitHub dependencies completed successfully in the book-first workflow linked from Issue #23. The original count of 112 is superseded and should not be assumed to be the current count. [The delivery map](GITHUB-DELIVERY-MAP.md) provides navigable milestone → epic → issue references and the M1 entry point. The [reconciliation workflow](https://github.com/rouslanbaranov/tycho/actions/workflows/reconcile-delivery-hierarchy.yml) completed successfully.
 
-The original 94 issues formed the initial plan; #17 and #23–#25 are now closed after bounded deliverables were merged. The remaining backlog is not completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
+The original 94 issues formed the initial plan; #17 and #23–#26 are now closed after bounded deliverables were merged. The remaining backlog is not completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
 
 ## Completed bounded work / current book priority
 
@@ -42,7 +42,7 @@ The original 94 issues formed the initial plan; #17 and #23–#25 are now closed
 
 ## Next action
 
-Editorial templates #24 and research workflow #25 have been merged and closed. Issue #26 now specifies [three bounded pilot contracts](PILOT-WAVE-01.md), then prioritize writing the first three **evidence-backed** technical chapters (#38–#40). Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
+Editorial templates #24 and research workflow #25 have been merged and closed. Issue #26 is closed after PR #99 merged the [three bounded pilot contracts](PILOT-WAVE-01.md). First technical pilot #38 now has a source-grounded [queueing chapter](../book/performance/queueing-littles-law.md) in its dedicated feature branch; validate, review and merge it, then research technical pilots #39–#40. Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
 
 ## Review limits
 

@@ -16,8 +16,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Verify branch naming and workload example unit tests
-        run: python3 -m unittest discover -s tests -p 'test_tycho17.py' -v
+      - name: Verify branch naming and all Tycho unit checks
+        run: python3 -m unittest discover -s tests -p 'test_tycho*.py' -v
       - name: Validate this PR's source branch against its issue title
         env:
           GH_TOKEN: ${{ github.token }}

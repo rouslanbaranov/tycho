@@ -17,6 +17,20 @@
 
 Do not make dead Markdown links to nonexistent files. Keep TODO as plain text until content is committed.
 
+## Scope and reading map (Mermaid where informative)
+
+Replace the illustrative navigation with relationships genuinely useful to this volume; omit it if it adds no insight. Nodes are template placeholders, **not researched architecture claims**.
+
+```mermaid
+flowchart LR
+    Q["Reader question"] --> F["Foundations and assumptions"]
+    F --> M["Mechanisms and boundaries"]
+    M --> E["Evidence and experiments"]
+    E --> R["Trade-offs and open questions"]
+```
+
+Text alternative: start from a reader's question, establish assumptions, understand the mechanism, inspect its evidence and then assess trade-offs or unknowns.
+
 ## How to read
 
 - **Start here:** <short orientation page when it exists>
