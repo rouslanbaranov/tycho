@@ -161,6 +161,18 @@ The essential questions are: *What problem does this mechanism solve? Under whic
 | C06 — Search and question routes for architecture agents | How can requirements, symptoms and evidence guide selective reading? |
 | C07 — Cross-domain worked comparisons and unresolved cases | How does a decision stay falsifiable and attributable to its sources? |
 
+## Proposed first page-level research slices
+
+These are **three real authoring targets**, not placeholders to commit until the relevant primary sources have been read. Chapters own the following bounded pages initially:
+
+| Pilot chapter owner | First bounded page | Second bounded page | Third bounded page |
+|---|---|---|---|
+| V07/C01, queueing and demand | Arrival and completion boundary definitions, with distributions and units | Little's Law applicability and finite-window caveats | Capacity diagnosis, overload counterexamples and experiments |
+| V04/C04–C05, cross-system events | Local transaction, outbox and publication timeline | Delivery/replay/consumer idempotency and duplicate effects | Failure matrix, recovery and alternative mechanisms |
+| V08/C04–C07, rollback and recovery | Rollout/compatibility timeline, target versus transition | Failure-domain, backup and recovery checks | Go/no-go, observability, irreversibility and unresolved evidence |
+
+Each page will contain orientation, a bounded mechanism or failure scenario, and exact public provenance. Do not assume three pages are sufficient; split only to maintain bounded context and precise ownership. This **does not replace** the editorial standards of #24, research contracts of #26 or evidence controls of #27–#37.
+
 ## Mandatory research-track ownership
 
 Each track below has one primary home; multiple chapters may link to it without copying its core explanation.
