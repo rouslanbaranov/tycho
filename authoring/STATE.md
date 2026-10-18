@@ -25,7 +25,7 @@ The [knowledge platform and MCP plan](knowledge-platform-and-mcp-plan.md) define
 
 ## Not implemented
 
-More than the first technical pilot chapter; finalized table of contents; formal JSON Schema; chapter frontmatter/index/link/anchor validation; evidence-backed graph; retrieval benchmark; semantic search; MCP delivery.
+A complete multi-volume book corpus; finalized table of contents; formal JSON Schema; chapter frontmatter/index/link/anchor validation; evidence-backed graph; retrieval benchmark; semantic search; MCP delivery.
 
 ## GitHub delivery tracking
 
@@ -42,7 +42,7 @@ The original 94 issues formed the initial plan; #17 and #23–#26 are now closed
 
 ## Next action
 
-Editorial templates #24 and research workflow #25 have been merged and closed. Issue #26 is closed after PR #99 merged the [three bounded pilot contracts](PILOT-WAVE-01.md). First technical pilot #38 now has a source-grounded [queueing chapter](../book/performance/queueing-littles-law.md) in its dedicated feature branch; validate, review and merge it, then research technical pilots #39–#40. Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
+Editorial templates #24 and research workflow #25 have been merged and closed. Issue #26 is closed after PR #99 merged the [three bounded pilot contracts](PILOT-WAVE-01.md). First technical pilot #38 is merged and closed via PR #100; the [queueing chapter](../book/performance/queueing-littles-law.md) is now in main. The second technical pilot #39 adds a [source-grounded outbox and duplicate-effects chapter](../book/distributed/transactional-outbox-and-idempotency.md) in a feature branch; complete its CI/merge and then #40. Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
 
 ## Review limits
 
