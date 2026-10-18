@@ -75,3 +75,10 @@ The private remote repository is established. Branch protection has not been con
 ## Java execution research — Issue #82
 
 Three original public-source-grounded chapters now cover platform/virtual threads (JDK 21 and 24), Reactor/WebFlux/R2DBC, and Netty/Vert.x/Quarkus/Mutiny/RxJava. See [execution navigation](../book/execution/README.md). Version and evidence limitations are recorded in each page. No compilation, runtime measurement, independent review, full-book coverage or MCP implementation is claimed. Next content issue: #83. Milestone-only GitHub Actions policy remains unchanged.
+
+
+## Database architecture corpus — Issue #83
+
+Three original, version-aware [data research chapters](../book/data/README.md) now cover PostgreSQL 17 MVCC, isolation, indexes and planner evidence; PostgreSQL WAL, physical/logical replication and recovery limits; and a bounded trade-off comparison of SQLite, CockroachDB, FoundationDB, MongoDB, Cassandra, ClickHouse, Neo4j and time-series workloads. Synthetic Mermaid diagrams and provenance tables identify what is documented versus merely proposed. No database cluster or benchmark was run, and milestone-only CI has not yet executed for this issue.
+
+Next corpus task: [#84](https://github.com/rouslanbaranov/tycho/issues/84). The full book and machine-readable knowledge platform are still incomplete.

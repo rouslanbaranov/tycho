@@ -17,6 +17,7 @@ A [question-driven draft table of contents](PROPOSED-STRUCTURE.md) now maps the 
 - [Application architecture and quality foundations](application/README.md) — three original evidence-linked pages on quality drivers, modular monoliths, DDD boundaries, SOA/microservices, ports/adapters and safe modernization.
 - [Performance and queueing](performance/README.md) — first researched mechanism and measurement boundary.
 - [Distributed coordination](distributed/README.md) — causal ordering, consensus, transactions, sagas, outbox, CQRS and projections.
+- [Data storage and database engines](data/README.md) — PostgreSQL 17 transactions, WAL, replication, query/index choices and comparison of alternative storage models.
 - [Messaging and stream processing](integration/README.md) — Kafka, RabbitMQ, Pulsar, NATS, stateful stream processing and CDC, with versioned evidence.
 - [Java concurrency and execution](execution/README.md) — platform and virtual threads, Reactor/WebFlux/R2DBC, Netty/Vert.x/Quarkus/Mutiny/RxJava.
 - [Deployment and recovery](delivery/README.md) — rollout, compatibility and restoration constraints.
