@@ -42,7 +42,7 @@ All 94 issues are open; this confirms a complete GitHub planning structure, **no
 
 ## Next action
 
-PR checks for [#95](https://github.com/rouslanbaranov/tycho/pull/95) have passed; obtain intended review and merge before marking [#17](https://github.com/rouslanbaranov/tycho/issues/17) accepted. Then begin its dependents #18 and #19; follow the recorded native blocking links throughout M1. Define the models/templates in architecture-decision-layer-plan.md together with the knowledge, graph, retrieval and MCP contracts in knowledge-platform-and-mcp-plan.md. Then use sources/READING-PLAN.md and sources/COVERAGE.md to propose a question-driven book structure and three bounded pilot contracts that exercise architecture selection and modernization reasoning. Pin relevant versions and exact source sections, establish minimal chapter metadata contracts, then research the pilots. The inventory is not an instruction to read every linked corpus in full or generate the entire book.
+Complete the question-driven structure review for #23 and the minimal authoring/pilot contracts (#24–#26), then prioritize writing the first three **evidence-backed** technical chapters (#38–#40). Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
 
 ## Review limits
 
