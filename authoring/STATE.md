@@ -33,11 +33,12 @@ Validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/is
 
 All 94 issues are open; this confirms a complete GitHub planning structure, **not** completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
 
-## In progress — TYCHO-17 feature branch
+## Completed bounded work / current book priority
 
-- Issue [#17](https://github.com/rouslanbaranov/tycho/issues/17) has an independently authored **draft** requirements/workload model, reusable template, original synthetic case and bounded research contract on `feature/TYCHO-17-requirements-and-workload-profile`. These are branch artifacts pending PR checks, review and merge; they do not complete K30's architecture-selection workflow.
-- The repository now documents the mandatory issue-aligned `feature/TYCHO-<issue-number>-<task-desc-slug>` naming convention and an implemented PR-time branch-name validation check. Branch protection is not configured; rules plus checks are not the same as protected default-branch enforcement.
-- No production data, empirical latency/capacity measurements, subject review or technology selection is claimed. Source reading for this slice is bounded and recorded in [the research contract](contracts/TYCHO-17-research-contract.md) and [research log](RESEARCH-LOG.md).
+- [#17](https://github.com/rouslanbaranov/tycho/issues/17) closed after [PR #95](https://github.com/rouslanbaranov/tycho/pull/95) was merged and configured CI passed. A requirements/workload model, template, original fictional illustration and bounded research contract now exist. K30 as a whole is **not** complete.
+- Branch convention `feature/TYCHO-<issue-number>-<task-desc-slug>` and PR-time checks are implemented. Administrative branch protection remains unconfigured.
+- The next book-first step is [#23](https://github.com/rouslanbaranov/tycho/issues/23): propose a [question-driven structure](../book/PROPOSED-STRUCTURE.md) and three bounded initial research page families. The structure is not approved and no technical chapter has yet been written.
+- #18/#19 decision-support development should be refined from researched pilot content rather than treated as a precondition for beginning the book. Manual evidence checks remain mandatory during pilots while full validators are developed in parallel.
 
 ## Next action
 
