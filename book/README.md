@@ -10,7 +10,7 @@ The book should develop engineering judgment rather than prescribe universal arc
 
 A reader can understand each chapter using the explanations and local links in this repository. Public citations support further verification. No private system knowledge or companion corpus is required.
 
-A [question-driven draft table of contents](PROPOSED-STRUCTURE.md) now maps the research coverage into proposed volume/chapter owners and the first three bounded pilot page slices. **It is a proposal, not an approved table of contents or researched chapters.** No technical chapter is claimed complete.
+A [question-driven draft table of contents](PROPOSED-STRUCTURE.md) now maps the research coverage into proposed volume/chapter owners and the first three bounded pilot page slices. The [editorial contract](../authoring/EDITORIAL-CONTRACT.md) governs future bounded pages and landing views. **It is a proposal, not an approved table of contents or researched chapters.** No technical chapter is claimed complete.
 
 ## Machine-readable knowledge product
 
