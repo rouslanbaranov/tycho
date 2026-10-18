@@ -17,7 +17,7 @@ Discovery/entry-page inspection is complete for the first inventory pass. Commer
 
 ## Planned decision layer
 
-The [architecture decision layer](architecture-decision-layer-plan.md) is now part of the roadmap: requirements/workload and legacy profiles, applicability cards, option comparison, ADRs, target/transition architecture and four decision-navigation routes. Only the plan is recorded; these models and their evaluation are not implemented.
+The [architecture decision layer](architecture-decision-layer-plan.md) is now part of the roadmap: requirements/workload and legacy profiles, applicability cards, option comparison, ADRs, target/transition architecture and four decision-navigation routes. Only the requirements/workload model (#17) is implemented as a bounded authoring method. Legacy/applicability and the evaluated architecture-selection workflow remain unimplemented.
 
 ## Required knowledge-service delivery
 
@@ -29,9 +29,9 @@ Technical chapters; approved table of contents; formal JSON Schema; chapter fron
 
 ## GitHub delivery tracking
 
-Validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/issues/1) owns 15 native epic sub-issues (#2–#16), which own all 78 work items (#17–#94). Eight GitHub milestones (M1–M8) cover the epic and work-item acceptance stages. All 112 declared issue dependencies have native `blocked by` relationships, without cycles or unknown targets. [The delivery map](GITHUB-DELIVERY-MAP.md) provides navigable milestone → epic → issue references and the M1 entry point. The [reconciliation workflow](https://github.com/rouslanbaranov/tycho/actions/workflows/reconcile-delivery-hierarchy.yml) completed successfully.
+Originally validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/issues/1) owns 15 native epic sub-issues (#2–#16), which own all 78 work items (#17–#94). Eight GitHub milestones (M1–M8) cover the epic and work-item acceptance stages. The original 112 declared issue dependencies had native `blocked by` relationships without cycles. A book-first dependency revision is planned under #23 and must be validated again before this count is treated as current. [The delivery map](GITHUB-DELIVERY-MAP.md) provides navigable milestone → epic → issue references and the M1 entry point. The [reconciliation workflow](https://github.com/rouslanbaranov/tycho/actions/workflows/reconcile-delivery-hierarchy.yml) completed successfully.
 
-All 94 issues are open; this confirms a complete GitHub planning structure, **not** completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
+The initial 94 issues were created as open planning items; #17 is now closed after the bounded model was delivered. The remaining backlog is not completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
 
 ## Completed bounded work / current book priority
 
