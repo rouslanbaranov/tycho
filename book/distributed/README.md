@@ -1,27 +1,38 @@
-# Distributed coordination and event integration
+# Distributed coordination, transactions and events
 
-**Status:** initial researched content only; other planned chapters remain unresearched. The proposed volume owner is V04; this landing is a navigable record, not a complete volume.
+**Status:** four bounded public-source-grounded technical pages; the distributed-systems volume is **not** complete. Machine IDs, curated graph, source revision locks and formal review remain separate work.
 
 ## Purpose and mission
 
-Explain what coordination, ownership, ordering, transactions, event delivery, retries and failure actually guarantee **at their declared boundaries**. Technical readers and AI agents should not confuse local database atomicity, message delivery and externally observed business effects.
+Explain how causal relationships, replicated agreement, local transaction isolation, business workflows and event-based read projections work across boundaries. A client timeout, broker acknowledgement, local commit and consensus commit are different facts: the book must not imply one proves another.
 
-## Research route
+## Reading route
 
 ```mermaid
-flowchart LR
-    State["Local state owner"] --> Commit["Atomic local commit"]
-    Commit --> Relay["Event publication boundary"]
-    Relay --> Consumer["Consumer effects and duplicates"]
-    Consumer --> Recovery["Replay and reconciliation"]
+flowchart TD
+    Causality["Causality and ordering"] --> Consensus["Consensus / quorum limits"]
+    Consensus --> Invariants["Business invariants and local isolation"]
+    Invariants --> Sagas["Distributed workflow / saga compensation"]
+    Sagas --> Outbox["Outbox, retries and consumer dedup"]
+    Outbox --> CQRS["CQRS, event sourcing and projections"]
+    CQRS --> Decisions["Evidence, recovery and applicability checks"]
 ```
 
-Text alternative: understand local committed state, event publication, the consumer's idempotency responsibility and the recovery/reconciliation obligations. This is a topic-navigation map, not an implemented system.
+Text alternative: understand ordering and consensus before applying transactional invariants; then investigate distributed compensations, external event delivery, duplicate effects and read-model replay. The route is for selective reading, not a universal system implementation order.
 
-## Completed bounded research
+## Canonical researched pages
 
-- [Local transaction, outbox publication and duplicate side effects](transactional-outbox-and-idempotency.md): original synthetic request/event timelines, exact public evidence, alternative approaches, retries, recovery and insufficient-evidence limits.
+| Engineering question | Canonical content | Evidence state |
+|---|---|---|
+| What is causality, and when does a replicated log need consensus? | [Causality, ordering and consensus](causality-ordering-and-consensus.md) | Lamport 1978 abstract/bibliographic record; extended Raft 2014 §§2,5. Full Lamport PDF not reviewed |
+| Which invariants fit local transactions, and what does a saga compensate? | [Transaction isolation and sagas](transaction-isolation-and-sagas.md) | PostgreSQL 17 §§13.2,13.5; Richardson public saga patterns |
+| What happens after source commit, broker delay or duplicate delivery? | [Outbox publication and idempotency](transactional-outbox-and-idempotency.md) | Debezium 3.6, PostgreSQL 17, RFC 9110, public API-idempotence reference |
+| When is an event the authority, and what does CQRS introduce? | [CQRS, event sourcing and projections](cqrs-event-sourcing-and-projections.md) | Fowler 2005/2011/2017, Richardson CQRS pattern |
 
-## Planned rather than researched
+All examples and Mermaid sequences are original **fictional models**; no public primary source is copied into the book. Claims are bounded by each page's explicit evidence ledger. There is no verified production system or independent expert review.
 
-Causality and ordering, consensus, delivery guarantee matrices, Kafka and stateful stream processing, sagas and durable workflow implementations all require independent bounded source investigations. The [proposed structure](../PROPOSED-STRUCTURE.md) identifies their intended owners. No content is assumed complete because a title appears there.
+## Adjacent and unfinished coverage
+
+Detailed Kafka partition/replication/consumer-group semantics, RabbitMQ/Pulsar/NATS delivery patterns, Flink/Streams, gRPC and durable workflow products belong to [#81](https://github.com/rouslanbaranov/tycho/issues/81) and must be researched independently. Cross-service performance is connected to [queueing](../performance/queueing-littles-law.md); service decomposition to [application styles](../application/architecture-styles-and-module-boundaries.md); safe version migration to [rollout and recovery](../delivery/safe-rollout-and-recovery.md).
+
+The proposal for all remaining topic ownership lives in [the book structure](../PROPOSED-STRUCTURE.md). No incomplete title is a live chapter.
