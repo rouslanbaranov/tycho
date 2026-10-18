@@ -18,6 +18,21 @@ flowchart LR
 
 Text alternative: establish demand and work boundaries before interpreting mean occupancy; then examine sampling limitations and validate hypotheses through controlled experiments. This is a navigation map, not an assertion that all related chapters are complete.
 
+## How the research questions connect
+
+```mermaid
+flowchart LR
+    Q["Workload / architecture question"] --> M["Define request and measurement boundary"]
+    M --> L["Queueing and Little's Law: researched page"]
+    L --> E{"Sufficient evidence to decide?"}
+    E -->|No| X["Measure offered load, queueing and bottlenecks"]
+    E -->|Yes| T["Compare bounded mitigation hypotheses"]
+    X --> E
+    T --> R["Validate under normal and degraded load"]
+```
+
+The chart is an **original reading and decision map**, not a simulated production system. Only the queueing/measurement page below has been researched; the remaining boxes are diagnostic steps and future research questions, not links to nonexistent chapters.
+
 ## Available research
 
 | Reader question | Canonical researched page | Status / evidence |
