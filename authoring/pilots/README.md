@@ -1,12 +1,12 @@
 # Tycho — first bounded technical research wave
 
-Status: **three research contracts specified, not researched or written**. Portfolio owner: [Issue #26](https://github.com/rouslanbaranov/tycho/issues/26). Complete the three scopes separately under their own feature branches and GitHub Issues.
+Status: **three research contracts specified, not researched or written**. The canonical specifications live in `authoring/contracts/PILOT-0*.md`; this README is only an index and shared acceptance gate. Portfolio owner: [Issue #26](https://github.com/rouslanbaranov/tycho/issues/26). Complete the three scopes separately under their own feature branches and GitHub Issues.
 
 | Pilot | Type | Canonical proposed book owner | Task | Question and key evidence |
 |---|---|---|---|---|
-| [P01 — Queueing and demand](P01-queueing-and-workload.md) | Mechanism | V07/C01 | [#38](https://github.com/rouslanbaranov/tycho/issues/38) | Little's Law 2013 paper, Grafana k6 open/closed arrivals, SRE overload; conditional mean-workload reasoning |
-| [P02 — Outbox and idempotency](P02-outbox-and-idempotency.md) | Cross-component | V04/C04–C05 | [#39](https://github.com/rouslanbaranov/tycho/issues/39) | Transaction, publication, duplicate side effects and ambiguous acknowledgements |
-| [P03 — Rollout and recovery](P03-rollout-and-recovery.md) | Failure/recovery | V08/C04–C07 | [#40](https://github.com/rouslanbaranov/tycho/issues/40) | Compatibility stages, recovery checks, RPO/RTO and a deliberately unanswerable scenario |
+| [P01 — Queueing and demand](../contracts/PILOT-01-queueing.md) | Mechanism | V07/C01 | [#38](https://github.com/rouslanbaranov/tycho/issues/38) | Little's Law 2013 paper, Grafana k6 open/closed arrivals, SRE overload; conditional mean-workload reasoning |
+| [P02 — Outbox and idempotency](../contracts/PILOT-02-transactional-outbox.md) | Cross-component | V04/C04–C05 | [#39](https://github.com/rouslanbaranov/tycho/issues/39) | Transaction, publication, duplicate side effects and ambiguous acknowledgements |
+| [P03 — Rollout and recovery](../contracts/PILOT-03-rollout-recovery.md) | Failure/recovery | V08/C04–C07 | [#40](https://github.com/rouslanbaranov/tycho/issues/40) | Compatibility stages, recovery checks, RPO/RTO and a deliberately unanswerable scenario |
 
 ## Independence, coverage and stop rules
 
