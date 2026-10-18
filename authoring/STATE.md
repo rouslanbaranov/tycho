@@ -62,6 +62,12 @@ Added three original source-grounded chapters on [causality and consensus](../bo
 
 **Next corpus issue:** [#81 — Integration, messaging, Kafka and stream processing](https://github.com/rouslanbaranov/tycho/issues/81). The present pages do not constitute the entirety of the distributed-systems volume.
 
+## Integration and stream-processing corpus — Issue #81
+
+Three new independently grounded [integration pages](../book/integration/README.md) now cover [Kafka 4.1 partition/replication/transaction contracts](../book/integration/kafka-partitions-replication-and-contracts.md), [RabbitMQ/NATS/Pulsar messaging families and durable workflow boundaries](../book/integration/messaging-families-and-durable-workflows.md), and [stateful Kafka Streams, Flink checkpointing and CDC](../book/integration/stateful-stream-processing-and-cdc.md). Each page has original Mermaid diagrams, failure/repair paths and a bounded public-source ledger; all numerical examples are synthetic. Version scope (including archived Flink 2.1 docs) is explicit. No running broker, benchmark or independent human review has been performed.
+
+Milestone-only CI remains the sole GitHub Actions trigger; issue PRs do **not** run automated GitHub pipelines. The next content issue is [#82](https://github.com/rouslanbaranov/tycho/issues/82). Full book coverage and shared Rocinante/MCP remain incomplete.
+
 ## Review limits
 
 The private remote repository is established. Branch protection has not been configured. Discovery and mechanical checks do not establish technical truth or independent human review.
