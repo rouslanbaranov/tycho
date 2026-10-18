@@ -25,7 +25,7 @@ The [knowledge platform and MCP plan](knowledge-platform-and-mcp-plan.md) define
 
 ## Not implemented
 
-More than the first technical pilot chapter; finalized table of contents; formal JSON Schema; chapter frontmatter/index/link/anchor validation; evidence-backed graph; retrieval benchmark; semantic search; MCP delivery.
+A complete multi-volume book corpus; finalized table of contents; formal JSON Schema; chapter frontmatter/index/link/anchor validation; evidence-backed graph; retrieval benchmark; semantic search; MCP delivery.
 
 ## GitHub delivery tracking
 
