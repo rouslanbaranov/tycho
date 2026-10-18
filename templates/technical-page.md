@@ -22,7 +22,17 @@ Explain components and who owns state; name interactions, requests/events, order
 2. <state transition and enforceable invariant>
 3. <observable result>
 
-A compact diagram may add value if it clarifies direction, ownership or failure; it must have a text explanation and an explicit scope. **Do not add a diagram for decoration.**
+Use a **Mermaid flowchart or sequence diagram** if it improves understanding of this page's architecture, ownership or failure. Replace the following **synthetic illustration** with a precise researched diagram, or omit it when no visual explanation is needed.
+
+```mermaid
+flowchart LR
+    Client["Input / stimulus"] --> Boundary["Named system boundary"]
+    Boundary --> State["State owner"]
+    State --> Result["Observable outcome"]
+    Boundary --> Failure["Failure or rejection"]
+```
+
+Text alternative: an input reaches a named boundary, which interacts with state ownership and leads either to a defined outcome or a failure path. Explain assumptions and cite any *factual* semantics before presenting them as verified; a diagram alone is not evidence.
 
 ### Invariants, guarantees and operating envelope
 
