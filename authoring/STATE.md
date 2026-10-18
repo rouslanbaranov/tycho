@@ -33,9 +33,15 @@ Validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/is
 
 All 94 issues are open; this confirms a complete GitHub planning structure, **not** completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
 
+## In progress — TYCHO-17 feature branch
+
+- Issue [#17](https://github.com/rouslanbaranov/tycho/issues/17) has an independently authored **draft** requirements/workload model, reusable template, original synthetic case and bounded research contract on `feature/TYCHO-17-requirements-and-workload-profile`. These are branch artifacts pending PR checks, review and merge; they do not complete K30's architecture-selection workflow.
+- The repository now documents the mandatory issue-aligned `feature/TYCHO-<issue-number>-<task-desc-slug>` naming convention and a planned PR-time validation check. Branch protection is not configured; rules plus checks are not the same as protected default-branch enforcement.
+- No production data, empirical latency/capacity measurements, subject review or technology selection is claimed. Source reading for this slice is bounded and recorded in [the research contract](contracts/TYCHO-17-research-contract.md) and [research log](RESEARCH-LOG.md).
+
 ## Next action
 
-Start M1 with [#17 — Requirements and workload profile](https://github.com/rouslanbaranov/tycho/issues/17) (no prerequisites). Complete it before its dependents #18 and #19; follow the recorded native blocking links throughout M1. Define the models/templates in architecture-decision-layer-plan.md together with the knowledge, graph, retrieval and MCP contracts in knowledge-platform-and-mcp-plan.md. Then use sources/READING-PLAN.md and sources/COVERAGE.md to propose a question-driven book structure and three bounded pilot contracts that exercise architecture selection and modernization reasoning. Pin relevant versions and exact source sections, establish minimal chapter metadata contracts, then research the pilots. The inventory is not an instruction to read every linked corpus in full or generate the entire book.
+Complete the PR checks and intended review for [#17 — Requirements and workload profile](https://github.com/rouslanbaranov/tycho/issues/17) before marking it accepted. Then begin its dependents #18 and #19; follow the recorded native blocking links throughout M1. Define the models/templates in architecture-decision-layer-plan.md together with the knowledge, graph, retrieval and MCP contracts in knowledge-platform-and-mcp-plan.md. Then use sources/READING-PLAN.md and sources/COVERAGE.md to propose a question-driven book structure and three bounded pilot contracts that exercise architecture selection and modernization reasoning. Pin relevant versions and exact source sections, establish minimal chapter metadata contracts, then research the pilots. The inventory is not an instruction to read every linked corpus in full or generate the entire book.
 
 ## Review limits
 
