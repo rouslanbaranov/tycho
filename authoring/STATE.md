@@ -29,16 +29,20 @@ A complete multi-volume book corpus; finalized table of contents; formal JSON Sc
 
 ## GitHub delivery tracking
 
-Originally validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/issues/1) owns 15 native epic sub-issues (#2–#16), which own all 78 work items (#17–#94). Eight GitHub milestones (M1–M8) cover the epic and work-item acceptance stages. The initial dependency tree was revised for book-first delivery on 2026-10-18. The scoped revision of native GitHub dependencies completed successfully in the book-first workflow linked from Issue #23. The original count of 112 is superseded and should not be assumed to be the current count. [The delivery map](GITHUB-DELIVERY-MAP.md) provides navigable milestone → epic → issue references and the M1 entry point. The [reconciliation workflow](https://github.com/rouslanbaranov/tycho/actions/workflows/reconcile-delivery-hierarchy.yml) completed successfully.
+Originally validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/issues/1) owns 15 native epic sub-issues (#2–#16), which own all 78 work items (#17–#94). Eight GitHub milestones (M1–M8) cover the epic and work-item acceptance stages. The initial dependency tree was revised for book-first delivery on 2026-10-18. The scoped revision of native GitHub dependencies completed successfully in the book-first workflow linked from Issue #23. The original count of 112 is superseded and should not be assumed to be the current count. [The delivery map](GITHUB-DELIVERY-MAP.md) provides navigable milestone → epic → issue references and the M1 entry point. The historical [hierarchy reconciliation run](https://github.com/rouslanbaranov/tycho/actions/runs/39151315650) completed successfully. The old reconciliation workflow is retired to prevent unnecessary or unsafe reruns.
 
-The original 94 issues formed the initial plan; #17, #23–#26 and #38–#40 were closed after bounded deliverables were merged. The remaining backlog is not completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
+The original 94 issues formed the initial plan; #17, #23–#26 and #38–#41 were closed after bounded deliverables were merged. Issue #104 independently tracks milestone-only CI. The remaining backlog is not completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
 
 ## Completed bounded work / current book priority
 
 - [#17](https://github.com/rouslanbaranov/tycho/issues/17) closed after [PR #95](https://github.com/rouslanbaranov/tycho/pull/95) was merged and configured CI passed. A requirements/workload model, template, original fictional illustration and bounded research contract now exist. K30 as a whole is **not** complete.
-- Branch convention `feature/TYCHO-<issue-number>-<task-desc-slug>` and PR-time checks are implemented. Administrative branch protection remains unconfigured.
+- Branch convention `feature/TYCHO-<issue-number>-<task-desc-slug>` remains mandatory. Per-PR CI is retired in favor of local pre-merge checks and one milestone-close verification. Administrative branch protection has not been established by this work.
 - Book structure [#23](https://github.com/rouslanbaranov/tycho/issues/23) was delivered as a **proposal** through [PR #96](https://github.com/rouslanbaranov/tycho/pull/96) and closed; the five adjusted GitHub issue dependencies passed verification. Issues #24 and #25 were delivered and closed through PRs #97 and #98. Editorial templates and a bounded research workflow exist, while #26 formally scopes the first three source-reading pilots. Neither the outline nor the templates constitutes a researched technical chapter.
 - #18/#19 decision-support development should be refined from researched pilot content rather than treated as a precondition for beginning the book. Manual evidence checks remain mandatory during pilots while full validators are developed in parallel.
+
+## Milestone-only CI policy (Issue #104)
+
+Only the [milestone verification workflow](../.github/workflows/boundary.yml) remains active. GitHub Actions now runs only when a **milestone is closed with zero open issues**. Normal commits and PRs incur no GitHub-hosted CI run; pre-merge checks run locally via [premerge_check.py](../scripts/premerge_check.py). See [the policy](MILESTONE-CI.md). This is a configuration change, **not** a claim that a milestone-wide verification has already passed.
 
 ## Next action
 
@@ -47,6 +51,10 @@ Editorial templates #24 and research workflow #25 have been merged and closed. I
 ## Immediate expansion path
 
 Run the pilot methodology check in Issue #41 (author-only review and tiny in-sample retrieval smoke, not LLM answer acceptance). Then begin [#79 foundational architecture research](https://github.com/rouslanbaranov/tycho/issues/79) in its own feature branch. Full source pinning, structured metadata/validation, lexical/hybrid search and MCP are still required. The corpus is not complete.
+
+## Foundations corpus expansion — Issue #79
+
+Three original source-grounded pages now describe [quality-driven architecture views](../book/application/quality-drivers-and-architecture-views.md), [module and service styles](../book/application/architecture-styles-and-module-boundaries.md), and [architecture evolution](../book/application/architecture-evolution-and-extraction.md). A [navigation landing](../book/application/README.md) links them. These are bounded research chapters with original Mermaid diagrams and explicit limitations, not a complete System Design corpus, measured case study or independently reviewed architecture. Issue-level GitHub Actions checks are no longer triggered; verification is batched at milestone closure per [the current CI policy](MILESTONE-CI.md).
 
 ## Review limits
 
