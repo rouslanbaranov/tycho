@@ -32,3 +32,14 @@ Bounded source inspection: public arc42 Section 1 (§1.1/§1.2), Google SRE Work
 Quality scope: independent-origin review of authored content, checks of example calculations and branch-name parsing, repository boundary checks, source inventory checks and PR workflow. These are mechanical validations and a bounded self-review, **not** a human-approved architecture, measured capacity, proven invariant or production-validated SLO.
 
 Validation outcome: [PR #95](https://github.com/rouslanbaranov/tycho/pull/95) opened as draft; [branch convention CI](https://github.com/rouslanbaranov/tycho/actions/runs/39153497864) and [source boundary CI](https://github.com/rouslanbaranov/tycho/actions/runs/39153497829) both completed successfully. Local source-boundary scans also passed on the feature commits. No human approval or merge is claimed. Next: independent review and merge; issue remains open. Subsequent #18/#19 work is not implemented here.
+
+
+## 2026-10-18 — Book-first delivery reprioritization and TYCHO-23 draft
+
+Following completion of #17, reconsidered the order of work: comprehensive legacy-modernization and pattern applicability contracts would be mostly hypothetical before any evidence-backed technical chapters existed. The requirements/workload model is sufficient to define the initial questions; it is not a substitute for researched architecture knowledge.
+
+Drafted `book/PROPOSED-STRUCTURE.md`: audience, independent question-driven topic ownership, provisional 10-volume outline, bounded chapter/page responsibilities, mandatory coverage mapping and retrieval entry routes. This is a *proposal*, not an approved table of contents, written chapter, source deep-reading, technical finding or implementation claim.
+
+Planned the revised dependency chain: #23 (after completed #17) → #24 → #25 → #26 → #38–#40. Specific blockers for #18/#19 are moved downstream of evidence-backed pilot content; final accepted case-study methods will be reworked from those findings. #37 remains required validation infrastructure, developed in parallel, but it will not prevent writing the first material under manual source/claim and existing mechanical checks.
+
+The `scripts/apply_book_first_order.py` workflow is intentionally limited to five known Issues and will run after the #23 PR merges. Update the checkpoint after **verified** GitHub execution. This planning update does not execute source reading, publication of the book or generation of technical pages.

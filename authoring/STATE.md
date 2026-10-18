@@ -17,7 +17,7 @@ Discovery/entry-page inspection is complete for the first inventory pass. Commer
 
 ## Planned decision layer
 
-The [architecture decision layer](architecture-decision-layer-plan.md) is now part of the roadmap: requirements/workload and legacy profiles, applicability cards, option comparison, ADRs, target/transition architecture and four decision-navigation routes. Only the plan is recorded; these models and their evaluation are not implemented.
+The [architecture decision layer](architecture-decision-layer-plan.md) is now part of the roadmap: requirements/workload and legacy profiles, applicability cards, option comparison, ADRs, target/transition architecture and four decision-navigation routes. Only the requirements/workload model (#17) is implemented as a bounded authoring method. Legacy/applicability and the evaluated architecture-selection workflow remain unimplemented.
 
 ## Required knowledge-service delivery
 
@@ -29,19 +29,20 @@ Technical chapters; approved table of contents; formal JSON Schema; chapter fron
 
 ## GitHub delivery tracking
 
-Validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/issues/1) owns 15 native epic sub-issues (#2–#16), which own all 78 work items (#17–#94). Eight GitHub milestones (M1–M8) cover the epic and work-item acceptance stages. All 112 declared issue dependencies have native `blocked by` relationships, without cycles or unknown targets. [The delivery map](GITHUB-DELIVERY-MAP.md) provides navigable milestone → epic → issue references and the M1 entry point. The [reconciliation workflow](https://github.com/rouslanbaranov/tycho/actions/workflows/reconcile-delivery-hierarchy.yml) completed successfully.
+Originally validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/issues/1) owns 15 native epic sub-issues (#2–#16), which own all 78 work items (#17–#94). Eight GitHub milestones (M1–M8) cover the epic and work-item acceptance stages. The original 112 declared issue dependencies had native `blocked by` relationships without cycles. A book-first dependency revision is planned under #23 and must be validated again before this count is treated as current. [The delivery map](GITHUB-DELIVERY-MAP.md) provides navigable milestone → epic → issue references and the M1 entry point. The [reconciliation workflow](https://github.com/rouslanbaranov/tycho/actions/workflows/reconcile-delivery-hierarchy.yml) completed successfully.
 
-All 94 issues are open; this confirms a complete GitHub planning structure, **not** completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
+The initial 94 issues were created as open planning items; #17 is now closed after the bounded model was delivered. The remaining backlog is not completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
 
-## In progress — TYCHO-17 feature branch
+## Completed bounded work / current book priority
 
-- Issue [#17](https://github.com/rouslanbaranov/tycho/issues/17) has an independently authored **draft** requirements/workload model, reusable template, original synthetic case and bounded research contract on `feature/TYCHO-17-requirements-and-workload-profile`. These are branch artifacts pending PR checks, review and merge; they do not complete K30's architecture-selection workflow.
-- The repository now documents the mandatory issue-aligned `feature/TYCHO-<issue-number>-<task-desc-slug>` naming convention and an implemented PR-time branch-name validation check. Branch protection is not configured; rules plus checks are not the same as protected default-branch enforcement.
-- No production data, empirical latency/capacity measurements, subject review or technology selection is claimed. Source reading for this slice is bounded and recorded in [the research contract](contracts/TYCHO-17-research-contract.md) and [research log](RESEARCH-LOG.md).
+- [#17](https://github.com/rouslanbaranov/tycho/issues/17) closed after [PR #95](https://github.com/rouslanbaranov/tycho/pull/95) was merged and configured CI passed. A requirements/workload model, template, original fictional illustration and bounded research contract now exist. K30 as a whole is **not** complete.
+- Branch convention `feature/TYCHO-<issue-number>-<task-desc-slug>` and PR-time checks are implemented. Administrative branch protection remains unconfigured.
+- The next book-first step is [#23](https://github.com/rouslanbaranov/tycho/issues/23): propose a [question-driven structure](../book/PROPOSED-STRUCTURE.md) and three bounded initial research page families. The structure is not approved and no technical chapter has yet been written.
+- #18/#19 decision-support development should be refined from researched pilot content rather than treated as a precondition for beginning the book. Manual evidence checks remain mandatory during pilots while full validators are developed in parallel.
 
 ## Next action
 
-PR checks for [#95](https://github.com/rouslanbaranov/tycho/pull/95) have passed; obtain intended review and merge before marking [#17](https://github.com/rouslanbaranov/tycho/issues/17) accepted. Then begin its dependents #18 and #19; follow the recorded native blocking links throughout M1. Define the models/templates in architecture-decision-layer-plan.md together with the knowledge, graph, retrieval and MCP contracts in knowledge-platform-and-mcp-plan.md. Then use sources/READING-PLAN.md and sources/COVERAGE.md to propose a question-driven book structure and three bounded pilot contracts that exercise architecture selection and modernization reasoning. Pin relevant versions and exact source sections, establish minimal chapter metadata contracts, then research the pilots. The inventory is not an instruction to read every linked corpus in full or generate the entire book.
+Complete the question-driven structure review for #23 and the minimal authoring/pilot contracts (#24–#26), then prioritize writing the first three **evidence-backed** technical chapters (#38–#40). Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
 
 ## Review limits
 

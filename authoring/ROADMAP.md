@@ -12,10 +12,10 @@ The full capability inventory, current-state matrix, dependencies and acceptance
 
 1. **Foundation — established.** Preserve independence, English artifacts, source controls and repository-wide agent instructions.
 2. **Source discovery — first pass complete.** Maintain the public register, coverage and implementation maps, access limitations and research gaps. Discovery is not full reading.
-3. **Decision and knowledge contracts — next; planned.** Define [requirements/legacy/applicability and migration models](architecture-decision-layer-plan.md), document/evidence/graph semantics, retrieval/MCP contracts and authoritative ownership.
-4. **Book and pilot design — planned.** Propose audience, question-driven hierarchy and three pilot contracts; include requirement, symptom, legacy-constraint and modernization routes.
-5. **Reproducible knowledge tooling — planned.** Build strict schemas, automatic frontmatter, deterministic routing index, source-revision locks/read-only clones, repository catalogue and structural/link/provenance validators.
-6. **Pilot research and graphs — planned.** Research one mechanism, one end-to-end process and one recovery scenario; apply evidence/readiness/freshness review, code graph extraction and curated sharded directed multigraph validation.
+3. **Book structure and bounded pilot contracts — next.** After the completed requirements/workload baseline (#17), propose and review the question-driven book structure (#23), minimal authoring/templates (#24), bounded methodology (#25), and three pilot research contracts (#26). Do not gate them on completing the whole architecture decision layer.
+4. **First technical chapters — immediately after minimal contracts.** Research, source-pin and author one mechanism, one end-to-end process and one recovery scenario (#38–#40). Apply available source checks and manual claim/link checks; finish comprehensive validators as a parallel infrastructure task, not as a reason to postpone all writing.
+5. **Research tooling and evidence infrastructure — parallel.** Build strict schemas, automatic frontmatter, deterministic routing index, source-revision locks/read-only clones, repository catalogue and structural/link/provenance validators (#27–#37). Fold pilot feedback into these tools.
+6. **Evidence-grounded architecture decision layer — after the first meaningful corpus.** Refine applicability cards (#19), legacy/modernization baseline (#18), option comparison and ADRs (#20), target/transition templates (#21), and decision navigation (#22) using actual researched mechanisms and synthetic cases. Requirements model (#17) is implemented; its presence does not complete K30.
 7. **Ranked search — required; planned.** Build section-level lexical retrieval, filters, stable citations, progressive reads, graph traversal and evidence resolution. Separate index builds from authoring/deepening.
 8. **Semantic/hybrid evaluation — required; planned.** Prototype and benchmark vectors/hybrid ranking against lexical and graph baselines; record the measured production decision and versioning/update requirements.
 9. **MCP and generic onboarding — required; planned.** Deliver a read-only remote service, verified client/SDK/transport compatibility, discoverable entry/onboarding and bounded search/read/graph/evidence operations.
@@ -26,7 +26,7 @@ The full capability inventory, current-state matrix, dependencies and acceptance
 
 ## Dependencies and boundaries
 
-Define semantics before schemas and graph/API encoding. Use validated pilot content to test retrieval. Design MCP/onboarding early; accept the service only after evidence, interoperability and operational checks. Research and authoring can progress without waiting for full hosting infrastructure.
+Define essential semantics for pilot authoring without blocking book content on a complete schema/graph/API. Use validated pilot content to test retrieval. Design MCP/onboarding early; accept the service only after evidence, interoperability and operational checks. Research and authoring can progress without waiting for full hosting infrastructure.
 
 Specific engine, hosting target, vector model and client adapters require evidence-based selection. Those choices do not make MCP delivery, onboarding, graphs or evaluation optional. The book remains locally usable without the hosted service.
 

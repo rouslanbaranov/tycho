@@ -2,7 +2,7 @@
 
 > Generated planning snapshot, 2026-10-18. GitHub Issues, native hierarchy and milestones are the tracking system of record; this document is navigation, not a second backlog. Regenerate when scopes change.
 
-**Verified GitHub structure (2026-10-18):** 15 epic links under Program #1, 78 native work-item links under the appropriate epics, and 112 native blocked-by relationships. [Reconciliation and verification succeeded](https://github.com/rouslanbaranov/tycho/actions/runs/39151315650). All work items remain open; no implementation completion is implied.
+**Verified GitHub structure (2026-10-18):** 15 epic links under Program #1, 78 native work-item links under the appropriate epics, and 112 native blocked-by relationships. [Reconciliation and verification succeeded](https://github.com/rouslanbaranov/tycho/actions/runs/39151315650). Issue #17 was completed and closed via PR #95; other work items remain planned. Book-first priority corrections for #18, #19, #23, #26 and #38 will be reconciled by the dedicated workflow after the #23 PR merges.
 
 ## Program
 
@@ -16,18 +16,18 @@
 **[E01 — Architecture decision models and modernization](https://github.com/rouslanbaranov/tycho/issues/2)** (#2)
 
 - [#17 — Requirements and workload profile](https://github.com/rouslanbaranov/tycho/issues/17)
-- [#18 — Legacy baseline and modernization profile](https://github.com/rouslanbaranov/tycho/issues/18) — depends on [#17](https://github.com/rouslanbaranov/tycho/issues/17)
-- [#19 — Pattern applicability and contraindication cards](https://github.com/rouslanbaranov/tycho/issues/19) — depends on [#17](https://github.com/rouslanbaranov/tycho/issues/17)
+- [#18 — Legacy baseline and modernization profile](https://github.com/rouslanbaranov/tycho/issues/18) — depends on [#39](https://github.com/rouslanbaranov/tycho/issues/39)
+- [#19 — Pattern applicability and contraindication cards](https://github.com/rouslanbaranov/tycho/issues/19) — depends on [#38](https://github.com/rouslanbaranov/tycho/issues/38)
 - [#20 — Candidate comparison and evidence-backed ADR template](https://github.com/rouslanbaranov/tycho/issues/20) — depends on [#18](https://github.com/rouslanbaranov/tycho/issues/18), [#19](https://github.com/rouslanbaranov/tycho/issues/19)
 - [#21 — Target and transition architecture templates](https://github.com/rouslanbaranov/tycho/issues/21) — depends on [#20](https://github.com/rouslanbaranov/tycho/issues/20)
 - [#22 — Decision navigation and insufficient-evidence behavior](https://github.com/rouslanbaranov/tycho/issues/22) — depends on [#21](https://github.com/rouslanbaranov/tycho/issues/21)
 
 **[E02 — Book structure and authoring contracts](https://github.com/rouslanbaranov/tycho/issues/3)** (#3)
 
-- [#23 — Define audience and question-driven book hierarchy](https://github.com/rouslanbaranov/tycho/issues/23) — depends on [#19](https://github.com/rouslanbaranov/tycho/issues/19)
+- [#23 — Define audience and question-driven book hierarchy](https://github.com/rouslanbaranov/tycho/issues/23) — depends on [#17](https://github.com/rouslanbaranov/tycho/issues/17)
 - [#24 — Define editorial, navigation and page templates](https://github.com/rouslanbaranov/tycho/issues/24) — depends on [#23](https://github.com/rouslanbaranov/tycho/issues/23)
 - [#25 — Define bounded research, deepening and readiness workflow](https://github.com/rouslanbaranov/tycho/issues/25) — depends on [#24](https://github.com/rouslanbaranov/tycho/issues/24)
-- [#26 — Specify three pilot research contracts](https://github.com/rouslanbaranov/tycho/issues/26) — depends on [#22](https://github.com/rouslanbaranov/tycho/issues/22), [#25](https://github.com/rouslanbaranov/tycho/issues/25)
+- [#26 — Specify three pilot research contracts](https://github.com/rouslanbaranov/tycho/issues/26) — depends on [#25](https://github.com/rouslanbaranov/tycho/issues/25)
 
 ### [M2 — Reproducible knowledge foundation](https://github.com/rouslanbaranov/tycho/milestone/2)
 
@@ -52,7 +52,7 @@
 
 **[E05 — Pilot corpus and evidence-grounded quality baseline](https://github.com/rouslanbaranov/tycho/issues/6)** (#6)
 
-- [#38 — Research and author the mechanism pilot](https://github.com/rouslanbaranov/tycho/issues/38) — depends on [#26](https://github.com/rouslanbaranov/tycho/issues/26), [#37](https://github.com/rouslanbaranov/tycho/issues/37)
+- [#38 — Research and author the mechanism pilot](https://github.com/rouslanbaranov/tycho/issues/38) — depends on [#26](https://github.com/rouslanbaranov/tycho/issues/26)
 - [#39 — Research and author the end-to-end pilot](https://github.com/rouslanbaranov/tycho/issues/39) — depends on [#38](https://github.com/rouslanbaranov/tycho/issues/38)
 - [#40 — Research and author the recovery and transition pilot](https://github.com/rouslanbaranov/tycho/issues/40) — depends on [#39](https://github.com/rouslanbaranov/tycho/issues/39)
 - [#41 — Curate 20–30 questions and accept the pilot methodology](https://github.com/rouslanbaranov/tycho/issues/41) — depends on [#40](https://github.com/rouslanbaranov/tycho/issues/40)
@@ -152,7 +152,7 @@
 
 ## Execution entry point — M1
 
-Start with [#17 — Requirements and workload profile](https://github.com/rouslanbaranov/tycho/issues/17) (no dependency). Then [#18 — Legacy baseline](https://github.com/rouslanbaranov/tycho/issues/18) and [#19 — Pattern applicability](https://github.com/rouslanbaranov/tycho/issues/19) may be investigated in parallel. Follow the explicit issue dependencies for design-model and book-structure work. Do not start bulk book authoring before the three bounded pilot research contracts and admission checks.
+Requirements baseline [#17](https://github.com/rouslanbaranov/tycho/issues/17) was delivered. Prioritize [#23 — Book structure](https://github.com/rouslanbaranov/tycho/issues/23), then #24 → #25 → #26 → evidence-backed pilot chapters #38–#40. Source and content validation are required, but full tooling (#27–#37) is not a blanket blocker for the first authored material. Refine broad #18/#19 decision-layer deliverables against researched content. Do not bulk-generate unresearched chapters.
 
 ## Tracking rules
 
