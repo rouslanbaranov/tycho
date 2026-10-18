@@ -56,6 +56,12 @@ Run the pilot methodology check in Issue #41 (author-only review and tiny in-sam
 
 Three original source-grounded pages now describe [quality-driven architecture views](../book/application/quality-drivers-and-architecture-views.md), [module and service styles](../book/application/architecture-styles-and-module-boundaries.md), and [architecture evolution](../book/application/architecture-evolution-and-extraction.md). A [navigation landing](../book/application/README.md) links them. These are bounded research chapters with original Mermaid diagrams and explicit limitations, not a complete System Design corpus, measured case study or independently reviewed architecture. Issue-level GitHub Actions checks are no longer triggered; verification is batched at milestone closure per [the current CI policy](MILESTONE-CI.md).
 
+## Distributed-system corpus — Issue #80
+
+Added three original source-grounded chapters on [causality and consensus](../book/distributed/causality-ordering-and-consensus.md), [transaction isolation and sagas](../book/distributed/transaction-isolation-and-sagas.md), and [CQRS/event sourcing](../book/distributed/cqrs-event-sourcing-and-projections.md). They extend the existing [outbox/idempotency chapter](../book/distributed/transactional-outbox-and-idempotency.md) without duplicating its canonical mechanisms. The [landing page](../book/distributed/README.md) routes questions among the four sources. All examples are synthetic; no production tests or independent domain review claimed. Full GitHub CI still runs **only at milestone acceptance**.
+
+**Next corpus issue:** [#81 — Integration, messaging, Kafka and stream processing](https://github.com/rouslanbaranov/tycho/issues/81). The present pages do not constitute the entirety of the distributed-systems volume.
+
 ## Review limits
 
 The private remote repository is established. Branch protection has not been configured. Discovery and mechanical checks do not establish technical truth or independent human review.
