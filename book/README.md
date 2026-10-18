@@ -17,6 +17,7 @@ A [question-driven draft table of contents](PROPOSED-STRUCTURE.md) now maps the 
 - [Application architecture and quality foundations](application/README.md) — three original evidence-linked pages on quality drivers, modular monoliths, DDD boundaries, SOA/microservices, ports/adapters and safe modernization.
 - [Performance and queueing](performance/README.md) — first researched mechanism and measurement boundary.
 - [Distributed coordination](distributed/README.md) — causal ordering, consensus, transactions, sagas, outbox, CQRS and projections.
+- [Search and retrieval architecture](search/README.md) — inverted indices, SQL FTS, vector/ANN, hybrid ranking and graph-backed evidence.
 - [Scaling mechanisms](scaling/README.md) — sharding, connection pooling, cache freshness and overload controls.
 - [Data storage and database engines](data/README.md) — PostgreSQL 17 transactions, WAL, replication, query/index choices and comparison of alternative storage models.
 - [Messaging and stream processing](integration/README.md) — Kafka, RabbitMQ, Pulsar, NATS, stateful stream processing and CDC, with versioned evidence.
