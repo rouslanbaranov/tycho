@@ -1,5 +1,7 @@
 """Editorial-language boundary fixtures; no forbidden terms appear literally."""
 import pathlib
+from contextlib import redirect_stdout
+from io import StringIO
 import sys
 import tempfile
 import unittest
@@ -47,8 +49,11 @@ class NeutralTerminologyTests(unittest.TestCase):
             (root / ("example-" + token + ".md")).write_text(
                 "This document contains only neutral text.", encoding="utf-8"
             )
-            with patch.object(guard, "ROOT", root):
+            buffer = StringIO()
+            with patch.object(guard, "ROOT", root), redirect_stdout(buffer):
                 self.assertEqual(guard.main(), 1)
+            self.assertIn("[restricted]", buffer.getvalue())
+            self.assertNotIn(token, buffer.getvalue().casefold())
 
     def test_existing_local_link_rule_preserved(self):
         findings = guard.violations("test.md", "file:" + "//" + "private/notes.md")
