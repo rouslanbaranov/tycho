@@ -6,8 +6,8 @@
 ## Executive result
 
 - The proposed outline contains **10 volumes and 69 chapters**. All 10 volume rows were compared against titles and section headings in currently reachable technical prose.
-- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine new source-grounded chapter drafts were added on this feature branch; the branch now has at least 42 known directly linked technical files, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
-- Of 69 proposed questions: **46 directly addressed**, **23 partially addressed**, **0 without a focused book treatment verified**, after nine new *unreviewed* chapter drafts on this branch (V02/C05; V03/C06; V07/C04 and C06; V09/C06 and C07; V10/C01, C02 and C06). **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
+- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine previously missing subjects and one formerly partial subject received new chapter drafts on this feature branch; the branch now has at least 43 known directly linked technical files, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
+- Of 69 proposed questions: **47 directly addressed**, **22 partially addressed**, **0 without a focused book treatment verified**, after nine new *unreviewed* chapter drafts on this branch (V02/C05; V03/C06; V07/C04 and C06; V09/C06 and C07; V10/C01, C02 and C06). **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
 - Source discovery was limited to current root/topic navigation and linked Markdown files accessed from GitHub. The entire Git tree was **not exhaustively enumerated** and repository-wide executable checks **were not run**. Reconcile this matrix with a full local inventory and content review before presenting the classification as comprehensive proof.
 - Educational graph storage/traversal remains a legitimate V06/C06 topic; a curated concept/decision graph for Tycho is **not required**. Search/MCP/deployment infrastructure work is excluded from this manuscript completion gate.
 
@@ -132,7 +132,7 @@
 |---|---|---|---|
 | V10/C01 — Architecture requirement and workload profiles | D | [New requirements/workload chapter](../book/decisions/requirements-and-workload-architecture-profiles.md) | Original independent book treatment; supporting model is not substituted for book prose; review pending. |
 | V10/C02 — Baseline analysis for existing software | D | [New legacy baseline chapter](../book/decisions/legacy-baseline-and-modernization-evidence.md) | Original synthetic catalog and admissible public modernization sources; independent validation pending. |
-| V10/C03 — Pattern applicability and contraindications | P | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Turn method cards/contraindications into a navigable pattern-selection book chapter. |
+| V10/C03 — Pattern applicability and contraindications | D | [New pattern-selection chapter](../book/decisions/pattern-applicability-and-contraindications.md) | Source-grounded alternatives, hard gates, contraindications and original pattern cards; independent review pending. |
 | V10/C04 — Alternatives, experiments and ADRs | P | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Expand condition-gated alternative analysis and ADR falsification examples. |
 | V10/C05 — Target architecture versus transition states | P | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Develop target versus transition states with reversible and non-reversible steps. |
 | V10/C06 — Search and question routes for architecture agents | D | [New question/reading routes chapter](../book/decisions/question-routes-for-architecture-analysis.md) | Original evidence-first progressive reading and decision route; no implemented search/MCP; review pending. |
@@ -141,7 +141,11 @@
 ## Content remediation recorded in this branch
 
 - **Nine original new draft chapters moved from M to D (not accepted):** V02/C05, V03/C06, V07/C04/C06, V09/C06/C07, V10/C01/C02/C06.  V02/C05 details:  new original [HTTP and RPC compatibility chapter](../book/application/http-rpc-contracts-and-compatibility.md), using independently verified RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers documentation. Its application landing now links to it. Other new drafts cover diagnostics, tail latency, autoscaling, incident response, agent-access safety, requirements/workload decisions, legacy baselines and progressive reading routes. No executable client/provider tests, independent review or full-repository validation has run; publication completeness is not claimed.
-- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **46 D / 23 P / 0 M**, all still subject to inventory and quality review.
+- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **47 D / 22 P / 0 M**, all still subject to inventory and quality review.
+
+## Latest partial-coverage remediation
+
+- **V10/C03 changed from P to D (still not accepted):** [pattern applicability and contraindications](../book/decisions/pattern-applicability-and-contraindications.md) now has a standalone original book chapter covering modular monoliths, microservices, asynchronous workflows, caching, sharding and execution models with explicit disqualifiers and falsifiable tests. Supporting authoring models are kept separate; no model selection or independent review was executed.
 
 ## High-priority confirmed editorial gaps
 
