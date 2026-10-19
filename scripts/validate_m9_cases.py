@@ -158,6 +158,60 @@ def validate_fixtures(fixtures: dict, case_ids: set[str], source_ids: set[str]) 
     return counts
 
 
+
+def validate_evidence_facet_pilot(
+        pilot: dict, questions: list[dict], case_ids: set[str], source_ids: set[str]) -> dict:
+    """Check proposed multi-hop labels without treating them as independent gold."""
+    require(pilot["status"] == "proposed_for_independent_label_review",
+            "facet pilot must not claim independent reviewer acceptance")
+    require(pilot["schema_version"] == "m9-facet-coverage-pilot-0.1",
+            "unsupported facet pilot format")
+    matching = [q for q in questions if q["id"] == pilot["query_id"]]
+    require(len(matching) == 1, "facet query missing/ambiguous")
+    q = matching[0]
+    require(q["query"] == pilot["original_question"],
+            "facet question text drifted from frozen baseline")
+    require(q["expected_case_ids"] == pilot["frozen_primary_expected_case_ids"],
+            "primary baseline labels changed without explicit re-evaluation")
+    facets = pilot["required_facets"]
+    require(isinstance(facets, list) and len(facets) >= 2,
+            "facet coverage requires two or more independently sourced facets")
+    names = [f["facet_id"] for f in facets]
+    require(len(names) == len(set(names)), "duplicate facet ID")
+    direct_cases: set[str] = set()
+    for facet in facets:
+        require(facet["required_for_complete_synthesis"] is True,
+                "pilot facet lacks mandatory-coverage status")
+        require(isinstance(facet["case_support"], list) and facet["case_support"],
+                "facet has no documented direct evidence")
+        for support in facet["case_support"]:
+            require(support["role"] == "direct_evidence",
+                    "only primary case support may satisfy a required facet")
+            require(support["case_id"] in case_ids,
+                    "facet points to an unindexed case")
+            require(isinstance(support["source_ids"], list) and support["source_ids"],
+                    "facet missing source references")
+            require(set(support["source_ids"]) <= source_ids,
+                    "facet points to unregistered sources")
+            require(isinstance(support["claim"], str) and support["claim"],
+                    "facet missing bounded claim description")
+            direct_cases.add(support["case_id"])
+    for support in pilot["contextual_evidence"]:
+        require(support["role"] in {"related_but_distinct", "contrast_not_immutable"},
+                "contextual analogy must not be promoted to direct proof")
+        require(support["case_id"] in case_ids,
+                "contextual analogy points to an unindexed case")
+        require(set(support["source_ids"]) <= source_ids,
+                "contextual analogy points to unregistered sources")
+    require(len(direct_cases) >= 2,
+            "composite evidence must reference at least two cases")
+    require(pilot["review_decision"] == "pending_independent_relevance_adjudication",
+            "do not fabricate completed independent relevance review")
+    return {"query_id": q["id"], "proposed_facets": len(facets),
+            "proposed_direct_cases": len(direct_cases),
+            "adjudication": "NOT DONE"}
+
+
 def read_case_catalog() -> tuple[set[str], list[Path]]:
     page_index = (CASE_DIR / "README.md").read_text(encoding="utf-8")
     local = [
@@ -206,7 +260,11 @@ def check(root: Path = ROOT) -> dict:
     for item in examples:
         validate_record(item, schema, registered)
         require(item["case_id"] in ids, "sample case missing from book")
-    counts = validate_fixtures(json_read(QUERIES), ids, registered)
+    query_data = json_read(QUERIES)
+    counts = validate_fixtures(query_data, ids, registered)
+    facet_pilot = validate_evidence_facet_pilot(
+        json_read(root / "tests/fixtures/m9-q042-evidence-facets.proposed.json"),
+        query_data["questions"], ids, registered)
     validation_engine = "portable strict subset"
     try:
         import jsonschema  # type: ignore
@@ -219,7 +277,8 @@ def check(root: Path = ROOT) -> dict:
             require(not errors, "JSON Schema example " + str(i) + ": " + "; ".join(str(err) for err in errors))
         validation_engine = "jsonschema Draft2020-12+FormatChecker"
     return {"case_pages": len(ids), "indexed_md_paths": len(links), "source_candidates": len(registered),
-            "sample_records": len(examples), "question_classes": counts, "schema_check": validation_engine,
+            "sample_records": len(examples), "question_classes": counts,
+            "proposed_facet_pilot": facet_pilot, "schema_check": validation_engine,
             "retrieval_execution": "NOT RUN", "independent_review": "NOT RUN"}
 
 
