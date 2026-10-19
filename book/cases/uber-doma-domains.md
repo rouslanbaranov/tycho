@@ -88,4 +88,6 @@ A different distributed fleet can start with one operationally costly cross-team
 
 Favor domains and API ownership when a *preexisting* large distributed fleet suffers escalating coordination cost. For a small product that can change one deployable application cheaply, prefer module-level domain boundaries before adding network hops. Before a roadmap is approved, require a baseline with data ownership and blast radius, a comparison to a smaller intervention, and measurable acceptance gates. An agent should retrieve this case as **evidence for conditions and counterconditions**, not as a universal preferred architecture.
 
+**2026-10-19 publisher-source spot check:** [The dated U01 verification register](../../authoring/cases/M9_UBER_DOMA_SOURCE_SPOTCHECK_2026-10-19.md) matched 11 narrow source-specific statements and classified the Uber/Shopify comparison as Tycho's own inference. This does not establish a qualified independent review, copyright approval or reproduced benchmark.
+
 **Provenance:** [U01 primary](https://www.uber.com/us/en/blog/microservice-architecture/), sections Microservices at Uber; Domain-Oriented Microservice Architecture; Layer Design; Gateways; Extensions. Cross-case comparisons must retain the original company's architecture and historical observation window. **Case review:** not yet independently approved under #121.
