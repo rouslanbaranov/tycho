@@ -20,11 +20,6 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CASE_DIR = ROOT / "book/cases"
-SOURCE_REGISTER = ROOT / "sources/REAL_WORLD_ARCHITECTURE_CASES.md"
-PROPOSED_SCHEMA = ROOT / "authoring/cases/case-record.schema.json"
-SAMPLES = ROOT / "authoring/cases/examples/case-records.json"
-QUERIES = ROOT / "tests/fixtures/m9-case-queries.json"
 CID = re.compile(r"^case\.[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*$")
 CLAIM_ID = re.compile(r"^claim\.[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*\.[0-9]{3}$")
 SOURCE_ID = re.compile(r"^(N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}$")
@@ -251,7 +246,9 @@ def read_case_catalog(root: Path = ROOT) -> tuple[set[str], list[Path]]:
 def check(root: Path = ROOT) -> dict:
     schema = json_read(root / "authoring/cases/case-record.schema.json")
     require(schema["$schema"].endswith("2020-12/schema"), "unexpected schema dialect")
-    assert schema["$id"].startswith("urn:tycho:m9:")
+    require(isinstance(schema.get("$id"), str) and
+            schema["$id"].startswith("urn:tycho:m9:"),
+            "proposed M9 schema must use scoped Tycho URN")
     raw_sources = (root / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8")
     registered = set(re.findall(r"^\| ((?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}) \|", raw_sources, flags=re.M))
     require(len(registered) == 43, "source register not 43 candidates")
