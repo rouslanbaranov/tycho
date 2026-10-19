@@ -6,8 +6,8 @@
 ## Measured status
 
 - **43** original candidates inspected in source registry.
-- **38** accessible in this research reader, including U05 after a canonical locale URL fix. Accessibility does **not** imply completeness, reproducibility or license to mirror.
-- **5** unresolved/failed primary URL accesses: N14, N15, SH04, SP02, SP03; **not admitted** pending retry and alternate first-party resolution.
+- **41** accessible in the subsequent research reader checks, including U05 after a canonical locale URL fix. Accessibility does **not** imply completeness, reproducibility or license to mirror.
+- **2** sources remain without directly retrievable original article bodies (N14 and N15). N14 has author-attributed syndication but the **primary article URL** was unavailable in the reader; N15 timed out. SH04, SP02 and SP03 have since been confirmed on their original publisher sites with publication dates and substantive primary sections; see [follow-up admission](REAL_WORLD_CASES_PRIMARY_AGENT_MIGRATION_EVIDENCE.md). These figures measure retrieval results in the present research environment, not permanent availability.
 - **5** Netflix entries already have detailed bounded claim/location evidence in [wave 01](REAL_WORLD_CASES_ADMISSION_WAVE_01.md): N01, N02, N05, N06, N07.
 - Remaining accessible sources have title/producer and topic triage, but are **not yet claim-admitted** for arbitrary chapter assertions; a named original section/timestamp and author/date must accompany each assertion before authoring.
 - **0** externally measured benchmarks and **0** reviewed case chapters. Only original links/paraphrase may be reused; no redistribution rights assumed.
@@ -47,10 +47,10 @@
 | SH01 | Shopify | ACCESSIBLE — claim-level gate pending | [original](https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity) | Shopify 'Deconstructing the Monolith': original 2019-era modular architecture account; do not mislabel as microservices. |
 | SH02 | Shopify | ACCESSIBLE — claim-level gate pending | [original](https://shopify.engineering/shopify-monolith) | Shopify 'Under Deconstruction': actual ongoing modularity effort; not proof of completely isolated components. |
 | SH03 | Shopify | ACCESSIBLE — claim-level gate pending | [original](https://shopify.engineering/cloud-load-modular-code-shopify-2022) | Shopify 'Cloud, Load, and Modular Code': 2022 status and renderer extraction. |
-| SH04 | Shopify | BLOCKED — cannot admit | [original](https://shopify.engineering/helix) | Shopify link /helix returned internal error; verify canonical article and publication date |
+| SH04 | Shopify | READABLE — original author/publisher verified and bounded claims cited | [original](https://shopify.engineering/helix) | Talha Naqvi, 2026-09-21; "The loop at a glance", "Reviews are gates", "Helix can also run autonomously"; four gates and opt-in autonomy; human approval default. See follow-up primary-source ledger. |
 | SP01 | Spotify | ACCESSIBLE — claim-level gate pending | [original](https://engineering.atspotify.com/2020/6/tech-migrations-the-spotify-way) | Spotify 'Tech Migrations, the Spotify Way': 2020-06-25 Chakrabarti and Lee; sections 'Ruthlessly prioritize', 'Product-ify', 'Automate'. Long-tail and Backstage coordination. |
-| SP02 | Spotify | BLOCKED — cannot admit | [original](https://www.engineering.atspotify.com/2025/11/spotifys-background-coding-agent-part-1) | Spotify www-engineering address returned cache miss; retry canonical engineering.atspotify.com |
-| SP03 | Spotify | BLOCKED — cannot admit | [original](https://www.engineering.atspotify.com/2026/4/background-coding-agents-dataset-migrations-honk-part-4) | Spotify www-engineering address returned cache miss; retry canonical engineering.atspotify.com |
+| SP02 | Spotify | READABLE — first-party claim bounded | [original](https://www.engineering.atspotify.com/2025/11/spotifys-background-coding-agent-part-1) | Max Charas and Marc Bruggmann, 2025-11-06; >1,500 PRs **merged** reported; time savings 60–90% company-estimated on its migration tasks, not externally measured correctness/safety. |
+| SP03 | Spotify | READABLE — first-party claim bounded | [original](https://www.engineering.atspotify.com/2026/4/background-coding-agents-dataset-migrations-honk-part-4) | Devon Edwards Joseph, 2026-04-22; 1,800 direct downstream pipelines, 240 automated migration PRs **rolled out** (not necessarily all merged); BigQuery Runner/dbt chosen; Scio excluded; lack of tests forced owners' manual verification. |
 | ST01 | Stripe | ACCESSIBLE — claim-level gate pending | [original](https://stripe.com/blog/online-migrations) | Stripe 'Online migrations at scale': original article accessible, migration phases; guard correctness and dual-representation compatibility. |
 | ST02 | Stripe | ACCESSIBLE — claim-level gate pending | [original](https://stripe.com/blog/migrating-to-typescript) | Stripe article redirects to stripe.dev/blog/migrating-to-typescript; author Andrew Lunny, published 2022-05-20. |
 | DI01 | Discord | ACCESSIBLE — claim-level gate pending | [original](https://discord.com/blog/how-discord-stores-trillions-of-messages) | Discord 'How Discord Stores Trillions of Messages': original article accessible; workload- and epoch-bound Cassandra/Scylla numbers. |
@@ -74,8 +74,12 @@
 
 ## Definition of done for issue #114
 
-For every eventual admitted source: stable ID, primary creator/publisher, original publication/event date, observed URL and redirect, exact claim-specific section/timestamp, historical version and workload, explicit source-reported-vs-independent classification, license/reuse limitation, negative/counterclaims, and source disposition. The 5 unresolved URLs and claim-level work on the other accessible sources keep **#114 OPEN**. A deferred source may remain excluded with a recorded reason; it must not silently be called verified.
+For every eventual admitted source: stable ID, primary creator/publisher, original publication/event date, observed URL and redirect, exact claim-specific section/timestamp, historical version and workload, explicit source-reported-vs-independent classification, license/reuse limitation, negative/counterclaims, and source disposition. The remaining unresolved URLs and claim-level work on the other accessible sources keep **#114 OPEN**. A deferred source may remain excluded with a recorded reason; it must not silently be called verified.
 
 ## Reproduction scope
 
 The audit relied on read-only retrieval of the listed official sites (including normalized permanent redirects). No credentials, private material, live experiments, performance logs, graph rebuild, CI run or external company's data were accessed. The evidence rows are a research navigation index; readers must follow each linked original source and validate the cited section at publication time before making quantitative engineering decisions.
+
+## Follow-up correction — 2026-10-19
+
+The first pass recorded five links as failing in a particular retrieval environment. This is now superseded for SH04/SP02/SP03 after original first-party publisher pages were found. Their claims are restricted to the dated, named sections in [the follow-up ledger](REAL_WORLD_CASES_PRIMARY_AGENT_MIGRATION_EVIDENCE.md). N14 is corroborated by an attributed full syndication of Netflix's 2026-10-14 post, but the direct original page remained inaccessible to the reader; do not treat the syndication as an independent measurement or as reproduction permission. N15 remains inaccessible. Additional claim-level checks for the other entries remain due.
