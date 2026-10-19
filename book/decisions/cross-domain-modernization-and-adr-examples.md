@@ -200,8 +200,8 @@ Source grounding: existing inspected-source ledgers in [queueing](../performance
 
 ## Applied M9 evidence: what transfers and what does not
 
-The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
 
-- **[Agent-assisted migration safety](../cases/decisions/agentic-migration-safety.md)** illustrates synthetic ADR requires behavior, isolation and evidence gates before agent-generated code can change production. **It cannot establish:** shopify/Spotify reports do not provide authorization for fully autonomous unsafe changes or benchmarked universal agent correctness.
+**Case lens — [Agent-assisted migration safety](../cases/decisions/agentic-migration-safety.md)**. **Relevant mechanism or architectural contrast:** Synthetic ADR requires behavior, isolation and evidence gates before agent-generated code can change production. **Not established by this report/playbook:** Shopify/Spotify reports do not provide authorization for fully autonomous unsafe changes or benchmarked universal agent correctness.
 
-A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

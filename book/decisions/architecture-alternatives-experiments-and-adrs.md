@@ -195,9 +195,10 @@ Proposed home: **V10/C04** in [proposed contents](../PROPOSED-STRUCTURE.md). Cur
 
 ## Applied M9 evidence: what transfers and what does not
 
-The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
 
-- **[Reactive vs virtual threads](../cases/decisions/reactive-vs-virtual-threads.md)** illustrates synthetic comparison separates connection wait, CPU bound work, scheduler pinning and downstream pool budget. **It cannot establish:** company observations are different workloads/JDK vintages, not a controlled head-to-head benchmark.
-- **[GC vs tail latency](../cases/decisions/gc-and-tail-latency.md)** illustrates synthetic ADR chooses GC from SLO/cost workload objectives, using contrasting Netflix and contention cases. **It cannot establish:** the stated decision and candidate thresholds are hypothetical, not actual Netflix/Discord collector evaluations.
+**Case lens — [Reactive vs virtual threads](../cases/decisions/reactive-vs-virtual-threads.md)**. **Relevant mechanism or architectural contrast:** Synthetic comparison separates connection wait, CPU bound work, scheduler pinning and downstream pool budget. **Not established by this report/playbook:** Company observations are different workloads/JDK vintages, not a controlled head-to-head benchmark.
 
-A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.
+**Case lens — [GC vs tail latency](../cases/decisions/gc-and-tail-latency.md)**. **Relevant mechanism or architectural contrast:** Synthetic ADR chooses GC from SLO/cost workload objectives, using contrasting Netflix and contention cases. **Not established by this report/playbook:** The stated decision and candidate thresholds are hypothetical, not actual Netflix/Discord collector evaluations.
+
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.
