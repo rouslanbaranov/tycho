@@ -70,9 +70,9 @@
 
 | Planned chapter | Coverage | Observed primary material | Outstanding work |
 |---|---|---|---|
-| V05/C01 — Relational modeling and transaction isolation | D | [Technical page](../book/data/postgresql-mvcc-indexes-and-query-plans.md) | Keep relational constraints, visibility and isolation scope explicit. |
+| V05/C01 — Relational modeling and transaction isolation | D | [Separate draft](../book/data/relational-modeling-and-transaction-isolation.md) | New independent PostgreSQL 17 relational constraints/MVCC/isolation chapter; no DB/concurrency test. |
 | V05/C02 — PostgreSQL MVCC, WAL and recovery | D | [Technical page](../book/data/postgresql-wal-replication-and-recovery.md) | Maintain PostgreSQL version and physical/logical replica evidence. |
-| V05/C03 — Query planning, indexes and access paths | D | [Technical page](../book/data/postgresql-mvcc-indexes-and-query-plans.md) | Check planner statistics/index write costs and observed-versus-estimated distinctions. |
+| V05/C03 — Query planning, indexes and access paths | D | [Separate draft](../book/data/postgresql-indexes-statistics-and-query-plans.md) | New independent PostgreSQL 17 indexing/EXPLAIN/planner-statistics chapter; no benchmark or query execution. |
 | V05/C04 — Alternative data models and stores | D | [Technical page](../book/data/storage-model-alternatives-and-workload-fit.md) | Add selection examples where competing data models fail hard gates. |
 | V05/C05 — Partitioning, sharding and rebalancing | D | [Technical page](../book/scaling/shard-keys-hotspots-and-resharding.md) | Reconcile ownership movement and online resharding with data invariants. |
 | V05/C06 — Schema evolution, data migration and retention | D | [Technical page](../book/delivery/progressive-delivery-and-schema-evolution.md) | Make schema/data lifecycle, compatibility and retention canonical in this volume. |
@@ -177,6 +177,13 @@
 3. Deepen P subjects; for D subjects perform a chapter-specific acceptance review and extend when the chapter question is not completely answered.
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
+
+## 2026-10-19 canonical data-owner separation — V05/C01 and C03
+
+- Added distinct reader-facing [relational modeling and transaction isolation](../book/data/relational-modeling-and-transaction-isolation.md) and [PostgreSQL indexing, statistics and query plans](../book/data/postgresql-indexes-statistics-and-query-plans.md) owner drafts (**1,224** and **1,456** whitespace-separated words respectively). The preexisting [combined PostgreSQL research article](../book/data/postgresql-mvcc-indexes-and-query-plans.md) remains intact for evidence and overlap review.
+- Verified H1 and balanced Mermaid fences in both; fetched **12/12 unique local destination files** linked from both new chapters on the same PR branch. This checks local file existence, not source URLs or reference anchors.
+- Reviewed version-scoped official PostgreSQL 17 sections §5.5 (constraints), §§13.1–13.2 (MVCC/isolation), Chapter 11 (indexes), §§14.1–14.2 (EXPLAIN/planner statistics), plus CREATE INDEX. No DB system, SQL fixture, measured plan or isolation experiment ran; independent source-by-claim review remains pending.
+- Matched separately to original **V05/C01** and **V05/C03** without claiming that the entire original shared source has been content-preserved and reviewed. The 69-question *topic-coverage* classification remains **69 D / 0 P / 0 M**, not a complete book edition.
 
 ## 2026-10-19 additional canonical-owner separation — V02 and V04
 
