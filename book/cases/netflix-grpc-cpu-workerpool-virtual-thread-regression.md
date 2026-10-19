@@ -49,6 +49,31 @@ Proposed reversible method: profile worker actual runnable/blocking time → pin
 
 **Falsification criteria:** if virtual threads increase CPU per completed gRPC request with no reduction in p99 or I/O waits, keep the bounded platform-thread pool. If a later product changes to mostly slow network I/O, repeat the experiment with fresh traffic mix; the original historical result no longer necessarily applies.
 
+## The nearby positive experiments do not cancel the negative one
+
+The [QCon practitioner transcript](https://www.infoq.com/presentations/netflix-java/) (N02, **Virtual Threads**) describes **three distinct adoption points** in one discussion. A Tomcat **thread-per-request** execution pool and Spring asynchronous task execution were promising because service code frequently waits for other network calls; some large services were reportedly already using virtual threads with neutral or modest results. GraphQL per-field execution was discussed as a future opportunity for network fan-out, **not an already measured fleet migration**. Then the speaker gives the specific counterexample: outgoing **gRPC client worker pools** had enough CPU-intensive work that moving to virtual threads made them **a few percent slower**.
+
+The speaker's conclusion is about **placement**, not a binary choice to adopt or ban Loom. Platform-level support can allow application teams to benefit without rewriting every service, but only where blocking wait dominates execution and the exact library/JDK stack is compatible. The later 2024 tracing-induced carrier starvation [incident](netflix-java21-virtual-thread-pinning.md) (N06) is independent: one is extra overhead on CPU-heavy workers, the other a scheduler starvation failure under synchronized locks.
+
+## How to design an actual controlled comparison
+
+For an unrelated Java application with a mixed outbound gRPC stack, hold constant the service version, JDK patch, gRPC/Netty and tracing dependencies, caller mix, reply sizes, deadline budget and downstream concurrency limit. Vary **only** the worker executor initially:
+
+| Proposed measurement | What it isolates | Failure signal |
+|---|---|---|
+| CPU time per **completed** outgoing gRPC operation | Whether task scheduling improves useful compute efficiency | Increased CPU/work at unchanged I/O waits |
+| Runnable vs blocked time by worker type | Whether the workload actually benefits from parking/unmounting | CPU saturation with almost no blocking fraction |
+| Queue wait, goodput and p99 by request class | Scheduler overhead, cancellation and backpressure | More runnable tasks without more completed responses |
+| Downstream in-flight RPC count and server error rate | Virtual-thread abundance does not override downstream capacity | Higher fan-out amplifies remote timeouts and retries |
+| Trace/security context propagation | Executor change may alter request-local context | Missing auth/audit metadata despite successful calls |
+| Heap/native allocation and carrier pinning | Later migration versions and integrations may regress differently | Material RSS increase, stuck carriers, or object churn |
+
+These tests are **Tycho's synthetic protocol**, not an unpublished Netflix benchmark. The original speaker did not provide an exact percent, request count, hardware config, p99 distribution or executor code revision for the gRPC experiment; the word **few** must never be converted to a point estimate. If the target workload becomes I/O-heavy later, retest rather than freeze a historical 2023 choice forever.
+
+## Explicit decision rejection criteria
+
+A recommendation to change the executor is unsupported when no CPU-vs-wait profile exists, outbound client pooling already caps connections, or the target JDK/library semantics are not tested. A *larger number of cheap runnable threads* can simply create a larger backlog at the downstream service. For CPU-bound pools, a bounded platform-thread executor plus explicit queue/backpressure is the conservative comparator. For I/O-bound request orchestration, measure virtual threads and nonblocking I/O independently and preserve the security, cancellation and error contract. When neither versioned data nor a valid workload profile exists, return **insufficient evidence**.
+
 ## Evidence and non-claims
 
 This is one engineer's **first-party qualitative performance report**, not a published peer-reviewed benchmark or a quantified Netflix fleet-wide rollout. Runtime version details for the specific outbound gRPC pool are not sufficiently pinned by this transcript; do not assert it used Java 21 production for that experiment. The transcript's later online publication date is distinct from its October 2023 presentation. No copied publisher diagrams, transcribed passages or company-private source code are included.
