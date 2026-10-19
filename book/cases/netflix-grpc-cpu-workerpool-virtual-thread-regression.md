@@ -74,6 +74,29 @@ These tests are **Tycho's synthetic protocol**, not an unpublished Netflix bench
 
 A recommendation to change the executor is unsupported when no CPU-vs-wait profile exists, outbound client pooling already caps connections, or the target JDK/library semantics are not tested. A *larger number of cheap runnable threads* can simply create a larger backlog at the downstream service. For CPU-bound pools, a bounded platform-thread executor plus explicit queue/backpressure is the conservative comparator. For I/O-bound request orchestration, measure virtual threads and nonblocking I/O independently and preserve the security, cancellation and error contract. When neither versioned data nor a valid workload profile exists, return **insufficient evidence**.
 
+## Workload decomposition: a scheduling change is not a compute optimization
+
+The historical N02 source gives a **qualitative negative experiment**, not a complete benchmark. An outgoing gRPC client can perform both network waiting and CPU-heavy work, but merely labeling an executor “gRPC” does not establish which phase consumes its threads. What matters is the proportion of **runnable computation, socket waiting and synchronization** on the actual executor whose implementation is being changed.
+
+For another Java platform, the correct unit of experimentation is the worker's *actual task class*, not a whole mixed gateway. Split end-to-end traces into serialization, authorization, local transformation, send/wait and response processing. Record carrier/platform-thread occupancy, CPU per *completed useful request*, queue age, downstream connection limits, p99 and cancellation. Hold transport/library/JDK versions fixed when changing the scheduling model.
+
+| Synthetic test cohort | Candidate choice | Falsification condition |
+|---|---|---|
+| CPU-intensive protobuf transformations | Bounded platform pool sized to CPU and contention | Virtual threads do not reduce CPU work; more scheduler transitions with no p99 benefit |
+| Large number of *genuinely blocked* remote requests | Virtual threads with bounded downstream connection permits | Carrier pinning, unbounded fan-out or no useful concurrency improvement |
+| Fully async/network-driven fan-out | Nonblocking event loop plus bounded CPU offload | Event loop stalls from blocking calls, TLS/crypto or transformation work |
+| Mixed incoming endpoint | Separate CPU lane and I/O lane rather than replacing all execution | Trace/identity lost across boundaries or request cancellation fails to stop work |
+
+This matrix is **Tycho synthetic architecture analysis**, not a record of Netflix's exact benchmark participants. The talk does not publish core counts, allocations, load distributions or a precise regression percentage. Refuse to invent those values.
+
+## Safe transition, backpressure and recovery
+
+A safe migration begins in instrumentation-only mode. Identify which executor owns upstream transport callbacks, which code may block within locks or native libraries and where downstream budgets are enforced. During a small canary, inject a slow gRPC peer, a canceled client request, an overloaded CPU transformation stage and a tracing/reporting failure. Assert that new tasks do not grow without bound, error/context propagation remains correct, and the old executor remains selectable. Measure repeated workload windows at equal offered traffic; include both queued and completed tasks in denominators.
+
+Virtual threads are **not** admission control. Even if waiting no longer holds OS threads, too many simultaneous downstream RPCs can overwhelm the peer or connection pool. The migration must preserve semaphores, deadlines, retry budgets and endpoint-specific circuit breakers independently of the thread type.
+
+**Stop and rollback** if CPU cost increases for comparable successful work, p99 rises, downstream errors grow, or an instrumentation lock consumes carriers. The last failure mode is from the **different 2024 tracing incident** documented in [Java21 carrier starvation](netflix-java21-virtual-thread-pinning.md); it must not be retroactively attributed to N02's 2023 CPU-pool experiment. A future JDK/library upgrade may change results, requiring a new measured comparison.
+
 ## Evidence and non-claims
 
 This is one engineer's **first-party qualitative performance report**, not a published peer-reviewed benchmark or a quantified Netflix fleet-wide rollout. Runtime version details for the specific outbound gRPC pool are not sufficiently pinned by this transcript; do not assert it used Java 21 production for that experiment. The transcript's later online publication date is distinct from its October 2023 presentation. No copied publisher diagrams, transcribed passages or company-private source code are included.
