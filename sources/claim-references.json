@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "claims": [
+    {
+      "id": "claim.same-intent-retry",
+      "statement": "For a proposed service contract, retrying a request with the same caller-scoped identity and same intent should recover the same logical operation outcome without creating duplicate business state; atomic enforcement must be tested.",
+      "owner_page": "book/distributed/transactional-outbox-and-idempotency.md",
+      "status": "evidence-linked",
+      "applicability": {
+        "conditions": [
+          "Client/request token has a documented scope and retention policy",
+          "Atomic association between request identity, business state and outcome is implemented"
+        ],
+        "exclusions": [
+          "Different intent under reused key must be rejected",
+          "No guarantee of downstream external side effects without separate consumer evidence"
+        ]
+      },
+      "evidence": [
+        {
+          "source_id": "src.aws-idempotency",
+          "relation": "supports",
+          "reasoning": "The article explicitly describes caller-supplied request identity, atomic association with mutations, and semantically equivalent retry outcomes. Supports a proposed application contract, not untested production implementation.",
+          "observed_at": "2026-10-19",
+          "location": {
+            "kind": "document-section",
+            "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+            "section": "Reducing client complexity; Retries and semantic equivalence; Same client request ID, different intent",
+            "revision": null,
+            "path": null,
+            "symbol": null
+          },
+          "verification": "section-inspected"
+        },
+        {
+          "source_id": "src.http-semantics",
+          "relation": "qualifies",
+          "reasoning": "RFC 9110 section 9.2.2 defines idempotent HTTP method semantics, which does not by itself establish application-level transactional deduplication or externally atomic notification.",
+          "observed_at": "2026-10-19",
+          "location": {
+            "kind": "document-section",
+            "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+            "section": "Section 9.2.2 Idempotent Methods",
+            "revision": null,
+            "path": null,
+            "symbol": null
+          },
+          "verification": "section-inspected"
+        }
+      ]
+    },
+    {
+      "id": "claim.http-idempotence-is-not-global-exactly-once",
+      "statement": "Disputed inference: HTTP idempotent-method designation alone guarantees no duplicate external database or notification effect under arbitrary partial failure.",
+      "owner_page": "book/distributed/transactional-outbox-and-idempotency.md",
+      "status": "contested",
+      "applicability": {
+        "conditions": [
+          "This is a deliberately disputed architectural inference, not a recommended design"
+        ],
+        "exclusions": [
+          "HTTP semantics and application transactional effects have different boundaries"
+        ]
+      },
+      "evidence": [
+        {
+          "source_id": "src.http-semantics",
+          "relation": "contradicts",
+          "reasoning": "The standard is specifically about intended effects of multiple identical HTTP method requests; it does not assert transactional atomicity over unrelated external systems. Thus it contradicts the broad architectural interpretation, not another primary source.",
+          "observed_at": "2026-10-19",
+          "location": {
+            "kind": "document-section",
+            "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+            "section": "Section 9.2.2 Idempotent Methods",
+            "revision": null,
+            "path": null,
+            "symbol": null
+          },
+          "verification": "section-inspected"
+        },
+        {
+          "source_id": "src.aws-idempotency",
+          "relation": "qualifies",
+          "reasoning": "The discussion of request-token persistence and semantic equivalence documents the additional server-side contract and implementation requirements.",
+          "observed_at": "2026-10-19",
+          "location": {
+            "kind": "document-section",
+            "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+            "section": "Reducing client complexity; Retrying and side effects",
+            "revision": null,
+            "path": null,
+            "symbol": null
+          },
+          "verification": "section-inspected"
+        }
+      ]
+    },
+    {
+      "id": "claim.jep491-full-text-unavailable",
+      "statement": "The canonical OpenJDK JEP 491 full text was unavailable to this research pass; technical claims must be supported by separately inspected official companion materials, not invented JEP paragraphs.",
+      "owner_page": "sources/ACCESS-LICENSING-RESOLUTION.md",
+      "status": "insufficient-evidence",
+      "applicability": {
+        "conditions": [
+          "Canonical JEP content is not independently retrievable"
+        ],
+        "exclusions": [
+          "Companion documentation must not be presented as the inaccessible JEP itself"
+        ]
+      },
+      "evidence": [
+        {
+          "source_id": "src.jep491",
+          "relation": "unavailable",
+          "reasoning": "Canonical OpenJDK URL returned HTTP 403 on 2026-10-19. This is an access finding only; it does not invalidate or prove JEP contents.",
+          "observed_at": "2026-10-19",
+          "location": null,
+          "verification": "not-accessible"
+        }
+      ]
+    }
+  ]
+}
