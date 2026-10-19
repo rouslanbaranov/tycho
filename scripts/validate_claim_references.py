@@ -108,7 +108,7 @@ def validate(data, source_register, repository_lock):
             require(ev["relation"] in VALID_REL, cid + ": invalid evidence relation")
             relations.add(ev["relation"])
             plain_text(ev["reasoning"], cid + ".reasoning")
-            require(ev["verification"] in {"section-inspected", "identifier-only", "not-accessible"},
+            require(ev["verification"] in {"section-inspected", "code-inspected", "identifier-only", "not-accessible"},
                     cid + ": invalid verification")
             require(isinstance(ev["observed_at"], str), cid + ": observation date missing")
             date.fromisoformat(ev["observed_at"])
@@ -118,8 +118,8 @@ def validate(data, source_register, repository_lock):
             else:
                 require(sources[sid]["admission"] == "admitted-for-research",
                         cid + ": bibliography-only/pending source cannot support claims")
-                require(ev["verification"] == "section-inspected",
-                        cid + ": evidence relation must cite inspected location")
+                require(ev["verification"] == ("code-inspected" if ev["location"]["kind"] == "source-code" else "section-inspected"),
+                        cid + ": evidence relation must cite separately inspected code/section location")
                 validate_location(ev["location"], sources[sid], locked, cid + "." + sid)
         if claim["status"] == "evidence-linked":
             require("supports" in relations and "contradicts" not in relations,
