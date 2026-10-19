@@ -6,8 +6,8 @@
 ## Executive result
 
 - The proposed outline contains **10 volumes and 69 chapters**. All 10 volume rows were compared against titles and section headings in currently reachable technical prose.
-- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine initially missing-focused subjects and seven initially partial questions now have newly authored standalone drafts on this feature branch; the branch has at least 58 known directly linked technical manuscripts across audited topic routes, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
-- Of 69 proposed questions: **62 directly addressed**, **7 partially addressed**, **0 without a focused book treatment verified**, after nine initial missing-topic drafts plus sixteen newly deepened-topic drafts on this branch. **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
+- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine initially missing-focused subjects and seven initially partial questions now have newly authored standalone drafts on this feature branch; the branch has at least 65 known research/manuscript pages across reachable topic sections across audited topic routes, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
+- Of 69 proposed questions: **69 directly addressed**, **0 partially addressed**, **0 without a focused book treatment verified**, after nine initial missing-topic drafts plus twenty-three newly deepened-topic drafts on this branch. **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
 - Source discovery was limited to current root/topic navigation and linked Markdown files accessed from GitHub. The entire Git tree was **not exhaustively enumerated** and repository-wide executable checks **were not run**. Reconcile this matrix with a full local inventory and content review before presenting the classification as comprehensive proof.
 - Educational graph storage/traversal remains a legitimate V06/C06 topic; a curated concept/decision graph for Tycho is **not required**. Search/MCP/deployment infrastructure work is excluded from this manuscript completion gate.
 
@@ -28,7 +28,7 @@
 | V01/C03 — Quality attributes and trade-offs | D | [Technical page](../book/application/quality-drivers-and-architecture-views.md) | Deepen systematic quality conflict evaluation and acceptance across stakeholder perspectives. |
 | V01/C04 — Evidence, hypotheses and architecture experiments | D | [New architecture evidence hypotheses and experiments chapter](../book/application/architecture-evidence-hypotheses-and-experiments.md) | Bounded hypothesis/evidence classes, controlled experiments and original failure/negative-test cases; review pending. |
 | V01/C05 — Architecture descriptions and decision records | D | [New architecture views and decision records chapter](../book/application/architecture-views-and-decision-records.md) | Source-bounded arc42 context/static/runtime/deployment and ADR coherence with synthetic diagrams; review pending. |
-| V01/C06 — Capacity, operational constraints and total cost | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Add end-to-end total-cost and team/operations hard-gate comparisons. |
+| V01/C06 — Capacity, operational constraints and total cost | D | [Focused draft](../book/application/operational-constraints-and-total-cost-gates.md) | Original operating/ownership/cost gate chapter; no accepted policy or real cost estimate. |
 
 ### V02 — Application boundaries and interaction contracts
 
@@ -40,16 +40,16 @@
 | V02/C04 — SOA, microservices and distributed boundaries | D | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Deepen SOA versus microservices decisions with independent deployment conditions. |
 | V02/C05 — Public APIs, HTTP/RPC and compatibility | D | [New chapter draft](../book/application/http-rpc-contracts-and-compatibility.md) | Newly written; pending independent technical review, full local verification and final V02 chapter/page assembly. |
 | V02/C06 — Integration adapters and anti-corruption boundaries | D | [New anti-corruption adapters chapter](../book/application/anti-corruption-adapters-and-coexistence.md) | Original semantic mappings, lost-acknowledgment contract and migration tests; review pending. |
-| V02/C07 — Authorization boundaries and multitenancy | P | [Technical page](../book/security/identity-authorization-and-isolation.md) | Move/link ownership-specific multitenancy boundaries without duplicating security chapter. |
+| V02/C07 — Authorization boundaries and multitenancy | D | [Focused draft](../book/application/authorization-boundaries-and-multitenancy.md) | OWASP/tenancy model plus original isolation/negative tests; no security assessment. |
 
 ### V03 — Execution models, concurrency and flow control
 
 | Planned chapter | Coverage | Observed primary material | Outstanding work |
 |---|---|---|---|
-| V03/C01 — Threads, tasks and coordination | P | [Technical page](../book/execution/platform-threads-executors-and-virtual-threads.md) | Clarify concurrency primitives, cancellation, contention and work-queue ownership. |
+| V03/C01 — Threads, tasks and coordination | D | [Focused draft](../book/execution/threads-tasks-structured-coordination.md) | Java 25 executor/structured concurrency preview with task/interrupt limits; no runtime tests. |
 | V03/C02 — Java execution and virtual threads | D | [Technical page](../book/execution/platform-threads-executors-and-virtual-threads.md) | Retain JDK-scoped virtual-thread contraindications and downstream capacity tests. |
 | V03/C03 — Reactive streams, demand and cancellation | D | [Technical page](../book/execution/reactor-webflux-r2dbc-and-backpressure.md) | Complete demand, scheduling and end-to-end backpressure decision examples. |
-| V03/C04 — Asynchronous APIs and streaming | P | [Technical page](../book/execution/reactor-webflux-r2dbc-and-backpressure.md) | Add explicit async API/protocol streaming/cancellation and deadline interoperability. |
+| V03/C04 — Asynchronous APIs and streaming | D | [Focused draft](../book/execution/asynchronous-apis-streaming-and-cancellation.md) | gRPC/Reactive Streams 1.0.4 flow and cancellation semantics; no streaming integration run. |
 | V03/C05 — Thread, connection and buffer pools | D | [Technical page](../book/scaling/connection-pools-hikaricp-pgbouncer.md) | Integrate thread, connection and buffer budgets into one cross-layer model. |
 | V03/C06 — Memory, GC, CPU and blocking diagnostics | D | [New diagnosis chapter](../book/execution/cpu-memory-gc-and-blocking-diagnostics.md) | Source-bound JVM profiling and original symptom matrix; pending independent/editorial validation. |
 
@@ -58,7 +58,7 @@
 | Planned chapter | Coverage | Observed primary material | Outstanding work |
 |---|---|---|---|
 | V04/C01 — Time, causality and ordering | D | [Technical page](../book/distributed/causality-ordering-and-consensus.md) | Maintain separate causal-order guarantees and counterexamples. |
-| V04/C02 — Replication, consensus and leader changes | P | [Technical page](../book/distributed/causality-ordering-and-consensus.md) | Expand replication/leader changes, quorum failure assumptions and safety/liveness distinction. |
+| V04/C02 — Replication, consensus and leader changes | D | [Focused draft](../book/distributed/replication-consensus-and-leader-change.md) | Raft/etcd quorum and failure model with synthetic partitions; no cluster tests. |
 | V04/C03 — Consistency and distributed transactions | D | [Technical page](../book/distributed/transaction-isolation-and-sagas.md) | Test invariant scope and real cross-boundary limitations of transaction choices. |
 | V04/C04 — Retries, idempotency and duplicate effects | D | [Technical page](../book/distributed/transactional-outbox-and-idempotency.md) | Preserve scoped idempotency identities and duplicate-effect failure cases. |
 | V04/C05 — Outbox, inbox, sagas and durable workflows | D | [Technical page](../book/distributed/transactional-outbox-and-idempotency.md) | Integrate saga ownership and durable-workflow recovery without canonical duplication. |
@@ -87,8 +87,8 @@
 | V06/C03 — Lexical full-text indexing and ranking | D | [Technical page](../book/search/lexical-indexing-bm25-and-sql-fts.md) | Retain query analyzer, BM25 and index-update/version trade-offs. |
 | V06/C04 — Vector embeddings and nearest-neighbor retrieval | D | [Technical page](../book/search/vector-hnsw-faiss-pgvector.md) | Expand embedding drift, exact baseline and filtered ANN limitations. |
 | V06/C05 — Hybrid retrieval and reranking | D | [Technical page](../book/search/hybrid-ranking-graph-and-evaluation.md) | Extend hybrid fusion/rerank falsifiable comparisons. |
-| V06/C06 — Graph relationships and traversal | P | [Technical page](../book/search/hybrid-ranking-graph-and-evaluation.md) | Graph models are an educational topic only; add graph data/queries without building a curated Tycho graph. |
-| V06/C07 — Retrieval evaluation and index lifecycle | P | [Technical page](../book/search/hybrid-ranking-graph-and-evaluation.md) | Give retrieval evaluation and index lifecycle dedicated canonical treatment and sample protocols. |
+| V06/C06 — Graph relationships and traversal | D | [Focused draft](../book/search/graph-data-models-and-traversal.md) | Cypher graph theory and bounded traversal; NO curated Tycho graph infrastructure. |
+| V06/C07 — Retrieval evaluation and index lifecycle | D | [Focused draft](../book/search/retrieval-evaluation-and-index-lifecycle.md) | TREC/BEIR judgment methods and index validity; no built index or benchmark. |
 
 ### V07 — Performance, scale and resilience under load
 
@@ -141,7 +141,7 @@
 ## Content remediation recorded in this branch
 
 - **Nine original new draft chapters moved from M to D (not accepted):** V02/C05, V03/C06, V07/C04/C06, V09/C06/C07, V10/C01/C02/C06.  V02/C05 details:  new original [HTTP and RPC compatibility chapter](../book/application/http-rpc-contracts-and-compatibility.md), using independently verified RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers documentation. Its application landing now links to it. Other new drafts cover diagnostics, tail latency, autoscaling, incident response, agent-access safety, requirements/workload decisions, legacy baselines and progressive reading routes. No executable client/provider tests, independent review or full-repository validation has run; publication completeness is not claimed.
-- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **62 D / 7 P / 0 M**, all still subject to inventory and quality review.
+- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **69 D / 0 P / 0 M**, all still subject to inventory and quality review.
 
 ## 2026-10-19 additional recovery and overload coverage
 
@@ -177,6 +177,14 @@
 3. Deepen P subjects; for D subjects perform a chapter-specific acceptance review and extend when the chapter question is not completely answered.
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
+
+## 2026-10-19 content-coverage milestone — all 69 proposed topics have direct prose
+
+- The last seven topics previously assessed as partial now have dedicated original research chapters: **V01/C06, V02/C07, V03/C01, V03/C04, V04/C02, V06/C06 and V06/C07**, in addition to the seven earlier P→D changes this evening. They are linked from their topic landings.
+- **Final topical crosswalk classification for this branch: 69 D / 0 P / 0 M, 69 unique chapter IDs** against the 10-volume proposed outline. **This is NOT evidence that 69 individual final chapter units have been assembled, independently validated or accepted.** Many preexisting articles cover several proposed chapter questions; completeness, depth, provenance, primary source versions, overlap and narrative quality still require real inspection and consolidation.
+- These page additions are all **substantive manuscript drafts** with original fictional examples, explicitly bounded claims and public references. No real system test, benchmark, generated index, graph deployment, Java program, runtime trace, cluster/restore drill or independent domain review was performed.
+- The project continues to **exclude a manually curated Tycho concept graph**; V06/C06 is a technical subject about graph data modeling and traversal. V06/C07 is an educational overview of retrieval evaluation, not implementation of a search/MCP service.
+- The next mandatory step of #213 is a **source-by-source editorial acceptance and exhaustive file inventory**, not inflating chapter counts or closing the issue based on topical coverage. Final 10-volume / 69-chapter / bounded-page publication under #214 must use a verified canonical-owner and reversible content migration map.
 
 ## 2026-10-19 evening: seven more substantive book chapters
 
