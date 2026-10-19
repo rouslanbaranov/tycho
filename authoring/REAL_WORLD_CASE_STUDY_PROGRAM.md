@@ -49,6 +49,7 @@ Gate M9-F (acceptance): local source/license review; independent technical/seman
 | E16-06 | Cross-company decision synthesis | ≥6 evidence-backed comparison/application/contraindication pages + transition/ADR exercises | E16-02..05 |
 | E16-07 | Case identity/provenance/retrieval contract | Metadata mapping, typed relationships, searchable dimensions, stable citations, local routing/evaluation fixtures, later adapter points | E16-01 and stable K10–K20 contracts |
 | E16-08 | Audit and milestone acceptance | 30+ hard questions, contradiction tests, independent technical review, source/version audit, M9 evidence report | E16-02..07 |
+| E16-09 | Create the actual GitHub milestone | New native M9 milestone, associate E16-01..08 and epic, verify URL (GitHub connector currently cannot create milestones) | E16 epic |
 
 Recommended milestones across work: 8 Netflix accepted cases; 12 cross-company accepted cases; 6 comparison pages; ≥30 evaluation questions. These are **targets**, not work already produced.
 
@@ -86,3 +87,18 @@ Comparative exemplars:
 ## Definition of completion
 
 Do not close the proposed milestone until the required **actual book case pages**, cross-company synthesis, tests, provenance/rights review, verification matrix and reviewer disposition are recorded. This planning document and source discovery are not a chapter corpus and should never close those issues by themselves.
+
+## GitHub execution records (created 2026-10-19)
+
+- [Epic E16 #113](https://github.com/rouslanbaranov/tycho/issues/113)
+- [E16-01 #114](https://github.com/rouslanbaranov/tycho/issues/114) source verification
+- [E16-02 #115](https://github.com/rouslanbaranov/tycho/issues/115) Netflix Java/Spring/reactive
+- [E16-03 #116](https://github.com/rouslanbaranov/tycho/issues/116) Netflix JVM/performance failures
+- [E16-04 #117](https://github.com/rouslanbaranov/tycho/issues/117) Netflix cloud/data/orchestration
+- [E16-05 #118](https://github.com/rouslanbaranov/tycho/issues/118) additional-company cases
+- [E16-06 #119](https://github.com/rouslanbaranov/tycho/issues/119) comparison and decision transfer
+- [E16-07 #120](https://github.com/rouslanbaranov/tycho/issues/120) provenance/retrieval integration design
+- [E16-08 #121](https://github.com/rouslanbaranov/tycho/issues/121) acceptance and review
+- [E16-09 #122](https://github.com/rouslanbaranov/tycho/issues/122) **native M9 milestone creation and issue assignment still required**
+
+These are linked GitHub issues. Native GitHub sub-issue parenting and M9 milestone assignments have **not** been applied by this plan; references in descriptions carry ownership until those metadata operations are available.
