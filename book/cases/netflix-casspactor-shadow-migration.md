@@ -77,6 +77,37 @@ Adopt a layered backup-reader + model-specific transformation approach when meta
 
 **Stop or reverse** when SSTable manifests cannot establish a stable snapshot, old/new comparisons use different TTL/consistency windows, wide-partition execution still OOMs, fallback produces stale customer tables, or the controller cannot guarantee one authoritative publication of a job's final artifact. Track both functional parity and operational fallback, not only new connector runtime. A [related data-authority decision guide](decisions/data-migration-correctness.md) contrasts this immutable/batch style with mutable Stripe subscriptions and streaming Meta ingestion.
 
+## Migration scale, ownership and unmeasured effects
+
+The May 2026 source (N11, **Casspactor: The Engine We Outgrew**) reports roughly **1,200 movement jobs a day** and approximately **3 PB transferred** by the old connector. These are the publisher's workload observations, not the volume of one job, the size of the Cassandra fleet or a proven speedup. Existing consumers used Data Bridge job definitions and Iceberg table outputs. Maintaining both interfaces was therefore an explicit compatibility requirement: replacing a connector without changing the way consumers request data and interpret results.
+
+The new read layer combines Cassandra Analytics with backup metadata from object storage. This is a change in the **source of backup truth**, not proof of transactionality across all Cassandra writes and destination Iceberg commits. Abstraction-specific transformations operate over Spark DataFrames; the reported benefits include handling skewed partitions, avoiding repeated intermediate output and supporting historical schema/topology snapshots. The article's **dollar-millions** savings description lacks cost breakdown and is not an independent cost benchmark.
+
+## Four distinct consistency proofs for another platform
+
+A comparable migration must specify more than the set-equality formula, because different data paths can agree on the wrong result:
+
+| Verification dimension | What to compare | Adversarial case |
+|---|---|---|
+| **Backup input identity** | Manifest revision, SSTable coverage, schema/topology and reference time | Connector A reads a later backup after topology change |
+| **Logical row identity** | Both old-minus-new and new-minus-old rows, including schema-normalized keys | Equal row counts hide duplicates and omissions |
+| **Meaning over time** | TTL reference instant, tombstones, expiring rows, ordering and consistency rule | Same physical input interpreted at different expiration times |
+| **Consumer contract** | Iceberg table schema, data types, partition layout and downstream query outputs | Row equality passes while nullability or type mapping breaks clients |
+
+N11 specifically reports investigating differences involving TTL reference times, consistency levels, backup choice and logic. The table's adversarial tests and normalization procedure are **original Tycho guidance**, not an assertion that the authors ran every test listed.
+
+## Fallback is not the same as zero failure
+
+The reported Maestro Decider selects the connector by cohort and execution parameters, with a fallback to Casspactor after a new-connector failure. This makes a connector change locally reversible while the old path remains deployable. It **does not** prove bounded total job runtime, successful completion during an object-storage outage affecting both paths, or safe retirement without a replacement fallback.
+
+For a hypothetical platform, track: primary attempt count, fallback count and cause, job completion by cohort, artifact-quality diffs, p95/p99 job duration, processing cost and the last safe rollback date. Inject malformed backup metadata, a wide partition, partial Spark executor failure, stale snapshot and the case where both connectors produce different but nonempty outputs. Escalate unresolved mismatches; do not automatically choose legacy merely because the old implementation is familiar.
+
+## Legacy removal gate and oppositional decision
+
+A **smaller alternative** is to strengthen Casspactor's backup manifest selection, add a dedicated skew handler and retain existing interfaces when the connector family is narrow. A **layered replacement** becomes compelling only when multiple data models need different transforms and the shared old engine repeatedly fails correctness/scale boundaries. The choice should follow observable source manifest failures, intermediate-storage cost and repeatable comparison results rather than the company label.
+
+Retire the old connector only after every active job cohort has a supported replacement and the recovery path is tested *without* that old connector. In N11, current and future capability statements are distinct: new Key Value and Time Series connectors are reported; a bulk Cassandra-ingest direction is **future work**. Independent reviewer #121 still must verify the dated claims; neither this page nor its original analytical tests certify the migration's universal correctness.
+
 ## Decision transfer and contraindications
 
 The crucial design is **stable customer contract + shadow evidence + configurable fallback**, not a compulsory adoption of Spark. If legacy output is demonstrably incorrect, equality with old output can replicate bugs; discrepancies must be adjudicated against independent semantics and business invariants before accepting either side. If data is mutable during snapshot capture, prove comparable transaction/snapshot boundaries; otherwise C−M is noisy rather than diagnostic.
