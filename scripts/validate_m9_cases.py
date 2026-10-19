@@ -212,10 +212,11 @@ def validate_evidence_facet_pilot(
             "adjudication": "NOT DONE"}
 
 
-def read_case_catalog() -> tuple[set[str], list[Path]]:
-    page_index = (CASE_DIR / "README.md").read_text(encoding="utf-8")
+def read_case_catalog(root: Path = ROOT) -> tuple[set[str], list[Path]]:
+    case_dir = root / "book/cases"
+    page_index = (case_dir / "README.md").read_text(encoding="utf-8")
     local = [
-        CASE_DIR / path.split("#", 1)[0]
+        case_dir / path.split("#", 1)[0]
         for path in re.findall(r"\]\(([^)#]+\.md(?:#[^)]*)?)\)", page_index)
         if not path.startswith("../")
     ]
@@ -248,19 +249,19 @@ def read_case_catalog() -> tuple[set[str], list[Path]]:
 
 
 def check(root: Path = ROOT) -> dict:
-    schema = json_read(PROPOSED_SCHEMA)
+    schema = json_read(root / "authoring/cases/case-record.schema.json")
     require(schema["$schema"].endswith("2020-12/schema"), "unexpected schema dialect")
     assert schema["$id"].startswith("urn:tycho:m9:")
-    raw_sources = SOURCE_REGISTER.read_text(encoding="utf-8")
+    raw_sources = (root / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8")
     registered = set(re.findall(r"^\| ((?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}) \|", raw_sources, flags=re.M))
     require(len(registered) == 43, "source register not 43 candidates")
-    ids, links = read_case_catalog()
-    examples = json_read(SAMPLES)
+    ids, links = read_case_catalog(root)
+    examples = json_read(root / "authoring/cases/examples/case-records.json")
     require(isinstance(examples, list) and len(examples) >= 2, "missing portable examples")
     for item in examples:
         validate_record(item, schema, registered)
         require(item["case_id"] in ids, "sample case missing from book")
-    query_data = json_read(QUERIES)
+    query_data = json_read(root / "tests/fixtures/m9-case-queries.json")
     counts = validate_fixtures(query_data, ids, registered)
     facet_pilot = validate_evidence_facet_pilot(
         json_read(root / "tests/fixtures/m9-q042-evidence-facets.proposed.json"),
@@ -271,6 +272,7 @@ def check(root: Path = ROOT) -> dict:
     except ImportError:
         pass
     else:
+        jsonschema.Draft202012Validator.check_schema(schema)
         checker = jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker())
         for i, item in enumerate(examples):
             errors = list(checker.iter_errors(item))
@@ -282,11 +284,11 @@ def check(root: Path = ROOT) -> dict:
             "retrieval_execution": "NOT RUN", "independent_review": "NOT RUN"}
 
 
-def self_test() -> None:
-    schema = json_read(PROPOSED_SCHEMA)
+def self_test(root: Path = ROOT) -> None:
+    schema = json_read(root / "authoring/cases/case-record.schema.json")
     refs = set(re.findall(r"^\| ((?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}) \|",
-                          SOURCE_REGISTER.read_text(encoding="utf-8"), flags=re.M))
-    good = json_read(SAMPLES)[0]
+                          (root / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8"), flags=re.M))
+    good = json_read(root / "authoring/cases/examples/case-records.json")[0]
     validate_record(good, schema, refs)
     failures = 0
     malformed_records = []
@@ -373,12 +375,16 @@ def self_test() -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--self-test", action="store_true")
+    parser.add_argument("--root", type=Path, default=ROOT,
+                        help="Pinned checkout/snapshot root (default: repository containing this script)")
     args = parser.parse_args()
     try:
+        root = args.root.resolve()
+        require(root.is_dir(), "--root must reference a directory")
         if args.self_test:
-            self_test()
+            self_test(root)
         else:
-            print(json.dumps(check(), indent=2))
+            print(json.dumps(check(root), indent=2))
     except (ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
         print("M9 validation FAILED: " + str(error), file=sys.stderr)
         raise SystemExit(1)
