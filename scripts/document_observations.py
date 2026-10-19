@@ -45,7 +45,10 @@ def public_https(value):
             ip = ipaddress.ip_address(u.hostname)
         except ValueError:
             pass
-        return ip is None and u.port in (None, 443)
+        host = u.hostname.lower().rstrip('.')
+        return (ip is None and host not in {'localhost'}
+                and not host.endswith(('.local', '.internal', '.test', '.example'))
+                and u.port in (None, 443))
     except ValueError:
         return False
 
@@ -140,10 +143,13 @@ def acquire(entry, *, timeout=20, opener=None):
     try:
         response = opener.open(request, timeout=timeout)
     except HTTPError as exc:
+        error_url = exc.geturl()
+        require(public_https(error_url) and urlsplit(error_url).hostname in hosts,
+                'HTTP error came from unexpected redirect origin')
         if exc.code not in (401, 403, 404, 410, 429):
             raise ValueError("Document fetch error; no record written: HTTP " + str(exc.code)) from exc
         return {
-            "source_id": entry["id"], "requested_url": start_url, "resolved_url": start_url,
+            "source_id": entry["id"], "requested_url": start_url, "resolved_url": error_url,
             "fetched_at": stamp, "source_version": entry["version"],
             "http_status": exc.code, "state": "unavailable", "content_type": None,
             "bytes_read": 0, "content_sha256": None, "etag": None, "last_modified": None,
