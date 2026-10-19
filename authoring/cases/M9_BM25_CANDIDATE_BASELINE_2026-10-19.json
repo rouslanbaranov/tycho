@@ -1,0 +1,1211 @@
+{
+  "experiment": "Offline lexical candidate ranking baseline; NOT deployed MCP, NOT answer correctness",
+  "date": "2026-10-19",
+  "case_docs": 29,
+  "fixture_count": 60,
+  "tokenizer": "lowercase ASCII alphanumeric tokens length >=3 minus fixed stopwords; strip link destinations and case IDs",
+  "ranker": "BM25 k1=1.2 b=0.75; unique query tokens; ties by case ID",
+  "source_path": "book/cases/*.md",
+  "fixture_sha": "c0c3c5653a0aa512e64fea2048550a2fb8759125",
+  "metrics_all": {
+    "queries": 60,
+    "with_expected_case": 57,
+    "hit_at_1": 48,
+    "hit_rate_at_1": 0.8421,
+    "gold_pair_recall_at_1": 0.7164,
+    "hit_at_3": 55,
+    "hit_rate_at_3": 0.9649,
+    "gold_pair_recall_at_3": 0.8955,
+    "hit_at_5": 55,
+    "hit_rate_at_5": 0.9649,
+    "gold_pair_recall_at_5": 0.8955,
+    "hit_at_10": 56,
+    "hit_rate_at_10": 0.9825,
+    "gold_pair_recall_at_10": 0.9552,
+    "mrr": 0.8993
+  },
+  "metrics_by_behavior": {
+    "answerable": {
+      "queries": 21,
+      "with_expected_case": 21,
+      "hit_at_1": 19,
+      "hit_rate_at_1": 0.9048,
+      "gold_pair_recall_at_1": 0.6786,
+      "hit_at_3": 20,
+      "hit_rate_at_3": 0.9524,
+      "gold_pair_recall_at_3": 0.8214,
+      "hit_at_5": 20,
+      "hit_rate_at_5": 0.9524,
+      "gold_pair_recall_at_5": 0.8214,
+      "hit_at_10": 20,
+      "hit_rate_at_10": 0.9524,
+      "gold_pair_recall_at_10": 0.8929,
+      "mrr": 0.925
+    },
+    "reject_false_claim": {
+      "queries": 26,
+      "with_expected_case": 25,
+      "hit_at_1": 23,
+      "hit_rate_at_1": 0.92,
+      "gold_pair_recall_at_1": 0.8214,
+      "hit_at_3": 25,
+      "hit_rate_at_3": 1,
+      "gold_pair_recall_at_3": 0.9643,
+      "hit_at_5": 25,
+      "hit_rate_at_5": 1,
+      "gold_pair_recall_at_5": 0.9643,
+      "hit_at_10": 25,
+      "hit_rate_at_10": 1,
+      "gold_pair_recall_at_10": 1,
+      "mrr": 0.9533
+    },
+    "insufficient_evidence": {
+      "queries": 13,
+      "with_expected_case": 11,
+      "hit_at_1": 6,
+      "hit_rate_at_1": 0.5455,
+      "gold_pair_recall_at_1": 0.5455,
+      "hit_at_3": 10,
+      "hit_rate_at_3": 0.9091,
+      "gold_pair_recall_at_3": 0.9091,
+      "hit_at_5": 10,
+      "hit_rate_at_5": 0.9091,
+      "gold_pair_recall_at_5": 0.9091,
+      "hit_at_10": 11,
+      "hit_rate_at_10": 1,
+      "gold_pair_recall_at_10": 1,
+      "mrr": 0.7273
+    }
+  },
+  "answerable_hit_at_3_misses": [
+    {
+      "id": "m9-q042",
+      "expected": [
+        {
+          "id": "case.netflix.casspactor-to-analytics",
+          "rank": 15
+        },
+        {
+          "id": "case.stripe.online-subscriptions",
+          "rank": 11
+        }
+      ],
+      "top3": [
+        "case.spotify.honk-dataset-consumer-migration",
+        "case.linkedin.kafka-tier-audit",
+        "case.meta.ingestion-shadow-lifecycle"
+      ]
+    }
+  ],
+  "per_query": [
+    {
+      "id": "m9-q001",
+      "behavior": "insufficient_evidence",
+      "expected": [
+        "case.netflix.java-platform-convergence"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.java-platform-convergence",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.java-platform-convergence",
+        "case.netflix.hotspot-sharing-cpu-scaling",
+        "case.netflix.grpc-cpu-workerpool-loom-regression"
+      ]
+    },
+    {
+      "id": "m9-q002",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.java-platform-convergence"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.java-platform-convergence",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.java-platform-convergence",
+        "case.netflix.dgs-spring-graphql-convergence",
+        "case.meta.ingestion-shadow-lifecycle"
+      ]
+    },
+    {
+      "id": "m9-q003",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.java-platform-convergence"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.java-platform-convergence",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.java-platform-convergence",
+        "case.netflix.casspactor-to-analytics",
+        "case.netflix.chaos-kong-regional-failover"
+      ]
+    },
+    {
+      "id": "m9-q004",
+      "behavior": "answerable",
+      "expected": [
+        "case.netflix.cloud-rearchitecture-2008-2016",
+        "case.shopify.modular-monolith"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.cloud-rearchitecture-2008-2016",
+          "rank": 6
+        },
+        {
+          "id": "case.shopify.modular-monolith",
+          "rank": 3
+        }
+      ],
+      "top3": [
+        "case.uber.doma-domains",
+        "case.netflix.java-platform-convergence",
+        "case.shopify.modular-monolith"
+      ]
+    },
+    {
+      "id": "m9-q005",
+      "behavior": "insufficient_evidence",
+      "expected": [
+        "case.netflix.cloud-rearchitecture-2008-2016"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.cloud-rearchitecture-2008-2016",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.cloud-rearchitecture-2008-2016",
+        "case.netflix.durable-data-project-identity",
+        "case.netflix.zuul2-nonblocking-gateway"
+      ]
+    },
+    {
+      "id": "m9-q006",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.uber.doma-domains"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.uber.doma-domains",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.uber.doma-domains",
+        "case.uber.cinnamon-database-overload-control",
+        "case.netflix.generational-zgc-vs-g1"
+      ]
+    },
+    {
+      "id": "m9-q007",
+      "behavior": "answerable",
+      "expected": [
+        "case.shopify.modular-monolith",
+        "case.uber.doma-domains"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.shopify.modular-monolith",
+          "rank": 1
+        },
+        {
+          "id": "case.uber.doma-domains",
+          "rank": 19
+        }
+      ],
+      "top3": [
+        "case.shopify.modular-monolith",
+        "case.shopify.component-governance",
+        "case.netflix.cloud-rearchitecture-2008-2016"
+      ]
+    },
+    {
+      "id": "m9-q008",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.shopify.component-governance"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.shopify.component-governance",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.shopify.component-governance",
+        "case.shopify.modular-monolith",
+        "case.shopify.helix-checkpoint-gates"
+      ]
+    },
+    {
+      "id": "m9-q009",
+      "behavior": "insufficient_evidence",
+      "expected": [
+        "case.shopify.component-governance"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.shopify.component-governance",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.shopify.component-governance",
+        "case.shopify.helix-checkpoint-gates",
+        "case.spotify.tech-migrations-long-tail"
+      ]
+    },
+    {
+      "id": "m9-q010",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.zuul2-nonblocking-gateway"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.zuul2-nonblocking-gateway",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.zuul2-nonblocking-gateway",
+        "case.netflix.java-platform-convergence",
+        "case.netflix.dgs-spring-graphql-convergence"
+      ]
+    },
+    {
+      "id": "m9-q011",
+      "behavior": "answerable",
+      "expected": [
+        "case.netflix.zuul2-nonblocking-gateway"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.zuul2-nonblocking-gateway",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.zuul2-nonblocking-gateway",
+        "case.netflix.generational-zgc-vs-g1",
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ]
+    },
+    {
+      "id": "m9-q012",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.zuul2-nonblocking-gateway"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.zuul2-nonblocking-gateway",
+          "rank": 3
+        }
+      ],
+      "top3": [
+        "case.linkedin.kafka-tier-audit",
+        "case.discord.search-index-cells",
+        "case.netflix.zuul2-nonblocking-gateway"
+      ]
+    },
+    {
+      "id": "m9-q013",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.java21-virtual-thread-carrier-starvation",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.java21-virtual-thread-carrier-starvation",
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.java-platform-convergence"
+      ]
+    },
+    {
+      "id": "m9-q014",
+      "behavior": "insufficient_evidence",
+      "expected": [
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.java21-virtual-thread-carrier-starvation",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.java21-virtual-thread-carrier-starvation",
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.generational-zgc-vs-g1"
+      ]
+    },
+    {
+      "id": "m9-q015",
+      "behavior": "insufficient_evidence",
+      "expected": [
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.java21-virtual-thread-carrier-starvation",
+          "rank": 2
+        }
+      ],
+      "top3": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.java21-virtual-thread-carrier-starvation",
+        "case.netflix.java-platform-convergence"
+      ]
+    },
+    {
+      "id": "m9-q016",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.generational-zgc-vs-g1"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.generational-zgc-vs-g1",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.generational-zgc-vs-g1",
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ]
+    },
+    {
+      "id": "m9-q017",
+      "behavior": "answerable",
+      "expected": [
+        "case.netflix.generational-zgc-vs-g1"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.generational-zgc-vs-g1",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.generational-zgc-vs-g1",
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ]
+    },
+    {
+      "id": "m9-q018",
+      "behavior": "insufficient_evidence",
+      "expected": [
+        "case.netflix.generational-zgc-vs-g1"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.generational-zgc-vs-g1",
+          "rank": 6
+        }
+      ],
+      "top3": [
+        "case.cloudflare.super-slurper-queues",
+        "case.netflix.zuul2-nonblocking-gateway",
+        "case.netflix.hotspot-sharing-cpu-scaling"
+      ]
+    },
+    {
+      "id": "m9-q019",
+      "behavior": "answerable",
+      "expected": [
+        "case.netflix.hotspot-sharing-cpu-scaling"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.hotspot-sharing-cpu-scaling",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.hotspot-sharing-cpu-scaling",
+        "case.netflix.zuul2-nonblocking-gateway",
+        "case.netflix.grpc-cpu-workerpool-loom-regression"
+      ]
+    },
+    {
+      "id": "m9-q020",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.hotspot-sharing-cpu-scaling"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.hotspot-sharing-cpu-scaling",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.hotspot-sharing-cpu-scaling",
+        "case.netflix.java21-virtual-thread-carrier-starvation",
+        "case.netflix.java-platform-convergence"
+      ]
+    },
+    {
+      "id": "m9-q021",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.dgs-spring-graphql-convergence"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.dgs-spring-graphql-convergence",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.dgs-spring-graphql-convergence",
+        "case.netflix.generational-zgc-vs-g1",
+        "case.netflix.java-platform-convergence"
+      ]
+    },
+    {
+      "id": "m9-q022",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.dgs-spring-graphql-convergence"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.dgs-spring-graphql-convergence",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.dgs-spring-graphql-convergence",
+        "case.netflix.generational-zgc-vs-g1",
+        "case.netflix.java-platform-convergence"
+      ]
+    },
+    {
+      "id": "m9-q023",
+      "behavior": "answerable",
+      "expected": [
+        "case.netflix.dgs-spring-graphql-convergence"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.dgs-spring-graphql-convergence",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.dgs-spring-graphql-convergence",
+        "case.netflix.java-platform-convergence",
+        "case.netflix.zuul2-nonblocking-gateway"
+      ]
+    },
+    {
+      "id": "m9-q024",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.cloud-rearchitecture-2008-2016",
+        "case.shopify.modular-monolith"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.cloud-rearchitecture-2008-2016",
+          "rank": 1
+        },
+        {
+          "id": "case.shopify.modular-monolith",
+          "rank": 6
+        }
+      ],
+      "top3": [
+        "case.netflix.cloud-rearchitecture-2008-2016",
+        "case.netflix.chaos-kong-regional-failover",
+        "case.uber.doma-domains"
+      ]
+    },
+    {
+      "id": "m9-q025",
+      "behavior": "answerable",
+      "expected": [
+        "case.netflix.casspactor-to-analytics"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.casspactor-to-analytics",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.casspactor-to-analytics",
+        "case.netflix.durable-data-project-identity",
+        "case.netflix.dgs-spring-graphql-convergence"
+      ]
+    },
+    {
+      "id": "m9-q026",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.casspactor-to-analytics"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.casspactor-to-analytics",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.casspactor-to-analytics",
+        "case.netflix.durable-data-project-identity",
+        "case.meta.ingestion-shadow-lifecycle"
+      ]
+    },
+    {
+      "id": "m9-q027",
+      "behavior": "answerable",
+      "expected": [
+        "case.netflix.dynamic-timeseries-partition-splits"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.dynamic-timeseries-partition-splits",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.dynamic-timeseries-partition-splits",
+        "case.netflix.casspactor-to-analytics",
+        "case.discord.cassandra-scylladb-messages"
+      ]
+    },
+    {
+      "id": "m9-q028",
+      "behavior": "insufficient_evidence",
+      "expected": [
+        "case.netflix.cloud-rearchitecture-2008-2016"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.cloud-rearchitecture-2008-2016",
+          "rank": 3
+        }
+      ],
+      "top3": [
+        "case.netflix.durable-data-project-identity",
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.cloud-rearchitecture-2008-2016"
+      ]
+    },
+    {
+      "id": "m9-q029",
+      "behavior": "answerable",
+      "expected": [
+        "case.stripe.online-subscriptions"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.stripe.online-subscriptions",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.stripe.online-subscriptions",
+        "case.meta.ingestion-shadow-lifecycle",
+        "case.spotify.honk-dataset-consumer-migration"
+      ]
+    },
+    {
+      "id": "m9-q030",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.stripe.online-subscriptions"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.stripe.online-subscriptions",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.stripe.online-subscriptions",
+        "case.uber.mezzanine-trip-data",
+        "case.meta.tao-social-graph-serving"
+      ]
+    },
+    {
+      "id": "m9-q031",
+      "behavior": "answerable",
+      "expected": [
+        "case.uber.mezzanine-trip-data",
+        "case.stripe.online-subscriptions"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.uber.mezzanine-trip-data",
+          "rank": 2
+        },
+        {
+          "id": "case.stripe.online-subscriptions",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.stripe.online-subscriptions",
+        "case.uber.mezzanine-trip-data",
+        "case.uber.cinnamon-database-overload-control"
+      ]
+    },
+    {
+      "id": "m9-q032",
+      "behavior": "answerable",
+      "expected": [
+        "case.discord.cassandra-scylladb-messages"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.discord.cassandra-scylladb-messages",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.discord.cassandra-scylladb-messages",
+        "case.uber.cinnamon-database-overload-control",
+        "case.discord.search-index-cells"
+      ]
+    },
+    {
+      "id": "m9-q033",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.discord.cassandra-scylladb-messages"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.discord.cassandra-scylladb-messages",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.discord.cassandra-scylladb-messages",
+        "case.discord.search-index-cells",
+        "case.netflix.casspactor-to-analytics"
+      ]
+    },
+    {
+      "id": "m9-q034",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.discord.search-index-cells",
+        "case.discord.cassandra-scylladb-messages"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.discord.search-index-cells",
+          "rank": 1
+        },
+        {
+          "id": "case.discord.cassandra-scylladb-messages",
+          "rank": 2
+        }
+      ],
+      "top3": [
+        "case.discord.search-index-cells",
+        "case.discord.cassandra-scylladb-messages",
+        "case.uber.cinnamon-database-overload-control"
+      ]
+    },
+    {
+      "id": "m9-q035",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.airbnb.jvm-bazel"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.airbnb.jvm-bazel",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.airbnb.jvm-bazel",
+        "case.uber.mezzanine-trip-data",
+        "case.netflix.cloud-rearchitecture-2008-2016"
+      ]
+    },
+    {
+      "id": "m9-q036",
+      "behavior": "answerable",
+      "expected": [
+        "case.airbnb.jvm-bazel"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.airbnb.jvm-bazel",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.airbnb.jvm-bazel",
+        "case.netflix.java-platform-convergence",
+        "case.netflix.chaos-kong-regional-failover"
+      ]
+    },
+    {
+      "id": "m9-q037",
+      "behavior": "insufficient_evidence",
+      "expected": [
+        "case.spotify.tech-migrations-long-tail"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.spotify.tech-migrations-long-tail",
+          "rank": 2
+        }
+      ],
+      "top3": [
+        "case.spotify.honk-dataset-consumer-migration",
+        "case.spotify.tech-migrations-long-tail",
+        "case.shopify.helix-checkpoint-gates"
+      ]
+    },
+    {
+      "id": "m9-q038",
+      "behavior": "answerable",
+      "expected": [
+        "case.spotify.tech-migrations-long-tail"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.spotify.tech-migrations-long-tail",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.spotify.tech-migrations-long-tail",
+        "case.spotify.honk-dataset-consumer-migration",
+        "case.shopify.helix-checkpoint-gates"
+      ]
+    },
+    {
+      "id": "m9-q039",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.meta.tao-social-graph-serving"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.meta.tao-social-graph-serving",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.meta.tao-social-graph-serving",
+        "case.uber.cinnamon-database-overload-control",
+        "case.meta.ingestion-shadow-lifecycle"
+      ]
+    },
+    {
+      "id": "m9-q040",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.linkedin.kafka-tier-audit"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.linkedin.kafka-tier-audit",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.linkedin.kafka-tier-audit",
+        "case.netflix.dynamic-timeseries-partition-splits",
+        "case.netflix.casspactor-to-analytics"
+      ]
+    },
+    {
+      "id": "m9-q041",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.cloudflare.super-slurper-queues"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.cloudflare.super-slurper-queues",
+          "rank": 2
+        }
+      ],
+      "top3": [
+        "case.netflix.java21-virtual-thread-carrier-starvation",
+        "case.cloudflare.super-slurper-queues",
+        "case.netflix.generational-zgc-vs-g1"
+      ]
+    },
+    {
+      "id": "m9-q042",
+      "behavior": "answerable",
+      "expected": [
+        "case.netflix.casspactor-to-analytics",
+        "case.stripe.online-subscriptions"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.casspactor-to-analytics",
+          "rank": 15
+        },
+        {
+          "id": "case.stripe.online-subscriptions",
+          "rank": 11
+        }
+      ],
+      "top3": [
+        "case.spotify.honk-dataset-consumer-migration",
+        "case.linkedin.kafka-tier-audit",
+        "case.meta.ingestion-shadow-lifecycle"
+      ]
+    },
+    {
+      "id": "m9-q043",
+      "behavior": "reject_false_claim",
+      "expected": [],
+      "expected_ranks": [],
+      "top3": [
+        "case.spotify.honk-dataset-consumer-migration",
+        "case.netflix.cloud-rearchitecture-2008-2016",
+        "case.netflix.hotspot-sharing-cpu-scaling"
+      ]
+    },
+    {
+      "id": "m9-q044",
+      "behavior": "insufficient_evidence",
+      "expected": [
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.java21-virtual-thread-carrier-starvation",
+          "rank": 2
+        }
+      ],
+      "top3": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.java21-virtual-thread-carrier-starvation",
+        "case.netflix.java-platform-convergence"
+      ]
+    },
+    {
+      "id": "m9-q045",
+      "behavior": "answerable",
+      "expected": [
+        "case.netflix.durable-data-project-identity"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.durable-data-project-identity",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.durable-data-project-identity",
+        "case.shopify.helix-checkpoint-gates",
+        "case.netflix.casspactor-to-analytics"
+      ]
+    },
+    {
+      "id": "m9-q046",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.durable-data-project-identity"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.durable-data-project-identity",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.durable-data-project-identity",
+        "case.netflix.cloud-rearchitecture-2008-2016",
+        "case.meta.ingestion-shadow-lifecycle"
+      ]
+    },
+    {
+      "id": "m9-q047",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.durable-data-project-identity"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.durable-data-project-identity",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.durable-data-project-identity",
+        "case.spotify.honk-dataset-consumer-migration",
+        "case.spotify.tech-migrations-long-tail"
+      ]
+    },
+    {
+      "id": "m9-q048",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.durable-data-project-identity"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.durable-data-project-identity",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.durable-data-project-identity",
+        "case.netflix.chaos-kong-regional-failover",
+        "case.netflix.casspactor-to-analytics"
+      ]
+    },
+    {
+      "id": "m9-q049",
+      "behavior": "answerable",
+      "expected": [
+        "case.uber.cinnamon-database-overload-control"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.uber.cinnamon-database-overload-control",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.uber.cinnamon-database-overload-control",
+        "case.uber.mezzanine-trip-data",
+        "case.uber.mysql-to-myrocks"
+      ]
+    },
+    {
+      "id": "m9-q050",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.uber.cinnamon-database-overload-control"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.uber.cinnamon-database-overload-control",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.uber.cinnamon-database-overload-control",
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.zuul2-nonblocking-gateway"
+      ]
+    },
+    {
+      "id": "m9-q051",
+      "behavior": "answerable",
+      "expected": [
+        "case.uber.cinnamon-database-overload-control"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.uber.cinnamon-database-overload-control",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.uber.cinnamon-database-overload-control",
+        "case.netflix.dynamic-timeseries-partition-splits",
+        "case.netflix.grpc-cpu-workerpool-loom-regression"
+      ]
+    },
+    {
+      "id": "m9-q052",
+      "behavior": "answerable",
+      "expected": [
+        "case.meta.ingestion-shadow-lifecycle"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.meta.ingestion-shadow-lifecycle",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.meta.ingestion-shadow-lifecycle",
+        "case.uber.mysql-to-myrocks",
+        "case.netflix.dynamic-timeseries-partition-splits"
+      ]
+    },
+    {
+      "id": "m9-q053",
+      "behavior": "insufficient_evidence",
+      "expected": [
+        "case.meta.ingestion-shadow-lifecycle"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.meta.ingestion-shadow-lifecycle",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.meta.ingestion-shadow-lifecycle",
+        "case.netflix.casspactor-to-analytics",
+        "case.netflix.grpc-cpu-workerpool-loom-regression"
+      ]
+    },
+    {
+      "id": "m9-q054",
+      "behavior": "answerable",
+      "expected": [
+        "case.meta.ingestion-shadow-lifecycle",
+        "case.stripe.online-subscriptions",
+        "case.netflix.casspactor-to-analytics"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.meta.ingestion-shadow-lifecycle",
+          "rank": 1
+        },
+        {
+          "id": "case.stripe.online-subscriptions",
+          "rank": 2
+        },
+        {
+          "id": "case.netflix.casspactor-to-analytics",
+          "rank": 9
+        }
+      ],
+      "top3": [
+        "case.meta.ingestion-shadow-lifecycle",
+        "case.stripe.online-subscriptions",
+        "case.meta.tao-social-graph-serving"
+      ]
+    },
+    {
+      "id": "m9-q055",
+      "behavior": "insufficient_evidence",
+      "expected": [],
+      "expected_ranks": [],
+      "top3": [
+        "case.meta.ingestion-shadow-lifecycle",
+        "case.netflix.casspactor-to-analytics",
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ]
+    },
+    {
+      "id": "m9-q056",
+      "behavior": "insufficient_evidence",
+      "expected": [],
+      "expected_ranks": [],
+      "top3": [
+        "case.netflix.dynamic-timeseries-partition-splits",
+        "case.stripe.online-subscriptions",
+        "case.netflix.chaos-kong-regional-failover"
+      ]
+    },
+    {
+      "id": "m9-q057",
+      "behavior": "answerable",
+      "expected": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.grpc-cpu-workerpool-loom-regression",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.java21-virtual-thread-carrier-starvation",
+        "case.netflix.java-platform-convergence"
+      ]
+    },
+    {
+      "id": "m9-q058",
+      "behavior": "reject_false_claim",
+      "expected": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.grpc-cpu-workerpool-loom-regression",
+          "rank": 1
+        },
+        {
+          "id": "case.netflix.java21-virtual-thread-carrier-starvation",
+          "rank": 2
+        }
+      ],
+      "top3": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.java21-virtual-thread-carrier-starvation",
+        "case.netflix.java-platform-convergence"
+      ]
+    },
+    {
+      "id": "m9-q059",
+      "behavior": "insufficient_evidence",
+      "expected": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.grpc-cpu-workerpool-loom-regression",
+          "rank": 1
+        }
+      ],
+      "top3": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.java-platform-convergence",
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ]
+    },
+    {
+      "id": "m9-q060",
+      "behavior": "answerable",
+      "expected": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.zuul2-nonblocking-gateway"
+      ],
+      "expected_ranks": [
+        {
+          "id": "case.netflix.grpc-cpu-workerpool-loom-regression",
+          "rank": 1
+        },
+        {
+          "id": "case.netflix.zuul2-nonblocking-gateway",
+          "rank": 2
+        }
+      ],
+      "top3": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.zuul2-nonblocking-gateway",
+        "case.netflix.java-platform-convergence"
+      ]
+    }
+  ]
+}
