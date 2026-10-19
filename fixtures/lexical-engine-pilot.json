@@ -1,0 +1,152 @@
+{
+  "version": 1,
+  "scope": "12 wholly original synthetic English architecture excerpts and 12 predeclared one-document relevance cases. No private source text, benchmark workloads or user data.",
+  "documents": [
+    {
+      "id": "d01",
+      "title": "Outbox publication and idempotent requests",
+      "body": "A database transaction records the registration and outbox intent. Relay publication can repeat; consumers use event ids for deduplication."
+    },
+    {
+      "id": "d02",
+      "title": "Kafka partition key and consumer order",
+      "body": "Kafka topic partitions order records for a partition key; group reassignment can change consumer ownership. Delivery and offset semantics need explicit tests."
+    },
+    {
+      "id": "d03",
+      "title": "Little's Law and offered workload",
+      "body": "Queueing identity uses average concurrency, throughput and response time in a precisely bounded stable window. Burst arrivals can build wait time."
+    },
+    {
+      "id": "d04",
+      "title": "Admission control and load shedding",
+      "body": "Early admission rejection prevents unbounded queue occupancy when downstream capacity is saturated. Retry amplification and fairness remain risks."
+    },
+    {
+      "id": "d05",
+      "title": "Database connection pool saturation",
+      "body": "Pool acquisition waiting and excessive open connections can degrade database response under concurrency; measure transaction holding time and resource use."
+    },
+    {
+      "id": "d06",
+      "title": "PostgreSQL MVCC visibility",
+      "body": "PostgreSQL multi version concurrency control governs transaction snapshots, row visibility, vacuum and update behavior."
+    },
+    {
+      "id": "d07",
+      "title": "Java virtual threads and blocking IO",
+      "body": "Virtual threads permit many concurrent blocking tasks but do not make database connections unlimited. Carrier pinning depends on exact Java runtime version."
+    },
+    {
+      "id": "d08",
+      "title": "Distributed cache invalidation",
+      "body": "Cache freshness and invalidation races require version tokens, TTL reasoning, ownership and explicit stale read tolerance."
+    },
+    {
+      "id": "d09",
+      "title": "Vector index approximate nearest neighbors",
+      "body": "HNSW approximate nearest-neighbor graph indexing improves vector candidate retrieval, with recall and memory tradeoffs beyond lexical matching."
+    },
+    {
+      "id": "d10",
+      "title": "Distributed trace propagation and spans",
+      "body": "Trace context propagation connects spans across services, enabling diagnosis of dependency latency and partial failures."
+    },
+    {
+      "id": "d11",
+      "title": "HTTP request idempotent methods",
+      "body": "HTTP PUT and DELETE have defined idempotent intent, distinct from exactly once business effects across external systems."
+    },
+    {
+      "id": "d12",
+      "title": "Monolith modernization and transition",
+      "body": "Legacy modular monolith modernization may use branch by abstraction, strangler and expand migrate contract phases with compatibility gates."
+    }
+  ],
+  "questions": [
+    {
+      "query": "retry outbox notification",
+      "relevant_ids": [
+        "d01"
+      ],
+      "case": "outbox-retry"
+    },
+    {
+      "query": "kafka partition ordering",
+      "relevant_ids": [
+        "d02"
+      ],
+      "case": "kafka-order"
+    },
+    {
+      "query": "queueing concurrency throughput",
+      "relevant_ids": [
+        "d03"
+      ],
+      "case": "little-law"
+    },
+    {
+      "query": "load shedding admission",
+      "relevant_ids": [
+        "d04"
+      ],
+      "case": "admission"
+    },
+    {
+      "query": "database pool connection",
+      "relevant_ids": [
+        "d05"
+      ],
+      "case": "pool"
+    },
+    {
+      "query": "PostgreSQL MVCC",
+      "relevant_ids": [
+        "d06"
+      ],
+      "case": "postgres"
+    },
+    {
+      "query": "virtual threads blocking",
+      "relevant_ids": [
+        "d07"
+      ],
+      "case": "virtual-threads"
+    },
+    {
+      "query": "HNSW vector index",
+      "relevant_ids": [
+        "d09"
+      ],
+      "case": "hnsw"
+    },
+    {
+      "query": "trace context span",
+      "relevant_ids": [
+        "d10"
+      ],
+      "case": "tracing"
+    },
+    {
+      "query": "legacy strangler migration",
+      "relevant_ids": [
+        "d12"
+      ],
+      "case": "legacy"
+    },
+    {
+      "query": "http idempotent request",
+      "relevant_ids": [
+        "d11"
+      ],
+      "case": "http-idempotence"
+    },
+    {
+      "query": "cache freshness invalidation",
+      "relevant_ids": [
+        "d08"
+      ],
+      "case": "cache"
+    }
+  ]
+}
