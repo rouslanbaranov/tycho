@@ -8,7 +8,7 @@
 - **111,272 whitespace-separated Markdown tokens/words** across the 69 primary drafts at this checkpoint (sum of simple `trim().split(/\s+/)` counts returned while re-reading files). This **includes Markdown syntax, tables, reference URLs, diagram labels and citations**: it is neither prose word count nor pagination, and indicates no completeness or quality threshold. It excludes preserved earlier shared research and unlisted supplementary pages.
 - **All 69 chapter content/technical/source acceptance states are still PENDING**. No chapter is certified merely by having an H1, source links, 1,000 words or a Mermaid diagram. The editorial contract explicitly rejects fixed page or word quotas.
 - **44/44 distinct local link-target files** referenced by the preceding 13 newly authored owner drafts were re-fetched and existed. This tests target file existence **only**; anchors, individual assertions, bibliography versions, diagram rendering and complete repo navigation remain unchecked.
-- **Four narrow public reference samples** independently rechecked during this checkpoint: RFC-compatible consumer deduplication pattern (Microservices.io), saga local-transaction/compensation semantics (Microservices.io), PostgreSQL 17 isolation behaviors, and Kubernetes topology spread constraints; independent URL/document checks do not establish full source-to-claim acceptance or runtime tests. Published AWS recovery automation guidance was also inspected for its fail-safe stop rule.
+- **Four narrow public reference samples** independently rechecked during this checkpoint: public consumer-deduplication pattern (Microservices.io), saga local-transaction/compensation semantics (Microservices.io), PostgreSQL 17 isolation behaviors, and Kubernetes topology spread constraints; independent URL/document checks do not establish full source-to-claim acceptance or runtime tests. Published AWS recovery automation guidance was also inspected for its fail-safe stop rule.
 - **Nothing has been merged**; the planned edition under [#214](https://github.com/rouslanbaranov/tycho/issues/214) does not exist yet. No external/private system content, agents, scheduled workers, MCP/search infrastructure or curated book knowledge graph was added during this verification.
 
 ## Draft size and review planning by proposed volume
@@ -124,6 +124,10 @@ A chapter can change from `PENDING` only after all applicable gates have records
 - Pay extra attention to compact but high-consequence technical pages such as **V03/C01** (task cancellation), **V08/C04** (rollout gating), **V08/C06–C07** (HA/DR), and **V06/C06** (graph query semantics as a topic, not an infrastructure feature). Compactness is not a failure classification.
 - Audit the **whole Git source tree** for manuscript content not listed as a primary target. This register verifies *assigned primary drafts only*. Do not delete or migrate old pages solely because a mapping exists.
 - Defer final ten-volume/69-chapter/page packaging until chapters pass content/source/depth acceptance. Issue #214 is an edition build task, not a substitute for #213.
+
+## Public-source spot check, independent of acceptance
+
+[Eleven exact narrow source/claim comparisons across seven technical manuscript owners](CLAIM_VERIFICATION_SPOTCHECK_2026-10-19.md) were documented against published PostgreSQL 17, OASIS SOA, Kubernetes, Microservices.io and AWS references. The checked narrow assertions matched their bounded source sections; **the seven full chapters remain PENDING**, and no experiment, source-license audit or independent editorial sign-off was performed.
 
 ## Focused source verification and manuscript deepening — V05/C01
 
