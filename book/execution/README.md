@@ -1,6 +1,6 @@
 # Java concurrency and execution models
 
-> **Status:** four bounded public-source-grounded research pages for [Issue #82](https://github.com/rouslanbaranov/tycho/issues/82). Versions, exact source sections and access limits are recorded per page. These are original technical drafts, not a completed runtime architecture volume or measured framework comparison.
+> **Status:** six bounded public-source-grounded research pages for [Issue #82](https://github.com/rouslanbaranov/tycho/issues/82). Versions, exact source sections and access limits are recorded per page. These are original technical drafts, not a completed runtime architecture volume or measured framework comparison.
 
 ## Purpose and mission
 
@@ -23,6 +23,8 @@ Text alternative: begin with API and dependency semantics. Compare platform/virt
 
 | Question | Page | Primary versioned evidence |
 |---|---|---|
+| Who owns a spawned task, and how do cancellation, task scopes and pooled resources interact? | [Threads, tasks and structured coordination](threads-tasks-structured-coordination.md) | V03/C01; Java 25 preview API, executor best-effort interruption and fictional test plan |
+| When are unary, client/server/bidirectional streams and durable jobs appropriate? | [Asynchronous APIs, streaming and cancellation](asynchronous-apis-streaming-and-cancellation.md) | V03/C04; gRPC/Reactive Streams public contract, no client/server test |
 | How do bounded platform executors differ from virtual-thread-per-task, and what changed in JDK 24 pinning? | [Platform threads, executors and virtual-thread capacity](platform-threads-executors-and-virtual-threads.md) | OpenJDK JEP 444 / JDK 21, JEP 491 primary review / JDK 24, Spring Boot 3.3.13 |
 | What do Reactive Streams demand, Reactor scheduling/context, WebFlux and R2DBC actually guarantee? | [Reactive execution, WebFlux, R2DBC and backpressure](reactor-webflux-r2dbc-and-backpressure.md) | Reactor 3.7.0, Spring Framework 6.2, R2DBC SPI 1.0.0.RELEASE |
 | Where do Netty, Vert.x, Quarkus, Mutiny and RxJava schedule handlers and preserve ordering? | [Java framework execution boundaries](vertx-netty-quarkus-mutiny-and-rxjava.md) | Netty 4.x guide, Vert.x 4.4.9, Quarkus 3.27, Mutiny 2.9.0, RxJava v3.1.9 |
