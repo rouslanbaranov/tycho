@@ -23,6 +23,7 @@ Text alternative: start from quality drivers, identify cohesive responsibilities
 
 | Reader question | Canonical page | Status |
 |---|---|---|
+| Which actors, external interfaces and authoritative effects define the system before choosing a style? | [Problem framing and system boundaries](problem-framing-and-system-boundaries.md) | V01/C01 original arc42/C4 context and evidence-scope draft; independent review pending |
 | What outcomes, constraints and quality attributes should drive architecture choices? | [Architecture drivers, quality scenarios and readable views](quality-drivers-and-architecture-views.md) | Source-grounded draft: arc42, public SRE Workbook and C4 |
 | How do a modular monolith, hexagonal architecture, service orientation, bounded contexts and microservices differ? | [Application architecture styles and module boundaries](architecture-styles-and-module-boundaries.md) | Source-grounded draft: Fowler/Lewis, Cockburn, OASIS and Spring Modulith |
 | When should a legacy module remain internal versus become an independently deployed service? | [Architecture evolution and service extraction](architecture-evolution-and-extraction.md) | Source-grounded draft: Cockburn, Fowler and versioned Modulith verification |
