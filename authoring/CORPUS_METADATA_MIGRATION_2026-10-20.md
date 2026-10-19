@@ -95,9 +95,15 @@ archive; no browser rendering result is asserted.
 The parser is reproducible with the committed dependency lock:
 
 ```sh
-npm ci --prefix tools/mermaid --ignore-scripts --no-audit --no-fund
-node tools/mermaid/check.mjs --root .
+tycho_diagram_runtime="$(mktemp -d)"
+cp tools/mermaid/package.json tools/mermaid/package-lock.json \
+  tools/mermaid/check.mjs "$tycho_diagram_runtime/"
+npm ci --prefix "$tycho_diagram_runtime" --ignore-scripts --no-audit --no-fund
+node "$tycho_diagram_runtime/check.mjs" --root "$PWD"
 ```
+
+Keep the dependency directory outside the checkout so third-party package
+content is not scanned as authored Tycho text by the boundary guard.
 
 This is an additional local check, not a new GitHub Actions trigger or a Node
 dependency for the Python-only runner.
