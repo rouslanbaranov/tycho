@@ -42,5 +42,23 @@ class CapacityTraceLabTests(unittest.TestCase):
             open_arrivals(2, 0)
 
 
+    def test_nonfinite_and_bool_parameters_are_rejected(self):
+        for invalid in (float("nan"), float("inf"), float("-inf")):
+            with self.assertRaises(ValueError):
+                open_arrivals(2, invalid)
+            with self.assertRaises(ValueError):
+                closed_arrivals(2, invalid)
+            with self.assertRaises(ValueError):
+                simulate_admission([(invalid, "A", .1)], {"A": 1}, shared=False)
+            with self.assertRaises(ValueError):
+                simulate_admission([(0.0, "A", invalid)], {"A": 1}, shared=False)
+        with self.assertRaises(ValueError):
+            open_arrivals(True, 0.1)
+        with self.assertRaises(ValueError):
+            closed_arrivals(False, 0.1)
+        with self.assertRaises(ValueError):
+            simulate_admission([(0.0, "A", 0.1)], {"A": True}, shared=False)
+
+
 if __name__ == "__main__":
     unittest.main()
