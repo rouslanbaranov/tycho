@@ -209,17 +209,22 @@ def validate_evidence_facet_pilot(
 
 def read_case_catalog(root: Path = ROOT) -> tuple[set[str], list[Path]]:
     case_dir = root / "book/cases"
-    page_index = (case_dir / "README.md").read_text(encoding="utf-8")
+    root_boundary = root.resolve()
+    case_boundary = case_dir.resolve()
+    require(case_boundary.is_relative_to(root_boundary),
+            "case collection escapes the selected root")
+    index_path = case_dir / "README.md"
+    require(index_path.resolve().is_relative_to(case_boundary),
+            "case README index escapes its collection")
+    # Inspect paths before opening any README/index content.
+    page_index = index_path.read_text(encoding="utf-8")
     local = [
         case_dir / path.split("#", 1)[0]
         for path in re.findall(r"\]\(([^)#]+\.md(?:#[^)]*)?)\)", page_index)
         if not path.startswith("../")
     ]
     require(len(local) == len(set(local)), "case index duplicate Markdown paths")
-    # Treat the selected root as an explicit provenance/security boundary.
     # resolve() also protects against symlinks that point outside the snapshot.
-    case_boundary = case_dir.resolve()
-    root_boundary = root.resolve()
     require(all(path.resolve().is_relative_to(case_boundary) for path in local),
             "case index escapes the selected case collection")
     case_pages = [p for p in local if "decisions" not in p.parts]
