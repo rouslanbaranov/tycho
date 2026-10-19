@@ -1,6 +1,6 @@
 # Distributed coordination, transactions and events
 
-**Status:** four bounded public-source-grounded technical pages; the distributed-systems volume is **not** complete. Machine IDs, curated graph, source revision locks and formal review remain separate work.
+**Status:** five bounded public-source-grounded technical pages; the distributed-systems volume is **not** complete. Source revision verification and independent domain review remain separate work. A manually curated knowledge graph is not part of Tycho infrastructure.
 
 ## Purpose and mission
 
@@ -24,6 +24,7 @@ Text alternative: understand ordering and consensus before applying transactiona
 
 | Engineering question | Canonical content | Evidence state |
 |---|---|---|
+| What survives leader changes, minority partitions and quorum reconfiguration? | [Replication, quorum and leader change](replication-consensus-and-leader-change.md) | V04/C02; Raft/etcd public protocol scope and synthetic failure matrix; no cluster exercised |
 | What is causality, and when does a replicated log need consensus? | [Causality, ordering and consensus](causality-ordering-and-consensus.md) | Lamport 1978 abstract/bibliographic record; extended Raft 2014 §§2,5. Full Lamport PDF not reviewed |
 | Which invariants fit local transactions, and what does a saga compensate? | [Transaction isolation and sagas](transaction-isolation-and-sagas.md) | PostgreSQL 17 §§13.2,13.5; Richardson public saga patterns |
 | What happens after source commit, broker delay or duplicate delivery? | [Outbox publication and idempotency](transactional-outbox-and-idempotency.md) | Debezium 3.6, PostgreSQL 17, RFC 9110, public API-idempotence reference |
