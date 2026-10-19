@@ -8,6 +8,10 @@ Connect authenticated identities, authorization, protected business objects and 
 
 - [Threat boundaries, identity, authorization and service isolation](identity-authorization-and-isolation.md) — threat worksheet, authentication versus authorization, policy enforcement, object-level access and multi-tenant boundaries, OAuth token audiences, service identity, failure matrix and original synthetic access-control scenario.
 
+## Applied verification companion
+
+- [Resource authorization and threat verification workbook](identity-authorization-threat-models-and-isolation.md) — an extended synthetic policy-test matrix, actor/resource/action boundary, failure-state controls, OAuth token misuse checks and explicit evidence limits. The [canonical trust-boundary chapter](identity-authorization-and-isolation.md) remains the primary explanation; this companion does not supersede its source ledger.
+
 ## Routes to adjacent material
 
 - [Audit and trace correctness](../observability/trace-context-lineage-and-audit.md) — why best-effort logs and sampled traces do not replace authoritative audit.
