@@ -25,6 +25,8 @@ Text alternative: start from quality drivers, identify cohesive responsibilities
 |---|---|---|
 | Which actors, external interfaces and authoritative effects define the system before choosing a style? | [Problem framing and system boundaries](problem-framing-and-system-boundaries.md) | V01/C01 original arc42/C4 context and evidence-scope draft; independent review pending |
 | What outcomes, constraints and quality attributes should drive architecture choices? | [Architecture drivers, quality scenarios and readable views](quality-drivers-and-architecture-views.md) | Source-grounded draft: arc42, public SRE Workbook and C4 |
+| Where are business models, data authority, contracts and cross-context mappings owned? | [Domain boundaries, data ownership and contract evolution](domain-boundaries-data-ownership-and-contracts.md) | V02/C02 public bounded-context/arc42 evidence and original makerspace cases; unreviewed |
+| When and how can an anti-corruption adapter translate incompatible models during a migration? | [Anti-corruption adapters and coexistence](anti-corruption-adapters-and-coexistence.md) | V02/C06 public ACL/Strangler references and original failure paths; unreviewed |
 | How do a modular monolith, hexagonal architecture, service orientation, bounded contexts and microservices differ? | [Application architecture styles and module boundaries](architecture-styles-and-module-boundaries.md) | Source-grounded draft: Fowler/Lewis, Cockburn, OASIS and Spring Modulith |
 | When should a legacy module remain internal versus become an independently deployed service? | [Architecture evolution and service extraction](architecture-evolution-and-extraction.md) | Source-grounded draft: Cockburn, Fowler and versioned Modulith verification |
 | How do public HTTP/RPC contracts survive retries, timeouts and old/new client versions? | [HTTP and RPC contracts, compatibility and deadlines](http-rpc-contracts-and-compatibility.md) | New source-grounded draft (V02/C05); RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers; review pending |
@@ -40,6 +42,6 @@ These pages explain distinct canonical questions. They cite published source sec
 
 ## Missing coverage and further research
 
-DDD primary reference text and comprehensive domain modeling, specific hexagonal implementations beyond original pattern intent, code-level module verification on an executable fixture, broad SOA governance alternatives, empirical style comparisons, measured teams/cost and independent expert review remain outside this bounded chapter set.
+Direct verification of the original proprietary DDD reference text and broader domain modeling, specific hexagonal implementations beyond original pattern intent, code-level module verification on an executable fixture, broad SOA governance alternatives, empirical style comparisons, measured teams/cost and independent expert review remain outside this bounded chapter set.
 
 The proposed full [Tycho structure](../PROPOSED-STRUCTURE.md) continues to own those topics. Neither the navigation diagram nor the page count proves book completion.
