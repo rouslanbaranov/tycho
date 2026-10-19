@@ -76,6 +76,37 @@ A reversible rollout can initially run Cinnamon in **decision-only shadow mode**
 
 For a small stateless API, a fixed bounded concurrency limit and per-caller quota may already suffice. For a stateful multi-tenant store, a storage-local regulator can prevent one hot partition from crippling others, while an authenticated priority policy can preserve high-value operations. The key questions are where resource pressure is actually observed, whether the service can distinguish traffic importance, and whether rejection is cheaper than futile queued execution. Without those measurements and ownership, the correct recommendation is **insufficient evidence**, not immediate adoption of a sophisticated feedback controller.
 
+## Three kinds of admission are not interchangeable
+
+The [April 20, 2026 first-party report](https://www.uber.com/us/en/blog/from-static-rate-limiting-to-intelligent-load-management/) (U06, **Balancing Resilience and Fairness**, **Scorecard Engine**, **Regulators**) distinguishes **global overload**, **one noisy tenant** and **one hot resource**. A system-wide PID shedder can preserve the total storage process yet allow a single tenant to monopolize admitted slots; per-tenant Scorecard enforces concurrency limits even when aggregate capacity is healthy; regulators detect high write bytes, one hot partition, low process memory or excessive goroutine count that aggregate QPS may not reveal.
+
+The first quota experiment failed partly because **output bytes were a bad proxy for consumed work**: a table scan returning one row looked as cheap as a one-row point lookup. Moving the admission decision closer to the stateful storage executor exposed more relevant load signals, while avoiding Redis network dependency on every request. This placement is the historical architectural decision, not an instruction to remove all edge/API contractual rate limits.
+
+## The load-manager iterations and actual negative outcomes
+
+| Source-described version | Admission/queue design | Observed failure that motivated the next stage |
+|---|---|---|
+| Query-layer fixed quotas | Redis-backed per-user accounting, request cost from returned bytes | Expensive scans underpriced; static quotas stale; no per-partition health view |
+| Storage CoDel + Scorecard | Separate read/write/slow queues, delay-based rejection, per-tenant fairness | Queue thresholds were **static and priority-agnostic**; expired work piled up; clients retried together and high-priority requests were dropped |
+| Priority-aware Cinnamon | Priority ranks **t0–t5**, with online-important **t1**; simplify to read/write queues; dynamic timeout and inflight limits | Storage-local health alone cannot detect a healthy leader whose followers are lagging |
+| Unified Cinnamon + regulators | PID control with external follower **commit-index lag** and pluggable resource signals in one decision path | Requires robust signal freshness, priority governance and feedback stability; detailed operator thresholds are not public |
+
+**Evidence:** U06, **Controlled Delay**, **Limitations**, **Cinnamon Replaces CoDel**, **Areas for Improvement**, **The Unified Load Shedding Engine**. The exact total-cost and all-cohort incident counts are not published.
+
+One subtle protocol issue matters: the source reports using **adaptive FIFO-to-LIFO behavior under queue pressure** in early CoDel, reducing wasted work on aged requests. This can be appropriate for **new independent lookups**, but a datastore performing ordered writes or transactions cannot blindly reorder conflicting mutations. Tycho's separate consistency test must establish that any reordering is confined to admissible independent tasks. This is a synthetic contraindication, not a documented Uber ordering incident.
+
+## The actual feedback loop and non-equivalent performance figures
+
+Cinnamon uses request priority and an adaptive time budget based on observed **p90 latency** plus a **PID-controlled inflight limit**; later it accepts remote follower-lag signals. The first-party report compares a specific overloaded test/reference condition: average throughput **~3,000 → ~5,400 QPS**, upsert p99 **~3.1 → ~1.0 seconds**, peak goroutines **150,000 → 10,000**, peak heap **5–6 GB → about 1 GB**. The company's own headline “~60% lower heap” is not exactly derivable from the separately quoted spike/max values; do not silently overwrite its percentage with an arithmetic reduction from unlike denominators. These are **publisher-scoped results**, not arbitrary QPS capacity predictions or independent randomized trials. [U06, **The Payoff**].
+
+**Control-loop hazard (Tycho analysis):** a PID controller with stale metrics, delayed actions, badly chosen gains or priority override can oscillate and shed the wrong cohort. Therefore measuring lower rejected-request counts is not enough: simultaneously record successful **goodput by priority**, queue wait, fraction already past client deadline, leader/follower lag, retries, memory and per-tenant fairness.
+
+## Synthetic reversible rollout and refusal contract
+
+Start with **observation only** at the storage executor, logging which requests would be rejected under each independently checked constraint. Verify tenant and priority identity propagation from the query tier; reject untrusted caller claims of tier-zero importance. Bring Scorecard online with conservative per-tenant limits without simultaneously enabling dynamic global load shedding. Canary priority-aware queues by partition and traffic cohort, then add the PID control loop behind a reversible switch with guardrails on minimum critical-service capacity and maximum retry burst. Test a hot partition, a slow follower, an oversized write from low-QPS caller, a retry storm and a dropped telemetry feed.
+
+**Stop/rollback triggers:** priority spoofing or unknown tenant identity; healthy traffic starved by stale external signals; rising p99 despite fewer admitted tasks; follower lag propagating beyond safety threshold; PID oscillation or prolonged shed state; or an inability to restore the old control mode without unbounded retry pressure. With no measured workload mix or protected operation priorities, return **insufficient evidence**, not “deploy Cinnamon because it improved Uber's QPS.”
+
 ## Applicability, migration and rollback ADR for another organization
 
 **Synthetic context:** multitenant ledger serving unpredictable scans and writes, high retry amplification and a few tenant hot keys. Proposed architecture decision: instrument per-key hotness, concurrency, queue wait, follower lag and request priority before building a pluggable controller; continue existing budget limiting during canary to avoid unlimited client flood.
