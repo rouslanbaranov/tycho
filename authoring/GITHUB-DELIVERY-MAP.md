@@ -157,6 +157,25 @@ Requirements baseline [#17](https://github.com/rouslanbaranov/tycho/issues/17) w
 ## Tracking rules
 
 - Native GitHub parent/sub-issue links represent ownership; native blocked-by relationships mirror the explicit Dependencies section in executable issues.
-- All eight milestones describe acceptance outcomes, not fabricated due dates.
+- All nine milestones describe acceptance outcomes, not fabricated due dates.
 - Keep all issues open until deliverables have actually passed their individual acceptance criteria; update source/version evidence and the current state after completion.
 - This map is safe to regenerate from GitHub and must never drive an unsolicited change to the corpus.
+
+
+## M9 — Real-World Architecture Modernization: Case Studies and Decision Transfer
+
+[Native milestone](https://github.com/rouslanbaranov/tycho/milestone/9) → [Epic E16 #113](https://github.com/rouslanbaranov/tycho/issues/113).
+
+| Issue | Work | Dependency |
+|---|---|---|
+| #114 | Source verification/admission | Existing public-source policy |
+| #115 | Netflix Java, Spring and reactive evolution | #114 |
+| #116 | JVM concurrency and performance failures | #114 |
+| #117 | Cloud, storage and resilience transitions | #114 |
+| #118 | Cross-industry counterexamples | #114 |
+| #119 | Comparative decision and migration playbooks | #115–#118 |
+| #120 | Case provenance and portable search/graph fixtures | #114; stable owning contracts for actual adapters |
+| #121 | Independent review and milestone acceptance | #115–#120 |
+| #122 | Native milestone and hierarchy setup | Epic #113 |
+
+See [program acceptance and start-readiness](REAL_WORLD_CASE_STUDY_PROGRAM.md). Closed duplicates #123–#130 are excluded; no due date is asserted.
