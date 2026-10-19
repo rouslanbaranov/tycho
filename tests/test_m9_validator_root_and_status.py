@@ -151,7 +151,7 @@ class PinnedRootAndFormatTest(unittest.TestCase):
             good.write_text("Synthetic public source register", encoding="utf-8")
             index = case_dir / "README.md"
             index.write_text(index.read_text(encoding="utf-8") +
-                             "\\n- [Public source](../../sources/REAL_WORLD_ARCHITECTURE_CASES.md)\\n",
+                             "\n- [Public source](../../sources/REAL_WORLD_ARCHITECTURE_CASES.md)\n",
                              encoding="utf-8")
             ids, pages = read_case_catalog(root)
             self.assertEqual(20, len(ids))
@@ -165,7 +165,7 @@ class PinnedRootAndFormatTest(unittest.TestCase):
             outside.write_text("Not in snapshot", encoding="utf-8")
             index = case_dir / "README.md"
             index.write_text(index.read_text(encoding="utf-8") +
-                             "\\n- [Outside](../../../private.md)\\n",
+                             "\n- [Outside](../../../private.md)\n",
                              encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "contextual link escapes"):
                 read_case_catalog(root)
@@ -176,7 +176,7 @@ class PinnedRootAndFormatTest(unittest.TestCase):
             case_dir = self._synthetic_cases(root)
             index = case_dir / "README.md"
             index.write_text(index.read_text(encoding="utf-8") +
-                             "\\n- [Missing](../../sources/not-present.md)\\n",
+                             "\n- [Missing](../../sources/not-present.md)\n",
                              encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "broken contextual link"):
                 read_case_catalog(root)
