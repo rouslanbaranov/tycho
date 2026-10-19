@@ -180,8 +180,8 @@ All example data, percentages, capacity statements and system behavior are hypot
 
 ## Applied M9 evidence: what transfers and what does not
 
-The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
 
-- **[Uber — Cinnamon fairness](../cases/uber-cinnamon-admission-and-fairness.md)** illustrates static edge quotas may fail to protect storage; storage-local feedback can handle load and fairness. **It cannot establish:** uber's reported later controller improvements are not proof that every database or customer tier supports the same policy.
+**Case lens — [Uber — Cinnamon fairness](../cases/uber-cinnamon-admission-and-fairness.md)**. **Relevant mechanism or architectural contrast:** Static edge quotas may fail to protect storage; storage-local feedback can handle load and fairness. **Not established by this report/playbook:** Uber's reported later controller improvements are not proof that every database or customer tier supports the same policy.
 
-A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

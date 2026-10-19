@@ -149,8 +149,8 @@ All diagrams, recommendations and failure cases in this chapter are conceptual. 
 
 ## Applied M9 evidence: what transfers and what does not
 
-The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
 
-- **[Airbnb — Bazel JVM build migration](../cases/airbnb-jvm-monorepo-bazel.md)** illustrates build-system coexistence and controlled migration are engineering work separate from selecting Bazel. **It cannot establish:** airbnb's historical premerge times and build improvements are not a transferable benchmark or proof every polyrepo needs Bazel.
+**Case lens — [Airbnb — Bazel JVM build migration](../cases/airbnb-jvm-monorepo-bazel.md)**. **Relevant mechanism or architectural contrast:** Build-system coexistence and controlled migration are engineering work separate from selecting Bazel. **Not established by this report/playbook:** Airbnb's historical premerge times and build improvements are not a transferable benchmark or proof every polyrepo needs Bazel.
 
-A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.
