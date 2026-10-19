@@ -228,6 +228,26 @@ class PinnedRootAndFormatTest(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "URL disagrees"):
                     validate_record(wrong, schema, refs)
 
+    def test_case_page_requires_a_curated_primary_url(self) -> None:
+        with tempfile.TemporaryDirectory() as workspace:
+            root = Path(workspace) / "pinned"
+            case_dir = self._synthetic_cases(root)
+            registered = {"N11": "https://example.org/engineering/primary"}
+            for case_path in case_dir.glob("case-*.md"):
+                case_path.write_text(
+                    case_path.read_text(encoding="utf-8") +
+                    "\nEvidence N11: https://example.org/engineering/primary\n",
+                    encoding="utf-8")
+            ids, pages = read_case_catalog(root, registered)
+            self.assertEqual(20, len(ids))
+            self.assertEqual(20, len(pages))
+            first = case_dir / "case-00.md"
+            first.write_text(first.read_text(encoding="utf-8").replace(
+                registered["N11"], "https://example.org/engineering/different"),
+                encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "no matching curated source"):
+                read_case_catalog(root, registered)
+
     def test_curated_source_registry_rejects_duplicate_and_unparseable_urls(self) -> None:
         raw = (ROOT / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8")
         refs = parse_source_registry(raw)

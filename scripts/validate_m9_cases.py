@@ -232,7 +232,7 @@ def validate_evidence_facet_pilot(
             "adjudication": "NOT DONE"}
 
 
-def read_case_catalog(root: Path = ROOT) -> tuple[set[str], list[Path]]:
+def read_case_catalog(root: Path = ROOT, source_urls: dict[str, str] | None = None) -> tuple[set[str], list[Path]]:
     case_dir = root / "book/cases"
     root_boundary = root.resolve()
     case_boundary = case_dir.resolve()
@@ -272,6 +272,15 @@ def read_case_catalog(root: Path = ROOT) -> tuple[set[str], list[Path]]:
         require("mermaid" in text.lower(), path.name + ": no architectural graph")
         require(text.count("```") % 2 == 0, path.name + ": unclosed Markdown fence")
         require("http" in text, path.name + ": no primary-source link")
+        if source_urls is not None:
+            # At least one literal first-party URL from the curated register
+            # must accompany its source ID in every case draft. Other mentions
+            # may intentionally be contextual, not separately linked.
+            cited = set(re.findall(
+                r"\b(?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}\b", text))
+            require(any(source_id in cited and url in text
+                        for source_id, url in source_urls.items()),
+                    path.name + ": no matching curated source ID + primary URL")
     for path in local:
         text = path.read_text(encoding="utf-8")
         for link in re.findall(r"\]\(([^)]+)\)", text):
@@ -296,7 +305,7 @@ def check(root: Path = ROOT) -> dict:
             "proposed M9 schema must use scoped Tycho URN")
     raw_sources = (root / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8")
     registered = parse_source_registry(raw_sources)
-    ids, links = read_case_catalog(root)
+    ids, links = read_case_catalog(root, registered)
     examples = json_read(root / "authoring/cases/examples/case-records.json")
     require(isinstance(examples, list) and len(examples) >= 2, "missing portable examples")
     for item in examples:
