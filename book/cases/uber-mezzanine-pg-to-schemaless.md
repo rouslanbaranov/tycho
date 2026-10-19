@@ -46,6 +46,43 @@ Uber reports a completed trip-data store migration and interface-seam pattern. T
 
 This is a company-reported historical result, not an independently reproduced benchmark. Precise current topology, total engineering effort, p99 and comparative cost must be regarded as **unknown** unless the named primary article supplies them. Do not extrapolate a dated deployment to October 2026 current practice.
 
+## A dated 2014 migration with a real launch constraint
+
+René Schmidt's [July 28, 2015 first-party retrospective](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/) (U02, **Background**, **The New Trip Store**) describes **2014** conditions, not Uber's 2020 DOMA structure. Trip volume was growing around **20% per month**. A large shared PostgreSQL store still served many near-100-service backend components; trip rows consumed the greatest storage/IOPS share, and adding an index/column to the largest table could require downtime. Uber projected the store would exhaust capacity during the year and set a high-traffic **October 31** deadline.
+
+The target tripstore had published requirements: backup/replication, online capacity/index expansion, high write availability, secondary lookups and stable operator behavior. The team rejected several externally evaluated NoSQL products **for its own maturity/operational-experience reasons**, then built a sharded **Schemaless** API backed by MySQL. This is *not* an assertion that PostgreSQL generally cannot scale or that building a new database is usually the right choice. [U02, **The New Trip Store**].
+
+## The data semantics made the cutover tractable
+
+The target organized JSON-style cell data by **trip UUID**, column name and optional timestamp. Its fixed initial logical shard count was typically **4,096**, with shards movable among MySQL hosts for online capacity balancing. The model was **append-only**: a cell was not changed after being written. That property enabled application-defined idempotent and commutative operations for retries and replay. When a target shard was temporarily unavailable, writes could enter a **pending table on another healthy MySQL node** and be replayed later. Secondary indexes were themselves sharded and could be versioned/backfilled before an alias switch. [U02, **The New Trip Store**].
+
+These design decisions require explicit **domain semantics**. A cancellation, price recalculation or correction must be represented as new versioned facts if the record cannot be updated in place. Appending data is not equivalent to a full relational ACID transaction across arbitrary tables; idempotency and ordering constraints must be demonstrated for each effect. The source does not publish a generalized formal proof covering every downstream user/business projection.
+
+## Six observed code and data migration milestones
+
+| Migration stage in 2014 | What the team changed | Specific compatibility/failure risk |
+|---|---|---|
+| Global identifier refactoring | Auto-increment PostgreSQL trip IDs → UUIDs | Hidden references in SQLAlchemy relationships, API payloads and secondary keys |
+| Explicit data layout | Convert trips and linked columns to Schemaless cell model | Loss of implicit joins and relational constraints |
+| Historical backfill | Transfer existing trip records | Old/new identity mapping, incomplete record versions and repeated backfills |
+| Mirrored writes | Writes maintained PostgreSQL **and** Schemaless | Divergent retries or one unavailable target |
+| Query migration | Replace **hundreds** of direct/indirect ORM queries with a restricted tripstore query API | Missing joins, wrong projection order or incompatible filters |
+| Read validation and switch | Replay queries on Schemaless and compare results while PostgreSQL served callers | Comparison sampling can miss rare operations or ordering differences |
+
+**Observed API seam:** `lib/tripstore` initially implemented the *new restricted API* over **old PostgreSQL**, then used a switch to route the same operation to Schemaless. That is a strong ordering decision: migrate consumers to one stable abstraction **before** making their storage source change. The source explicitly says mirrored writes and shadow-query comparisons began early and progressed alongside backfill and code changes; validation was **sampled probabilistically** to limit additional load on the already pressured PostgreSQL system. [U02, **From SQLAlchemy to Schemaless**].
+
+## Measured historical results and negative evidence
+
+The article reports that the initial storage system went from idea to production in **about five months**, the final focused migration wave spanned **six weeks**, and the final routing switch happened roughly **one month before Halloween 2014**. It describes a non-event cutover, then a further capacity doubling without downtime; these are **company retrospective statements**, not an audited service SLO, a universal five-month delivery forecast or proof of zero latent data defects. Hundreds of millions of rows, **more than 100 services**, and many engineers are original migration *scope* figures, not parallel read throughput benchmarks.
+
+**Failure and cost:** SQLAlchemy joins could not be carried into the restricted API; identifier and query rewrites were substantial; data-model revisions required repeated backfills; the column model moved some query/index cost directly to application owners. Parallel backfill and shadow reads themselves added load to an already IOPS-bound PostgreSQL instance. The reporting does not provide a full post-cutover p99, exact changed-row count, error distribution, total project cost or recovery-time objective.
+
+## Independent transfer with safe rollback (Tycho synthetic)
+
+A hypothetical high-growth transaction system can emulate the ordering **identity → compatible API facade on old store → explicit new model → dual write/backfill → sampled old/new query parity → canary → authority switch**. Keep the incumbent writable until outstanding consumers and delayed retries are fully enumerated. Reconcile UUID mappings and secondary indexes under the same snapshot; run negative-path tests for unavailable shards, duplicate append/replay and missing compound relational reads. Sample enough pathological consumer queries before making a global switch.
+
+**Stop conditions:** unsupported query semantics, secondary index not backfilled, mirrored write divergence, pending-write backlog without bounded recovery, old client misinterpreting UUIDs, or inability to route reads back without losing new-only committed facts. Choosing append-only or UUIDs does not by itself guarantee zero data loss. Compare the [Stripe online-subscription migration](stripe-online-subscriptions-migration.md) as a contrasting mutable data-authority strategy and the [data-migration decision guide](decisions/data-migration-correctness.md) for scenario selection.
+
 ## Applicability to legacy modernization
 
 Prefer API strangling and explicit change of identifiers when a storage migration crosses many teams. If the original relational store still meets capacity and operational requirements, a new distributed engine may not justify this migration. Before a roadmap is approved, require a baseline with data ownership and blast radius, a comparison to a smaller intervention, and measurable acceptance gates. An agent should retrieve this case as **evidence for conditions and counterconditions**, not as a universal preferred architecture.
