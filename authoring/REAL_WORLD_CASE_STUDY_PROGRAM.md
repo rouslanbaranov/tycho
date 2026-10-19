@@ -76,7 +76,7 @@ Proposed new navigation: `book/cases/README.md` for case routes; one company nav
 
 New conceptual metadata (adapt to K10/K11 schema rather than inventing an incompatible committed schema):
 - `document_kind: case-study`, stable `case_id`, `company`, `observation_period`, `source_ids`, `reported_vs_inferred`, `legacy_baseline`, `architecture_transitions`, `constraint_tags`, `workload_profile`, `failure_modes`, `patterns_applied`, `counterpatterns`, `result_metrics`, `migration_phases`, `confidence`, `verification_status`, `reviewed_at`.
-- Graph relations: `case → observed_use_of → pattern`; `case → contradicts_universal_claim → claim`; `case → was_motivated_by → constraint`; `case → migrated_from/to → architecture-state`; `case → reports → evidence`. Every edge requires an evidence pointer and validity window. Do not infer global 'recommended' from a single observed use.
+- Case relationships are **ordinary typed metadata and reviewable Markdown links**, not edges of a graph. A page may explicitly link to related patterns, contrary evidence, source sections, and applicable decision guides with the conditions in prose. No graph schema/ownership/assembly/traversal is requested.
 - Search routes by **problem first**, not company: e.g., 'high p99 JVM service with retry storms'; 'Cassandra hot partition'; 'complex microservice mesh ownership'; 'schema migration with no downtime'; 'Bazel vs Gradle build throughput'; 'migration agent with missing tests'.
 - A Rocinante response must separate **what a source says happened** from **what might work for the queried legacy system**. Test with candidate evaluation sets; never present these as measured agent gains before running benchmarks.
 
@@ -97,7 +97,7 @@ Comparative exemplars:
 - E14 continues independently writing foundation chapters; E16 cites only already accepted canonical owners and adds links later.
 - E01/K30 decision rules consume cross-case applicability evidence but do not outsource correctness to company popularity.
 - E03/K07 source register and provenance rules admit references; E04/K10–K13 provides metadata validation.
-- E06/K15–K16 eventually indexes curated case relationships; E07–E09/K17–K22 makes them retrievable by future MCP.
+- K15–K16 curated graph work is **retired**; E07–E09/K17–K22 may index ordinary case metadata and provide source-bound retrieval through MCP **without graph infrastructure**.
 - E13/K28 must benchmark case-oriented search quality, accurate provenance and insufficient-evidence responses. No duplicate search/MCP epics.
 - E15/K29 maintains source freshness and change impact (publication updates are not automatic truth updates).
 
