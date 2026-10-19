@@ -178,6 +178,14 @@
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
 
+## Additional verification checkpoint — 2026-10-19 (recoverability and overload)
+
+- New substantive chapter drafts V05/C07 and V07/C05 were re-fetched on the active branch. Both have single H1 titles, independently public evidence ledgers and one original Mermaid diagram each, with balanced Markdown code fences.
+- Extracted their relative link targets and fetched all **14/14 distinct destination files** on the same branch. This establishes link target **file existence** only; not anchors, claims or external source permanence.
+- Confirmed the separate 69-row matrix now classifies **55 directly addressed / 14 partially addressed / 0 without a focused draft**. All 69 chapter questions remain subject to independent semantic/source/editorial acceptance.
+- Public narrow source readings performed: official PostgreSQL 17 Chapter 25 and §25.3 on logical/physical/PITR backup, §26.2 on standby; Google SRE Handling Overload and AWS Builders' Library on load shedding/retries. These are public methods/implementation documentation, not a completed restoration or overload experiment.
+- No restore, fault injection, source-repository program execution, end-to-end verification, GitHub milestone CI or full local pre-merge/boundary check was performed. The scope of PR #215 remains **draft**; #213 and #214 remain open.
+
 ## Additional verification checkpoint — 2026-10-19 (V01/V02/V07/V08 deepening)
 
 - Added five original technical manuscripts: V01/C02, V02/C02, V02/C06, V07/C03 and V08/C02. Each addresses an initially partial canonical chapter question with its own explanation, original synthetic mechanisms and failure cases, independent public evidence and explicit nonclaims. A drafted chapter is **not** independently accepted.
