@@ -1,10 +1,11 @@
 # M9 — Historical Architecture Modernization Case Studies
 
-**Evidence state:** original author-reviewed **drafts**, not independent-reviewed/accepted Tycho cases. As of 2026-10-19 this collection contains **25** case pages: **10 Netflix** and **15 from 9 other organizations**. A publisher's architectural write-up is evidence of its historical account, not independent validation of an experiment. Do not represent the case counts as finished milestone acceptance until E16-01 and E16-08 gates pass.
+**Evidence state:** original author-reviewed **drafts**, not independent-reviewed/accepted Tycho cases. As of 2026-10-19 this collection contains **28** case pages: **11 Netflix** and **17 from 9 other organizations**. A publisher's architectural write-up is evidence of its historical account, not independent validation of an experiment. Do not represent the case counts as finished milestone acceptance until E16-01 and E16-08 gates pass.
 
 ## Netflix — Java and runtime (#115/#116/#117)
 
 - [Java service platform convergence](netflix-java-platform-convergence.md)
+- [Durable identity and project-based data governance](netflix-data-project-durable-workload-identity.md)
 - [Zuul 2 async gateway](netflix-zuul2-nonblocking-gateway.md)
 - [DGS and Spring GraphQL](netflix-dgs-spring-graphql-convergence.md)
 - [Java 21 virtual-thread pinning](netflix-java21-virtual-thread-pinning.md)
@@ -20,6 +21,7 @@
 - [Uber DOMA](uber-doma-domains.md)
 - [Uber Mezzanine trip migration](uber-mezzanine-pg-to-schemaless.md)
 - [Uber MyRocks](uber-mysql-to-myrocks.md)
+- [Uber Cinnamon dynamic overload protection and fairness](uber-cinnamon-admission-and-fairness.md)
 - [Shopify modular monolith](shopify-modular-monolith.md)
 - [Shopify component governance](shopify-packwerk-boundary-evolution.md)
 - [Shopify Helix gate-driven AI native migration](shopify-helix-checkpoint-gated-native-migration.md)
@@ -31,6 +33,7 @@
 - [Spotify Honk dataset-consumer migration and negative evidence](spotify-honk-data-consumer-migration.md)
 - [Cloudflare queue-backed Super Slurper](cloudflare-super-slurper-queues.md)
 - [Meta TAO graph serving](meta-tao-social-graph-serving.md)
+- [Meta ingestion shadow lifecycle and cutover](meta-ingestion-shadow-migration-lifecycle.md)
 - [LinkedIn audited Kafka tiers](linkedin-kafka-tiered-completeness.md)
 
 ## Reading and agent retrieval policy
