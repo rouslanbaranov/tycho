@@ -79,6 +79,40 @@ For another temporal datastore, profile partition-byte percentiles **and** read 
 
 **Tycho rollback/stop gates:** do not activate new routing while checksum/byte-shadow parity fails; refuse partial results for complete-history contracts; fall back if metadata is stale, filter memory exceeds budget, split introduces excessive query fan-out, or retention makes old/new incomparable. Retain the original until recovery and expiry are explicitly resolved. These criteria are analytical, not a disclosed Netflix full runbook.
 
+## Repartitioning is two different problems, not one universal background rewrite
+
+The [June 2026 first-party report](https://netflixtechblog.com/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456) (N12) identifies one failure mode from **bad initial forecasts** and another from a **few exceptional event IDs**. A table-wide future time-slice adjustment addresses the first; rewriting all historical data to solve it would introduce unnecessary risk. The per-ID asynchronous pipeline addresses the second while leaving ordinary IDs untouched. The article explicitly discusses a third choice, a **partial return** after an SLO threshold, but only where the client contract accepts incomplete results. That is not equivalent to a complete read with lower latency.
+
+### Source-reported split lifecycle and exact read ownership
+
+| Phase and source anchor | Publisher-supported behavior | Guard condition for consumers |
+|---|---|---|
+| **Detection** | Bytes-read threshold emits a Kafka event for one ID/time bucket | One expensive read may precede detection; it is not a preventive write-side limiter |
+| **Planning** | Read full original partition, compute a strategy and checkpoint progress | Restart does not imply the first partial plan was complete |
+| **Split** | Use additional event buckets, cap bucket count for ultra-wide rows and preserve sort order | Faster per-partition reads can increase read fan-out |
+| **Validate** | Compare old/new partition checksums before marking the split completed | The checksum definition and reference snapshot must match |
+| **Route** | Cache completed split identities in Bloom filters; on a hit consult the split metadata then merge parallel reads | Bloom positives need metadata resolution; a Bloom lookup is not proof the split exists |
+| **Fallback** | Retain the original wide partition to support old-path reads | Extra storage is intentional; old data cannot be deleted prematurely |
+| **Additional confidence** | Offline Data Bridge comparison and staged shadow byte comparisons | A transition to live reads requires more than the checksum predicate |
+
+**Primary locations:** N12, **Detection** through **Results**. Split-reader correctness must address old/new keys, ordered pagination, TTL and source value representation. The source explicitly calls **mutable-partition splitting** and retries of failed splits further work; neither is accepted as already deployed at June 2026.
+
+## Outcome and what the published examples cannot show
+
+N12 reports wide-partition average reads moving from **seconds to low double-digit milliseconds**, tails declining from **several seconds to about 200 ms or better**, and fewer timeouts. It also shows an exceptional **500 MB-plus** paginated partition still requiring roughly **41 seconds** for one request in the published example. These can coexist: reducing most affected request latency is not proof that the worst giant partition becomes cheap, nor a guarantee for every data distribution. Numerical figures are **first-party observational**, not independently replayed traffic or published confidence intervals.
+
+## Separate physical state from logical query identity
+
+For an unrelated time-series application, Tycho recommends that a logical query use stable `dataset + entity + interval + ordering + page token` semantics. A routing sidecar may resolve that identity to one ordinary partition or multiple completed split partitions, but physical routing must remain an implementation detail. A page token produced before split completion must either remain interpretable or cause an explicit resumable result; silently continuing in a changed ordering could duplicate or skip events.
+
+A safe synthetic transition uses these controls: first record pre-split source manifest and row identity; second create a unique split plan version with idempotent event handling; third execute a checkpointed copy using immutable intervals; fourth reconcile **content, order and metadata**, not only byte counts; fifth shadow serve both paths to compare answers under real predicates; sixth enable the new route for selected cohorts; seventh preserve a fallback until the old representation may be retired safely. This is **Tycho analysis**, not Netflix's undisclosed end-to-end runbook.
+
+**Adversarial tests:** duplicate Kafka detection; planner crash before checkpoint; partial write after checkpoint; checksum collision or excluded metadata; Bloom false positive; missing split metadata; stale read-cache state; a retention job dropping source data; changing consistency levels; pagination across a split; and a previously immutable partition receiving a late write. If any case cannot produce a consistent fallback, return **insufficient evidence** and do not switch the read path.
+
+## Architecture selection and reversal
+
+A **future time-slice strategy** is cheaper when a broad dataset is systematically under- or over-partitioned. **Per-ID splitting** is defensible when rare hot IDs dominate the tail and the platform can maintain split metadata and old-path fallbacks. **Scale-out or throttling** can be simpler if performance pressure is short-lived or source semantics allow partial results. Neither branch justifies a new Tycho product knowledge graph: the metadata here is the historical datastore's routing data, not architecture-document relationship infrastructure.
+
 ## Operational checks and unknowns
 
 Compare p99 by partition-size percentile, read queue depth, retries/timeouts, metadata cache hit behavior, storage read amplification and cost, all by dataset, not only fleet means. Guard cutover by consistent checksum and an explicit routing-state transition. The primary source does not provide source code SHA for every stage or a controlled experiment against an equivalent non-Cassandra store; do not present it as proof that Cassandra 4.x always beats alternatives.
