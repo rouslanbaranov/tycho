@@ -11,9 +11,9 @@ A company has a JVM monorepo with 45-minute CI waits but a separate polyrepo fle
 
 | Actual company case | What its primary source does and does not establish |
 |---|---|
-| [Airbnb](../cases/airbnb-jvm-monorepo-bazel.md) | A01: Gradle/Bazel coexistence and RBE speed/CSAT report |
-| [Spotify](../cases/spotify-tech-migration-long-tail.md) | SP01: Backstage, prioritized migration ownership and long-tail |
-| [Uber](../cases/uber-doma-domains.md) | U01: coordination costs when services and teams proliferate |
+| [Airbnb](../airbnb-jvm-monorepo-bazel.md) | A01: Gradle/Bazel coexistence and RBE speed/CSAT report |
+| [Spotify](../spotify-tech-migration-long-tail.md) | SP01: Backstage, prioritized migration ownership and long-tail |
+| [Uber](../uber-doma-domains.md) | U01: coordination costs when services and teams proliferate |
 
 **Why the apparent conflict is useful:** Airbnb evaluated developers opting into Bazel while Gradle continued; Spotify coordinated a long-tail across autonomous squads. Uber's DOMA points to a third failure: cross-service change spans ownership boundaries no build tool can abolish.
 
