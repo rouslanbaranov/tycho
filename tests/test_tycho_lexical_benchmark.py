@@ -62,5 +62,37 @@ class LexicalPilotTests(unittest.TestCase):
             b.validate_fixture(bad)
 
 
+    def test_ranked_results_deterministic_for_fixed_snapshot(self):
+        with tempfile.TemporaryDirectory() as d:
+            db = b.build_sqlite(Path(d) / "fixed.sqlite", self.fixtures["documents"])
+            for engine in ("fts5", "like"):
+                first = b.search(db, "database pool connection", engine)
+                second = b.search(db, "database pool connection", engine)
+                self.assertEqual(first, second)
+                self.assertIn("d05", first)
+            db.close()
+
+    def test_alias_misses_are_exposed_not_reinterpreted_as_true_negative(self):
+        cases = [q for q in self.fixtures["questions"]
+                 if q["case"].endswith("-unindexed")]
+        self.assertEqual(len(cases), 2)
+        with tempfile.TemporaryDirectory() as d:
+            db = b.build_sqlite(Path(d) / "aliases.sqlite", self.fixtures["documents"])
+            for q in cases:
+                hits = b.search(db, q["query"], "fts5")
+                # A sparse lexical index is not proof that synonyms are resolved.
+                self.assertNotIn(q["relevant_ids"][0], hits)
+            db.close()
+
+    def test_query_constraints_are_bounded(self):
+        with tempfile.TemporaryDirectory() as d:
+            db = b.build_sqlite(Path(d) / "limits.sqlite", self.fixtures["documents"])
+            with self.assertRaises(ValueError):
+                b.search(db, "kafka", "fts5", k=0)
+            with self.assertRaises(ValueError):
+                b.search(db, "kafka", "like", k=101)
+            db.close()
+
+
 if __name__ == "__main__":
     unittest.main()
