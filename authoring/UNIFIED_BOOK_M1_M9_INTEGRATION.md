@@ -79,6 +79,14 @@ These six pages are synthetic cross-case teaching guides. They supplement **V10'
 - Direct Git history verified two merge parents; comparison against core parent returned **exactly 41 M9 path changes**, matching PR #212, and comparison against main returned **108 path changes** at the merge checkpoint before integration-only docs. No main commits were missing at that checkpoint.
 - **No local `python` premerge/boundary/schema/M9 suite, rendered diagram, actual MCP evaluation, copyright clearance or independent human review was executed** in this QA. Do not translate these structural checks into any of the still-open acceptance gates.
 
+## Continued source-review and whole-book structural checkpoint
+
+The integrated manuscript has an additional [whole-book static scan](INTEGRATED_BOOK_STATIC_CHECKPOINT_2026-10-19.md) at pinned Git revision `ff88fe334050c6e429941cb514bdd02150fa6be2`: **136 of 136 book Markdown pages fetched**, **1,623 total Markdown link occurrences examined** for local file targets (none missing), exactly one H1 per file, and no odd triple-backtick fence counts. These are narrower GitHub-file/lexical checks, **not** a local Python premerge suite, complete anchor validation or source/diagram correctness review.
+
+A new [Shopify first-party source comparison](cases/M9_SHOPIFY_SOURCE_SPOTCHECK_2026-10-19.md) evaluates **12 specific SH01 (2019) and SH02 (2020) historical assertions** across the modular-monolith and Packwerk cases. This found and corrected an overstatement implying full 2019 domain-boundary enforcement. Publisher-windowed facts (including ~6,000 Ruby classes in 2019 and 37 components / approximately one-third Packwerk adoption in 2020) were distinguished from Tycho's proposed architecture-transfer guidance. This source spot-check **does not count as independent copyright or technical acceptance**, and none of the 60 graph-free MCP evaluation fixtures ran.
+
+Both core [#213](https://github.com/rouslanbaranov/tycho/issues/213) and M9 [#121](https://github.com/rouslanbaranov/tycho/issues/121) remain **OPEN**; the 69 core editorial statuses and 35 applied document statuses remain pending independent decisions.
+
 ## Integration and acceptance matrix — separate states
 
 | Gate | Core M1–M8 and #213 | M9 and #121 | Combined branch / publication disposition |
