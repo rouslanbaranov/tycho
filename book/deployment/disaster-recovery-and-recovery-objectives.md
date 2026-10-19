@@ -163,8 +163,8 @@ All services, failures, roles and diagrams are original inventions. No real inci
 
 ## Applied M9 evidence: what transfers and what does not
 
-The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
 
-- **[Netflix — Chaos Kong regional simulation](../cases/netflix-chaos-kong-regional-failover.md)** illustrates application-level regional fault simulation can expose cross-service failover dependencies and missing readiness. **It cannot establish:** chaos Kong does not simulate provider-wide physical outage or prove universal multi-region data integrity.
+**Case lens — [Netflix — Chaos Kong regional simulation](../cases/netflix-chaos-kong-regional-failover.md)**. **Relevant mechanism or architectural contrast:** Application-level regional fault simulation can expose cross-service failover dependencies and missing readiness. **Not established by this report/playbook:** Chaos Kong does not simulate provider-wide physical outage or prove universal multi-region data integrity.
 
-A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

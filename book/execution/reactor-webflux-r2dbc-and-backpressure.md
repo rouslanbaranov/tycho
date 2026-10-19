@@ -162,8 +162,8 @@ Run **equivalent open-loop offered-load** and bounded concurrency tests; include
 
 ## Applied M9 evidence: what transfers and what does not
 
-The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
 
-- **[Netflix — Zuul 2 nonblocking gateway](../cases/netflix-zuul2-nonblocking-gateway.md)** illustrates long-lived connections are a workload-specific reason to consider nonblocking gateway I/O. **It cannot establish:** netflix's company-reported results do not prove reactive execution beats blocking APIs for all workloads or improve every failure mode.
+**Case lens — [Netflix — Zuul 2 nonblocking gateway](../cases/netflix-zuul2-nonblocking-gateway.md)**. **Relevant mechanism or architectural contrast:** Long-lived connections are a workload-specific reason to consider nonblocking gateway I/O. **Not established by this report/playbook:** Netflix's company-reported results do not prove reactive execution beats blocking APIs for all workloads or improve every failure mode.
 
-A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.
