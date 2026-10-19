@@ -2,7 +2,7 @@
 
 Status: **curated research inputs, not yet accepted case-study chapters**. Initial discovery: 2026-10-19. Public company-owned technical blogs, named engineer talks/transcripts, public project documentation, and first-party engineering reports are preferred. URLs are external references, not permission to redistribute full text, figures, code, or recordings. Dates/figures below belong to the source's stated observation window, never universal architecture benchmarks.
 
-This register adds **39 linked primary or practitioner-presented resources from 11 organizations**. Every row must be independently re-opened, dated, scoped, and claim-checked by its assigned author before becoming a Tycho source record. In particular, a conference abstract is *talk scope*, not proof that every proposed feature was deployed. Article content is evidence of what authors report, not independent validation of performance.
+This register adds **43 linked primary or practitioner-presented resources from 10 organizations**. Every row must be independently re-opened, dated, scoped, and claim-checked by its assigned author before becoming a Tycho source record. In particular, a conference abstract is *talk scope*, not proof that every proposed feature was deployed. Article content is evidence of what authors report, not independent validation of performance.
 
 | ID | Company | Primary public source | Architecture problem → modernization / trade-off | Tycho route | Evidence / limitation |
 |---|---|---|---|---|---|
