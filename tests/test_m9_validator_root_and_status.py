@@ -142,6 +142,45 @@ class PinnedRootAndFormatTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "case collection escapes the selected root"):
                 read_case_catalog(root)
 
+    def test_contextual_index_link_stays_in_selected_snapshot(self) -> None:
+        with tempfile.TemporaryDirectory() as workspace:
+            root = Path(workspace) / "pinned"
+            case_dir = self._synthetic_cases(root)
+            good = root / "sources" / "REAL_WORLD_ARCHITECTURE_CASES.md"
+            good.parent.mkdir(parents=True)
+            good.write_text("Synthetic public source register", encoding="utf-8")
+            index = case_dir / "README.md"
+            index.write_text(index.read_text(encoding="utf-8") +
+                             "\\n- [Public source](../../sources/REAL_WORLD_ARCHITECTURE_CASES.md)\\n",
+                             encoding="utf-8")
+            ids, pages = read_case_catalog(root)
+            self.assertEqual(20, len(ids))
+            self.assertEqual(20, len(pages))
+
+    def test_contextual_index_link_cannot_escape_snapshot(self) -> None:
+        with tempfile.TemporaryDirectory() as workspace:
+            root = Path(workspace) / "pinned"
+            case_dir = self._synthetic_cases(root)
+            outside = Path(workspace) / "private.md"
+            outside.write_text("Not in snapshot", encoding="utf-8")
+            index = case_dir / "README.md"
+            index.write_text(index.read_text(encoding="utf-8") +
+                             "\\n- [Outside](../../../private.md)\\n",
+                             encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "contextual link escapes"):
+                read_case_catalog(root)
+
+    def test_contextual_index_link_must_exist(self) -> None:
+        with tempfile.TemporaryDirectory() as workspace:
+            root = Path(workspace) / "pinned"
+            case_dir = self._synthetic_cases(root)
+            index = case_dir / "README.md"
+            index.write_text(index.read_text(encoding="utf-8") +
+                             "\\n- [Missing](../../sources/not-present.md)\\n",
+                             encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "broken contextual link"):
+                read_case_catalog(root)
+
     def test_independent_review_needs_nonempty_reviewer_and_date(self) -> None:
         schema = json_read(ROOT / "authoring/cases/case-record.schema.json")
         baseline = json_read(ROOT / "authoring/cases/examples/case-records.json")[0]
