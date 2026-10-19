@@ -17,7 +17,7 @@ For actual v2 support use a specifically verified, pinned **MCP Python SDK 2.x**
 | Transport | Streamable HTTP and stdio supported in relevant SDKs | Streamable HTTP POST, JSON or per-request SSE; stdio where supported | `/mcp` for remote transport, stdio for local integration/evidence tests |
 | Metadata | Session/initialize-negotiated capabilities | `params._meta` carries protocol version, client info/capabilities as specified | Validate supported protocol revisions and legal capability assumptions per call |
 | HTTP headers | Legacy negotiated `MCP-Protocol-Version`; session if assigned | `MCP-Protocol-Version`, `Mcp-Method` and `Mcp-Name` where method requires it | Validate body/header agreement, reject mismatches; let conformant SDK handle protocol parsing |
-| Server capabilities | Negotiated at initialization | `server/discover`, `tools/list`, `resources/list`, `prompts/list` | Advertise **actually implemented** features only, never list planned graph/vector tools |
+| Server capabilities | Negotiated at initialization | `server/discover`, `tools/list`, `resources/list`, `prompts/list` | Advertise **actually implemented** features only; graph tools are excluded and vector tools require independent evidence and acceptance |
 | Notifications and subscriptions | Legacy GET SSE/change notifications | Explicit `subscriptions/listen` capability for subscribed notifications; not mandatory for simple read-only tools | No unsolicited notification stream as part of the minimal deployment |
 | App state | Protocol session can carry state | Explicit application-generated handle or immutable snapshot ID passed in ordinary tool args | Snapshot/cursor identity must remain independent of TCP connection/server replica |
 
@@ -52,7 +52,7 @@ The [retrieval contract](models/retrieval-contracts.md) owns stable IDs, snapsho
 | Exact pinned MCP SDK and client compatibility tests | **Pending**, must be tested when SDK/runtime is installed | #57 implementation gate |
 | Section/lexical retrieval engine | Independent partial source and index work; no deployed endpoint claimed | #49–#51 |
 | Standard MCP tools/resources/read adapter | **Not implemented by this issue** | #57 |
-| Evidence/graph and decision-method tools | **Not implemented by this issue** | #58 |
+| Evidence/provenance and decision-method tools | **Not implemented by this issue**; no curated graph tools are planned | #58 |
 | Remote deployment, authorization, observability, load testing | **Planned** separate rollout/evaluation scope | later E09 / Rocinante integration |
 
 This decision is intentionally reversible if a client compatibility matrix demonstrates that an older SDK is required. **Only exact-version client/server tests can justify changing the deployment stack**, and no speculative protocol-level onboarding method should be invented. Independent reviewer approval, end-to-end client roundtrip, auth pen-test and a live server are not claimed.

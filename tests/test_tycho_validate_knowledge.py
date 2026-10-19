@@ -38,26 +38,42 @@ class KnowledgeValidationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"incompatible"):
                 k.contract_versions(root)
 
-    def test_missing_index_and_graph_not_reported_as_pass(self):
+    def test_missing_index_not_reported_as_pass(self):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)
             checks, missing = k.ordered_checks(root, "available")
             self.assertTrue(any(x.startswith("routing-index") for x in missing))
-            self.assertIn("graph-validator-not-implemented", missing)
             self.assertTrue(any(name == "source-register" for name,_ in checks))
             with self.assertRaisesRegex(ValueError,"strict knowledge validation unavailable"):
                 k.ordered_checks(root, "strict")
 
-    def test_optional_hooks_explicit_and_ordered(self):
+    def test_routing_index_strict_gate_without_graph_requirement(self):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)
-            for name in ("generated/route-index.v1.json", "scripts/validate_graph.py"):
+            for name in ("generated/route-index.v1.json",):
                 path = root / name
                 path.parent.mkdir(parents=True,exist_ok=True)
                 path.write_text("{}")
             checks, missing = k.ordered_checks(root, "strict")
             self.assertFalse(missing)
-            self.assertEqual([x[0] for x in checks][-2:], ["routing-index","graph-hook"])
+            self.assertEqual(checks[-1][0], "routing-index")
+            self.assertNotIn("graph-hook", [x[0] for x in checks])
+
+    def test_graph_absence_or_presence_never_blocks_strict_tycho_validation(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            idx = root / "generated/route-index.v1.json"
+            idx.parent.mkdir(parents=True, exist_ok=True)
+            idx.write_text("{}")
+            checks, missing = k.ordered_checks(root, "strict")
+            self.assertEqual(missing, [])
+            self.assertFalse(any("graph" in name for name, _ in checks))
+            optional_graph = root / "scripts/validate_graph.py"
+            optional_graph.parent.mkdir(parents=True, exist_ok=True)
+            optional_graph.write_text("# historical optional prototype")
+            checks, missing = k.ordered_checks(root, "strict")
+            self.assertEqual(missing, [])
+            self.assertFalse(any("graph" in name for name, _ in checks))
 
     def test_structural_green_with_missing_hooks_still_incomplete(self):
         with TemporaryDirectory() as tmp:

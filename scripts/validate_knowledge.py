@@ -2,7 +2,7 @@
 """Non-enriching Tycho knowledge-validation orchestration (E04-06).
 
 Explicit local runner; never invokes source acquisition, clone, reindex,
-frontmatter apply, graph assembly, external services or GitHub Actions.
+frontmatter apply, external services or GitHub Actions.
 All commands are read-only and their results must be reported honestly.
 """
 import argparse
@@ -60,11 +60,6 @@ def ordered_checks(root, mode):
         checks.append(("routing-index", ["scripts/route_index.py", "check"]))
     else:
         missing.append("routing-index-not-built")
-    graph = root / "scripts/validate_graph.py"
-    if graph.is_file():
-        checks.append(("graph-hook", ["scripts/validate_graph.py"]))
-    else:
-        missing.append("graph-validator-not-implemented")
     if mode == "strict" and missing:
         raise ValueError("strict knowledge validation unavailable: " + ", ".join(missing))
     return checks, missing

@@ -1,5 +1,7 @@
 # Directed architecture knowledge graph — vocabulary, provenance and ownership v1
 
+> **ARCHIVED PROPOSAL — NOT PART OF TYCHO DELIVERY.** Superseded on 2026-10-19 by [ADR: Retire Tycho's curated knowledge graph](../ADR-RETIRE-CURATED-KNOWLEDGE-GRAPH.md). The graph structures, shards, graph-query tasks and graph-related acceptance gates below are **historical**, not requirements or implemented capabilities. Graph-oriented topics remain valid as educational book material.
+
 > E06-01 [issue #42](https://github.com/rouslanbaranov/tycho/issues/42), M4, 2026-10-19. This is a **contract**, not a populated static graph, graph extraction benchmark, inferred knowledge source, validated graph assembly or deployed query API. Tycho remains self-contained and uses independently public inputs.
 
 ## Why two relationship planes must stay separate

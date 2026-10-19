@@ -1,6 +1,6 @@
 # Architecture decision layer — implementation plan
 
-Status: planned. Added: 2026-10-18.
+Status: roadmap scope revised 2026-10-19. Originally drafted 2026-10-18.
 
 ## Purpose
 
@@ -95,9 +95,9 @@ Provide four entry routes:
 - Legacy constraint → excluded/viable options → transition choices.
 - Modernization objective → measurable outcomes → target and migration alternatives.
 
-Plan typed links between requirements, constraints, workload conditions, patterns, alternatives, evidence, implementations, experiments and decisions. Record source/provenance and conditions on material relationships. Do not create a graph as a competing narrative source of truth; first agree relation semantics and ownership, then encode only relationships that aid retrieval.
+Use the established requirement/legacy profiles, applicability cards, candidate comparisons, ADRs, target/transition documents and **existing typed claim-to-source provenance** as the authoritative relationships. Resolve stable document IDs, relevant sections and exact evidence through metadata and ranked retrieval. **Do not implement a curated knowledge graph or maintain a parallel hand-authored set of concept/pattern/decision edges.** The additional maintenance cost has no demonstrated Tycho-specific search/decision benefit.
 
-**Deliverable:** route specification and examples; graph implementation follows the knowledge-contract stage.
+**Deliverable:** route specification and original worked examples plus evidence-linked navigation through existing document/source IDs. A graph implementation is **not** a dependency.
 
 ## 7. Pilot and acceptance criteria
 
@@ -121,6 +121,6 @@ Record baseline findings and observed results; do not invent measurements or cla
 
 ## Sequencing and current boundary
 
-Design the profiles, card, ADR and transition models first. Align the book structure and pilot contracts with them. Pin public evidence for pilot applicability claims. Implement agreed schemas/relations and validate the pilots before populating the wider book.
+Design the profiles, card, ADR and transition models first. Align the book structure and pilot contracts with them. Pin public evidence for pilot applicability claims. Implement agreed metadata, source/claim references and section retrieval, and validate the pilots before populating the wider book. A maintained curated concept graph is explicitly out of scope.
 
-This document adds planned work only. The profiles, templates, applicability corpus, decision graph and evaluated selection workflow are not yet implemented. Do not automatically execute this plan merely because it has been recorded.
+This document originated as a plan. Several profiles, templates and examples have since been implemented in scoped issues; do not reset their real GitHub status. The **curated decision graph is removed from scope** as of 2026-10-19. Broader evaluated decision workflows remain subject to actual tests and independent review; do not auto-execute merely because a plan exists.
