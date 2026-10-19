@@ -7,7 +7,7 @@
 
 - The proposed outline contains **10 volumes and 69 chapters**. All 10 volume rows were compared against titles and section headings in currently reachable technical prose.
 - The current book is **not assembled** into those volume/chapter/page paths. Across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. They contain real prose; they are not 69 separate canonical chapter units.
-- Of 69 proposed questions: **38 directly addressed**, **23 partially addressed**, **8 without a focused book treatment verified**, counting the new unreviewed V02/C05 draft on this branch. **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
+- Of 69 proposed questions: **42 directly addressed**, **23 partially addressed**, **4 without a focused book treatment verified**, including five new unreviewed book drafts on this branch (V02/C05; V07/C04 and C06; V10/C01 and C02). **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
 - Source discovery was limited to current root/topic navigation and linked Markdown files accessed from GitHub. The entire Git tree was **not exhaustively enumerated** and repository-wide executable checks **were not run**. Reconcile this matrix with a full local inventory and content review before presenting the classification as comprehensive proof.
 - Educational graph storage/traversal remains a legitimate V06/C06 topic; a curated concept/decision graph for Tycho is **not required**. Search/MCP/deployment infrastructure work is excluded from this manuscript completion gate.
 
@@ -97,9 +97,9 @@
 | V07/C01 — Queueing, Little's Law and measurement boundaries | D | [Technical page](../book/performance/queueing-littles-law.md) | Maintain assumptions and synthetic finite-window counterexample. |
 | V07/C02 — Contention, saturation and scaling laws | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Add saturation/contended resources and system-specific scaling-law limitations. |
 | V07/C03 — Load-test methods and benchmark validity | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Separate load-test fixture validity, open versus closed demand and reproducibility. |
-| V07/C04 — Tail latency, fan-out and time budgets | M | No focused book page verified | Write tail-latency and fan-out deadline budgeting with failure and percentile counterexamples. |
+| V07/C04 — Tail latency, fan-out and time budgets | D | [New tail-latency chapter](../book/performance/tail-latency-fanout-and-deadline-budgets.md) | Authored from independent published materials; requires formal validation and editorial review. |
 | V07/C05 — Overload protection and graceful degradation | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Expand admission, shedding, queue bounds, retry storms and degraded-mode correctness. |
-| V07/C06 — Horizontal/vertical scaling and autoscaling delay | M | No focused book page verified | Write autoscaling lag, cold start, stabilization and workload-following counterexamples. |
+| V07/C06 — Horizontal/vertical scaling and autoscaling delay | D | [New autoscaling chapter](../book/performance/autoscaling-lag-and-capacity-limits.md) | Controller, startup lag, vertical/horizontal and overload trade-offs researched; requires independent review. |
 | V07/C07 — Capacity planning and cost/performance trade-offs | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Add defensible capacity planning and total-cost sensitivity models. |
 
 ### V08 — Delivery, deployment and disaster recovery
@@ -130,8 +130,8 @@
 
 | Planned chapter | Coverage | Observed primary material | Outstanding work |
 |---|---|---|---|
-| V10/C01 — Architecture requirement and workload profiles | M | No focused book page verified | Write the canonical book chapter interpreting and applying the existing requirements/workload method; authoring/models is supporting method, not book prose. |
-| V10/C02 — Baseline analysis for existing software | M | No focused book page verified | Write canonical legacy-baseline architecture assessment chapter using only independent synthetic cases; method exists in authoring/models. |
+| V10/C01 — Architecture requirement and workload profiles | D | [New requirements/workload chapter](../book/decisions/requirements-and-workload-architecture-profiles.md) | Original independent book treatment; supporting model is not substituted for book prose; review pending. |
+| V10/C02 — Baseline analysis for existing software | D | [New legacy baseline chapter](../book/decisions/legacy-baseline-and-modernization-evidence.md) | Original synthetic catalog and admissible public modernization sources; independent validation pending. |
 | V10/C03 — Pattern applicability and contraindications | P | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Turn method cards/contraindications into a navigable pattern-selection book chapter. |
 | V10/C04 — Alternatives, experiments and ADRs | P | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Expand condition-gated alternative analysis and ADR falsification examples. |
 | V10/C05 — Target architecture versus transition states | P | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Develop target versus transition states with reversible and non-reversible steps. |
@@ -140,12 +140,12 @@
 
 ## Content remediation recorded in this branch
 
-- **V02/C05 moved from M to D (not accepted):** new original [HTTP and RPC compatibility chapter](../book/application/http-rpc-contracts-and-compatibility.md), using independently verified RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers documentation. Its application landing now links to it. No executable client/provider tests, independent review or full-repository validation has run; publication completeness is not claimed.
-- Initial main-at-audit classification before this new chapter was **37 D / 23 P / 9 M**. The current feature-branch classification is **38 D / 23 P / 8 M**, all still subject to inventory and quality review.
+- **V02/C05 and V07/C04/C06 and V10/C01/C02 moved from M to D (not accepted):** V02/C05 details:  new original [HTTP and RPC compatibility chapter](../book/application/http-rpc-contracts-and-compatibility.md), using independently verified RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers documentation. Its application landing now links to it. The other new drafts cover tail latency, autoscaling, requirements/workload decisions and legacy architecture. No executable client/provider tests, independent review or full-repository validation has run; publication completeness is not claimed.
+- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **42 D / 23 P / 4 M**, all still subject to inventory and quality review.
 
 ## High-priority confirmed editorial gaps
 
-1. **Unwritten focused subject coverage (M):** CPU/GC diagnostic decision-making; tail latency/fan-out budgets; autoscaling delay and stabilization; incident response; agent-facing trust/privacy controls; V10 requirements and legacy synthesis; agent-oriented reading route. Each needs original substantial material and precise admissible sources.
+1. **Unwritten focused subject coverage (M):** CPU/GC diagnostic decision-making; incident response; agent-facing trust/privacy controls; agent-oriented reading route. Drafts for the four other former M rows above are now present; deeper semantic review is outstanding. Each needs original substantial material and precise admissible sources.
 2. **Deepen fragmented subjects (P):** requirements and quality experimentation, modernization transitions, bounded architecture styles, graph concepts as *book content*, retrieval evaluation, cost modeling, recovery validation, and supply-chain acceptance.
 3. **Normalize ownership:** current topical research pages often span multiple intended chapters. Preserve their proven material; split by genuinely separate reader question only, and establish one canonical source of explanation. Do not copy the same mechanism into every mapped chapter.
 4. **Validate maturity:** confirm all claims with exact independently public versioned sources; review original diagrams, failure matrices, tests and limits. Existing self-authored researched pages are not evidence of independent domain approval or of real system benchmarking.
