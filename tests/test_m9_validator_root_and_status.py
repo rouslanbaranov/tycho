@@ -22,6 +22,7 @@ from validate_m9_cases import (  # noqa: E402
     check,
     iso_date,
     json_read,
+    parse_source_registry,
     read_case_catalog,
     self_test,
     validate_record,
@@ -184,7 +185,8 @@ class PinnedRootAndFormatTest(unittest.TestCase):
     def test_independent_review_needs_nonempty_reviewer_and_date(self) -> None:
         schema = json_read(ROOT / "authoring/cases/case-record.schema.json")
         baseline = json_read(ROOT / "authoring/cases/examples/case-records.json")[0]
-        refs = set(baseline["source_refs"])
+        refs = parse_source_registry(
+            (ROOT / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8"))
         validate_record(baseline, schema, refs)
 
         for reviewer, date in (
@@ -206,6 +208,36 @@ class PinnedRootAndFormatTest(unittest.TestCase):
         metadata_only["review"]["reviewed_on"] = "2026-10-19"
         validate_record(metadata_only, schema, refs)
         # Passing this structural test is never proof of real reviewer identity.
+
+    def test_curated_source_id_url_binding(self) -> None:
+        schema = json_read(ROOT / "authoring/cases/case-record.schema.json")
+        records = json_read(ROOT / "authoring/cases/examples/case-records.json")
+        refs = parse_source_registry(
+            (ROOT / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8"))
+        self.assertEqual(43, len(refs))
+        for record in records:
+            with self.subTest(valid=record["case_id"]):
+                validate_record(record, schema, refs)
+
+        case = next(record for record in records if record["source_refs"] == ["N11"])
+        for url in (refs["ST01"], refs["N11"] + "-different-article",
+                    "https://evil.example.org/" + refs["N11"].rsplit("/", 1)[-1]):
+            with self.subTest(invalid_url=url):
+                wrong = copy.deepcopy(case)
+                wrong["claims"][0]["primary_url"] = url
+                with self.assertRaisesRegex(ValueError, "URL disagrees"):
+                    validate_record(wrong, schema, refs)
+
+    def test_curated_source_registry_rejects_duplicate_and_unparseable_urls(self) -> None:
+        raw = (ROOT / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8")
+        refs = parse_source_registry(raw)
+        self.assertEqual(43, len(refs))
+        first = next(line for line in raw.splitlines() if line.startswith("| N11 |"))
+        with self.assertRaisesRegex(ValueError, "duplicate primary source ID"):
+            parse_source_registry(raw + "\n" + first + "\n")
+        with self.assertRaisesRegex(ValueError, "missing HTTPS primary link"):
+            parse_source_registry(raw.replace(first, first.replace(
+                refs["N11"], "http://untrusted.example/blog"), 1))
 
     def test_full_schema_rejects_empty_review_metadata_when_installed(self) -> None:
         try:
