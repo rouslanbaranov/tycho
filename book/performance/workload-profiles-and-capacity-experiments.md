@@ -134,3 +134,13 @@ This shows a **constructed** example of a trade-off: isolation protects class A'
 - Reconcile the branch with current main, verify all relative links and run repository-wide local premerge checks.
 - Inspect the full PR diff and request independent architectural/domain review; **self-authorship and four synthetic unit tests are not independent review**.
 - Only after source/structure/correctness gates should #86 be considered for completion; completion of this trace is not completion of the milestone.
+
+
+## Narrow primary-paper abstract verification (2026-10-19)
+
+The following are **primary publisher/author-hosted abstracts inspected in this pass**, not claims that the entire papers or their proofs were read. They refine two source pointers left pending above.
+
+- **Little (1961)** — [INFORMS publisher abstract, *A Proof for the Queuing Formula: L = λW*](https://pubsonline.informs.org/doi/abs/10.1287/opre.9.3.383), *Abstract*, volume 9(3), pages 383–387, published online 1961-06-01. The abstract explicitly names finite means, strict stationarity, and a metrically transitive arrival process with nonzero mean among its conditions. It **supports the conditional mean identity** in the chapter; it does not assert transient-window validity, a percentile relationship, bottleneck localization, queue sizing or a universal workload threshold. The body/proof was **not inspected** in this pass.
+- **Gunther (2008)** — [arXiv author-submitted abstract, *A General Theory of Computational Scalability Based on Rational Functions*](https://arxiv.org/abs/0808.1431), version 1 dated 2008-08-11, *Abstract*. The abstract describes a computational-capacity rational function with linear numerator and second-degree denominator, its relation to a queue-theoretic synchronous throughput bound, and statistical modeling/prediction. This **supports why a capacity-fit model is relevant**; it does not independently establish a particular fitted value of contention or coherency for an application, or provide production results for the Tycho synthetic scenarios. The full derivation was **not inspected**; use the exact USL coefficient formula above as a published model representation pending a primary full-text algebra review.
+
+**Editorial consequence:** report both references as "publisher/author abstract verified; full-text derivation outstanding," rather than "unverified" or "full paper independently checked." A credible load-study outcome still requires measured inputs, fit validation against held-out data, workload definitions and actual system tests.
