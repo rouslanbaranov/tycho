@@ -42,6 +42,40 @@ The publisher additionally labels heap improvement **~60% lower**, although its 
 
 The source's 'Lessons Learned' recommends priority-aware admission, early rejection when deadlines are already lost, storage-local signals and observability. **Do not infer** that static rate limits are always wrong: they can complement the dynamic controller for API contract policing, and cannot replace workload capacity measurements.
 
+## Model the protection boundaries separately
+
+The [2026 first-party account](https://www.uber.com/us/en/blog/from-static-rate-limiting-to-intelligent-load-management/) (U06) separates three jobs that are easy to conflate: **systemwide overload shedding**, **per-tenant fairness in healthy periods**, and **specific resource protection** for hot keys, large writes, memory or goroutine budgets. Its architecture evolved from fixed query-layer quotas through CoDel queues/Scorecard and regulators to a priority-aware Cinnamon controller using feedback from storage-local and remote replica conditions.
+
+| Control | What it regulates | Why another controller cannot simply replace it |
+|---|---|---|
+| Request-level quota | Caller entitlement or contractual request ceiling | It cannot infer stateful disk/replica health from byte-size of the response |
+| Tenant Scorecard | Inflight concurrency by tenant | A low-QPS, high-byte write or hot partition can still overload local resources |
+| Resource regulator | Specific write-byte, hot-key, memory or goroutine pressure | Without priority policy it may drop a critical request as early as an optional job |
+| Feedback-based Cinnamon admission | Current workload delay/error/replica-lag against priority | Feedback may oscillate, be delayed, or reflect conditions different from the request cohort |
+| Client retry/deadline | Limits useful time and retry amplification outside the store | Admission alone cannot stop irresponsible client retry storms |
+
+The table's explanatory contraindications are Tycho reasoning; U06 describes these mechanisms and some historic missteps, not an externally standardized load-management specification.
+
+## Admission must optimize useful completed work, not accepted requests
+
+A retryable request with a deadline shorter than predicted queue wait can create harm if accepted: its caller has already abandoned it by the time the store consumes CPU, memory and locks. A controller should count **completed useful operations** and successful critical classes, not just ingress QPS or aggregate reject rate. It should also expose why individual requests were rejected, and whether old low-priority work made critical traffic miss deadlines.
+
+**Synthetic comparison test:** replay equivalent read, write, scan, long-lived background and hot-key traffic at a fixed offered load. Use priority classes with immutable test metadata, inject follower replication lag and a burst of large writes, and run the old fixed limiter versus the candidate controller independently. Compare successful results by class, p95/p99, queue age, retries, admission rate, heap/goroutines, replica lag and fairness (per-tenant share and starvation). A controller that increases total throughput while starving an essential tenant **fails** the requirement.
+
+The publisher reports **5,400 vs 3,000 QPS** and **1.0s vs 3.1s upsert p99** in its overload comparison, plus large goroutine/heap reductions. Its stated heap reduction percentage and peak examples use different aggregations and cannot be mathematically normalized from the public post alone. These are **reported test observations**, not guarantees for another store. [U06, **The Payoff**].
+
+## Controller failure and safe rollback
+
+PID regulation is only as good as its observations, sampling rate and bounded output. A delayed follower-lag signal could cause over-admission into a replica that cannot commit; stale error telemetry can drive oscillation. Another test is a false-priority producer attempting to mark noncritical work as critical. Protect the policy at a trusted ingress boundary, not by trusting a user-supplied header.
+
+A reversible rollout can initially run Cinnamon in **decision-only shadow mode**, recording hypothetical shed reasons. Canary actual admission on a small tenant/partition cohort while leaving fixed baseline protection available. Raise scope only after observing priority fairness, hot-key isolation, replication safety and recovery from overload. Keep a kill switch, rate-of-change cap on control output, a safe low-confidence behavior when remote signals fail, and operator-readable reason codes.
+
+**Stop conditions:** controller swings repeatedly between rejection and flooding; critical requests are shed while optional work survives; a lagging follower becomes an invisible bottleneck; telemetry outage produces unlimited admission; or an emergency fallback requires unauthorized priority override. Those are **original Tycho design requirements**, not assertions about undocumented implementation details.
+
+## Alternative architectures and applicability
+
+For a small stateless API, a fixed bounded concurrency limit and per-caller quota may already suffice. For a stateful multi-tenant store, a storage-local regulator can prevent one hot partition from crippling others, while an authenticated priority policy can preserve high-value operations. The key questions are where resource pressure is actually observed, whether the service can distinguish traffic importance, and whether rejection is cheaper than futile queued execution. Without those measurements and ownership, the correct recommendation is **insufficient evidence**, not immediate adoption of a sophisticated feedback controller.
+
 ## Applicability, migration and rollback ADR for another organization
 
 **Synthetic context:** multitenant ledger serving unpredictable scans and writes, high retry amplification and a few tenant hot keys. Proposed architecture decision: instrument per-key hotness, concurrency, queue wait, follower lag and request priority before building a pluggable controller; continue existing budget limiting during canary to avoid unlimited client flood.
