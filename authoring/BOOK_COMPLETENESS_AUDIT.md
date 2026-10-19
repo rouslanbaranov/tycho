@@ -6,8 +6,8 @@
 ## Executive result
 
 - The proposed outline contains **10 volumes and 69 chapters**. All 10 volume rows were compared against titles and section headings in currently reachable technical prose.
-- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine previously missing subjects and one formerly partial subject received new chapter drafts on this feature branch; the branch now has at least 44 known directly linked technical files, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
-- Of 69 proposed questions: **48 directly addressed**, **21 partially addressed**, **0 without a focused book treatment verified**, after nine new *unreviewed* chapter drafts on this branch (V02/C05; V03/C06; V07/C04 and C06; V09/C06 and C07; V10/C01, C02 and C06). **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
+- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine previously missing subjects and one formerly partial subject received new chapter drafts on this feature branch; the branch now has at least 49 known linked technical drafts from the inspected topic entry routes, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
+- Of 69 proposed questions: **53 directly addressed**, **16 partially addressed**, **0 without a focused book treatment verified**, after nine new *unreviewed* chapter drafts on this branch (V02/C05; V03/C06; V07/C04 and C06; V09/C06 and C07; V10/C01, C02 and C06). **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
 - Source discovery was limited to current root/topic navigation and linked Markdown files accessed from GitHub. The entire Git tree was **not exhaustively enumerated** and repository-wide executable checks **were not run**. Reconcile this matrix with a full local inventory and content review before presenting the classification as comprehensive proof.
 - Educational graph storage/traversal remains a legitimate V06/C06 topic; a curated concept/decision graph for Tycho is **not required**. Search/MCP/deployment infrastructure work is excluded from this manuscript completion gate.
 
@@ -24,7 +24,7 @@
 | Planned chapter | Coverage | Observed primary material | Outstanding work |
 |---|---|---|---|
 | V01/C01 — Problem framing and system boundaries | D | [New system boundaries chapter](../book/application/problem-framing-and-system-boundaries.md) | Independently public arc42/C4 scope, original diagrams and synthetic boundary contract; expert review pending. |
-| V01/C02 — Workload and demand models | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Expand a complete measurable workload/demand profile beyond experimental mechanics. |
+| V01/C02 — Workload and demand models | D | [New workload and arrival chapter](../book/performance/workload-demand-and-arrival-models.md) | Original quantitative workload definitions and synthetic cases; independent source and semantic review pending. |
 | V01/C03 — Quality attributes and trade-offs | D | [Technical page](../book/application/quality-drivers-and-architecture-views.md) | Deepen systematic quality conflict evaluation and acceptance across stakeholder perspectives. |
 | V01/C04 — Evidence, hypotheses and architecture experiments | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Separate hypothesis/evidence design and experimental validity from capacity examples. |
 | V01/C05 — Architecture descriptions and decision records | P | [Technical page](../book/application/quality-drivers-and-architecture-views.md) | Unify architectural views and bounded ADR reading into one canonical chapter. |
@@ -35,11 +35,11 @@
 | Planned chapter | Coverage | Observed primary material | Outstanding work |
 |---|---|---|---|
 | V02/C01 — Layered, modular and ports-and-adapters design | D | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Confirm full layered/ports/adapters mechanics, dependency enforcement and limits. |
-| V02/C02 — Domain boundaries, data ownership and contracts | P | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Add explicit domain ownership, data contracts, mapping and boundary evolution. |
+| V02/C02 — Domain boundaries, data ownership and contracts | D | [New domain ownership chapter](../book/application/domain-boundaries-data-ownership-and-contracts.md) | Separate domain/data/deployment authority and contract evolution; review pending. |
 | V02/C03 — Modular monolith and internal events | P | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Expand modular-monolith lifecycle, internal events, invariants and deployment countercases. |
 | V02/C04 — SOA, microservices and distributed boundaries | D | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Deepen SOA versus microservices decisions with independent deployment conditions. |
 | V02/C05 — Public APIs, HTTP/RPC and compatibility | D | [New chapter draft](../book/application/http-rpc-contracts-and-compatibility.md) | Newly written; pending independent technical review, full local verification and final V02 chapter/page assembly. |
-| V02/C06 — Integration adapters and anti-corruption boundaries | P | [Technical page](../book/application/architecture-evolution-and-extraction.md) | Write anti-corruption adapter contracts and long-lived coexistence with original failure scenarios. |
+| V02/C06 — Integration adapters and anti-corruption boundaries | D | [New anti-corruption adapters chapter](../book/application/anti-corruption-adapters-and-coexistence.md) | Original semantic mappings, lost-acknowledgment contract and migration tests; review pending. |
 | V02/C07 — Authorization boundaries and multitenancy | P | [Technical page](../book/security/identity-authorization-and-isolation.md) | Move/link ownership-specific multitenancy boundaries without duplicating security chapter. |
 
 ### V03 — Execution models, concurrency and flow control
@@ -96,7 +96,7 @@
 |---|---|---|---|
 | V07/C01 — Queueing, Little's Law and measurement boundaries | D | [Technical page](../book/performance/queueing-littles-law.md) | Maintain assumptions and synthetic finite-window counterexample. |
 | V07/C02 — Contention, saturation and scaling laws | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Add saturation/contended resources and system-specific scaling-law limitations. |
-| V07/C03 — Load-test methods and benchmark validity | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Separate load-test fixture validity, open versus closed demand and reproducibility. |
+| V07/C03 — Load-test methods and benchmark validity | D | [New benchmark validity chapter](../book/performance/load-testing-and-benchmark-validity.md) | Independent public k6/HdrHistogram/SRE references and original tests; no benchmark executed. |
 | V07/C04 — Tail latency, fan-out and time budgets | D | [New tail-latency chapter](../book/performance/tail-latency-fanout-and-deadline-budgets.md) | Authored from independent published materials; requires formal validation and editorial review. |
 | V07/C05 — Overload protection and graceful degradation | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Expand admission, shedding, queue bounds, retry storms and degraded-mode correctness. |
 | V07/C06 — Horizontal/vertical scaling and autoscaling delay | D | [New autoscaling chapter](../book/performance/autoscaling-lag-and-capacity-limits.md) | Controller, startup lag, vertical/horizontal and overload trade-offs researched; requires independent review. |
@@ -107,7 +107,7 @@
 | Planned chapter | Coverage | Observed primary material | Outstanding work |
 |---|---|---|---|
 | V08/C01 — CI/CD architecture and artifact provenance | D | [Technical page](../book/delivery/ci-cd-provenance-and-gitops.md) | Unify build/test/promotion/release contracts. |
-| V08/C02 — Supply chain and release verification | P | [Technical page](../book/delivery/ci-cd-provenance-and-gitops.md) | Deepen artifact signing, SBOM, evidence and independently verifiable supply-chain gates. |
+| V08/C02 — Supply chain and release verification | D | [New supply-chain verification chapter](../book/delivery/sbom-attestation-and-release-verification.md) | SLSA 1.2, SPDX/CycloneDX, Sigstore and negative policy tests; no signing or scanning performed. |
 | V08/C03 — VMs, containers, orchestration and serverless | D | [Technical page](../book/deployment/runtime-placement-and-control-plane.md) | Keep VM/container/managed/serverless and control-plane failure distinctions. |
 | V08/C04 — GitOps, rollout and progressive delivery | D | [Technical page](../book/delivery/progressive-delivery-and-schema-evolution.md) | Integrate GitOps reconciliation and rollout decision under mixed versions. |
 | V08/C05 — Backward-compatible database change | D | [Technical page](../book/delivery/progressive-delivery-and-schema-evolution.md) | Make expand/migrate/contract and rollback/no-return boundaries explicit. |
@@ -141,7 +141,13 @@
 ## Content remediation recorded in this branch
 
 - **Nine original new draft chapters moved from M to D (not accepted):** V02/C05, V03/C06, V07/C04/C06, V09/C06/C07, V10/C01/C02/C06.  V02/C05 details:  new original [HTTP and RPC compatibility chapter](../book/application/http-rpc-contracts-and-compatibility.md), using independently verified RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers documentation. Its application landing now links to it. Other new drafts cover diagnostics, tail latency, autoscaling, incident response, agent-access safety, requirements/workload decisions, legacy baselines and progressive reading routes. No executable client/provider tests, independent review or full-repository validation has run; publication completeness is not claimed.
-- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **48 D / 21 P / 0 M**, all still subject to inventory and quality review.
+- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **53 D / 16 P / 0 M**, all still subject to inventory and quality review.
+
+## 2026-10-19 additional partial-coverage remediation
+
+- **Five V01/V02/V07/V08 partial chapters deepened into direct drafts (not accepted):** [workload and demand](../book/performance/workload-demand-and-arrival-models.md), [domain/data ownership](../book/application/domain-boundaries-data-ownership-and-contracts.md), [semantic anti-corruption adapters](../book/application/anti-corruption-adapters-and-coexistence.md), [benchmark validity](../book/performance/load-testing-and-benchmark-validity.md), [SBOM/attestation/release gates](../book/delivery/sbom-attestation-and-release-verification.md).
+- New files contain original diagrams, synthetic failure cases, public specification references and precise known limitations. They still need semantic/source review, full checkout validation and correct final-volume ownership.
+- Historic initial audit was **37 D / 23 P / 9 M**; before this set it was **48 D / 21 P / 0 M**. Current branch is **53 D / 16 P / 0 M**. No D row is synonymous with an accepted complete chapter.
 
 ## V01 problem-frame remediation
 
