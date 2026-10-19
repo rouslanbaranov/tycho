@@ -113,6 +113,35 @@ class PinnedRootAndFormatTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "escapes the selected case collection"):
                 read_case_catalog(root)
 
+    def test_symlinked_readme_is_rejected_before_read(self) -> None:
+        with tempfile.TemporaryDirectory() as workspace:
+            root = Path(workspace) / "pinned"
+            case_dir = self._synthetic_cases(root)
+            readme = case_dir / "README.md"
+            outside = Path(workspace) / "external-index.md"
+            outside.write_text(readme.read_text(encoding="utf-8"),
+                               encoding="utf-8")
+            readme.unlink()
+            try:
+                readme.symlink_to(outside)
+            except (NotImplementedError, OSError):
+                self.skipTest("filesystem does not support test symlinks")
+            with self.assertRaisesRegex(ValueError, "README index escapes its collection"):
+                read_case_catalog(root)
+
+    def test_symlinked_case_directory_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as workspace:
+            base = Path(workspace)
+            outside = self._synthetic_cases(base / "external")
+            root = base / "pinned"
+            (root / "book").mkdir(parents=True)
+            try:
+                (root / "book/cases").symlink_to(outside, target_is_directory=True)
+            except (NotImplementedError, OSError):
+                self.skipTest("filesystem does not support test symlinks")
+            with self.assertRaisesRegex(ValueError, "case collection escapes the selected root"):
+                read_case_catalog(root)
+
     def test_independent_review_needs_nonempty_reviewer_and_date(self) -> None:
         schema = json_read(ROOT / "authoring/cases/case-record.schema.json")
         baseline = json_read(ROOT / "authoring/cases/examples/case-records.json")[0]
