@@ -119,6 +119,26 @@ class SectionIndexTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "under generated"):
                 idx.publish(self.root)
 
+    def test_target_sqlite_fts5_profile_is_checked(self):
+        """Capability check exercises the exact FTS5 features of the index."""
+        if sqlite3.sqlite_version_info < (3, 26, 0):
+            with self.assertRaisesRegex(ValueError, "3.26"):
+                idx.require_fts5()
+        else:
+            idx.require_fts5()
+
+    def test_old_sqlite_version_is_rejected_before_writes(self):
+        with patch.object(idx.sqlite3, "sqlite_version_info", (3, 25, 0)):
+            with self.assertRaisesRegex(ValueError, "3.26"):
+                idx.publish(self.root)
+        self.assertFalse((self.root / "generated" / idx.INDEX_NAME).exists())
+
+    def test_case_sensitive_section_identifiers_and_bm25_probe(self):
+        """Do not mistake the version number for successful FTS feature checks."""
+        with patch.object(idx.sqlite3, "sqlite_version_info", (3, 26, 0)):
+            # A modern local SQLite runtime still exercises the real probe.
+            idx.require_fts5()
+
     def test_incomplete_metadata_is_not_misrepresented(self):
         with patch.object(idx.route_index, "canonical_scan", return_value={
             "snapshot_sha256":"0"*64, "coverage":"partial",
