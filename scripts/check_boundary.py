@@ -42,7 +42,8 @@ def main():
             continue
         errors.extend((rel, reason) for reason in violations(rel, content))
     for rel, reason in errors:
-        print(f"FAIL {rel}: {reason}")  # Never echo matched source content.
+        safe_path = INDUSTRY_WORD.sub("[restricted]", rel)
+        print(f"FAIL {safe_path}: {reason}")  # Never reproduce restricted terms or source content.
     if errors:
         return 1
     print("PASS: configured lexical boundary checks; independent-origin review still required.")
