@@ -140,4 +140,6 @@ For a hypothetical mature Rails-like monolith, a sensible pilot would:
 
 Prefer incremental, observable dependency constraints over a big-bang module rewrite; measure new violations, removed exceptions and cross-boundary churn. Before a roadmap is approved, require a baseline with data ownership and blast radius, a comparison to a smaller intervention, and measurable acceptance gates. An agent should retrieve this case as **evidence for conditions and counterconditions**, not as a universal preferred architecture.
 
+**2026-10-19 bounded source recheck:** Selected SH01/SH02 factual assertions (including Wedge test duration, Packwerk scan timing, 37 components, partial adoption, and the 2019-versus-2020 difference) were compared directly with publisher sections in the [Shopify evidence spot-check](../../authoring/cases/M9_SHOPIFY_SOURCE_SPOTCHECK_2026-10-19.md). No independent acceptance or running-tool validation is implied.
+
 **Provenance:** [SH02 primary](https://shopify.engineering/shopify-monolith), sections Under Deconstruction; component boundaries and dependency enforcement. Cross-case comparisons must retain the original company's architecture and historical observation window. **Case review:** not yet independently approved under #121.
