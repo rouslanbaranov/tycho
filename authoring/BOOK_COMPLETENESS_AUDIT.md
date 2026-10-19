@@ -82,8 +82,8 @@
 
 | Planned chapter | Coverage | Observed primary material | Outstanding work |
 |---|---|---|---|
-| V06/C01 — Local and distributed caching | D | [Technical page](../book/scaling/local-distributed-caching-and-invalidation.md) | Separate authority from invalidation and cache-failure acceptance. |
-| V06/C02 — Hot keys, cache stampedes and read amplification | D | [Technical page](../book/scaling/local-distributed-caching-and-invalidation.md) | Deepen hot-key, stampede and overload comparative mechanisms. |
+| V06/C01 — Local and distributed caching | D | [Distinct chapter draft](../book/scaling/local-and-distributed-cache-design.md) | Dedicated cache placement, authority/freshness and Caffeine/Redis reference; no live test. |
+| V06/C02 — Hot keys, cache stampedes and read amplification | D | [Distinct chapter draft](../book/scaling/cache-invalidation-stampede-and-hot-keys.md) | Dedicated stale-fill/hot-key failure protocols and original experiments; no race or load tests. |
 | V06/C03 — Lexical full-text indexing and ranking | D | [Technical page](../book/search/lexical-indexing-bm25-and-sql-fts.md) | Retain query analyzer, BM25 and index-update/version trade-offs. |
 | V06/C04 — Vector embeddings and nearest-neighbor retrieval | D | [Technical page](../book/search/vector-hnsw-faiss-pgvector.md) | Expand embedding drift, exact baseline and filtered ANN limitations. |
 | V06/C05 — Hybrid retrieval and reranking | D | [Technical page](../book/search/hybrid-ranking-graph-and-evaluation.md) | Extend hybrid fusion/rerank falsifiable comparisons. |
@@ -177,6 +177,12 @@
 3. Deepen P subjects; for D subjects perform a chapter-specific acceptance review and extend when the chapter question is not completely answered.
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
+
+## 2026-10-19 canonical cache-owner split — V06/C01 and C02
+
+- Two original dedicated manuscript chapters separate [cache placement, authority and freshness](../book/scaling/local-and-distributed-cache-design.md) (V06/C01, approx. 1,254 whitespace-separated Markdown words) from [invalidation races, cache stampedes and hot-key protection](../book/scaling/cache-invalidation-stampede-and-hot-keys.md) (V06/C02, approx. 1,338 words). Their original [combined cache research](../book/scaling/local-distributed-caching-and-invalidation.md) remains preserved.
+- Narrow primary sources: Caffeine Eviction and Refresh docs, Redis cache-aside and EXPIRE. No installed cache, fence implementation, experiment or independent review occurred.
+- Chapter-owner links and [scaling navigation](../book/scaling/README.md) point to separate content. Topical classification remains **69 D / 0 P / 0 M**, not a signoff or final edition.
 
 ## 2026-10-19 canonical data-owner separation — V05/C01 and C03
 
