@@ -10,19 +10,20 @@ harness to validate any production architecture conclusion.
 from collections import defaultdict
 import heapq
 import json
+import math
 from typing import Iterable
 
 
 def open_arrivals(count: int, interval_s: float) -> list[float]:
     """Offered arrivals independent of previous service completions."""
-    if count < 0 or interval_s <= 0:
+    if type(count) is not int or count < 0 or not math.isfinite(interval_s) or interval_s <= 0:
         raise ValueError("count must be nonnegative and interval_s positive")
     return [round(i * interval_s, 9) for i in range(count)]
 
 
 def closed_arrivals(count: int, service_s: float, think_s: float = 0) -> list[float]:
     """A single synchronous virtual user; next start depends on completion."""
-    if count < 0 or service_s <= 0 or think_s < 0:
+    if type(count) is not int or count < 0 or not math.isfinite(service_s) or not math.isfinite(think_s) or service_s <= 0 or think_s < 0:
         raise ValueError("invalid closed-model parameters")
     return [round(i * (service_s + think_s), 9) for i in range(count)]
 
@@ -49,7 +50,8 @@ def simulate_admission(
     total_offered = 0
     last_t = float("-inf")
     for t, cls, service_s in arrivals:
-        if not isinstance(cls, str) or not cls or t < 0 or service_s <= 0 or t < last_t:
+        if (not isinstance(cls, str) or not cls or not math.isfinite(t)
+                or not math.isfinite(service_s) or t < 0 or service_s <= 0 or t < last_t):
             raise ValueError("arrivals must be sorted, nonnegative, with positive durations and class")
         last_t = t
         total_offered += 1
