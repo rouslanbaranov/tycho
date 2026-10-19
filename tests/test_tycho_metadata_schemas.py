@@ -57,6 +57,10 @@ class MetadataSchemaTests(unittest.TestCase):
         bad = {**self.section, "access_checked": "2026-13-01"}
         self.assertRejected(self.source_check, bad)
 
+    def test_identifier_prefix_must_match_declared_kind(self):
+        bad = {**self.page, "kind": "chapter"}
+        self.assertRejected(self.doc_check, bad)
+
     def test_hierarchy_requires_book_null_parent_and_children_parent(self):
         bad = {**self.book, "parent_id": "tycho.volume.01h9abcdef"}
         self.assertRejected(self.doc_check, bad)
