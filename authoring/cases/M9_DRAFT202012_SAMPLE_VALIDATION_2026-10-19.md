@@ -26,11 +26,13 @@
 | 60 deployed MCP/search retrieval queries | **NOT RUN** | External K18–K23 runtime and results not available |
 | Independent semantic, numerical or reuse-rights review | **NOT RUN** | Human/independent review gate remains open |
 
+**Follow-up clarification (2026-10-19):** The ten manually evaluated Draft2020-12 mutations above include an **invalid individual ISO date**, which the format checker can reject. The repository `--self-test` instead includes a **chronologically inverted interval with two individually valid dates**. These are **different negative fixtures**. A Draft 2020-12 schema with separate `format: date` checks does **not** reject the reversed range; the `validate_record` semantic invariant must reject it. The original claim that the ten *repository self-test* variants should all fail the JSON Schema engine was incorrect. This is corrected in the follow-up code change and can be checked independently without implying the original ad-hoc ten different mutations were invalid evidence.
+
 The ten adversarial mutations test only a representative subset of JSON Schema rules. Two passing sample records cannot certify the remaining 29 case drafts, all source claims or the implementation of the proposed schema by the future knowledge platform.
 
 ## Permanent regression protection proposed in this PR
 
-`scripts/validate_m9_cases.py --self-test` currently verifies ten negative mutations using its dependency-free record validator. This PR updates it to **also** run `Draft202012Validator.check_schema`, the real format-checked draft validator on the good sample and the same ten negative samples **when the optional `jsonschema` package is installed**. When unavailable, it reports `NOT RUN` for the JSON Schema engine rather than claiming its fallback is full Draft2020-12 compliance.
+`scripts/validate_m9_cases.py --self-test` currently verifies ten negative mutations using its dependency-free record validator. This PR updates it to **also** run `Draft202012Validator.check_schema`, the real format-checked draft validator on the good sample and the **nine schema-invalid negative samples**; the tenth reversed valid-date interval is checked by the separate semantic validator **when the optional `jsonschema` package is installed**. When unavailable, it reports `NOT RUN` for the JSON Schema engine rather than claiming its fallback is full Draft2020-12 compliance.
 
 ## Commands for independent acceptance and future platform integration
 
