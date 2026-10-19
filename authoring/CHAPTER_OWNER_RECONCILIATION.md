@@ -5,13 +5,32 @@
 
 ## Verified scope and counts
 
-At the **initial overlap audit**, the 69-row topic audit mapped to **60 distinct primary Markdown target paths**. **Eight files** were assigned to more than one canonical chapter, accounting for **17 chapter-owner assignments** and **nine duplicate-target assignments** beyond the 60 unique paths. **After independent V09/C01–C04 manuscript ownership splits, the current crosswalk maps to 62 distinct primary target paths, with six remaining shared legacy files (13 chapter-owner assignments, seven duplicate-target assignments).**
+At the **initial overlap audit**, the 69-row topic audit mapped to **60 distinct primary Markdown target paths**. **Eight files** were assigned to more than one canonical chapter, accounting for **17 chapter-owner assignments** and **nine duplicate-target assignments** beyond the 60 unique paths. **After the complete V02/V04/V05/V06/V08/V09 main-chapter draft separation, the latest crosswalk maps 69 chapter questions to 69 unique primary files; all 69/69 primary files were re-fetched successfully and eight original shared-article ownership conflicts are resolved at primary-file/path level. No chapter is independently accepted.**
 
-These counts were derived from [the branch coverage audit](BOOK_COMPLETENESS_AUDIT.md) and checked against the headings and approximate word counts of **all eight shared manuscript files** through the GitHub branch file API. The 60 files are **not** an exhaustive Git-tree inventory; the crosswalk may omit adjacent, older or supplemental manuscript content. No final chapter landing, chapter/page metadata, semantic correctness review or rendered book edition is certified by this count.
+These counts were derived from [the branch coverage audit](BOOK_COMPLETENESS_AUDIT.md) and checked against the headings and approximate word counts of **all eight shared manuscript files** through the GitHub branch file API. The original 60-target baseline and latest 69-target crosswalk are **not** an exhaustive Git-tree inventory; the crosswalk may omit adjacent, older or supplemental manuscript content. No final chapter landing, chapter/page metadata, semantic correctness review or rendered book edition is certified by this count.
 
 **Key distinction:** One researched article can legitimately answer several chapter questions at a shallow level. This is useful draft coverage but **not** evidence that all intended owner chapters exist as coherent independent reading units. Conversely, blindly copying one research page into two chapters creates duplicated explanations that quickly diverge.
 
-## Eight confirmed overlapping manuscript ownership groups — initial baseline
+## Latest reconciliation and verification checkpoint — 2026-10-19
+
+**Result: 69 unique primary Markdown targets for 69 proposed chapter owners; eight initial shared-primary-file groups all separated.** An unchanged older combined source can still share *mechanisms* with a new chapter; that duplication and the original evidence claims still require editorial comparison. The earlier 60 → 61 → 62 counts in historical sections below must be read as successive checkpoints, not as current status.
+
+| Original shared-research group | New primary chapter owners and distinct files | File-owner separation | Claim-by-claim evidence review |
+|---|---|---|---|
+| Application styles | [V02/C01 layered/hexagonal](../book/application/layered-hexagonal-ports-and-adapters.md), [V02/C04 service orientation](../book/application/service-orientation-microservices-and-distribution.md) | Complete | **Pending** |
+| Outbox and idempotency | [V04/C04 retries and ambiguous effects](../book/distributed/retries-idempotency-and-ambiguous-effects.md), [V04/C05 outbox/inbox/saga/workflows](../book/distributed/outbox-inbox-sagas-and-durable-workflows.md) | Complete | **Pending** |
+| PostgreSQL MVCC and planning | [V05/C01 relational/isolation](../book/data/relational-modeling-and-transaction-isolation.md), [V05/C03 indexing/plans](../book/data/postgresql-indexes-statistics-and-query-plans.md) | Complete | **Pending** |
+| Schema and rollout | [V05/C06 data lifecycle](../book/data/schema-lifecycle-and-semantic-migration.md), [V08/C04 progressive rollout](../book/delivery/gitops-canary-and-progressive-rollout.md), [V08/C05 DB compatibility](../book/delivery/mixed-version-database-compatibility-and-online-ddl.md) | Complete | **Pending** |
+| Caching | [V06/C01 placement/freshness](../book/scaling/local-and-distributed-cache-design.md), [V06/C02 stampede/invalidation](../book/scaling/cache-invalidation-stampede-and-hot-keys.md) | Complete | **Pending** |
+| HA and DR | [V08/C06 availability placement](../book/deployment/availability-zones-placement-and-failure-domains.md), [V08/C07 disaster recovery](../book/deployment/disaster-recovery-and-recovery-objectives.md) | Complete | **Pending** |
+| SLI/SLO and metrics storage | [V09/C01 SLO decision](../book/observability/service-level-indicators-objectives-and-alerts.md), [V09/C02 telemetry pipeline](../book/observability/metric-pipelines-cardinality-and-retention.md) | Complete | **Pending** |
+| Tracing versus audit | [V09/C03 tracing](../book/observability/distributed-tracing-context-and-sampling.md), [V09/C04 log/audit/lineage](../book/observability/logs-audit-and-data-lineage.md) | Complete | **Pending** |
+
+**Actual verification:** the 69-row matrix had 69 distinct Vxx/Cxx IDs and 69 primary file paths with no duplicates, and **all 69 files existed on the feature branch** when individually fetched. The 13 most recently added shared-owner drafts were re-fetched and **44/44 unique locally referenced Markdown target files existed** on that branch. Read [the independent 69-row editorial acceptance ledger](CHAPTER_EDITORIAL_ACCEPTANCE_LEDGER.md) for per-chapter file sizes and pending review status. An external check of selected OASIS, PostgreSQL, Kubernetes, public saga/consumer and AWS recovery documentation supported *narrow referenced mechanism descriptions*, not a comprehensive source provenance audit.
+
+**Not established:** full Git-tree inventory, proof that every prior research claim survived migration, exact external citation stability, link fragments, required per-question depth, runtime/diagram tests, copyright admission per source, final book metadata, complete local CI or publication approval. All chapter content review states remain **pending**. Source research articles are **retained**; avoid deleting or silently retiring them until evidence reconciliation completes.
+
+## Eight historically overlapping manuscript groups — all primary-file assignments separated; source claims not yet reconciled
 
 | Shared current article | Intended owners | Main existing conceptual sections | Required canonicalization |
 |---|---|---|---|
@@ -44,7 +63,7 @@ The former single [trace/log/audit/lineage page](../book/observability/trace-con
 - **V09/C04:** [Structured logging, authoritative audit and data lineage](../book/observability/logs-audit-and-data-lineage.md). Owns diagnostic logs versus committed business-audit effects, OpenTelemetry log semantics, OpenLineage job/run/dataset identity, integrity/access/retention and failure cases. Does not claim a running audit or a lineage system.
 - The original common article is **not deleted**; it remains a source candidate for verifying that technical interpretations and citations were preserved. These are two unreviewed original independent chapters, not approved publication pages.
 
-As of this second separation, the verified 69-row crosswalk has **62 distinct primary article paths**. Remaining duplicate primary owners: six original articles mapping to 13 planned chapters. No claim of a complete Git-tree inventory or source-to-claim review is made.
+At the time of the second separation, the crosswalk had **62 distinct primary article paths** and six remaining shared groups. **Historical snapshot only:** the latest confirmed crosswalk is 69/69 unique primary targets. No claim of a complete Git-tree inventory or source-to-claim review is made.
 
 ## Canonical publication rule
 
@@ -78,11 +97,11 @@ Use an auditable chapter review card with:
 ## Sequence for the publication pipeline
 
 A. Verify the repository-wide source/page census and source revisions; reconcile unexpected extra pages.  
-B. Continue reviewing the **six remaining overlap groups (13 affected planned owners)** and author/adjust specific destination prose; two initial groups (V09/C01–C04) have distinct current book drafts but still awaits full source/editorial acceptance.  
-C. Apply the same depth/evidence gates to the remaining 52 chapter questions, not just to these overlaps.  
+B. **All eight groups now have separate primary chapter drafts.** Perform line/claim/source mapping from each preserved shared research article to its independently owned destination chapters; deepen or correct any missing content, without deleting originals prematurely.  
+C. Apply the same depth/evidence/independence gates to **all 69 planned chapter questions** and track real acceptance in the [chapter editorial acceptance ledger](CHAPTER_EDITORIAL_ACCEPTANCE_LEDGER.md).  
 D. Rebuild or validate strict frontmatter/schema and the deterministic page routing index against canonical volume/chapter/page IDs, with complete link/anchor checks.  
 E. After content acceptance, create final 10-volume, 69-chapter first edition and bounded child pages under #214, with a reproducible inventory and source ledger; optionally render additional publication formats only when separately authorized.
 
 ## Explicit limitations
 
-No full repository checkout, Git-tree inventory, automated boundary/premerge check, source-by-claim approval, Mermaid rendering, independent research assessment, or final edition was produced in this specific review. The inspected eight article headings and shared path assignments provide a **concrete duplication/ownership blocker**, not a release certificate.
+No full repository checkout, Git-tree inventory, automated boundary/premerge check, source-by-claim approval, Mermaid rendering, independent research assessment, or final edition was produced in this specific review. The inspected shared articles and latest 69 unique destination paths document **resolved primary-file ownership only**; the unresolved blocker is complete *content/evidence/quality acceptance*, not merely duplicate file paths.
