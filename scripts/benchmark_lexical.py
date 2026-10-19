@@ -88,7 +88,7 @@ def search(db, query, engine, k=5):
         params = ["%" if not t else t for t in terms]
         rows = db.execute(
             "SELECT docid FROM pages WHERE " + cond + " ORDER BY (" + weight + ") DESC,docid LIMIT ?",
-            tuple(params + params + [k]),
+            tuple(params + [v for t in params for v in (t, t)] + [k]),
         ).fetchall()
     else:
         raise ValueError("Unknown engine")
