@@ -111,5 +111,35 @@ class PublicRepoSnapshotTests(unittest.TestCase):
         self.assertEqual(list(self.root.glob(".tycho-clone-*")), [])
 
 
+    def test_full_checkout_lifecycle_with_disposable_local_origin(self):
+        """Only the clone transport is swapped for a local Git fixture.
+
+        Production manifest admission remains HTTPS-only; all checkout,
+        gitlink, detached, hook and reinspection logic is the real code.
+        """
+        dst = self.root / "new-checkout"
+        original = snap.git
+        calls = []
+
+        def fixture_clone(args, cwd=None, timeout=300):
+            if args[0] == "clone":
+                calls.append(args[0])
+                system_git("clone", "-q", "--no-checkout",
+                           str(self.origin), args[-1])
+                return ""
+            return original(args, cwd=cwd, timeout=timeout)
+
+        with patch.object(snap, "git", side_effect=fixture_clone):
+            self.assertEqual(snap.checkout_one(self.entry, dst), self.sha)
+            self.assertEqual(snap.checkout_one(self.entry, dst), self.sha)
+        self.assertEqual(calls, ["clone"], "same revision must not re-clone")
+        self.assertEqual(system_git("rev-parse", "--abbrev-ref", "HEAD", cwd=dst), "HEAD")
+        self.assertEqual(system_git("remote", cwd=dst), "")
+        self.assertTrue((dst / ".git" / "hooks" / "pre-push").is_file())
+        self.assertTrue((dst / ".git" / "hooks" / "pre-commit").is_file())
+        self.assertFalse((dst / "README.md").stat().st_mode & 0o222)
+        self.assertEqual(snap.inspect_checkout(dst, self.entry), self.sha)
+
+
 if __name__ == "__main__":
     unittest.main()
