@@ -39,6 +39,8 @@ The chart is an **original reading and decision map**, not a simulated productio
 |---|---|---|
 | How do arrivals, logical operations, resource demand, concurrency and skew define a workload? | [Workload and arrival models](workload-demand-and-arrival-models.md) | V01/C02; original examples and public k6/queueing boundary, not a workload forecast |
 | When is a benchmark invalid because the generator, denominators or fixture changed? | [Load testing and benchmark validity](load-testing-and-benchmark-validity.md) | V07/C03; independently published k6 and histogram-model scope, no test executed |
+| Which serial, contended and coordination limits defeat naive linear scaling? | [Contention, saturation and scaling laws](contention-saturation-and-scaling-laws.md) | V07/C02 original model examples; Gunther scalability paper, no fitted throughput data |
+| How do workload shape, operating cost and warm capacity affect a safe design? | [Capacity planning and cost/performance](capacity-planning-and-cost-performance.md) | V07/C07 public cost-method sources and invented sensitivity examples; no vendor price estimate |
 | What can mean in-flight work, throughput and residence time establish, and when is Little's Law misapplied? | [Queueing, Little's Law and measurement boundaries](queueing-littles-law.md) | Public-source-grounded draft from a fixed 2013 paper and specifically inspected k6/SRE documentation; not a benchmark or human-reviewed capacity study |
 | How should offered load, failure and capacity hypotheses be tested? | [Workload profiles and capacity experiments](workload-profiles-and-capacity-experiments.md) | Source-bound methodology and synthetic examples; not a production load test |
 | Why do p99 and user-visible deadlines worsen under dependency fan-out? | [Tail latency, fan-out and deadline budgets](tail-latency-fanout-and-deadline-budgets.md) | New V07/C04 evidence-based draft; no live tail benchmark |
@@ -47,8 +49,7 @@ The chart is an **original reading and decision map**, not a simulated productio
 
 ## Planned questions — **not yet written**
 
-- Contention, coordination and scaling laws: evidence of shared-bottleneck saturation.
-- Deeper cross-resource contention and capacity scaling-law comparisons.
+- Validated, runnable scaling-law and resource-optimization experiments beyond the educational coverage.
 - Deeper recovery-capacity cost trade-offs and executable overload-policy comparisons beyond the existing bounded drafts.
 
 The planning owners are listed in the [proposed book structure](../PROPOSED-STRUCTURE.md). The source-reading procedure and stopping conditions are in the [research workflow](../../authoring/RESEARCH-WORKFLOW.md).
