@@ -7,7 +7,7 @@
 - Source register: **43 unique candidates**, **41** with at least one bounded public claim or deliberately narrow publisher-scoped abstract/team-charter statement, **2 deferred** (N14 Conductor primary original not readable; ST02 Stripe TypeScript primary redirects to metadata). These two are **excluded from asserting technical outcomes**.
 - Pages: **28** bounded original case drafts, including **11 Netflix** and **17 other-company** cases, indexed from `book/cases/README.md`.
 - Comparisons: **6** case-backed synthetic decision playbooks, not company ADRs.
-- Agent evaluation: **44** proposed retrieval test fixtures (14 answerable, 21 unsupported/false-claim rejection, 9 insufficient evidence) plus **2** example records and a Draft 2020-12 *proposed* JSON schema.
+- Agent evaluation: **56** proposed retrieval test fixtures (19 answerable, 25 unsupported/false-claim rejection, 12 insufficient evidence) plus **2** example records and a Draft 2020-12 *proposed* JSON schema.
 - Case-specific provenance: stable human-readable `case.*` IDs in all reviewed draft pages; first-party URL reference and Mermaid diagram present in each sampled path; no source article image imported.
 - **No independent reviewer acceptance**, no production search/ranking/graph evaluation and no reproduced vendor metric are claimed.
 
@@ -20,11 +20,11 @@
 | Mermaid/Markdown structural check | In 28/28 case pages: ≥1 Mermaid block, paired backtick fences, first-party cited URL, review state clearly identified | **PASS** for observed text patterns; not a Mermaid renderer check |
 | Decision corpus | Six linked comparison pages, each with synthetic constraints and at least two contrasting cases plus decision guardrails | **PASS** for existence, not substantive independent endorsement |
 | Candidate-specific numeric evidence | Company 2013–2026 windows and negative results available in waves 01–08, including Netflix ZGC, Uber MyRocks, Discord, Airbnb, Shopify and Cloudflare | **PARTIAL**, high-risk numeric claims still require independent source-by-source review |
-| Proposed schema/fixtures | 2 sample JSON records, 44 unique fixture IDs, 14/21/9 behavior groups; fixture source IDs from 43-source register | **STRUCTURAL PASS**, not full Python/schema engine run |
+| Proposed schema/fixtures | 2 sample JSON records, 56 unique fixture IDs, 19/25/12 behavior groups; fixture source IDs from 43-source register | **STRUCTURAL PASS**, not full Python/schema engine run |
 | Local Python validator | `scripts/validate_m9_cases.py` exists with negative tests and optional `jsonschema` | **NOT EXECUTED** against a full checked-out repository in this review |
 | Source license and link reachability | URLs and reproduction warnings present; external URLs partly opened; publisher licensing beyond citation/paraphrase not granted | **LIMITED**; no bulk redistribution of vendor diagrams/text |
 | Independent reviewer | No independent reviewer signoff or recorded source-specific verdict | **BLOCKED** |
-| Live K10–K20 / MCP evaluation | Runtime ownership in core milestones, not available as integrated M9 transport | **DEFERRED**; 44 query fixtures are specifications, not measured hits |
+| Live K10–K20 / MCP evaluation | Runtime ownership in core milestones, not available as integrated M9 transport | **DEFERRED**; 56 query fixtures are specifications, not measured hits |
 
 ## Case-by-case review matrix
 
@@ -87,18 +87,22 @@ A qualified reviewer other than the author must independently examine **every** 
 11. All company diagrams are original Tycho simplifications, not copyright-reproduced original schematics; verify that no long article quotation slipped into case body.
 12. No private Adro/employer sources or corpus cross-indexing; `tycho-public` collection boundary remains explicit.
 
-## Proposed 44-query evaluation execution, when a real service is available
+## Proposed 56-query evaluation execution, when a real service is available
 
-Evaluate all 44 fixture questions with answer **plus citation fidelity**, not just retrieval count. Record case hits, false-claim refusal, temporal contradiction handling, source URL and claim anchor, token/tool budget and p95 response time. Do not fabricate measured ranks or executed MCP results. Synthetic incorrect claims (e.g., 'Netflix removed all RxJava', 'Shopify completed all modularization', '240 Spotify PRs merged') **must be rejected**.
+Evaluate all 56 fixture questions with answer **plus citation fidelity**, not just retrieval count. Record case hits, false-claim refusal, temporal contradiction handling, source URL and claim anchor, token/tool budget and p95 response time. Do not fabricate measured ranks or executed MCP results. Synthetic incorrect claims (e.g., 'Netflix removed all RxJava', 'Shopify completed all modularization', '240 Spotify PRs merged') **must be rejected**.
 
 A reviewer should produce a signed/verifiable matrix with case file, claim ID, original-source section, observation period, correctness verdict, major/medium/minor severity, fix commit, numeric denominator verification, and explicit signoff. If any case lacks this evidence, leave it in draft and keep #121/M9 open.
 
 ## Decision as of this checkpoint
 
-**Accepted mechanically:** existence of 28 well-scoped drafts, 6 guides, source ID mapping, 44 proposed fixtures.  
+**Accepted mechanically:** existence of 28 well-scoped drafts, 6 guides, source ID mapping, 56 proposed fixtures.  
 **Not accepted:** final external-source semantic review of all pages, complete production search evaluation, independently reproduced performance, external review signoff.  
 **Milestone M9:** **OPEN — acceptance gate E16-08 not met**. This is an evidence-grounded delivery checkpoint, not a license to claim finished architecture modernization transfer.
 
 ## Addendum: October 19, 2026 — expanded coverage
 
 Merged [case batch #168](https://github.com/rouslanbaranov/tycho/pull/168) added durable Netflix Data Projects identity, Uber Cinnamon overload control and Meta's shadow-validated ingestion transition. This checkpoint **mechanically inspected** each new page's case ID, original-source link and paired Mermaid fence, bringing observed presence checks to 28/28. It did **not** independently verify security-token semantics, Uber PID benchmarks or Meta checksum equivalence. A human reviewer should start from the new rows above and record evidence-specific verdicts separately.
+
+## Evaluation checkpoint — public case retrieval 56-query set
+
+After [PR #170](https://github.com/rouslanbaranov/tycho/pull/170), the proposed decision-retrieval fixture set has **56 unique IDs**: **19 answerable, 25 reject unsupported/false claims, 12 return insufficient evidence**. Manual structural checks found no foreign-source ID or unknown case ID in the expected results; references resolve to the existing 43 registered public sources and 28 indexed case identities. **These checks are not a live retrieval/evidence benchmark:** no search results, ranking relevance, MCP answer citation fidelity, latency or token cost have been measured. K18–K23 implementation and runtime validation are separate dependencies; keep #121 open until a genuine reviewer and applicable execution proof exist.
