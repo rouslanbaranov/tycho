@@ -63,9 +63,15 @@ def validate_record(record: dict, schema: dict, registered_sources: set[str]) ->
     require(set(record) <= allowed, "unknown case keys " + str(sorted(set(record) - allowed)))
     require(record["collection"] == "tycho-public", "case corpus isolation violation")
     require(record["schema_version"] == "m9-case-1.0-proposal", "invalid schema version")
+    # Keep the no-dependency fallback faithful to declared JSON Schema types.
+    for key, minimum in (("title", 12), ("company", 2), ("legacy_state", 12), ("target_state", 12)):
+        require(isinstance(record[key], str) and len(record[key]) >= minimum,
+                key + ": expected string of minimum length " + str(minimum))
     require(isinstance(record["case_id"], str) and CID.fullmatch(record["case_id"]) is not None, "invalid case_id")
     require(record["status"] in schema["properties"]["status"]["enum"], "invalid review status")
     require(isinstance(record["source_refs"], list) and len(record["source_refs"]) > 0, "source_refs absent")
+    require(all(isinstance(ref, str) and SOURCE_ID.fullmatch(ref) is not None
+                for ref in record["source_refs"]), "source ref not a valid string ID")
     require(len(record["source_refs"]) == len(set(record["source_refs"])), "duplicate source ref")
     require(set(record["source_refs"]) <= registered_sources, "unregistered case source")
     require(isinstance(record["claims"], list) and len(record["claims"]) > 0, "case has no claims")
@@ -74,12 +80,16 @@ def validate_record(record: dict, schema: dict, registered_sources: set[str]) ->
     require(isinstance(review, dict), "review not object")
     require(set(review) == {"reviewer", "reviewed_on", "limitations"}, "invalid review contract")
     iso_date(review["reviewed_on"], "reviewed_on", nullable=True)
-    require(isinstance(review["limitations"], list), "review limitations not list")
+    require(review["reviewer"] is None or isinstance(review["reviewer"], str), "reviewer not string/null")
+    require(isinstance(review["limitations"], list)
+            and all(isinstance(x, str) for x in review["limitations"]), "review limitations not string list")
     pattern = record["patterns"]
     require(isinstance(pattern, dict) and set(pattern) == {"selected", "avoided"}, "invalid patterns")
-    require(all(isinstance(pattern[k], list) for k in ("selected", "avoided")), "pattern tokens not arrays")
+    require(all(isinstance(pattern[k], list) and all(isinstance(x, str) for x in pattern[k])
+                for k in ("selected", "avoided")), "pattern tokens not string arrays")
     for key in ("constraints", "failure_modes"):
-        require(isinstance(record[key], list), key + " must be list")
+        require(isinstance(record[key], list) and all(isinstance(x, str) for x in record[key]),
+                key + " must be string list")
     claim_keys = set(schema["$defs"]["claim"]["required"])
     claim_allowed = set(schema["$defs"]["claim"]["properties"])
     seen = set()
@@ -92,6 +102,11 @@ def validate_record(record: dict, schema: dict, registered_sources: set[str]) ->
         require(cid not in seen, "duplicate claim_id")
         seen.add(cid)
         require(cid.startswith(record["case_id"].replace("case.", "claim.") + "."), "claim_id does not belong to case")
+        require(isinstance(item["statement"], str) and len(item["statement"]) >= 12,
+                "claim statement too short or not string")
+        require(isinstance(item["source_ref_id"], str)
+                and SOURCE_ID.fullmatch(item["source_ref_id"]) is not None,
+                "claim source ID not a valid string")
         require(item["source_ref_id"] in record["source_refs"], "claim source absent from case source_refs")
         require(isinstance(item["primary_url"], str) and item["primary_url"].startswith("https://"), "primary URL not HTTPS")
         require(isinstance(item["source_section"], str) and len(item["source_section"]) > 2, "empty source section")
@@ -204,7 +219,9 @@ def self_test() -> None:
     good = json_read(SAMPLES)[0]
     validate_record(good, schema, refs)
     failures = 0
-    for mutation in ("wrong_collection", "orphan_source", "bad_claim", "missing_review", "future_window"):
+    for mutation in ("wrong_collection", "orphan_source", "bad_claim", "missing_review", "future_window",
+                     "integer_title", "short_statement", "non_string_source_ref", "non_string_pattern",
+                     "non_string_review_limitation"):
         candidate = json.loads(json.dumps(good))
         if mutation == "wrong_collection":
             candidate["collection"] = "other-private-corpus"
@@ -218,12 +235,22 @@ def self_test() -> None:
             candidate["claims"][0]["validity_window"] = {
                 "valid_from": "2026-10-20", "valid_until": "2026-10-19"
             }
+        if mutation == "integer_title":
+            candidate["title"] = 42
+        if mutation == "short_statement":
+            candidate["claims"][0]["statement"] = "too short"
+        if mutation == "non_string_source_ref":
+            candidate["source_refs"][0] = ["N11"]
+        if mutation == "non_string_pattern":
+            candidate["patterns"]["selected"] = [123]
+        if mutation == "non_string_review_limitation":
+            candidate["review"]["limitations"] = [False]
         try:
             validate_record(candidate, schema, refs)
         except ValueError:
             failures += 1
-    require(failures == 5, "one or more negative contract tests incorrectly accepted")
-    print("PASS: 5 malformed records rejected; valid example accepted")
+    require(failures == 10, "one or more negative contract tests incorrectly accepted")
+    print("PASS: 10 malformed records rejected; valid example accepted")
 
 
 if __name__ == "__main__":
