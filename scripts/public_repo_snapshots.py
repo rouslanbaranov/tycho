@@ -47,8 +47,9 @@ def validate(data):
         parts = u.path.strip("/").split("/")
         if (u.scheme != "https" or u.netloc != "github.com" or u.username or u.password
                 or u.query or u.fragment or len(parts) != 2
+                or u.path != "/" + "/".join(parts)
                 or not all(COMPONENT.fullmatch(x) for x in parts)
-                or not parts[0] or not parts[1] or parts[1] in {".git", ".."}):
+                or parts[0] in {".", ".."} or parts[1] in {".", "..", ".git"}):
             raise ValueError("Only canonical public GitHub HTTPS repository URLs are allowed")
         if r["url"] in used_url:
             raise ValueError("Duplicate canonical repository URL")
