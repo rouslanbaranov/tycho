@@ -33,7 +33,7 @@ A **synthetic migration readiness checklist** for applying the lesson elsewhere 
 
 ## Measured or reported outcome
 
-Airbnb reports **3–5x faster local build/test**, **2–3x IntelliJ sync**, **2–3x development deployment** and build satisfaction rising **38% to 68%** in its own context. These are company-reported historical measurements, not controlled evidence for an unrelated JVM repo.
+Airbnb reports **3–5x faster local build/test**, **2–3x IntelliJ sync**, **2–3x development deployment** and build satisfaction rising **38% to 68%** in its own context. The entire migration took **4.5 years**; the initial **2–4x faster** Viaduct pilot alone did not prompt developer adoption until integration issues were fixed. Approximately **100 of 700 services** had startup/integration parity failures during Bazel-built deploy verification; these were not necessarily production incidents. These are company-reported historical observations, not controlled evidence for an unrelated JVM repo. For numbered section anchors and caveats, see [Wave 09](../../authoring/cases/M9_NUMERIC_SOURCE_RECHECK_WAVE09.md).
 
 ## Failed assumptions and when not to transfer the design
 
