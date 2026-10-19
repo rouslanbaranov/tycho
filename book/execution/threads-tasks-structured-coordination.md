@@ -123,6 +123,23 @@ Timeouts, explicit client cancellation, interruption and server shutdown have di
 | Semaphore | Limits one shared resource's concurrency | Correct state authority across processes |
 | Virtual threads | Reduces many blocking task costs for eligible workloads | More CPU, datastore throughput or external quota |
 
+
+### Worked original failure trace: cancelled parent, committed child
+
+Consider a fictional reservation endpoint that starts two child operations: **A** commits a single-authority reservation, while **B** requests a noncritical notification. Assume the reservation has a stable logical operation key, a database uniqueness constraint and a five-second user deadline; these are *design assumptions*, not measured infrastructure. The parent deadline expires after A's commit but before its acknowledgement reaches the parent. B is still queued.
+
+| Order | Actor's observable state | Durable state and required response |
+|---|---|---|
+| T0 | Parent validates and forks A/B with one deadline | No reservation yet; both tasks belong to one request lifetime |
+| T1 | A obtains a bounded connection and commits R7 with key K42 | **R7 is authoritative** even if the caller never receives a success response |
+| T2 | Parent deadline fires; parent requests cancellation of outstanding tasks | Stop waiting for B and release resources; **do not infer R7 was undone** |
+| T3 | Client retries K42 after a transport timeout | Resolve K42 from durable authority; duplicate transport attempts must not make R8 |
+| T4 | B's notification may or may not have been sent | Reconcile via durable publication/inbox semantics when notification delivery is required |
+
+The safe normal path joins all *required* children before reporting success. The partial-failure path reports an **unknown outcome** if the response was lost, rather than treating interruption as an automatic business abort. On retry the state owner either returns R7 or exposes a bounded pending/reconciliation state. A cancellation-aware executor improves cleanup, not durability or exactly-once effects. The [deduplication owner](../distributed/retries-idempotency-and-ambiguous-effects.md) defines logical-effect identity; the [outbox owner](../distributed/outbox-inbox-sagas-and-durable-workflows.md) defines durable notification recovery. Their mechanisms should not be copied into this concurrency chapter.
+
+**Alternative and reversal:** if B is essential to the invariant, the API may need a durable workflow and asynchronous response instead of parent-scoped fire-and-forget tasks. If the operation is pure computation, a scoped fork/join and cancellation policy may be sufficient. A proposed test would kill the parent between database commit and reply and verify one authoritative reservation, bounded threads/connections and a discoverable eventual result. **This test was not executed.**
+
 ## 6. Proposed tests and source ledger
 
 A reviewable fixture would: fork two tasks then force one to fail; cancel the parent with an outstanding connection; inject a lost response after write commit; force an uncooperative blocking call; vary virtual-thread count while holding the datastore pool fixed; check error, cleanup and duplicate-effect invariants. **None was run** in preparing this chapter.
