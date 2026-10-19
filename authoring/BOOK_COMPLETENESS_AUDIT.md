@@ -178,6 +178,14 @@
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
 
+## Editorial structure QA — four distinct V09 manuscripts
+
+- Re-fetched **all four** newly written observability owner manuscripts from the same PR feature branch: V09/C01 (1,475 words), C02 (1,548), C03 (1,173), C04 (1,392), or **5,588 whitespace-separated words** in total. Each has a single H1 and one fenced Mermaid diagram with balanced delimiters.
+- Inspected their locally linked Markdown destinations: **9/9 unique link target files** from V09/C01+C02 and **10/10** from V09/C03+C04 exist on the branch. This checks **file existence only**; source links, anchor fragments and actual semantic claims were not validated automatically.
+- Recomputed the 69-row primary-target crosswalk after four V09 owner updates: **69 distinct chapter IDs, 62 unique primary Markdown target paths, 6 remaining overlapping legacy source files covering 13 chapter owners and 7 extra repeated primary-path assignments**. The original metrics and tracing joint research articles remain preserved.
+- These distinct owner files establish a cleaner **chapter-level content structure** but neither final volume/page layout nor independent technical, editorial, source-license, privacy or provenance sign-off.
+- The [shared-owner reconciliation report](CHAPTER_OWNER_RECONCILIATION.md) identifies the six remaining groups for substantive canonicalization and captures why 69 D / 0 P / 0 M topical coverage should not be confused with 69 publication-ready chapters.
+
 ## Canonical owner reconciliation checkpoint — V09/C03 and C04
 
 - Added independent original [distributed tracing/context/sampling](../book/observability/distributed-tracing-context-and-sampling.md) and [structured logs/audit/lineage](../book/observability/logs-audit-and-data-lineage.md) draft chapters. The former combined [tracing/logging/lineage/audit research page](../book/observability/trace-context-lineage-and-audit.md) remains preserved for evidence migration.
