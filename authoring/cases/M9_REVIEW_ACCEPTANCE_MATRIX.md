@@ -136,3 +136,22 @@ The user set **100% substantive case-page coverage as M9's highest priority**. T
 **Graph-related checks and deliverables are retired for all M9 acceptance.** No case graph, graph edge catalogue, graph-aware MCP API, graph freshness/version checks or graph infrastructure maintenance will be requested or accepted as new M9 work. Preserve stable IDs, canonical Markdown links, versioned source provenance and text/section search, per [accepted ADR](../ADR-RETIRE-CURATED-KNOWLEDGE-GRAPH.md). Native diagrams and published case studies about graph-based systems remain legitimate explanatory material. Historical graph references elsewhere in the milestone are superseded by this decision.
 
 Do not equate “all 29 pages exist”, “all issues closed” or an approximate word count with 100% content. Independent acceptance of exact external claims remains a separate outstanding gate. No full-repository tests, complete case review or executed agent benchmark are asserted by this policy update.
+
+## M9 page-depth checkpoint — content improvement wave, 2026-10-19
+
+The linked [PR #212](https://github.com/rouslanbaranov/tycho/pull/212) improves seven previously existing case chapters and one existing decision guide while applying the graph-retirement requirement. It does not replace the prior **29-case/6-guide existence check** with independent acceptance. The chapter-level improvements below were authored from first-party public accounts and include additional observed historical phases, incompatibilities, negative outcomes, and separate synthetic migration controls:
+
+| Expanded chapter | New substantive coverage | Remaining gate |
+|---|---|---|
+| Netflix Java convergence | Distinct JVM/framework/API-composition phases, Java 17 CPU context, cross-service compatibility and reversible fleet rollout | Independent primary metric/compatibility review |
+| Netflix DGS/Spring GraphQL | 8.5.0 opt-in to 10.0.0, async-filter regressions, deleted modules and subscription migration concerns | Independent release-claim and numerical review |
+| Netflix Generational ZGC | Collector comparisons, pause/retry amplification, native memory, reference handling and THP | Independent original blog figure/denominator review |
+| Uber DOMA | 2,200 services/70 domains with partial adoption, layer/gateway/extension contracts and company-reported outcome limits | Independent historic benefit and timeline review |
+| Shopify modular monolith | 2017 componentization, mechanical file move and history cost, contrasted 2020 partial ownership and service exceptions | Independent source/temporal review |
+| Shopify component enforcement | Wedge-to-Packwerk differences, rigid-rule failure, ownership-first versus isolation-first and incomplete rollout | Independent technical and provenance review |
+| LinkedIn Kafka tiers | Audit instrumentation across producer, mirrors, consumers; 2015 dated scale, counted-versus-identical-event caveat | Independent numeric/date and Kafka semantics review |
+| Agent-assisted migration decision playbook | Correctness oracles, explicit stop states, staged code/data migration and human acceptance | Independent review of transferred applicability |
+
+**Result of this wave:** **7 of 29** case pages and **1 of 6** decision pages substantively expanded; this ratio **does not represent the percentage of pages that are 100%-complete or independently accepted**. The other **22 case pages and 5 decision pages** were not depth-expanded in this wave. All 35 documents remain subject to full per-page completeness assessment and external independent approval. No independent reviewer or production MCP evaluation was performed in this checkpoint.
+
+**Remote text-only mechanical check against PR head:** all 14 initially modified files, 102 relative Markdown links checked against a 248-file repository tree, balanced code fences, and the configured lexical boundary patterns of the edited files had **no detected issues**. This is not execution of the actual local Python checkers or proof of evidence correctness, and does not supersede them.
