@@ -264,5 +264,40 @@
         }
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "independent_reviewed"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "review": {
+            "properties": {
+              "reviewer": {
+                "type": "string",
+                "minLength": 3,
+                "pattern": "\\S"
+              },
+              "reviewed_on": {
+                "type": "string",
+                "format": "date"
+              }
+            },
+            "required": [
+              "reviewer",
+              "reviewed_on"
+            ]
+          }
+        }
+      }
+    }
+  ]
 }
