@@ -688,6 +688,58 @@
       ],
       "expected_behavior": "insufficient_evidence",
       "guard": "ST02 redirects to author/date/title metadata only; technical conversion claim not admitted."
+    },
+    {
+      "id": "m9-q057",
+      "query": "What caused Netflix's 2023 CPU-heavy outgoing gRPC worker-pool virtual-thread experiment to regress?",
+      "expected_case_ids": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression"
+      ],
+      "required_source_ids": [
+        "N02"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "First-party talk reports a few-percent slowdown from CPU-intensive worker tasks; virtual threads do not add cores."
+    },
+    {
+      "id": "m9-q058",
+      "query": "Was Netflix's 2023 CPU-heavy gRPC performance regression the same failure as its July 2024 Brave tracing carrier starvation?",
+      "expected_case_ids": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ],
+      "required_source_ids": [
+        "N02",
+        "N06"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "CPU overhead in outgoing gRPC worker tasks and synchronized pinned-carrier starvation in REST/Tomcat have different causes, dates and affected layers."
+    },
+    {
+      "id": "m9-q059",
+      "query": "Exactly what p99 and percentage slowdown did Netflix measure for the virtual-thread gRPC client worker experiment?",
+      "expected_case_ids": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression"
+      ],
+      "required_source_ids": [
+        "N02"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "The conference transcript states a few percent worse performance but does not publish exact percentage, p99, benchmark hardware or JDK configuration."
+    },
+    {
+      "id": "m9-q060",
+      "query": "Which thread model should a hypothetical CPU-heavy gRPC client worker and an I/O-bound gateway use?",
+      "expected_case_ids": [
+        "case.netflix.grpc-cpu-workerpool-loom-regression",
+        "case.netflix.zuul2-nonblocking-gateway"
+      ],
+      "required_source_ids": [
+        "N02",
+        "N07"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Preserve CPU-workload-specific bounded executors unless measured otherwise; test event-loop connection multiplexing separately with no hidden blocking."
     }
   ]
 }
