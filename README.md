@@ -30,3 +30,7 @@ All repository content is written in English. Reading the book must not require 
 The project contains governance, authoring rules, a curated public-source inventory, coverage and implementation maps, a generated catalogue and structural source checks. Research and authoring take place in the ChatGPT project; GitHub stores the book. No technical chapters have been researched or validated. Metadata schemas, generated indexes, graph validators, and retrieval evaluation are planned, not implemented.
 
 Run `python3 scripts/check_boundary.py` from the repository root. A successful scan detects none of the configured patterns; it does not certify independent origin or semantic correctness.
+
+## Industry-neutral delivery
+
+Describe deployment and compatibility requirements without naming a specific sector or institution. Use neutral descriptions such as `restricted enterprise environments`, `regulated environments`, and `security-constrained deployments`. This applies to docs, prompts, examples, code, filenames, issues and releases; see [governance/INDEPENDENCE.md](governance/INDEPENDENCE.md) and [AGENTS.md](AGENTS.md) for mandatory contributor rules.
