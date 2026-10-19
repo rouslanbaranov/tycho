@@ -178,3 +178,11 @@ These scenarios are proposed requirements, not observed incidents.
 All queries, scores, data, diagrams, source snapshots and tests here are original hypothetical examples. No index, embeddings, graph, training, test fixture, evaluation run or independent expert review was executed. The chapter adds **System Design education only**, and does not change Tycho's separate retrieval infrastructure roadmap or resurrect a curated knowledge graph.
 
 **Navigation:** proposed **V06/C07** in [book outline](../PROPOSED-STRUCTURE.md), current [search architecture landing](README.md). Read [Lexical full-text](lexical-indexing-bm25-and-sql-fts.md), [Vector/ANN](vector-hnsw-faiss-pgvector.md), [Hybrid retrieval](hybrid-ranking-graph-and-evaluation.md), [Graph traversal as educational topic](graph-data-models-and-traversal.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Discord — Search index cells](../cases/discord-search-index-cells.md)** illustrates index cells, queue changes and shard-key evolution address different search availability and growth constraints. **It cannot establish:** search-cell results do not establish universal optimal shard sizes or retrieval quality for unrelated indexes.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

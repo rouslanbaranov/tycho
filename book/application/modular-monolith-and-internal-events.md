@@ -163,3 +163,11 @@ All modules, diagrams, events and failure cases are original invented teaching m
 ## Navigation
 
 Proposed owner **V02/C03** in [planned table of contents](../PROPOSED-STRUCTURE.md), [application landing](README.md). Start with [bounded contexts and ownership](domain-boundaries-data-ownership-and-contracts.md), then [module/service styles](architecture-styles-and-module-boundaries.md), [internal vs external outbox](../distributed/transactional-outbox-and-idempotency.md) and [safe extraction](architecture-evolution-and-extraction.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Shopify — Modular monolith](../cases/shopify-modular-monolith.md)** illustrates a modular monolith can be a legitimate target when domain ownership matters more than release separation. **It cannot establish:** the 2019 report does not imply Shopify achieved perfectly enforced modules everywhere or that service decomposition always fails.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

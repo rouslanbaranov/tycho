@@ -225,3 +225,12 @@ A credible selection compares:
 | E07 | [Neo4j property graph concepts](https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/), *Introduction; Node; Relationship; Schema*, rolling official docs observed 2026-10-19 | Property graph model, not universal graph query speed advantage |
 
 **Review state:** explanatory comparison, fictional workload diagrams only; no engine installed or benchmark run, no independent domain review, no comprehensive time-series vendor comparison and no measured migration. This page does **not** give a database product recommendation for a real user system.
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Uber — MyRocks](../cases/uber-mysql-to-myrocks.md)** illustrates storage-engine choice must include operational write amplification, workload shape and production rollout gates. **It cannot establish:** company-reported MyRocks savings do not transfer to arbitrary datasets, hardware, version or query patterns.
+- **[Discord — Cassandra to ScyllaDB](../cases/discord-cassandra-scylladb-messages.md)** illustrates combining data engine migration with request coalescing addresses hot partitions and latency feedback. **It cannot establish:** publisher-reported results cannot isolate the new engine as sole cause or compare equal server resources without adjustment.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

@@ -162,3 +162,11 @@ Acceptance includes correct user effects, database invariants, bounded downtime 
 Every system, schema, migration diagram and experiment is original synthetic work. No SQL, client/consumer, restore or load test was run and final book metadata remains pending.
 
 **Navigation:** **V08/C05** in [draft outline](../PROPOSED-STRUCTURE.md) via [delivery landing](README.md). Read [data lifecycle](../data/schema-lifecycle-and-semantic-migration.md), [canary/rolling](gitops-canary-and-progressive-rollout.md), [target/transition states](../decisions/target-and-transition-architecture-states.md), [safe recovery](safe-rollout-and-recovery.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Stripe — Online subscriptions migration](../cases/stripe-online-subscriptions-migration.md)** illustrates dual-write, change readers, change writers and retire sequence illustrates online authority migration. **It cannot establish:** successful company migration is not a generic atomic dual-write guarantee or proof every backfill can safely roll back.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

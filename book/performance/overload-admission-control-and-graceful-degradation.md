@@ -177,3 +177,11 @@ All example data, percentages, capacity statements and system behavior are hypot
 - Proposed **V07/C05** in [planned TOC](../PROPOSED-STRUCTURE.md), current [Performance landing](README.md).
 - Prerequisite: [Workload demand](workload-demand-and-arrival-models.md), [Queueing](queueing-littles-law.md).
 - Related: [Autoscaling delay](autoscaling-lag-and-capacity-limits.md), [Tail latency](tail-latency-fanout-and-deadline-budgets.md), [Benchmark validity](load-testing-and-benchmark-validity.md), [Outbox/idempotency](../distributed/transactional-outbox-and-idempotency.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Uber — Cinnamon fairness](../cases/uber-cinnamon-admission-and-fairness.md)** illustrates static edge quotas may fail to protect storage; storage-local feedback can handle load and fairness. **It cannot establish:** uber's reported later controller improvements are not proof that every database or customer tier supports the same policy.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

@@ -191,3 +191,14 @@ The example, diagrams, client versions, recovery gates and migration states are 
 ## Navigation
 
 Proposed **V10/C05**, currently [decision support landing](README.md). Prerequisites: [legacy baseline](legacy-baseline-and-modernization-evidence.md), [API compatibility](../application/http-rpc-contracts-and-compatibility.md), [data ownership](../application/domain-boundaries-data-ownership-and-contracts.md). Next: [architecture alternatives/ADR](architecture-alternatives-experiments-and-adrs.md), [safe rollout](../delivery/safe-rollout-and-recovery.md), and [question-driven decision routes](question-routes-for-architecture-analysis.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Shopify — Helix migration gates](../cases/shopify-helix-checkpoint-gated-native-migration.md)** illustrates small migration checkpoints with behavior and human-review gates reduce unbounded AI-change scope. **It cannot establish:** an opt-in autonomous mode and company report are not evidence of zero escaped defects or safe unsupervised database migration.
+- **[Spotify — Long-tail platform migration](../cases/spotify-tech-migration-long-tail.md)** illustrates fleet modernization fails without ownership, adoption telemetry and managing the long tail. **It cannot establish:** a governance report does not prove one automation tactic guarantees 100% fleet adoption or any technical runtime improvement.
+- **[Data migration correctness](../cases/decisions/data-migration-correctness.md)** illustrates synthetic ADR contrasts transactional cutover, shadow-equality and client-version migration contracts. **It cannot establish:** stripe, Netflix and Meta operated different data authorities; no shared company-endorsed proof or universal checksum.
+- **[Build and delivery migration](../cases/decisions/build-delivery-migration.md)** illustrates synthetic ADR separates build reproducibility from adoption governance using Airbnb and Spotify. **It cannot establish:** historical publisher outcomes do not establish the invented organization's savings or a single canonical CI tool.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

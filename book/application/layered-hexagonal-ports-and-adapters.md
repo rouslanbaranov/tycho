@@ -157,3 +157,11 @@ The synthetic project, figure, tables and acceptance protocols are original. No 
 ## Navigation
 
 Proposed **V02/C01** in the [10-volume outline](../PROPOSED-STRUCTURE.md). See [application landing](README.md), then [domain/data ownership](domain-boundaries-data-ownership-and-contracts.md), [modular monoliths](modular-monolith-and-internal-events.md), [SOA/microservice boundaries](service-orientation-microservices-and-distribution.md), [safe extraction](architecture-evolution-and-extraction.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Shopify — Packwerk boundaries](../cases/shopify-packwerk-boundary-evolution.md)** illustrates automated dependency checking and gradually tightened boundaries can make modularity executable. **It cannot establish:** reference checks alone do not establish business-domain cohesion, latency isolation or independent deployability.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

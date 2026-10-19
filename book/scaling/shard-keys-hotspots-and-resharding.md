@@ -179,3 +179,11 @@ Database query/index optimization, bounded connection pools, increasing storage/
 | E03 | [PostgreSQL 17 table partitioning](https://www.postgresql.org/docs/17/ddl-partitioning.html), **Declarative Partitioning and Partition Pruning** | Physical table partitioning and planner behavior; not an application-wide distributed transaction protocol |
 
 All diagrams are original; no Vitess cluster, data move, load generator, index benchmark or independent technical review ran. **Shard count, key and traffic thresholds are not prescribed** by this chapter.
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Netflix — Cassandra time-series splits](../cases/netflix-cassandra-dynamic-time-series-splits.md)** illustrates wide partitions require adaptive ownership and reader compatibility, with workload-dependent split strategies. **It cannot establish:** netflix results do not mean every Cassandra partition should be dynamically split, or that reported gains apply to another dataset.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

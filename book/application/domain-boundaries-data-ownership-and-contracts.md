@@ -173,3 +173,11 @@ The makerspace, rules, mappings, diagrams, decision alternatives and failures ar
 - Proposed V02/C02, currently [Application architecture landing](README.md).
 - Prerequisite: [System boundaries](problem-framing-and-system-boundaries.md), [architecture styles](architecture-styles-and-module-boundaries.md).
 - Further reading: [API/RPC compatibility](http-rpc-contracts-and-compatibility.md), [transaction and idempotency limits](../distributed/transactional-outbox-and-idempotency.md), [legacy transition](../decisions/legacy-baseline-and-modernization-evidence.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Uber — DOMA](../cases/uber-doma-domains.md)** illustrates governing dependencies after service proliferation can reduce team coupling without adding indiscriminate services. **It cannot establish:** anecdotal high fanout and original adoption data are not a universal optimum domain size or architecture score.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

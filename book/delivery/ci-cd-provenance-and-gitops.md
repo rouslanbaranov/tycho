@@ -146,3 +146,11 @@ Prefer the simplest delivery chain that can independently demonstrate source ide
 | E04 | [Argo CD Automated Sync Policy](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/), automated sync, prune, self-heal and rollback notes | Depends on actual installed version/policy; no production behavior inferred |
 
 All diagrams, recommendations and failure cases in this chapter are conceptual. No pipeline, signer, reconciler, live environment or recovery drill has been executed, and no independent domain review is claimed.
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Airbnb — Bazel JVM build migration](../cases/airbnb-jvm-monorepo-bazel.md)** illustrates build-system coexistence and controlled migration are engineering work separate from selecting Bazel. **It cannot establish:** airbnb's historical premerge times and build improvements are not a transferable benchmark or proof every polyrepo needs Bazel.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.
