@@ -1,3 +1,48 @@
+---
+metadata_version: 1
+id: "tycho.page.ddeff7f1556f44f18c67659b73e6e15f"
+kind: "page"
+parent_id: "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+canonical_path: "book/data/postgresql-wal-replication-and-recovery.md"
+title: "PostgreSQL 17 WAL, physical/logical replication and recovery evidence"
+topic_ids:
+  - "data-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for PostgreSQL 17 WAL, physical/logical replication and recovery evidence. Scope includes 1. Why write-ahead logging exists; Durability has configuration boundaries; 2. Physical streaming replication versus logical replication."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of PostgreSQL 17 WAL, physical/logical replication and recovery evidence?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "PostgreSQL"
+    - "WAL"
+    - "physical/logical"
+    - "replication"
+    - "and"
+    - "recovery"
+    - "evidence"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # PostgreSQL 17 WAL, physical/logical replication and recovery evidence
 
 > Tycho Issue [#83](https://github.com/rouslanbaranov/tycho/issues/83). Version-pinned public source reading: PostgreSQL **17**, on 2026-10-19. Original mechanism explanations and fictional system diagrams, not a live restore drill, benchmark or operational guarantee.

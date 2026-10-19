@@ -1,3 +1,48 @@
+---
+metadata_version: 1
+id: "tycho.page.3c78e2b17ac74973b2ae658977843c2a"
+kind: "page"
+parent_id: "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+canonical_path: "book/distributed/transaction-isolation-and-sagas.md"
+title: "Consistency, transaction isolation and sagas across service boundaries"
+topic_ids:
+  - "distributed-systems"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Consistency, transaction isolation and sagas across service boundaries. Scope includes 1. Define the invariant before naming consistency; 2. PostgreSQL transaction isolation as a concrete bounded example; Local atomic commit does not include the outside world."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Consistency, transaction isolation and sagas across service boundaries?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Consistency"
+    - "transaction"
+    - "isolation"
+    - "and"
+    - "sagas"
+    - "across"
+    - "service"
+    - "boundaries"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Consistency, transaction isolation and sagas across service boundaries
 
 > Tycho Issue [#80](https://github.com/rouslanbaranov/tycho/issues/80), proposed V04/C03/C05. Research: 2026-10-18. Public-source-grounded explanation and entirely fictional registration workflow. **Not** a tested transaction framework or guarantee of exactly-once operation.

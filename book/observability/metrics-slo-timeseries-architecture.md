@@ -1,3 +1,51 @@
+---
+metadata_version: 1
+id: "tycho.page.1c7350e3bc17483ba18f201d02727aea"
+kind: "page"
+parent_id: "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+canonical_path: "book/observability/metrics-slo-timeseries-architecture.md"
+title: "Metrics architecture, SLOs, collection and time-series retention"
+topic_ids:
+  - "observability"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Metrics architecture, SLOs, collection and time-series retention. Scope includes 1. Specify service-level meaning before signal collection; 2. Telemetry collection is a pipeline, not a database write; Original topology."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Metrics architecture, SLOs, collection and time-series retention?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+    - "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Metrics"
+    - "architecture"
+    - "SLOs"
+    - "collection"
+    - "and"
+    - "time-series"
+    - "retention"
+evidence_scope:
+  source_ids:
+    - "src.otel-metrics-model"
+    - "src.prometheus-storage"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Metrics architecture, SLOs, collection and time-series retention
 
 > Tycho E14-11 [issue #89](https://github.com/rouslanbaranov/tycho/issues/89), original source-linked manuscript, 2026-10-19. No actual SLO measurements, telemetry pipeline, deployed collector, load test, audit or independent human review is asserted.

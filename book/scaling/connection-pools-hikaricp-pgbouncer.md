@@ -1,3 +1,51 @@
+---
+metadata_version: 1
+id: "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+kind: "page"
+parent_id: "tycho.landing.73dff529d70048569efef74bffa88b00"
+canonical_path: "book/scaling/connection-pools-hikaricp-pgbouncer.md"
+title: "Connection pools: HikariCP, PgBouncer and end-to-end database budgets"
+topic_ids:
+  - "scaling-mechanisms"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Connection pools: HikariCP, PgBouncer and end-to-end database budgets. Scope includes 1. Capacity belongs to the entire dependency topology; Synthetic capacity arithmetic, not a deployment recommendation; 2. HikariCP bounds per-process JDBC connection use."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Connection pools: HikariCP, PgBouncer and end-to-end database budgets?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.02238832b395417bae63939cd96b9134"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Connection"
+    - "pools"
+    - "HikariCP"
+    - "PgBouncer"
+    - "and"
+    - "end-to-end"
+    - "database"
+    - "budgets"
+evidence_scope:
+  source_ids:
+    - "src.hikaricp"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Connection pools: HikariCP, PgBouncer and end-to-end database budgets
 
 > Tycho research chapter for [Issue #84](https://github.com/rouslanbaranov/tycho/issues/84), public docs inspected **2026-10-19**. Main source scopes: HikariCP public README configuration, official PgBouncer configuration and PostgreSQL 17 server connections. Original examples and Mermaid diagrams only; no running connection pool, benchmark or independent expert review.
@@ -95,9 +143,8 @@ sequenceDiagram
     Proxy-->>ClientA: Result
     Note over Proxy,Server: Server connection reusable after transaction
     ClientA->>Proxy: Later session-dependent command
-    Note over ClientA,Proxy: May use a different backend; do not assume session affinity
+    Note over ClientA,Proxy: May use a different backend, do not assume session affinity
 ```
-
 Text alternative: in transaction mode, one client uses a server connection for its transaction. After commit it can be returned for another client; later statements need not reach the same backend. Session state cannot be presumed to persist across transactions.
 
 PgBouncer `max_client_conn` limits accepted client sessions; `default_pool_size` is a default maximum **server connections per user/database pool**. The actual total server connections can exceed one pool size when multiple database/user pairs exist, and file descriptors/memory limits must be considered. [E02]

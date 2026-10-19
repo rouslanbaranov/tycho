@@ -30,6 +30,28 @@ from validate_m9_cases import (  # noqa: E402
 
 
 class PinnedRootAndFormatTest(unittest.TestCase):
+    def test_complete_catalog_and_retrieval_contracts(self) -> None:
+        # Exercise the orchestration path, not only individual records. This
+        # catches registry mappings accidentally passed into set comparisons.
+        result = check(ROOT)
+        self.assertEqual(result["case_pages"], 29)
+        self.assertEqual(result["indexed_md_paths"], 35)
+        self.assertEqual(result["source_candidates"], 43)
+        self.assertEqual(result["sample_records"], 2)
+        self.assertEqual(sum(result["question_classes"].values()), 60)
+        self.assertEqual(result["retrieval_execution"], "NOT RUN")
+        self.assertEqual(result["independent_review"], "NOT RUN")
+
+    def test_unknown_well_formed_source_is_rejected(self) -> None:
+        schema = json_read(ROOT / "authoring/cases/case-record.schema.json")
+        item = copy.deepcopy(json_read(
+            ROOT / "authoring/cases/examples/case-records.json")[0])
+        refs = parse_source_registry(
+            (ROOT / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8"))
+        item["source_refs"] = ["N99"]
+        with self.assertRaisesRegex(ValueError, "unregistered case source"):
+            validate_record(item, schema, refs)
+
     def test_date_requires_full_calendar_syntax(self) -> None:
         for value in ("2026-10-19", "2024-02-29"):
             with self.subTest(valid=value):

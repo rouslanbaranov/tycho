@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.9176c39f97f544f884666e291ae38b90"
+kind: "page"
+parent_id: "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+canonical_path: "book/data/postgresql-mvcc-indexes-and-query-plans.md"
+title: "PostgreSQL 17: MVCC, indexing, query plans and relational invariants"
+topic_ids:
+  - "data-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for PostgreSQL 17: MVCC, indexing, query plans and relational invariants. Scope includes 1. Data authority and an original relational model; 2. MVCC is about snapshot visibility, not a replacement for reasoning about writes; 3. Indexes trade read access against writes, storage and maintenance."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of PostgreSQL 17: MVCC, indexing, query plans and relational invariants?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.3c78e2b17ac74973b2ae658977843c2a"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.02238832b395417bae63939cd96b9134"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "PostgreSQL"
+    - "MVCC"
+    - "indexing"
+    - "query"
+    - "plans"
+    - "and"
+    - "relational"
+    - "invariants"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # PostgreSQL 17: MVCC, indexing, query plans and relational invariants
 
 > Tycho technical chapter for [Issue #83](https://github.com/rouslanbaranov/tycho/issues/83). Research scope: **PostgreSQL 17**, official public versioned documentation, inspected 2026-10-19. Original diagrams and fictional examples. No SQL statements were executed, no query benchmark was collected and no independent database expert has reviewed the chapter.

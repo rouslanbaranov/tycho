@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406"
+kind: "page"
+parent_id: "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+canonical_path: "book/observability/trace-context-lineage-and-audit.md"
+title: "Distributed tracing, structured logs, data lineage and trustworthy audit"
+topic_ids:
+  - "observability"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Distributed tracing, structured logs, data lineage and trustworthy audit. Scope includes 1. Trace context and causality boundaries; What a trace may fail to show; 2. Correlation without recording credentials."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Distributed tracing, structured logs, data lineage and trustworthy audit?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Distributed"
+    - "tracing"
+    - "structured"
+    - "logs"
+    - "data"
+    - "lineage"
+    - "and"
+    - "trustworthy"
+    - "audit"
+evidence_scope:
+  source_ids:
+    - "src.trace-context"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Distributed tracing, structured logs, data lineage and trustworthy audit
 
 > Tycho E14-11 [#89](https://github.com/rouslanbaranov/tycho/issues/89). Original technical manuscript using official public source sections inspected 2026-10-19. Examples are fictional and conceptual; no capture pipeline, incident, authorized forensic procedure or human review was executed.

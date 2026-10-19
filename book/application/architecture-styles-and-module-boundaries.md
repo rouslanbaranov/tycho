@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.page.c226850223614886b61b7cb36c7d5032"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/architecture-styles-and-module-boundaries.md"
+title: "Application architecture styles: modules, services and ownership boundaries"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Application architecture styles: modules, services and ownership boundaries. Scope includes 1. Separate four different architectural axes; 2. Monolith does not mean unstructured code; Example: fictional workshop application."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Application architecture styles: modules, services and ownership boundaries?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Application"
+    - "architecture"
+    - "styles"
+    - "modules"
+    - "services"
+    - "and"
+    - "ownership"
+    - "boundaries"
+evidence_scope:
+  source_ids:
+    - "src.hexagonal"
+    - "src.microservices"
+    - "src.monolith-first"
+    - "src.soa-model"
+    - "src.spring-modulith"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Application architecture styles: modules, services and ownership boundaries
 
 > **Tycho research page — Issue #79**, proposed V02/C01–C04. Public source reading: **2026-10-18**. Status: independently researched draft, *not* independently reviewed or evaluated on a deployed system. This page is original explanation and synthetic illustration; cited sources are bounded publications, not experimental performance guarantees.

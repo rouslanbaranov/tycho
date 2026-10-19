@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.0c8a001625a545c1bbfa56bcb89accc4"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/meta-ingestion-shadow-migration-lifecycle.md"
+title: "Meta — Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Meta — Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation. Scope includes Legacy architecture, tension and reported outcome; Concrete migration safety mechanism; Preconditions and what the published gates cannot prove by themselves."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Meta — Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Meta"
+    - "Dataset"
+    - "Ingestion"
+    - "Cutover"
+    - "Across"
+    - "Thousands"
+    - "Jobs"
+    - "with"
+    - "Shadow"
+    - "Validation"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Meta — Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation
 
 **Case ID:** `case.meta.ingestion-shadow-lifecycle` · **M9:** E16-05 #118 · **Status:** evidence-backed draft; independent review pending.  
@@ -60,6 +107,31 @@ Shadow jobs do not eliminate rollback design, change-data-capture ordering or mu
 **Alternative A — big bang:** may be viable only for a tiny noncritical batch that can be re-run deterministically without consumer SLA, but wrong for thousands of continuously consumed tables. **Alternative B — indefinitely mirror both systems:** appears safer but incurs duplication and increases ambiguity about data authority. **Selected proposed approach:** successive independently validated job cohorts with explicit cutover and legacy retirement criteria.
 
 A control failure should be recorded as a counterexample: an equal number of rows plus equal coarse checksum can still miss business-significant schema semantics if the fingerprint omits a column; a green shadow table can be stale if the source snapshot window differed. Those are **hypothetical** risks, not reported Meta incidents.
+
+## What a green shadow comparison cannot guarantee
+
+ME03 documents **job-level authority transitions**: legacy production/new shadow, followed by new production/legacy reverse shadow, then cleanup. This choreography solves a different problem from changing all reads before writes in Stripe's mutable subscription migration. There is no safe universal “dual-write” shortcut that represents both histories.
+
+For a different warehouse, materialized output can match row count and checksum while *still* diverging semantically when time windows differ, null/value canonicalization is lossy or the fingerprint excludes business-critical fields. Model each comparison as a tuple of `source snapshot + schema version + partition identity + job revision + equality rule + freshness window`. An audit should reject comparisons whose tuple differs in a way the domain owner has not explicitly normalized.
+
+| Candidate failure during synthetic migration | Observation needed before continuing | Recovery boundary |
+|---|---|---|
+| Full snapshot finishes after CDC deltas began | Snapshot high-watermark and ordered delta offset | Replay/rebuild from consistent checkpoint |
+| Shadow row counts match but checksum differs | Per-column/value-level diff with source revision | Hold job, investigate semantics before cutover |
+| Reverse-shadow new production job emits a bad delta partition | Affected partition, downstream dependents, first corrupted offset | Stop further propagation; quarantine/repair from accepted snapshot |
+| New job is correct but exceeds landing-time SLO | End-to-end watermark lag and critical consumer deadlines | Return production authority or throttle cohort |
+| Legacy shadow job is retired too early | No independently runnable old path and no accepted recovery plan | Block cleanup, preserve reverse operation until post-cutover evidence |
+| Resource demand spikes when many jobs shadow together | Capacity budget and priority-aware migration scheduler | Reduce or pause migration cohorts rather than overload production |
+
+These are **Tycho synthetic error-injection tests** based on the categories of output authority, CDC/partition corruption and capacity limits described in ME03, not a company incident log. The report says the migration was complete as of its May 2026 publication; it does not expose full private comparison queries or independently audited zero-loss statistics.
+
+## Explicit completion and rollback contract
+
+A page-ready migration case should answer four questions for **every** job: who currently writes the consumer-facing production table; what isolated shadow output is compared; which exact result/event flips authority; and which preserved state permits rollback after the flip. Resource usage and landing latency are first-class gates, not a footnote after value equality.
+
+A synthetic accepted job can be `SHADOW_VERIFIED` only after representative sources, partition counts and field values converge within a defined window. It can be `REVERSE_SHADOW` only when the new production writer's authorization and checkpoint/retention semantics are proven and the old writer still runs as shadow. It can be `RETIRED` only when late partitions, critical consumers and recovery conditions have been reviewed. These names are **Tycho model states**, not official Meta API identifiers.
+
+**Counterexample:** for a tiny, immutable offline table with deterministic reprocessing and no live consumer SLO, a one-shot recompute and direct compare may be simpler than maintaining two production job generations. But for thousands of mutable feeds with independent CDC lag, job-scoped authority and recoverability may justify this operational complexity. Without named snapshot/offset identity and a repair path, a migration status of “100%” remains **insufficient evidence** for completeness of a new platform's own implementation.
 
 ## Quantitative status and provenance
 

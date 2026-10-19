@@ -1,3 +1,53 @@
+---
+metadata_version: 1
+id: "tycho.page.359813d554c84da794a353d4416b8047"
+kind: "page"
+parent_id: "tycho.landing.4348c76938fc4d41b239721b94338436"
+canonical_path: "book/search/hybrid-ranking-graph-and-evaluation.md"
+title: "Hybrid retrieval, graph expansion, reranking and evidence-quality evaluation"
+topic_ids:
+  - "search-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Hybrid retrieval, graph expansion, reranking and evidence-quality evaluation. Scope includes 1. Retrieval has multiple independent signals; 2. Reciprocal Rank Fusion handles incompatible score scales; Tiny synthetic example, not an evaluation result."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Hybrid retrieval, graph expansion, reranking and evidence-quality evaluation?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.39a694d604d646a996bf90c3357c3b27"
+    - "tycho.page.7a67fd6346a54eff97784465c22bbc74"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.9176c39f97f544f884666e291ae38b90"
+    - "tycho.landing.73dff529d70048569efef74bffa88b00"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Hybrid"
+    - "retrieval"
+    - "graph"
+    - "expansion"
+    - "reranking"
+    - "and"
+    - "evidence-quality"
+    - "evaluation"
+evidence_scope:
+  source_ids:
+    - "src.pgvector"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Hybrid retrieval, graph expansion, reranking and evidence-quality evaluation
 
 > Tycho technical research for [Issue #85](https://github.com/rouslanbaranov/tycho/issues/85); inspected public Elasticsearch RRF, PostgreSQL text search, pgvector and Neo4j graph concepts on 2026-10-19. Original algorithms/diagrams and **synthetic** examples only. No deployed retrieval server or independently judged quality benchmark is claimed.

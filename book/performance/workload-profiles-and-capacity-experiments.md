@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+kind: "page"
+parent_id: "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+canonical_path: "book/performance/workload-profiles-and-capacity-experiments.md"
+title: "Workload profiles and falsifiable capacity experiments"
+topic_ids:
+  - "performance-engineering"
+perspectives:
+  - "architecture"
+  - "evaluation"
+summary: "Reader entry for Workload profiles and falsifiable capacity experiments. Scope includes Decision question; Record the boundary before the number; Measurement model."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Workload profiles and falsifiable capacity experiments?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Workload"
+    - "profiles"
+    - "and"
+    - "falsifiable"
+    - "capacity"
+    - "experiments"
+evidence_scope:
+  source_ids:
+    - "src.aws-backoff"
+    - "src.k8s-hpa"
+    - "src.sre-overload"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Workload profiles and falsifiable capacity experiments
 
 > Tycho E14-08 research draft, 2026-10-19. Synthetic examples only; no production measurement, benchmark, or independent review is claimed.

@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.decision.54dff384ace3468490c46b1d00b0dcf6"
+kind: "decision"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/decisions/build-delivery-migration.md"
+title: "Decision Playbook — Build and delivery modernization: hermetic execution vs fleet adoption"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Decision Playbook — Build and delivery modernization: hermetic execution vs fleet adoption. Scope includes Synthetic legacy system and decision problem; Contrasting historical evidence; Decision tree and chosen ADR."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Decision Playbook — Build and delivery modernization: hermetic execution vs fleet adoption?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.c766e3289b95429bb158fb168f7bd0b9"
+    - "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2"
+    - "tycho.page.7419e7903c5549a6a9c7944f4214f7e1"
+    - "tycho.page.acfab58bfa6b470ca28010ac561dfeef"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Decision"
+    - "Playbook"
+    - "Build"
+    - "and"
+    - "delivery"
+    - "modernization"
+    - "hermetic"
+    - "execution"
+    - "fleet"
+    - "adoption"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Decision Playbook — Build and delivery modernization: hermetic execution vs fleet adoption
 
 **ID:** `decision.build-platform-and-adoption` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending.  
@@ -51,6 +102,50 @@ flowchart TD
 Build pilot and parity checks → progressive opt-in with IDE support → migration map and owners → automation on truly mechanical parts → track unresolved tail and retire old execution only after equivalence.
 
 **Reversal triggers / insufficient evidence:** If build time is dominated by integration tests or external services, improving Bazel cache will not fix it; if owners are blocked by API semantics, more auto-created PRs will only create noise.
+
+## The two bottlenecks are different subsystems
+
+[Airbnb's multi-year Bazel migration](../airbnb-jvm-monorepo-bazel.md) (A01) identifies expensive, non-hermetic **build and test execution**. The original company account reports 3–5× faster local build/test, 2–3× faster IDE sync and improvement in build satisfaction—but also about 100 of 700 service deployables initially failing startup parity checks and a **4.5-year** migration. A faster compiled artifact was not automatically a correct production artifact. Gradle/Bazel coexistence was deliberately retained while service owners fixed reflective dependency and packaging issues.
+
+[Spotify's long-tail technology migrations](../spotify-tech-migration-long-tail.md) (SP01, **2020**) instead concern **coordinating version upgrades across owners**. Standardizing workflow, measuring version/dependency inventory and helping engineers perform changes can reduce chronic adoption lag even when every repository already builds quickly. The 2020 Spotify account must not be mislabeled as an LLM-agent migration; the [2025–26 Honk case](../spotify-honk-data-consumer-migration.md) (SP02/SP03) describes a separate, later coding-agent workflow with explicit ambiguous-field refusals, Scio exclusions and incomplete testing.
+
+[Uber's service-domain ownership case](../uber-doma-domains.md) (U01, **2020**) adds a third independent variable: the number of consumer teams and contracts touched by one feature. Making a build faster does not make an unstable multi-team interface easier to coordinate. These published cases are **not** one cross-company controlled experiment.
+
+## Two independent synthetic decision records
+
+| Dimension | Build reproducibility ADR for a JVM monorepo | Fleet-adoption ADR for many repositories |
+|---|---|---|
+| Defect to measure | Long p90 CI latency, unbounded worker footprint, inconsistent build artifacts | Many repos on unsupported versions or owners unable to adopt published change |
+| Smallest first intervention | Profile critical path, remove needless serial tasks, test cache consistency | Enumerate owners, usage, dependency constraints and release blockers |
+| Larger selected option | Hermetic actions, remote cache/execution, parity-tested gradual migration | Source-indexed upgrade recipes, approved issue batches, assisted PRs and human exception route |
+| Safety oracle | Equivalent compiled/JAR/startup/runtime behavior, dependency versions and full tests | Correct feature semantics, release compatibility, downstream/client tests and post-deploy observations |
+| Rejection condition | Low cache reuse or build latency dominated by external service waits | Most remaining upgrades require undocumented domain interpretation |
+| Rollback | Old build/deploy path remains while new outputs can fail, and cutover is reversible | Hold affected repository version; retain prior release while owner fixes incompatible consumer |
+| Success measure | CI p90, local edit-test loop, cache hit, flaky tests, startup parity, cost per validated build | Coverage of eligible repositories, exceptions by owner/reason, rollout age, escaped defects |
+
+The above criteria are **Tycho synthetic alternatives**. Neither company is claimed to have measured the other column's outcomes or used the same delivery contract.
+
+## Detailed migration experiment for a fictitious mixed estate
+
+**Build execution wave:** select one complex but actively supported JVM service, not a trivial hello-world project. Run Gradle and Bazel against pinned source and dependency snapshots, matching compilation, test discovery, generated resources, runtime classpaths, reflection and startup/health checks. Measure both cold and warm cache, local and remote worker behavior, action queue delays, aggregate CI cost and independent developer experience. If startup or serialization parity fails, do not use a faster unit-test result to justify production rollout. Track why non-hermetic tasks failed, and retain the old artifact generation path until a comparable deployment has succeeded.
+
+**Fleet upgrade wave:** separately identify target dependency versions, repositories impacted, business/test owners, transitive compatibility and runtime support windows. Issue incremental PRs with clear acceptance/refusal semantics and source-supported change descriptions. If a repository lacks valid tests, require a human owner to define the oracle before merge. Record merged vs generated vs rolled-out PRs **as different populations**; Spotify Honk reports illustrate why counting generated pull requests cannot prove actual deployment or migration completion.
+
+**Integration wave:** compare the product's *end-to-end* critical path. A fast build may still wait on manual approval; an automatically generated upgrade may still require cross-team contract negotiation. Fix the current dominating wait using evidence rather than introducing both Bazel and new agentic tooling simultaneously, which would confound a before/after comparison.
+
+## Failure matrix and required counterevidence
+
+- **Hermetic test, non-hermetic runtime:** the same code tests under Bazel but crashes on reflection, generated file discovery or incompatible dependency versions. Airbnb's real rollout surfaced these categories (A01). Require deployment startup and representative integration parity separately.
+- **CI faster, releases unchanged:** approvals, environments or unstable service contracts dominate the lead-time distribution. Build speed is a local achievement, not proof of product throughput.
+- **Hundreds of generated PRs, many unsupported changes:** missing business-field mappings or untestable code produce superficially passing diffs; [Spotify's dataset migration](../spotify-honk-data-consumer-migration.md) (SP03) documents narrowed framework scope and manual validation.
+- **Rollout hidden by source compatibility:** a library compiles but violates data/schema version expectations at the consumer boundary. Track deployed-version inventory, not only repository default-branch versions.
+- **Ownership unassigned:** a fleet upgrade is “95% done” while the remaining 5% includes business-critical consumers and no accountable maintainer. Require explicit exception classification and a dated waiver/escalation.
+
+**Reversal criteria:** keep or restore the old build/deploy path for correctness failures; stop agent-assisted PR waves when semantic defect or manual-rework cost exceeds agreed thresholds; prioritize the oldest/highest-risk unsupported consumers rather than optimizing headline adoption percentage. Metrics with unknown denominators should be returned as **insufficient evidence**.
+
+## What the Rocinante agent should answer
+
+Given a legacy system, ask first: Are delayed changes driven by **compile/test time, reproducibility, service interface ownership, or actual deployment adoption**? Which cohort and release revisions were measured? What is the cheapest reversible intervention, and what contrary evidence would invalidate it? Only then recommend a tooling or organization change. Return dated A01/SP01/U01 (and optional later SP03) provenance, the hypothetical assumptions, required parity/fallback checks and a bounded next experiment; never claim a company-reported performance ratio is a universal SLO.
 
 ## Failure analysis and evidence provenance
 

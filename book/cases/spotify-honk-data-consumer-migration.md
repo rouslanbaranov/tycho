@@ -1,3 +1,52 @@
+---
+metadata_version: 1
+id: "tycho.page.acfab58bfa6b470ca28010ac561dfeef"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/spotify-honk-data-consumer-migration.md"
+title: "Spotify — Honk: why data-lineage context and tests determine safe AI migration scope"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Spotify — Honk: why data-lineage context and tests determine safe AI migration scope. Scope includes Original migration and constraints; Iteration: three failure boundaries; Quantitative claims and why they cannot be mixed."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Spotify — Honk: why data-lineage context and tests determine safe AI migration scope?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.5b4cd43052b647abb7cb161381ebdcc5"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Spotify"
+    - "Honk"
+    - "why"
+    - "data-lineage"
+    - "context"
+    - "and"
+    - "tests"
+    - "determine"
+    - "safe"
+    - "migration"
+    - "scope"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Spotify — Honk: why data-lineage context and tests determine safe AI migration scope
 
 **Case ID:** `case.spotify.honk-dataset-consumer-migration` | **Owner:** M9 E16-05 #118 | **Status:** first-party evidence-backed draft; independent reviewer pending.  
@@ -47,6 +96,30 @@ flowchart TD
 An agent is not automatically safe because its input is 'structured'. Missing field semantics produced wrong assumptions until explicit mapping tables were written. Even then, the target repositories lacked automatic tests, so *human verification remained necessary*. The scalable architecture here is **lineage + bounded transformation context + supervised PR workflow**, not unattended SQL code generation.
 
 For another organization, test one standardized framework cohort, pin dataset schema versions and source-lineage snapshot, require a field-level oracle and detect missing test coverage before expansion. Mark untestable or ambiguous cases for owners; if data governance cannot define equivalence, the correct agent output is *insufficient evidence*, not a speculative mapping. A failed mapping, deferred framework or PR still awaiting merge is a first-class result.
+
+## A versioned transformation contract for each consumer cohort
+
+The SP03 article distinguishes **discovering affected repositories**, **generating patches**, **testing their semantic correctness**, and **merging/rolling out**. These are different acceptance states. The cited lineage population of about **1,800 direct pipelines** is an impact estimate for two datasets; it must not be reported as the set successfully changed. The **240 rolled-out PRs** are a narrower migration cohort, not proof every PR merged, every affected pipeline migrated or every data value preserved business meaning.
+
+For a different platform, each eligible transformation should have a versioned contract containing: original dataset fields and types; replacement field mappings; acceptable null/default transformations; affected query engine; data-owner-approved invariants; executable verification procedure; a repository/source revision; and a refusal policy. This should be **machine-readable enough to constrain a coding agent** and human-readable enough that a downstream owner can challenge the mapping.
+
+| Transformation decision | Required oracle | Safe outcome |
+|---|---|---|
+| Direct field rename with equivalent semantics | Both schemas and representative query-value tests | Automated patch candidate, still subject to review |
+| Field change with ambiguous business meaning | Named data-owner interpretation, explicit mapping and examples | **Stop; request human decision** instead of guessing |
+| Unsupported framework or highly variable pipeline | Framework-specific dependency model and target runtime tests | Leave unchanged, report as excluded cohort |
+| No local build/test runner | Executable downstream validation owned by pipeline team | Human-owned verification before merge |
+| Generated PR awaiting owner action | Merge and deployment state from a trusted workflow | Keep status **proposed**, not “migrated” |
+
+The matrix is an **original Tycho test design** and must not be presented as Spotify's unpublished mandatory tool schema. The company explicitly describes wrong inferred mappings, the narrowed scope excluding Scio and manual tests when repositories lacked automatic test feedback.
+
+## Controlling progress and measuring failure honestly
+
+A synthetic experiment should begin with a small representative cohort of BigQuery Runner/dbt consumers and a separate *excluded* Scio set. Snapshot the original lineage and identify downstream users; run the agent with the exact mapping contract; compare query semantics with an independent reviewer; execute repository checks where available and owner-run data tests otherwise. Record every excluded/ambiguous mapping and every generated, reviewed, merged, deployed or rolled-back PR **as separate status**. Do not smooth away the long tail by reporting only automatic successes.
+
+**Negative-path drills:** deprecated fields with similar names but different meaning, null-value changes, joins whose cardinality changes, a pipeline missing unit tests, stale lineage and target schema changing after PR generation. If the oracle fails or an owner cannot verify semantics, preserve the existing consumer until a correct migration is specified. A compile-success label and a visually plausible SQL diff are not correctness evidence.
+
+The first-party reports describe an operational tool chain and selected outcomes; they do not publish a controlled independent escaped-defect rate. Treat estimated engineering-week savings as **hypotheses**, not verified effort saved. Compare with [Shopify Helix's checkpoint gates](shopify-helix-checkpoint-gated-native-migration.md), recognizing that UI visual tests are not valid oracles for data-consumer semantics.
 
 ## Source and review limits
 

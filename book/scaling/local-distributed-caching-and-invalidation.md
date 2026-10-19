@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.ded52d8d012347b79d70e608488cf6a4"
+kind: "page"
+parent_id: "tycho.landing.73dff529d70048569efef74bffa88b00"
+canonical_path: "book/scaling/local-distributed-caching-and-invalidation.md"
+title: "Local and distributed caching: correctness, invalidation and overload boundaries"
+topic_ids:
+  - "scaling-mechanisms"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Local and distributed caching: correctness, invalidation and overload boundaries. Scope includes 1. First name the authoritative value; 2. Local in-process cache: fast reads, isolated knowledge; 3. Distributed cache and cache-aside policy."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Local and distributed caching: correctness, invalidation and overload boundaries?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Local"
+    - "and"
+    - "distributed"
+    - "caching"
+    - "correctness"
+    - "invalidation"
+    - "overload"
+    - "boundaries"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Local and distributed caching: correctness, invalidation and overload boundaries
 
 > Tycho [Issue #84](https://github.com/rouslanbaranov/tycho/issues/84), original technical research based on publicly accessible Redis and Caffeine documentation, inspected **2026-10-19**. All scenarios and data are fictional. No measured cache hit rates, end-to-end speedup, consistency guarantee or independent review is claimed.

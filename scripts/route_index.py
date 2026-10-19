@@ -178,6 +178,8 @@ def main():
         print("Built",len(data["documents"]),"docs; coverage:",data["coverage"])
         return
     current = load_fresh(args.root, args.index)
+    require(args.allow_partial or current["coverage"] == "complete",
+            "partial routing coverage requires explicit --allow-partial")
     if args.action == "check":
         print("PASS:",current["snapshot_sha256"],current["coverage"])
     elif args.action == "route":

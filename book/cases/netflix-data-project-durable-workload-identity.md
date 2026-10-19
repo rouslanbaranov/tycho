@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.ca73432e255443ca808b30f9587f20cb"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/netflix-data-project-durable-workload-identity.md"
+title: "Netflix Data Projects — From Human-Tied Credentials to Durable Data-Workload Identity"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Netflix Data Projects — From Human-Tied Credentials to Durable Data-Workload Identity. Scope includes Legacy security and reliability failure; A different security principal, not a longer-lived human token; Actual security and rollout boundaries."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Netflix Data Projects — From Human-Tied Credentials to Durable Data-Workload Identity?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Netflix"
+    - "Data"
+    - "Projects"
+    - "From"
+    - "Human-Tied"
+    - "Credentials"
+    - "Durable"
+    - "Data-Workload"
+    - "Identity"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Netflix Data Projects — From Human-Tied Credentials to Durable Data-Workload Identity
 
 **Case ID:** `case.netflix.durable-data-project-identity` · **Issue:** E16-05 #118 · **Status:** evidence-bounded draft; independent acceptance pending.  
@@ -53,6 +99,36 @@ In the section **Using Data Projects**, the authors acknowledge that moving exis
 **Counterexample:** A project identity with uncontrolled group-level write grants can increase blast radius relative to carefully managed table ACLs. Better continuity alone is not proof of least privilege. A synthetic 'every project gets admin' grant is a dangerous anti-pattern.
 
 **Validation:** identity lifetime, role revocation, delegated execution audit, effective grant diff, permission errors by owner transfer, orphaned assets, data retention obligations and ability to restore execution after temporary identity-provider errors. Confirm that no user can assume a privileged project merely by creating a new CI job.
+
+## Separate ownership, entitlement and execution identities
+
+The [May 2026 first-party report](https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e) (N17) identifies **two different defects**: an asset-by-asset ACL model makes reorganization costly, while long-running workloads inherit the lifecycle of a particular human creator. A project container addresses the management unit; its assumable identity addresses execution continuity. One does not logically guarantee the other.
+
+For a new platform, distinguish four principals: **asset owner** (accountability), **project administrators** (who can delegate roles), **workload identity** (runtime authentication), and **caller** (who initiated or authorized a job). Project grouping makes access policy easier to operate, but it can also spread an excessive permission grant across more resources. Durable credentials are not automatically least-privilege credentials. These distinctions are Tycho security reasoning, not a claim about Netflix's unpublished IAM internals.
+
+| Trust boundary | Allowed operation to prove | Essential negative test |
+|---|---|---|
+| User or CI → Project | Assume a role only through an authorized grant | An unrelated user creates a similarly named project/job and cannot inherit privileges |
+| Project → Workflow manager | Issue a workload-bound identity only for approved execution | A copied job definition cannot mint a credential for a different project |
+| Workflow → Asset | Read/write only explicitly authorized dataset or derived asset | Auto-attached output does not expose sensitive inherited source permissions |
+| Project → External IAM role | Exchange project identity for a constrained cloud role | Role assumption cannot escape intended resource, region or environment |
+| Membership change → Existing jobs | Preserve authorized durable operation while revoking departing human access | Revoked personnel do not retain inherited long-term tokens |
+
+The Netflix article describes platform roles, Maestro-issued identities, optional AWS role integration and automatic grouping of created assets (“gravity”). Exact token lifetimes, denial precedence, revocation propagation and every grant inheritance rule are **not** published; the matrix proposes tests rather than reproducing a hidden design.
+
+## Migration of a human-owned job requires two separate cutovers
+
+A safe migration cannot simply replace the username in a scheduler. The project first needs a **business asset ownership** decision: which tables, workflows and target outputs belong together? Then it needs an **effective permission comparison**: is the project's eventual read/write set sufficient for authorized work but no broader than intended? Finally, the identity provider and workflow manager have to bind the runtime token to that project without borrowing a human's personal entitlement.
+
+**Tycho synthetic release sequence:** inventory jobs and owners; map table/secret/resource access; create a project with bounded role grants; run *shadow authorization decisions* against real planned operations; execute a canary job with project identity; compare outputs, audit trail, retries and failure handling; migrate remaining jobs by cohort; stop the dependency on departed human credentials only after successful token revocation and disaster-recovery tests. Do not reuse the old human token indefinitely as a “fallback,” because that recreates the original security failure.
+
+A good test deliberately changes a project administrator's team membership while a scheduled workload runs. Durable operation may continue if policy permits, but the removed human must lose administrative influence, and the audit must identify both the actual job principal and originating approval. These are normative security requirements, **not** independently established outcomes of N17.
+
+## Failure cases and alternative choices
+
+A **per-job service account** may be preferable for a small fleet with strict isolation and simple rotation. A **team-wide identity** may ease migration but amplifies cross-project blast radius. A **project-owned identity** is defensible when project data boundaries remain stable across staffing changes and the platform can prove delegation/revocation semantics. None is universally safest without grants, job count, owner churn and blast-radius evidence.
+
+**Stop conditions:** project grants collapse incompatible confidentiality boundaries, orphaned assets receive unexpected access, token revocation is not testable, emergency recovery depends on a departed user, or asset ownership is unresolved. The source reports that guidance for automatically right-sizing permissions and some cross-platform integrations remained future work. It does not publish independent fleet-wide least-privilege percentages or an authorization proof; retain **insufficient evidence** where that outcome is requested.
 
 ## Evidence and reviewer gaps
 

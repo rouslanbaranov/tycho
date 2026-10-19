@@ -1,3 +1,44 @@
+---
+metadata_version: 1
+id: "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+kind: "landing"
+parent_id: "tycho.book.37c50125355948f1b52ec66229ef59bd"
+canonical_path: "book/PROPOSED-STRUCTURE.md"
+title: "Tycho — proposed question-driven book structure"
+topic_ids:
+  - "system-design"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Tycho — proposed question-driven book structure. Scope includes Audience and use cases; Structure rules for this draft; Proposed volumes and chapter ownership."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Tycho — proposed question-driven book structure?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Tycho"
+    - "proposed"
+    - "question-driven"
+    - "book"
+    - "structure"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Tycho — proposed question-driven book structure
 
 Status: **proposal for Issue #23**, 2026-10-18. This is an authoring/navigation plan, **not** completed chapters, reviewed technical claims, approved JSON metadata IDs, or a commitment to replicate another book's numbering. Existing `book/README.md` remains the current canonical entry until a structure is accepted.

@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.7a67fd6346a54eff97784465c22bbc74"
+kind: "page"
+parent_id: "tycho.landing.4348c76938fc4d41b239721b94338436"
+canonical_path: "book/search/vector-hnsw-faiss-pgvector.md"
+title: "Vector retrieval: exact distance, HNSW, IVF, filtering and pgvector/Faiss"
+topic_ids:
+  - "search-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Vector retrieval: exact distance, HNSW, IVF, filtering and pgvector/Faiss. Scope includes 1. The retrieval contract begins before embeddings; 3. ANN index types and their trade-offs; 4. Metadata filtering creates a subtle recall and security boundary."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Vector retrieval: exact distance, HNSW, IVF, filtering and pgvector/Faiss?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Vector"
+    - "retrieval"
+    - "exact"
+    - "distance"
+    - "HNSW"
+    - "IVF"
+    - "filtering"
+    - "and"
+    - "pgvector/Faiss"
+evidence_scope:
+  source_ids:
+    - "src.pgvector"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Vector retrieval: exact distance, HNSW, IVF, filtering and pgvector/Faiss
 
 > Tycho [Issue #85](https://github.com/rouslanbaranov/tycho/issues/85), independent official/public-source review on **2026-10-19**. Examples and diagrams are original. Versioned pgvector and Faiss claims are scoped to the *public documentation inspected*, not a claimed running database, embedding API or benchmark.

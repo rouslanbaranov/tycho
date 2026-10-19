@@ -1,3 +1,56 @@
+---
+metadata_version: 1
+id: "tycho.page.c75a11f9786442a5b5456f11c2412df4"
+kind: "page"
+parent_id: "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+canonical_path: "book/data/storage-model-alternatives-and-workload-fit.md"
+title: "Storage model alternatives: embedded SQL, distributed SQL, document, wide-column, OLAP, graph and time series"
+topic_ids:
+  - "data-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Storage model alternatives: embedded SQL, distributed SQL, document, wide-column, OLAP, graph and time series. Scope includes 1. Start from the workload and invariant, not a database brand; 2. Transactional relational and embedded storage; 3. Distributed SQL and transactional key-value."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Storage model alternatives: embedded SQL, distributed SQL, document, wide-column, OLAP, graph and time series?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.9176c39f97f544f884666e291ae38b90"
+    - "tycho.page.ddeff7f1556f44f18c67659b73e6e15f"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.7beb6ba382a1458dbfba5800ff1b53af"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Storage"
+    - "model"
+    - "alternatives"
+    - "embedded"
+    - "SQL"
+    - "distributed"
+    - "document"
+    - "wide-column"
+    - "OLAP"
+    - "graph"
+    - "and"
+    - "time"
+evidence_scope:
+  source_ids:
+    - "src.sqlite"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Storage model alternatives: embedded SQL, distributed SQL, document, wide-column, OLAP, graph and time series
 
 > Tycho Issue [#83](https://github.com/rouslanbaranov/tycho/issues/83). Independent official public documentation inspected on 2026-10-19, versions recorded below. This is a **bounded comparative architecture primer**, not a vendor ranking, empirical TCO calculation or claim of testing production databases.
@@ -141,9 +194,8 @@ sequenceDiagram
     OLTP-->>CDC: Durable change/outbox intent
     CDC-->>View: Apply projection update
     Client->>View: Query derived representation
-    Note over Client,View: View may lag; response needs a freshness contract
+    Note over Client,View: View may lag, response needs a freshness contract
 ```
-
 Text alternative: a user commits to an authoritative store. A change pipeline later updates derived views, which may temporarily return stale results. Define freshness, rebuild, deduplication, schema migration and failure recovery explicitly. See the canonical [outbox page](../distributed/transactional-outbox-and-idempotency.md) and [CQRS projections](../distributed/cqrs-event-sourcing-and-projections.md).
 
 ## 8. Safe selection process and insufficient evidence

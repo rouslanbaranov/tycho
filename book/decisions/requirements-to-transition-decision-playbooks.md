@@ -1,3 +1,67 @@
+---
+metadata_version: 1
+id: "tycho.page.a726b2ab751b44dea1a659556ed4f4c6"
+kind: "page"
+parent_id: "tycho.landing.b656116463d9480f83199d8202b127a4"
+canonical_path: "book/decisions/requirements-to-transition-decision-playbooks.md"
+title: "Architecture decisions: from requirements, symptoms and legacy constraints to safe transition"
+topic_ids:
+  - "architecture-decisions"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Architecture decisions: from requirements, symptoms and legacy constraints to safe transition. Scope includes 1. A shared decision envelope; 2. Route R1: a new requirement → feasible architecture; 3. Route R2: operational symptom → competing hypotheses."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Architecture decisions: from requirements, symptoms and legacy constraints to safe transition?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.06b70cb83d4f490ea9ef698a025e7684"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+    - "tycho.page.02238832b395417bae63939cd96b9134"
+    - "tycho.page.9176c39f97f544f884666e291ae38b90"
+    - "tycho.page.1c7350e3bc17483ba18f201d02727aea"
+    - "tycho.page.47ffb5c160bd4b10aff27101414c2133"
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+    - "tycho.page.ea94649bfd8c4be183f9114618d7ccaa"
+    - "tycho.page.2536d18422944e27abe4ea8549beb9ab"
+    - "tycho.page.ddeff7f1556f44f18c67659b73e6e15f"
+    - "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406"
+    - "tycho.page.58c3c4e5e19d46bcb2da66255eb61068"
+    - "tycho.page.7921e82a71b9446790f185c818326911"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Architecture"
+    - "decisions"
+    - "from"
+    - "requirements"
+    - "symptoms"
+    - "and"
+    - "legacy"
+    - "constraints"
+    - "safe"
+    - "transition"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Architecture decisions: from requirements, symptoms and legacy constraints to safe transition
 
 > Tycho E14-12 [issue #90](https://github.com/rouslanbaranov/tycho/issues/90), original cross-topic book chapter, 2026-10-19. All worked scenarios are **synthetic**; assumptions, results and verification requests are not measurements of a deployed system. Canonical decision authoring contracts exist separately in [decision navigation](../../authoring/models/decision-navigation.md), [requirement profiles](../../authoring/models/requirements-workload-profile.md), [legacy baseline](../../authoring/models/legacy-modernization-profile.md), [candidate ADRs](../../authoring/models/candidate-comparison-adr.md), [pattern cards](../../authoring/models/pattern-applicability-card.md) and [target/transition states](../../authoring/models/target-transition-architecture.md).

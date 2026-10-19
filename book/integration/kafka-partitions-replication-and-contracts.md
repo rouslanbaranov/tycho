@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.0b493340594c4c4392c5d93940a7f319"
+kind: "page"
+parent_id: "tycho.landing.816c847b8daa4d67a3fe1e3a8cbe3830"
+canonical_path: "book/integration/kafka-partitions-replication-and-contracts.md"
+title: "Integration contracts, Kafka partitions and delivery boundaries"
+topic_ids:
+  - "integration-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Integration contracts, Kafka partitions and delivery boundaries. Scope includes 1. Command, query, notification and durable event are distinct contracts; 2. Kafka's partition is an ordering and load unit; 3. Replicas, ISR and acknowledgement scope."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Integration contracts, Kafka partitions and delivery boundaries?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Integration"
+    - "contracts"
+    - "Kafka"
+    - "partitions"
+    - "and"
+    - "delivery"
+    - "boundaries"
+evidence_scope:
+  source_ids:
+    - "src.grpc"
+    - "src.kafka-design"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Integration contracts, Kafka partitions and delivery boundaries
 
 > Technical research for Tycho [#81](https://github.com/rouslanbaranov/tycho/issues/81), proposed V04/C06–C07. Source inspection **2026-10-18**, explicitly anchored to **Apache Kafka 4.1 documentation**. Version 4.1 is a selected **older documentation release**, not a claim that it is the newest. Examples and diagrams are original synthetic scenarios, not executed benchmarks or proof of external exactly-once effects.
@@ -88,9 +134,8 @@ sequenceDiagram
     C->>Broker: Commit position after o
     Note over C,Broker: Crash before position commit may replay E
     Broker->>C: Redeliver E if position was not committed
-    C->>DB: Dedup(E); avoid second effect
+    C->>DB: Dedup(E), avoid second effect
 ```
-
 Text alternative: after applying the external effect, the consumer commits its position. A crash between those actions causes replay; the external store's own deduplication protocol must make the duplicate harmless. The diagram is a proposed consumer contract.
 
 Committing offset *before* the external effect can cause that effect to be silently lost after a crash. Committing it *after* the effect can cause duplicates. No perfect ordering of two independent commits creates an automatic global transaction.
@@ -104,7 +149,7 @@ Kafka 4.1 documentation **Message Delivery Semantics** and **Using Transactions*
 - `read_committed` is an isolation choice for transactional Kafka records; it is not proof that every consumer's external side effect happens once.
 - Stream-processing frameworks may offer an **exactly-once processing guarantee within a bounded Kafka state/output topology**; the scope must be explicitly stated alongside connector and external sink behavior.
 
-**Insufficient evidence question:** "Kafka transactions are enabled, therefore our bank transfer side effect can never happen twice." False inference. Need source input identity, sink transaction/idempotency, replay/failure tests, external provider contract and reconciliation policy.
+**Insufficient evidence question:** "Kafka transactions are enabled, therefore our external transfer side effect can never happen twice." False inference. Need source input identity, sink transaction/idempotency, replay/failure tests, external provider contract and reconciliation policy.
 
 ## 5. Failure and recovery matrix
 

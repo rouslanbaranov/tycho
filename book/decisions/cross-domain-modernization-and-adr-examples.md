@@ -1,3 +1,60 @@
+---
+metadata_version: 1
+id: "tycho.page.0ce5d0aaf63f425ebf556ea97e2d24a9"
+kind: "page"
+parent_id: "tycho.landing.b656116463d9480f83199d8202b127a4"
+canonical_path: "book/decisions/cross-domain-modernization-and-adr-examples.md"
+title: "Cross-domain architecture decisions and modernization under constraints"
+topic_ids:
+  - "architecture-decisions"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Cross-domain architecture decisions and modernization under constraints. Scope includes 1. Four valid starting points; 2. First example: a burst does not imply a service split; 3. Second example: runtime modernization without data loss."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Cross-domain architecture decisions and modernization under constraints?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.page.9176c39f97f544f884666e291ae38b90"
+    - "tycho.page.ded52d8d012347b79d70e608488cf6a4"
+    - "tycho.page.0d34dd26886340b89fd4f1499d790a81"
+    - "tycho.page.ea94649bfd8c4be183f9114618d7ccaa"
+    - "tycho.page.2536d18422944e27abe4ea8549beb9ab"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+    - "tycho.page.dde63373c50f4f4a80e727b6e160def5"
+    - "tycho.page.0b493340594c4c4392c5d93940a7f319"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Cross-domain"
+    - "architecture"
+    - "decisions"
+    - "and"
+    - "modernization"
+    - "under"
+    - "constraints"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Cross-domain architecture decisions and modernization under constraints
 
 > Tycho E14-12 [issue #90](https://github.com/rouslanbaranov/tycho/issues/90), original synthesis of existing canonical models and technical chapters, 2026-10-19. All scenarios are fictional and all outcomes conditional. No live modernization project, benchmark, review board decision or independent domain review is claimed.

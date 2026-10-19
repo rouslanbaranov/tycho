@@ -1,3 +1,57 @@
+---
+metadata_version: 1
+id: "tycho.book.37c50125355948f1b52ec66229ef59bd"
+kind: "book"
+parent_id: null
+canonical_path: "book/README.md"
+title: "Tycho — System Design"
+topic_ids:
+  - "system-design"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Tycho — System Design. Scope includes Reading contract; Integrated foundational and real-world casebook reading; Available researched entry points."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Tycho — System Design?"
+  prerequisites: []
+  related_ids:
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+    - "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+    - "tycho.landing.4348c76938fc4d41b239721b94338436"
+    - "tycho.landing.73dff529d70048569efef74bffa88b00"
+    - "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+    - "tycho.landing.816c847b8daa4d67a3fe1e3a8cbe3830"
+    - "tycho.landing.e181d96c75784f818a330bb0f266520c"
+    - "tycho.landing.fe2eace7b2df4ae480adbdf844b68100"
+    - "tycho.landing.6f58e5c00dea4f4086963169a2590bf5"
+    - "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+    - "tycho.landing.3870e6370654489c949e098b9acd1840"
+    - "tycho.landing.b656116463d9480f83199d8202b127a4"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Tycho"
+    - "System"
+    - "Design"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Tycho — System Design
 
 ## Purpose and mission
@@ -10,22 +64,34 @@ The book should develop engineering judgment rather than prescribe universal arc
 
 A reader can understand each chapter using the explanations and local links in this repository. Public citations support further verification. No private system knowledge or companion corpus is required.
 
-A [question-driven draft table of contents](PROPOSED-STRUCTURE.md) now maps the research coverage into proposed volume/chapter owners and the first three bounded pilot page slices. The [editorial contract](../authoring/EDITORIAL-CONTRACT.md) and [Pilot wave 01](../authoring/PILOT-WAVE-01.md) govern future bounded pages, source reading and the first three real technical research slices. **The outline is still a proposal, not an approved table of contents.** The first [source-grounded performance chapter](performance/queueing-littles-law.md) and an [outbox/duplicate-effects technical chapter](distributed/transactional-outbox-and-idempotency.md) are written as independently source-grounded drafts; a [safe rollout and recovery chapter](delivery/safe-rollout-and-recovery.md) now extends the first pilot wave; no complete volume, empirical benchmark or independent human review is claimed.
+A [question-driven draft table of contents](PROPOSED-STRUCTURE.md) defines 10 planned volumes and 69 chapter questions. The active [content-completeness matrix](../authoring/BOOK_COMPLETENESS_AUDIT.md) compares them with the existing researched prose; the feature-branch assessment is **69 directly addressed questions, 0 partially addressed questions and 0 without any focused book treatment**, after a series of independently sourced chapter drafts. This is **topical coverage only**: many original research pages span multiple planned chapters, and **69 final, independently validated chapter units do not yet exist**. The corpus remains grouped in topical folders rather than final Volume → Chapter → Page directories. A [separate primary-owner reconciliation](../authoring/CHAPTER_OWNER_RECONCILIATION.md) verifies **69 distinct primary file targets for 69 planned chapter questions**, with all **69/69 target files fetched** and eight original multi-owner research groups split at file level. The [per-chapter editorial ledger](../authoring/CHAPTER_EDITORIAL_ACCEPTANCE_LEDGER.md) records each actual primary manuscript and **PENDING** content/source/technical acceptance. These are file-existence and organization checkpoints, not accepted technical claims. [Issue #213](https://github.com/rouslanbaranov/tycho/issues/213) owns full content completion, followed by [Issue #214](https://github.com/rouslanbaranov/tycho/issues/214) for edition assembly, authoritative navigation and release. The [editorial contract](../authoring/EDITORIAL-CONTRACT.md) and [research workflow](../authoring/RESEARCH-WORKFLOW.md) continue to govern bounded original prose, sources, diagrams and validation.
+
+## Integrated foundational and real-world casebook reading
+
+The **M1–M8 architectural foundation and the M9 real-world case studies are now combined in the [draft integration branch](https://github.com/rouslanbaranov/tycho/tree/integration/tycho-m1-m9-unified-manuscript-20261019)**. They are complementary parts of **one Tycho book**, not two separately finished products: **10 planned volumes and 69 unique primary foundational/decision chapter drafts**, plus an integrated [historical casebook](cases/README.md) with **29 evidence-scoped case studies and six synthetic decision playbooks**.
+
+The [unified reading and editorial integration map](../authoring/UNIFIED_BOOK_M1_M9_INTEGRATION.md) links **all 35 applied pages** to their most relevant existing Vxx/Cxx chapter owners, without copying technical explanations or introducing a curated concept graph. Start with a concept/requirement, follow selected historical cases and contrast with draft decision playbooks, always checking source date, authorship, uncertainty and falsification conditions.
+
+**Acceptance:** both [#213](https://github.com/rouslanbaranov/tycho/issues/213) and M9 [#121](https://github.com/rouslanbaranov/tycho/issues/121) remain open. Neither [PR #215](https://github.com/rouslanbaranov/tycho/pull/215) nor [PR #212](https://github.com/rouslanbaranov/tycho/pull/212) was independently approved. Combining Git histories is not acceptance, and the planned edition [#214](https://github.com/rouslanbaranov/tycho/issues/214) is not published. Graph infrastructure remains excluded.
 
 ## Available researched entry points
 
-- [Application architecture and quality foundations](application/README.md) — three original evidence-linked pages on quality drivers, modular monoliths, DDD boundaries, SOA/microservices, ports/adapters and safe modernization.
-- [Performance and queueing](performance/README.md) — first researched mechanism and measurement boundary.
-- [Distributed coordination](distributed/README.md) — causal ordering, consensus, transactions, sagas, outbox, CQRS and projections.
-- [Search and retrieval architecture](search/README.md) — inverted indices, SQL FTS, vector/ANN, hybrid ranking and graph-backed evidence.
+- [Real-world architecture modernization cases and decision playbooks](cases/README.md) — 29 public-source historical case drafts and six synthetic comparisons, linked to the canonical technical explanations.\n- [Application architecture, evidence and quality foundations](application/README.md) — context and views, hypothesis/evidence discipline, domain/module boundaries, SOA/microservices, ports/adapters and safe modernization.
+- [Performance, workload and queueing](performance/README.md) — arrival models, queueing, scaling laws, cost/capacity, tail latency, load-test validity and overload contracts.
+- [Distributed coordination](distributed/README.md) — causal ordering, quorum and leader-change failure modes, transactions, sagas, outbox, CQRS and projections.
+- [Search and retrieval architecture](search/README.md) — inverted indices, SQL FTS, vector/ANN, hybrid ranking, graph data models as educational material, and retrieval evaluation.
 - [Scaling mechanisms](scaling/README.md) — sharding, connection pooling, cache freshness and overload controls.
 - [Data storage and database engines](data/README.md) — PostgreSQL 17 transactions, WAL, replication, query/index choices and comparison of alternative storage models.
 - [Messaging and stream processing](integration/README.md) — Kafka, RabbitMQ, Pulsar, NATS, stateful stream processing and CDC, with versioned evidence.
 - [Java concurrency and execution](execution/README.md) — platform and virtual threads, Reactor/WebFlux/R2DBC, Netty/Vert.x/Quarkus/Mutiny/RxJava.
 - [Deployment and recovery](delivery/README.md) — rollout, compatibility and restoration constraints.
+- [Runtime topology and disaster recovery](deployment/README.md) — control-plane/data-plane limits, failure domains and region recovery decisions.
+- [Observability and incident response](observability/README.md) — SLOs, metrics, traces, lineage, audit and original incident response model.
+- [Security and safe agent-accessible knowledge](security/README.md) — identity, object authorization, untrusted source boundaries and data privacy as System Design topics.
+- [Architecture decision and modernization guidance](decisions/README.md) — source-grounded requirements, legacy baseline, pattern applicability and progressive evidence-first question routes.
 
-These are **partial topic areas**, not completed volumes or comprehensive architecture recommendations. Source reading, content validation, planned metadata/index/search and independent review are tracked separately.
+These are **draft research areas**, not 10 finalized volumes or a published 69-chapter edition. The [69-chapter completeness audit](../authoring/BOOK_COMPLETENESS_AUDIT.md) records topical coverage and limitations; the editorial ledger records per-chapter unresolved acceptance. Source reading, content validation, planned metadata/index/search and independent review are tracked separately.
 
 ## Machine-readable knowledge product
 
-The book is also the canonical content for a planned read-only MCP knowledge service. External agents will discover its structure through onboarding, retrieve ranked sections, traverse evidence-backed graphs and verify provenance using versioned snapshots. A shared Rocinante integration package will carry the operating guidance. These are required roadmap outcomes; see the [knowledge-platform plan](../authoring/knowledge-platform-and-mcp-plan.md). They are not implemented yet. The book remains self-contained and locally navigable without MCP.
+The book is also the canonical content for a planned read-only MCP knowledge service. External agents will discover its structure through onboarding, retrieve ranked sections, verify source-to-claim provenance and browse typed metadata/navigation using versioned snapshots. A shared Rocinante integration package will carry the operating guidance. These are required roadmap outcomes; see the [knowledge-platform plan](../authoring/knowledge-platform-and-mcp-plan.md). The hosted service and full evaluation are not implemented; foundational schemas and some deterministic routing/validation tooling already exist, with current coverage and test limits recorded separately. A manually curated concept graph is not in Tycho's delivery scope. The book remains self-contained and locally navigable without MCP.

@@ -1,0 +1,305 @@
+# Tycho — ten-volume, 69-chapter content coverage audit
+
+**Assessment:** 2026-10-19; **scope:** content-first editorial baseline for [Issue #213](https://github.com/rouslanbaranov/tycho/issues/213).
+**Authority:** the provisional chapter questions in [the proposed table of contents](../book/PROPOSED-STRUCTURE.md). This is a verification snapshot, not a publication certificate.
+
+## Executive result
+
+- The proposed outline contains **10 volumes and 69 chapters**. All 10 volume rows were compared against titles and section headings in currently reachable technical prose.
+- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine initially missing-focused subjects and seven initially partial questions now have newly authored standalone drafts on this feature branch; the branch has at least 65 known research/manuscript pages across reachable topic sections across audited topic routes, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
+- Of 69 proposed questions: **69 directly addressed**, **0 partially addressed**, **0 without a focused book treatment verified**, after nine initial missing-topic drafts plus twenty-three newly deepened-topic drafts on this branch. **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
+- Source discovery was limited to current root/topic navigation and linked Markdown files accessed from GitHub. The entire Git tree was **not exhaustively enumerated** and repository-wide executable checks **were not run**. Reconcile this matrix with a full local inventory and content review before presenting the classification as comprehensive proof.
+- Educational graph storage/traversal remains a legitimate V06/C06 topic; a curated concept/decision graph for Tycho is **not required**. Search/MCP/deployment infrastructure work is excluded from this manuscript completion gate.
+
+### Labels
+
+- **D — Direct:** one or more substantive existing book pages address the core chapter question; depth, uniqueness of canonical owner and evidence still require review.
+- **P — Partial:** only a subset is handled, across source pages or authoring-method artifacts, and a substantive chapter owner/deepening is required.
+- **M — Missing focused treatment:** no substantial dedicated treatment of this chapter's main question was verified in inspected book prose. A related mention or method file does not count as a chapter.
+
+## Planned chapter ownership vs. verified current prose
+
+### V01 — Requirements, quality attributes and architecture fundamentals
+
+| Planned chapter | Coverage | Observed primary material | Outstanding work |
+|---|---|---|---|
+| V01/C01 — Problem framing and system boundaries | D | [New system boundaries chapter](../book/application/problem-framing-and-system-boundaries.md) | Independently public arc42/C4 scope, original diagrams and synthetic boundary contract; expert review pending. |
+| V01/C02 — Workload and demand models | D | [New workload and arrival chapter](../book/performance/workload-demand-and-arrival-models.md) | Original quantitative workload definitions and synthetic cases; independent source and semantic review pending. |
+| V01/C03 — Quality attributes and trade-offs | D | [Technical page](../book/application/quality-drivers-and-architecture-views.md) | Deepen systematic quality conflict evaluation and acceptance across stakeholder perspectives. |
+| V01/C04 — Evidence, hypotheses and architecture experiments | D | [New architecture evidence hypotheses and experiments chapter](../book/application/architecture-evidence-hypotheses-and-experiments.md) | Bounded hypothesis/evidence classes, controlled experiments and original failure/negative-test cases; review pending. |
+| V01/C05 — Architecture descriptions and decision records | D | [New architecture views and decision records chapter](../book/application/architecture-views-and-decision-records.md) | Source-bounded arc42 context/static/runtime/deployment and ADR coherence with synthetic diagrams; review pending. |
+| V01/C06 — Capacity, operational constraints and total cost | D | [Focused draft](../book/application/operational-constraints-and-total-cost-gates.md) | Original operating/ownership/cost gate chapter; no accepted policy or real cost estimate. |
+
+### V02 — Application boundaries and interaction contracts
+
+| Planned chapter | Coverage | Observed primary material | Outstanding work |
+|---|---|---|---|
+| V02/C01 — Layered, modular and ports-and-adapters design | D | [Separate draft](../book/application/layered-hexagonal-ports-and-adapters.md) | Dedicated layered/ports/adapters design, invented invariants and test boundaries; no build/test or peer sign-off. |
+| V02/C02 — Domain boundaries, data ownership and contracts | D | [New domain ownership chapter](../book/application/domain-boundaries-data-ownership-and-contracts.md) | Separate domain/data/deployment authority and contract evolution; review pending. |
+| V02/C03 — Modular monolith and internal events | D | [New modular monolith and internal events chapter](../book/application/modular-monolith-and-internal-events.md) | Versioned Spring event semantics and module boundaries, original transaction/crash examples; review pending. |
+| V02/C04 — SOA, microservices and distributed boundaries | D | [Separate draft](../book/application/service-orientation-microservices-and-distribution.md) | Dedicated public SOA/microservices comparison with remote-boundary failure trade-offs; no deployment or source-by-claim approval. |
+| V02/C05 — Public APIs, HTTP/RPC and compatibility | D | [New chapter draft](../book/application/http-rpc-contracts-and-compatibility.md) | Newly written; pending independent technical review, full local verification and final V02 chapter/page assembly. |
+| V02/C06 — Integration adapters and anti-corruption boundaries | D | [New anti-corruption adapters chapter](../book/application/anti-corruption-adapters-and-coexistence.md) | Original semantic mappings, lost-acknowledgment contract and migration tests; review pending. |
+| V02/C07 — Authorization boundaries and multitenancy | D | [Focused draft](../book/application/authorization-boundaries-and-multitenancy.md) | OWASP/tenancy model plus original isolation/negative tests; no security assessment. |
+
+### V03 — Execution models, concurrency and flow control
+
+| Planned chapter | Coverage | Observed primary material | Outstanding work |
+|---|---|---|---|
+| V03/C01 — Threads, tasks and coordination | D | [Focused draft](../book/execution/threads-tasks-structured-coordination.md) | Java 25 executor/structured concurrency preview with task/interrupt limits; no runtime tests. |
+| V03/C02 — Java execution and virtual threads | D | [Technical page](../book/execution/platform-threads-executors-and-virtual-threads.md) | Retain JDK-scoped virtual-thread contraindications and downstream capacity tests. |
+| V03/C03 — Reactive streams, demand and cancellation | D | [Technical page](../book/execution/reactor-webflux-r2dbc-and-backpressure.md) | Complete demand, scheduling and end-to-end backpressure decision examples. |
+| V03/C04 — Asynchronous APIs and streaming | D | [Focused draft](../book/execution/asynchronous-apis-streaming-and-cancellation.md) | gRPC/Reactive Streams 1.0.4 flow and cancellation semantics; no streaming integration run. |
+| V03/C05 — Thread, connection and buffer pools | D | [Technical page](../book/scaling/connection-pools-hikaricp-pgbouncer.md) | Integrate thread, connection and buffer budgets into one cross-layer model. |
+| V03/C06 — Memory, GC, CPU and blocking diagnostics | D | [New diagnosis chapter](../book/execution/cpu-memory-gc-and-blocking-diagnostics.md) | Source-bound JVM profiling and original symptom matrix; pending independent/editorial validation. |
+
+### V04 — Distributed coordination and event integration
+
+| Planned chapter | Coverage | Observed primary material | Outstanding work |
+|---|---|---|---|
+| V04/C01 — Time, causality and ordering | D | [Technical page](../book/distributed/causality-ordering-and-consensus.md) | Maintain separate causal-order guarantees and counterexamples. |
+| V04/C02 — Replication, consensus and leader changes | D | [Focused draft](../book/distributed/replication-consensus-and-leader-change.md) | Raft/etcd quorum and failure model with synthetic partitions; no cluster tests. |
+| V04/C03 — Consistency and distributed transactions | D | [Technical page](../book/distributed/transaction-isolation-and-sagas.md) | Test invariant scope and real cross-boundary limitations of transaction choices. |
+| V04/C04 — Retries, idempotency and duplicate effects | D | [Separate draft](../book/distributed/retries-idempotency-and-ambiguous-effects.md) | Dedicated logical operation/effect identity and lost-acknowledgment semantics; no executable fixture. |
+| V04/C05 — Outbox, inbox, sagas and durable workflows | D | [Separate draft](../book/distributed/outbox-inbox-sagas-and-durable-workflows.md) | Dedicated outbox/inbox/saga/workflow state and failure recovery; no broker/DB/workflow execution. |
+| V04/C06 — Messaging families and delivery contracts | D | [Technical page](../book/integration/messaging-families-and-durable-workflows.md) | Reconcile per-broker ordering/ack/retention guarantees and limits. |
+| V04/C07 — Kafka logs, partitions and transactions | D | [Technical page](../book/integration/kafka-partitions-replication-and-contracts.md) | Deepen producer/consumer transaction, version and replay failure edge cases. |
+| V04/C08 — Stateful/event-time stream processing | D | [Technical page](../book/integration/stateful-stream-processing-and-cdc.md) | Verify watermarks, checkpoint/savepoint and CDC recovery cases. |
+
+### V05 — Data models, engines and lifecycle
+
+| Planned chapter | Coverage | Observed primary material | Outstanding work |
+|---|---|---|---|
+| V05/C01 — Relational modeling and transaction isolation | D | [Separate draft](../book/data/relational-modeling-and-transaction-isolation.md) | New independent PostgreSQL 17 relational constraints/MVCC/isolation chapter; no DB/concurrency test. |
+| V05/C02 — PostgreSQL MVCC, WAL and recovery | D | [Technical page](../book/data/postgresql-wal-replication-and-recovery.md) | Maintain PostgreSQL version and physical/logical replica evidence. |
+| V05/C03 — Query planning, indexes and access paths | D | [Separate draft](../book/data/postgresql-indexes-statistics-and-query-plans.md) | New independent PostgreSQL 17 indexing/EXPLAIN/planner-statistics chapter; no benchmark or query execution. |
+| V05/C04 — Alternative data models and stores | D | [Technical page](../book/data/storage-model-alternatives-and-workload-fit.md) | Add selection examples where competing data models fail hard gates. |
+| V05/C05 — Partitioning, sharding and rebalancing | D | [Technical page](../book/scaling/shard-keys-hotspots-and-resharding.md) | Reconcile ownership movement and online resharding with data invariants. |
+| V05/C06 — Schema evolution, data migration and retention | D | [Independent chapter draft](../book/data/schema-lifecycle-and-semantic-migration.md) | Dedicated domain identity, backfill/reconciliation and retention contract; no migration executed. |
+| V05/C07 — Replication, backups and restore drills | D | [New backup/PITR and restore drills chapter](../book/data/backup-restore-pitr-and-recovery-drills.md) | PostgreSQL 17 archive, backup chain and user-level recovery model; no exercised restore or expert review. |
+
+### V06 — Caching, indexing and information retrieval
+
+| Planned chapter | Coverage | Observed primary material | Outstanding work |
+|---|---|---|---|
+| V06/C01 — Local and distributed caching | D | [Distinct chapter draft](../book/scaling/local-and-distributed-cache-design.md) | Dedicated cache placement, authority/freshness and Caffeine/Redis reference; no live test. |
+| V06/C02 — Hot keys, cache stampedes and read amplification | D | [Distinct chapter draft](../book/scaling/cache-invalidation-stampede-and-hot-keys.md) | Dedicated stale-fill/hot-key failure protocols and original experiments; no race or load tests. |
+| V06/C03 — Lexical full-text indexing and ranking | D | [Technical page](../book/search/lexical-indexing-bm25-and-sql-fts.md) | Retain query analyzer, BM25 and index-update/version trade-offs. |
+| V06/C04 — Vector embeddings and nearest-neighbor retrieval | D | [Technical page](../book/search/vector-hnsw-faiss-pgvector.md) | Expand embedding drift, exact baseline and filtered ANN limitations. |
+| V06/C05 — Hybrid retrieval and reranking | D | [Technical page](../book/search/hybrid-ranking-graph-and-evaluation.md) | Extend hybrid fusion/rerank falsifiable comparisons. |
+| V06/C06 — Graph relationships and traversal | D | [Focused draft](../book/search/graph-data-models-and-traversal.md) | Cypher graph theory and bounded traversal; NO curated Tycho graph infrastructure. |
+| V06/C07 — Retrieval evaluation and index lifecycle | D | [Focused draft](../book/search/retrieval-evaluation-and-index-lifecycle.md) | TREC/BEIR judgment methods and index validity; no built index or benchmark. |
+
+### V07 — Performance, scale and resilience under load
+
+| Planned chapter | Coverage | Observed primary material | Outstanding work |
+|---|---|---|---|
+| V07/C01 — Queueing, Little's Law and measurement boundaries | D | [Technical page](../book/performance/queueing-littles-law.md) | Maintain assumptions and synthetic finite-window counterexample. |
+| V07/C02 — Contention, saturation and scaling laws | D | [New contention saturation and scaling laws chapter](../book/performance/contention-saturation-and-scaling-laws.md) | Amdahl/Gunther models, conditional scaling and hypothetical contention; no fitted benchmark. |
+| V07/C03 — Load-test methods and benchmark validity | D | [New benchmark validity chapter](../book/performance/load-testing-and-benchmark-validity.md) | Independent public k6/HdrHistogram/SRE references and original tests; no benchmark executed. |
+| V07/C04 — Tail latency, fan-out and time budgets | D | [New tail-latency chapter](../book/performance/tail-latency-fanout-and-deadline-budgets.md) | Authored from independent published materials; requires formal validation and editorial review. |
+| V07/C05 — Overload protection and graceful degradation | D | [New overload admission and degradation chapter](../book/performance/overload-admission-control-and-graceful-degradation.md) | SRE/Builders' Library scope, original overload fixtures and policy conditions; no exercise or independent review. |
+| V07/C06 — Horizontal/vertical scaling and autoscaling delay | D | [New autoscaling chapter](../book/performance/autoscaling-lag-and-capacity-limits.md) | Controller, startup lag, vertical/horizontal and overload trade-offs researched; requires independent review. |
+| V07/C07 — Capacity planning and cost/performance trade-offs | D | [New capacity planning and cost performance chapter](../book/performance/capacity-planning-and-cost-performance.md) | Demand/cost sensitivity and original comparative budget; no real prices or capacity study. |
+
+### V08 — Delivery, deployment and disaster recovery
+
+| Planned chapter | Coverage | Observed primary material | Outstanding work |
+|---|---|---|---|
+| V08/C01 — CI/CD architecture and artifact provenance | D | [Technical page](../book/delivery/ci-cd-provenance-and-gitops.md) | Unify build/test/promotion/release contracts. |
+| V08/C02 — Supply chain and release verification | D | [New supply-chain verification chapter](../book/delivery/sbom-attestation-and-release-verification.md) | SLSA 1.2, SPDX/CycloneDX, Sigstore and negative policy tests; no signing or scanning performed. |
+| V08/C03 — VMs, containers, orchestration and serverless | D | [Technical page](../book/deployment/runtime-placement-and-control-plane.md) | Keep VM/container/managed/serverless and control-plane failure distinctions. |
+| V08/C04 — GitOps, rollout and progressive delivery | D | [Independent chapter draft](../book/delivery/gitops-canary-and-progressive-rollout.md) | Dedicated rollout/controller/exposure and safety gates; no cluster deployment. |
+| V08/C05 — Backward-compatible database change | D | [Independent chapter draft](../book/delivery/mixed-version-database-compatibility-and-online-ddl.md) | Dedicated mixed-version readers/writers, DDL and rollback boundary; no DDL/test executed. |
+| V08/C06 — High availability and failure-domain placement | D | [Independent chapter draft](../book/deployment/availability-zones-placement-and-failure-domains.md) | Dedicated zonal placement, shared dependencies and HA failure tests; no deployment. |
+| V08/C07 — Multi-region recovery and data reconciliation | D | [Independent chapter draft](../book/deployment/disaster-recovery-and-recovery-objectives.md) | Dedicated DR RTO/RPO, fencing and user-level reconciliation; no restore executed. |
+
+### V09 — Observability, security and operational architecture
+
+| Planned chapter | Coverage | Observed primary material | Outstanding work |
+|---|---|---|---|
+| V09/C01 — SLIs, SLOs and error budgets | D | [Dedicated SLI/SLO manuscript](../book/observability/service-level-indicators-objectives-and-alerts.md) | Original user-visible SLI/SLO/error-budget reasoning and proposed tests; exact citation/editorial acceptance still pending. |
+| V09/C02 — Metrics ingestion, cardinality and time-series storage | D | [Dedicated metrics pipeline manuscript](../book/observability/metric-pipelines-cardinality-and-retention.md) | Source-grounded OTel/Prometheus temporality, cardinality, storage/cost and synthetic examples; exact review/tests pending. |
+| V09/C03 — Distributed tracing and propagation | D | [Dedicated tracing manuscript](../book/observability/distributed-tracing-context-and-sampling.md) | W3C context, correlation and sampling failure boundaries; original synthetic source-led draft, independent acceptance pending. |
+| V09/C04 — Logging, audit and lineage | D | [Dedicated audit and lineage manuscript](../book/observability/logs-audit-and-data-lineage.md) | OTel log model, durable business effects and OpenLineage job/run/dataset semantics; no real audit performed. |
+| V09/C05 — Identity, authorization and threat modeling | D | [Technical page](../book/security/identity-authorization-and-isolation.md) | Retain explicit object authorization, trust model and service boundaries. |
+| V09/C06 — Incident response and operational change | D | [New incident response chapter](../book/observability/incident-response-and-operational-change.md) | Incident-role and state-machine research plus synthetic drill; review pending. |
+| V09/C07 — Safety, isolation and privacy in agent-accessible services | D | [New agent-access safety chapter](../book/security/safe-agent-access-and-knowledge-isolation.md) | OWASP-based bounded trust and privacy architecture; no implemented service; review pending. |
+
+### V10 — Decision support and modernization playbooks
+
+| Planned chapter | Coverage | Observed primary material | Outstanding work |
+|---|---|---|---|
+| V10/C01 — Architecture requirement and workload profiles | D | [New requirements/workload chapter](../book/decisions/requirements-and-workload-architecture-profiles.md) | Original independent book treatment; supporting model is not substituted for book prose; review pending. |
+| V10/C02 — Baseline analysis for existing software | D | [New legacy baseline chapter](../book/decisions/legacy-baseline-and-modernization-evidence.md) | Original synthetic catalog and admissible public modernization sources; independent validation pending. |
+| V10/C03 — Pattern applicability and contraindications | D | [New pattern-selection chapter](../book/decisions/pattern-applicability-and-contraindications.md) | Source-grounded alternatives, hard gates, contraindications and original pattern cards; independent review pending. |
+| V10/C04 — Alternatives, experiments and ADRs | D | [New architecture alternatives experiments and adrs chapter](../book/decisions/architecture-alternatives-experiments-and-adrs.md) | Full hard-gate and discriminating test example, proposed ADR; no architecture approval. |
+| V10/C05 — Target architecture versus transition states | D | [New target and transition architecture states chapter](../book/decisions/target-and-transition-architecture-states.md) | Original versioned coexistence, cutover and recovery states; no migration or restore test. |
+| V10/C06 — Search and question routes for architecture agents | D | [New question/reading routes chapter](../book/decisions/question-routes-for-architecture-analysis.md) | Original evidence-first progressive reading and decision route; no implemented search/MCP; review pending. |
+| V10/C07 — Cross-domain worked comparisons and unresolved cases | D | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Expand original cross-domain worked decisions and insufficient-evidence outcomes. |
+
+## Content remediation recorded in this branch
+
+- **Nine original new draft chapters moved from M to D (not accepted):** V02/C05, V03/C06, V07/C04/C06, V09/C06/C07, V10/C01/C02/C06.  V02/C05 details:  new original [HTTP and RPC compatibility chapter](../book/application/http-rpc-contracts-and-compatibility.md), using independently verified RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers documentation. Its application landing now links to it. Other new drafts cover diagnostics, tail latency, autoscaling, incident response, agent-access safety, requirements/workload decisions, legacy baselines and progressive reading routes. No executable client/provider tests, independent review or full-repository validation has run; publication completeness is not claimed.
+- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **69 D / 0 P / 0 M**, all still subject to inventory and quality review.
+
+## 2026-10-19 additional recovery and overload coverage
+
+- **V05/C07 and V07/C05 P → D (drafts only):** [versioned backup/recovery drills](../book/data/backup-restore-pitr-and-recovery-drills.md) and [overload/admission/degradation](../book/performance/overload-admission-control-and-graceful-degradation.md), both source-grounded and internally navigable, with no real test, restore exercise or external technical approval.
+- Running coverage classification is **55 D / 14 P / 0 M**; final editorial correctness and full book assembly still unverified.
+
+## 2026-10-19 additional partial-coverage remediation
+
+- **Five V01/V02/V07/V08 partial chapters deepened into direct drafts (not accepted):** [workload and demand](../book/performance/workload-demand-and-arrival-models.md), [domain/data ownership](../book/application/domain-boundaries-data-ownership-and-contracts.md), [semantic anti-corruption adapters](../book/application/anti-corruption-adapters-and-coexistence.md), [benchmark validity](../book/performance/load-testing-and-benchmark-validity.md), [SBOM/attestation/release gates](../book/delivery/sbom-attestation-and-release-verification.md).
+- New files contain original diagrams, synthetic failure cases, public specification references and precise known limitations. They still need semantic/source review, full checkout validation and correct final-volume ownership.
+- Historic initial audit was **37 D / 23 P / 9 M**; before this set it was **48 D / 21 P / 0 M**. Current branch is **53 D / 16 P / 0 M**. No D row is synonymous with an accepted complete chapter.
+
+## V01 problem-frame remediation
+
+- **V01/C01 changed from P to D (unreviewed):** the original [system boundaries and business/technical context chapter](../book/application/problem-framing-and-system-boundaries.md) now explains actors, system control scope, authoritative effects, external partners and failure contracts, with separate context/technical maps and exact public arc42/C4 reference boundaries. It contains only original fictional reservations and no observed application claims.
+
+## Latest partial-coverage remediation
+
+- **V10/C03 changed from P to D (still not accepted):** [pattern applicability and contraindications](../book/decisions/pattern-applicability-and-contraindications.md) now has a standalone original book chapter covering modular monoliths, microservices, asynchronous workflows, caching, sharding and execution models with explicit disqualifiers and falsifiable tests. Supporting authoring models are kept separate; no model selection or independent review was executed.
+
+## High-priority confirmed editorial gaps
+
+1. **Remaining missing-focused (M) at the reviewed navigation level:** none. All nine previously missing topics have now received a substantial draft. This does **not** mean that 69 proposed chapters are content-complete: 23 remain partial and all 46 direct-coverage chapters still need full scope, canonical ownership and evidence/quality review.
+2. **Deepen fragmented subjects (P):** requirements and quality experimentation, modernization transitions, bounded architecture styles, graph concepts as *book content*, retrieval evaluation, cost modeling, recovery validation, and supply-chain acceptance.
+3. **Normalize ownership:** current topical research pages often span multiple intended chapters. Preserve their proven material; split by genuinely separate reader question only, and establish one canonical source of explanation. Do not copy the same mechanism into every mapped chapter.
+4. **Validate maturity:** confirm all claims with exact independently public versioned sources; review original diagrams, failure matrices, tests and limits. Existing self-authored researched pages are not evidence of independent domain approval or of real system benchmarking.
+5. **Structural publication is separate:** book root, 10 volume landings, 69 chapter landings and bounded child pages will be built under [#214](https://github.com/rouslanbaranov/tycho/issues/214) only when the manuscript is substantively complete. No empty chapter placeholders are accepted as completion.
+
+## Recommended execution order
+
+1. Establish a complete repository Markdown inventory and reconcile every page/link with this 69-row table.
+2. Validate the nine new D-class drafts against their full source/claim scope, then deepen P chapters in dependency order, prioritizing the largest uncovered questions. Use bounded reviewable authoring slices and independent public sources.
+3. Deepen P subjects; for D subjects perform a chapter-specific acceptance review and extend when the chapter question is not completely answered.
+4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
+5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
+
+## First explicit claim/source spot-check register — 2026-10-19
+
+[Eleven narrow independently checked source claims](CLAIM_VERIFICATION_SPOTCHECK_2026-10-19.md) in seven selected high-risk manuscript owners are recorded with exact URLs and negative scopes. This confirms neither full-chapter technical correctness nor license/rights clearance. The corresponding independent tests and all 69 final editorial acceptance decisions remain **pending**.
+
+## 2026-10-19 latest — verified 69 distinct primary drafts, editorial acceptance ledger opened
+
+**This is the current structural status; previous 60/61/62/64-target counts in the dated checkpoints below are historical intermediate results.**
+
+- Original proposed question matrix: **69 rows, 69 unique Vxx/Cxx planning locators, 69/69 with direct topical treatment (D), and 69 unique primary Markdown destination paths** — no duplicate file ownership for any planned chapter.
+- **GitHub verified 69/69 primary destination files actually exist on this PR branch**, in five bounded independent read batches of 14+14+14+14+13 files. This is stronger than a static link-map check, but not whole-repository content completeness or technical acceptance.
+- **GitHub verified 44/44 distinct local Markdown target files** extracted from the previous 13 newly written owner manuscripts (batches of 15+15+14) on the same branch. Anchor fragments, source URLs, version correctness and all unlisted book links were **not** verified by this check.
+- Opened [per-chapter editorial acceptance ledger](CHAPTER_EDITORIAL_ACCEPTANCE_LEDGER.md): all 69 chapter-owner files have measured Markdown whitespace-split sizes (sum **110,922**, *including markup and diagram labels*), explicit PENDING content/source/technical review state, and individualized navigation to their primary draft. A count, H1, diagram or bibliography link is not a chapter sign-off. This sum does **not** count preserved shared research pages.
+- Updated [canonical-owner reconciliation](CHAPTER_OWNER_RECONCILIATION.md): all eight previously identified shared-primary-file ownership conflicts are separated to distinct substantive chapter drafts. **Source sentence-to-claim migration, independent evidence admission, editorial duplication reconciliation and quality acceptance for those eight groups are still pending**; all original combined research articles remain intact.
+- Inspected narrow public references while checking source semantics: PostgreSQL 17 §13.2 supports Read Committed/Repeatable Read/Serializable distinctions, the public idempotent-consumer and saga patterns support their stated *limited local* guarantees, Kubernetes topology-spread docs support conditional placement rather than permanent balancing, and AWS Well-Architected automated-recovery guidance explicitly recommends abort controls. These individual spot checks are **not full claim-by-claim provenance audits**.
+- Existing [issue #213](https://github.com/rouslanbaranov/tycho/issues/213) and [Draft PR #215](https://github.com/rouslanbaranov/tycho/pull/215) remain open. **No evidence-backed approval to merge or start publishing #214** is recorded. The remaining work is real editorial and technical/source verification rather than generating extra topic placeholders.
+
+## Final two primary-content ownership groups split — 2026-10-19
+
+- **V05/C06, V08/C04 and V08/C05:** three distinct new original book manuscripts own (respectively) [semantic schema/data lifecycle](../book/data/schema-lifecycle-and-semantic-migration.md), [rolling/blue-green/canary release exposure](../book/delivery/gitops-canary-and-progressive-rollout.md), and [old/new binaries, schema compatibility and online DDL](../book/delivery/mixed-version-database-compatibility-and-online-ddl.md). Former [combined rollout/schema study](../book/delivery/progressive-delivery-and-schema-evolution.md) remains preserved for line-level evidence reconciliation.
+- **V08/C06 and V08/C07:** two distinct new original manuscripts own [failure-domain placement/HA](../book/deployment/availability-zones-placement-and-failure-domains.md) and [disaster recovery, RPO/RTO and fenced reconciliation](../book/deployment/disaster-recovery-and-recovery-objectives.md). Former [combined regional/DR study](../book/deployment/multi-region-disaster-recovery-contracts.md) is preserved for editorial review.
+- Public primary references used in these five drafts: Danilo Sato's Parallel Change, Kubernetes Deployment and Pod Topology Spread, Argo Rollouts Canary, PostgreSQL 17 PITR and ALTER TABLE, Confluent Schema Registry compatibility and public Well-Architected recovery-strategy guidance. These are **bounded mechanism references**, not proof a fictitious migration, rollback or DR drill succeeded.
+- The original ten-volume **69 D / 0 P / 0 M** question-coverage rubric does not change. The 69-row primary-target uniqueness count must be independently recomputed and checked; **one unique link target per chapter is not complete technical chapter acceptance**.
+- No prior combined research text was erased or silently promoted. Independent technical/copyright/security editorial approval, full bibliography claims, strict metadata/frontmatter, diagram rendering and actual code/restore tests remain open.
+
+## 2026-10-19 canonical cache-owner split — V06/C01 and C02
+
+- Two original dedicated manuscript chapters separate [cache placement, authority and freshness](../book/scaling/local-and-distributed-cache-design.md) (V06/C01, approx. 1,254 whitespace-separated Markdown words) from [invalidation races, cache stampedes and hot-key protection](../book/scaling/cache-invalidation-stampede-and-hot-keys.md) (V06/C02, approx. 1,338 words). Their original [combined cache research](../book/scaling/local-distributed-caching-and-invalidation.md) remains preserved.
+- Narrow primary sources: Caffeine Eviction and Refresh docs, Redis cache-aside and EXPIRE. No installed cache, fence implementation, experiment or independent review occurred.
+- Chapter-owner links and [scaling navigation](../book/scaling/README.md) point to separate content. Topical classification remains **69 D / 0 P / 0 M**, not a signoff or final edition.
+
+## 2026-10-19 canonical data-owner separation — V05/C01 and C03
+
+- Added distinct reader-facing [relational modeling and transaction isolation](../book/data/relational-modeling-and-transaction-isolation.md) and [PostgreSQL indexing, statistics and query plans](../book/data/postgresql-indexes-statistics-and-query-plans.md) owner drafts (**1,224** and **1,456** whitespace-separated words respectively). The preexisting [combined PostgreSQL research article](../book/data/postgresql-mvcc-indexes-and-query-plans.md) remains intact for evidence and overlap review.
+- Verified H1 and balanced Mermaid fences in both; fetched **12/12 unique local destination files** linked from both new chapters on the same PR branch. This checks local file existence, not source URLs or reference anchors.
+- Reviewed version-scoped official PostgreSQL 17 sections §5.5 (constraints), §§13.1–13.2 (MVCC/isolation), Chapter 11 (indexes), §§14.1–14.2 (EXPLAIN/planner statistics), plus CREATE INDEX. No DB system, SQL fixture, measured plan or isolation experiment ran; independent source-by-claim review remains pending.
+- Matched separately to original **V05/C01** and **V05/C03** without claiming that the entire original shared source has been content-preserved and reviewed. The 69-question *topic-coverage* classification remains **69 D / 0 P / 0 M**, not a complete book edition.
+
+## 2026-10-19 additional canonical-owner separation — V02 and V04
+
+- Four independent original, English, source-led technical manuscript drafts now own proposed **V02/C01** [layered/hexagonal ports](../book/application/layered-hexagonal-ports-and-adapters.md), **V02/C04** [service orientation and microservices](../book/application/service-orientation-microservices-and-distribution.md), **V04/C04** [retries and effect identity](../book/distributed/retries-idempotency-and-ambiguous-effects.md), and **V04/C05** [outbox, inbox, sagas and durable workflows](../book/distributed/outbox-inbox-sagas-and-durable-workflows.md).
+- Prior combined [application styles](../book/application/architecture-styles-and-module-boundaries.md) and [outbox/idempotency](../book/distributed/transactional-outbox-and-idempotency.md) research articles remain preserved as *research input* until exact source/claim and duplicate-mechanism reconciliation. Neither is still mapped as a primary sole chapter destination for the four owners.
+- Re-fetched the four chapter files on this branch: **5,865 Markdown whitespace-separated words**, **five original Mermaid diagrams**, exactly one H1 each, all code fences balanced. Retrieved **18/18 distinct local Markdown target files** referenced by the four drafts on the same branch. Target existence does not mean anchors, cited external URLs or full technical claim validity were verified.
+- Public reference sections checked while writing: Cockburn's 2005 hexagonal architecture, Lewis/Fowler 2014 microservices, OASIS SOA Reference Model v1.0, RFC 9110 §9.2.2, Debezium 3.6 Outbox Event Router, Richardson's transactional-outbox, idempotent-consumer and saga pattern descriptions. Independently published sources describe narrow mechanisms; no real system tests or independent full claim review were performed.
+- **Status remains 69 D / 0 P / 0 M** as an *indicative topical prose classification*, not completed chapter or volume acceptance. Update the canonical-owner overlap count from the branch matrix separately; do not guess from the number of new files. No graph infrastructure, worker, M9 case, MCP/search/deployment implementation or scheduled task was touched.
+
+## Editorial structure QA — four distinct V09 manuscripts
+
+- Re-fetched **all four** newly written observability owner manuscripts from the same PR feature branch: V09/C01 (1,475 words), C02 (1,548), C03 (1,173), C04 (1,392), or **5,588 whitespace-separated words** in total. Each has a single H1 and one fenced Mermaid diagram with balanced delimiters.
+- Inspected their locally linked Markdown destinations: **9/9 unique link target files** from V09/C01+C02 and **10/10** from V09/C03+C04 exist on the branch. This checks **file existence only**; source links, anchor fragments and actual semantic claims were not validated automatically.
+- Recomputed the 69-row primary-target crosswalk after four V09 owner updates: **69 distinct chapter IDs, 62 unique primary Markdown target paths, 6 remaining overlapping legacy source files covering 13 chapter owners and 7 extra repeated primary-path assignments**. The original metrics and tracing joint research articles remain preserved.
+- These distinct owner files establish a cleaner **chapter-level content structure** but neither final volume/page layout nor independent technical, editorial, source-license, privacy or provenance sign-off.
+- The [shared-owner reconciliation report](CHAPTER_OWNER_RECONCILIATION.md) identifies the six remaining groups for substantive canonicalization and captures why 69 D / 0 P / 0 M topical coverage should not be confused with 69 publication-ready chapters.
+
+## Canonical owner reconciliation checkpoint — V09/C03 and C04
+
+- Added independent original [distributed tracing/context/sampling](../book/observability/distributed-tracing-context-and-sampling.md) and [structured logs/audit/lineage](../book/observability/logs-audit-and-data-lineage.md) draft chapters. The former combined [tracing/logging/lineage/audit research page](../book/observability/trace-context-lineage-and-audit.md) remains preserved for evidence migration.
+- These two new primary chapter paths eliminate the **second** confirmed duplicate-owner group at source-path level, while retaining cross-links to common context where needed. **69 D / 0 P / 0 M remains topical coverage only**, not independently validated publication content.
+- Source guidance inspected: W3C Trace Context Recommendation (2021), OpenTelemetry Logs Data Model, OpenLineage Run/Job/Dataset/Facet spec and lineage facet semantics. The new illustrations are synthetic. No audit database, collector, traced distributed system or human technical review was used.
+- Current primary-target/overlap counts are recomputed from the 69-row matrix in the next checkpoint; do not treat any planned owner as accepted on file-existence evidence.
+
+## Canonical-owner reconciliation checkpoint — observability C01/C02
+
+- An independent [shared-owner analysis](CHAPTER_OWNER_RECONCILIATION.md) found the 69 planned chapter questions previously mapped to **60 distinct primary article targets**, across eight overlapping legacy articles (17 owner assignments on 8 files). This is the first **actual content-ownership blocker** found after all 69 topics were marked directly addressed.
+- Implemented **two original stand-alone manuscript chapters**, [V09/C01 SLIs, SLOs and error-budget decisions](../book/observability/service-level-indicators-objectives-and-alerts.md) and [V09/C02 metric pipelines, cardinality and retention](../book/observability/metric-pipelines-cardinality-and-retention.md). They now hold **separate primary target paths** in the chapter matrix while the preexisting [combined research article](../book/observability/metrics-slo-timeseries-architecture.md) remains as supporting source material, not deleted or silently duplicated.
+- Revised distinct target count should be independently recomputed after this change (historical value 60); **both chapters remain unreviewed**, and moving them to separate paths does not prove final depth or independent acceptance. Other seven overlapping legacy article groups remain to be reconciled.
+- **69 D / 0 P / 0 M remains unchanged** because D is topical substantive coverage, not one-file-per-chapter compliance or book readiness.
+- No new worker/M9 material, manually curated Tycho concept graph, MCP/service, deployment or metadata schema change.
+
+## 2026-10-19 evening: GitHub branch file/link checkpoint for last 14 drafts
+
+- Read **all 14 newly authored book pages** directly from the PR branch. Each has exactly one H1, an original technical or decision-based explanation, an explicit limitations/evidence section and correctly paired code fences. Combined: **19,174 Markdown whitespace-separated words**, **15 Mermaid diagrams**, with no unbalanced fenced blocks detected. This is a **limited structural** check, not source/technical peer review.
+- Extracted relative Markdown link destinations across those fourteen files. Fetched **53 distinct local target paths** in bounded batches against the same branch; **53/53 target files exist**. This does not validate anchor fragments, diagrams rendered, external URLs, semantic references or current provenance revisions.
+- Fetched both the authoritative 69-question proposed outline and the updated coverage matrix: **69 matrix rows / 69 distinct planned chapter IDs / 69 D / 0 P / 0 M**. The PR has no edits to M9 case-study materials, worker locks, curated graph components, search/MCP implementation or deployment infrastructure.
+- Exact public source segments consulted in this writing pass include arc42 sections 2/3/5/6/7/9/10, Java SE 25 ExecutorService and preview StructuredTaskScope, Spring Framework transaction events and Spring Modulith events, Reactive Streams 1.0.4, gRPC cancellation/flow control, Raft project and etcd v3.6 quorum FAQ, Neo4j Cypher pattern/path manuals, TREC qrels, BEIR retrieval evaluation, Fowler Strangler Fig, and AWS cost principles. None is a substitute for an independent **claim-by-claim** editorial provenance review.
+- **Critically unresolved:** an exhaustive Git-tree/content census, one canonical owner and full required depth for each of the 69 chapter questions, checking exact source citations/versions and artifact admissibility for *every* existing and new chapter, all-anchors and external URL validation, full schema/frontmatter/index regeneration, rendered diagrams, local premerge/boundary checks, human technical/editorial acceptance and final volume/chapter/page edition build.
+- **Decision:** this is an **all-topics-addressed manuscript draft milestone**, not a completed book, nor a final publication acceptance. Keep #213 and PR #215 open/draft; #214 edition assembly follows actual content/quality acceptance.
+
+## 2026-10-19 content-coverage milestone — all 69 proposed topics have direct prose
+
+- The last seven topics previously assessed as partial now have dedicated original research chapters: **V01/C06, V02/C07, V03/C01, V03/C04, V04/C02, V06/C06 and V06/C07**, in addition to the seven earlier P→D changes this evening. They are linked from their topic landings.
+- **Final topical crosswalk classification for this branch: 69 D / 0 P / 0 M, 69 unique chapter IDs** against the 10-volume proposed outline. **This is NOT evidence that 69 individual final chapter units have been assembled, independently validated or accepted.** Many preexisting articles cover several proposed chapter questions; completeness, depth, provenance, primary source versions, overlap and narrative quality still require real inspection and consolidation.
+- These page additions are all **substantive manuscript drafts** with original fictional examples, explicitly bounded claims and public references. No real system test, benchmark, generated index, graph deployment, Java program, runtime trace, cluster/restore drill or independent domain review was performed.
+- The project continues to **exclude a manually curated Tycho concept graph**; V06/C06 is a technical subject about graph data modeling and traversal. V06/C07 is an educational overview of retrieval evaluation, not implementation of a search/MCP service.
+- The next mandatory step of #213 is a **source-by-source editorial acceptance and exhaustive file inventory**, not inflating chapter counts or closing the issue based on topical coverage. Final 10-volume / 69-chapter / bounded-page publication under #214 must use a verified canonical-owner and reversible content migration map.
+
+## 2026-10-19 evening: seven more substantive book chapters
+
+- Seven initial P rows received new original independently sourced English prose: **V01/C04**, **V01/C05**, **V02/C03**, **V07/C02**, **V07/C07**, **V10/C04**, and **V10/C05**. The dedicated pages above include named source/evidence limits, bounded examples, failure/alternative criteria and navigation; all are still **draft**, not editorially approved or experimentally validated.
+- The new directly covered questions build on *already existing* authoring decision methods; the methods were not renamed or represented as new implementations.
+- Updated branch-level chapter question classification: **62 direct / 7 partial / 0 no-focused** across the original **69** draft chapter questions. This assesses topical prose coverage, **not manuscript completeness, final chapter structure, citation correctness or independent approval**.
+- New source-specific public verification for this writing pass included arc42 §3/§5/§6/§7/§9/§10, Fowler's 2024 Strangler Fig, Microsoft Strangler Fig (2026 revision), Gunther's theoretical scalability paper, AWS Well-Architected cost methodology, and Spring Framework/Modulith event semantics. No system measurements, executed dependency-checkers or external sign-offs were obtained.
+- Publication/structural work under #214 has **not** begun. A manually curated Tycho graph remains out of scope; graph data technologies can still be discussed in the theoretical book.
+
+## Additional verification checkpoint — 2026-10-19 (recoverability and overload)
+
+- New substantive chapter drafts V05/C07 and V07/C05 were re-fetched on the active branch. Both have single H1 titles, independently public evidence ledgers and one original Mermaid diagram each, with balanced Markdown code fences.
+- Extracted their relative link targets and fetched all **14/14 distinct destination files** on the same branch. This establishes link target **file existence** only; not anchors, claims or external source permanence.
+- Confirmed the separate 69-row matrix now classifies **55 directly addressed / 14 partially addressed / 0 without a focused draft**. All 69 chapter questions remain subject to independent semantic/source/editorial acceptance.
+- Public narrow source readings performed: official PostgreSQL 17 Chapter 25 and §25.3 on logical/physical/PITR backup, §26.2 on standby; Google SRE Handling Overload and AWS Builders' Library on load shedding/retries. These are public methods/implementation documentation, not a completed restoration or overload experiment.
+- No restore, fault injection, source-repository program execution, end-to-end verification, GitHub milestone CI or full local pre-merge/boundary check was performed. The scope of PR #215 remains **draft**; #213 and #214 remain open.
+
+## Additional verification checkpoint — 2026-10-19 (V01/V02/V07/V08 deepening)
+
+- Added five original technical manuscripts: V01/C02, V02/C02, V02/C06, V07/C03 and V08/C02. Each addresses an initially partial canonical chapter question with its own explanation, original synthetic mechanisms and failure cases, independent public evidence and explicit nonclaims. A drafted chapter is **not** independently accepted.
+- Fetched all five files from the active PR branch; inspected H1 headings and balanced fenced Mermaid blocks: **six Mermaid diagrams** across five new files, all fence counts even.
+- Re-extracted all local Markdown destinations from those five files, obtaining **21 unique branch-relative target paths**. Fetched each in two bounded batches: **21/21 existing**. This verifies file presence, **not** headings/fragment anchors, external URLs or precise evidentiary support.
+- Compared chapter matrix against the original outline: **69 rows**, **69 unique Vxx/Cxx identifiers**, **53 direct / 16 partial / 0 missing-focused**. All five targeted rows changed P → D with specific local draft paths.
+- Scope-specific public reference pages reviewed in this work: Fowler on bounded contexts; Microsoft on anti-corruption layers; Grafana k6 on open/closed arrivals and dropped iterations; SLSA **1.2** provenance/build track and consumer artifact verification; SPDX specifications; CycloneDX specifications; Sigstore Cosign signature/attestation verification. This source inspection supports narrow statements, not complete source-to-claim certification.
+- **Still not run:** repository-wide full-tree content census, local pre-merge and boundary scripts, full JSON Schema/frontmatter rebuild, anchor and external-link validation, diagram rendering, all-volume content-owner review, independent technical/copyright/security review, executable benchmarks, real build signature verification or milestone CI. Never treat a GitHub API fetch as a successful full CI validation.
+- The earlier 11-draft checkpoint below is historical; the branch now contains **16 new substantial drafted pages** beyond the initial researched baseline. Final volume/chapter/page publication work remains separate in #214.
+
+## GitHub branch validation checkpoint — 2026-10-19
+
+**Performed directly against the PR feature branch** rather than inferred from authored claims:
+
+- Re-fetched the provisional TOC and audited matrix: **69 actual planned chapter rows**, **69 distinct Vxx/Cxx IDs**, all recorded once; current classification **47 D / 22 P / 0 M**. These numbers indicate topic coverage, **not 47 accepted chapters**.
+- Re-fetched all **11 new technical Markdown files** (10 initial remediation drafts plus V01/C01). Each has an H1, original synthetic examples, source/evidence or research limitation statements, and 1–2 Mermaid illustrations. They total **22,706 Markdown whitespace-separated words** and **13 Mermaid diagrams** with matching fence delimiters. This is a structural manuscript inventory, not readability or semantic correctness certification.
+- Extracted relative Markdown links and directly fetched **45/45 distinct target files** from the first 10 technical drafts on the same GitHub branch; additionally extracted and fetched **9/9 distinct link targets** referenced by newly added V01/C01. All link **files** exist at their tested branch revisions. This does not verify anchors, actual article/source contents, symbol truth, external URLs or version-to-claim support.
+- Checked that new topic landings link the newly written drafts and that the root book landing and root project README correctly state the book-first scope.
+- **Not performed:** full checkout tree inventory; local Python `check_boundary.py` / `premerge_check.py`; metadata normalization, complete routing index regeneration, full anchors/fences/source validation; rendered Mermaid preview; independent technical/copyright editor or an architecture expert review; benchmark, live system test, whole-volume acceptance or milestone-close GitHub CI. These remain explicit acceptance work.
+- **Branch acceptance result:** new work is a substantial, traceable **draft corpus checkpoint**, not a complete release-ready manuscript. Keep PR #215 in draft and Issues #213 and #214 open.
+
+## Explicit nonclaims
+
+This document does not assert that 69 technical chapters exist, that all technical pages were discovered, that the sources were independently reviewed, that a full local validation/CI suite ran, or that a buildable final edition exists. Old repository READMEs and checkpoints that state no technical chapters or no metadata tooling are stale and must be reconciled as a separate scoped change.

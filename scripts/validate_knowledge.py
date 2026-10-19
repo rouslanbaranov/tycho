@@ -31,6 +31,7 @@ CORE = (
     ("document-observations", ["scripts/document_observations.py", "validate"]),
     ("research-checkpoints", ["scripts/research_checkpoints.py", "check"]),
     ("strict-json-schemas", ["scripts/validate_metadata_schemas.py", "examples"]),
+    ("book-metadata", ["scripts/validate_book_metadata.py"]),
     ("book-navigation", ["scripts/validate_book_navigation.py"]),
 )
 

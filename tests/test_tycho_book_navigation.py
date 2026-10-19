@@ -51,7 +51,7 @@ class BookNavigationTests(unittest.TestCase):
 
     def test_mermaid_fence_skips_links_and_balances(self):
         self.write("book/chapter.md",
-                   "# Page\n```mermaid\nflowchart LR\n A[Missing](absent.md) --> B[OK]\n```\n")
+                   "# Page\n## What it does\n```mermaid\nflowchart LR\n A[Missing](absent.md) --> B[OK]\n```\n")
         self.assertEqual(self.reasons(), [])
 
     def test_unclosed_fence_is_reported(self):
@@ -60,7 +60,7 @@ class BookNavigationTests(unittest.TestCase):
 
     def test_relative_parent_link_inside_repository_allowed(self):
         self.write("authoring/reference.md", "# Verified reference\n")
-        self.write("book/chapter.md", "# Chapter\n[Public reference](../authoring/reference.md)\n")
+        self.write("book/chapter.md", "# Chapter\n## What it does\n[Public reference](../authoring/reference.md)\n")
         self.assertEqual(self.reasons(), [])
 
     def test_repo_escape_is_rejected(self):

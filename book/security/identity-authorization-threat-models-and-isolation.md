@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.58c3c4e5e19d46bcb2da66255eb61068"
+kind: "page"
+parent_id: "tycho.landing.3870e6370654489c949e098b9acd1840"
+canonical_path: "book/security/identity-authorization-threat-models-and-isolation.md"
+title: "Security architecture: identity, authorization, trust boundaries and isolation"
+topic_ids:
+  - "security-architecture"
+perspectives:
+  - "architecture"
+  - "security"
+summary: "Reader entry for Security architecture: identity, authorization, trust boundaries and isolation. Scope includes 1. Model assets, principals and actions; 2. Trust boundaries, policy decisions and enforcement; Original boundary diagram."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Security architecture: identity, authorization, trust boundaries and isolation?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Security"
+    - "architecture"
+    - "identity"
+    - "authorization"
+    - "trust"
+    - "boundaries"
+    - "and"
+    - "isolation"
+evidence_scope:
+  source_ids:
+    - "src.oauth-security"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Security architecture: identity, authorization, trust boundaries and isolation
 
 > Tycho E14-12 [issue #90](https://github.com/rouslanbaranov/tycho/issues/90), original technical manuscript. Public references inspected on 2026-10-19: NIST SP 800-207, IETF RFC 9700 and OWASP API Security Top 10 (2023). This is a source-bounded explanation with fictional examples; it is **not** a security assessment, proof of compliance, exploit test, deployed policy or independent human review.

@@ -1,3 +1,52 @@
+---
+metadata_version: 1
+id: "tycho.decision.054f312b9e744575ac80632f4acf72fa"
+kind: "decision"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/decisions/gc-and-tail-latency.md"
+title: "Decision Playbook — JVM GC choice: pause-sensitive online services vs high-throughput batch"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Decision Playbook — JVM GC choice: pause-sensitive online services vs high-throughput batch. Scope includes Synthetic legacy system and decision problem; Contrasting historical evidence; Decision tree and chosen ADR."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Decision Playbook — JVM GC choice: pause-sensitive online services vs high-throughput batch?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a486e061c9564587b1e39a4e83024fca"
+    - "tycho.page.6cdc8b405be542f29528e4cfd7454bc9"
+    - "tycho.page.b55f5bf29d7946c78454a769980c476e"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Decision"
+    - "Playbook"
+    - "JVM"
+    - "choice"
+    - "pause-sensitive"
+    - "online"
+    - "services"
+    - "high-throughput"
+    - "batch"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Decision Playbook — JVM GC choice: pause-sensitive online services vs high-throughput batch
 
 **ID:** `decision.jvm-gc-performance-context` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending.  
@@ -51,6 +100,41 @@ flowchart TD
 Choose normalized workload mixes → pin runtime images and collector flags → run comparable canaries including failure spikes → inspect allocation and retention distributions → record regression/fallback before rollout.
 
 **Reversal triggers / insufficient evidence:** A batch workload with burst allocations and long-lived objects may prefer G1/Parallel; an interactive service with pause-induced retry amplification may justify ZGC even if raw throughput gains are small.
+
+## Workload before collector: what the source can actually tell us
+
+[Netflix's March 2024 GC report](../netflix-generational-zgc-workloads.md) (N05) reports a significant **request-tail and retry-amplification** problem in latency-sensitive Java services. A stop-the-world pause can cause an upstream request timeout, trigger retries/hedging and thus increase work after the original pause ends. The publication distinguishes **G1**, **older non-generational ZGC**, **Generational ZGC**, and **Parallel GC**. Mixing them would produce a false architectural conclusion: older ZGC was about **36% more CPU-intensive** than G1 in one comparison, **generational** ZGC was around **10% better** than G1 on the described workload, and **Parallel** outperformed G1 by **6–8% throughput** in a particular precompute batch. These are **different experiments and denominators**.
+
+The [Netflix HotSpot sharing study](../netflix-hotspot-false-true-sharing.md) (N18) addresses a different cause of CPU waste: microarchitectural contention despite superficially reasonable Java code. The [Discord Cassandra→ScyllaDB migration](../discord-cassandra-scylladb-messages.md) (DI01) exposes GC as only one factor in database-node instability: hot partitions, compaction and request shaping also mattered. This is not an experiment showing that changing a collector would have replaced its storage-engine migration.
+
+## Synthetic workload-specific selection matrix
+
+| Dominant measurable requirement | Collector/optimization candidates | Risk of choosing the wrong metric | Failure test |
+|---|---|---|---|
+| Interactive service with strict p99 and retry storms | Measure G1 vs Generational ZGC on the **same JDK and request mix** | Better GC pause percentile but worse CPU/native footprint or same end-to-end p99 | Inject allocation spikes, downstream timeout and retry feedback |
+| Large nightly batch with deadline but relaxed pause SLO | G1 vs Parallel, possibly other candidates if measured | Lowest max pause wins a meaningless contest while completed batch work falls | Compare completed jobs/hour, end-to-end duration, RSS and CPU at equal inputs |
+| Small heap / tight container memory | Quantify compressed refs, native memory and direct buffers per collector | Heap-only comparison misses native memory and container OOM | Test full RSS/cgroup limit and reference/direct-buffer cleanup |
+| CPU-heavy service with memory/cache contention | Profile cache line sharing, synchronization, allocation and code paths before collector change | An unrelated hotspot is mislabeled GC and collector tweaks cannot fix it | CPU profiles, hardware counters where available and throughput after isolation |
+| Data service with hot partitions and query-level skew | Data access, compaction, backpressure and partitioning can dominate collector policy | Node GC symptoms incorrectly attributed as the sole architectural cause | Reproduce hot-key workloads and compare useful completed operations |
+
+This table is **Tycho synthetic analysis**, not a fleet-wide benchmark at any publisher.
+
+## A reproducible, confounder-resistant decision experiment
+
+1. Preserve one pinned application revision, **JDK patch version**, runtime image, request/record mix and observability contract. Do not simultaneously move to Java 21, switch collector, change compression and tune data access or it becomes impossible to attribute results.
+2. For Service A (latency-driven), observe GC pause distribution, per-route p50/p95/p99, timeouts and cancellations, hedging/retry fan-out, useful completed requests, CPU/request, allocation rate, old-generation growth and full heap/native RSS.
+3. For Service B (batch-driven), observe time-to-complete, processed records/sec, allocation churn, compaction (if any), full-cycle throughput, CPU and direct/native memory at identical inputs and parallelism.
+4. Run enough representative windows to capture allocation seasonality, cache warm-up, memory fragmentation, long-lived buffers and intermittent dependency delays. A single short benchmark without a confidence interval can guide hypotheses but not prove operational superiority.
+5. Exercise fault conditions: container memory limit, major allocation spike, stalled downstream inducing retry storms, heap dump/thread dump diagnostics and rollback to previous collector/JDK configuration.
+6. Define an explicit winner only for the **tested workload and versions**. Preserve per-class exceptions rather than promote one collector as a mandatory policy for every application.
+
+**Candidate rollback triggers:** worse tail SLO/cancellation despite shorter pauses, sustained extra CPU or SSD/backing-memory demand, native-memory headroom under configured limit, or inability to capture required runtime diagnostics. This test plan is **not Netflix's unpublished benchmark method**.
+
+## Interpret historical metrics without imaginary precision
+
+The N05 publication reports approximately **3% native memory overhead relative to heap size** for ZGC in its stated configuration and discusses Linux transparent huge pages and direct-buffer processing. Those are engineering considerations, not evidence that every service has the same RSS shift. The **one-hour** batch time saving in its Parallel-GC story is a publisher-reported example, not a prediction for Service B.
+
+For the question “Does Generational ZGC reduce p99 for my Java service?”, an agent needs the target JDK, observed pause-to-timeout causality, load, request class, active retry policy and CPU/native budget. Without those, the correct result is **insufficient evidence** with a proposed canary. It should return the version and historical evidence distinction, not a universal yes.
 
 ## Failure analysis and evidence provenance
 

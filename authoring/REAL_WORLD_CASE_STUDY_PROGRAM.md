@@ -1,6 +1,16 @@
 # Real-World Modernization Case Study Program (M9)
 
-## Current execution state — 2026-10-19 (supersedes the historical start-readiness snapshot below)
+## Binding 2026-10-19 decision: full case-page coverage, no product knowledge graphs
+
+**Primary delivery priority:** finish the substantive content of **every one of the 29 M9 case pages and six comparative decision pages** against the case-study authoring contract. Count completeness by independently checkable question/evidence coverage per page, not by pages present, word count, diagram count, closed authoring issues or source-discovery totals. A missing publisher detail is documented as **unknown** rather than filled with an invented answer. No case is declared 100% content-complete until its own before/decision/alternatives/transition/failures/outcomes/transfer/provenance checks pass; independent approval is a separate gate. The 29 existing pages remain drafts until verified.
+
+**Graph work is STOPPED for M9**, consistently with [Tycho's accepted graph-retirement ADR](ADR-RETIRE-CURATED-KNOWLEDGE-GRAPH.md). Do not implement, improve, validate, wire, version, serve, operate, or maintain a curated case graph, graph schema, graph shards, graph traversal, case-to-pattern graph edge pipeline, or graph-dependent MCP/search contracts. Explicit Markdown cross-links, stable IDs, frontmatter/indexable fields, claim-to-source provenance, ranked retrieval and bounded MCP evidence reads are the supported alternatives. This policy applies to both new M9 work and unfinished historical graph language below; the historical text is not authorization to resume graph work. Graph databases, GraphQL schemas, organization-reported relationship systems and native Mermaid illustrations can still be subjects of technical prose: they are not Tycho product graph infrastructure.
+
+## Current execution state — 2026-10-19
+
+**Latest 2026-10-19 draft PR #212 checkpoint:** substantive case-depth work now covers **29/29 case pages** and **6/6 decision guides**. This is complete *authoring-wave coverage*, **not 35 independently accepted documents**. GitHub-tree checks inspected stable case identities, balanced Mermaid fences, H2 duplicates and relative Markdown file targets; the reviewer, full pinned local validation, source-by-source semantic/license audit and real integrated MCP evaluation remain outstanding. See [latest matrix](cases/M9_REVIEW_ACCEPTANCE_MATRIX.md). Graph support remains fully retired. M9 and #121 must remain OPEN.
+
+ (supersedes the historical start-readiness snapshot below)
 
 **M9 remains OPEN**. GitHub source intake **#114** and authoring/draft contract deliverables **#115–#120** are closed, but these are writing and source-disposition checkpoints, not independent case acceptance. There are **29 source-bounded *draft* case pages** (12 Netflix, 17 across nine other organizations), **6 analytical decision playbooks**, **43 source dispositions** (41 bounded/scope-only and 2 deferred technical bodies, N14/ST02), and **60 public-only answer/refusal/evidence fixtures** (21 answerable; 26 reject_false_claim; 13 insufficient_evidence). The M9 Epic #113 and independent acceptance issue [#121](https://github.com/rouslanbaranov/tycho/issues/121) remain open.
 
@@ -44,7 +54,7 @@ Gate M9-C (cross-company breadth): at least twelve additional accepted cases acr
 
 Gate M9-D (analytical transfer): at least six cross-company comparison/decision pages, explicit requirements/workload/legacy constraints, alternatives, contraindications, transition architecture and 'insufficient evidence' cases. Evidence-backed ADR examples use original hypothetical inputs.
 
-Gate M9-E (agent readiness): deterministic case IDs, reviewed provenance, links, indexable tags and decision predicates; case graph relationship *specification* now, actual schema/index/graph wiring only when existing K10–K20 implementers provide the stable infrastructure. Query/evaluation fixture set of at least 30 case-oriented questions including counterfactual and unanswerable queries. Require clear cross-provider origin and temporal validity, no private corpus in Tycho.
+Gate M9-E (agent readiness): deterministic case IDs, reviewed provenance, links, indexable tags and decision predicates; explicit case-to-pattern Markdown links and source-backed routing metadata now; actual schema/index/retrieval wiring only when existing metadata/search implementers provide stable contracts. **No curated graph design or implementation is in scope.** Query/evaluation fixture set of at least 30 case-oriented questions including counterfactual and unanswerable queries. Require clear cross-provider origin and temporal validity, no private corpus in Tycho.
 
 Gate M9-F (acceptance): local source/license review; independent technical/semantic reviewer; tests and validation feasible at milestone stage; acceptance checkpoint with admitted source counts vs drafted vs verified; open known limitations. No claim of 'all patterns validated' or runtime measured.
 
@@ -70,7 +80,7 @@ Proposed new navigation: `book/cases/README.md` for case routes; one company nav
 
 New conceptual metadata (adapt to K10/K11 schema rather than inventing an incompatible committed schema):
 - `document_kind: case-study`, stable `case_id`, `company`, `observation_period`, `source_ids`, `reported_vs_inferred`, `legacy_baseline`, `architecture_transitions`, `constraint_tags`, `workload_profile`, `failure_modes`, `patterns_applied`, `counterpatterns`, `result_metrics`, `migration_phases`, `confidence`, `verification_status`, `reviewed_at`.
-- Graph relations: `case → observed_use_of → pattern`; `case → contradicts_universal_claim → claim`; `case → was_motivated_by → constraint`; `case → migrated_from/to → architecture-state`; `case → reports → evidence`. Every edge requires an evidence pointer and validity window. Do not infer global 'recommended' from a single observed use.
+- Case relationships are **ordinary typed metadata and reviewable Markdown links**, not edges of a graph. A page may explicitly link to related patterns, contrary evidence, source sections, and applicable decision guides with the conditions in prose. No graph schema/ownership/assembly/traversal is requested.
 - Search routes by **problem first**, not company: e.g., 'high p99 JVM service with retry storms'; 'Cassandra hot partition'; 'complex microservice mesh ownership'; 'schema migration with no downtime'; 'Bazel vs Gradle build throughput'; 'migration agent with missing tests'.
 - A Rocinante response must separate **what a source says happened** from **what might work for the queried legacy system**. Test with candidate evaluation sets; never present these as measured agent gains before running benchmarks.
 
@@ -91,7 +101,7 @@ Comparative exemplars:
 - E14 continues independently writing foundation chapters; E16 cites only already accepted canonical owners and adds links later.
 - E01/K30 decision rules consume cross-case applicability evidence but do not outsource correctness to company popularity.
 - E03/K07 source register and provenance rules admit references; E04/K10–K13 provides metadata validation.
-- E06/K15–K16 eventually indexes curated case relationships; E07–E09/K17–K22 makes them retrievable by future MCP.
+- K15–K16 curated graph work is **retired**; E07–E09/K17–K22 may index ordinary case metadata and provide source-bound retrieval through MCP **without graph infrastructure**.
 - E13/K28 must benchmark case-oriented search quality, accurate provenance and insufficient-evidence responses. No duplicate search/MCP epics.
 - E15/K29 maintains source freshness and change impact (publication updates are not automatic truth updates).
 
@@ -118,7 +128,7 @@ Native ownership: Program #1 → Epic #113 → tasks #114–#122. All ten E16 is
 
 Ready to begin **source verification #114**, not accepted case publication. The program, 43-candidate register, Netflix dossier and case template are in main. No `book/cases/` pages exist yet. The 43 candidates are separate from the 169-record canonical source register; admission and exact claim verification remain #114 work.
 
-Execution order: #114 → #115–#118 → #119; #120 can design portable contracts/fixtures after source admission; #121 audits completed content and records independent reviewer disposition. Do not wait for all M1–M8 completion to research cases. Actual schema/index/graph adapters wait for their stable owning contracts; record deferred integration explicitly rather than claiming deployment.
+Execution order: #114 → #115–#118 → #119; #120 can design portable contracts/fixtures after source admission; #121 audits completed content and records independent reviewer disposition. Do not wait for all M1–M8 completion to research cases. Actual schema/index/retrieval adapters wait for their stable owning contracts; **there are no M9 graph adapters**; record deferred integration explicitly rather than claiming deployment.
 
 The Netflix task minima are three cases each (#115–#117), hence **at least nine distinct cases** if all three minima apply; this exceeds the eight-case milestone floor. Count unique case IDs once and satisfy both task and milestone criteria. #118 requires twelve additional cases across six other companies; #119 requires six comparisons; #120/#121 require at least thirty evaluation queries.
 
