@@ -68,6 +68,30 @@ The reusable design lesson is **compare useful performance at the new intended o
 
 **Refuse an automatic HotSpot patch** when hardware counters are unavailable, the exact problematic source code is not present, or a production-representative correctness test cannot be executed. N18 reports a specific service and historical JDK behavior; upstream bug history, current vendor fixes and complete replication remain unverified under M9 #121.
 
+## Why equal-traffic canaries concealed the capacity regression
+
+The [November 9, 2022 practitioner investigation](https://netflixtechblog.com/seeing-through-hardware-counters-a-journey-to-threefold-performance-increase-2721924a2822) (N18, **The problem**) says the initial larger-instance canary received the **same number of requests** as the small instance, rather than the scaled load a three-times-larger CPU allocation was intended to carry. It looked healthy at that workload. Later, with autoscaling held near the same **55% CPU target**, the 48-vCPU node delivered only **~25% more throughput** than the original capacity expectation and had **>50% worse average latency**. Thus the acceptance error was not merely “we failed to look at RPS”; it was a mismatched **workload normalization**.
+
+A robust capacity experiment for an unrelated CPU-bound service would compare: same total traffic to validate compatibility; same requests per core to test scaling efficiency; same CPU-utilization target to model autoscaling; and equal useful output to compare cost, *including* tail latency and variance across instances. These are **Tycho evaluation categories**, not four published Netflix test phases.
+
+## Separate the true causes, fixes and observation windows
+
+| Evidence phase in N18 | Original diagnostic | What changed | Remaining issue |
+|---|---|---|---|
+| Standard profile | Fast and slow nodes had similar flame-graph/JFR/JIT stack distributions | No useful actionable difference discovered | CPU microarchitecture bottleneck still unexplained |
+| Hardware counters | Slow nodes had **almost 3× CPI** and roughly **4× MACHINE_CLEARS** vs fast nodes | Investigators localized HotSpot subtype-check code with Intel VTune and assembly | Needs correct CPU counter interpretation, including sampling skid |
+| False-sharing patch | 64-byte cache line held adjacent **`_secondary_super_cache`** and **`_secondary_supers`** | Added padding between fields, eliminating persistent slow-node band | Capacity still only around **150 RPS/node**, below **~250 RPS** target |
+| True-sharing patch | Multiple cores wrote one secondary-superclass cache field | Optional flag-gated bypass of those writes | Workload and JDK behavior may not transfer to other JVM versions |
+| Measured outcome | Up to **~350 RPS/node at 55% CPU**, improved mean/tail latency | Company-reported **3.5×** relative to initial 48-vCPU throughput | Not a fleet-wide runtime update or guaranteed performance multiplier |
+
+The **one-in-eight** allocation alignment observation arises from a **64-byte line and 8-byte pointer**, matching the observed approximately **12% fast-node fraction**. This is evidence supporting *that* false-sharing diagnosis, not a probabilistic rule about every modern JVM heap layout. The authors also referenced **JDK-8180450**, but publication in 2022 does not prove that modern runtime builds still contain the same issue.
+
+## Falsification and release gates for a different architecture
+
+First preserve a versioned CPU/JDK/hardware baseline and vary one parameter at a time. If throughput fails to scale despite identical stack-level profiles, collect CPU counters before rewriting Java business logic. Validate the suspected field-layout issue with an isolated JVM patch on representative production traffic; then **repeat all latency and throughput checks after the first fix**, because a second bottleneck can become dominant. Never ship a globally enabled HotSpot behavior change solely on one service's apparent gain: maintain a versioned feature flag, a fallback JDK image and cross-workload regression coverage.
+
+If the CPU profile, cache-line layout or runtime version differs materially, the N18 diagnostic remains a **hypothesis**, not proof. Return **insufficient evidence** for claims about a different runtime's exact hot method or attainable RPS. This case is about scaling correctness within one service—not a recommendation to build graph-based infrastructure for Tycho.
+
 ## Applicability and safer modernization
 
 Tycho's inferred procedure is to characterize CPU-bound service topology, shard placement, cache line layout and target throughput before selecting larger instances. Compare cost per successful request, p99 at equal CPU/throughput, and variation across nodes and cold vs warm JVM lifetimes. Investigate both false and true sharing, and be prepared for a second bottleneck to emerge after the first is resolved.
