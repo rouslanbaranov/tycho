@@ -38,3 +38,16 @@ Every document should be read with its original publication period, exact first-
 - Program and acceptance: [M9 case-study program](../../authoring/REAL_WORLD_CASE_STUDY_PROGRAM.md), [E16-01 #114](https://github.com/rouslanbaranov/tycho/issues/114), [E16-08 #121](https://github.com/rouslanbaranov/tycho/issues/121).
 - The source register's five inaccessible entries (N14, N15, SH04, SP02, SP03) remain out of the authored case set until resolved. The Stripe TypeScript redirect currently exposes insufficient article body for substantive technical assertions; it is also excluded from case authoring.
 - All Mermaid diagrams are newly authored conceptual schematics. Any reported performance numbers are explicitly scoped by source and period. No independent technical peer review or system benchmarks have yet been completed.
+
+## Evidence-based architecture decision playbooks (E16-06)
+
+Six cross-company, synthetic-decision guides are published as **drafts**; their ADRs are Tycho analyses, not historical decisions taken by the named companies.
+
+- [Modular monolith vs microservices](decisions/monolith-vs-services.md) — Netflix / Shopify / Uber
+- [Reactive, virtual threads and queue-based I/O](decisions/reactive-vs-virtual-threads.md) — Netflix / Cloudflare
+- [JVM collector and tail-latency choice](decisions/gc-and-tail-latency.md) — Netflix / Discord
+- [Correctness-first online data migration](decisions/data-migration-correctness.md) — Stripe / Netflix / Uber / Discord
+- [Build platform and fleet adoption](decisions/build-delivery-migration.md) — Airbnb / Spotify / Uber
+- [Agent-assisted modernization safety](decisions/agentic-migration-safety.md) — Spotify / Stripe / Airbnb / Netflix; **does not claim verified AI-agent success rates**
+
+Each decision guide has a synthetic starting state, evidence for contrasting real-world mechanisms, contraindications, an original ADR, rollback/insufficient-evidence branch, and a proposed transition.
