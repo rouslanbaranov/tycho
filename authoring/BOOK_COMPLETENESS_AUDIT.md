@@ -163,6 +163,17 @@
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
 
+## GitHub branch validation checkpoint — 2026-10-19
+
+**Performed directly against the PR feature branch** rather than inferred from authored claims:
+
+- Re-fetched the provisional TOC and audited matrix: **69 actual planned chapter rows**, **69 distinct Vxx/Cxx IDs**, all recorded once; current classification **47 D / 22 P / 0 M**. These numbers indicate topic coverage, **not 47 accepted chapters**.
+- Re-fetched all **10 new technical Markdown files**. Each has an H1, source/evidence or research limitation statements, independently original prose and 1–2 Mermaid illustrations. They total approximately **20,537 Markdown whitespace-separated words**, 12 Mermaid diagrams, and matching code-fence delimiters. This is an editorial inventory, not readability or semantic correctness certification.
+- Extracted relative Markdown links from the 10 new technical pages and fetched each of the **45 unique local destination files** using the same GitHub branch reference: **45/45 files exist**. This checks target presence only—not fragments/anchors, referenced symbol truth, external URL availability, or exact version-to-claim support.
+- Checked that new topic landings link the newly written drafts and that the root book landing and root project README correctly state the book-first scope.
+- **Not performed:** full checkout tree inventory; local Python `check_boundary.py` / `premerge_check.py`; metadata normalization, complete routing index regeneration, full anchors/fences/source validation; rendered Mermaid preview; independent technical/copyright editor or an architecture expert review; benchmark, live system test, whole-volume acceptance or milestone-close GitHub CI. These remain explicit acceptance work.
+- **Branch acceptance result:** new work is a substantial, traceable **draft corpus checkpoint**, not a complete release-ready manuscript. Keep PR #215 in draft and Issues #213 and #214 open.
+
 ## Explicit nonclaims
 
 This document does not assert that 69 technical chapters exist, that all technical pages were discovered, that the sources were independently reviewed, that a full local validation/CI suite ran, or that a buildable final edition exists. Old repository READMEs and checkpoints that state no technical chapters or no metadata tooling are stale and must be reconciled as a separate scoped change.
