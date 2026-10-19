@@ -6,8 +6,8 @@
 ## Executive result
 
 - The proposed outline contains **10 volumes and 69 chapters**. All 10 volume rows were compared against titles and section headings in currently reachable technical prose.
-- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine initially missing-focused subjects and seven initially partial questions now have newly authored standalone drafts on this feature branch; the branch has at least 51 identifiable technical manuscripts across audited topic routes, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
-- Of 69 proposed questions: **55 directly addressed**, **14 partially addressed**, **0 without a focused book treatment verified**, after nine initial missing-topic drafts plus nine new deepening drafts on this branch. **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
+- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine initially missing-focused subjects and seven initially partial questions now have newly authored standalone drafts on this feature branch; the branch has at least 58 known directly linked technical manuscripts across audited topic routes, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
+- Of 69 proposed questions: **62 directly addressed**, **7 partially addressed**, **0 without a focused book treatment verified**, after nine initial missing-topic drafts plus sixteen newly deepened-topic drafts on this branch. **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
 - Source discovery was limited to current root/topic navigation and linked Markdown files accessed from GitHub. The entire Git tree was **not exhaustively enumerated** and repository-wide executable checks **were not run**. Reconcile this matrix with a full local inventory and content review before presenting the classification as comprehensive proof.
 - Educational graph storage/traversal remains a legitimate V06/C06 topic; a curated concept/decision graph for Tycho is **not required**. Search/MCP/deployment infrastructure work is excluded from this manuscript completion gate.
 
@@ -26,8 +26,8 @@
 | V01/C01 — Problem framing and system boundaries | D | [New system boundaries chapter](../book/application/problem-framing-and-system-boundaries.md) | Independently public arc42/C4 scope, original diagrams and synthetic boundary contract; expert review pending. |
 | V01/C02 — Workload and demand models | D | [New workload and arrival chapter](../book/performance/workload-demand-and-arrival-models.md) | Original quantitative workload definitions and synthetic cases; independent source and semantic review pending. |
 | V01/C03 — Quality attributes and trade-offs | D | [Technical page](../book/application/quality-drivers-and-architecture-views.md) | Deepen systematic quality conflict evaluation and acceptance across stakeholder perspectives. |
-| V01/C04 — Evidence, hypotheses and architecture experiments | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Separate hypothesis/evidence design and experimental validity from capacity examples. |
-| V01/C05 — Architecture descriptions and decision records | P | [Technical page](../book/application/quality-drivers-and-architecture-views.md) | Unify architectural views and bounded ADR reading into one canonical chapter. |
+| V01/C04 — Evidence, hypotheses and architecture experiments | D | [New architecture evidence hypotheses and experiments chapter](../book/application/architecture-evidence-hypotheses-and-experiments.md) | Bounded hypothesis/evidence classes, controlled experiments and original failure/negative-test cases; review pending. |
+| V01/C05 — Architecture descriptions and decision records | D | [New architecture views and decision records chapter](../book/application/architecture-views-and-decision-records.md) | Source-bounded arc42 context/static/runtime/deployment and ADR coherence with synthetic diagrams; review pending. |
 | V01/C06 — Capacity, operational constraints and total cost | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Add end-to-end total-cost and team/operations hard-gate comparisons. |
 
 ### V02 — Application boundaries and interaction contracts
@@ -36,7 +36,7 @@
 |---|---|---|---|
 | V02/C01 — Layered, modular and ports-and-adapters design | D | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Confirm full layered/ports/adapters mechanics, dependency enforcement and limits. |
 | V02/C02 — Domain boundaries, data ownership and contracts | D | [New domain ownership chapter](../book/application/domain-boundaries-data-ownership-and-contracts.md) | Separate domain/data/deployment authority and contract evolution; review pending. |
-| V02/C03 — Modular monolith and internal events | P | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Expand modular-monolith lifecycle, internal events, invariants and deployment countercases. |
+| V02/C03 — Modular monolith and internal events | D | [New modular monolith and internal events chapter](../book/application/modular-monolith-and-internal-events.md) | Versioned Spring event semantics and module boundaries, original transaction/crash examples; review pending. |
 | V02/C04 — SOA, microservices and distributed boundaries | D | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Deepen SOA versus microservices decisions with independent deployment conditions. |
 | V02/C05 — Public APIs, HTTP/RPC and compatibility | D | [New chapter draft](../book/application/http-rpc-contracts-and-compatibility.md) | Newly written; pending independent technical review, full local verification and final V02 chapter/page assembly. |
 | V02/C06 — Integration adapters and anti-corruption boundaries | D | [New anti-corruption adapters chapter](../book/application/anti-corruption-adapters-and-coexistence.md) | Original semantic mappings, lost-acknowledgment contract and migration tests; review pending. |
@@ -95,12 +95,12 @@
 | Planned chapter | Coverage | Observed primary material | Outstanding work |
 |---|---|---|---|
 | V07/C01 — Queueing, Little's Law and measurement boundaries | D | [Technical page](../book/performance/queueing-littles-law.md) | Maintain assumptions and synthetic finite-window counterexample. |
-| V07/C02 — Contention, saturation and scaling laws | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Add saturation/contended resources and system-specific scaling-law limitations. |
+| V07/C02 — Contention, saturation and scaling laws | D | [New contention saturation and scaling laws chapter](../book/performance/contention-saturation-and-scaling-laws.md) | Amdahl/Gunther models, conditional scaling and hypothetical contention; no fitted benchmark. |
 | V07/C03 — Load-test methods and benchmark validity | D | [New benchmark validity chapter](../book/performance/load-testing-and-benchmark-validity.md) | Independent public k6/HdrHistogram/SRE references and original tests; no benchmark executed. |
 | V07/C04 — Tail latency, fan-out and time budgets | D | [New tail-latency chapter](../book/performance/tail-latency-fanout-and-deadline-budgets.md) | Authored from independent published materials; requires formal validation and editorial review. |
 | V07/C05 — Overload protection and graceful degradation | D | [New overload admission and degradation chapter](../book/performance/overload-admission-control-and-graceful-degradation.md) | SRE/Builders' Library scope, original overload fixtures and policy conditions; no exercise or independent review. |
 | V07/C06 — Horizontal/vertical scaling and autoscaling delay | D | [New autoscaling chapter](../book/performance/autoscaling-lag-and-capacity-limits.md) | Controller, startup lag, vertical/horizontal and overload trade-offs researched; requires independent review. |
-| V07/C07 — Capacity planning and cost/performance trade-offs | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Add defensible capacity planning and total-cost sensitivity models. |
+| V07/C07 — Capacity planning and cost/performance trade-offs | D | [New capacity planning and cost performance chapter](../book/performance/capacity-planning-and-cost-performance.md) | Demand/cost sensitivity and original comparative budget; no real prices or capacity study. |
 
 ### V08 — Delivery, deployment and disaster recovery
 
@@ -133,15 +133,15 @@
 | V10/C01 — Architecture requirement and workload profiles | D | [New requirements/workload chapter](../book/decisions/requirements-and-workload-architecture-profiles.md) | Original independent book treatment; supporting model is not substituted for book prose; review pending. |
 | V10/C02 — Baseline analysis for existing software | D | [New legacy baseline chapter](../book/decisions/legacy-baseline-and-modernization-evidence.md) | Original synthetic catalog and admissible public modernization sources; independent validation pending. |
 | V10/C03 — Pattern applicability and contraindications | D | [New pattern-selection chapter](../book/decisions/pattern-applicability-and-contraindications.md) | Source-grounded alternatives, hard gates, contraindications and original pattern cards; independent review pending. |
-| V10/C04 — Alternatives, experiments and ADRs | P | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Expand condition-gated alternative analysis and ADR falsification examples. |
-| V10/C05 — Target architecture versus transition states | P | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Develop target versus transition states with reversible and non-reversible steps. |
+| V10/C04 — Alternatives, experiments and ADRs | D | [New architecture alternatives experiments and adrs chapter](../book/decisions/architecture-alternatives-experiments-and-adrs.md) | Full hard-gate and discriminating test example, proposed ADR; no architecture approval. |
+| V10/C05 — Target architecture versus transition states | D | [New target and transition architecture states chapter](../book/decisions/target-and-transition-architecture-states.md) | Original versioned coexistence, cutover and recovery states; no migration or restore test. |
 | V10/C06 — Search and question routes for architecture agents | D | [New question/reading routes chapter](../book/decisions/question-routes-for-architecture-analysis.md) | Original evidence-first progressive reading and decision route; no implemented search/MCP; review pending. |
 | V10/C07 — Cross-domain worked comparisons and unresolved cases | D | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Expand original cross-domain worked decisions and insufficient-evidence outcomes. |
 
 ## Content remediation recorded in this branch
 
 - **Nine original new draft chapters moved from M to D (not accepted):** V02/C05, V03/C06, V07/C04/C06, V09/C06/C07, V10/C01/C02/C06.  V02/C05 details:  new original [HTTP and RPC compatibility chapter](../book/application/http-rpc-contracts-and-compatibility.md), using independently verified RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers documentation. Its application landing now links to it. Other new drafts cover diagnostics, tail latency, autoscaling, incident response, agent-access safety, requirements/workload decisions, legacy baselines and progressive reading routes. No executable client/provider tests, independent review or full-repository validation has run; publication completeness is not claimed.
-- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **55 D / 14 P / 0 M**, all still subject to inventory and quality review.
+- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **62 D / 7 P / 0 M**, all still subject to inventory and quality review.
 
 ## 2026-10-19 additional recovery and overload coverage
 
@@ -177,6 +177,14 @@
 3. Deepen P subjects; for D subjects perform a chapter-specific acceptance review and extend when the chapter question is not completely answered.
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
+
+## 2026-10-19 evening: seven more substantive book chapters
+
+- Seven initial P rows received new original independently sourced English prose: **V01/C04**, **V01/C05**, **V02/C03**, **V07/C02**, **V07/C07**, **V10/C04**, and **V10/C05**. The dedicated pages above include named source/evidence limits, bounded examples, failure/alternative criteria and navigation; all are still **draft**, not editorially approved or experimentally validated.
+- The new directly covered questions build on *already existing* authoring decision methods; the methods were not renamed or represented as new implementations.
+- Updated branch-level chapter question classification: **62 direct / 7 partial / 0 no-focused** across the original **69** draft chapter questions. This assesses topical prose coverage, **not manuscript completeness, final chapter structure, citation correctness or independent approval**.
+- New source-specific public verification for this writing pass included arc42 §3/§5/§6/§7/§9/§10, Fowler's 2024 Strangler Fig, Microsoft Strangler Fig (2026 revision), Gunther's theoretical scalability paper, AWS Well-Architected cost methodology, and Spring Framework/Modulith event semantics. No system measurements, executed dependency-checkers or external sign-offs were obtained.
+- Publication/structural work under #214 has **not** begun. A manually curated Tycho graph remains out of scope; graph data technologies can still be discussed in the theoretical book.
 
 ## Additional verification checkpoint — 2026-10-19 (recoverability and overload)
 
