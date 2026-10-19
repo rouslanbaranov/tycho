@@ -1,3 +1,65 @@
+---
+metadata_version: 1
+id: "tycho.page.ca056fe720e74a9691ce0c253d9526fc"
+kind: "page"
+parent_id: "tycho.landing.b656116463d9480f83199d8202b127a4"
+canonical_path: "book/decisions/question-routes-for-architecture-analysis.md"
+title: "Architecture questions: progressive reading and evidence-bounded decision routes"
+topic_ids:
+  - "architecture-decisions"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Architecture questions: progressive reading and evidence-bounded decision routes. Scope includes 1. First classify the intent before fetching pages; 2. The progressive reading strategy; 3. Retrieval relevance is not evidence validity."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Architecture questions: progressive reading and evidence-bounded decision routes?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.0ce5d0aaf63f425ebf556ea97e2d24a9"
+    - "tycho.page.868027aee4884210bea1d8a6542fbfb0"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.eb130a7f820544a2ba0e0883c0ce587b"
+    - "tycho.page.b6cecfd7301b408db611228b4cec59c5"
+    - "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1"
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.page.47ffb5c160bd4b10aff27101414c2133"
+    - "tycho.page.39a694d604d646a996bf90c3357c3b27"
+    - "tycho.page.7a67fd6346a54eff97784465c22bbc74"
+    - "tycho.page.359813d554c84da794a353d4416b8047"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+    - "tycho.page.0b493340594c4c4392c5d93940a7f319"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.0ae1aabac3b64c2f924cc427684bdbab"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b656116463d9480f83199d8202b127a4"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Architecture"
+    - "questions"
+    - "progressive"
+    - "reading"
+    - "and"
+    - "evidence-bounded"
+    - "decision"
+    - "routes"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Architecture questions: progressive reading and evidence-bounded decision routes
 
 > **Tycho technical book draft V10/C06**, authored 2026-10-19. The subject is a reader/agent reasoning method, **not** a shipped MCP server, ranked search endpoint, autonomous agent or graph infrastructure. All examples are original and hypothetical; independent review and benchmark evaluation remain open.

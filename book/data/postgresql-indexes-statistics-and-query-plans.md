@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee"
+kind: "page"
+parent_id: "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+canonical_path: "book/data/postgresql-indexes-statistics-and-query-plans.md"
+title: "PostgreSQL indexing, planner statistics and query access paths"
+topic_ids:
+  - "data-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for PostgreSQL indexing, planner statistics and query access paths. Scope includes 1. Model the query and distribution first; 2. Compare access methods by the supported operator/workload; 3. Planner estimates are hypotheses about table contents."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of PostgreSQL indexing, planner statistics and query access paths?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.9176c39f97f544f884666e291ae38b90"
+    - "tycho.page.6b42723bd575413bb0d1b94d3e179b6a"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+    - "tycho.page.ddeff7f1556f44f18c67659b73e6e15f"
+    - "tycho.page.fdb4ef7f69154f8c8c433591f71494f9"
+    - "tycho.page.39a694d604d646a996bf90c3357c3b27"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "PostgreSQL"
+    - "indexing"
+    - "planner"
+    - "statistics"
+    - "and"
+    - "query"
+    - "access"
+    - "paths"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # PostgreSQL indexing, planner statistics and query access paths
 
 > **Tycho independent manuscript — proposed V05/C03**, prepared 2026-10-19, using version-scoped PostgreSQL 17 official documentation. The query shapes and workload are entirely synthetic. No DB engine, EXPLAIN ANALYZE, DDL, benchmark or reviewer approval was executed. Earlier [combined MVCC/index research](postgresql-mvcc-indexes-and-query-plans.md) remains preserved for claim-by-claim reconciliation.

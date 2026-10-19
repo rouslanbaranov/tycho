@@ -1,3 +1,53 @@
+---
+metadata_version: 1
+id: "tycho.page.c987c475cc5340bcb967f4b6f963b295"
+kind: "page"
+parent_id: "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+canonical_path: "book/observability/service-level-indicators-objectives-and-alerts.md"
+title: "User-visible service indicators, objectives and error-budget decisions"
+topic_ids:
+  - "observability"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for User-visible service indicators, objectives and error-budget decisions. Scope includes 1. Identify the service boundary and eligible population; 2. An SLI is an observation; an SLO is a chosen target; 3. Measure the right signals at the right level."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of User-visible service indicators, objectives and error-budget decisions?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53"
+    - "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.1c7350e3bc17483ba18f201d02727aea"
+    - "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+    - "tycho.page.d87f9ba3852b49ee8188d150bb679716"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "User-visible"
+    - "service"
+    - "indicators"
+    - "objectives"
+    - "and"
+    - "error-budget"
+    - "decisions"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # User-visible service indicators, objectives and error-budget decisions
 
 > **Tycho chapter-owner draft V09/C01, 2026-10-19.** Public Google SRE Workbook, Prometheus and OpenTelemetry documentation inform the explanation. The workflow, numbers and examples are original fictional teaching material. No service SLO, alert rule, monitoring deployment, traffic trace, data sample or independent technical acceptance has been observed or executed.

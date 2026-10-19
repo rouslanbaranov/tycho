@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.06b70cb83d4f490ea9ef698a025e7684"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/quality-drivers-and-architecture-views.md"
+title: "Architecture drivers, quality scenarios and readable system views"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Architecture drivers, quality scenarios and readable system views. Scope includes 1. Name the decision before selecting a style; 2. Quality-attribute scenarios must be testable; A design can improve one quality and weaken another."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Architecture drivers, quality scenarios and readable system views?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.c226850223614886b61b7cb36c7d5032"
+    - "tycho.page.47ffb5c160bd4b10aff27101414c2133"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Architecture"
+    - "drivers"
+    - "quality"
+    - "scenarios"
+    - "and"
+    - "readable"
+    - "system"
+    - "views"
+evidence_scope:
+  source_ids:
+    - "src.microservices"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Architecture drivers, quality scenarios and readable system views
 
 > Tycho foundational technical page for [Issue #79](https://github.com/rouslanbaranov/tycho/issues/79), proposed V01/C01–C05. Public reference reading: **2026-10-18**. Original teaching examples only; no approved stakeholder objectives, load measurements, production system or independent expert review.

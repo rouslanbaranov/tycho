@@ -1,3 +1,56 @@
+---
+metadata_version: 1
+id: "tycho.page.76244dbe2bd44035b7154f821191f6f2"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/operational-constraints-and-total-cost-gates.md"
+title: "Capacity, operational constraints and total-cost hard gates"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Capacity, operational constraints and total-cost hard gates. Scope includes 1. Constraints must be typed and owned; 3. Original synthetic case: a community plant catalogue; 4. Operating cost is a lifecycle, not a monthly instance fee."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Capacity, operational constraints and total-cost hard gates?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8"
+    - "tycho.page.49d9df04c0b4488e936b02e580a62271"
+    - "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060"
+    - "tycho.page.868027aee4884210bea1d8a6542fbfb0"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.page.4318e542ac7e445b9e8b3150effd2cff"
+    - "tycho.page.06b70cb83d4f490ea9ef698a025e7684"
+    - "tycho.page.fdb4ef7f69154f8c8c433591f71494f9"
+    - "tycho.page.f05854fcc406435bbf38a192bc7ab2f1"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Capacity"
+    - "operational"
+    - "constraints"
+    - "and"
+    - "total-cost"
+    - "hard"
+    - "gates"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Capacity, operational constraints and total-cost hard gates
 
 > **Tycho book draft V01/C06, 2026-10-19.** Independent conceptual treatment of constraints that architecture proposals must pass. Public arc42 constraints and AWS cost design guidance consulted; original fictional scenarios only. No operational team, workload, budget, price, or independent approval was examined.

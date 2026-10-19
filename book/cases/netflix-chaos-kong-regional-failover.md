@@ -1,3 +1,51 @@
+---
+metadata_version: 1
+id: "tycho.page.b256d263efff488c8cf549e116be9683"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/netflix-chaos-kong-regional-failover.md"
+title: "Netflix — Chaos Kong: testing application-level regional failure, not shutting down AWS"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Netflix — Chaos Kong: testing application-level regional failure, not shutting down AWS. Scope includes Pressure: a green single-service test can miss regional dependencies; Architecture states and test boundary; Historical result versus experiment design."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Netflix — Chaos Kong: testing application-level regional failure, not shutting down AWS?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Netflix"
+    - "Chaos"
+    - "Kong"
+    - "testing"
+    - "application-level"
+    - "regional"
+    - "failure"
+    - "not"
+    - "shutting"
+    - "down"
+    - "AWS"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Netflix — Chaos Kong: testing application-level regional failure, not shutting down AWS
 
 **Case ID:** `case.netflix.chaos-kong-regional-failover` | **M9:** E16-04 #117 | **Status:** historical first-party evidence draft; independent review pending.  

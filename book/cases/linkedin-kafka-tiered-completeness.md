@@ -1,3 +1,48 @@
+---
+metadata_version: 1
+id: "tycho.page.9f1f71a670f345e9898fe78167b48cda"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/linkedin-kafka-tiered-completeness.md"
+title: "LinkedIn — tiered Kafka transport needs end-to-end completeness audits"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for LinkedIn — tiered Kafka transport needs end-to-end completeness audits. Scope includes Pressure, legacy baseline and actual chosen direction; Migration mechanics and reliability; Outcomes and negative lessons."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of LinkedIn — tiered Kafka transport needs end-to-end completeness audits?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "LinkedIn"
+    - "tiered"
+    - "Kafka"
+    - "transport"
+    - "needs"
+    - "end-to-end"
+    - "completeness"
+    - "audits"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # LinkedIn — tiered Kafka transport needs end-to-end completeness audits
 
 **Case ID:** `case.linkedin.kafka-tier-audit` | **M9:** E16-05 #118 | **Status:** original case draft; independent reviewer pending.  

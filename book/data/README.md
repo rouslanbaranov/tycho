@@ -1,3 +1,57 @@
+---
+metadata_version: 1
+id: "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+kind: "landing"
+parent_id: "tycho.book.37c50125355948f1b52ec66229ef59bd"
+canonical_path: "book/data/README.md"
+title: "Database design, storage engines and recovery"
+topic_ids:
+  - "data-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Database design, storage engines and recovery. Scope includes Reading route; Canonical researched pages; Cross-domain ownership."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Database design, storage engines and recovery?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.6b42723bd575413bb0d1b94d3e179b6a"
+    - "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee"
+    - "tycho.page.9176c39f97f544f884666e291ae38b90"
+    - "tycho.page.ddeff7f1556f44f18c67659b73e6e15f"
+    - "tycho.page.81efb7e6d72349768b6f202845cbe35e"
+    - "tycho.page.357c2d162bd44f3aa06a995a1e691551"
+    - "tycho.page.c75a11f9786442a5b5456f11c2412df4"
+    - "tycho.page.3c78e2b17ac74973b2ae658977843c2a"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Database"
+    - "design"
+    - "storage"
+    - "engines"
+    - "and"
+    - "recovery"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Database design, storage engines and recovery
 
 > Status: independent-source technical draft chapters, including distinct V05/C01 and V05/C03 owners for [Issue #83](https://github.com/rouslanbaranov/tycho/issues/83), not complete coverage of all databases or a tested operational deployment. Example queries, failure cases and architecture diagrams are fictional and original.

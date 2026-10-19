@@ -1,3 +1,53 @@
+---
+metadata_version: 1
+id: "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8"
+kind: "page"
+parent_id: "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+canonical_path: "book/performance/capacity-planning-and-cost-performance.md"
+title: "Capacity planning and cost/performance trade-offs"
+topic_ids:
+  - "performance-engineering"
+perspectives:
+  - "architecture"
+  - "evaluation"
+summary: "Reader entry for Capacity planning and cost/performance trade-offs. Scope includes 1. Write a capacity envelope, not a magic instance count; 2. Cost must include more than infrastructure instance prices; 3. Original synthetic comparison."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Capacity planning and cost/performance trade-offs?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.49d9df04c0b4488e936b02e580a62271"
+    - "tycho.page.7ad835c06d5a4e3aabf6b14632f92c86"
+    - "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+    - "tycho.page.fdb4ef7f69154f8c8c433591f71494f9"
+    - "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060"
+    - "tycho.page.f05854fcc406435bbf38a192bc7ab2f1"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Capacity"
+    - "planning"
+    - "and"
+    - "cost/performance"
+    - "trade-offs"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Capacity planning and cost/performance trade-offs
 
 > **Tycho original book manuscript V07/C07**, 2026-10-19. Calculations, scenario, parameters and diagrams are fictional; official public AWS Well-Architected cost guidance was consulted for principles, not for prices, forecasts or measured performance. No cloud bill, simulator, benchmark or production cost study was used.

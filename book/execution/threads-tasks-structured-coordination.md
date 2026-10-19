@@ -1,3 +1,52 @@
+---
+metadata_version: 1
+id: "tycho.page.4e075e4ebc644f0e9b92c05294f62ca4"
+kind: "page"
+parent_id: "tycho.landing.e181d96c75784f818a330bb0f266520c"
+canonical_path: "book/execution/threads-tasks-structured-coordination.md"
+title: "Threads, tasks and coordination: cancellation and resource ownership"
+topic_ids:
+  - "execution-models"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Threads, tasks and coordination: cancellation and resource ownership. Scope includes 1. Four distinct concurrency boundaries; 2. ExecutorService and cooperative cancellation; 3. Structured concurrency is a task-lifetime mechanism."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Threads, tasks and coordination: cancellation and resource ownership?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.02238832b395417bae63939cd96b9134"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.e181d96c75784f818a330bb0f266520c"
+    - "tycho.page.114da51171c2474ebd56ee3bebad3bcb"
+    - "tycho.page.b6cecfd7301b408db611228b4cec59c5"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Threads"
+    - "tasks"
+    - "and"
+    - "coordination"
+    - "cancellation"
+    - "resource"
+    - "ownership"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Threads, tasks and coordination: cancellation and resource ownership
 
 > **Independent Tycho book draft V03/C01, 2026-10-19.** The public Java SE 25 and gRPC contracts cited below are independently published. The example and test plan are invented. No Java code was compiled or executed, no profiler ran, and no reviewer accepted an implementation. Structured concurrency in Java 25 is explicitly a **preview API**, not a permanent portability contract.

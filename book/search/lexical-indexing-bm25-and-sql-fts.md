@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.39a694d604d646a996bf90c3357c3b27"
+kind: "page"
+parent_id: "tycho.landing.4348c76938fc4d41b239721b94338436"
+canonical_path: "book/search/lexical-indexing-bm25-and-sql-fts.md"
+title: "Lexical retrieval: inverted indexes, BM25, PostgreSQL FTS and Lucene"
+topic_ids:
+  - "search-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Lexical retrieval: inverted indexes, BM25, PostgreSQL FTS and Lucene. Scope includes 1. Why inverted indexes work; BM25 and field weighting; 2. PostgreSQL 17 full-text search is a real candidate."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Lexical retrieval: inverted indexes, BM25, PostgreSQL FTS and Lucene?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.359813d554c84da794a353d4416b8047"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Lexical"
+    - "retrieval"
+    - "inverted"
+    - "indexes"
+    - "BM25"
+    - "PostgreSQL"
+    - "FTS"
+    - "and"
+    - "Lucene"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Lexical retrieval: inverted indexes, BM25, PostgreSQL FTS and Lucene
 
 > Technical research for Tycho [Issue #85](https://github.com/rouslanbaranov/tycho/issues/85). Public source reading 2026-10-19; PostgreSQL docs **17**, Lucene concepts/version references as explicitly cited. Entirely original illustrations and synthetic examples, not a search deployment or benchmark.

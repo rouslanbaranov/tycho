@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+kind: "page"
+parent_id: "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+canonical_path: "book/distributed/transactional-outbox-and-idempotency.md"
+title: "Local transaction, outbox publication and duplicate side effects"
+topic_ids:
+  - "distributed-systems"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Local transaction, outbox publication and duplicate side effects. Scope includes 1. Boundaries: why the naive dual write is unsafe; 2. Local transaction plus outbox: the changed atomic boundary; Record identity must be scoped correctly."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Local transaction, outbox publication and duplicate side effects?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Local"
+    - "transaction"
+    - "outbox"
+    - "publication"
+    - "and"
+    - "duplicate"
+    - "side"
+    - "effects"
+evidence_scope:
+  source_ids:
+    - "src.aws-idempotency"
+    - "src.http-semantics"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Local transaction, outbox publication and duplicate side effects
 
 > Tycho evidence-backed technical pilot, [#39](https://github.com/rouslanbaranov/tycho/issues/39); proposed owners V04/C04–C05. Source inspection: **2026-10-18**. Status: original technical explanation with specifically inspected public-source passages, **not** a running integration, verified production guarantee or independent human review.
@@ -54,7 +101,7 @@ sequenceDiagram
     participant Broker
     participant Consumer
     Client->>App: Register with request key K
-    App->>DB: BEGIN; registration + outbox event E
+    App->>DB: BEGIN transaction, write registration and outbox event E
     DB-->>App: COMMIT of both local records
     App-->>Client: Confirm registration
     DB-->>Relay: Observe committed outbox change
@@ -63,7 +110,6 @@ sequenceDiagram
     Broker->>Consumer: Deliver E
     Consumer->>Consumer: Deduplicate then apply local effect
 ```
-
 Text alternative: the registration and outbox rows commit together in the application's database. Publication and consumption happen later through a distinct relay and broker; there is **no global transaction** spanning these systems. The depicted replies are nominal events; lost responses and duplicate delivery are analyzed below.
 
 ### Record identity must be scoped correctly

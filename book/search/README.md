@@ -1,3 +1,51 @@
+---
+metadata_version: 1
+id: "tycho.landing.4348c76938fc4d41b239721b94338436"
+kind: "landing"
+parent_id: "tycho.book.37c50125355948f1b52ec66229ef59bd"
+canonical_path: "book/search/README.md"
+title: "Search and retrieval architecture"
+topic_ids:
+  - "search-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Search and retrieval architecture. Scope includes Question-driven reading route; Canonical research pages; Cross-domain context."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Search and retrieval architecture?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.39a694d604d646a996bf90c3357c3b27"
+    - "tycho.page.7a67fd6346a54eff97784465c22bbc74"
+    - "tycho.page.d34afc7f27b54431b779f7f75f11e2c3"
+    - "tycho.page.d79b0a48b30f4995a9bc110dbe691e52"
+    - "tycho.page.359813d554c84da794a353d4416b8047"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+    - "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Search"
+    - "and"
+    - "retrieval"
+    - "architecture"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Search and retrieval architecture
 
 > Bounded public-source technical coverage for [Issue #85](https://github.com/rouslanbaranov/tycho/issues/85). These pages explain system-design methods; no production search cluster, vector index, agent-answer evaluation or deployed MCP endpoint is claimed.

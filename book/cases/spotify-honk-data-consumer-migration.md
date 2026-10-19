@@ -1,3 +1,52 @@
+---
+metadata_version: 1
+id: "tycho.page.acfab58bfa6b470ca28010ac561dfeef"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/spotify-honk-data-consumer-migration.md"
+title: "Spotify — Honk: why data-lineage context and tests determine safe AI migration scope"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Spotify — Honk: why data-lineage context and tests determine safe AI migration scope. Scope includes Original migration and constraints; Iteration: three failure boundaries; Quantitative claims and why they cannot be mixed."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Spotify — Honk: why data-lineage context and tests determine safe AI migration scope?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.5b4cd43052b647abb7cb161381ebdcc5"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Spotify"
+    - "Honk"
+    - "why"
+    - "data-lineage"
+    - "context"
+    - "and"
+    - "tests"
+    - "determine"
+    - "safe"
+    - "migration"
+    - "scope"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Spotify — Honk: why data-lineage context and tests determine safe AI migration scope
 
 **Case ID:** `case.spotify.honk-dataset-consumer-migration` | **Owner:** M9 E16-05 #118 | **Status:** first-party evidence-backed draft; independent reviewer pending.  

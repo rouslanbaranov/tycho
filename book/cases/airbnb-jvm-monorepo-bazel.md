@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.c766e3289b95429bb158fb168f7bd0b9"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/airbnb-jvm-monorepo-bazel.md"
+title: "Airbnb — JVM monorepo Gradle to Bazel: coexistence before mandatory cutover"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Airbnb — JVM monorepo Gradle to Bazel: coexistence before mandatory cutover. Scope includes Original pressure and baseline; Architecture shift and ownership; Execution stages, validation and reversibility."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Airbnb — JVM monorepo Gradle to Bazel: coexistence before mandatory cutover?"
+  prerequisites: []
+  related_ids:
+    - "tycho.decision.54dff384ace3468490c46b1d00b0dcf6"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Airbnb"
+    - "JVM"
+    - "monorepo"
+    - "Gradle"
+    - "Bazel"
+    - "coexistence"
+    - "before"
+    - "mandatory"
+    - "cutover"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Airbnb — JVM monorepo Gradle to Bazel: coexistence before mandatory cutover
 
 **Case ID:** `case.airbnb.jvm-bazel` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-grounded draft, pending reviewer.  

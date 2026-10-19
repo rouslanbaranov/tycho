@@ -1,3 +1,53 @@
+---
+metadata_version: 1
+id: "tycho.page.aa810dd152884b35a84f0f4cbe4369e9"
+kind: "page"
+parent_id: "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+canonical_path: "book/distributed/outbox-inbox-sagas-and-durable-workflows.md"
+title: "Outbox, inbox, sagas and durable workflow coordination"
+topic_ids:
+  - "distributed-systems"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Outbox, inbox, sagas and durable workflow coordination. Scope includes 1. Two unsafe dual-write orders; Publication truth table; 2. Publication schema and ordering boundaries."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Outbox, inbox, sagas and durable workflow coordination?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+    - "tycho.page.3c78e2b17ac74973b2ae658977843c2a"
+    - "tycho.page.0b493340594c4c4392c5d93940a7f319"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Outbox"
+    - "inbox"
+    - "sagas"
+    - "and"
+    - "durable"
+    - "workflow"
+    - "coordination"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Outbox, inbox, sagas and durable workflow coordination
 
 > **Tycho manuscript — proposed V04/C05**, 2026-10-19. Primary public references: transactional-outbox and saga/consumer patterns, plus Debezium 3.6 configuration. Original synthetic sequence and state diagram. No broker, CDC process, workflow runner or actual database was deployed, exercised or independently reviewed. Earlier combined [outbox/idempotency research](transactional-outbox-and-idempotency.md) remains preserved for line-level source comparison.

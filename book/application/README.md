@@ -1,3 +1,63 @@
+---
+metadata_version: 1
+id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+kind: "landing"
+parent_id: "tycho.book.37c50125355948f1b52ec66229ef59bd"
+canonical_path: "book/application/README.md"
+title: "Foundations and application architecture — researched entry"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Foundations and application architecture — researched entry. Scope includes How the material fits together; Research pages; Related existing book content."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Foundations and application architecture — researched entry?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a2cd4465792a4740aa5150ad248fd420"
+    - "tycho.page.b42e3ffc4a924b7089d261d0a3dc33b0"
+    - "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf"
+    - "tycho.page.76244dbe2bd44035b7154f821191f6f2"
+    - "tycho.page.31cda61d174248eaa326559d256ce352"
+    - "tycho.page.4318e542ac7e445b9e8b3150effd2cff"
+    - "tycho.page.06b70cb83d4f490ea9ef698a025e7684"
+    - "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3"
+    - "tycho.page.31c8e450f78c451d90cb6090df330c5a"
+    - "tycho.page.77b512c4e2e946bd92d70b4a714600c8"
+    - "tycho.page.acb452608a8b42898aae7482c27f5f04"
+    - "tycho.page.c226850223614886b61b7cb36c7d5032"
+    - "tycho.page.47ffb5c160bd4b10aff27101414c2133"
+    - "tycho.page.cccbd188936543a2aaf904f4002236d8"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Foundations"
+    - "and"
+    - "application"
+    - "architecture"
+    - "researched"
+    - "entry"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Foundations and application architecture — researched entry
 
 > **Status:** initial evidence-backed material for [Issue #79](https://github.com/rouslanbaranov/tycho/issues/79), not a completed ten-volume book or independently peer-reviewed reference. This is a practical reading route across V01 requirements foundations and V02 application-boundary content, pending final persistent page-ID schema.

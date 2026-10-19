@@ -1,3 +1,58 @@
+---
+metadata_version: 1
+id: "tycho.page.7ad835c06d5a4e3aabf6b14632f92c86"
+kind: "page"
+parent_id: "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+canonical_path: "book/performance/contention-saturation-and-scaling-laws.md"
+title: "Contention, saturation and scalability laws: distinguishing capacity limits"
+topic_ids:
+  - "performance-engineering"
+perspectives:
+  - "architecture"
+  - "evaluation"
+summary: "Reader entry for Contention, saturation and scalability laws: distinguishing capacity limits. Scope includes 1. Concurrency, parallel execution and completed throughput differ; 2. Amdahl's conditional bound; 3. A model for contention and coordination overhead."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Contention, saturation and scalability laws: distinguishing capacity limits?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.fdb4ef7f69154f8c8c433591f71494f9"
+    - "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e"
+    - "tycho.page.0d34dd26886340b89fd4f1499d790a81"
+    - "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060"
+    - "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+    - "tycho.page.49d9df04c0b4488e936b02e580a62271"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Contention"
+    - "saturation"
+    - "and"
+    - "scalability"
+    - "laws"
+    - "distinguishing"
+    - "capacity"
+    - "limits"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Contention, saturation and scalability laws: distinguishing capacity limits
 
 > **Tycho V07/C02 draft**, 2026-10-19. Original equations worked under explicit assumptions and invented load examples, not observed performance. Independently public queueing literature and Gunther's Universal Scalability Law paper are cited with narrow scope. No scaling experiment, fit or independently verified hardware benchmark was performed.

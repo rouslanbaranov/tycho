@@ -1,3 +1,48 @@
+---
+metadata_version: 1
+id: "tycho.page.09cb313598ad41bbafd7b10d9b4e8018"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/shopify-packwerk-boundary-evolution.md"
+title: "Shopify — component governance is a migration, not a one-time refactor"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Shopify — component governance is a migration, not a one-time refactor. Scope includes Situation — the legacy architecture and constraint; Chosen architectural change; Migration and validation."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Shopify — component governance is a migration, not a one-time refactor?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.aed8b635f57f41dfa63c897a8d1caca8"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Shopify"
+    - "component"
+    - "governance"
+    - "migration"
+    - "not"
+    - "one-time"
+    - "refactor"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Shopify — component governance is a migration, not a one-time refactor
 
 **Case ID:** `case.shopify.component-governance` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-bound original draft; technical review pending.  

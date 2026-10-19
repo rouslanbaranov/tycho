@@ -1,3 +1,55 @@
+---
+metadata_version: 1
+id: "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765"
+kind: "page"
+parent_id: "tycho.landing.6f58e5c00dea4f4086963169a2590bf5"
+canonical_path: "book/deployment/disaster-recovery-and-recovery-objectives.md"
+title: "Disaster recovery: measured RTO, RPO, fencing and state reconciliation"
+topic_ids:
+  - "deployment-architecture"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Disaster recovery: measured RTO, RPO, fencing and state reconciliation. Scope includes 1. Define objectives by meaningful clocks and outcomes; 2. Replication is not historical recovery; 3. Original synthetic recovery scenario."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Disaster recovery: measured RTO, RPO, fencing and state reconciliation?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.2536d18422944e27abe4ea8549beb9ab"
+    - "tycho.page.6b3725950fad4c0db82417b3d0225d32"
+    - "tycho.page.81efb7e6d72349768b6f202845cbe35e"
+    - "tycho.landing.6f58e5c00dea4f4086963169a2590bf5"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Disaster"
+    - "recovery"
+    - "measured"
+    - "RTO"
+    - "RPO"
+    - "fencing"
+    - "and"
+    - "state"
+    - "reconciliation"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Disaster recovery: measured RTO, RPO, fencing and state reconciliation
 
 > **Tycho V08/C07 book manuscript**, 2026-10-19. Versioned PostgreSQL 17 PITR and public Well-Architected recovery-strategy guidance were reviewed. The failure chronology, tables and proposed drills are original fictional material. No failover, region loss, backup restore, replication test or independent human review was executed. Earlier [regional/DR research](multi-region-disaster-recovery-contracts.md) is preserved.

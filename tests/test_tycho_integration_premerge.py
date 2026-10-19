@@ -45,7 +45,7 @@ class IdentityTests(unittest.TestCase):
 class CommandInventoryTests(unittest.TestCase):
     def test_scoped_suite_reuses_existing_validators(self):
         commands = runner.commands("python-test-executable")
-        self.assertEqual(len(commands), 10)
+        self.assertEqual(len(commands), 12)
         self.assertTrue(all(command[0] == "python-test-executable"
                             for command in commands))
         paths = [" ".join(c) for c in commands]
@@ -55,6 +55,8 @@ class CommandInventoryTests(unittest.TestCase):
             "scripts/source_catalog.py --check",
             "scripts/validate_claim_references.py",
             "scripts/validate_metadata_schemas.py examples",
+            "scripts/validate_book_metadata.py",
+            "scripts/validate_knowledge.py --mode strict --json",
             "scripts/validate_book_navigation.py",
             "scripts/validate_m9_cases.py --self-test",
             "test_tycho*.py",

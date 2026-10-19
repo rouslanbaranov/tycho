@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.7419e7903c5549a6a9c7944f4214f7e1"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/uber-doma-domains.md"
+title: "Uber — DOMA: governing service ownership after microservice explosion"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Uber — DOMA: governing service ownership after microservice explosion. Scope includes Situation — the legacy architecture and constraint; Chosen architectural change; Migration and validation."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Uber — DOMA: governing service ownership after microservice explosion?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.aed8b635f57f41dfa63c897a8d1caca8"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Uber"
+    - "DOMA"
+    - "governing"
+    - "service"
+    - "ownership"
+    - "after"
+    - "microservice"
+    - "explosion"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Uber — DOMA: governing service ownership after microservice explosion
 
 **Case ID:** `case.uber.doma-domains` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-bound original draft; technical review pending.  

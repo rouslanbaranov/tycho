@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.page.868027aee4884210bea1d8a6542fbfb0"
+kind: "page"
+parent_id: "tycho.landing.b656116463d9480f83199d8202b127a4"
+canonical_path: "book/decisions/requirements-and-workload-architecture-profiles.md"
+title: "From requirements and workloads to a testable architecture profile"
+topic_ids:
+  - "architecture-decisions"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for From requirements and workloads to a testable architecture profile. Scope includes 1. Begin with a user outcome and a system boundary; 2. Four kinds of requirement must stay distinct; 3. Workload is a vector, not a user count."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of From requirements and workloads to a testable architecture profile?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.0ce5d0aaf63f425ebf556ea97e2d24a9"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b656116463d9480f83199d8202b127a4"
+    - "tycho.page.06b70cb83d4f490ea9ef698a025e7684"
+    - "tycho.page.47ffb5c160bd4b10aff27101414c2133"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "From"
+    - "requirements"
+    - "and"
+    - "workloads"
+    - "testable"
+    - "architecture"
+    - "profile"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # From requirements and workloads to a testable architecture profile
 
 > **Tycho independent technical chapter draft:** proposed V10/C01. Authored 2026-10-19 using publicly accessible architecture-evaluation guidance and original synthetic examples. This chapter explains a *book-level method*; the reusable [authoring profile contract](../../authoring/models/requirements-workload-profile.md) remains a separate supporting tool. No actual organization, workload telemetry, approval or benchmark is represented.

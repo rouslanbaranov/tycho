@@ -1,3 +1,52 @@
+---
+metadata_version: 1
+id: "tycho.page.e0f0d5b68f834acbae94cc6714895dd3"
+kind: "page"
+parent_id: "tycho.landing.73dff529d70048569efef74bffa88b00"
+canonical_path: "book/scaling/cache-invalidation-stampede-and-hot-keys.md"
+title: "Cache invalidation, stampedes and hot-key failure modes"
+topic_ids:
+  - "scaling-mechanisms"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Cache invalidation, stampedes and hot-key failure modes. Scope includes 1. The stale-fill-after-invalidation race; 2. Stampede at a synchronized expiry; 3. A refresh lock is not automatically a correctness lock."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Cache invalidation, stampedes and hot-key failure modes?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.ded52d8d012347b79d70e608488cf6a4"
+    - "tycho.page.33742c54f667446cbf57cb9f3696a533"
+    - "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.73dff529d70048569efef74bffa88b00"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Cache"
+    - "invalidation"
+    - "stampedes"
+    - "and"
+    - "hot-key"
+    - "failure"
+    - "modes"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Cache invalidation, stampedes and hot-key failure modes
 
 > **Original Tycho V06/C02 chapter draft**, 2026-10-19. Public Caffeine refresh, Redis cache-aside and EXPIRE sources describe mechanisms. All races and load examples here are educational inventions; no cache, Redis lock, version guard, database or benchmark was run or reviewed. The earlier [combined cache research](local-distributed-caching-and-invalidation.md) remains intact until claims are reconciled.

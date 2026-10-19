@@ -1,3 +1,55 @@
+---
+metadata_version: 1
+id: "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+kind: "landing"
+parent_id: "tycho.book.37c50125355948f1b52ec66229ef59bd"
+canonical_path: "book/distributed/README.md"
+title: "Distributed coordination, transactions and events"
+topic_ids:
+  - "distributed-systems"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Distributed coordination, transactions and events. Scope includes Reading route; Canonical researched pages; Adjacent and unfinished coverage."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Distributed coordination, transactions and events?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.1b2657011d454460856103419095031b"
+    - "tycho.page.d4822cc1e71c4f73896b7f6509f6daae"
+    - "tycho.page.3c78e2b17ac74973b2ae658977843c2a"
+    - "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f"
+    - "tycho.page.aa810dd152884b35a84f0f4cbe4369e9"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.7beb6ba382a1458dbfba5800ff1b53af"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.c226850223614886b61b7cb36c7d5032"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Distributed"
+    - "coordination"
+    - "transactions"
+    - "and"
+    - "events"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Distributed coordination, transactions and events
 
 **Status:** independently researched technical manuscript pages, with two distinct new V04/C04–C05 owner drafts; the distributed-systems volume is **not** complete. Source revision verification and independent domain review remain separate work. A manually curated knowledge graph is not part of Tycho infrastructure.

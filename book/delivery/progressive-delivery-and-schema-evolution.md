@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+kind: "page"
+parent_id: "tycho.landing.fe2eace7b2df4ae480adbdf844b68100"
+canonical_path: "book/delivery/progressive-delivery-and-schema-evolution.md"
+title: "Progressive delivery, mixed-version contracts and database evolution"
+topic_ids:
+  - "software-delivery"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Progressive delivery, mixed-version contracts and database evolution. Scope includes 1. Four distinct deployment modes; 2. Compatibility is a matrix, not a Boolean; 3. Expand → migrate → contract with explicit gates."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Progressive delivery, mixed-version contracts and database evolution?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.7921e82a71b9446790f185c818326911"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Progressive"
+    - "delivery"
+    - "mixed-version"
+    - "contracts"
+    - "and"
+    - "database"
+    - "evolution"
+evidence_scope:
+  source_ids:
+    - "src.k8s-deployments"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Progressive delivery, mixed-version contracts and database evolution
 
 > Tycho E14-10 [#88](https://github.com/rouslanbaranov/tycho/issues/88), original source-bounded research 2026-10-19. The migration stages and failure timeline are fictional. No controlled rollout, restored backup, upgrade or independent review was performed.

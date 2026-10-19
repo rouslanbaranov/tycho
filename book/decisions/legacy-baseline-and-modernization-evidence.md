@@ -1,3 +1,57 @@
+---
+metadata_version: 1
+id: "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1"
+kind: "page"
+parent_id: "tycho.landing.b656116463d9480f83199d8202b127a4"
+canonical_path: "book/decisions/legacy-baseline-and-modernization-evidence.md"
+title: "Legacy system baseline and modernization evidence: deciding what to keep"
+topic_ids:
+  - "architecture-decisions"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Legacy system baseline and modernization evidence: deciding what to keep. Scope includes 1. Old software is not itself an architecture defect; 2. Collect a baseline as an evidence-bearing architecture model; 3. Original synthetic case: a catalog and import service."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Legacy system baseline and modernization evidence: deciding what to keep?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b656116463d9480f83199d8202b127a4"
+    - "tycho.page.868027aee4884210bea1d8a6542fbfb0"
+    - "tycho.page.47ffb5c160bd4b10aff27101414c2133"
+    - "tycho.page.cccbd188936543a2aaf904f4002236d8"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Legacy"
+    - "system"
+    - "baseline"
+    - "and"
+    - "modernization"
+    - "evidence"
+    - "deciding"
+    - "what"
+    - "keep"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Legacy system baseline and modernization evidence: deciding what to keep
 
 > **Tycho book chapter draft:** proposed V10/C02, 2026-10-19. This is an original, industry-neutral teaching example based on admissible public modernization literature. It is not a description, reconstruction, measurement or modernization plan for an actual employer, application or production system. Its companion [legacy-profile authoring model](../../authoring/models/legacy-modernization-profile.md) is an information-gathering tool, not a replacement for this chapter.

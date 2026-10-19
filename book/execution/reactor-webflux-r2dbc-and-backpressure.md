@@ -1,3 +1,47 @@
+---
+metadata_version: 1
+id: "tycho.page.114da51171c2474ebd56ee3bebad3bcb"
+kind: "page"
+parent_id: "tycho.landing.e181d96c75784f818a330bb0f266520c"
+canonical_path: "book/execution/reactor-webflux-r2dbc-and-backpressure.md"
+title: "Reactive execution, WebFlux, R2DBC and backpressure"
+topic_ids:
+  - "execution-models"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Reactive execution, WebFlux, R2DBC and backpressure. Scope includes 1. Nonblocking I/O is an end-to-end contract; 2. Reactive Streams is demand coordination, not a magic queue; 3. Reactor 3.7.0: scheduler choice and context."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Reactive execution, WebFlux, R2DBC and backpressure?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.02238832b395417bae63939cd96b9134"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Reactive"
+    - "execution"
+    - "WebFlux"
+    - "R2DBC"
+    - "and"
+    - "backpressure"
+evidence_scope:
+  source_ids:
+    - "src.r2dbc"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Reactive execution, WebFlux, R2DBC and backpressure
 
 > **Tycho #82; research inspected 2026-10-18.** Canonical question: when does a nonblocking reactive chain improve a service, and which guarantees survive a database, queue or HTTP boundary? Scope: Reactor Core **3.7.0**, Spring Framework **6.2** reference, R2DBC SPI **1.0.0.RELEASE**. No running Spring application, driver, benchmark or independent review is claimed.

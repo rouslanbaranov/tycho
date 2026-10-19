@@ -1,3 +1,59 @@
+---
+metadata_version: 1
+id: "tycho.page.eb130a7f820544a2ba0e0883c0ce587b"
+kind: "page"
+parent_id: "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+canonical_path: "book/performance/tail-latency-fanout-and-deadline-budgets.md"
+title: "Tail latency, fan-out and end-to-end deadline budgets"
+topic_ids:
+  - "performance-engineering"
+perspectives:
+  - "architecture"
+  - "evaluation"
+summary: "Reader entry for Tail latency, fan-out and end-to-end deadline budgets. Scope includes 1. One percentile cannot describe a distributed request; 2. Draw the critical path and distinguish parallel from serial; 4. Hedging, replication and selective degradation."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Tail latency, fan-out and end-to-end deadline budgets?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+    - "tycho.page.cccbd188936543a2aaf904f4002236d8"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.page.02238832b395417bae63939cd96b9134"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Tail"
+    - "latency"
+    - "fan-out"
+    - "and"
+    - "end-to-end"
+    - "deadline"
+    - "budgets"
+evidence_scope:
+  source_ids:
+    - "src.aws-backoff"
+    - "src.sre-cascading"
+    - "src.tail-at-scale"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Tail latency, fan-out and end-to-end deadline budgets
 
 > **Tycho chapter draft:** intended canonical topic V07/C04 of the provisional 69-chapter table of contents. Source scope reviewed 2026-10-19. This page is original explanatory material with synthetic numbers; no live trace, experiment, performance benchmark, independent reviewer acceptance or production SLO is claimed.

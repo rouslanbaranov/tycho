@@ -3,6 +3,7 @@ from copy import deepcopy
 import json
 from pathlib import Path
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -91,6 +92,19 @@ class SnapshotRoutingTests(unittest.TestCase):
         data = route.canonical_scan(self.root, allow_partial=True)
         self.assertEqual(data["coverage"], "partial")
         self.assertEqual(data["unannotated_paths"], ["book/extra.md"])
+
+    def test_cli_partial_check_requires_explicit_disposition(self):
+        (self.root/"book/extra.md").write_text("# No metadata\n")
+        data = route.canonical_scan(self.root, allow_partial=True)
+        index = self.root/"route-index.json"
+        index.write_text(json.dumps(data))
+        command = [sys.executable, str(ROOT/"scripts/route_index.py"), "check",
+                   "--root", str(self.root), "--index", str(index)]
+        denied = subprocess.run(command, text=True, capture_output=True)
+        self.assertNotEqual(denied.returncode, 0)
+        self.assertIn("partial routing coverage", denied.stderr)
+        allowed = subprocess.run(command + ["--allow-partial"], text=True, capture_output=True)
+        self.assertEqual(allowed.returncode, 0, allowed.stderr)
 
     def test_dangling_related_reference_rejected(self):
         self.page["route_hints"]["related_ids"] = ["tycho.page.unknown1"]

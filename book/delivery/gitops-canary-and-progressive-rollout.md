@@ -1,3 +1,55 @@
+---
+metadata_version: 1
+id: "tycho.page.b938ff1a06264492a425f2eff555ae7d"
+kind: "page"
+parent_id: "tycho.landing.fe2eace7b2df4ae480adbdf844b68100"
+canonical_path: "book/delivery/gitops-canary-and-progressive-rollout.md"
+title: "GitOps, rolling, blue/green and canary release architecture"
+topic_ids:
+  - "software-delivery"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for GitOps, rolling, blue/green and canary release architecture. Scope includes 1. GitOps reconciles desired configuration, not business outcomes; 2. Release strategies and their limits; 3. Original fictional canary failure."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of GitOps, rolling, blue/green and canary release architecture?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb"
+    - "tycho.page.357c2d162bd44f3aa06a995a1e691551"
+    - "tycho.page.7921e82a71b9446790f185c818326911"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.fe2eace7b2df4ae480adbdf844b68100"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "GitOps"
+    - "rolling"
+    - "blue/green"
+    - "and"
+    - "canary"
+    - "release"
+    - "architecture"
+evidence_scope:
+  source_ids:
+    - "src.k8s-deployments"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # GitOps, rolling, blue/green and canary release architecture
 
 > **Independent Tycho V08/C04 manuscript**, 2026-10-19. Public Kubernetes Deployment and Argo Rollouts documentation informs controller mechanisms. All rollout examples, diagrams and acceptance criteria are original hypotheticals; no cluster, deployment, pipeline, experiment or external review was executed. Prior [mixed rollout/schema research](progressive-delivery-and-schema-evolution.md) is preserved for editorial mapping.

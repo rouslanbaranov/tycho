@@ -1,3 +1,52 @@
+---
+metadata_version: 1
+id: "tycho.page.33742c54f667446cbf57cb9f3696a533"
+kind: "page"
+parent_id: "tycho.landing.73dff529d70048569efef74bffa88b00"
+canonical_path: "book/scaling/local-and-distributed-cache-design.md"
+title: "Local and distributed caching: authority, freshness and placement"
+topic_ids:
+  - "scaling-mechanisms"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Local and distributed caching: authority, freshness and placement. Scope includes 1. Begin with the authority and the data contract; 2. Three basic placements; 3. Local cache eviction and refresh are different actions."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Local and distributed caching: authority, freshness and placement?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.ded52d8d012347b79d70e608488cf6a4"
+    - "tycho.page.e0f0d5b68f834acbae94cc6714895dd3"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.73dff529d70048569efef74bffa88b00"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+    - "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Local"
+    - "and"
+    - "distributed"
+    - "caching"
+    - "authority"
+    - "freshness"
+    - "placement"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Local and distributed caching: authority, freshness and placement
 
 > **Independent Tycho draft V06/C01, 2026-10-19.** Public Redis cache-aside and Caffeine eviction/refresh specifications inform the mechanism. All examples are invented. No application, cache server, performance test or independent reviewer was involved. The former [combined caching research](local-distributed-caching-and-invalidation.md) is retained for source/claim reconciliation.

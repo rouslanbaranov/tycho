@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/spotify-tech-migration-long-tail.md"
+title: "Spotify — removing long-tail platform migrations through ownership and Backstage"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Spotify — removing long-tail platform migrations through ownership and Backstage. Scope includes Pressure, legacy baseline and actual chosen direction; Migration mechanics and reliability; Outcomes and negative lessons."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Spotify — removing long-tail platform migrations through ownership and Backstage?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.acfab58bfa6b470ca28010ac561dfeef"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Spotify"
+    - "removing"
+    - "long-tail"
+    - "platform"
+    - "migrations"
+    - "through"
+    - "ownership"
+    - "and"
+    - "Backstage"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Spotify — removing long-tail platform migrations through ownership and Backstage
 
 **Case ID:** `case.spotify.tech-migrations-long-tail` | **M9:** E16-05 #118 | **Status:** original case draft; independent reviewer pending.  

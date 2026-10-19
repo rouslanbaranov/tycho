@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.decision.cb09e574f2a64060a6f46120394e398d"
+kind: "decision"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/decisions/reactive-vs-virtual-threads.md"
+title: "Decision Playbook — Reactive event loops, virtual threads and queued I/O"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Decision Playbook — Reactive event loops, virtual threads and queued I/O. Scope includes Synthetic legacy system and decision problem; Contrasting historical evidence; Decision tree and chosen ADR."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Decision Playbook — Reactive event loops, virtual threads and queued I/O?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.8982b044f7ee4305a2330a6ff989bb77"
+    - "tycho.page.8ece705ef365401395fd06585173b1f1"
+    - "tycho.page.36d83a4c7ecb4d12b60fb814d605646a"
+    - "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Decision"
+    - "Playbook"
+    - "Reactive"
+    - "event"
+    - "loops"
+    - "virtual"
+    - "threads"
+    - "and"
+    - "queued"
+    - "I/O"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Decision Playbook — Reactive event loops, virtual threads and queued I/O
 
 **ID:** `decision.async-reactive-vs-virtual-threads` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending.  

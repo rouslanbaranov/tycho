@@ -1,3 +1,45 @@
+---
+metadata_version: 1
+id: "tycho.page.d4822cc1e71c4f73896b7f6509f6daae"
+kind: "page"
+parent_id: "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+canonical_path: "book/distributed/causality-ordering-and-consensus.md"
+title: "Causality, ordering and consensus in distributed systems"
+topic_ids:
+  - "distributed-systems"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Causality, ordering and consensus in distributed systems. Scope includes 1. The happens-before relation describes causal knowledge; 2. Agreement, linearizability and availability solve different problems; What Raft safety requires beyond electing a leader."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Causality, ordering and consensus in distributed systems?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Causality"
+    - "ordering"
+    - "and"
+    - "consensus"
+    - "distributed"
+    - "systems"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Causality, ordering and consensus in distributed systems
 
 > Tycho research page for [Issue #80](https://github.com/rouslanbaranov/tycho/issues/80), proposed V04/C01–C02. Source inspection: 2026-10-18. Original explanatory prose and **synthetic** diagrams; not a formal proof, operational consensus deployment or independently reviewed implementation.

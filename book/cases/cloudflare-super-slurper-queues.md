@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/cloudflare-super-slurper-queues.md"
+title: "Cloudflare — Super Slurper: copy objects through queues and distributed workers"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Cloudflare — Super Slurper: copy objects through queues and distributed workers. Scope includes Pressure, legacy baseline and actual chosen direction; Migration mechanics and reliability; Outcomes and negative lessons."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Cloudflare — Super Slurper: copy objects through queues and distributed workers?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Cloudflare"
+    - "Super"
+    - "Slurper"
+    - "copy"
+    - "objects"
+    - "through"
+    - "queues"
+    - "and"
+    - "distributed"
+    - "workers"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Cloudflare — Super Slurper: copy objects through queues and distributed workers
 
 **Case ID:** `case.cloudflare.super-slurper-queues` | **M9:** E16-05 #118 | **Status:** original case draft; independent reviewer pending.  

@@ -1,3 +1,52 @@
+---
+metadata_version: 1
+id: "tycho.page.b95df0f6a3ee4355939f65193b11d8c9"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/netflix-java-platform-convergence.md"
+title: "Netflix — Java service-platform convergence without copying the former Netflix OSS stack"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Netflix — Java service-platform convergence without copying the former Netflix OSS stack. Scope includes Decision and boundary; Before — coupling hidden by fan-out; After — schema boundaries plus Java integration."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Netflix — Java service-platform convergence without copying the former Netflix OSS stack?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.36d83a4c7ecb4d12b60fb814d605646a"
+    - "tycho.page.aed8b635f57f41dfa63c897a8d1caca8"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Netflix"
+    - "Java"
+    - "service-platform"
+    - "convergence"
+    - "without"
+    - "copying"
+    - "the"
+    - "former"
+    - "OSS"
+    - "stack"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Netflix — Java service-platform convergence without copying the former Netflix OSS stack
 
 **Case ID:** `case.netflix.java-platform-convergence` · **Owner:** M9 E16-02 #115 · **Status:** source-backed draft; human technical review pending  

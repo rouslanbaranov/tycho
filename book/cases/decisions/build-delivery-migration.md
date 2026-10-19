@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.decision.54dff384ace3468490c46b1d00b0dcf6"
+kind: "decision"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/decisions/build-delivery-migration.md"
+title: "Decision Playbook — Build and delivery modernization: hermetic execution vs fleet adoption"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Decision Playbook — Build and delivery modernization: hermetic execution vs fleet adoption. Scope includes Synthetic legacy system and decision problem; Contrasting historical evidence; Decision tree and chosen ADR."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Decision Playbook — Build and delivery modernization: hermetic execution vs fleet adoption?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.c766e3289b95429bb158fb168f7bd0b9"
+    - "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2"
+    - "tycho.page.7419e7903c5549a6a9c7944f4214f7e1"
+    - "tycho.page.acfab58bfa6b470ca28010ac561dfeef"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Decision"
+    - "Playbook"
+    - "Build"
+    - "and"
+    - "delivery"
+    - "modernization"
+    - "hermetic"
+    - "execution"
+    - "fleet"
+    - "adoption"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Decision Playbook — Build and delivery modernization: hermetic execution vs fleet adoption
 
 **ID:** `decision.build-platform-and-adoption` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending.  

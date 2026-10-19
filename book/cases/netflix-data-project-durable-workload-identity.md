@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.ca73432e255443ca808b30f9587f20cb"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/netflix-data-project-durable-workload-identity.md"
+title: "Netflix Data Projects — From Human-Tied Credentials to Durable Data-Workload Identity"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Netflix Data Projects — From Human-Tied Credentials to Durable Data-Workload Identity. Scope includes Legacy security and reliability failure; A different security principal, not a longer-lived human token; Actual security and rollout boundaries."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Netflix Data Projects — From Human-Tied Credentials to Durable Data-Workload Identity?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Netflix"
+    - "Data"
+    - "Projects"
+    - "From"
+    - "Human-Tied"
+    - "Credentials"
+    - "Durable"
+    - "Data-Workload"
+    - "Identity"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Netflix Data Projects — From Human-Tied Credentials to Durable Data-Workload Identity
 
 **Case ID:** `case.netflix.durable-data-project-identity` · **Issue:** E16-05 #118 · **Status:** evidence-bounded draft; independent acceptance pending.  

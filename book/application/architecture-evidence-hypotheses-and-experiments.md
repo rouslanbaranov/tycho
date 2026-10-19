@@ -1,3 +1,53 @@
+---
+metadata_version: 1
+id: "tycho.page.a2cd4465792a4740aa5150ad248fd420"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/architecture-evidence-hypotheses-and-experiments.md"
+title: "Architecture evidence, competing hypotheses and decision experiments"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Architecture evidence, competing hypotheses and decision experiments. Scope includes 1. Five evidence classes are not substitutes; 2. Competing hypotheses beat single-cause stories; 3. Define the experiment contract before the result."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Architecture evidence, competing hypotheses and decision experiments?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+    - "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.page.4318e542ac7e445b9e8b3150effd2cff"
+    - "tycho.page.06b70cb83d4f490ea9ef698a025e7684"
+    - "tycho.page.f05854fcc406435bbf38a192bc7ab2f1"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Architecture"
+    - "evidence"
+    - "competing"
+    - "hypotheses"
+    - "and"
+    - "decision"
+    - "experiments"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Architecture evidence, competing hypotheses and decision experiments
 
 > **Tycho manuscript V01/C04 (2026-10-19).** Original experimental method and invented example; bounded public arc42 and SRE materials reviewed. No benchmark, controlled fault, actual source inspection of a target application, statistical acceptance or independent expert review has been executed.

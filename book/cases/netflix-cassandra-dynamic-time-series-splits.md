@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/netflix-cassandra-dynamic-time-series-splits.md"
+title: "Netflix — evolving Cassandra partition keys without destabilizing Time Series readers"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Netflix — evolving Cassandra partition keys without destabilizing Time Series readers. Scope includes From a correct provisioning estimate to an incorrect future; Two different levers for different skew shapes; Safety and trade-off analysis."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Netflix — evolving Cassandra partition keys without destabilizing Time Series readers?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Netflix"
+    - "evolving"
+    - "Cassandra"
+    - "partition"
+    - "keys"
+    - "without"
+    - "destabilizing"
+    - "Time"
+    - "Series"
+    - "readers"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Netflix — evolving Cassandra partition keys without destabilizing Time Series readers
 
 **Case ID:** `case.netflix.dynamic-timeseries-partition-splits` | **M9:** E16-04 #117 | **Period:** Netflix first-party article **2026-06-03** | **Status:** evidence-backed draft  

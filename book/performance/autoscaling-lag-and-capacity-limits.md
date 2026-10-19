@@ -1,3 +1,58 @@
+---
+metadata_version: 1
+id: "tycho.page.49d9df04c0b4488e936b02e580a62271"
+kind: "page"
+parent_id: "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+canonical_path: "book/performance/autoscaling-lag-and-capacity-limits.md"
+title: "Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability"
+topic_ids:
+  - "performance-engineering"
+perspectives:
+  - "architecture"
+  - "evaluation"
+summary: "Reader entry for Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability. Scope includes 1. Decompose the actual scale-out response time; 2. Feedback signals and the hot-key trap; 3. Autoscaling can lose the race against a burst."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.eb130a7f820544a2ba0e0883c0ce587b"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+    - "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+    - "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.page.ea94649bfd8c4be183f9114618d7ccaa"
+    - "tycho.page.2536d18422944e27abe4ea8549beb9ab"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Horizontal"
+    - "and"
+    - "vertical"
+    - "scaling"
+    - "autoscaling"
+    - "lag"
+    - "resource"
+    - "ceilings"
+    - "stability"
+evidence_scope:
+  source_ids:
+    - "src.k8s-hpa"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability
 
 > **Original System Design chapter draft**, intended V07/C06. Public specifications reviewed 2026-10-19; synthetic examples only. No autoscaler, Kubernetes cluster, cloud instance, load generator, production telemetry or independent review was used to validate the proposed designs.

@@ -1,3 +1,57 @@
+---
+metadata_version: 1
+id: "tycho.page.f921597aae854c6996459fc025a9bca3"
+kind: "page"
+parent_id: "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+canonical_path: "book/observability/distributed-tracing-context-and-sampling.md"
+title: "Distributed tracing: context propagation, sampling and causal limits"
+topic_ids:
+  - "observability"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Distributed tracing: context propagation, sampling and causal limits. Scope includes 1. A trace, a span and a request are different entities; 2. Causal and temporal interpretation; 3. Propagation is also a trust boundary."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Distributed tracing: context propagation, sampling and causal limits?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.436c2b22dc9e47acaaca7d18fadb511c"
+    - "tycho.page.c987c475cc5340bcb967f4b6f963b295"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71"
+    - "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+    - "tycho.page.eb130a7f820544a2ba0e0883c0ce587b"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Distributed"
+    - "tracing"
+    - "context"
+    - "propagation"
+    - "sampling"
+    - "and"
+    - "causal"
+    - "limits"
+evidence_scope:
+  source_ids:
+    - "src.trace-context"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Distributed tracing: context propagation, sampling and causal limits
 
 > **Tycho independent book draft V09/C03, 2026-10-19.** Draws on W3C Trace Context (Recommendation of 2021) and published OpenTelemetry tracing semantics. All requests, diagrams and fault scenarios are original fiction. No trace collection, backend or distributed experiment was executed.

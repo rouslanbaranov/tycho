@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.5a4108bc167f4e2387dbf019eac7881e"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/netflix-dgs-spring-graphql-convergence.md"
+title: "Netflix — DGS and Spring GraphQL: compatibility before duplicated-framework removal"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Netflix — DGS and Spring GraphQL: compatibility before duplicated-framework removal. Scope includes Architecture question; Three temporal architecture states; A revealing failed performance assumption."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Netflix — DGS and Spring GraphQL: compatibility before duplicated-framework removal?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Netflix"
+    - "DGS"
+    - "and"
+    - "Spring"
+    - "GraphQL"
+    - "compatibility"
+    - "before"
+    - "duplicated-framework"
+    - "removal"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Netflix — DGS and Spring GraphQL: compatibility before duplicated-framework removal
 
 **Case ID:** `case.netflix.dgs-spring-graphql-convergence` · **Owner:** M9 E16-02 #115 · **Status:** evidence-backed draft; human review pending  

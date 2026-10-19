@@ -1,3 +1,59 @@
+---
+metadata_version: 1
+id: "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060"
+kind: "page"
+parent_id: "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+canonical_path: "book/performance/overload-admission-control-and-graceful-degradation.md"
+title: "Overload protection, admission control and graceful degradation"
+topic_ids:
+  - "performance-engineering"
+perspectives:
+  - "architecture"
+  - "evaluation"
+summary: "Reader entry for Overload protection, admission control and graceful degradation. Scope includes 2. Admission must precede the expensive operation; 3. Queues, limits and priority create new contracts; 4. Bulkheads, circuit breakers and retries have different responsibilities."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Overload protection, admission control and graceful degradation?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.49d9df04c0b4488e936b02e580a62271"
+    - "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e"
+    - "tycho.page.cccbd188936543a2aaf904f4002236d8"
+    - "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+    - "tycho.page.fdb4ef7f69154f8c8c433591f71494f9"
+    - "tycho.page.eb130a7f820544a2ba0e0883c0ce587b"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Overload"
+    - "protection"
+    - "admission"
+    - "control"
+    - "and"
+    - "graceful"
+    - "degradation"
+evidence_scope:
+  source_ids:
+    - "src.aws-backoff"
+    - "src.sre-overload"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Overload protection, admission control and graceful degradation
 
 > **Tycho book chapter draft V07/C05 (2026-10-19).** Original examples and diagrams, with scope-bound published SRE and Builders' Library guidance. No deployed protection, incident, load generator, performance comparison or independent expert review has been executed.

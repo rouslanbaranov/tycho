@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.2536d18422944e27abe4ea8549beb9ab"
+kind: "page"
+parent_id: "tycho.landing.6f58e5c00dea4f4086963169a2590bf5"
+canonical_path: "book/deployment/multi-region-disaster-recovery-contracts.md"
+title: "Multi-zone availability, multi-region disaster recovery and restore contracts"
+topic_ids:
+  - "deployment-architecture"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Multi-zone availability, multi-region disaster recovery and restore contracts. Scope includes The question: what survives which loss?; RTO, RPO and their measurement boundaries; DR strategies with different operational dependencies."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Multi-zone availability, multi-region disaster recovery and restore contracts?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.ea94649bfd8c4be183f9114618d7ccaa"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Multi-zone"
+    - "availability"
+    - "multi-region"
+    - "disaster"
+    - "recovery"
+    - "and"
+    - "restore"
+    - "contracts"
+evidence_scope:
+  source_ids:
+    - "src.aws-static-stability"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Multi-zone availability, multi-region disaster recovery and restore contracts
 
 > Original Tycho E14-09 technical chapter, 2026-10-19, linked to [issue #87](https://github.com/rouslanbaranov/tycho/issues/87). The plans, tables and example timeline are **fictional and proposed**, not an operated disaster recovery system or evidence of a successful restore.

@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53"
+kind: "page"
+parent_id: "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+canonical_path: "book/observability/metric-pipelines-cardinality-and-retention.md"
+title: "Metrics ingestion, cardinality and time-series retention architecture"
+topic_ids:
+  - "observability"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Metrics ingestion, cardinality and time-series retention architecture. Scope includes 1. Separate measurement generation from retrieval; 2. Measurement types and aggregation limitations; 3. Temporality, restarts and data correctness."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Metrics ingestion, cardinality and time-series retention architecture?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.c987c475cc5340bcb967f4b6f963b295"
+    - "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406"
+    - "tycho.page.1c7350e3bc17483ba18f201d02727aea"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+    - "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Metrics"
+    - "ingestion"
+    - "cardinality"
+    - "and"
+    - "time-series"
+    - "retention"
+    - "architecture"
+evidence_scope:
+  source_ids:
+    - "src.otel-metrics-model"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Metrics ingestion, cardinality and time-series retention architecture
 
 > **Tycho source-grounded System Design draft V09/C02, 2026-10-19.** OpenTelemetry and Prometheus public specifications support the narrow instrumentation and data-model descriptions. All pipelines, rate/budget figures and failure tests here are original hypothetical examples. No collector, database, remote-write service or runtime metric stream was deployed or exercised.

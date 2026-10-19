@@ -1,3 +1,51 @@
+---
+metadata_version: 1
+id: "tycho.page.95bf2e08c056472f92faf870de8f1357"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/discord-search-index-cells.md"
+title: "Discord — search cells: splitting Elasticsearch clusters and changing shard keys"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Discord — search cells: splitting Elasticsearch clusters and changing shard keys. Scope includes Original pressure and baseline; Architecture shift and ownership; Execution stages, validation and reversibility."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Discord — search cells: splitting Elasticsearch clusters and changing shard keys?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.b55f5bf29d7946c78454a769980c476e"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Discord"
+    - "search"
+    - "cells"
+    - "splitting"
+    - "Elasticsearch"
+    - "clusters"
+    - "and"
+    - "changing"
+    - "shard"
+    - "keys"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Discord — search cells: splitting Elasticsearch clusters and changing shard keys
 
 **Case ID:** `case.discord.search-index-cells` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-grounded draft, pending reviewer.  

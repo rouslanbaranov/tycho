@@ -1,3 +1,61 @@
+---
+metadata_version: 1
+id: "tycho.page.35d5be6a4e074758afff95bf3ec68bc5"
+kind: "page"
+parent_id: "tycho.landing.b656116463d9480f83199d8202b127a4"
+canonical_path: "book/decisions/pattern-applicability-and-contraindications.md"
+title: "Architecture patterns: applicability, contraindications and evidence gates"
+topic_ids:
+  - "architecture-decisions"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Architecture patterns: applicability, contraindications and evidence gates. Scope includes 1. A pattern card answers a decision, not a vocabulary question; 2. Evaluate the baseline before choosing a target; 3. Worked applicability cards: deployment and communication."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Architecture patterns: applicability, contraindications and evidence gates?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.868027aee4884210bea1d8a6542fbfb0"
+    - "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1"
+    - "tycho.page.c226850223614886b61b7cb36c7d5032"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.0b493340594c4c4392c5d93940a7f319"
+    - "tycho.page.98616bdc3c514ea997b2cfe30ad7c070"
+    - "tycho.page.ded52d8d012347b79d70e608488cf6a4"
+    - "tycho.page.0d34dd26886340b89fd4f1499d790a81"
+    - "tycho.page.02238832b395417bae63939cd96b9134"
+    - "tycho.page.114da51171c2474ebd56ee3bebad3bcb"
+    - "tycho.page.b6cecfd7301b408db611228b4cec59c5"
+    - "tycho.page.0ce5d0aaf63f425ebf556ea97e2d24a9"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b656116463d9480f83199d8202b127a4"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Architecture"
+    - "patterns"
+    - "applicability"
+    - "contraindications"
+    - "and"
+    - "evidence"
+    - "gates"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Architecture patterns: applicability, contraindications and evidence gates
 
 > **Tycho chapter draft V10/C03**, 2026-10-19, original general-purpose explanations and synthetic examples. This is the book-level interpretation of pattern selection. The separately maintained [pattern applicability authoring model](../../authoring/models/pattern-applicability-card.md) remains a reusable decision-record tool and is not substituted for technical prose. No real design review, measured service or automatic selector is claimed.

@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.6d571f3069e847408a5f1f7d45c797c1"
+kind: "page"
+parent_id: "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+canonical_path: "book/performance/workload-shape-and-scalability-laws.md"
+title: "Workload shape and scalability laws"
+topic_ids:
+  - "performance-engineering"
+perspectives:
+  - "architecture"
+  - "evaluation"
+summary: "Reader entry for Workload shape and scalability laws. Scope includes 1. Workload profile before technology; 2. Little's Law and saturation; 3. Universal Scalability Law."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Workload shape and scalability laws?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+    - "tycho.page.0d34dd26886340b89fd4f1499d790a81"
+    - "tycho.landing.73dff529d70048569efef74bffa88b00"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Workload"
+    - "shape"
+    - "and"
+    - "scalability"
+    - "laws"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Workload shape and scalability laws
 
 > Tycho [#86](https://github.com/rouslanbaranov/tycho/issues/86). Original synthetic examples; public sources inspected 2026-10-19. No deployed workload or measured scalability is claimed.

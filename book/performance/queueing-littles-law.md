@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+kind: "page"
+parent_id: "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+canonical_path: "book/performance/queueing-littles-law.md"
+title: "Queueing, Little's Law and workload measurement boundaries"
+topic_ids:
+  - "performance-engineering"
+perspectives:
+  - "architecture"
+  - "evaluation"
+summary: "Reader entry for Queueing, Little's Law and workload measurement boundaries. Scope includes Orientation: four numbers that are not interchangeable; Conservation before prediction; Architecture: Little's Law is an average identity."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Queueing, Little's Law and workload measurement boundaries?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Queueing"
+    - "Little"
+    - "Law"
+    - "and"
+    - "workload"
+    - "measurement"
+    - "boundaries"
+evidence_scope:
+  source_ids:
+    - "src.little-law"
+    - "src.sre-overload"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Queueing, Little's Law and workload measurement boundaries
 
 > **Tycho technical chapter — first evidence-backed pilot**, issue [#38](https://github.com/rouslanbaranov/tycho/issues/38), proposed volume V07/C01. Research/read date: **2026-10-18**. Status: independently public-source-grounded draft, self-reviewed mechanically; **not** human-reviewed, a performance benchmark, production deployment or a capacity estimate.
@@ -113,10 +159,9 @@ sequenceDiagram
     Note over Client,Boundary: Observation window is [0,5) seconds
     Client->>Boundary: Admit request at t=0
     Note over Boundary: Work stays in system during [0,5)
-    Note over Boundary: Measurement ends t=5; request remains outstanding
+    Note over Boundary: Measurement ends t=5, request remains outstanding
     Boundary-->>Client: Request exits at t=10 (outside window)
 ```
-
 Text alternative: the only request enters at t=0, remains outstanding at t=5 when observation stops, and exits at t=10. Using its full eventual residence time in the five-second window mixes incompatible intervals and produces the counterexample above.
 
 ## Workload generators: closed feedback versus independent arrivals

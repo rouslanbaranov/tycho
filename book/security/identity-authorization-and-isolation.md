@@ -1,3 +1,48 @@
+---
+metadata_version: 1
+id: "tycho.page.dde63373c50f4f4a80e727b6e160def5"
+kind: "page"
+parent_id: "tycho.landing.3870e6370654489c949e098b9acd1840"
+canonical_path: "book/security/identity-authorization-and-isolation.md"
+title: "Threat boundaries, identity, authorization and service isolation"
+topic_ids:
+  - "security-architecture"
+perspectives:
+  - "architecture"
+  - "security"
+summary: "Reader entry for Threat boundaries, identity, authorization and service isolation. Scope includes 1. Start with protected outcomes and an explicit threat model; 2. Authentication is not authorization; 3. Object-level authorization and multitenancy."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Threat boundaries, identity, authorization and service isolation?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Threat"
+    - "boundaries"
+    - "identity"
+    - "authorization"
+    - "and"
+    - "service"
+    - "isolation"
+evidence_scope:
+  source_ids:
+    - "src.oauth-security"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Threat boundaries, identity, authorization and service isolation
 
 > Original Tycho E14-12 [#90](https://github.com/rouslanbaranov/tycho/issues/90), public-specification reading 2026-10-19. This is a decision-method chapter, **not** a penetration test, vulnerability assessment, product certification, configured policy or observed security guarantee.

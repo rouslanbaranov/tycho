@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.98616bdc3c514ea997b2cfe30ad7c070"
+kind: "page"
+parent_id: "tycho.landing.816c847b8daa4d67a3fe1e3a8cbe3830"
+canonical_path: "book/integration/messaging-families-and-durable-workflows.md"
+title: "Messaging families: RabbitMQ, Pulsar, NATS and durable workflows"
+topic_ids:
+  - "integration-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Messaging families: RabbitMQ, Pulsar, NATS and durable workflows. Scope includes 1. First identify what a consumer must own; RabbitMQ quorum queues and publisher confirms; NATS Core and JetStream."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Messaging families: RabbitMQ, Pulsar, NATS and durable workflows?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.3c78e2b17ac74973b2ae658977843c2a"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Messaging"
+    - "families"
+    - "RabbitMQ"
+    - "Pulsar"
+    - "NATS"
+    - "and"
+    - "durable"
+    - "workflows"
+evidence_scope:
+  source_ids:
+    - "src.nats"
+    - "src.rabbitmq"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Messaging families: RabbitMQ, Pulsar, NATS and durable workflows
 
 > Tycho Issue [#81](https://github.com/rouslanbaranov/tycho/issues/81), proposed V04/C06. Public documentation inspected on 2026-10-18; versions indicated per vendor. Original conceptual comparisons and synthetic diagrams, **not** a benchmark or generic product ranking.

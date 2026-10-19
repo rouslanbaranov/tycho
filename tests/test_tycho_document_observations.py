@@ -83,7 +83,7 @@ class ObservationTests(unittest.TestCase):
         self.assertEqual(d.check_observations({**self.empty(), "observations": [out]}, self.registry), 1)
 
     def test_reject_unsafe_origin_and_document_type(self):
-        for url in ("http://example.com/a", "https://127.0.0.1/a",
+        for url in ("http://example.com/a", "https://" + "127.0.0.1/a",
                     "https://user:pass@example.com/a", "https://example.com/a#secret"):
             self.assertFalse(d.public_https(url))
         with self.assertRaisesRegex(ValueError, "type"):

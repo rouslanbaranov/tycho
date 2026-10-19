@@ -1,3 +1,52 @@
+---
+metadata_version: 1
+id: "tycho.page.47ffb5c160bd4b10aff27101414c2133"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/architecture-evolution-and-extraction.md"
+title: "Architecture evolution: when to keep, modularize or extract a service"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Architecture evolution: when to keep, modularize or extract a service. Scope includes 1. Start with an observed baseline, not a preferred destination; 2. Three credible modernization options; Option A: keep the deployment, improve the architecture."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Architecture evolution: when to keep, modularize or extract a service?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.c226850223614886b61b7cb36c7d5032"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Architecture"
+    - "evolution"
+    - "when"
+    - "keep"
+    - "modularize"
+    - "extract"
+    - "service"
+evidence_scope:
+  source_ids:
+    - "src.hexagonal"
+    - "src.microservices"
+    - "src.monolith-first"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Architecture evolution: when to keep, modularize or extract a service
 
 > **Tycho research page — Issue #79**, proposed V02/C03–C06. Public source review: **2026-10-18**. Original explanation and wholly synthetic migration case; not a completed architecture assessment or independently verified modernization plan.

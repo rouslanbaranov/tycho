@@ -1,3 +1,48 @@
+---
+metadata_version: 1
+id: "tycho.page.02238832b395417bae63939cd96b9134"
+kind: "page"
+parent_id: "tycho.landing.e181d96c75784f818a330bb0f266520c"
+canonical_path: "book/execution/platform-threads-executors-and-virtual-threads.md"
+title: "Platform-thread executors and virtual-thread capacity"
+topic_ids:
+  - "execution-models"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Platform-thread executors and virtual-thread capacity. Scope includes The concurrency question; Platform pools, queues and deadlines; Virtual threads: tasks are cheap; operations are not."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Platform-thread executors and virtual-thread capacity?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Platform-thread"
+    - "executors"
+    - "and"
+    - "virtual-thread"
+    - "capacity"
+evidence_scope:
+  source_ids:
+    - "src.jep444"
+    - "src.jep491"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Platform-thread executors and virtual-thread capacity
 
 > **Tycho #82, public research inspected 2026-10-18.** Scope: OpenJDK JEP 444 (JDK 21), OpenJDK JEP 491 implementation discussion (JDK 24), Spring Boot 3.3.13. Original design reasoning and synthetic examples; no Java code was executed, no load test or independent human review occurred.
@@ -75,12 +120,11 @@ sequenceDiagram
     participant I as Blocking I/O
     V->>C: Mount and execute
     V->>I: Supported blocking call
-    Note over V,C: Normally unmount; carrier reused
+    Note over V,C: Normally unmount, carrier reused
     I-->>V: Ready, timeout or interruption
     V->>C: Resume on available carrier
     Note over V,C: Native/VM pinning exceptions are version-dependent
 ```
-
 Text alternative: a virtual task temporarily uses a carrier. Supported blocking I/O normally frees the carrier until completion. JDK 21 monitor pinning differs from JDK 24 behavior; the diagram does not promise unmounting for every native library.
 
 ## Cancellation, context, failures

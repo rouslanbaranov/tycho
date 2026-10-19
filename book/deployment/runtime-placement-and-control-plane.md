@@ -1,3 +1,47 @@
+---
+metadata_version: 1
+id: "tycho.page.ea94649bfd8c4be183f9114618d7ccaa"
+kind: "page"
+parent_id: "tycho.landing.6f58e5c00dea4f4086963169a2590bf5"
+canonical_path: "book/deployment/runtime-placement-and-control-plane.md"
+title: "Deployment topology and control-plane independence"
+topic_ids:
+  - "deployment-architecture"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Deployment topology and control-plane independence. Scope includes Decision question and scope; Compute models and their real trade-offs; Control plane, data plane and static stability."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Deployment topology and control-plane independence?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.2536d18422944e27abe4ea8549beb9ab"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Deployment"
+    - "topology"
+    - "and"
+    - "control-plane"
+    - "independence"
+evidence_scope:
+  source_ids:
+    - "src.aws-static-stability"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Deployment topology and control-plane independence
 
 > Original Tycho technical chapter for [E14-09 / issue #87](https://github.com/rouslanbaranov/tycho/issues/87), research scope inspected 2026-10-19. Explains design trade-offs; NOT a deployment recipe or performance benchmark. The examples are synthetic, no employer/private architecture is used.

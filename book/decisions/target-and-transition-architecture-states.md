@@ -1,3 +1,58 @@
+---
+metadata_version: 1
+id: "tycho.page.cf0ce38c73e44950aec5a9c2869bee63"
+kind: "page"
+parent_id: "tycho.landing.b656116463d9480f83199d8202b127a4"
+canonical_path: "book/decisions/target-and-transition-architecture-states.md"
+title: "Target architecture versus transition states: coexistence, reversibility and recovery"
+topic_ids:
+  - "architecture-decisions"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Target architecture versus transition states: coexistence, reversibility and recovery. Scope includes 1. Keep five distinct contracts; 2. The fictional migration: moving a public catalogue read model; 3. A versioned sequence of safe intermediate states."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Target architecture versus transition states: coexistence, reversibility and recovery?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.81efb7e6d72349768b6f202845cbe35e"
+    - "tycho.page.31c8e450f78c451d90cb6090df330c5a"
+    - "tycho.landing.b656116463d9480f83199d8202b127a4"
+    - "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1"
+    - "tycho.page.cccbd188936543a2aaf904f4002236d8"
+    - "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3"
+    - "tycho.page.f05854fcc406435bbf38a192bc7ab2f1"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+    - "tycho.page.ca056fe720e74a9691ce0c253d9526fc"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Target"
+    - "architecture"
+    - "versus"
+    - "transition"
+    - "states"
+    - "coexistence"
+    - "reversibility"
+    - "and"
+    - "recovery"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Target architecture versus transition states: coexistence, reversibility and recovery
 
 > **Independent Tycho manuscript draft V10/C05, 2026-10-19.** Original fictional case and decision tables. This chapter applies, but does not replace or copy, the reusable [target/transition authoring model](../../authoring/models/target-transition-architecture.md). No real migration, data movement, approval or restore drill occurred.

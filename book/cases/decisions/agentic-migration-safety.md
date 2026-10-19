@@ -1,3 +1,55 @@
+---
+metadata_version: 1
+id: "tycho.decision.73ab83b8148a4061a1effab218d47b0b"
+kind: "decision"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/decisions/agentic-migration-safety.md"
+title: "Decision Playbook — Agent-assisted modernization: evidence and deterministic safety gates"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Decision Playbook — Agent-assisted modernization: evidence and deterministic safety gates. Scope includes Synthetic legacy system and decision problem; Contrasting historical evidence; Decision tree and chosen ADR."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Decision Playbook — Agent-assisted modernization: evidence and deterministic safety gates?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2"
+    - "tycho.page.acfab58bfa6b470ca28010ac561dfeef"
+    - "tycho.page.5b4cd43052b647abb7cb161381ebdcc5"
+    - "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87"
+    - "tycho.page.c766e3289b95429bb158fb168f7bd0b9"
+    - "tycho.page.50b3410cae7d4032babb15542e748cac"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Decision"
+    - "Playbook"
+    - "Agent-assisted"
+    - "modernization"
+    - "evidence"
+    - "and"
+    - "deterministic"
+    - "safety"
+    - "gates"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Decision Playbook — Agent-assisted modernization: evidence and deterministic safety gates
 
 **ID:** `decision.agentic-migration-safety` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending.  

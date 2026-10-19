@@ -52,6 +52,8 @@ def commands(python: str = sys.executable) -> list[list[str]]:
         [python, "scripts/source_catalog.py", "--check"],
         [python, "scripts/validate_claim_references.py"],
         [python, "scripts/validate_metadata_schemas.py", "examples"],
+        [python, "scripts/validate_book_metadata.py"],
+        [python, "scripts/validate_knowledge.py", "--mode", "strict", "--json"],
         [python, "scripts/validate_book_navigation.py"],
         [python, "scripts/validate_m9_cases.py"],
         [python, "scripts/validate_m9_cases.py", "--self-test"],

@@ -1,3 +1,55 @@
+---
+metadata_version: 1
+id: "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5"
+kind: "page"
+parent_id: "tycho.landing.e181d96c75784f818a330bb0f266520c"
+canonical_path: "book/execution/asynchronous-apis-streaming-and-cancellation.md"
+title: "Asynchronous APIs and streaming: demand, deadlines and cancellation"
+topic_ids:
+  - "execution-models"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Asynchronous APIs and streaming: demand, deadlines and cancellation. Scope includes 1. Four interaction contracts; 2. Backpressure is a contract between producers and consumers; 3. Buffer ownership and memory safety."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Asynchronous APIs and streaming: demand, deadlines and cancellation?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.0b493340594c4c4392c5d93940a7f319"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71"
+    - "tycho.page.114da51171c2474ebd56ee3bebad3bcb"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.e181d96c75784f818a330bb0f266520c"
+    - "tycho.page.4e075e4ebc644f0e9b92c05294f62ca4"
+    - "tycho.page.cccbd188936543a2aaf904f4002236d8"
+    - "tycho.page.eb130a7f820544a2ba0e0883c0ce587b"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Asynchronous"
+    - "APIs"
+    - "and"
+    - "streaming"
+    - "demand"
+    - "deadlines"
+    - "cancellation"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Asynchronous APIs and streaming: demand, deadlines and cancellation
 
 > **Independent Tycho V03/C04 book draft, 2026-10-19.** This chapter compares contract and flow-control choices. Official Reactive Streams 1.0.4 and gRPC guides supply bounded public facts. The example and acceptance tests are original synthetic material; no streaming client/server, implementation or benchmark was exercised.

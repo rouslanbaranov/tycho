@@ -1,3 +1,55 @@
+---
+metadata_version: 1
+id: "tycho.page.cccbd188936543a2aaf904f4002236d8"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/http-rpc-contracts-and-compatibility.md"
+title: "HTTP and RPC contracts: compatibility, deadlines and retry safety"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for HTTP and RPC contracts: compatibility, deadlines and retry safety. Scope includes 1. The contract has multiple layers; 2. HTTP method semantics are not business-effect deduplication; Original synthetic command: build a preview."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of HTTP and RPC contracts: compatibility, deadlines and retry safety?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.c226850223614886b61b7cb36c7d5032"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.page.dde63373c50f4f4a80e727b6e160def5"
+    - "tycho.page.114da51171c2474ebd56ee3bebad3bcb"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "HTTP"
+    - "and"
+    - "RPC"
+    - "contracts"
+    - "compatibility"
+    - "deadlines"
+    - "retry"
+    - "safety"
+evidence_scope:
+  source_ids:
+    - "src.http-semantics"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # HTTP and RPC contracts: compatibility, deadlines and retry safety
 
 > **Research status:** independent, source-grounded book draft, 2026-10-19. **Proposed owner:** V02/C05 (public APIs, HTTP/RPC and compatibility). No runtime tests, empirical benchmark, client interoperability test or independent technical acceptance is claimed.

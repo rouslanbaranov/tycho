@@ -1,3 +1,55 @@
+---
+metadata_version: 1
+id: "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14"
+kind: "decision"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/decisions/data-migration-correctness.md"
+title: "Decision Playbook — Data migration: compatibility, shadow differences and authoritative cutover"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Decision Playbook — Data migration: compatibility, shadow differences and authoritative cutover. Scope includes Synthetic legacy system and decision problem; Contrasting historical evidence; Decision tree and chosen ADR."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Decision Playbook — Data migration: compatibility, shadow differences and authoritative cutover?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87"
+    - "tycho.page.50b3410cae7d4032babb15542e748cac"
+    - "tycho.page.b369cf77ebee40c6a35f45effefe473d"
+    - "tycho.page.b55f5bf29d7946c78454a769980c476e"
+    - "tycho.page.0c8a001625a545c1bbfa56bcb89accc4"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Decision"
+    - "Playbook"
+    - "Data"
+    - "migration"
+    - "compatibility"
+    - "shadow"
+    - "differences"
+    - "and"
+    - "authoritative"
+    - "cutover"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Decision Playbook — Data migration: compatibility, shadow differences and authoritative cutover
 
 **ID:** `decision.data-migration-shadow-reconcile` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending.  

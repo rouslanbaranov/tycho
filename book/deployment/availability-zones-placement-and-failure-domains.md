@@ -1,3 +1,52 @@
+---
+metadata_version: 1
+id: "tycho.page.6b3725950fad4c0db82417b3d0225d32"
+kind: "page"
+parent_id: "tycho.landing.6f58e5c00dea4f4086963169a2590bf5"
+canonical_path: "book/deployment/availability-zones-placement-and-failure-domains.md"
+title: "Availability zones, placement and failure-domain architecture"
+topic_ids:
+  - "deployment-architecture"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Availability zones, placement and failure-domain architecture. Scope includes 1. Failure domains are dependency sets, not just geographical labels; 2. Redundancy must be combined with correct traffic routing; 3. Kubernetes placement as an illustrative mechanism."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Availability zones, placement and failure-domain architecture?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.2536d18422944e27abe4ea8549beb9ab"
+    - "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765"
+    - "tycho.page.ea94649bfd8c4be183f9114618d7ccaa"
+    - "tycho.page.1b2657011d454460856103419095031b"
+    - "tycho.landing.6f58e5c00dea4f4086963169a2590bf5"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Availability"
+    - "zones"
+    - "placement"
+    - "and"
+    - "failure-domain"
+    - "architecture"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Availability zones, placement and failure-domain architecture
 
 > **Independent Tycho manuscript — proposed V08/C06**, 2026-10-19. Public Kubernetes scheduling/topology and AWS Well-Architected DR planning references inform the explanation. The topology and fault tests are original hypothetical examples. No cluster, deployment, failover or independent technical acceptance was performed. The earlier [combined region/recovery research](multi-region-disaster-recovery-contracts.md) is preserved.

@@ -1,3 +1,51 @@
+---
+metadata_version: 1
+id: "tycho.page.8ece705ef365401395fd06585173b1f1"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/netflix-java21-virtual-thread-pinning.md"
+title: "Netflix — Java 21 virtual-thread starvation hidden behind tracing locks"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Netflix — Java 21 virtual-thread starvation hidden behind tracing locks. Scope includes The actual failure—not a synthetic throughput benchmark; Diagnosis chain and instrumentation boundary; Decision and transition safety."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Netflix — Java 21 virtual-thread starvation hidden behind tracing locks?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.36d83a4c7ecb4d12b60fb814d605646a"
+    - "tycho.page.a486e061c9564587b1e39a4e83024fca"
+    - "tycho.page.8982b044f7ee4305a2330a6ff989bb77"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Netflix"
+    - "Java"
+    - "virtual-thread"
+    - "starvation"
+    - "hidden"
+    - "behind"
+    - "tracing"
+    - "locks"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Netflix — Java 21 virtual-thread starvation hidden behind tracing locks
 
 **Case ID:** `case.netflix.java21-virtual-thread-carrier-starvation` | **M9:** E16-03 #116 | **Status:** source-backed draft, not independently reviewed  

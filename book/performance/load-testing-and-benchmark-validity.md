@@ -1,3 +1,55 @@
+---
+metadata_version: 1
+id: "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e"
+kind: "page"
+parent_id: "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+canonical_path: "book/performance/load-testing-and-benchmark-validity.md"
+title: "Load-test methodology, generator validity and defensible benchmark evidence"
+topic_ids:
+  - "performance-engineering"
+perspectives:
+  - "architecture"
+  - "evaluation"
+summary: "Reader entry for Load-test methodology, generator validity and defensible benchmark evidence. Scope includes 1. Write the experiment claim before starting a load generator; 2. Open versus closed arrivals: the generator can hide degradation; 3. Define denominators and avoid coordinated omission."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Load-test methodology, generator validity and defensible benchmark evidence?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.eb130a7f820544a2ba0e0883c0ce587b"
+    - "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+    - "tycho.page.49d9df04c0b4488e936b02e580a62271"
+    - "tycho.page.35d5be6a4e074758afff95bf3ec68bc5"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Load-test"
+    - "methodology"
+    - "generator"
+    - "validity"
+    - "and"
+    - "defensible"
+    - "benchmark"
+    - "evidence"
+evidence_scope:
+  source_ids:
+    - "src.sre-overload"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Load-test methodology, generator validity and defensible benchmark evidence
 
 > **Tycho book draft V07/C03 (2026-10-19).** Original method and fictional examples. Primary public k6, HdrHistogram and SRE documentation is cited at limited scope. No test run, recorded benchmark, independent statistical review, or hardware comparison was performed. This chapter does not claim that a threshold or test tool creates an architecture decision automatically.

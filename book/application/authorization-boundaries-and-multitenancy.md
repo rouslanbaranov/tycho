@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.page.31cda61d174248eaa326559d256ce352"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/authorization-boundaries-and-multitenancy.md"
+title: "Authorization boundaries and multitenancy: domain ownership and isolation"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Authorization boundaries and multitenancy: domain ownership and isolation. Scope includes 1. Separate four isolation dimensions; 2. Fictional example: community equipment libraries; 3. Common storage and placement designs."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Authorization boundaries and multitenancy: domain ownership and isolation?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.dde63373c50f4f4a80e727b6e160def5"
+    - "tycho.page.cf0ce38c73e44950aec5a9c2869bee63"
+    - "tycho.page.81efb7e6d72349768b6f202845cbe35e"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3"
+    - "tycho.page.0ae1aabac3b64c2f924cc427684bdbab"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Authorization"
+    - "boundaries"
+    - "and"
+    - "multitenancy"
+    - "domain"
+    - "ownership"
+    - "isolation"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Authorization boundaries and multitenancy: domain ownership and isolation
 
 > **Tycho book chapter draft V02/C07**, 2026-10-19. Original abstract design and hypothetical fixtures. Public OWASP and independently available multitenancy design guidance consulted. No real tenant data, authorization engine, system credentials, or security assessment was used. [Threat modeling, identity and isolation](../security/identity-authorization-and-isolation.md) owns the security primitives; this chapter owns how tenancy affects *application decomposition and domain authority*.

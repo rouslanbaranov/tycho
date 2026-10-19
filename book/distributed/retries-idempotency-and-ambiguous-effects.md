@@ -1,3 +1,53 @@
+---
+metadata_version: 1
+id: "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f"
+kind: "page"
+parent_id: "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+canonical_path: "book/distributed/retries-idempotency-and-ambiguous-effects.md"
+title: "Retries, idempotency and ambiguous side effects"
+topic_ids:
+  - "distributed-systems"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Retries, idempotency and ambiguous side effects. Scope includes 1. Distinguish five identities; 2. HTTP method idempotence has a precise scope; 3. Original synthetic sequence: double-submit on equipment booking."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Retries, idempotency and ambiguous side effects?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.aa810dd152884b35a84f0f4cbe4369e9"
+    - "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+    - "tycho.page.cccbd188936543a2aaf904f4002236d8"
+    - "tycho.page.3c78e2b17ac74973b2ae658977843c2a"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Retries"
+    - "idempotency"
+    - "and"
+    - "ambiguous"
+    - "side"
+    - "effects"
+evidence_scope:
+  source_ids:
+    - "src.http-semantics"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Retries, idempotency and ambiguous side effects
 
 > **Tycho book manuscript — proposed V04/C04**, 2026-10-19. Original synthetic command and failure sequences. Independently inspected RFC 9110 §9.2.2 and public idempotent-consumer pattern references. No service, transaction, replay, production trace or independently reviewed contract test was executed. Previous combined [outbox/idempotency research](transactional-outbox-and-idempotency.md) remains preserved for detailed source-claim reconciliation.

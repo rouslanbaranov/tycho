@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.page.6b42723bd575413bb0d1b94d3e179b6a"
+kind: "page"
+parent_id: "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+canonical_path: "book/data/relational-modeling-and-transaction-isolation.md"
+title: "Relational modeling, business constraints and transaction isolation"
+topic_ids:
+  - "data-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Relational modeling, business constraints and transaction isolation. Scope includes 1. Model business identities before tables; 2. A snapshot is not an invariant; 3. A synthetic two-transaction anomaly."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Relational modeling, business constraints and transaction isolation?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.9176c39f97f544f884666e291ae38b90"
+    - "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee"
+    - "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f"
+    - "tycho.page.c75a11f9786442a5b5456f11c2412df4"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+    - "tycho.page.3c78e2b17ac74973b2ae658977843c2a"
+    - "tycho.page.81efb7e6d72349768b6f202845cbe35e"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Relational"
+    - "modeling"
+    - "business"
+    - "constraints"
+    - "and"
+    - "transaction"
+    - "isolation"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Relational modeling, business constraints and transaction isolation
 
 > **Tycho manuscript — proposed V05/C01**, 2026-10-19. Versioned primary evidence is PostgreSQL 17 chapters 5 and 13. All examples and decision tests are original and fictional, not production data. No PostgreSQL instance was started or tested and no independent technical/editorial acceptance was performed. The previously combined [MVCC and index research](postgresql-mvcc-indexes-and-query-plans.md) remains for source mapping.

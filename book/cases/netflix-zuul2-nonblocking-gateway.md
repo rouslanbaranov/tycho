@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.8982b044f7ee4305a2330a6ff989bb77"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/netflix-zuul2-nonblocking-gateway.md"
+title: "Netflix — Zuul 2: async gateway architecture with workload-dependent efficiency"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Netflix — Zuul 2: async gateway architecture with workload-dependent efficiency. Scope includes Engineering pressure; Before and after: execution ownership; What Netflix actually reported."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Netflix — Zuul 2: async gateway architecture with workload-dependent efficiency?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.36d83a4c7ecb4d12b60fb814d605646a"
+    - "tycho.page.8ece705ef365401395fd06585173b1f1"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Netflix"
+    - "Zuul"
+    - "async"
+    - "gateway"
+    - "architecture"
+    - "with"
+    - "workload-dependent"
+    - "efficiency"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Netflix — Zuul 2: async gateway architecture with workload-dependent efficiency
 
 **Case ID:** `case.netflix.zuul2-nonblocking-gateway` · **Owner:** M9 E16-02 #115 · **Status:** evidence-backed draft; independent technical review pending  

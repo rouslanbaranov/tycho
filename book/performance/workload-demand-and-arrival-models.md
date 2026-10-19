@@ -1,3 +1,60 @@
+---
+metadata_version: 1
+id: "tycho.page.fdb4ef7f69154f8c8c433591f71494f9"
+kind: "page"
+parent_id: "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+canonical_path: "book/performance/workload-demand-and-arrival-models.md"
+title: "Workload and demand models: from user behavior to measurable offered work"
+topic_ids:
+  - "performance-engineering"
+perspectives:
+  - "architecture"
+  - "evaluation"
+summary: "Reader entry for Workload and demand models: from user behavior to measurable offered work. Scope includes 1. Workload nouns that must not be interchanged; 2. Arrival shape is part of the architecture requirement; 3. Original example: two identical account counts, different costs."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Workload and demand models: from user behavior to measurable offered work?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.868027aee4884210bea1d8a6542fbfb0"
+    - "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+    - "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.0d34dd26886340b89fd4f1499d790a81"
+    - "tycho.page.49d9df04c0b4488e936b02e580a62271"
+    - "tycho.page.35d5be6a4e074758afff95bf3ec68bc5"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+    - "tycho.page.4318e542ac7e445b9e8b3150effd2cff"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Workload"
+    - "and"
+    - "demand"
+    - "models"
+    - "from"
+    - "user"
+    - "behavior"
+    - "measurable"
+    - "offered"
+    - "work"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Workload and demand models: from user behavior to measurable offered work
 
 > **Original Tycho book draft V01/C02**, prepared 2026-10-19. Independently public queueing and load-model references, with invented examples. No population analytics, experiment, observed user trace, or validated production forecast exists for this chapter.

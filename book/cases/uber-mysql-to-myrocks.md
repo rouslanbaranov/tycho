@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.689c7d51faf1441caa7edfcb6152345e"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/uber-mysql-to-myrocks.md"
+title: "Uber — MySQL to MyRocks: storage engine economics under real workloads"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Uber — MySQL to MyRocks: storage engine economics under real workloads. Scope includes Situation — the legacy architecture and constraint; Chosen architectural change; Migration and validation."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Uber — MySQL to MyRocks: storage engine economics under real workloads?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Uber"
+    - "MySQL"
+    - "MyRocks"
+    - "storage"
+    - "engine"
+    - "economics"
+    - "under"
+    - "real"
+    - "workloads"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Uber — MySQL to MyRocks: storage engine economics under real workloads
 
 **Case ID:** `case.uber.mysql-to-myrocks` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-bound original draft; technical review pending.  

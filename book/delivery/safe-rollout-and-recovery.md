@@ -1,3 +1,51 @@
+---
+metadata_version: 1
+id: "tycho.page.1e89567050974052b13ba62b3b44484f"
+kind: "page"
+parent_id: "tycho.landing.fe2eace7b2df4ae480adbdf844b68100"
+canonical_path: "book/delivery/safe-rollout-and-recovery.md"
+title: "Safe rollout, compatibility and recovery under partial failure"
+topic_ids:
+  - "software-delivery"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Safe rollout, compatibility and recovery under partial failure. Scope includes 1. The fictional boundary and the target design; Target versus transition are different artifacts; 2. Rolling, canary and blue/green mechanisms are not equivalent."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Safe rollout, compatibility and recovery under partial failure?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Safe"
+    - "rollout"
+    - "compatibility"
+    - "and"
+    - "recovery"
+    - "under"
+    - "partial"
+    - "failure"
+evidence_scope:
+  source_ids:
+    - "src.k8s-deployments"
+    - "src.sre-cascading"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Safe rollout, compatibility and recovery under partial failure
 
 > Tycho technical research pilot [#40](https://github.com/rouslanbaranov/tycho/issues/40), proposed owners V08/C04–C07. Independent public-source reading: **2026-10-18**. This is original technical explanation and **synthetic failure analysis**. It is not an executed deployment, operational runbook, certified DR design, measured RTO/RPO, production guarantee or independently human-reviewed chapter.

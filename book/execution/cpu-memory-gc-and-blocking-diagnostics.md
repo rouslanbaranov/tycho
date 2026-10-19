@@ -1,3 +1,55 @@
+---
+metadata_version: 1
+id: "tycho.page.b6cecfd7301b408db611228b4cec59c5"
+kind: "page"
+parent_id: "tycho.landing.e181d96c75784f818a330bb0f266520c"
+canonical_path: "book/execution/cpu-memory-gc-and-blocking-diagnostics.md"
+title: "CPU, memory, garbage collection and blocking: an evidence-first diagnosis"
+topic_ids:
+  - "execution-models"
+perspectives:
+  - "architecture"
+summary: "Reader entry for CPU, memory, garbage collection and blocking: an evidence-first diagnosis. Scope includes 1. Divide wall-clock latency before selecting a remedy; 2. Working symptom matrix; 3. Java heap is only one memory domain."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of CPU, memory, garbage collection and blocking: an evidence-first diagnosis?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.02238832b395417bae63939cd96b9134"
+    - "tycho.page.114da51171c2474ebd56ee3bebad3bcb"
+    - "tycho.page.883194a820194482bc2508c8e4568d86"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.eb130a7f820544a2ba0e0883c0ce587b"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.e181d96c75784f818a330bb0f266520c"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "CPU"
+    - "memory"
+    - "garbage"
+    - "collection"
+    - "and"
+    - "blocking"
+    - "evidence-first"
+    - "diagnosis"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # CPU, memory, garbage collection and blocking: an evidence-first diagnosis
 
 > **Tycho draft chapter V03/C06**, independently researched from public JDK and profiling documentation on 2026-10-19. Synthetic symptoms and decision experiments only. No process profiling, benchmarking, production recording or independent technical review has been executed for this page.

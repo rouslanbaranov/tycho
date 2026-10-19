@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.6cdc8b405be542f29528e4cfd7454bc9"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/netflix-hotspot-false-true-sharing.md"
+title: "Netflix — larger JVM instances exposed false sharing, then true sharing in HotSpot"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Netflix — larger JVM instances exposed false sharing, then true sharing in HotSpot. Scope includes The attractive migration that regressed performance; Diagnose what conventional profilers miss; Two distinct fixes, not one miracle patch."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Netflix — larger JVM instances exposed false sharing, then true sharing in HotSpot?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Netflix"
+    - "larger"
+    - "JVM"
+    - "instances"
+    - "exposed"
+    - "false"
+    - "sharing"
+    - "then"
+    - "true"
+    - "HotSpot"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Netflix — larger JVM instances exposed false sharing, then true sharing in HotSpot
 
 **Case ID:** `case.netflix.hotspot-sharing-cpu-scaling` | **Owner:** M9 E16-03 #116 | **Period:** first-party article **2022-11-09**, workload GS2 | **Status:** source-backed draft  

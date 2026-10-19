@@ -1,3 +1,51 @@
+---
+metadata_version: 1
+id: "tycho.page.b369cf77ebee40c6a35f45effefe473d"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/uber-mezzanine-pg-to-schemaless.md"
+title: "Uber — Project Mezzanine: moving trip data behind a compatibility seam"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Uber — Project Mezzanine: moving trip data behind a compatibility seam. Scope includes Situation — the legacy architecture and constraint; Chosen architectural change; Migration and validation."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Uber — Project Mezzanine: moving trip data behind a compatibility seam?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87"
+    - "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Uber"
+    - "Project"
+    - "Mezzanine"
+    - "moving"
+    - "trip"
+    - "data"
+    - "behind"
+    - "compatibility"
+    - "seam"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Uber — Project Mezzanine: moving trip data behind a compatibility seam
 
 **Case ID:** `case.uber.mezzanine-trip-data` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-bound original draft; technical review pending.  

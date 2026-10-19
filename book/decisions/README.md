@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.landing.b656116463d9480f83199d8202b127a4"
+kind: "landing"
+parent_id: "tycho.book.37c50125355948f1b52ec66229ef59bd"
+canonical_path: "book/decisions/README.md"
+title: "System Design decision support and modernization"
+topic_ids:
+  - "architecture-decisions"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for System Design decision support and modernization. Scope includes Canonical book chapters (all drafts); Case-backed decision transfer — integrated M9; Authoring and research contract."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of System Design decision support and modernization?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.868027aee4884210bea1d8a6542fbfb0"
+    - "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1"
+    - "tycho.page.35d5be6a4e074758afff95bf3ec68bc5"
+    - "tycho.page.f05854fcc406435bbf38a192bc7ab2f1"
+    - "tycho.page.cf0ce38c73e44950aec5a9c2869bee63"
+    - "tycho.page.ca056fe720e74a9691ce0c253d9526fc"
+    - "tycho.page.0ce5d0aaf63f425ebf556ea97e2d24a9"
+    - "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "System"
+    - "Design"
+    - "decision"
+    - "support"
+    - "and"
+    - "modernization"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # System Design decision support and modernization
 
 ## Purpose and mission

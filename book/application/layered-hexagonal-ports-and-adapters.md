@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.page.77b512c4e2e946bd92d70b4a714600c8"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/layered-hexagonal-ports-and-adapters.md"
+title: "Layered, hexagonal and ports-and-adapters architecture"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Layered, hexagonal and ports-and-adapters architecture. Scope includes 1. Layered design states a dependency policy; 2. A port is an application contract, not automatically a network port; 3. Original fictional example: a shared workshop equipment scheduler."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Layered, hexagonal and ports-and-adapters architecture?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.c226850223614886b61b7cb36c7d5032"
+    - "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf"
+    - "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3"
+    - "tycho.page.acb452608a8b42898aae7482c27f5f04"
+    - "tycho.page.aa810dd152884b35a84f0f4cbe4369e9"
+    - "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.page.47ffb5c160bd4b10aff27101414c2133"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Layered"
+    - "hexagonal"
+    - "and"
+    - "ports-and-adapters"
+    - "architecture"
+evidence_scope:
+  source_ids:
+    - "src.hexagonal"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Layered, hexagonal and ports-and-adapters architecture
 
 > **Tycho book manuscript — proposed V02/C01.** Prepared 2026-10-19 from independent public architecture references. All case studies, diagrams and proposed tests are original. This is not a representation of a deployed system; no module-boundary checker, integration fixture, production trace or editorial peer review was executed. The combined earlier [architecture-styles research](architecture-styles-and-module-boundaries.md) remains available until source/claim reconciliation.

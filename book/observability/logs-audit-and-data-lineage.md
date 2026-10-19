@@ -1,3 +1,53 @@
+---
+metadata_version: 1
+id: "tycho.page.436c2b22dc9e47acaaca7d18fadb511c"
+kind: "page"
+parent_id: "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+canonical_path: "book/observability/logs-audit-and-data-lineage.md"
+title: "Structured logging, authoritative audit and data lineage"
+topic_ids:
+  - "observability"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Structured logging, authoritative audit and data lineage. Scope includes 1. Separate semantics before selecting storage; 2. An original fictional reservation audit; 3. OpenLineage records data-flow relationships, not business approval."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Structured logging, authoritative audit and data lineage?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.f921597aae854c6996459fc025a9bca3"
+    - "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+    - "tycho.page.0ae1aabac3b64c2f924cc427684bdbab"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Structured"
+    - "logging"
+    - "authoritative"
+    - "audit"
+    - "and"
+    - "data"
+    - "lineage"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Structured logging, authoritative audit and data lineage
 
 > **Tycho original System Design manuscript V09/C04, 2026-10-19.** Public OpenTelemetry Logs Data Model and OpenLineage specifications support narrow data representation claims. All cases are invented, with no real logs, private identifiers, audit store, workflow run or compliance approval used.

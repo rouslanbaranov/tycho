@@ -1,3 +1,56 @@
+---
+metadata_version: 1
+id: "tycho.page.acb452608a8b42898aae7482c27f5f04"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/service-orientation-microservices-and-distribution.md"
+title: "Service orientation, microservices and distributed boundaries"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Service orientation, microservices and distributed boundaries. Scope includes 1. Separate concept, deployment and ownership; 2. Independence is not proved by a separate container; 3. Original fictional system: reservable equipment."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Service orientation, microservices and distributed boundaries?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.c226850223614886b61b7cb36c7d5032"
+    - "tycho.page.77b512c4e2e946bd92d70b4a714600c8"
+    - "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3"
+    - "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf"
+    - "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f"
+    - "tycho.page.cccbd188936543a2aaf904f4002236d8"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.page.47ffb5c160bd4b10aff27101414c2133"
+    - "tycho.page.cf0ce38c73e44950aec5a9c2869bee63"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Service"
+    - "orientation"
+    - "microservices"
+    - "and"
+    - "distributed"
+    - "boundaries"
+evidence_scope:
+  source_ids:
+    - "src.soa-model"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Service orientation, microservices and distributed boundaries
 
 > **Tycho book manuscript — proposed V02/C04**, 2026-10-19. Source boundary: public OASIS SOA Reference Model v1.0 and Fowler/Lewis' 2014 microservices discussion. Examples and tests are original fictional material. No service topology was deployed, team structure observed or empirical architecture comparison performed. Prior [architecture-style research](architecture-styles-and-module-boundaries.md) is preserved for editorial reconciliation.

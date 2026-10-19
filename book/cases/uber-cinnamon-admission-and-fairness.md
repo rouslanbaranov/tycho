@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/uber-cinnamon-admission-and-fairness.md"
+title: "Uber — Failed Static Quotas to Storage-Local Overload Control and Tenant Fairness"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Uber — Failed Static Quotas to Storage-Local Overload Control and Tenant Fairness. Scope includes Why the first idea failed in production; Revised boundary: storage-local and multi-signal; Negative and positive results with denominators."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Uber — Failed Static Quotas to Storage-Local Overload Control and Tenant Fairness?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Uber"
+    - "Failed"
+    - "Static"
+    - "Quotas"
+    - "Storage-Local"
+    - "Overload"
+    - "Control"
+    - "and"
+    - "Tenant"
+    - "Fairness"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Uber — Failed Static Quotas to Storage-Local Overload Control and Tenant Fairness
 
 **Case ID:** `case.uber.cinnamon-database-overload-control` · **M9:** E16-05 #118 · **Status:** source-backed draft, independent review pending.  

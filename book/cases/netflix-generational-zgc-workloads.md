@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.a486e061c9564587b1e39a4e83024fca"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/netflix-generational-zgc-workloads.md"
+title: "Netflix — Generational ZGC as a workload-shaped latency choice, not a universal default"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Netflix — Generational ZGC as a workload-shaped latency choice, not a universal default. Scope includes Workload requirement changes the answer; Separate three collectors and four measurements; Genuine counterexample: spiky allocation and long-running batch."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Netflix — Generational ZGC as a workload-shaped latency choice, not a universal default?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Netflix"
+    - "Generational"
+    - "ZGC"
+    - "workload-shaped"
+    - "latency"
+    - "choice"
+    - "not"
+    - "universal"
+    - "default"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Netflix — Generational ZGC as a workload-shaped latency choice, not a universal default
 
 **Case ID:** `case.netflix.generational-zgc-vs-g1` | **M9:** E16-03 #116 | **Period:** Netflix article **2024-03-06**, JDK 21 | **Status:** drafted, technical review pending  

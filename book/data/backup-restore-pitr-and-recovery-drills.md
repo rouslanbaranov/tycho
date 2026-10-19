@@ -1,3 +1,53 @@
+---
+metadata_version: 1
+id: "tycho.page.81efb7e6d72349768b6f202845cbe35e"
+kind: "page"
+parent_id: "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+canonical_path: "book/data/backup-restore-pitr-and-recovery-drills.md"
+title: "Backup, restore and recovery drills: proving data recoverability"
+topic_ids:
+  - "data-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Backup, restore and recovery drills: proving data recoverability. Scope includes 1. Recovery objectives have a named failure and clock; 2. Logical backup, physical backup and WAL replay differ; 3. Original synthetic example: public equipment reservations."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Backup, restore and recovery drills: proving data recoverability?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.ddeff7f1556f44f18c67659b73e6e15f"
+    - "tycho.page.2536d18422944e27abe4ea8549beb9ab"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Backup"
+    - "restore"
+    - "and"
+    - "recovery"
+    - "drills"
+    - "proving"
+    - "data"
+    - "recoverability"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Backup, restore and recovery drills: proving data recoverability
 
 > **Tycho book draft V05/C07 (2026-10-19).** Scope: public PostgreSQL 17 backup, WAL, recovery and replication documentation, plus original synthetic examples. No database, backup set, disaster exercise, operational measurement or independent review was performed.

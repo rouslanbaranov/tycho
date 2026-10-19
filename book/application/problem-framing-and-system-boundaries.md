@@ -1,3 +1,59 @@
+---
+metadata_version: 1
+id: "tycho.page.4318e542ac7e445b9e8b3150effd2cff"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/problem-framing-and-system-boundaries.md"
+title: "Problem framing and system boundaries: architecture begins outside the code"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Problem framing and system boundaries: architecture begins outside the code. Scope includes 1. Begin with observable outcomes; 2. Separate business context from technical context; 3. Ownership boundaries are not deployment boundaries."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Problem framing and system boundaries: architecture begins outside the code?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.868027aee4884210bea1d8a6542fbfb0"
+    - "tycho.page.cccbd188936543a2aaf904f4002236d8"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.dde63373c50f4f4a80e727b6e160def5"
+    - "tycho.page.c226850223614886b61b7cb36c7d5032"
+    - "tycho.page.35d5be6a4e074758afff95bf3ec68bc5"
+    - "tycho.page.0ce5d0aaf63f425ebf556ea97e2d24a9"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.page.06b70cb83d4f490ea9ef698a025e7684"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Problem"
+    - "framing"
+    - "and"
+    - "system"
+    - "boundaries"
+    - "architecture"
+    - "begins"
+    - "outside"
+    - "the"
+    - "code"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Problem framing and system boundaries: architecture begins outside the code
 
 > **Tycho V01/C01, original System Design book draft (2026-10-19).** This is a question-led architectural explanation using independently public arc42, C4 and the openly available ISO/IEC/IEEE 42010:2022 abstract. Every example and diagram below is invented. No actual client system, stakeholder interview, verified production boundary or independent architecture assessment is claimed.

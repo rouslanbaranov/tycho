@@ -1,3 +1,49 @@
+---
+metadata_version: 1
+id: "tycho.page.883194a820194482bc2508c8e4568d86"
+kind: "page"
+parent_id: "tycho.landing.e181d96c75784f818a330bb0f266520c"
+canonical_path: "book/execution/vertx-netty-quarkus-mutiny-and-rxjava.md"
+title: "Vert.x, Netty, Quarkus, Mutiny and RxJava execution boundaries"
+topic_ids:
+  - "execution-models"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Vert.x, Netty, Quarkus, Mutiny and RxJava execution boundaries. Scope includes 1. Runtime layers are not equivalent products; 2. The blocked event loop is a shared-fate failure; 3. Quarkus 3.27: choosing worker, reactive or virtual handler."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Vert.x, Netty, Quarkus, Mutiny and RxJava execution boundaries?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.0b493340594c4c4392c5d93940a7f319"
+    - "tycho.page.02238832b395417bae63939cd96b9134"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Vert.x"
+    - "Netty"
+    - "Quarkus"
+    - "Mutiny"
+    - "and"
+    - "RxJava"
+    - "execution"
+    - "boundaries"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Vert.x, Netty, Quarkus, Mutiny and RxJava execution boundaries
 
 > **Tycho #82, public research inspected 2026-10-18.** Canonical question: how do the Java networking and reactive libraries allocate work, propagate demand and protect event loops? Source scopes: Vert.x **4.4.9** core guide, Netty **4.x** guide (rolling within major, exact patch not asserted), Quarkus **3.27**, SmallRye Mutiny **2.9.0**, RxJava **v3.1.9** tagged README. All examples are synthetic; no server or broker was run.

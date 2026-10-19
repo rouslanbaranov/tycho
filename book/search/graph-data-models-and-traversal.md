@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.page.d34afc7f27b54431b779f7f75f11e2c3"
+kind: "page"
+parent_id: "tycho.landing.4348c76938fc4d41b239721b94338436"
+canonical_path: "book/search/graph-data-models-and-traversal.md"
+title: "Graph data models and traversal: when relationships are the query"
+topic_ids:
+  - "search-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Graph data models and traversal: when relationships are the query. Scope includes 1. Clarify the meaning of an edge; 2. Original fictional example: a workshop equipment dependency map; 3. Graph traversal and relational joins can express similar answers."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Graph data models and traversal: when relationships are the query?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.359813d554c84da794a353d4416b8047"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.4348c76938fc4d41b239721b94338436"
+    - "tycho.page.c75a11f9786442a5b5456f11c2412df4"
+    - "tycho.page.dde63373c50f4f4a80e727b6e160def5"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Graph"
+    - "data"
+    - "models"
+    - "and"
+    - "traversal"
+    - "when"
+    - "relationships"
+    - "are"
+    - "the"
+    - "query"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Graph data models and traversal: when relationships are the query
 
 > **Tycho educational System Design manuscript V06/C06 (2026-10-19).** Graph models are a general architectural topic; **a manually curated knowledge graph for Tycho itself is explicitly excluded** from the product/infrastructure roadmap. This page is original explanatory prose and synthetic scenarios with public Neo4j Cypher references. No graph database was installed, queried or benchmarked.

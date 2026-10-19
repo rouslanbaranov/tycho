@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.7921e82a71b9446790f185c818326911"
+kind: "page"
+parent_id: "tycho.landing.fe2eace7b2df4ae480adbdf844b68100"
+canonical_path: "book/delivery/ci-cd-provenance-and-gitops.md"
+title: "CI/CD architecture, artifact provenance and GitOps reconciliation"
+topic_ids:
+  - "software-delivery"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for CI/CD architecture, artifact provenance and GitOps reconciliation. Scope includes 1. Five separately controlled boundaries; Original delivery-flow diagram; 2. Workflow and runner topology."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of CI/CD architecture, artifact provenance and GitOps reconciliation?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "CI/CD"
+    - "architecture"
+    - "artifact"
+    - "provenance"
+    - "and"
+    - "GitOps"
+    - "reconciliation"
+evidence_scope:
+  source_ids:
+    - "src.opengitops"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # CI/CD architecture, artifact provenance and GitOps reconciliation
 
 > Tycho E14-10 [#88](https://github.com/rouslanbaranov/tycho/issues/88). Original technical chapter; official public sections inspected 2026-10-19. All examples are synthetic. No release, signature verification, compromise experiment or independent expert review has been performed.

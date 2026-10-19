@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/meta-tao-social-graph-serving.md"
+title: "Meta/Facebook — TAO: specialized graph APIs over MySQL and tiered caches"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Meta/Facebook — TAO: specialized graph APIs over MySQL and tiered caches. Scope includes Pressure, legacy baseline and actual chosen direction; Migration mechanics and reliability; Outcomes and negative lessons."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Meta/Facebook — TAO: specialized graph APIs over MySQL and tiered caches?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Meta/Facebook"
+    - "TAO"
+    - "specialized"
+    - "graph"
+    - "APIs"
+    - "over"
+    - "MySQL"
+    - "and"
+    - "tiered"
+    - "caches"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Meta/Facebook — TAO: specialized graph APIs over MySQL and tiered caches
 
 **Case ID:** `case.meta.tao-social-graph-serving` | **M9:** E16-05 #118 | **Status:** original case draft; independent reviewer pending.  

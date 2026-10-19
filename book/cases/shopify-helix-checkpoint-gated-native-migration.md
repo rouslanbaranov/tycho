@@ -1,3 +1,51 @@
+---
+metadata_version: 1
+id: "tycho.page.5b4cd43052b647abb7cb161381ebdcc5"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/shopify-helix-checkpoint-gated-native-migration.md"
+title: "Shopify — Helix: replace one-shot AI migrations with small provable checkpoints"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Shopify — Helix: replace one-shot AI migrations with small provable checkpoints. Scope includes Decision pressure and temporal state; Actual reported architecture and verification loop; Gates and their limits."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Shopify — Helix: replace one-shot AI migrations with small provable checkpoints?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.acfab58bfa6b470ca28010ac561dfeef"
+    - "tycho.decision.73ab83b8148a4061a1effab218d47b0b"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Shopify"
+    - "Helix"
+    - "replace"
+    - "one-shot"
+    - "migrations"
+    - "with"
+    - "small"
+    - "provable"
+    - "checkpoints"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Shopify — Helix: replace one-shot AI migrations with small provable checkpoints
 
 **Case ID:** `case.shopify.helix-checkpoint-gates` | **Owner:** M9 E16-05 #118 | **Status:** source-grounded draft; independent reviewer pending.  

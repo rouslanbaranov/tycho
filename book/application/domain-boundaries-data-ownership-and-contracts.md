@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/domain-boundaries-data-ownership-and-contracts.md"
+title: "Domain boundaries, data ownership and contract evolution"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Domain boundaries, data ownership and contract evolution. Scope includes 1. Model behaviors and invariants before drawing ownership boxes; 2. Authority and storage are separate concerns; 3. Context maps are semantic integration maps, not mandatory graphs."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Domain boundaries, data ownership and contract evolution?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.c226850223614886b61b7cb36c7d5032"
+    - "tycho.page.cccbd188936543a2aaf904f4002236d8"
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.page.dde63373c50f4f4a80e727b6e160def5"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.page.4318e542ac7e445b9e8b3150effd2cff"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Domain"
+    - "boundaries"
+    - "data"
+    - "ownership"
+    - "and"
+    - "contract"
+    - "evolution"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Domain boundaries, data ownership and contract evolution
 
 > **Tycho manuscript draft — proposed V02/C02**, 2026-10-19. Original explanatory text and fictional examples; independently public context-design references. This chapter is not a model of any real organization or its software. No operational measurement, customer research, migration or independent design review has been performed.

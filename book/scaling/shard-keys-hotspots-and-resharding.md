@@ -1,3 +1,46 @@
+---
+metadata_version: 1
+id: "tycho.page.0d34dd26886340b89fd4f1499d790a81"
+kind: "page"
+parent_id: "tycho.landing.73dff529d70048569efef74bffa88b00"
+canonical_path: "book/scaling/shard-keys-hotspots-and-resharding.md"
+title: "Sharding, partition keys, hotspots and safe resharding"
+topic_ids:
+  - "scaling-mechanisms"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Sharding, partition keys, hotspots and safe resharding. Scope includes 1. Distinguish physical partitions, logical ownership and replicas; 2. Why shard-key selection cannot be made from average RPS; Synthetic hot-key counterexample."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Sharding, partition keys, hotspots and safe resharding?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Sharding"
+    - "partition"
+    - "keys"
+    - "hotspots"
+    - "and"
+    - "safe"
+    - "resharding"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Sharding, partition keys, hotspots and safe resharding
 
 > Tycho bounded technical research for [Issue #84](https://github.com/rouslanbaranov/tycho/issues/84). Public source reading: **2026-10-19**. Selected implementation reference: **Vitess 24.0** Resharding/VSchema documentation. All workload numbers and diagrams are original synthetic models; there is no database shard cluster, measured benchmark or independently approved migration.

@@ -1,3 +1,53 @@
+---
+metadata_version: 1
+id: "tycho.page.31c8e450f78c451d90cb6090df330c5a"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/anti-corruption-adapters-and-coexistence.md"
+title: "Anti-corruption adapters: semantic translation and safe coexistence"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Anti-corruption adapters: semantic translation and safe coexistence. Scope includes 1. An adapter has a semantic contract, not just a schema mapping; 2. Original synthetic case: an equipment catalogue migration; 3. Synchronous and asynchronous mediation are different choices."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Anti-corruption adapters: semantic translation and safe coexistence?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.page.cccbd188936543a2aaf904f4002236d8"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Anti-corruption"
+    - "adapters"
+    - "semantic"
+    - "translation"
+    - "and"
+    - "safe"
+    - "coexistence"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Anti-corruption adapters: semantic translation and safe coexistence
 
 > **Tycho book manuscript V02/C06, 2026-10-19.** Independently reviewed public pattern guidance, original synthetic examples and diagrams. No actual legacy source, internal architecture, integration test, consumer migration or independent design review was used.

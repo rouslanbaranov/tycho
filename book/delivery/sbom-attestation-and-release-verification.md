@@ -1,3 +1,56 @@
+---
+metadata_version: 1
+id: "tycho.page.38bb8a14ebb54866a7004080318b47e1"
+kind: "page"
+parent_id: "tycho.landing.fe2eace7b2df4ae480adbdf844b68100"
+canonical_path: "book/delivery/sbom-attestation-and-release-verification.md"
+title: "Software supply-chain evidence: SBOM, build attestations and release verification"
+topic_ids:
+  - "software-delivery"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Software supply-chain evidence: SBOM, build attestations and release verification. Scope includes 1. Distinguish evidence objects and subjects; 2. SLSA 1.2: levels and provenance have explicit scopes; 3. SBOM completeness and dependency identity."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Software supply-chain evidence: SBOM, build attestations and release verification?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.7921e82a71b9446790f185c818326911"
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.fe2eace7b2df4ae480adbdf844b68100"
+    - "tycho.page.dde63373c50f4f4a80e727b6e160def5"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Software"
+    - "supply-chain"
+    - "evidence"
+    - "SBOM"
+    - "build"
+    - "attestations"
+    - "and"
+    - "release"
+    - "verification"
+evidence_scope:
+  source_ids:
+    - "src.slsa"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Software supply-chain evidence: SBOM, build attestations and release verification
 
 > **Tycho book manuscript draft V08/C02 (2026-10-19).** Based on independently public SLSA 1.2, SPDX, CycloneDX and Sigstore material. Original synthetic failure examples. No build, signing, scanning, provenance verifier, release policy, or security assessment has been executed for this book.

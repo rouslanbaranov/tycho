@@ -1,3 +1,52 @@
+---
+metadata_version: 1
+id: "tycho.page.50b3410cae7d4032babb15542e748cac"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/netflix-casspactor-shadow-migration.md"
+title: "Netflix — Casspactor to Cassandra Analytics: migrate data pipelines with proof and fallback"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Netflix — Casspactor to Cassandra Analytics: migrate data pipelines with proof and fallback. Scope includes Legacy fault model; New stack and where correctness lives; Evidence-based migration choreography."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Netflix — Casspactor to Cassandra Analytics: migrate data pipelines with proof and fallback?"
+  prerequisites: []
+  related_ids:
+    - "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Netflix"
+    - "Casspactor"
+    - "Cassandra"
+    - "Analytics"
+    - "migrate"
+    - "data"
+    - "pipelines"
+    - "with"
+    - "proof"
+    - "and"
+    - "fallback"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Netflix — Casspactor to Cassandra Analytics: migrate data pipelines with proof and fallback
 
 **Case ID:** `case.netflix.casspactor-to-analytics` | **M9:** E16-04 #117 | **Status:** technically detailed evidence-backed draft, reviewer pending  

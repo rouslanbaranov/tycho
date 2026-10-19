@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.page.0c8a001625a545c1bbfa56bcb89accc4"
+kind: "page"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/meta-ingestion-shadow-migration-lifecycle.md"
+title: "Meta — Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Meta — Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation. Scope includes Legacy architecture, tension and reported outcome; Concrete migration safety mechanism; Preconditions and what the published gates cannot prove by themselves."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Meta — Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Meta"
+    - "Dataset"
+    - "Ingestion"
+    - "Cutover"
+    - "Across"
+    - "Thousands"
+    - "Jobs"
+    - "with"
+    - "Shadow"
+    - "Validation"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Meta — Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation
 
 **Case ID:** `case.meta.ingestion-shadow-lifecycle` · **M9:** E16-05 #118 · **Status:** evidence-backed draft; independent review pending.  

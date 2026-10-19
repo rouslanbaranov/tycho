@@ -1,3 +1,50 @@
+---
+metadata_version: 1
+id: "tycho.decision.1c768ea76c334e82b00e98b955dcf7e9"
+kind: "decision"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/decisions/monolith-vs-services.md"
+title: "Decision Playbook — Modular monolith vs domain-oriented services"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Decision Playbook — Modular monolith vs domain-oriented services. Scope includes Synthetic legacy system and decision problem; Contrasting historical evidence; Decision tree and chosen ADR."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Decision Playbook — Modular monolith vs domain-oriented services?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.db99bd9dbe5c4058a286afaeb129f156"
+    - "tycho.page.aed8b635f57f41dfa63c897a8d1caca8"
+    - "tycho.page.7419e7903c5549a6a9c7944f4214f7e1"
+    - "tycho.page.09cb313598ad41bbafd7b10d9b4e8018"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Decision"
+    - "Playbook"
+    - "Modular"
+    - "monolith"
+    - "domain-oriented"
+    - "services"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Decision Playbook — Modular monolith vs domain-oriented services
 
 **ID:** `decision.modular-monolith-vs-microservices` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending.  

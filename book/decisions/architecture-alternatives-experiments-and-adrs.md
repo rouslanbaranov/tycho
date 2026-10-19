@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.page.f05854fcc406435bbf38a192bc7ab2f1"
+kind: "page"
+parent_id: "tycho.landing.b656116463d9480f83199d8202b127a4"
+canonical_path: "book/decisions/architecture-alternatives-experiments-and-adrs.md"
+title: "Architecture alternatives, discriminating experiments and decision records"
+topic_ids:
+  - "architecture-decisions"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Architecture alternatives, discriminating experiments and decision records. Scope includes 1. A precise problem statement comes before alternatives; 2. Enumerate a genuine retained/simple option; 3. Hypothesis → discriminator → possible reversal."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Architecture alternatives, discriminating experiments and decision records?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e"
+    - "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b656116463d9480f83199d8202b127a4"
+    - "tycho.page.868027aee4884210bea1d8a6542fbfb0"
+    - "tycho.page.35d5be6a4e074758afff95bf3ec68bc5"
+    - "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Architecture"
+    - "alternatives"
+    - "discriminating"
+    - "experiments"
+    - "and"
+    - "decision"
+    - "records"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Architecture alternatives, discriminating experiments and decision records
 
 > **Tycho independent book manuscript — proposed V10/C04, 2026-10-19.** The example, calculations and diagrams are original and hypothetical. This is a reader-facing explanation of how to compare options, not a real approved ADR, executable architecture experiment, or automated selector. The existing [candidate comparison authoring method](../../authoring/models/candidate-comparison-adr.md) remains a separately owned reusable record.

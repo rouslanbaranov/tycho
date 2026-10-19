@@ -1,3 +1,48 @@
+---
+metadata_version: 1
+id: "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71"
+kind: "page"
+parent_id: "tycho.landing.816c847b8daa4d67a3fe1e3a8cbe3830"
+canonical_path: "book/integration/stateful-stream-processing-and-cdc.md"
+title: "Stateful stream processing, Kafka Streams, Flink and CDC"
+topic_ids:
+  - "integration-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Stateful stream processing, Kafka Streams, Flink and CDC. Scope includes 1. From a database change to a replayable input; 2. Kafka Streams: tasks, state stores and changelogs; State restoration is a measurable operational cost."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Stateful stream processing, Kafka Streams, Flink and CDC?"
+  prerequisites: []
+  related_ids: []
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Stateful"
+    - "stream"
+    - "processing"
+    - "Kafka"
+    - "Streams"
+    - "Flink"
+    - "and"
+    - "CDC"
+evidence_scope:
+  source_ids:
+    - "src.kafka-streams"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Stateful stream processing, Kafka Streams, Flink and CDC
 
 > Tycho Issue [#81](https://github.com/rouslanbaranov/tycho/issues/81), proposed V04/C08. Source reading 2026-10-18. **Pinned examples:** Apache Kafka Streams documentation 4.1, Apache Flink documentation release **2.1** (explicitly archived/outdated), PostgreSQL documentation 17 and Debezium 3.6. Original synthetic diagrams and arithmetic; not an executed stream processor, validated exactly-once guarantee or current-version benchmark.

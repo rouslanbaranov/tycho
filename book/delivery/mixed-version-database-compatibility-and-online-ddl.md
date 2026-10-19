@@ -1,3 +1,56 @@
+---
+metadata_version: 1
+id: "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb"
+kind: "page"
+parent_id: "tycho.landing.fe2eace7b2df4ae480adbdf844b68100"
+canonical_path: "book/delivery/mixed-version-database-compatibility-and-online-ddl.md"
+title: "Backward-compatible database change: mixed-version reads, writes and online DDL"
+topic_ids:
+  - "software-delivery"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Backward-compatible database change: mixed-version reads, writes and online DDL. Scope includes 1. Check the real combinations, including old readers; 2. Expand-migrate-contract includes a compatibility window; 4. Event schema compatibility is an additional axis."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Backward-compatible database change: mixed-version reads, writes and online DDL?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.page.357c2d162bd44f3aa06a995a1e691551"
+    - "tycho.page.b938ff1a06264492a425f2eff555ae7d"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.fe2eace7b2df4ae480adbdf844b68100"
+    - "tycho.page.cf0ce38c73e44950aec5a9c2869bee63"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Backward-compatible"
+    - "database"
+    - "change"
+    - "mixed-version"
+    - "reads"
+    - "writes"
+    - "and"
+    - "online"
+    - "DDL"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Backward-compatible database change: mixed-version reads, writes and online DDL
 
 > **Tycho independent book manuscript — proposed V08/C05**, 2026-10-19. Official PostgreSQL 17 ALTER TABLE and Confluent Schema Registry evolution guidance were independently consulted for narrow semantics. The examples and rollout checks are original and fictional. No migration, SQL test, event replay, load test or independent expert review occurred. Previous [combined rollout/data study](progressive-delivery-and-schema-evolution.md) remains preserved for detailed evidence mapping.

@@ -1,3 +1,55 @@
+---
+metadata_version: 1
+id: "tycho.landing.73dff529d70048569efef74bffa88b00"
+kind: "landing"
+parent_id: "tycho.book.37c50125355948f1b52ec66229ef59bd"
+canonical_path: "book/scaling/README.md"
+title: "Scaling: sharding, connection pools and caches"
+topic_ids:
+  - "scaling-mechanisms"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Scaling: sharding, connection pools and caches. Scope includes Route through the mechanisms; Canonical researched pages; Related canonical owners."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Scaling: sharding, connection pools and caches?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.0d34dd26886340b89fd4f1499d790a81"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+    - "tycho.page.33742c54f667446cbf57cb9f3696a533"
+    - "tycho.page.e0f0d5b68f834acbae94cc6714895dd3"
+    - "tycho.page.ded52d8d012347b79d70e608488cf6a4"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+    - "tycho.landing.e181d96c75784f818a330bb0f266520c"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Scaling"
+    - "sharding"
+    - "connection"
+    - "pools"
+    - "and"
+    - "caches"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Scaling: sharding, connection pools and caches
 
 > Status: independently source-grounded draft pages, now with distinct V06/C01–C02 owner manuscripts for [Issue #84](https://github.com/rouslanbaranov/tycho/issues/84). Version scopes and uncertainty are recorded in the pages. Not a full implementation/benchmark or a finished scaling volume.

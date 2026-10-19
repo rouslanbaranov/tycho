@@ -1,3 +1,56 @@
+---
+metadata_version: 1
+id: "tycho.page.d87f9ba3852b49ee8188d150bb679716"
+kind: "page"
+parent_id: "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+canonical_path: "book/observability/incident-response-and-operational-change.md"
+title: "Incident response, containment and operational change"
+topic_ids:
+  - "observability"
+perspectives:
+  - "architecture"
+  - "operations"
+summary: "Reader entry for Incident response, containment and operational change. Scope includes 1. Define impact and correctness before the response procedure; Original operational flow; 3. Response actions are architecture choices."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Incident response, containment and operational change?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.1e89567050974052b13ba62b3b44484f"
+    - "tycho.page.2536d18422944e27abe4ea8549beb9ab"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.page.39a694d604d646a996bf90c3357c3b27"
+    - "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71"
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+    - "tycho.page.1c7350e3bc17483ba18f201d02727aea"
+    - "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Incident"
+    - "response"
+    - "containment"
+    - "and"
+    - "operational"
+    - "change"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Incident response, containment and operational change
 
 > **Tycho System Design draft V09/C06**, 2026-10-19. Built from independently public reliability guidance and wholly synthetic scenarios. This is not an executed incident, operational playbook for a real service, incident review, tested drill, or independently approved response policy.

@@ -1,3 +1,53 @@
+---
+metadata_version: 1
+id: "tycho.page.b42e3ffc4a924b7089d261d0a3dc33b0"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/architecture-views-and-decision-records.md"
+title: "Architecture descriptions, complementary views and decision records"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Architecture descriptions, complementary views and decision records. Scope includes 1. Start with concerns and a coherent vocabulary; 2. The main views answer separate questions; 3. Fictional architecture example: community tool reservations."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Architecture descriptions, complementary views and decision records?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.ea94649bfd8c4be183f9114618d7ccaa"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.page.4318e542ac7e445b9e8b3150effd2cff"
+    - "tycho.page.06b70cb83d4f490ea9ef698a025e7684"
+    - "tycho.page.c226850223614886b61b7cb36c7d5032"
+    - "tycho.page.f05854fcc406435bbf38a192bc7ab2f1"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Architecture"
+    - "descriptions"
+    - "complementary"
+    - "views"
+    - "and"
+    - "decision"
+    - "records"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Architecture descriptions, complementary views and decision records
 
 > **Tycho manuscript V01/C05**, original explanatory content and fictional diagrams; public arc42 §3, §5–7 and §9 source sections reviewed 2026-10-19. No observed software system, real source scan, deployed infrastructure or independently approved ADR was consulted.

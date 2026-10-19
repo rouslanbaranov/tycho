@@ -1,3 +1,53 @@
+---
+metadata_version: 1
+id: "tycho.page.357c2d162bd44f3aa06a995a1e691551"
+kind: "page"
+parent_id: "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+canonical_path: "book/data/schema-lifecycle-and-semantic-migration.md"
+title: "Schema lifecycle, semantic data migration and data retirement"
+topic_ids:
+  - "data-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Schema lifecycle, semantic data migration and data retirement. Scope includes 1. Distinguish syntactic change from semantic change; 2. Original synthetic scenario: two equipment identities; 3. Expand, migrate, contract as gated lifecycle."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Schema lifecycle, semantic data migration and data retirement?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.81add4a0d86b4053ae77f9301fd2281d"
+    - "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb"
+    - "tycho.page.b938ff1a06264492a425f2eff555ae7d"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+    - "tycho.page.6b42723bd575413bb0d1b94d3e179b6a"
+    - "tycho.page.cf0ce38c73e44950aec5a9c2869bee63"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Schema"
+    - "lifecycle"
+    - "semantic"
+    - "data"
+    - "migration"
+    - "and"
+    - "retirement"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Schema lifecycle, semantic data migration and data retirement
 
 > **Tycho book draft V05/C06**, 2026-10-19. Original synthetic migration and source-led architecture explanation. Sources: Danilo Sato's public Parallel Change and PostgreSQL 17 ALTER TABLE documentation. No schema migration, data backfill, SQL execution or independent review occurred. Previous [combined rollout/schema research](../delivery/progressive-delivery-and-schema-evolution.md) is preserved until source claims are reconciled.

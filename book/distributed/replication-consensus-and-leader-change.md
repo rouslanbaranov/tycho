@@ -1,3 +1,54 @@
+---
+metadata_version: 1
+id: "tycho.page.1b2657011d454460856103419095031b"
+kind: "page"
+parent_id: "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+canonical_path: "book/distributed/replication-consensus-and-leader-change.md"
+title: "Replication, consensus and leader change: safety and progress under failures"
+topic_ids:
+  - "distributed-systems"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Replication, consensus and leader change: safety and progress under failures. Scope includes 1. Separate replica types and required properties; 2. Majority quorum arithmetic and the failure envelope; 3. Original synthetic network-partition scenario."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Replication, consensus and leader change: safety and progress under failures?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.d4822cc1e71c4f73896b7f6509f6daae"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+    - "tycho.page.3c78e2b17ac74973b2ae658977843c2a"
+    - "tycho.page.2536d18422944e27abe4ea8549beb9ab"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Replication"
+    - "consensus"
+    - "and"
+    - "leader"
+    - "change"
+    - "safety"
+    - "progress"
+    - "under"
+    - "failures"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Replication, consensus and leader change: safety and progress under failures
 
 > **Tycho independent V04/C02 manuscript draft (2026-10-19).** Source scope: the public Raft project/paper entry and etcd 3.6 quorum/membership documentation, plus original synthetic figures. No distributed cluster, fault injection, model checker or independently reviewed proof was executed.

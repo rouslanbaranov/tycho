@@ -1,3 +1,55 @@
+---
+metadata_version: 1
+id: "tycho.page.d79b0a48b30f4995a9bc110dbe691e52"
+kind: "page"
+parent_id: "tycho.landing.4348c76938fc4d41b239721b94338436"
+canonical_path: "book/search/retrieval-evaluation-and-index-lifecycle.md"
+title: "Retrieval evaluation and index lifecycle: relevance, freshness and evidence budgets"
+topic_ids:
+  - "search-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Retrieval evaluation and index lifecycle: relevance, freshness and evidence budgets. Scope includes 1. Build an evaluation set before choosing a vector model; 2. What ranking metrics actually measure; Original fictional example."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Retrieval evaluation and index lifecycle: relevance, freshness and evidence budgets?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.39a694d604d646a996bf90c3357c3b27"
+    - "tycho.page.7a67fd6346a54eff97784465c22bbc74"
+    - "tycho.page.359813d554c84da794a353d4416b8047"
+    - "tycho.page.0ae1aabac3b64c2f924cc427684bdbab"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.4348c76938fc4d41b239721b94338436"
+    - "tycho.page.d34afc7f27b54431b779f7f75f11e2c3"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Retrieval"
+    - "evaluation"
+    - "and"
+    - "index"
+    - "lifecycle"
+    - "relevance"
+    - "freshness"
+    - "evidence"
+    - "budgets"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Retrieval evaluation and index lifecycle: relevance, freshness and evidence budgets
 
 > **Tycho System Design book manuscript V06/C07, 2026-10-19.** This describes evaluating *any* information retrieval system. It does not implement Tycho's ranked retrieval, embeddings, MCP or a curated graph. Public TREC/NIST and BEIR methodologies are cited; all queries, metrics and diagrams here are illustrative. No retrieval experiment, indexed corpus or independent judging exercise was executed.

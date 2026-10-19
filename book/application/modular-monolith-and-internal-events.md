@@ -1,3 +1,52 @@
+---
+metadata_version: 1
+id: "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf"
+kind: "page"
+parent_id: "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+canonical_path: "book/application/modular-monolith-and-internal-events.md"
+title: "Modular monolith architecture and internal domain events"
+topic_ids:
+  - "application-architecture"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Modular monolith architecture and internal domain events. Scope includes 1. Stable module boundaries before event buses; 2. Original synthetic example: community workshop reservation; 3. Internal events have multiple execution and durability contracts."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Modular monolith architecture and internal domain events?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.c226850223614886b61b7cb36c7d5032"
+    - "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3"
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.page.47ffb5c160bd4b10aff27101414c2133"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Modular"
+    - "monolith"
+    - "architecture"
+    - "and"
+    - "internal"
+    - "domain"
+    - "events"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Modular monolith architecture and internal domain events
 
 > **Original Tycho manuscript V02/C03**, prepared 2026-10-19. Public Spring Framework/Modulith references are technology illustrations, not a requirement to use those frameworks. The fictional application and event flow were invented independently. No build, module verification, event replay or independent review has been performed.

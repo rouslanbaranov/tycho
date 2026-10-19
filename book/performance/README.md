@@ -1,3 +1,56 @@
+---
+metadata_version: 1
+id: "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+kind: "landing"
+parent_id: "tycho.book.37c50125355948f1b52ec66229ef59bd"
+canonical_path: "book/performance/README.md"
+title: "Performance, scaling and resilience — research landing"
+topic_ids:
+  - "performance-engineering"
+perspectives:
+  - "architecture"
+  - "evaluation"
+summary: "Reader entry for Performance, scaling and resilience — research landing. Scope includes Research navigation map; How the research questions connect; Available research."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Performance, scaling and resilience — research landing?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.fdb4ef7f69154f8c8c433591f71494f9"
+    - "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e"
+    - "tycho.page.7ad835c06d5a4e3aabf6b14632f92c86"
+    - "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc"
+    - "tycho.page.eb130a7f820544a2ba0e0883c0ce587b"
+    - "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060"
+    - "tycho.page.49d9df04c0b4488e936b02e580a62271"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Performance"
+    - "scaling"
+    - "and"
+    - "resilience"
+    - "research"
+    - "landing"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Performance, scaling and resilience — research landing
 
 Status: **several independently researched technical pages**, not a completed volume. This landing page only links to pages that exist and states which questions remain open; it does not stand in for an approved table of contents.

@@ -1,3 +1,47 @@
+---
+metadata_version: 1
+id: "tycho.page.7beb6ba382a1458dbfba5800ff1b53af"
+kind: "page"
+parent_id: "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+canonical_path: "book/distributed/cqrs-event-sourcing-and-projections.md"
+title: "CQRS, event sourcing and reliable read projections"
+topic_ids:
+  - "distributed-systems"
+perspectives:
+  - "architecture"
+summary: "Reader entry for CQRS, event sourcing and reliable read projections. Scope includes 1. Four patterns frequently mixed together; 2. Event sourcing: what becomes authoritative?; A small original replay example."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of CQRS, event sourcing and reliable read projections?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.ace968ab1de8409383c6a9b22a00d006"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "CQRS"
+    - "event"
+    - "sourcing"
+    - "and"
+    - "reliable"
+    - "read"
+    - "projections"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # CQRS, event sourcing and reliable read projections
 
 > Tycho Issue [#80](https://github.com/rouslanbaranov/tycho/issues/80), proposed V04/C05–C06. Primary publicly accessible writing examined on 2026-10-18; author-created scenarios and Mermaid diagrams only. **Not** an implemented event store, tested projector or global delivery guarantee.

@@ -1,3 +1,57 @@
+---
+metadata_version: 1
+id: "tycho.book.37c50125355948f1b52ec66229ef59bd"
+kind: "book"
+parent_id: null
+canonical_path: "book/README.md"
+title: "Tycho — System Design"
+topic_ids:
+  - "system-design"
+perspectives:
+  - "architecture"
+summary: "Reader entry for Tycho — System Design. Scope includes Reading contract; Integrated foundational and real-world casebook reading; Available researched entry points."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Tycho — System Design?"
+  prerequisites: []
+  related_ids:
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+    - "tycho.landing.be90d29e1bc04524b2ea41ee9beaab0f"
+    - "tycho.landing.b08f16ced4a142a785c37b43eb340260"
+    - "tycho.landing.ddbfbbbe1a85406faa2705102378beea"
+    - "tycho.landing.4348c76938fc4d41b239721b94338436"
+    - "tycho.landing.73dff529d70048569efef74bffa88b00"
+    - "tycho.landing.984c44f8dbd44d8e89105b4d31787636"
+    - "tycho.landing.816c847b8daa4d67a3fe1e3a8cbe3830"
+    - "tycho.landing.e181d96c75784f818a330bb0f266520c"
+    - "tycho.landing.fe2eace7b2df4ae480adbdf844b68100"
+    - "tycho.landing.6f58e5c00dea4f4086963169a2590bf5"
+    - "tycho.landing.b7ea8fb13ebb4079af2333e475f97106"
+    - "tycho.landing.3870e6370654489c949e098b9acd1840"
+    - "tycho.landing.b656116463d9480f83199d8202b127a4"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Tycho"
+    - "System"
+    - "Design"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-18"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Tycho — System Design
 
 ## Purpose and mission

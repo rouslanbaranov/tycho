@@ -1,3 +1,55 @@
+---
+metadata_version: 1
+id: "tycho.page.0ae1aabac3b64c2f924cc427684bdbab"
+kind: "page"
+parent_id: "tycho.landing.3870e6370654489c949e098b9acd1840"
+canonical_path: "book/security/safe-agent-access-and-knowledge-isolation.md"
+title: "Safe agent-accessible knowledge: trust boundaries, privacy and bounded authority"
+topic_ids:
+  - "security-architecture"
+perspectives:
+  - "architecture"
+  - "security"
+summary: "Reader entry for Safe agent-accessible knowledge: trust boundaries, privacy and bounded authority. Scope includes 1. Define distinct security principals; 2. Treat retrieval as a data pipeline, not a command channel; 3. Prompt injection is a trust-boundary failure."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Safe agent-accessible knowledge: trust boundaries, privacy and bounded authority?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406"
+    - "tycho.page.dde63373c50f4f4a80e727b6e160def5"
+    - "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0"
+    - "tycho.landing.3870e6370654489c949e098b9acd1840"
+    - "tycho.page.359813d554c84da794a353d4416b8047"
+    - "tycho.page.0ce5d0aaf63f425ebf556ea97e2d24a9"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Safe"
+    - "agent-accessible"
+    - "knowledge"
+    - "trust"
+    - "boundaries"
+    - "privacy"
+    - "and"
+    - "bounded"
+    - "authority"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Safe agent-accessible knowledge: trust boundaries, privacy and bounded authority
 
 > **Tycho book draft V09/C07**, 2026-10-19. This is **System Design education**, not a deployed agent, authentication service, retrieval API, MCP adapter or security validation. Examples and policies are original and fictional; source-bound recommendations draw on public OWASP guidance.

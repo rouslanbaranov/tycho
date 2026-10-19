@@ -1,3 +1,52 @@
+---
+metadata_version: 1
+id: "tycho.decision.054f312b9e744575ac80632f4acf72fa"
+kind: "decision"
+parent_id: "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8"
+canonical_path: "book/cases/decisions/gc-and-tail-latency.md"
+title: "Decision Playbook — JVM GC choice: pause-sensitive online services vs high-throughput batch"
+topic_ids:
+  - "architecture-case-studies"
+perspectives:
+  - "architecture"
+  - "migration"
+summary: "Reader entry for Decision Playbook — JVM GC choice: pause-sensitive online services vs high-throughput batch. Scope includes Synthetic legacy system and decision problem; Contrasting historical evidence; Decision tree and chosen ADR."
+route_hints:
+  questions:
+    - "What are the scope, mechanisms and limits of Decision Playbook — JVM GC choice: pause-sensitive online services vs high-throughput batch?"
+  prerequisites: []
+  related_ids:
+    - "tycho.page.a486e061c9564587b1e39a4e83024fca"
+    - "tycho.page.6cdc8b405be542f29528e4cfd7454bc9"
+    - "tycho.page.b55f5bf29d7946c78454a769980c476e"
+  excludes:
+    - "No independent content acceptance or runtime reproduction is implied."
+  keywords:
+    - "Decision"
+    - "Playbook"
+    - "JVM"
+    - "choice"
+    - "pause-sensitive"
+    - "online"
+    - "services"
+    - "high-throughput"
+    - "batch"
+evidence_scope:
+  source_ids: []
+  claim_ids: []
+  status: "unknown"
+  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+content_review:
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
+  proof_uri: null
+authored_at: "2026-10-19"
+updated_at: "2026-10-20"
+source_inspection_date: null
+content_verified_at: null
+---
+
 # Decision Playbook — JVM GC choice: pause-sensitive online services vs high-throughput batch
 
 **ID:** `decision.jvm-gc-performance-context` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending.  
