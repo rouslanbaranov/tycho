@@ -2,6 +2,14 @@
 
 **Checkpoint:** 2026-10-19 · **Owner:** E16-08 #121 · **Status:** *mechanical/readability pre-review only*. This is NOT an independent technical review decision and NOT a certificate of complete M9. Data retrieved from Tycho `main` after source-intake #114; no CI, remote MCP queries, Java runtime or company production workloads executed.
 
+## Integrated-branch evidence checkpoint — 2026-10-19
+
+**Scoped publisher comparison:** [M9 Shopify first-party source spot-check](M9_SHOPIFY_SOURCE_SPOTCHECK_2026-10-19.md) reopened SH01 (2019-02-21) and SH02 (2020-09-16) and checked **12 bounded historical assertions** represented in the [modular-monolith](../../book/cases/shopify-modular-monolith.md) and [Packwerk](../../book/cases/shopify-packwerk-boundary-evolution.md) drafts, also relevant to the [monolith-versus-services comparison](../../book/cases/decisions/monolith-vs-services.md). A misleading introductory suggestion that domain enforcement was already complete in 2019 was **corrected** to reflect the ongoing rollout and later incomplete 2020 component state. Other selected source statements matched publisher-scoped sections and periods; **no independent qualified human technical/copyright review, license clearance, controlled benchmark or 2026 topology was established**.
+
+**Whole-book static cross-check:** [pinned integrated source scan](../INTEGRATED_BOOK_STATIC_CHECKPOINT_2026-10-19.md) fetched **136/136 Markdown files under book** at commit `ff88fe334050c6e429941cb514bdd02150fa6be2`; scanned 1,623 link occurrences with no missing local file targets and found no single-H1 or odd-backtick-fence anomalies. This did **not** run the Python premerge/M9 validators, resolve anchors, render Mermaid or verify external sources. Because Shopify content was edited after that pinned scan, rerun whole-tree validators on the eventual integration release candidate.
+
+**Verdict:** progress in bounded source review, **not acceptance**. All 29 case studies and six decision guides still require actual reviewer verdicts. **#121 and M9 remain OPEN**, with **60 real end-to-end MCP scenarios or formally approved waiver** still outstanding; curated graph work remains excluded.
+
 ## Scope frozen for this review preparation
 
 - Source register: **43 unique candidates**, **41** with at least one bounded public claim or deliberately narrow publisher-scoped abstract/team-charter statement, **2 deferred** (N14 Conductor primary original not readable; ST02 Stripe TypeScript primary redirects to metadata). These two are **excluded from asserting technical outcomes**.
