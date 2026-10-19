@@ -85,6 +85,9 @@ def validate(data, registered, claims):
         if e["status"] == "ready-for-review":
             require(e["kind"] == "section-inspected",
                     "review readiness requires an inspected section")
+        if e["kind"] == "checkpoint":
+            require(e["status"] in {"researching", "blocked"},
+                    "checkpoint alone cannot promote reading or independent review readiness")
         if source["admission"] != "admitted-for-research":
             require(e["kind"] in {"blocked", "checkpoint"},
                     "unadmitted source may not be marked inspected")
