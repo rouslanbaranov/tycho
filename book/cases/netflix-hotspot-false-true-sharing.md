@@ -38,6 +38,36 @@ First, the engineers padded the fields to avoid two unrelated data structures sh
 | First patch | Declare success after removing slow band | Retest at original throughput target; new bottleneck can emerge |
 | JVM optimization | Permanently change cross-workload behavior | Version/flag gate, regressions and revert path |
 
+## Why the original canary produced the wrong conclusion
+
+The first-party 2022 case (N18, **The problem**) reveals a benchmark-design mistake: a **48-vCPU** canary and its **16-vCPU** baseline received **equal traffic**, so the larger host initially looked comfortable. The actual change intended *more throughput per large instance at the same ~55% autoscaling CPU target*. Under this **different** operating point, the reported improvement was only around **25%**, and latency became worse. A successful equal-RPS canary was not a capacity qualification.
+
+The subsequent fast/slow host split was also a constraint on the hypothesis space. Host groups retained their performance band across JVM lifetimes while receiving similar request rates. Source authors observed approximately **12% fast nodes**, aligning with a cache-line alignment hypothesis. The article does not demonstrate that 12% of every JDK deployment will be lucky, nor does it provide a universal server-throughput law.
+
+## Competing diagnoses and falsifiable tests
+
+| Hypothesis for a new service | Initial diagnostic | Evidence that would argue against it |
+|---|---|---|
+| Application method uses excessive CPU | Sampling profile by Java method and request class | Similar execution profiles across high/low latency cohorts despite different CPI |
+| Garbage collector or allocation pressure | GC pause, allocation and safepoint events at matched load | No cohort-correlated GC behavior, with CPU pipeline stall counters diverging |
+| Host placement or network variance | Per-host work, NUMA locality, cache, NIC and request classification | Host differences remain tied to process/VM initialization rather than traffic locality |
+| **False sharing** | CPU cache-line invalidations and hot instruction disassembly on adjacent fields | Padding fields does not eliminate the cohort bimodality or coherence events |
+| **True sharing** | Remaining writes to same shared mutable field after padding | Suppressing writes does not change CPI or goodput at equal CPU utilization |
+
+These are **Tycho's analytical countertests**. The source specifically attributes the incident to HotSpot's secondary-superclass-cache layout and later shared-field updates; it does not establish that every high-CPI Java service has that cause. The original authors first tested conventional flame graphs/JFR and then hardware PMU counters and Intel VTune to isolate a JVM implementation path.
+
+## Why the two patches need two separate quality gates
+
+Padding the adjacent fields changed **memory layout** and removed the slow-node band but left throughput around **150 RPS per instance**, below a roughly **250-RPS** target. Bypassing the contentious cache update changed JDK *behavior*, so the source team guarded it with a JVM flag and measured around **350 RPS at the same 55% CPU target**. A safe adoption procedure must therefore test (1) unchanged Java behavior with altered memory layout and (2) altered cache behavior under representative class-hierarchy and concurrency patterns as **different interventions**.
+
+For another runtime, the test matrix must include class-loader changes, concurrent subtype checks, dynamically generated proxy types, long-running mixed workloads, end-to-end correctness and upstream/downstream latency; gather data for the exact JDK commit and target CPU architecture. A code patch that fixes one subtype-check benchmark may regress other workloads because the superclass cache serves as an optimization under different class shapes. Require a feature flag, a reversible JDK image and runtime class correctness tests; do not assume a blog's internal patch is still necessary or valid in a 2026 JDK.
+
+## Reuse criteria and limits
+
+The reusable design lesson is **compare useful performance at the new intended operating point and challenge conventional profilers when execution profiles do not explain real CPU stalls**. Before adding host capacity, record workloads by concurrency and tail-latency class. If a node's CPU is inflated by coherence stalls, adding cores may worsen contention. If the true constraint is a network queue or a cache miss unrelated to JVM field sharing, the appropriate remedy is different.
+
+**Refuse an automatic HotSpot patch** when hardware counters are unavailable, the exact problematic source code is not present, or a production-representative correctness test cannot be executed. N18 reports a specific service and historical JDK behavior; upstream bug history, current vendor fixes and complete replication remain unverified under M9 #121.
+
 ## Applicability and safer modernization
 
 Tycho's inferred procedure is to characterize CPU-bound service topology, shard placement, cache line layout and target throughput before selecting larger instances. Compare cost per successful request, p99 at equal CPU/throughput, and variation across nodes and cold vs warm JVM lifetimes. Investigate both false and true sharing, and be prepared for a second bottleneck to emerge after the first is resolved.
