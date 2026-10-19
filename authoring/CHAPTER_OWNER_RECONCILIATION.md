@@ -5,7 +5,7 @@
 
 ## Verified scope and counts
 
-At the **initial overlap audit**, the 69-row topic audit mapped to **60 distinct primary Markdown target paths**. **Eight files** were assigned to more than one canonical chapter, accounting for **17 chapter-owner assignments** and **nine duplicate-target assignments** beyond the 60 unique paths. **After the new V09/C01/C02 standalone chapters were written and assigned, the current crosswalk maps to 61 distinct primary target paths with seven remaining shared legacy files (15 chapter-owner assignments, eight duplicate-target assignments).**
+At the **initial overlap audit**, the 69-row topic audit mapped to **60 distinct primary Markdown target paths**. **Eight files** were assigned to more than one canonical chapter, accounting for **17 chapter-owner assignments** and **nine duplicate-target assignments** beyond the 60 unique paths. **After independent V09/C01–C04 manuscript ownership splits, the current crosswalk maps to 62 distinct primary target paths, with six remaining shared legacy files (13 chapter-owner assignments, seven duplicate-target assignments).**
 
 These counts were derived from [the branch coverage audit](BOOK_COMPLETENESS_AUDIT.md) and checked against the headings and approximate word counts of **all eight shared manuscript files** through the GitHub branch file API. The 60 files are **not** an exhaustive Git-tree inventory; the crosswalk may omit adjacent, older or supplemental manuscript content. No final chapter landing, chapter/page metadata, semantic correctness review or rendered book edition is certified by this count.
 
@@ -32,9 +32,19 @@ On 2026-10-19, two original focused manuscript chapters were authored and linked
 - **V09/C02:** [Metrics ingestion, cardinality and retention](../book/observability/metric-pipelines-cardinality-and-retention.md), approximately 1,548 words and one diagram. Owned subject: metric temporality and aggregation, counters/gauges/histograms, telemetry loss, TSDB cardinality, retention and costs.
 - Prior combined research page [metrics/SLOs/TSDB](../book/observability/metrics-slo-timeseries-architecture.md) is preserved as a historical research input, **not** copied wholesale or removed. The [observability landing](../book/observability/README.md) now directs readers to the two separate manuscript owners.
 - Both files were re-fetched from the feature branch and all **nine distinct local target file paths** extracted from their Markdown were fetched successfully (**9/9 exist**). External link permanence, Markdown anchor fragments, rendered Mermaid, exact claims, independently admissible revision provenance, semantic completeness and acceptance were **not tested**.
-- Recomputed against the updated 69-row branch matrix: **61 unique primary targets; seven remaining shared legacy source files assigned to 15 planned owners; eight duplicate-owner assignments.** The other eight shared-source cases still listed above are baseline findings; one of them is now resolved only at source-file ownership level.
+- Recomputed against the updated 69-row branch matrix: **61 unique primary targets; seven remaining shared legacy source files assigned to 15 planned owners; eight duplicate-owner assignments.** The eight groups in the table remain the historical baseline; two have now been resolved only at source-file ownership level, without semantic acceptance.
 
 **This is an editorial ownership improvement, not a new volume/chapter/page edition, final content acceptance, or a semantic source-to-claim review.**
+
+## Second owner separation — trace versus authoritative audit
+
+The former single [trace/log/audit/lineage page](../book/observability/trace-context-lineage-and-audit.md) is now referenced by two independent main manuscript paths:
+
+- **V09/C03:** [Distributed tracing, context propagation and sampling](../book/observability/distributed-tracing-context-and-sampling.md). Owns W3C traceparent/tracestate, trace-span relationship and links, sampling bias, trusted propagation and version scope. Does not claim trace completeness or an actual traced service.
+- **V09/C04:** [Structured logging, authoritative audit and data lineage](../book/observability/logs-audit-and-data-lineage.md). Owns diagnostic logs versus committed business-audit effects, OpenTelemetry log semantics, OpenLineage job/run/dataset identity, integrity/access/retention and failure cases. Does not claim a running audit or a lineage system.
+- The original common article is **not deleted**; it remains a source candidate for verifying that technical interpretations and citations were preserved. These are two unreviewed original independent chapters, not approved publication pages.
+
+As of this second separation, the verified 69-row crosswalk has **62 distinct primary article paths**. Remaining duplicate primary owners: six original articles mapping to 13 planned chapters. No claim of a complete Git-tree inventory or source-to-claim review is made.
 
 ## Canonical publication rule
 
@@ -68,7 +78,7 @@ Use an auditable chapter review card with:
 ## Sequence for the publication pipeline
 
 A. Verify the repository-wide source/page census and source revisions; reconcile unexpected extra pages.  
-B. Continue reviewing the **seven remaining overlap groups (15 affected planned owners)** and author/adjust specific destination prose; the eighth initial group (V09/C01–C02) has distinct current book drafts but still awaits full source/editorial acceptance.  
+B. Continue reviewing the **six remaining overlap groups (13 affected planned owners)** and author/adjust specific destination prose; two initial groups (V09/C01–C04) have distinct current book drafts but still awaits full source/editorial acceptance.  
 C. Apply the same depth/evidence gates to the remaining 52 chapter questions, not just to these overlaps.  
 D. Rebuild or validate strict frontmatter/schema and the deterministic page routing index against canonical volume/chapter/page IDs, with complete link/anchor checks.  
 E. After content acceptance, create final 10-volume, 69-chapter first edition and bounded child pages under #214, with a reproducible inventory and source ledger; optionally render additional publication formats only when separately authorized.
