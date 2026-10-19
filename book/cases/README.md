@@ -1,6 +1,6 @@
 # M9 — Historical Architecture Modernization Case Studies
 
-**Evidence state:** original author-reviewed **drafts**, not independent-reviewed/accepted Tycho cases. As of 2026-10-19 this collection contains **22** case pages: **9 Netflix** and **13 from 9 other organizations**. A publisher's architectural write-up is evidence of its historical account, not independent validation of an experiment. Do not represent the case counts as finished milestone acceptance until E16-01 and E16-08 gates pass.
+**Evidence state:** original author-reviewed **drafts**, not independent-reviewed/accepted Tycho cases. As of 2026-10-19 this collection contains **24** case pages: **9 Netflix** and **15 from 9 other organizations**. A publisher's architectural write-up is evidence of its historical account, not independent validation of an experiment. Do not represent the case counts as finished milestone acceptance until E16-01 and E16-08 gates pass.
 
 ## Netflix — Java and runtime (#115/#116/#117)
 
@@ -21,11 +21,13 @@
 - [Uber MyRocks](uber-mysql-to-myrocks.md)
 - [Shopify modular monolith](shopify-modular-monolith.md)
 - [Shopify component governance](shopify-packwerk-boundary-evolution.md)
+- [Shopify Helix gate-driven AI native migration](shopify-helix-checkpoint-gated-native-migration.md)
 - [Airbnb Bazel JVM build migration](airbnb-jvm-monorepo-bazel.md)
 - [Stripe online data migration](stripe-online-subscriptions-migration.md)
 - [Discord ScyllaDB messages](discord-cassandra-scylladb-messages.md)
 - [Discord search index cells](discord-search-index-cells.md)
 - [Spotify long-tail platform migrations](spotify-tech-migration-long-tail.md)
+- [Spotify Honk dataset-consumer migration and negative evidence](spotify-honk-data-consumer-migration.md)
 - [Cloudflare queue-backed Super Slurper](cloudflare-super-slurper-queues.md)
 - [Meta TAO graph serving](meta-tao-social-graph-serving.md)
 - [LinkedIn audited Kafka tiers](linkedin-kafka-tiered-completeness.md)
@@ -36,7 +38,7 @@ Every document should be read with its original publication period, exact first-
 
 - Sources and access status: [initial company register](../../sources/REAL_WORLD_ARCHITECTURE_CASES.md), [43-source audit](../../sources/REAL_WORLD_CASES_CANDIDATE_AUDIT.md), [first Netflix claim ledger](../../sources/REAL_WORLD_CASES_ADMISSION_WAVE_01.md).
 - Program and acceptance: [M9 case-study program](../../authoring/REAL_WORLD_CASE_STUDY_PROGRAM.md), [E16-01 #114](https://github.com/rouslanbaranov/tycho/issues/114), [E16-08 #121](https://github.com/rouslanbaranov/tycho/issues/121).
-- The source register's five inaccessible entries (N14, N15, SH04, SP02, SP03) remain out of the authored case set until resolved. The Stripe TypeScript redirect currently exposes insufficient article body for substantive technical assertions; it is also excluded from case authoring.
+- The later first-party audit confirmed SH04/SP02/SP03; their bounded evidence is [admitted](../../sources/REAL_WORLD_CASES_PRIMARY_AGENT_MIGRATION_EVIDENCE.md). N14 still lacks direct-original article access (publisher-attributed syndication exists), and N15 remains unreadable. Never claim all original articles are verified. The Stripe TypeScript redirect currently exposes insufficient article body for substantive technical assertions; it is also excluded from case authoring.
 - All Mermaid diagrams are newly authored conceptual schematics. Any reported performance numbers are explicitly scoped by source and period. No independent technical peer review or system benchmarks have yet been completed.
 
 ## Evidence-based architecture decision playbooks (E16-06)
@@ -48,6 +50,6 @@ Six cross-company, synthetic-decision guides are published as **drafts**; their 
 - [JVM collector and tail-latency choice](decisions/gc-and-tail-latency.md) — Netflix / Discord
 - [Correctness-first online data migration](decisions/data-migration-correctness.md) — Stripe / Netflix / Uber / Discord
 - [Build platform and fleet adoption](decisions/build-delivery-migration.md) — Airbnb / Spotify / Uber
-- [Agent-assisted modernization safety](decisions/agentic-migration-safety.md) — Spotify / Stripe / Airbnb / Netflix; **does not claim verified AI-agent success rates**
+- [Agent-assisted modernization safety](decisions/agentic-migration-safety.md) — Spotify / Shopify / Stripe / Airbnb / Netflix; source-reported AI migrations and their explicit test gaps, no independent AI-agent defect-rate claim
 
 Each decision guide has a synthetic starting state, evidence for contrasting real-world mechanisms, contraindications, an original ADR, rollback/insufficient-evidence branch, and a proposed transition.
