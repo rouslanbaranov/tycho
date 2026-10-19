@@ -1,6 +1,6 @@
 # Scaling: sharding, connection pools and caches
 
-> Status: three bounded evidence-backed research pages for [Issue #84](https://github.com/rouslanbaranov/tycho/issues/84). Version scopes and uncertainty are recorded in the pages. Not a full implementation/benchmark or a finished scaling volume.
+> Status: independently source-grounded draft pages, now with distinct V06/C01–C02 owner manuscripts for [Issue #84](https://github.com/rouslanbaranov/tycho/issues/84). Version scopes and uncertainty are recorded in the pages. Not a full implementation/benchmark or a finished scaling volume.
 
 ## Purpose and mission
 
@@ -27,7 +27,9 @@ Text alternative: identify whether a workload is limited by hot partition owners
 |---|---|---|
 | Which shard key preserves locality, avoids hot partitions and supports a safe re-shard? | [Shard keys, hotspots and resharding](shard-keys-hotspots-and-resharding.md) | Vitess 24.0 resharding, VSchema and PostgreSQL 17 partitioning |
 | How should JVM pools and PgBouncer share an actual PostgreSQL connection budget? | [Connection pool budgets and modes](connection-pools-hikaricp-pgbouncer.md) | HikariCP public configuration, PgBouncer pooling modes, PostgreSQL 17 connections |
-| When do local/shared caches help, and how do stale fills, invalidation races and stampedes arise? | [Caching, freshness and invalidation](local-distributed-caching-and-invalidation.md) | Caffeine Eviction/Refresh, Redis cache-aside and TTL |
+| When do local, shared or absent caches fit freshness, authority and operational constraints? | [Local and distributed cache design](local-and-distributed-cache-design.md) | V06/C01; Redis cache-aside and Caffeine eviction/refresh evidence; no measurements |
+| How do stale fills, hot-key expiration and refresh locks threaten source/correctness? | [Cache invalidation, stampedes and hot-key failures](cache-invalidation-stampede-and-hot-keys.md) | V06/C02; original races and negative test matrix; no executions |
+| What did the initial combined cache research cover? | [Preserved cache study](local-distributed-caching-and-invalidation.md) | Historical primary reference; no longer sole canonical owner for C01/C02, pending claim audit |
 
 ## Related canonical owners
 
