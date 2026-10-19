@@ -69,6 +69,16 @@ These six pages are synthetic cross-case teaching guides. They supplement **V10'
 | [Build and delivery migration](../book/cases/decisions/build-delivery-migration.md) | [V10/C05](../book/decisions/target-and-transition-architecture-states.md) | [V08/C01](../book/delivery/ci-cd-provenance-and-gitops.md) | Transition gates for build/platform changes |
 | [Agent-assisted migration safety](../book/cases/decisions/agentic-migration-safety.md) | [V10/C07](../book/decisions/cross-domain-modernization-and-adr-examples.md) | [V09/C07](../book/security/safe-agent-access-and-knowledge-isolation.md) | Evidence, refusal and authorized automation boundaries |
 
+## Verified integrated-branch mechanical QA — pinned snapshot
+
+**Executed on the combined branch** after the Git merge and new book navigation, against Git tree `54bc35532419005becf6c8c32ef40f3a6fc03bec` (pre-QA-note commit). The Git tree was fetched recursively, contained **311 blobs**, and was **not truncated**.
+
+- Re-fetched **all 35 M9 applied Markdown pages** in two batches (17 + 18) **from the merged branch**, checking duplicate exact H2 headings and paired fenced-code opening/closing boundaries. **35/35 passed those narrow structural checks**: no duplicate H2 headings and no odd fence counts detected. This does **not** render or syntax-validate Mermaid diagrams, and does not prove Markdown parser behavior, external URL access or source correctness.
+- Counted the applied corpus in the merged Git tree: **29 case-study files** (excluding the casebook README) and **six decision-guide files**; all were present.
+- Parsed *relative Markdown file links* in the [unified map](UNIFIED_BOOK_M1_M9_INTEGRATION.md), [main book README](../book/README.md), [casebook README](../book/cases/README.md) and [decision README](../book/decisions/README.md): **190/190 local file-link occurrences had existing target files** in this pinned Git tree; includes **109/109** integration-map references. Crosswalk contains **35 applied-page rows**, one per M9 case/guide. This is not anchor-fragment validation or claim-to-source verification.
+- Direct Git history verified two merge parents; comparison against core parent returned **exactly 41 M9 path changes**, matching PR #212, and comparison against main returned **108 path changes** at the merge checkpoint before integration-only docs. No main commits were missing at that checkpoint.
+- **No local `python` premerge/boundary/schema/M9 suite, rendered diagram, actual MCP evaluation, copyright clearance or independent human review was executed** in this QA. Do not translate these structural checks into any of the still-open acceptance gates.
+
 ## Integration and acceptance matrix — separate states
 
 | Gate | Core M1–M8 and #213 | M9 and #121 | Combined branch / publication disposition |
