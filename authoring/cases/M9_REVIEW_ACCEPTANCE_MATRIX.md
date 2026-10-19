@@ -98,7 +98,7 @@ A reviewer should produce a signed/verifiable matrix with case file, claim ID, o
 
 **Accepted mechanically:** existence of 29 well-scoped drafts, 6 guides, source ID mapping, 60 proposed fixtures.  
 **Not accepted:** final external-source semantic review of all pages, complete production search evaluation, independently reproduced performance, external review signoff.  
-**Milestone M9:** **OPEN — acceptance gate E16-08 not met**. This is an evidence-grounded delivery checkpoint, not a license to claim finished architecture modernization transfer.
+**Milestone M9:** **OPEN — E16-08 independent review and live-evaluation gates not met**. This is an evidence-grounded delivery checkpoint, not a license to claim finished architecture modernization transfer.
 
 ## Addendum: October 19, 2026 — expanded coverage
 
@@ -106,8 +106,14 @@ Merged [case batch #168](https://github.com/rouslanbaranov/tycho/pull/168) added
 
 ## Evaluation checkpoint — public case retrieval 60-query set
 
-After [PR #170](https://github.com/rouslanbaranov/tycho/pull/170), the proposed decision-retrieval fixture set has **60 unique IDs**: **21 answerable, 25 reject unsupported/false claims, 12 return insufficient evidence**. Manual structural checks found no foreign-source ID or unknown case ID in the expected results; references resolve to the existing 43 registered public sources and 29 indexed case identities. **These checks are not a live retrieval/evidence benchmark:** no search results, ranking relevance, MCP answer citation fidelity, latency or token cost have been measured. K18–K23 implementation and runtime validation are separate dependencies; keep #121 open until a genuine reviewer and applicable execution proof exist.
+After [PR #170](https://github.com/rouslanbaranov/tycho/pull/170) and [PR #176](https://github.com/rouslanbaranov/tycho/pull/176), the proposed decision-retrieval fixture set has **60 unique IDs**: **21 answerable, 26 reject unsupported/false claims, 13 return insufficient evidence**. Manual structural checks found no foreign-source ID or unknown case ID in the expected results; references resolve to the existing 43 registered public sources and 29 indexed case identities. **These checks are not a live retrieval/evidence benchmark:** no search results, ranking relevance, MCP answer citation fidelity, latency or token cost have been measured. K18–K23 implementation and runtime validation are separate dependencies; keep #121 open until a genuine reviewer and applicable execution proof exist.
 
 ## Second review checkpoint — 29 cases and 60 scenarios
 
 [PR #174](https://github.com/rouslanbaranov/tycho/pull/174) added the 2023 Netflix CPU-intensive outgoing gRPC client worker-pool virtual-thread *negative result* as a separate N02 case from the 2024 tracing pinning incident N06. [PR #176](https://github.com/rouslanbaranov/tycho/pull/176) linked this evidence into the cross-company concurrency ADR and added four expectation fixtures (Q57–Q60). The current proposed set is **60**: **21** answerable, **26** false-claim rejection and **13** insufficient-evidence. Repository content was checked manually through connected GitHub for 29 case IDs, original diagrams/paired fences, source links and 60 distinct fixture IDs from the public source register. All current **authoring issues #115–#119 are marked complete**, while **#121 stays open** for independent technical, licensing and temporal verification and genuine retrieval runtime execution. The draft state of every page remains unchanged. No real MCP score or external benchmark can be inferred from these structural checks.
+
+## Reopening #121 after unsupported closure — acceptance integrity
+
+On **2026-10-19 at 12:35:18 UTC**, GitHub recorded issue #121 closed, but its two evidence comments and this matrix continued to identify absent independent reviewer signoff and absent actual 60-fixture search/MCP execution. No documented independent verdict or live evaluation artifacts accompanied that closure. The issue was reopened to preserve the acceptance gate. This does **not** invalidate completed authoring deliverables #114–#120; it separates drafted, structurally tested case knowledge from independently accepted knowledge.
+
+**Completion requires evidence, not a closed GitHub status:** a named independent reviewer with case-by-case claim/source/date/copyright/contradiction verdicts (or an explicitly authorized independent evaluation process), correction of high-severity findings, executable offline checks with pinned revision and outputs, and a documented disposition for live integration tests depending on the K18–K23 runtime. If a prerequisite runtime does not exist, the exception/dependency must be transparently decided by the milestone owner rather than reporting imaginary MCP results. Count truth is **60 = 21 answerable + 26 false-claim refusals + 13 insufficient-evidence**. No Scheduled Tasks were enabled for this review.
