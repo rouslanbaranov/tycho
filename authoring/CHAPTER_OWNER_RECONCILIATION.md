@@ -5,13 +5,13 @@
 
 ## Verified scope and counts
 
-The 69-row topic audit currently maps to **60 distinct primary Markdown target paths**. **Eight files** are assigned to more than one canonical chapter, accounting for **17 chapter-owner assignments** and **nine duplicate-target assignments** beyond the 60 unique paths.
+At the **initial overlap audit**, the 69-row topic audit mapped to **60 distinct primary Markdown target paths**. **Eight files** were assigned to more than one canonical chapter, accounting for **17 chapter-owner assignments** and **nine duplicate-target assignments** beyond the 60 unique paths. **After the new V09/C01/C02 standalone chapters were written and assigned, the current crosswalk maps to 61 distinct primary target paths with seven remaining shared legacy files (15 chapter-owner assignments, eight duplicate-target assignments).**
 
 These counts were derived from [the branch coverage audit](BOOK_COMPLETENESS_AUDIT.md) and checked against the headings and approximate word counts of **all eight shared manuscript files** through the GitHub branch file API. The 60 files are **not** an exhaustive Git-tree inventory; the crosswalk may omit adjacent, older or supplemental manuscript content. No final chapter landing, chapter/page metadata, semantic correctness review or rendered book edition is certified by this count.
 
 **Key distinction:** One researched article can legitimately answer several chapter questions at a shallow level. This is useful draft coverage but **not** evidence that all intended owner chapters exist as coherent independent reading units. Conversely, blindly copying one research page into two chapters creates duplicated explanations that quickly diverge.
 
-## Eight confirmed overlapping manuscript ownership groups
+## Eight confirmed overlapping manuscript ownership groups — initial baseline
 
 | Shared current article | Intended owners | Main existing conceptual sections | Required canonicalization |
 |---|---|---|---|
@@ -21,8 +21,20 @@ These counts were derived from [the branch coverage audit](BOOK_COMPLETENESS_AUD
 | [PostgreSQL MVCC and query plans](../book/data/postgresql-mvcc-indexes-and-query-plans.md) (~1,742 words) | **V05/C01**, **V05/C03** | Relational constraints/MVCC visibility/isolation, indexes, query planner and EXPLAIN estimates | V05/C01 owns relational correctness, data model and snapshot isolation; V05/C03 owns indexing, statistics, query planning and access-path trade-offs. Do not equate cost estimate with measured latency; review PostgreSQL version-scoped evidence |
 | [Local and distributed caching](../book/scaling/local-distributed-caching-and-invalidation.md) (~1,752 words) | **V06/C01**, **V06/C02** | Authority/freshness, local/distributed cache, invalidation races, stampede/hot keys | V06/C01 owns local/distributed cache design and freshness models; V06/C02 owns cache-stampede, hot-key, invalidation and overload failure mechanics. Retain one owner per exact race and link from the other chapter |
 | [Multi-zone and multi-region recovery](../book/deployment/multi-region-disaster-recovery-contracts.md) (~1,912 words) | **V08/C06**, **V08/C07** | Placement/failure domains, RTO/RPO, active/active conflict, drills and data reconciliation | V08/C06 owns deployment/failure-domain placement and resilient topology; V08/C07 owns disaster-recovery plans, measured RTO/RPO, fencing and restore validation. Refer to V05/C07 for PostgreSQL backup/PITR mechanisms rather than restating DB-specific steps |
-| [Metrics, SLOs and TSDBs](../book/observability/metrics-slo-timeseries-architecture.md) (~1,601 words) | **V09/C01**, **V09/C02** | Indicators/SLO, collection pipeline, temporal metrics, cardinality, storage/retention and alerting | V09/C01 owns user-level metrics, SLO and alert semantics; V09/C02 owns observability pipeline, cardinality, TSDB/retention and cost. This original page may be a research seed, but *neither* owner has a separate complete stand-alone chapter yet |
+| [Metrics, SLOs and TSDBs](../book/observability/metrics-slo-timeseries-architecture.md) (~1,601 words) | **V09/C01**, **V09/C02** | Indicators/SLO, collection pipeline, temporal metrics, cardinality, storage/retention and alerting | **Draft owner split implemented:** [V09/C01 SLI/SLO/error budgets](../book/observability/service-level-indicators-objectives-and-alerts.md) and [V09/C02 metric ingestion/cardinality/retention](../book/observability/metric-pipelines-cardinality-and-retention.md) now have distinct substantive primary article targets. Existing combined source retained for claim reconciliation. Neither new owner has independent editorial sign-off |
 | [Tracing, logs, lineage and audit](../book/observability/trace-context-lineage-and-audit.md) (~1,767 words) | **V09/C03**, **V09/C04** | W3C trace propagation, async links, sampling, log contracts, OpenLineage and audit records | V09/C03 owns distributed tracing/context propagation/sampling; V09/C04 owns logs, authoritative audit, data lineage and integrity/retention. Critical distinction: sampled traces cannot serve as authoritative business audit |
+
+## Progress since baseline — first two owners separated
+
+On 2026-10-19, two original focused manuscript chapters were authored and linked under their own reader questions:
+
+- **V09/C01:** [Service-level indicators, objectives and error-budget decisions](../book/observability/service-level-indicators-objectives-and-alerts.md), approximately 1,475 whitespace-separated Markdown words and one original Mermaid diagram. Owned subject: eligible user outcomes and denominators, SLO, error budgets, burn/alert interpretation and hard correctness constraints.
+- **V09/C02:** [Metrics ingestion, cardinality and retention](../book/observability/metric-pipelines-cardinality-and-retention.md), approximately 1,548 words and one diagram. Owned subject: metric temporality and aggregation, counters/gauges/histograms, telemetry loss, TSDB cardinality, retention and costs.
+- Prior combined research page [metrics/SLOs/TSDB](../book/observability/metrics-slo-timeseries-architecture.md) is preserved as a historical research input, **not** copied wholesale or removed. The [observability landing](../book/observability/README.md) now directs readers to the two separate manuscript owners.
+- Both files were re-fetched from the feature branch and all **nine distinct local target file paths** extracted from their Markdown were fetched successfully (**9/9 exist**). External link permanence, Markdown anchor fragments, rendered Mermaid, exact claims, independently admissible revision provenance, semantic completeness and acceptance were **not tested**.
+- Recomputed against the updated 69-row branch matrix: **61 unique primary targets; seven remaining shared legacy source files assigned to 15 planned owners; eight duplicate-owner assignments.** The other eight shared-source cases still listed above are baseline findings; one of them is now resolved only at source-file ownership level.
+
+**This is an editorial ownership improvement, not a new volume/chapter/page edition, final content acceptance, or a semantic source-to-claim review.**
 
 ## Canonical publication rule
 
@@ -51,12 +63,12 @@ Use an auditable chapter review card with:
 | Originality/security | Scope neutrality, safe examples, boundary checks and human origin review | Contaminated or unauthorized material |
 | Review outcome | Reviewer/date/checks run, accepted or unresolved specific reason | Automatic acceptance inferred from issue/PR count |
 
-**No owner in the eight overlap groups is declared accepted by this report.**
+**No owner in the initial eight overlap groups is declared accepted by this report.**
 
 ## Sequence for the publication pipeline
 
 A. Verify the repository-wide source/page census and source revisions; reconcile unexpected extra pages.  
-B. Deeply review eight overlap groups and author/adjust specific destination prose so each of the **17 affected chapters** answers its independent question without replicated mechanisms.  
+B. Continue reviewing the **seven remaining overlap groups (15 affected planned owners)** and author/adjust specific destination prose; the eighth initial group (V09/C01–C02) has distinct current book drafts but still awaits full source/editorial acceptance.  
 C. Apply the same depth/evidence gates to the remaining 52 chapter questions, not just to these overlaps.  
 D. Rebuild or validate strict frontmatter/schema and the deterministic page routing index against canonical volume/chapter/page IDs, with complete link/anchor checks.  
 E. After content acceptance, create final 10-volume, 69-chapter first edition and bounded child pages under #214, with a reproducible inventory and source ledger; optionally render additional publication formats only when separately authorized.
