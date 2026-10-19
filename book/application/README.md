@@ -26,6 +26,7 @@ Text alternative: start from quality drivers, identify cohesive responsibilities
 | What outcomes, constraints and quality attributes should drive architecture choices? | [Architecture drivers, quality scenarios and readable views](quality-drivers-and-architecture-views.md) | Source-grounded draft: arc42, public SRE Workbook and C4 |
 | How do a modular monolith, hexagonal architecture, service orientation, bounded contexts and microservices differ? | [Application architecture styles and module boundaries](architecture-styles-and-module-boundaries.md) | Source-grounded draft: Fowler/Lewis, Cockburn, OASIS and Spring Modulith |
 | When should a legacy module remain internal versus become an independently deployed service? | [Architecture evolution and service extraction](architecture-evolution-and-extraction.md) | Source-grounded draft: Cockburn, Fowler and versioned Modulith verification |
+| How do public HTTP/RPC contracts survive retries, timeouts and old/new client versions? | [HTTP and RPC contracts, compatibility and deadlines](http-rpc-contracts-and-compatibility.md) | New source-grounded draft (V02/C05); RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers; review pending |
 
 These pages explain distinct canonical questions. They cite published source sections and original synthetic failures; none was verified by running a real domain/application architecture experiment.
 
