@@ -178,6 +178,10 @@
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
 
+## First explicit claim/source spot-check register — 2026-10-19
+
+[Eleven narrow independently checked source claims](CLAIM_VERIFICATION_SPOTCHECK_2026-10-19.md) in seven selected high-risk manuscript owners are recorded with exact URLs and negative scopes. This confirms neither full-chapter technical correctness nor license/rights clearance. The corresponding independent tests and all 69 final editorial acceptance decisions remain **pending**.
+
 ## 2026-10-19 latest — verified 69 distinct primary drafts, editorial acceptance ledger opened
 
 **This is the current structural status; previous 60/61/62/64-target counts in the dated checkpoints below are historical intermediate results.**
