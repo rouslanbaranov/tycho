@@ -65,7 +65,9 @@ class PublicRepoSnapshotTests(unittest.TestCase):
     def test_private_url_unsupported_or_unpinned_rejected(self):
         for badurl in ("file:///tmp/private", "http://github.com/x/y",
                        "https://evil.example/x/y", "https://github.com/a/b?token=x",
-                       "https://github.com/a/../b"):
+                       "https://github.com/a/../b", "https://github.com/../repo",
+                       "https://github.com/org/.", "https://github.com//org/repo",
+                       "https://github.com/org/repo/"):
             e = {**self.entry, "url": badurl}
             with self.assertRaises(ValueError, msg=badurl):
                 snap.validate(self.manifest([e]))
