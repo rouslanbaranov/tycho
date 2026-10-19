@@ -71,7 +71,7 @@ Include original author, URL, access date, relevant section/timestamp, repositor
 - Related real-world cases with opposite choices (required for major recommendation claims):
 - Related canonical Tycho patterns: links to existing pages; do not duplicate explanatory owners:
 - Search tags: baseline, bottleneck, quality attribute, workload regime, transition pattern, runtime version, evidence status:
-- Graph candidates: `case → demonstrates/contradicts/qualifies → pattern`, with explicit provenance and applicability conditions:
+- Explicit Markdown cross-links to relevant cases, pattern pages and decision chapters, with the evidence/conditions in prose (not graph edges):
 - Decision prompts the Rocinante agent can use, including a valid `insufficient evidence` outcome:
 
 ## Acceptance checklist
@@ -84,5 +84,9 @@ Include original author, URL, access date, relevant section/timestamp, repositor
 - [ ] At least one original Mermaid architecture or transition figure where useful, plus readable text alternative.
 - [ ] Contrasting company/pattern case linked; no 'because Netflix does it' inference.
 - [ ] Independent source and link checks passed; manual semantic review is not silently marked complete.
-- [ ] Metadata/index/graph integration occurs only after relevant Tycho infrastructure exists.
+- [ ] Stable case IDs, metadata/index, cross-page Markdown links and source-backed retrieval are verifiable; **no curated graph, graph edges, traversal, graph pipeline or graph maintenance is requested or built**.
 - [ ] `authoring/STATE.md`, source register and research log updated **in the accepted implementation phase**, not by this planning template.
+
+## Content-completeness gate (M9, binding)
+
+A page is **content-complete** only when the author can answer, in source-bounded English prose: (1) what existed and who owned it; (2) what workload/legacy constraints motivated the change and what is unknown; (3) which observed solution was chosen and which *analytical*, not falsely historical, alternatives are plausible; (4) what sequence and compatibility/recovery controls were actually reported versus recommended by Tycho; (5) which tests, failure paths and negative results were recorded; (6) what happened after, with dated denominators or an explicit *not published*; (7) when another team should or should not reuse the decision; and (8) exactly which public source section supports each material claim. Meaningful contrasts must link to other case pages. Do not fabricate missing results to meet a checklist or mark draft work independently approved. Educational Mermaid diagrams remain optional when they clarify the case; they do not imply construction of a machine-readable graph.
