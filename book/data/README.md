@@ -24,6 +24,7 @@ Text alternative: define actual transaction and query requirements before explor
 |---|---|---|
 | How do PostgreSQL isolation, query plans and indexes affect correctness and workload? | [PostgreSQL MVCC, indexing and query planning](postgresql-mvcc-indexes-and-query-plans.md) | Version-pinned PostgreSQL 17 §§13, 14 and Indexes |
 | What survives a crash/failover, and how do WAL, replicas and backups differ? | [PostgreSQL WAL, replication and recovery](postgresql-wal-replication-and-recovery.md) | PostgreSQL 17 WAL, standby/logical replication and archive recovery |
+| How are restorable backup chains, WAL gaps and business-level RPO/RTO proven? | [Backup, PITR and recovery drills](backup-restore-pitr-and-recovery-drills.md) | PostgreSQL 17 §§25–26 and original recovery acceptance experiments; no restore performed |
 | When are embedded SQL, distributed SQL/KV, document, wide-column, OLAP, graph and time-series storage good candidates? | [Storage model alternatives and workload fit](storage-model-alternatives-and-workload-fit.md) | Public official SQLite, CockroachDB v24.3, FoundationDB 8.0, MongoDB, Cassandra 5.0, ClickHouse and Neo4j docs |
 
 ## Cross-domain ownership
@@ -36,4 +37,4 @@ Text alternative: define actual transaction and query requirements before explor
 
 ## Open gaps
 
-Measured workloads, DDL evolution with installed drivers, partition/sharding implementation, query planner/optimizer settings, automated backup drills, geographically distributed failure tests and detailed specialized-engine internals require further bounded source/experiment work. This landing does not imply a complete volume or a working database service.
+Measured workloads, DDL evolution with installed drivers, partition/sharding implementation, query planner/optimizer settings, executed backup/restore drills, geographically distributed failure tests and detailed specialized-engine internals require further bounded source/experiment work. This landing does not imply a complete volume or a working database service.
