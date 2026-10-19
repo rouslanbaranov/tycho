@@ -85,6 +85,13 @@ def validate_record(record: dict, schema: dict, registered_sources: set[str]) ->
     require(set(review) == {"reviewer", "reviewed_on", "limitations"}, "invalid review contract")
     iso_date(review["reviewed_on"], "reviewed_on", nullable=True)
     require(review["reviewer"] is None or isinstance(review["reviewer"], str), "reviewer not string/null")
+    if record["status"] == "independent_reviewed":
+        # Metadata is necessary, never sufficient, evidence of true peer review.
+        require(isinstance(review["reviewer"], str)
+                and len(review["reviewer"].strip()) >= 3,
+                "independent review requires a named reviewer")
+        require(isinstance(review["reviewed_on"], str),
+                "independent review requires an actual review date")
     require(isinstance(review["limitations"], list)
             and all(isinstance(x, str) for x in review["limitations"]), "review limitations not string list")
     pattern = record["patterns"]
@@ -226,7 +233,9 @@ def self_test() -> None:
     malformed_records = []
     mutations = ("wrong_collection", "orphan_source", "bad_claim", "missing_review", "future_window",
                  "integer_title", "short_statement", "non_string_source_ref", "non_string_pattern",
-                 "non_string_review_limitation", "basic_date", "week_date", "invalid_calendar_date")
+                 "non_string_review_limitation", "basic_date", "week_date", "invalid_calendar_date",
+                 "independent_review_null_reviewer", "independent_review_null_date",
+                 "independent_review_blank_reviewer")
     for mutation in mutations:
         candidate = json.loads(json.dumps(good))
         if mutation == "wrong_collection":
@@ -257,6 +266,16 @@ def self_test() -> None:
             candidate["claims"][0]["accessed_on"] = "2026-W43-1"
         if mutation == "invalid_calendar_date":
             candidate["claims"][0]["accessed_on"] = "2026-02-30"
+        if mutation == "independent_review_null_reviewer":
+            candidate["status"] = "independent_reviewed"
+            candidate["review"]["reviewed_on"] = "2026-10-19"
+        if mutation == "independent_review_null_date":
+            candidate["status"] = "independent_reviewed"
+            candidate["review"]["reviewer"] = "Independent Reviewer"
+        if mutation == "independent_review_blank_reviewer":
+            candidate["status"] = "independent_reviewed"
+            candidate["review"]["reviewer"] = "   "
+            candidate["review"]["reviewed_on"] = "2026-10-19"
         malformed_records.append(candidate)
         try:
             validate_record(candidate, schema, refs)
