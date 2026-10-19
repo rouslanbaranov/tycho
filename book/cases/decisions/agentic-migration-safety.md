@@ -11,10 +11,10 @@ An engineering organization wants an AI coding agent to update a few thousand se
 
 | Actual company case | What its primary source does and does not establish |
 |---|---|
-| [Spotify](../cases/spotify-tech-migration-long-tail.md) | SP01: automated PRs as a fleet-migration tactic, not proof of AI agent success |
-| [Stripe](../cases/stripe-online-subscriptions-migration.md) | ST01: comparable old/new reads with Scientist and phased write authority |
-| [Airbnb](../cases/airbnb-jvm-monorepo-bazel.md) | A01: parallel build/test parity and voluntary adoption |
-| [Netflix](../cases/netflix-casspactor-shadow-migration.md) | N11: set-difference proof and fallback selector |
+| [Spotify](../spotify-tech-migration-long-tail.md) | SP01: automated PRs as a fleet-migration tactic, not proof of AI agent success |
+| [Stripe](../stripe-online-subscriptions-migration.md) | ST01: comparable old/new reads with Scientist and phased write authority |
+| [Airbnb](../airbnb-jvm-monorepo-bazel.md) | A01: parallel build/test parity and voluntary adoption |
+| [Netflix](../netflix-casspactor-shadow-migration.md) | N11: set-difference proof and fallback selector |
 
 **Why the apparent conflict is useful:** Spotify's 2020 report supports *general automation* and reviewed PRs, not necessarily LLM-generated migration reliability. Stripe supplies correctness checks for mutable data and Netflix supplies set comparisons for batch data; Airbnb shows dual-run build parity. These are separate, evidence-backed guardrails that can be composed into an agentic proposal, not proof that these firms used the same AI harness.
 
