@@ -115,7 +115,7 @@ python3 scripts/capacity_trace_lab.py
 python3 -m unittest discover -s tests -p 'test_tycho_capacity_trace_lab.py' -v
 ~~~
 
-The Python 3.10+ floor is required by the type-annotation syntax, not a benchmark prerequisite. A separate isolated local execution of these four tests on 2026-10-19 passed. This is **not** a claim that the entire repository's premerge suite ran, that a load generator drove an actual service, or that the GitHub PR's environment was verified.
+The Python 3.10+ floor is required by the type-annotation syntax, not a benchmark prerequisite. An isolated local execution of the five deterministic tests on 2026-10-19 passed; the fifth test rejects non-finite time values and boolean integer parameters. This is **not** a claim that the entire repository's premerge suite ran, that a load generator drove an actual service, or that the GitHub PR's environment was verified.
 
 Trace (all times in seconds, intentionally fictional): B at 0.00 and 0.01 with service duration 5.00; A at 0.02 and 0.12 with service duration 0.05. Compare two **total concurrent slots** in (i) one shared pool and (ii) dedicated A=1, B=1 pools. Admission is immediate with **no queue**. The deterministic model yields:
 
