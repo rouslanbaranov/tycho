@@ -54,7 +54,30 @@ def json_read(path: Path) -> object:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def validate_record(record: dict, schema: dict, registered_sources: set[str]) -> None:
+def parse_source_registry(raw: str) -> dict[str, str]:
+    """Map curated M9 source IDs to exactly one literal primary publisher URL.
+
+    No network calls or redirects: this is a local provenance-binding check.
+    """
+    rows: dict[str, str] = {}
+    source_row = re.compile(r"^\| ((?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}) \|")
+    link_row = re.compile(
+        r"^\| ((?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}) "
+        r"\| [^|]+ \| \[[^\]]+\]\((https://[^)\s]+)\) \|")
+    for line in raw.splitlines():
+        match = source_row.match(line)
+        if not match:
+            continue
+        source_id = match.group(1)
+        full = link_row.match(line)
+        require(full is not None, "source registry row missing HTTPS primary link: " + source_id)
+        require(source_id not in rows, "duplicate primary source ID: " + source_id)
+        rows[source_id] = full.group(2)
+    require(len(rows) == 43, "source register must contain 43 unambiguous primary URLs")
+    return rows
+
+
+def validate_record(record: dict, schema: dict, registered_sources: dict[str, str]) -> None:
     require(isinstance(record, dict), "case record must be object")
     required = set(schema["required"])
     require(required <= set(record), "missing case keys " + str(sorted(required - set(record))))
@@ -115,6 +138,8 @@ def validate_record(record: dict, schema: dict, registered_sources: set[str]) ->
                 "claim source ID not a valid string")
         require(item["source_ref_id"] in record["source_refs"], "claim source absent from case source_refs")
         require(isinstance(item["primary_url"], str) and item["primary_url"].startswith("https://"), "primary URL not HTTPS")
+        require(item["primary_url"] == registered_sources[item["source_ref_id"]],
+                "claim primary URL disagrees with curated source_ref_id: " + item["source_ref_id"])
         require(isinstance(item["source_section"], str) and len(item["source_section"]) > 2, "empty source section")
         require(item["evidence_type"] in schema["$defs"]["claim"]["properties"]["evidence_type"]["enum"], "unknown evidence type")
         require(isinstance(item["qualification"], str) and len(item["qualification"]) >= 10, "no qualification")
@@ -270,8 +295,7 @@ def check(root: Path = ROOT) -> dict:
             schema["$id"].startswith("urn:tycho:m9:"),
             "proposed M9 schema must use scoped Tycho URN")
     raw_sources = (root / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8")
-    registered = set(re.findall(r"^\| ((?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}) \|", raw_sources, flags=re.M))
-    require(len(registered) == 43, "source register not 43 candidates")
+    registered = parse_source_registry(raw_sources)
     ids, links = read_case_catalog(root)
     examples = json_read(root / "authoring/cases/examples/case-records.json")
     require(isinstance(examples, list) and len(examples) >= 2, "missing portable examples")
@@ -303,8 +327,8 @@ def check(root: Path = ROOT) -> dict:
 
 def self_test(root: Path = ROOT) -> None:
     schema = json_read(root / "authoring/cases/case-record.schema.json")
-    refs = set(re.findall(r"^\| ((?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}) \|",
-                          (root / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8"), flags=re.M))
+    refs = parse_source_registry(
+        (root / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8"))
     good = json_read(root / "authoring/cases/examples/case-records.json")[0]
     validate_record(good, schema, refs)
     failures = 0
@@ -313,7 +337,7 @@ def self_test(root: Path = ROOT) -> None:
                  "integer_title", "short_statement", "non_string_source_ref", "non_string_pattern",
                  "non_string_review_limitation", "basic_date", "week_date", "invalid_calendar_date",
                  "independent_review_null_reviewer", "independent_review_null_date",
-                 "independent_review_blank_reviewer")
+                 "independent_review_blank_reviewer", "wrong_source_url", "foreign_url_same_host")
     for mutation in mutations:
         candidate = json.loads(json.dumps(good))
         if mutation == "wrong_collection":
@@ -354,6 +378,10 @@ def self_test(root: Path = ROOT) -> None:
             candidate["status"] = "independent_reviewed"
             candidate["review"]["reviewer"] = "   "
             candidate["review"]["reviewed_on"] = "2026-10-19"
+        if mutation == "wrong_source_url":
+            candidate["claims"][0]["primary_url"] = refs["ST01"]
+        if mutation == "foreign_url_same_host":
+            candidate["claims"][0]["primary_url"] = refs["N11"] + "-another-article"
         malformed_records.append(candidate)
         try:
             validate_record(candidate, schema, refs)
@@ -373,9 +401,10 @@ def self_test(root: Path = ROOT) -> None:
         # JSON Schema 2020-12 "format: date" checks individual dates; it
         # cannot compare values of two sibling fields. Our extra semantic
         # invariant valid_from <= valid_until must run in validate_record.
+        semantic_only = {"future_window", "wrong_source_url", "foreign_url_same_host"}
         schema_mutations = [
             (name, candidate) for name, candidate in zip(mutations, malformed_records)
-            if name != "future_window"
+            if name not in semantic_only
         ]
         for name, candidate in schema_mutations:
             require(bool(list(validator.iter_errors(candidate))),
@@ -383,10 +412,14 @@ def self_test(root: Path = ROOT) -> None:
         reversed_window = malformed_records[mutations.index("future_window")]
         require(not list(validator.iter_errors(reversed_window)),
                 "expected both inverted-window date strings to satisfy the base schema")
-        # The semantic validator above already rejected the inverted window.
+        for name in ("wrong_source_url", "foreign_url_same_host"):
+            candidate = malformed_records[mutations.index(name)]
+            require(not list(validator.iter_errors(candidate)),
+                    "base schema unexpectedly constrains external source URL: " + name)
+        # The semantic validator already rejected both mismatched source URLs.
         print("PASS: Draft2020-12 engine rejects " +
               str(len(schema_mutations)) + " schema violations; "
-              "semantic validator rejects 1 inverted validity window")
+              "semantic validator rejects inverted window and 2 source URL mismatches")
 
 
 if __name__ == "__main__":
