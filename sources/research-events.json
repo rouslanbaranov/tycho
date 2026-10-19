@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "scope": "Append-only research event examples for public-source slices; current status is derived from latest event per slice. No private sources or implied human approval.",
+  "events": [
+    {
+      "id": "evt.aws-idempotency.entry",
+      "slice_id": "slice.idempotency-claim",
+      "source_id": "src.aws-idempotency",
+      "observed_on": "2026-10-19",
+      "kind": "entry-inspected",
+      "section": null,
+      "reference_url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+      "source_version": "Public Builders' Library article, observed 2026-10-19; rolling page",
+      "claim_ids": [
+        "claim.same-intent-retry"
+      ],
+      "finding": "Article title and topic were inspected. Entry-page inspection alone does not verify technical claims.",
+      "next_action": "Read the client-token, semantic-equivalence and different-intent sections against the claim.",
+      "status": "researching"
+    },
+    {
+      "id": "evt.aws-idempotency.section",
+      "slice_id": "slice.idempotency-claim",
+      "source_id": "src.aws-idempotency",
+      "observed_on": "2026-10-19",
+      "kind": "section-inspected",
+      "section": "Reducing client complexity; Retries and semantic equivalence; Same client request ID, different intent",
+      "reference_url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+      "source_version": "Public Builders' Library article, observed 2026-10-19; rolling page",
+      "claim_ids": [
+        "claim.same-intent-retry"
+      ],
+      "finding": "Inspected client request identity and semantically equivalent retry behavior; this does not prove a deployed service implementation.",
+      "next_action": "Have a separate reviewer assess the claim's atomicity and expiration assumptions; then test an implementation if available.",
+      "status": "ready-for-review"
+    },
+    {
+      "id": "evt.http-idempotence.disputed",
+      "slice_id": "slice.http-method-scope",
+      "source_id": "src.http-semantics",
+      "observed_on": "2026-10-19",
+      "kind": "dispute-recorded",
+      "section": "RFC 9110 section 9.2.2 Idempotent Methods",
+      "reference_url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+      "source_version": "RFC 9110",
+      "claim_ids": [
+        "claim.http-idempotence-is-not-global-exactly-once"
+      ],
+      "finding": "Dispute concerns an overbroad inference from HTTP method idempotence to unrelated externally atomic business effects; does NOT allege the RFC and AWS disagree.",
+      "next_action": "Keep claim contested; review each implementation boundary and write a falsifying transaction test before any promotion.",
+      "status": "blocked"
+    },
+    {
+      "id": "evt.jep491.unavailable",
+      "slice_id": "slice.jep491-primary",
+      "source_id": "src.jep491",
+      "observed_on": "2026-10-19",
+      "kind": "blocked",
+      "section": null,
+      "reference_url": "https://openjdk.org/jeps/491",
+      "source_version": "JEP 491 canonical publication, Java 24 scope",
+      "claim_ids": [
+        "claim.jep491-full-text-unavailable"
+      ],
+      "finding": "Canonical page returned HTTP 403 during public retrieval; no canonical technical text was read.",
+      "next_action": "Inspect and cite an authorized Oracle JDK 24 official companion under its own source identity; leave the canonical JEP unread.",
+      "status": "blocked"
+    }
+  ]
+}
