@@ -40,6 +40,45 @@ A split must preserve original event ordering, sort semantics and query complete
 | Partial results | Latency prioritized over full result set | Product contract must permit missing events |
 | Block abusive IDs | Invalid/test/spam hot keys | Unacceptable for valid critical customer IDs |
 
+## Why over-partitioning and wide partitions can both harm the same system
+
+The [June 3, 2026 first-party report](https://medium.com/netflix-techblog/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456) (N12, **Picking the Partitioning Strategy**, **The Problem with the Current Approach**) says TimeSeries provisioning used workload inputs plus **Monte Carlo simulations** to choose time slices and buckets. That approach assumes the future distribution resembles the input estimates. Actual datasets can be very different months later, or a small number of valid IDs can receive disproportionate traffic.
+
+Both extremes matter. An oversized partition may take **seconds** to read, creating retries and queueing. An **over-partitioned** dataset whose generated time buckets contain **under 10 KB** forces a read to fan out across many small partitions: the report describes an illustrative change from **60-second to 604,800-second** time buckets for future time slices after observing histogram percentiles. Neither “always smaller partitions” nor “always bigger partitions” is a rational policy. The article mentions an often-configured target density around **2–10 MiB**, explicitly dependent on workload.
+
+## Distinct runtime algorithms, not one global rewrite
+
+| Mechanism observed in N12 | When it acts | What it changes | What it cannot fix |
+|---|---|---|---|
+| Dataset-level Time Slice worker | Background inspection of histogram percentiles | Partition strategy for **future** time slices | Historical wide partitions already written |
+| Per-ID hot-partition detector | **Read path** bytes exceed configured threshold | Emits Kafka event with time slice, ID, existing buckets, immutability and version | Current request may already be slow; per-read detection does not prevent first spike |
+| Async planner + split strategy | Full read of source partition, checkpoints in `wide_row` metadata | Adds event buckets while preserving total sort order; caps split fan-out | Mutable partitions remain a harder future scope |
+| Validation gate | Before and after split | Pre/post checksums must match before state becomes completed | Wrong checksum scope or identical old/new semantic error |
+| Read-path router | After completed split metadata published | Bloom-filter candidate test and metadata read-through cache select parallel partition reads | Filter false positives, stale metadata or consistency bugs still need fallback |
+| Original-data fallback | Source physical partition retained | Re-read original when split routing/data unavailable | Costs extra storage; cannot erase errors already exposed by an unsafe cutover |
+
+**Source anchors:** N12, **Solution 1**, **Detection**, **Immutability**, **Checkpointing**, **Splitting**, **Validating Splits**, **Serving Reads**, **Fallbacks**. The high-level policy is reported; the table is a Tycho synthesis and not a copy of provider diagrams.
+
+## Shadow read parity and additional safeguards
+
+Netflix deliberately restricted the first implementation to **immutable old partitions**, reducing the likelihood that concurrent writes would invalidate the split. The retained original acts as the safe fallback. Beyond simple pre/post checksums, the company used an **offline Data Bridge/Spark comparison** and a **phased shadow read comparison of bytes served** by old and new paths before switching. These are complementary oracles: a checksum captures a chosen projection while byte-for-byte shadow reads can expose differences in the actual query encoding, ordering or pagination.
+
+The article reports Bloom-filter lookup usually taking **single-digit microseconds or less**, but that cost depends on the selected namespace, partition-key population and server memory. A positive Bloom result merely triggers a metadata lookup; it must not be equated with proof that a split exists. Query consistency and fallback require authoritative completed state, not a probabilistic filter as source of truth.
+
+**Read correctness matters even if new metadata is momentarily stale:** with old partitions retained, the system can use the original route while a split is incomplete or absent. Tycho would require checks for filter false positives, delayed cache refresh, split-state replay, TTL/reten­tion race and source/target data expiry; these are **synthetic test proposals**, not a claim that Netflix executed every failure test.
+
+## Reported gains, and one extreme exception
+
+The company reports that the **average latency for affected wide-partition reads** fell from **seconds** to **low double-digit milliseconds**, while their tail latency fell from several seconds to approximately **200 ms or less**, with fewer timeouts. This is **a scoped before/after for selected wide partitions**, not the full TimeSeries read-p99 or an independent A/B study. The published charts are not reproduced and do not supply enough population/time-window metadata here to build universal confidence intervals.
+
+Crucially, the same article includes an extreme **500 MB+** partition read returning paginated data while still taking roughly **41 seconds** in its example. That is a correct and useful negative boundary: partitioning improved availability and common tails but did **not** guarantee a millisecond SLO for every pathological dataset. The reported future work includes **splitting mutable partitions** and reprocessing previously failed splits; neither should be marked completed as of June 2026. [N12, **Results**, **Conclusion**].
+
+## Architectural selection and migration falsification
+
+For another temporal datastore, profile partition-byte percentiles **and** read fan-out before choosing a fix. If most IDs share a density problem, adjust new time slices and avoid rewriting old data. If only a small set of legitimate keys are extremely wide, use a checkpointed per-ID split with immutable-source safeguards and explicit query-equivalence checks. If partial results are acceptable under the external API, a bounded-latency partial-return strategy is another option; it is unacceptable when completeness is mandatory. Blocking spam/test IDs must never silently become blocking valid high-volume customers.
+
+**Tycho rollback/stop gates:** do not activate new routing while checksum/byte-shadow parity fails; refuse partial results for complete-history contracts; fall back if metadata is stale, filter memory exceeds budget, split introduces excessive query fan-out, or retention makes old/new incomparable. Retain the original until recovery and expiry are explicitly resolved. These criteria are analytical, not a disclosed Netflix full runbook.
+
 ## Operational checks and unknowns
 
 Compare p99 by partition-size percentile, read queue depth, retries/timeouts, metadata cache hit behavior, storage read amplification and cost, all by dataset, not only fleet means. Guard cutover by consistent checksum and an explicit routing-state transition. The primary source does not provide source code SHA for every stage or a controlled experiment against an equivalent non-Cassandra store; do not present it as proof that Cassandra 4.x always beats alternatives.
