@@ -37,6 +37,8 @@
 - [Meta ingestion shadow lifecycle and cutover](meta-ingestion-shadow-migration-lifecycle.md)
 - [LinkedIn audited Kafka tiers](linkedin-kafka-tiered-completeness.md)
 
+**M9 implementation boundary:** Graph development and maintenance are stopped. Navigate these cases through stable document IDs, human-readable links, indexed metadata, source citations and bounded text retrieval; no graph schema, edge database or graph-aware MCP feature is required. Original Mermaid illustrations and historical case subjects such as GraphQL or Meta TAO do not constitute Tycho product graph support.
+
 ## Reading and agent retrieval policy
 
 Every document should be read with its original publication period, exact first-party article sections, claim uncertainty and counter-architectures. The cases contrast incompatible answers: Netflix's microservice/cloud move and Shopify's modular-monolith choice; Zuul 2 async connection scale and Java 21 virtual-thread incident; ZGC tail latency and Parallel GC batch throughput; storage engine swaps and incremental schema changes.

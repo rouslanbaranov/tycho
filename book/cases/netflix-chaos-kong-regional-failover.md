@@ -52,6 +52,36 @@ A safe, independently designed adoption sequence is:
 
 These six steps are **Tycho's synthetic transfer controls**, not a report of Netflix's exact operational runbook.
 
+## Failure injection has a defined envelope, not unlimited coverage
+
+A regional exercise is meaningful only if its **fault boundary is explicit**. The N15 narrative dates Netflix's Chaos Kong work to 2015 and describes an application-level regional-loss simulation; it expressly does not shut down the physical AWS region. Thus a passing result concerns **traffic and dependencies that were actually redirected or suppressed**, not hypothetical failures of globally shared identity, cross-region control planes or every durable datastore.
+
+For another system, the decision should be written as a statement of exactly what is disrupted: *which clients lose which region? which reads are allowed to become stale? which region owns writes? which shared services remain healthy?* Without that scope, success can mask the very global dependency a multi-region design is intended to eliminate.
+
+| Candidate test envelope (Tycho synthetic) | What it proves if measured successfully | Significant blind spot |
+|---|---|---|
+| Route new client traffic away from region A | Traffic controller and receiving region accept eligible requests | Existing sessions, in-flight writes and global dependencies |
+| Make region-A service calls fail | Callers correctly time out, retry or degrade for those endpoints | A real whole-region outage may also remove identity or discovery |
+| Delay or partition inter-region replication | Secondary catches up or obeys bounded-staleness contract | Simultaneous promotion can create conflicting writes |
+| Fail shared regional control-plane APIs | Application can continue or explicitly refuse operations without them | Provider-level DNS, external credentials and unrelated managed services |
+| Disable the entire simulated region during live traffic | Selected end-to-end user journeys maintain agreed RTO/RPO and SLO | Does not prove all provider infrastructure was really unavailable |
+
+The table is an **original test model**, not five reported experiments Netflix necessarily performed. It makes the distinction between *simulation fidelity* and *observed user benefit* independently reviewable.
+
+## Write authority and the recovery contradiction
+
+A secondary region can serve read-only degraded traffic before it can safely become a writer. Promoting writers requires a policy for **in-flight acknowledgments**, replica lag, ordering, globally unique identifiers, replay idempotency and a recovery model when the former primary returns. An active-active system further requires conflict rules that match domain semantics; last-write-wins may be unacceptable for some mutable state.
+
+A fictitious acceptance exercise should stage two adversarial states: a write acknowledged in A but not visible in B when the failover begins, and a stale client still sending mutations to A after B has been promoted. Define whether to reject, forward, compensate or reconcile those writes, with **measured loss/recovery windows**, not a guessed “zero RPO.” The N15 post does not publish Netflix's complete write-ownership mechanics or a cryptographic proof of no lost writes.
+
+## Original engineering decision and staged verification
+
+Before investing in multi-region complexity, a different platform should compare a cheaper **single-region multi-AZ** deployment and practiced backup restoration. If the requirement truly demands regional continuity, first implement dependency discovery and runbooks, then shadow routing of read-only cohorts, then controlled region unavailable tests within bounded blast radius, and only later tests of write promotion, replication lag and regional return. Every stage has a stop switch and an incident owner.
+
+Metrics include completed end-user journeys, abandoned session count, p99 at failover, RTO, recovery point, retry amplification, authentication failures, routing convergence, and restoration correctness. If an experiment uses a prepared simulated region switch, report **the injection method and unaffected services** with the result.
+
+**Do not conclude:** “Chaos Kong proves an AWS region outage cannot affect customers.” The reported September 2015 DynamoDB incident is supporting historical context, not a controlled guarantee for all future faults. The independent source-review gate remains open, especially because the N15 original has intermittent access and its precise version is not pinned.
+
 ## Alternatives, counterexamples, and failure criteria
 
 | Choice | Correct when | Risk |

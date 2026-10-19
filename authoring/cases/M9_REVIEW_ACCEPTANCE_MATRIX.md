@@ -128,3 +128,65 @@ Actual run: connected-tool JS, with a captured machine-readable [per-question re
 ## Verified core retrieval/MCP dependency gate — 2026-10-19
 
 The exact still-open original Tycho service dependencies and no-waiver acceptance boundary are documented in [M9 search/MCP dependencies](M9_SEARCH_MCP_DEPENDENCIES_2026-10-19.md). E07 index #49 / ranked search #50 / evidence resolution #51 and E09 MCP adapter #57 (and follow-on graph/onboarding/client issues) are not yet an available deployed M9 retrieval service. [Core PR #188](https://github.com/rouslanbaranov/tycho/pull/188) is a section-index **prototype**, not 60 live MCP question runs. The offline 29-case BM25 diagnostic is real but measures document-level candidate retrieval only. **No independent-review or full-toolchain success must be inferred from a prototype or a closed status.**
+
+## Content-first completion policy — 2026-10-19
+
+The user set **100% substantive case-page coverage as M9's highest priority**. The current 29 cases and six decision guides are **not** individually certified content-complete by the existing presence/shape checks. For each case, assess published baseline, workload and owners, trigger, considered alternatives (clearly separate historical from Tycho-analytical), migration and compatibility phases, failure/rollback and negative results, measured outcomes including date/unit/denominator, counterexamples, applicability prerequisites, source-section citations, and falsifiable independent review. For comparisons, require disqualifying conditions, reversible transition strategies, data quality/operational checks and an explicit insufficient-evidence outcome. Log unavailable facts as gaps instead of inventing content.
+
+**Graph-related checks and deliverables are retired for all M9 acceptance.** No case graph, graph edge catalogue, graph-aware MCP API, graph freshness/version checks or graph infrastructure maintenance will be requested or accepted as new M9 work. Preserve stable IDs, canonical Markdown links, versioned source provenance and text/section search, per [accepted ADR](../ADR-RETIRE-CURATED-KNOWLEDGE-GRAPH.md). Native diagrams and published case studies about graph-based systems remain legitimate explanatory material. Historical graph references elsewhere in the milestone are superseded by this decision.
+
+Do not equate “all 29 pages exist”, “all issues closed” or an approximate word count with 100% content. Independent acceptance of exact external claims remains a separate outstanding gate. No full-repository tests, complete case review or executed agent benchmark are asserted by this policy update.
+
+## M9 page-depth checkpoint — content improvement wave, 2026-10-19
+
+The linked [PR #212](https://github.com/rouslanbaranov/tycho/pull/212) improves seven previously existing case chapters and one existing decision guide while applying the graph-retirement requirement. It does not replace the prior **29-case/6-guide existence check** with independent acceptance. The chapter-level improvements below were authored from first-party public accounts and include additional observed historical phases, incompatibilities, negative outcomes, and separate synthetic migration controls:
+
+| Expanded chapter | New substantive coverage | Remaining gate |
+|---|---|---|
+| Netflix Java convergence | Distinct JVM/framework/API-composition phases, Java 17 CPU context, cross-service compatibility and reversible fleet rollout | Independent primary metric/compatibility review |
+| Netflix DGS/Spring GraphQL | 8.5.0 opt-in to 10.0.0, async-filter regressions, deleted modules and subscription migration concerns | Independent release-claim and numerical review |
+| Netflix Generational ZGC | Collector comparisons, pause/retry amplification, native memory, reference handling and THP | Independent original blog figure/denominator review |
+| Uber DOMA | 2,200 services/70 domains with partial adoption, layer/gateway/extension contracts and company-reported outcome limits | Independent historic benefit and timeline review |
+| Shopify modular monolith | 2017 componentization, mechanical file move and history cost, contrasted 2020 partial ownership and service exceptions | Independent source/temporal review |
+| Shopify component enforcement | Wedge-to-Packwerk differences, rigid-rule failure, ownership-first versus isolation-first and incomplete rollout | Independent technical and provenance review |
+| LinkedIn Kafka tiers | Audit instrumentation across producer, mirrors, consumers; 2015 dated scale, counted-versus-identical-event caveat | Independent numeric/date and Kafka semantics review |
+| Agent-assisted migration decision playbook | Correctness oracles, explicit stop states, staged code/data migration and human acceptance | Independent review of transferred applicability |
+
+**Result of this wave:** **7 of 29** case pages and **1 of 6** decision pages substantively expanded; this ratio **does not represent the percentage of pages that are 100%-complete or independently accepted**. The other **22 case pages and 5 decision pages** were not depth-expanded in this wave. All 35 documents remain subject to full per-page completeness assessment and external independent approval. No independent reviewer or production MCP evaluation was performed in this checkpoint.
+
+**Remote text-only mechanical check against PR head:** all 14 initially modified files, 102 relative Markdown links checked against a 248-file repository tree, balanced code fences, and the configured lexical boundary patterns of the edited files had **no detected issues**. This is not execution of the actual local Python checkers or proof of evidence correctness, and does not supersede them.
+
+## Substantive page-depth work checkpoint — 2026-10-19
+
+**This is an authoring-progress register, not an independent acceptance result.** Of the existing **29** case studies, **14** have received additional primary-source-bounded architecture depth in the current [M9 draft PR #212](https://github.com/rouslanbaranov/tycho/pull/212): Netflix **Java platform, DGS/Spring GraphQL, ZGC, Java 21 pinning, Zuul 2, 2008–2016 cloud rearchitecture**; Shopify **modular monolith and Packwerk**; Uber **DOMA**; LinkedIn **Kafka tier audit**; Airbnb **Bazel migration**; Discord **search cells**; Stripe **online subscriptions**; and Cloudflare **Super Slurper**. The [agentic migration decision guide](../../book/cases/decisions/agentic-migration-safety.md) has also been substantively deepened. Added content includes reported-vs-inferred chronology, system/failure boundaries, negative results, migration/rollback safeguards, workload-specific quantitative caveats and applicability contraexamples.
+
+**Still without this dedicated depth pass in PR #212 — 15 case pages:** `netflix-data-project-durable-workload-identity.md`, `netflix-grpc-cpu-workerpool-virtual-thread-regression.md`, `netflix-hotspot-false-true-sharing.md`, `netflix-chaos-kong-regional-failover.md`, `netflix-casspactor-shadow-migration.md`, `netflix-cassandra-dynamic-time-series-splits.md`, `uber-mezzanine-pg-to-schemaless.md`, `uber-mysql-to-myrocks.md`, `uber-cinnamon-admission-and-fairness.md`, `shopify-helix-checkpoint-gated-native-migration.md`, `discord-cassandra-scylladb-messages.md`, `spotify-tech-migration-long-tail.md`, `spotify-honk-data-consumer-migration.md`, `meta-tao-social-graph-serving.md`, `meta-ingestion-shadow-migration-lifecycle.md`. This is **not a claim of their absence or poor quality**: each already exists as a bounded draft; each needs an explicit evidence-by-evidence completeness decision rather than a word-count target.
+
+**Still without this wave's dedicated depth pass — 5 comparison guides:** `monolith-vs-services.md`, `reactive-vs-virtual-threads.md`, `gc-and-tail-latency.md`, `data-migration-correctness.md`, `build-delivery-migration.md`. They already contain synthetic ADRs but remain pending domain-specific falsification/counterevidence and independent review.
+
+**Mechanical GitHub-only scan on the current wave:** reviewed the Markdown bodies on the feature branch against the `main` path inventory: 21 changed Markdown files at check time had balanced code fences, no repeated identical second-level headings and no missing relative Markdown file targets in the scanned subset. This does **not** verify anchors, external source reachability, diagram rendering, full repository checks, publisher claim accuracy, copyright or independence. Local `premerge_check.py` and `validate_m9_cases.py` were **not executed**: the execution container cannot resolve `github.com` for a full checkout. The feature branch was ahead of and behind current main; reconcile concurrent main changes before merge.
+
+**Completion contract:** continue page-by-page research until every existing case/decision page meets the substantive checklist; then obtain named independent technical/copyright review and an authorized, evidence-backed search/MCP dependency disposition. Keep #121/E16/M9 open. Retired knowledge-graph features cannot be reintroduced as blockers or “missing coverage.”
+
+## Latest full-corpus authoring checkpoint — 2026-10-19 (supersedes partial-wave counts above)
+
+**Highest-priority case-content work reached the complete corpus at this draft checkpoint:** all **29/29 case pages**, including **12 Netflix and 17 other-company cases**, and all **6/6 comparative decision pages** have received substantive expansion in [draft PR #212](https://github.com/rouslanbaranov/tycho/pull/212). Earlier checkpoints in this file saying 7/29, 14/29 or 22 outstanding refer to intermediate commits of the same work and **are not the latest count**. Work covers historical baseline/transition and ownership, alternative hypotheses, failure/correctness/rollback boundaries, dated publisher-reported outcome limits, contraindications, and original reproducible *proposed* experiments where source measurements are absent. Authored analysis must remain distinguishable from published facts.
+
+### Executed remote GitHub-tree checks for the 35-page current branch set
+
+| Check | Observed result | Scope / caveat |
+|---|---|---|
+| Edited substantive corpus | **29/29 case files, 6/6 decision guides** occur in PR diff | Counts files with source-bounded depth passes, **not** independently signed-off pages |
+| Source-backed case identity | **29/29** first-party URLs present and stable `case.*` identity labels visible | Not a human audit of URL accuracy or each claim against original section |
+| Native illustration structure | **29/29** case pages have balanced Mermaid code fences | A syntactic check, not an actual GitHub/Mermaid renderer execution |
+| Markdown file links | All 35 pages' **relative Markdown file targets** inspected against the GitHub `main` file inventory; **zero missing target files** | Target anchors, dynamic links and external HTTP reachability not certified |
+| Repeated level-2 headings | No repeated identical H2 headings observed in 35 pages | Editorial coherency and duplication between differently named sections still require review |
+| Decision guides | **6/6** have expanded domain-specific scenario, counterevidence, refusal and reversal discussions | No independent architecture decision fitness test or executing agent evidence |
+| Provenance/runtime tests | Full pinned-checkout `validate_m9_cases.py`, `premerge_check.py`, local source and quality suites: **NOT EXECUTED** in this GitHub-only pass | Structural inspection **must not** be converted into a test-suite PASS |
+| External human technical/copyright review | **NONE** supplied | No case is approved as `independent_reviewed` by this edit |
+| Live K18–K23 lexical/hybrid/MCP evaluation | **NOT EXECUTED**; core service availability/authorized dependency decision still gates final M9 acceptance | Historic candidate BM25 data is not this production evaluation |
+| Curated knowledge graphs | **EXCLUDED** from M9 by binding ADR | Not a missing implementation, coverage defect or release blocker |
+
+**Content-depth coverage is 100% of the existing 35-page corpus; independently confirmed complete/accepted coverage is NOT 100%.** A “depth pass” certifies that extra content was authored and links were scanned, not that every claim is correct, fresh, license-cleared and externally reviewed. The 43 public source candidates have their previous scoped admission/disposition; two unavailable technical source bodies remain excluded from positive engineering claims.
+
+**Next acceptance gate:** named qualified independent reviewer records a case-by-case source/section/date/metric/contraindication/rights verdict, amendments to every high-severity error, pinned repo-checkout execution with commands/output hashes, and authentic search/MCP evaluation or explicitly authorized exception. **Do not close #121, Epic #113 or M9** merely because 35/35 pages now have substantive drafts. Keep PR #212 **draft** until these controls and main-branch integration review pass. No renewed graph work is required or permitted.

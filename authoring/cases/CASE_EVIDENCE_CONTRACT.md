@@ -1,6 +1,6 @@
 # M9 case, claim, provenance and decision-retrieval contract
 
-**Status:** **portable proposed v1 contract** for issue [E16-07 #120](https://github.com/rouslanbaranov/tycho/issues/120). Updated 2026-10-19. This document and accompanying `case-record.schema.json` are *interchange fixtures and a design proposal*, **not** completion of Tycho K10–K20 (generated frontmatter, production JSON Schema, lexical index, Graphify/curated graph, hybrid search or MCP). Those remain owned by existing original Tycho epics. Do not create a second server, graph implementation or indexer in M9.
+**Status:** **portable proposed v1 contract** for issue [E16-07 #120](https://github.com/rouslanbaranov/tycho/issues/120). Updated 2026-10-19. This document and accompanying `case-record.schema.json` are *interchange fixtures and a design proposal*, **not** completion of Tycho K10–K20 (generated frontmatter, production JSON Schema, lexical index, hybrid search or MCP). Those remain owned by existing original Tycho epics. Do not create a second server or indexer in M9. **Graph development, graph fixtures, graph versioning, traversal and maintenance are retired under the accepted Tycho ADR.**
 
 ## Invariants and identifiers
 
@@ -14,7 +14,7 @@
 - `confidence` is claim-relative: `primary_statement`, `first_party_reported_measurement`, `independent_replication`, `analysis`, `insufficient_evidence`. Do not compute artificial confidence scores; independent replication must cite a real independently reproduced experiment.
 - `review_status`: `draft`, `source_reviewed`, `mechanically_validated`, `independent_reviewed`, `rejected`. A machine-readable record is not automatically `independent_reviewed`.
 - Every concrete numeric claim must include a unit, numerator/denominator where relevant, version/window, exact location in original publication and explicit comparison denominator. Unknown values remain unknown rather than invented.
-- Contract is collection-specific: `collection = tycho-public`; **Adro/private corpus must not enter Tycho's metadata, source register, evaluation cache, graph or embeddings.**
+- Contract is collection-specific: `collection = tycho-public`; **Adro/private corpus must not enter Tycho's metadata, source register, evaluation cache or embeddings.**
 
 ## Proposed JSON Schema boundaries
 
@@ -24,20 +24,9 @@
 - **Two-layer date checks:** Draft 2020-12 + `FormatChecker` validates the syntax of `valid_from` and `valid_until` individually; it does **not** express their relative chronological ordering in this schema. The portable Python `validate_record` semantic check rejects `valid_from > valid_until` when both exist. Future K11 adapters MUST retain this distinct business invariant. Test classification: **nine invalid schema shapes + one semantically inverted date window**; reporting ten JSON Schema failures is wrong.
 - The contract describes logical, not physical index formats. No Elasticsearch/Lucene/vector embedding shape is mandated by M9.
 
-## Proposed graph relations (K15/K16 owners implement only after review)
+## Navigation and decision relationships without a graph
 
-| From | Directed edge | To | Restriction |
-|---|---|---|---|
-| case | `documents-transition` | transition (legacy → target) | Temporal and public-source provenance |
-| case | `responds-to` | constraint | Requirement+workload scoped |
-| case | `reports-failure` | failure mode | Original source or explicitly labelled synthesis |
-| case | `uses-pattern` | pattern | Never implies pattern is globally best |
-| case | `contradicts-applicability-of` | decision card | Condition must be present; not company ranking |
-| claim | `derived-from` | primary source anchor | Exact section / timestamp / revision |
-| decision | `compares` | two or more cases | May not claim original companies considered each other |
-| query fixture | `tests-answer` | case, claim | Must preserve temporal uncertainty, refusal, negative evidence |
-
-Graph endpoint IDs must be stable, direction explicit, evidence-bound and versioned under K15/K16 semantics. If graph owner has not released its schema, these remain **proposed relationships**, not materialized graph edges.
+Case-to-pattern, case-to-case, claim-to-source, and decision-to-contrary-evidence relationships are represented through **stable document and claim identifiers**, explicit Markdown links, canonical metadata/section indexes and first-party source sections. This is not a graph edge vocabulary or a materialized graph model; no K15/K16 implementation or maintenance is expected. Requirements/contraindications are explained locally so an agent can validate the reasoning by reading the page and its source. For verified claims the bounded read path is case ID → claim ID → source reference → public publisher URL/section, with revision/date/unknown status preserved. Graph-dependent acceptance, APIs and adapters are removed from M9 scope.
 
 ## Retrieval and MCP compatibility (K12, K17–K23)
 

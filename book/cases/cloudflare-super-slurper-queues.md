@@ -36,6 +36,54 @@ Adding durable objects, queues and workers creates distributed orchestration, re
 | Introduce an intermediate compatibility adapter | Split change into reversible pieces | Additional short-term dual-state complexity |
 | Unknown until instrumented | No trustworthy baseline or correctness oracle | Do not present speculation as an endorsed architecture |
 
+## Observed orchestration stages and persistent state boundaries
+
+The [April 10, 2025 engineering post](https://blog.cloudflare.com/making-super-slurper-five-times-faster/) (CF01, **New architecture: Workers, Queues, and Durable Objects**) documents **more than a simple queue inserted in front of workers**. The original source-copy system reused Kubernetes SourcingKit infrastructure in a core data center. A roughly one-week proof of concept using Workers/Queues/Durable Objects **performed worse for a few hundred objects**, then matched or beat the original at very large object counts. That negative pilot result is a workload threshold, not evidence that event-driven copying always has lower overhead.
+
+| Actual processing phase in CF01 | Responsible reported component | Data it must durably preserve | Distinct failure/retry risk |
+|---|---|---|---|
+| Start a job | API Worker + account Durable Object | Migration options, source/target names and job identity | Duplicate start requests or inaccessible historical state |
+| Enumerate source objects | List Queue consumer | Continuation position, object identifiers and listing state | Replayed list page, reordering or overlapping workers |
+| Schedule transfers | List producer + Transfer Queue | Per-object key and transfer task | Queue backlog, duplicate delivery, dependence on remote source |
+| Copy bytes | Transfer Queue consumers / Workers | In-progress lock and object-transfer state; multipart status for large objects | Timeout after upload, partial multipart object, repeated copy |
+| Determine completion | Lifecycle Queue consumer | Pending/failed/completed object counts and job terminal status | Premature completion despite delayed transfer or dead-letter work |
+| Retrieve legacy jobs | Hyperdrive to old PostgreSQL records | Historical migration metadata | New runtime must not silently discard prior migration history |
+
+The publisher describes separate **account job Durable Objects**, **batch Durable Objects** for queued object keys and state, and a sharding mechanism to avoid the SQLite Durable Object **10 GB storage limit** when dealing with billions of keys. This is not a claim that each batch DO supports unlimited keys. Historical job data remain reachable through Hyperdrive, while the new path handles active job orchestration. [CF01, **Database layer: durable storage & legacy data retrieval**].
+
+## At-least-once semantics: four actual duplicate defenses
+
+Cloudflare names *two* duplicate causes: the delivery contract of Queues (**at least once**) and failures/late acknowledgments to Durable Objects after an object was already transferred. The source's **Challenges** section names concrete safeguards rather than assuming “exactly-once queue”:
+
+1. **Listing sequence identifiers:** a source listing is sequential through continuation tokens; numbering operations prevents competing duplicate enumerations and allows redundant retries to be short-circuited.
+2. **Per-key transfer lock:** consumers lock an object identity while processing; successful completion removes the key from the tracking database. A later redelivery whose key is absent can be recognized as already processed.
+3. **Transactional accounting:** inserting/deleting object keys and updating pending counts are coupled so failure to commit does not incorrectly advance the completed-object total.
+4. **Destination existence check:** as a last defense, the system can skip an object found at the destination with a publish time after migration start.
+
+These defenses address duplicate **work**, not a magic end-to-end atomic transfer between S3 and R2. For another platform, destination-existence and timestamp checks alone are not sufficient to prove byte equality, metadata correctness, same-version source identity or authorization. The account's published approach is a company-specific idempotency design with particular assumptions; do not silently generalize it to mutating sources or arbitrary overwrite semantics.
+
+**Failure branch:** queue consumers retry transient faults; nonretriable work moves to a **dead-letter queue** for later inspection. The listing producer can throttle enqueueing if dependent systems fail. A job controller must distinguish *all queued*, *all acknowledged*, *all verified* and *all failed/review-needed* before declaring completion. CF01 documents its lifecycle consumer; it does not publish full per-object hash verification or an independently reproduced loss bound.
+
+## Performance result, population and negative case
+
+| Publisher-reported metric | Observation | Validity caveat |
+|---|---|---|
+| **75,000 objects**, AWS S3 → R2 | Old copy **15m30s** vs new **3m25s** | Selected test of one object mix; roughly 4.5× for this sample, described as **up to 5×** |
+| Several hundred objects | First Worker/Queue proof of concept **slower** than old implementation | Queue and orchestration cost dominates small job |
+| Millions of objects | Proof of concept met or exceeded old design in larger tests | No full object-size distribution, cost or confidence intervals given |
+| Last two months of service history | Publisher says **35% of lifetime objects** had been copied in this interval after the new service was adopted | Adoption-volume observation, not throughput-normalized performance experiment |
+| Concurrency at post date | Company notes **3 concurrent migrations per account**; higher concurrency was a future goal | Does not prove arbitrary unbounded parallelism |
+
+The article reports some live transfers were even faster depending on object sizes, but supplies no general latency histogram, operational cost baseline or independent benchmark. The 75,000-object ratio must not be presented as a p99 speedup for every migration. [CF01, **Results**, **What’s next for Super Slurper?**].
+
+## Why the queue architecture is not automatically the best choice
+
+A local batch copier can be safer and cheaper for a limited fixed transfer set. A durable queued architecture adds partitioned coordinator state, asynchronous acknowledgments, poison messages, idempotency rules, recovery operations and versioned historical job data. It is attractive only when its extra operational cost buys useful concurrency and restartability at scale. The Cloudflare source supports distributed high-volume copy throughput, but it does not establish correctness for every schema or metadata translation.
+
+For a **synthetic object migration**, Tycho's acceptance contract would pin source bucket/version and destination settings, identify object-level authority, preserve listing and transfer cursors, inject queue duplicates and lost acknowledgments, verify byte-level content/metadata for representative and boundary cases, confirm the DLQ and resume workflow, and compare completion latency and cost for **small, medium, and large** object populations. Reconciliation must cover failures during copy as well as completion after copy but before acknowledging the work item.
+
+**Rollback boundary:** before destination consumers switch, suspend queue production and keep the old source authoritative; after consumers begin writing the target independently, returning to the source may need separate reverse synchronization. The historical article does not specify a universal two-way rollback protocol or prove a per-object recovery time. When source mutability, object versioning, target overwrite policy or authorization cannot be audited, return **insufficient evidence** rather than claim safe migration.
+
 ## Legacy modernization decision transfer
 
 Use queue fan-out and backpressure when an I/O-bound migration needs sustained parallelism and fault isolation across sources and destinations; do not add it to a tiny one-off copy script without operational justification.
