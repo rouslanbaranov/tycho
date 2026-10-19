@@ -115,6 +115,12 @@ def old_sections(index_path):
             rows = db.execute("""SELECT section_key,document_id,section_id,path,heading,title,content,
                                        char_start,char_end,document_sha256 FROM sections
                                 ORDER BY document_id,char_start""").fetchall()
+            require(db.execute("PRAGMA integrity_check").fetchone()[0] == "ok",
+                    "Corrupt SQLite index")
+            fts_rows = db.execute(
+                "SELECT section_key,title,body FROM fts ORDER BY section_key").fetchall()
+            require(sorted((r[0],r[5],r[6]) for r in rows) == fts_rows,
+                    "FTS records diverge from canonical section rows")
         cols = ("section_key","document_id","section_id","path","heading",
                 "title","content","char_start","char_end","document_sha256")
         grouped = {}
@@ -141,9 +147,25 @@ def compose(root, previous=None):
         text = path.read_text(encoding="utf-8")
         require(digest(text) == doc["sha256"], "Source file changed during index build")
         cached = old.get(doc["id"], [])
-        if cached and all(row["path"] == doc["path"]
-                          and row["document_sha256"] == doc["sha256"]
-                          for row in cached):
+        cached = sorted(cached, key=lambda r: r["char_start"])
+        header = route_index.FENCE.match(text)
+        safe_cached = (
+            cached and header is not None
+            and cached[0]["char_start"] == header.end()
+            and cached[-1]["char_end"] == len(text)
+            and all(r["path"] == doc["path"]
+                    and r["document_sha256"] == doc["sha256"]
+                    and r["title"] == doc["title"]
+                    and r["section_key"] == doc["id"] + "#" + r["section_id"]
+                    and type(r["char_start"]) is int
+                    and type(r["char_end"]) is int
+                    and r["char_start"] < r["char_end"]
+                    and r["content"] == text[r["char_start"]:r["char_end"]]
+                    for r in cached)
+            and all(a["char_end"] == b["char_start"]
+                    for a,b in zip(cached,cached[1:]))
+        )
+        if safe_cached:
             segments = cached
             reused += 1
         else:
@@ -181,6 +203,7 @@ def publish(root, supplied=None, *, full=False):
     previous = ({}, None) if full else old_sections(target)
     manifest, sections, reused = compose(root, previous)
     if previous[1] is not None and previous[1] == manifest and not full:
+        verify(root, target)
         return {"outcome": "unchanged", "snapshot": manifest["snapshot_id"],
                 "sections": len(sections), "reused_documents": reused}
     temp = None
@@ -226,10 +249,11 @@ def verify(root, supplied=None):
     target = output_path(root, supplied)
     cached, manifest = old_sections(target)
     require(manifest is not None, "No published section index")
-    fresh, actual_rows, _ = compose(root, (cached, manifest))
+    fresh, actual_rows, _ = compose(root, ({}, None))
     require(fresh == manifest, "Section index stale: canonical source/route snapshot changed")
-    require(sum(len(x) for x in cached.values()) == len(actual_rows),
-            "Section rows missing from index")
+    cached_rows = [x for rows in cached.values() for x in rows]
+    cached_rows.sort(key=lambda x: (x["document_id"],x["char_start"],x["section_id"]))
+    require(cached_rows == actual_rows, "Section metadata, offsets or content diverge from book")
     return {"outcome": "verified", "snapshot": manifest["snapshot_id"],
             "coverage": manifest["coverage"], "unannotated_count": len(manifest["unannotated_paths"]),
             "sections": manifest["section_count"]}
