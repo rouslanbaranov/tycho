@@ -53,6 +53,47 @@ Categorize I/O waits vs CPU work *separately for outgoing gRPC worker pools, inb
 
 **Reversal triggers / insufficient evidence:** If I/O waiting becomes negligible and CPU-heavy tasks dominate, retain a simpler bounded worker design. If tracing or locks cannot be made carrier-safe, postpone Loom and test later JDKs.
 
+## Four independent concurrency bottlenecks
+
+| Source-bounded precedent | Resource under pressure | Reported gain or failure | What it does **not** establish |
+|---|---|---|---|
+| [Netflix Zuul 2, 2016](../netflix-zuul2-nonblocking-gateway.md) (N07) | Many concurrent network connections; blocking waiting cost | Connection scale benefit; logging gateway ~25% throughput gain, API gateway no clear CPU efficiency improvement | Netty event loops increase CPU throughput for every workload |
+| [Netflix outgoing gRPC pool, QCon 2023](../netflix-grpc-cpu-workerpool-virtual-thread-regression.md) (N02) | CPU-intensive worker execution rather than blocked network threads | Virtual-thread experiment was **a few percent slower** | An exact quantified benchmark or global prohibition of virtual threads |
+| [Netflix REST tracing failure, 2024](../netflix-java21-virtual-thread-pinning.md) (N06) | Four JDK21 carrier threads pinned inside synchronized reporter wait | Request starvation despite live JVM and a lock with no running owner | A universal, current-JDK limitation independent of dependency versions |
+| [Cloudflare object copying, 2025](../cloudflare-super-slurper-queues.md) (CF01) | Long remote-object transfer waits and centralized job coordination | Large-object-count queue migration sped up; small-object proof of concept regressed | Queues and worker orchestration reduce tiny request latency or provide exactly-once delivery |
+
+The underlying categories are **network wait**, **CPU cycles**, **monitor/carrier scheduling**, and **durable asynchronous batch work**. They have different latency, scaling and rollback goals. The examples come from different organizations and years and are not one A/B experiment.
+
+## A capacity-and-correctness decision matrix
+
+For the **synthetic gateway with 40,000 mostly idle TLS connections**, track active/waiting time per connection, server-side response latency, event-loop runnable delay, native/socket memory and cross-route interference. Netty can multiplex I/O, but CPU-heavy authentication and blocking JDBC must be routed to **separate bounded executors** with explicit queue/admission limits. A nonblocking network stack does not make blocking JDBC operations nonblocking.
+
+For an independent **I/O-bound Java request service** that uses simple sequential code, a virtual-thread-per-request model may improve maintainability and concurrency **only if** the chosen JDK and dependency libraries unmount cleanly and maintain identity/tracing semantics. Underlying downstream connection pools, semaphores, transaction limits and database capacity still need explicit bounds. A virtual thread is *not* a concurrency contract for a database.
+
+For a **CPU-heavy gRPC worker pool**, retaining bounded platform threads is a defensible initial decision when useful CPU work saturates cores. The 2023 Netflix counterexample warns that replacing such a pool with many virtual threads can add scheduling overhead without increasing compute capacity. Test CPU-per-completed-work, queueing delay and p99 rather than process thread count.
+
+For **hours-long high-volume copy tasks**, a queue system solves durable work identity, checkpointing, fan-out and recovery, not in-process coroutine scheduling. Queue retries need deduplication, dead-letter inspection and idempotent external writes. Cloudflare CF01's 75,000-object test is a bounded transfer observation and not a universal speed gain.
+
+## Synthetic migration sequence and fault-injection oracles
+
+1. **Classify execution:** profile runnable CPU, blocking calls, network waits, timed-out downstreams, event-loop tasks, queue ages and hidden monitor wait for one representative workload window.
+2. **Keep workload lanes separate:** route CPU-intensive transformations to a capacity-bounded pool; isolate JDBC on a compatible executor; reserve event-loop threads for nonblocking callbacks; preserve identity and timeout budgets across handoffs.
+3. **Pin versions:** JDK minor/collector, tracing libraries, Tomcat/Netty, HTTP/gRPC dependencies and transport contracts must remain fixed during the first scheduling comparison.
+4. **Prove failure behavior:** inject a stalled downstream, saturated tracing reporter, slow queue consumer, duplicate messages, cancelled requests and forced client disconnects; assert no unbounded queue, orphaned work or lost audit context.
+5. **Canary by class:** compare CPU/operation, completed goodput, p95/p99, failed/cancelled requests, carrier/thread starvation and memory at matched traffic, not a single aggregate throughput number.
+6. **Preserve rollback:** old event-loop or platform-thread execution remains selectable until equivalence of security, context, error semantics and recovery can be demonstrated under the same load.
+
+This is **Tycho's synthetic verification process**. It is not Netflix's or Cloudflare's reported deployment checklist.
+
+## Contradictions, stop conditions and what to refuse
+
+- **"Virtual threads are nonblocking."** Not in every relevant sense: synchronized monitor regions or native library behavior can pin carriers on some JDKs, and CPU-bound work still consumes CPU.
+- **"Reactive always wins CPU."** Zuul's logging cluster and API cluster had different efficiency profiles; nonblocking I/O reduces *waiting overhead*, not arbitrary computation.
+- **"Queues guarantee exactly once."** The Cloudflare case explicitly includes at-least-once delivery and requires object-level deduplication.
+- **"One architecture applies to every service."** The four case outcomes are compatible once workload type and resource pressure are separated.
+
+Reject the redesign if the dominant bottleneck has not been measured, the target library stack is not verified under blocking conditions, security/tracing context cannot cross execution boundaries, or error cleanup/rollback has not been tested. Return **insufficient evidence** instead of guessing a universal scheduler ranking.
+
 ## Failure analysis and evidence provenance
 
 The company cases are not A/B comparisons of two architectures under one workload. Published outcomes describe different organizations, production periods, release versions, traffic mixes and operating constraints. This playbook compares *mechanisms and constraints*, not raw numerical results across companies.
