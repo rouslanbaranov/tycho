@@ -15,8 +15,9 @@ An online billing platform must move active invoice state out of a shared Custom
 | [Netflix](../netflix-casspactor-shadow-migration.md) | N11: row-set differences and cohort selector/fallback |
 | [Uber](../uber-mezzanine-pg-to-schemaless.md) | U02: query/ID seam, backfill and mirrored writes |
 | [Discord](../discord-cassandra-scylladb-messages.md) | DI01: token range checkpoints, tombstone final-range blocker |
+| [Meta](../meta-ingestion-shadow-migration-lifecycle.md) | ME03 (May 2026): per-job shadow **→ reverse shadow (new writes production, old writes shadow) → cleanup**, with CDC bad-partition containment and rollback |
 
-**Why the apparent conflict is useful:** Stripe's Scientist compares online read behavior; Netflix compares **C−M and M−C** on materialized output while leaving user job contracts stable; Uber first needed a client API/ID compatibility seam; Discord's last tombstone ranges showed why 99.9999% progress is not 'done'.
+**Why the apparent conflict is useful:** Stripe's Scientist compares online read behavior and shifts **all reads before all writes** to a new mutable subscription table. Netflix compares **C−M and M−C** on materialized batch outputs while preserving user-job contracts; Uber created an identifier/client-query seam before trip-store migration. Meta's warehouse ingestion instead preserves the **old job running as shadow *after* the new job starts writing production**, then retires it only after renewed quality/resource checks. Discord demonstrates why migration progress at 99.9999% is not source-independent proof of correctness. **Do not silently apply Stripe's write-path cutover order to Meta's CDC job authority transfer.**
 
 ## Decision tree and chosen ADR
 
@@ -52,6 +53,14 @@ flowchart TD
 Version contracts → establish old source authority → implement dual-state writes → backfill snapshot IDs/checkpoints → compare old/new values with temporal alignment → switch low-risk reads → invert writes under canary → decommission old only after proven zero callers.
 
 **Reversal triggers / insufficient evidence:** If the new model cannot preserve legacy business semantics, redesign domain/API contract with consumers before cutover rather than forcing opaque equality.
+
+## Data-authority decision guard: Stripe versus Meta
+
+**Stripe ST01 (2017):** expand/dual-write from old Customer array to new Subscription rows; backfill; use Scientist read comparisons; route **all reads to the new representation before changing write authority**, then remove obsolete writes and data after callers are migrated.
+
+**Meta ME03 (2026):** output-equivalence gates on shadow ingestion; switch the **new ingestion job to the production table while the old job begins producing shadow output**; keep comparing and backfilling; on CDC bad-partition detection stop unsafe delta propagation or reconstruct an affected target snapshot and roll back; only then retire the old job. This is an **ingestion job** lifecycle with full/delta/target partitions, not a two-representation online billing schema cutover.
+
+**Transferred decision test:** ask which representation/job is authoritative *at each phase*, whether former execution remains runnable after authority switches, which exact mismatch triggers rollback, and how CDC errors avoid contaminating later partitions. A row-count equality alone cannot answer those questions. For any other legacy system, choose stages from its own data-write semantics and consumer contracts; the above are historically observed, not a universal migration state machine.
 
 ## Failure analysis and evidence provenance
 
