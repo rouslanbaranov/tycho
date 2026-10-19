@@ -118,7 +118,7 @@ def inspect_checkout(path, locked):
     sha = git(["rev-parse", "--verify", "HEAD^{commit}"], cwd=path)
     if sha != locked["revision"]:
         raise ValueError("Pinned revision mismatch for " + locked["id"])
-    if git(["symbolic-ref", "-q", "HEAD"], cwd=path):
+    if git(["rev-parse", "--abbrev-ref", "HEAD"], cwd=path) != "HEAD":
         raise ValueError("Checkout is on a writable branch instead of detached HEAD")
     if git(["status", "--porcelain", "--untracked-files=all"], cwd=path):
         raise ValueError("Dirty checkout; never reset existing user work")
