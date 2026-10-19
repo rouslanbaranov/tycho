@@ -66,6 +66,7 @@ class ClaimReferenceTests(unittest.TestCase):
         row = self.lock["repositories"][0]
         ev = data["claims"][0]["evidence"][0]
         ev["source_id"] = row["id"]
+        ev["verification"] = "code-inspected"  # synthetic fixture only; no real code was read
         ev["location"] = {
             "kind": "source-code", "url": None, "section": None,
             "revision": row["revision"], "path": "README.md", "symbol": "syntheticSymbol",
@@ -77,6 +78,7 @@ class ClaimReferenceTests(unittest.TestCase):
         row = self.lock["repositories"][0]
         ev = data["claims"][0]["evidence"][0]
         ev["source_id"] = row["id"]
+        ev["verification"] = "code-inspected"  # synthetic fixture only; no real code was read
         ev["location"] = {"kind": "source-code", "url": None, "section": None,
                           "revision": "0" * 40, "path": "README.md", "symbol": None}
         with self.assertRaisesRegex(ValueError, "differs from pinned"):
@@ -87,6 +89,7 @@ class ClaimReferenceTests(unittest.TestCase):
         row = self.lock["repositories"][0]
         ev = data["claims"][0]["evidence"][0]
         ev["source_id"] = row["id"]
+        ev["verification"] = "code-inspected"  # synthetic fixture only; no real code was read
         ev["location"] = {"kind": "source-code", "url": None, "section": None,
                           "revision": row["revision"], "path": "../private", "symbol": None}
         with self.assertRaisesRegex(ValueError, "invalid code path"):
