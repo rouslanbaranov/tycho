@@ -544,6 +544,150 @@
       ],
       "expected_behavior": "insufficient_evidence",
       "guard": "No applicable SLO or current-library benchmark."
+    },
+    {
+      "id": "m9-q045",
+      "query": "What changed when Netflix migrated human-owned scheduled jobs into Data Projects in 2026?",
+      "expected_case_ids": [
+        "case.netflix.durable-data-project-identity"
+      ],
+      "required_source_ids": [
+        "N17"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Source describes durable project identity and project grants; do not infer every workforce credential retired."
+    },
+    {
+      "id": "m9-q046",
+      "query": "Does a durable Netflix Data Project identity automatically prove least privilege?",
+      "expected_case_ids": [
+        "case.netflix.durable-data-project-identity"
+      ],
+      "required_source_ids": [
+        "N17"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "A long-lived project role can still be overprivileged; rightsizing is future work."
+    },
+    {
+      "id": "m9-q047",
+      "query": "Was automated cross-platform IAM rightsizing already deployed across Netflix in May 2026?",
+      "expected_case_ids": [
+        "case.netflix.durable-data-project-identity"
+      ],
+      "required_source_ids": [
+        "N17"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Source 'What's Next' presents rightsizing and broader projects as proposed additions."
+    },
+    {
+      "id": "m9-q048",
+      "query": "Can a team migrate all existing user-tied Netflix workflows without mapping old permissions?",
+      "expected_case_ids": [
+        "case.netflix.durable-data-project-identity"
+      ],
+      "required_source_ids": [
+        "N17"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "The report explicitly notes permission preparation as a migration challenge."
+    },
+    {
+      "id": "m9-q049",
+      "query": "Why did Uber abandon static quota costs in the stateless query tier of Docstore/Schemaless?",
+      "expected_case_ids": [
+        "case.uber.cinnamon-database-overload-control"
+      ],
+      "required_source_ids": [
+        "U06"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Redis hop, stale storage metrics and cheap full-scans undercharged by output bytes."
+    },
+    {
+      "id": "m9-q050",
+      "query": "Does Uber's reported 80 percent overload throughput improvement guarantee the same gain for any queue?",
+      "expected_case_ids": [
+        "case.uber.cinnamon-database-overload-control"
+      ],
+      "required_source_ids": [
+        "U06"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "The numbers compare a specific overload experiment under different controllers."
+    },
+    {
+      "id": "m9-q051",
+      "query": "How are per-tenant Scorecard fairness and Cinnamon overload shedding different?",
+      "expected_case_ids": [
+        "case.uber.cinnamon-database-overload-control"
+      ],
+      "required_source_ids": [
+        "U06"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Noisy tenant isolation and systemwide/replica pressure are orthogonal protections."
+    },
+    {
+      "id": "m9-q052",
+      "query": "Which validation dimensions did Meta use for pre-production shadow ingestion?",
+      "expected_case_ids": [
+        "case.meta.ingestion-shadow-lifecycle"
+      ],
+      "required_source_ids": [
+        "ME03"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Check source-aligned row counts, checksum, landing latency and resource regression."
+    },
+    {
+      "id": "m9-q053",
+      "query": "Did Meta's reported 100 percent ingestion transition independently prove zero semantic data loss?",
+      "expected_case_ids": [
+        "case.meta.ingestion-shadow-lifecycle"
+      ],
+      "required_source_ids": [
+        "ME03"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "Publisher-reported transition status and two comparison dimensions do not imply formal proof."
+    },
+    {
+      "id": "m9-q054",
+      "query": "When should Meta shadow ingestion and Stripe dual-write online schemas use different correctness oracles?",
+      "expected_case_ids": [
+        "case.meta.ingestion-shadow-lifecycle",
+        "case.stripe.online-subscriptions",
+        "case.netflix.casspactor-to-analytics"
+      ],
+      "required_source_ids": [
+        "ME03",
+        "ST01",
+        "N11"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Batch snapshot equality differs from mutable online billing authority transitions and two-sided backup set diffs."
+    },
+    {
+      "id": "m9-q055",
+      "query": "Which internal Netflix Conductor 2026 throughput number was verified from the directly readable original N14?",
+      "expected_case_ids": [],
+      "required_source_ids": [
+        "N14"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "N14 was deferred because primary content not directly accessible; secondary syndication is not first-party technical admission."
+    },
+    {
+      "id": "m9-q056",
+      "query": "Does Stripe ST02 first-party metadata verify that exactly 3.7 million lines migrated correctly?",
+      "expected_case_ids": [],
+      "required_source_ids": [
+        "ST02"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "ST02 redirects to author/date/title metadata only; technical conversion claim not admitted."
     }
   ]
 }
