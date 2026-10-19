@@ -10,6 +10,12 @@
 
 **Verdict:** progress in bounded source review, **not acceptance**. All 29 case studies and six decision guides still require actual reviewer verdicts. **#121 and M9 remain OPEN**, with **60 real end-to-end MCP scenarios or formally approved waiver** still outstanding; curated graph work remains excluded.
 
+## Second bounded first-party check — Uber DOMA (2026-10-19)
+
+[Eleven narrow Uber DOMA historical/quantitative assertions](M9_UBER_DOMA_SOURCE_SPOTCHECK_2026-10-19.md) were rechecked against the directly published [July 23, 2020 first-party article](https://www.uber.com/us/en/blog/microservice-architecture/): reported **~2,200 services organized into 70 domains, roughly half implemented**, cited 50-services/12-teams incident, one 10-touchpoint integration, five layers, gateway/extension mechanisms, reported 25–50% onboarding change, one three-day-to-three-hour consumer integration, 1.5-year fleet half-life estimate and two platform rewrites behind gateways. The source comparison found no contradiction in these specific publisher-qualified claims. The [Uber case](../../book/cases/uber-doma-domains.md) now links the source review. The Uber-versus-Shopify interpretation in Tycho's playbook remains **Tycho inference**, not a common A/B trial or a 2026 topology report.
+
+**Acceptance unchanged:** source-specific AI-assisted spot checks are not qualified independent human review, copyright reuse/rights clearance or runtime experiment. No case marked independently accepted; 60 MCP evaluation scenarios and pinned full Python validators remain unexecuted; graph features remain excluded.
+
 ## Scope frozen for this review preparation
 
 - Source register: **43 unique candidates**, **41** with at least one bounded public claim or deliberately narrow publisher-scoped abstract/team-charter statement, **2 deferred** (N14 Conductor primary original not readable; ST02 Stripe TypeScript primary redirects to metadata). These two are **excluded from asserting technical outcomes**.
