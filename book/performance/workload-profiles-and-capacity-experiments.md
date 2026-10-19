@@ -60,3 +60,29 @@ Text alternative: independently scheduled arrivals pass an admission decision; r
 - [Grafana k6 arrival-rate executors](https://grafana.com/docs/k6/latest/using-k6/scenarios/executors/constant-arrival-rate/) and [closed-model executors](https://grafana.com/docs/k6/latest/using-k6/scenarios/executors/constant-vus/). Documentation pointers; current version and sections require exact source verification before editorial acceptance.
 
 The source pointers above are **not** claims of a fresh full primary-source review. Required follow-up: inspect the named source sections and versions, add precise claim-to-section ledger, independently review the chapter, and exercise a reproducible synthetic generator test. This page is a bounded draft and does not satisfy the entire issue acceptance.
+
+## Overload controls and failure containment
+
+**Autoscaling** is a delayed feedback loop, not an instantaneous capacity guarantee. Specify the measured signal (for example, queue age or admitted concurrency), observation interval, startup and warm-up delay, minimum and maximum replicas, and a scale-down stabilization rule. Test a burst shorter than the full provisioning delay: an autoscaler cannot protect that interval by adding instances that are not yet ready. Scaling application replicas may also exhaust a fixed downstream connection or rate-limit budget.
+
+**Admission control** must be applied before expensive work. Define a bounded in-flight limit and queue, a deadline-aware rejection policy, and distinct metrics for offered, accepted, rejected, timed-out and completed logical operations. A rejection is an explicit availability outcome, not successful throughput. Prefer fast, documented overload responses to unlimited queues that convert a burst into stale work.
+
+**Load shedding** may prioritize work classes, but the policy must name fairness and correctness constraints: never silently drop acknowledged writes or violate per-key ordering. Test priority inversion and starvation under sustained overload. For clients, expose an actionable backoff signal when supported, without promising immediate recovery.
+
+**Retry budgets** constrain the number and duration of extra attempts. Model amplification across layers: if each of three layers retries an operation up to three times, a pathological path may trigger up to 27 downstream attempts for one logical operation (assuming all layers independently make three attempts). Avoid retrying non-idempotent operations without deduplication or an idempotency key. Apply deadlines, jittered backoff, and an overall retry-rate budget; count retries separately from original demand.
+
+**Bulkheads** isolate bounded pools, concurrency slots or queues per dependency/work class so one slow dependency cannot consume all workers. A bulkhead's limit can itself reject valid work: measure isolation benefits and wasted capacity. Circuit breakers can reduce repeated calls to an unhealthy dependency, but require explicit half-open probe limits and recovery criteria; they do not replace admission control.
+
+### Synthetic failure experiment and acceptance signals
+
+Use two independent request classes, A (healthy dependency) and B (degraded dependency), with fixed scheduled arrival traces. Run a baseline and a B-only latency/failure injection while recording A and B p50/p95/p99, completions, rejections, queue age, concurrency, downstream attempts per logical operation and recovery time. Compare shared and isolated worker pools with the same aggregate resource budget. **Hypothesis:** isolation can preserve A's latency under B degradation; this is a testable expectation, not an observed result. Reject the hypothesis if A's tail latency or correctness remains unacceptable, or if throughput gains are entirely caused by dropping work outside the agreed SLO. Preserve raw timestamps and intended arrivals to detect coordinated omission.
+
+**Decision record:** document offered and admitted workload, peak duration, maximum queue wait, deadlines, retry and rejection policy, measured downstream ceiling, scale-out warm-up, and the rollback trigger. Do not select a universal replica count, queue length, or RPS threshold without workload-specific evidence.
+
+## Additional source pointers requiring editorial verification
+
+- [AWS Builders' Library, *Timeouts, retries, and backoff with jitter*](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/): retry amplification, timeout and jitter mechanisms; exact sections not freshly checked for this addition.
+- [AWS Builders' Library, *Using load shedding to avoid overload*](https://aws.amazon.com/builders-library/using-load-shedding-to-avoid-overload/): overload response design; exact sections not freshly checked for this addition.
+- [Microsoft Azure Architecture Center, *Bulkhead pattern*](https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead): isolation trade-offs; documentation version not freshly checked.
+
+These references are candidate primary documentation, **not** a verified claim-to-section ledger. No load generator was run and no independent review occurred for this addition.
