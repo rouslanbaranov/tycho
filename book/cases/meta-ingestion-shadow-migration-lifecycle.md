@@ -13,19 +13,21 @@ The company established a per-job migration lifecycle, not one global cutover sw
 
 ```mermaid
 flowchart TD
-  M[MySQL source / consistent snapshot window] --> O[Legacy ingestion job]
-  M --> N[Replacement shadow ingestion job]
-  O --> P[Production warehouse table]
-  N --> Q[Isolated shadow warehouse table]
-  P --> V{Row count / checksum / latency / resource gates}
+  S[MySQL CDC inputs] --> O[Legacy production ingestion job]
+  S --> N[New candidate ingestion job]
+  O --> P[Consumer-facing production table]
+  N --> Q[Isolated shadow table]
+  P --> V{Counts and checksums; latency and resource gates}
   Q --> V
-  V -->|mismatch| F[Investigate, fix and rerun shadow]
+  V -->|mismatch| F[Investigate and rerun candidate]
   F --> N
-  V -->|verified for cohort| C[Controlled active-job cutover]
-  C --> R[Monitor and keep documented rollback path]
+  V -->|pass| R[Reverse shadow: new job writes production; old job writes shadow]
+  R --> C{Post-cutover compare and backfill gates}
+  C -->|bad partition| B[Flag partition; stop unsafe delta propagation; rollback and repair]
+  C -->|pass| K[Cleanup: retire legacy ingestion job]
 ```
 
-**Text alternative:** both old and candidate ingestion jobs see comparable source data, but only old publishes to consumers initially. Differences between production and shadow output and performance/cost regressions must be investigated; verified jobs graduate through a controlled rollout. Diagram is a **simplified analysis**, not a copy of Meta's original lifecycle drawing. Comparable snapshot windows and rollback triggers for an unrelated system must be explicitly designed.
+**Text alternative:** first, the legacy job writes the consumer-facing warehouse table while the new job writes an isolated shadow table; compare row counts, checksums, landing time and resource usage. After verification, **reverse shadow** switches the new job to the real production table and redirects the old job to shadow, retaining a runnable rollback path and continuing comparisons. A mismatched CDC partition triggers bad-data quarantine, rollback and repair; only after stable observation is the old job removed. This is an original simplification of the three phases documented in the Meta publication, not a reproduction of its private dataflow drawing.
 
 ## Preconditions and what the published gates cannot prove by themselves
 
@@ -36,6 +38,18 @@ flowchart TD
 | Freshness | New landing latency no worse | Needs production-like source update patterns, measurement window and downstream consumers |
 | Resources | New compute/storage use comparable or improved | Capital cost, engineering time and operational ownership beyond reported utilization need separate analysis |
 | Critical data | Extra criteria agreed with dependent teams | Requirements vary by domain; no universal numerical thresholds given |
+
+### Meta's reported three-phase authority transition (ME03)
+
+1. **Shadow phase:** initial shadow ingestion runs in pre-production on production-like source inputs, writes to isolated shadow tables and compares partitions with production via **row counts and checksums** while also checking landing latency and resource utilization. After validation the candidate can run in production and progress.
+2. **Reverse shadow phase:** the **new** ingestion job writes to the consumer-facing production table, while the **old** job begins writing to a shadow table. Both still run and comparisons continue; a rollback can restore the previous path without rebuilding it. The first live switch is **not** the end of verification.
+3. **Cleanup:** only after ongoing output and operational gates pass does the team stop the legacy job. Meta reports completed workload cutover in its May 2026 article, but that is a company statement, not a reproduction of all data-quality checks.
+
+### Failure containment that changes the architecture decision
+
+The source describes **CDC full-dump, delta and target partitions** with a risk of propagating faulty prior data into subsequent partitions. During reverse shadow, partition-level bad-data metadata triggers early containment: a bad **delta partition** stops subsequent landing and alerts the operator; for a bad **target partition**, an earlier snapshot can be merged with later deltas. Rollback and corrective backfill use the recorded suspect partitions. These are **reported Meta mechanisms**, not generic suggestions.
+
+At scale Meta could not run all candidate shadow jobs simultaneously: migration batches were prioritized by throughput, business criticality, resource capacity and known issues; known-bad jobs were held to avoid repeating costly full dumps. This admission/rollout budget is part of the reported architecture, not merely project management. Source locations: **Phase 2: The Reverse Shadow Phase**, **Phase 3: Migration Cleanup**, **Early Signals After Rollout**, **Stopping the Bad Data Propagation Quickly During Rollback**, **Planning With Limited Capacity**. See the scoped [claim recheck](../../authoring/cases/M9_META_STRIPE_CUTOVER_SOURCE_CHECK.md).
 
 Shadow jobs do not eliminate rollback design, change-data-capture ordering or mutable-source race conditions by magic. **Do not claim** the company adopted every Tycho suggestion below; the article defines its concrete lifecycle and we derive reusable precautions.
 
