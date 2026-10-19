@@ -6,8 +6,8 @@
 ## Executive result
 
 - The proposed outline contains **10 volumes and 69 chapters**. All 10 volume rows were compared against titles and section headings in currently reachable technical prose.
-- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine initially missing-focused subjects and seven initially partial questions now have newly authored standalone drafts on this feature branch; the branch has at least 49 identifiable technical manuscripts across audited topic routes, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
-- Of 69 proposed questions: **53 directly addressed**, **16 partially addressed**, **0 without a focused book treatment verified**, after nine initial missing-topic drafts plus seven new deepening drafts on this branch. **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
+- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine initially missing-focused subjects and seven initially partial questions now have newly authored standalone drafts on this feature branch; the branch has at least 51 identifiable technical manuscripts across audited topic routes, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
+- Of 69 proposed questions: **55 directly addressed**, **14 partially addressed**, **0 without a focused book treatment verified**, after nine initial missing-topic drafts plus nine new deepening drafts on this branch. **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
 - Source discovery was limited to current root/topic navigation and linked Markdown files accessed from GitHub. The entire Git tree was **not exhaustively enumerated** and repository-wide executable checks **were not run**. Reconcile this matrix with a full local inventory and content review before presenting the classification as comprehensive proof.
 - Educational graph storage/traversal remains a legitimate V06/C06 topic; a curated concept/decision graph for Tycho is **not required**. Search/MCP/deployment infrastructure work is excluded from this manuscript completion gate.
 
@@ -76,7 +76,7 @@
 | V05/C04 — Alternative data models and stores | D | [Technical page](../book/data/storage-model-alternatives-and-workload-fit.md) | Add selection examples where competing data models fail hard gates. |
 | V05/C05 — Partitioning, sharding and rebalancing | D | [Technical page](../book/scaling/shard-keys-hotspots-and-resharding.md) | Reconcile ownership movement and online resharding with data invariants. |
 | V05/C06 — Schema evolution, data migration and retention | D | [Technical page](../book/delivery/progressive-delivery-and-schema-evolution.md) | Make schema/data lifecycle, compatibility and retention canonical in this volume. |
-| V05/C07 — Replication, backups and restore drills | P | [Technical page](../book/data/postgresql-wal-replication-and-recovery.md) | Add versioned backup/restore drills, corruption and independently proven recoverability. |
+| V05/C07 — Replication, backups and restore drills | D | [New backup/PITR and restore drills chapter](../book/data/backup-restore-pitr-and-recovery-drills.md) | PostgreSQL 17 archive, backup chain and user-level recovery model; no exercised restore or expert review. |
 
 ### V06 — Caching, indexing and information retrieval
 
@@ -98,7 +98,7 @@
 | V07/C02 — Contention, saturation and scaling laws | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Add saturation/contended resources and system-specific scaling-law limitations. |
 | V07/C03 — Load-test methods and benchmark validity | D | [New benchmark validity chapter](../book/performance/load-testing-and-benchmark-validity.md) | Independent public k6/HdrHistogram/SRE references and original tests; no benchmark executed. |
 | V07/C04 — Tail latency, fan-out and time budgets | D | [New tail-latency chapter](../book/performance/tail-latency-fanout-and-deadline-budgets.md) | Authored from independent published materials; requires formal validation and editorial review. |
-| V07/C05 — Overload protection and graceful degradation | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Expand admission, shedding, queue bounds, retry storms and degraded-mode correctness. |
+| V07/C05 — Overload protection and graceful degradation | D | [New overload admission and degradation chapter](../book/performance/overload-admission-control-and-graceful-degradation.md) | SRE/Builders' Library scope, original overload fixtures and policy conditions; no exercise or independent review. |
 | V07/C06 — Horizontal/vertical scaling and autoscaling delay | D | [New autoscaling chapter](../book/performance/autoscaling-lag-and-capacity-limits.md) | Controller, startup lag, vertical/horizontal and overload trade-offs researched; requires independent review. |
 | V07/C07 — Capacity planning and cost/performance trade-offs | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Add defensible capacity planning and total-cost sensitivity models. |
 
@@ -141,7 +141,12 @@
 ## Content remediation recorded in this branch
 
 - **Nine original new draft chapters moved from M to D (not accepted):** V02/C05, V03/C06, V07/C04/C06, V09/C06/C07, V10/C01/C02/C06.  V02/C05 details:  new original [HTTP and RPC compatibility chapter](../book/application/http-rpc-contracts-and-compatibility.md), using independently verified RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers documentation. Its application landing now links to it. Other new drafts cover diagnostics, tail latency, autoscaling, incident response, agent-access safety, requirements/workload decisions, legacy baselines and progressive reading routes. No executable client/provider tests, independent review or full-repository validation has run; publication completeness is not claimed.
-- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **53 D / 16 P / 0 M**, all still subject to inventory and quality review.
+- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **55 D / 14 P / 0 M**, all still subject to inventory and quality review.
+
+## 2026-10-19 additional recovery and overload coverage
+
+- **V05/C07 and V07/C05 P → D (drafts only):** [versioned backup/recovery drills](../book/data/backup-restore-pitr-and-recovery-drills.md) and [overload/admission/degradation](../book/performance/overload-admission-control-and-graceful-degradation.md), both source-grounded and internally navigable, with no real test, restore exercise or external technical approval.
+- Running coverage classification is **55 D / 14 P / 0 M**; final editorial correctness and full book assembly still unverified.
 
 ## 2026-10-19 additional partial-coverage remediation
 
