@@ -1,0 +1,268 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:tycho:m9:case-record:proposed:1",
+  "title": "Tycho M9 portable case-evidence record proposal (NOT production K11)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "collection",
+    "case_id",
+    "title",
+    "company",
+    "status",
+    "observed_on",
+    "legacy_state",
+    "target_state",
+    "source_refs",
+    "claims",
+    "patterns",
+    "constraints",
+    "failure_modes",
+    "review"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "m9-case-1.0-proposal"
+    },
+    "collection": {
+      "const": "tycho-public"
+    },
+    "case_id": {
+      "type": "string",
+      "pattern": "^case\\.[a-z][a-z0-9-]*\\.[a-z][a-z0-9-]*$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 12
+    },
+    "company": {
+      "type": "string",
+      "minLength": 2
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "source_reviewed",
+        "mechanically_validated",
+        "independent_reviewed",
+        "rejected"
+      ]
+    },
+    "observed_on": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "legacy_state": {
+      "type": "string",
+      "minLength": 12
+    },
+    "target_state": {
+      "type": "string",
+      "minLength": 12
+    },
+    "source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}$"
+      }
+    },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/claim"
+      }
+    },
+    "patterns": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selected",
+        "avoided"
+      ],
+      "properties": {
+        "selected": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "avoided": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "failure_modes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewer",
+        "reviewed_on",
+        "limitations"
+      ],
+      "properties": {
+        "reviewer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewed_on": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "statement",
+        "source_ref_id",
+        "primary_url",
+        "source_section",
+        "event_date",
+        "publication_date",
+        "accessed_on",
+        "evidence_type",
+        "validity_window",
+        "qualification"
+      ],
+      "properties": {
+        "claim_id": {
+          "type": "string",
+          "pattern": "^claim\\.[a-z][a-z0-9-]*\\.[a-z][a-z0-9-]*\\.[0-9]{3}$"
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 12
+        },
+        "source_ref_id": {
+          "type": "string",
+          "pattern": "^(N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}$"
+        },
+        "primary_url": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "source_section": {
+          "type": "string",
+          "minLength": 3
+        },
+        "event_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "publication_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "accessed_on": {
+          "type": "string",
+          "format": "date"
+        },
+        "evidence_type": {
+          "enum": [
+            "primary_statement",
+            "first_party_reported_measurement",
+            "independent_replication",
+            "analysis",
+            "insufficient_evidence"
+          ]
+        },
+        "validity_window": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "valid_from",
+            "valid_until"
+          ],
+          "properties": {
+            "valid_from": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date"
+            },
+            "valid_until": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date"
+            }
+          }
+        },
+        "qualification": {
+          "type": "string",
+          "minLength": 10
+        },
+        "metric": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit",
+            "comparison",
+            "workload"
+          ],
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "type": "string"
+            },
+            "comparison": {
+              "type": "string"
+            },
+            "workload": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

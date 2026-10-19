@@ -1,0 +1,120 @@
+[
+  {
+    "schema_version": "m9-case-1.0-proposal",
+    "collection": "tycho-public",
+    "case_id": "case.netflix.casspactor-to-analytics",
+    "title": "Netflix Casspactor to Cassandra Analytics shadow migration",
+    "company": "Netflix",
+    "status": "draft",
+    "observed_on": "2026-05-18",
+    "legacy_state": "Casspactor pipeline reads backup information through multiple changing metadata services.",
+    "target_state": "Cassandra Analytics reads S3 backup source metadata into model-specific Spark DataFrames.",
+    "source_refs": [
+      "N11"
+    ],
+    "claims": [
+      {
+        "claim_id": "claim.netflix.casspactor-to-analytics.001",
+        "statement": "Netflix described testing both legacy-minus-new and new-minus-legacy output sets during shadow validation.",
+        "source_ref_id": "N11",
+        "primary_url": "https://netflixtechblog.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1",
+        "source_section": "Journey Towards a Safe Migration — Pillar 1: Validation",
+        "event_date": null,
+        "publication_date": "2026-05-18",
+        "accessed_on": "2026-10-19",
+        "evidence_type": "primary_statement",
+        "validity_window": {
+          "valid_from": null,
+          "valid_until": null
+        },
+        "qualification": "Source-reported output comparison; no independent reproduction or production SQL captured."
+      }
+    ],
+    "patterns": {
+      "selected": [
+        "shadow-comparison",
+        "decider-fallback",
+        "layered-reader"
+      ],
+      "avoided": [
+        "hard-cutover-without-reconciliation"
+      ]
+    },
+    "constraints": [
+      "pipeline-output-equivalence",
+      "partition-skew",
+      "backup-metadata-authority"
+    ],
+    "failure_modes": [
+      "metadata-divergence",
+      "wide-partition-oom"
+    ],
+    "review": {
+      "reviewer": null,
+      "reviewed_on": null,
+      "limitations": [
+        "Not independently technically reviewed",
+        "Exact per-job performance measurement and private code unavailable"
+      ]
+    }
+  },
+  {
+    "schema_version": "m9-case-1.0-proposal",
+    "collection": "tycho-public",
+    "case_id": "case.stripe.online-subscriptions",
+    "title": "Stripe online migration of subscription data ownership",
+    "company": "Stripe",
+    "status": "draft",
+    "observed_on": "2017-02-02",
+    "legacy_state": "Subscription model embedded in Customer records with incompatible future evolution.",
+    "target_state": "Subscriptions migrated to separately stored authoritative table through online phases.",
+    "source_refs": [
+      "ST01"
+    ],
+    "claims": [
+      {
+        "claim_id": "claim.stripe.online-subscriptions.001",
+        "statement": "Stripe described dual writing, backfilling, comparing read paths, switching read/write authority and removing the legacy representation.",
+        "source_ref_id": "ST01",
+        "primary_url": "https://stripe.com/blog/online-migrations",
+        "source_section": "A pattern for online migrations; Part 1–4",
+        "event_date": null,
+        "publication_date": "2017-02-02",
+        "accessed_on": "2026-10-19",
+        "evidence_type": "primary_statement",
+        "validity_window": {
+          "valid_from": null,
+          "valid_until": null
+        },
+        "qualification": "Publisher-described process; timing of every internal event and independent performance replication unknown."
+      }
+    ],
+    "patterns": {
+      "selected": [
+        "expand-contract",
+        "dual-write",
+        "shadow-read-validation"
+      ],
+      "avoided": [
+        "stop-the-world-migration"
+      ]
+    },
+    "constraints": [
+      "subscription-correctness",
+      "zero-downtime",
+      "client-compatibility"
+    ],
+    "failure_modes": [
+      "dual-write-divergence",
+      "old-read-dependency"
+    ],
+    "review": {
+      "reviewer": null,
+      "reviewed_on": null,
+      "limitations": [
+        "Independent reviewer not appointed",
+        "No generalizable throughput/performance benchmark"
+      ]
+    }
+  }
+]
