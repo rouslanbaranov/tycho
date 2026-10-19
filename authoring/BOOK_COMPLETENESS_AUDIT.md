@@ -120,8 +120,8 @@
 |---|---|---|---|
 | V09/C01 — SLIs, SLOs and error budgets | D | [Dedicated SLI/SLO manuscript](../book/observability/service-level-indicators-objectives-and-alerts.md) | Original user-visible SLI/SLO/error-budget reasoning and proposed tests; exact citation/editorial acceptance still pending. |
 | V09/C02 — Metrics ingestion, cardinality and time-series storage | D | [Dedicated metrics pipeline manuscript](../book/observability/metric-pipelines-cardinality-and-retention.md) | Source-grounded OTel/Prometheus temporality, cardinality, storage/cost and synthetic examples; exact review/tests pending. |
-| V09/C03 — Distributed tracing and propagation | D | [Technical page](../book/observability/trace-context-lineage-and-audit.md) | Keep W3C-context propagation and sampling limitations distinct from proof. |
-| V09/C04 — Logging, audit and lineage | D | [Technical page](../book/observability/trace-context-lineage-and-audit.md) | Separate log, immutable business audit and lineage ownership. |
+| V09/C03 — Distributed tracing and propagation | D | [Dedicated tracing manuscript](../book/observability/distributed-tracing-context-and-sampling.md) | W3C context, correlation and sampling failure boundaries; original synthetic source-led draft, independent acceptance pending. |
+| V09/C04 — Logging, audit and lineage | D | [Dedicated audit and lineage manuscript](../book/observability/logs-audit-and-data-lineage.md) | OTel log model, durable business effects and OpenLineage job/run/dataset semantics; no real audit performed. |
 | V09/C05 — Identity, authorization and threat modeling | D | [Technical page](../book/security/identity-authorization-and-isolation.md) | Retain explicit object authorization, trust model and service boundaries. |
 | V09/C06 — Incident response and operational change | D | [New incident response chapter](../book/observability/incident-response-and-operational-change.md) | Incident-role and state-machine research plus synthetic drill; review pending. |
 | V09/C07 — Safety, isolation and privacy in agent-accessible services | D | [New agent-access safety chapter](../book/security/safe-agent-access-and-knowledge-isolation.md) | OWASP-based bounded trust and privacy architecture; no implemented service; review pending. |
@@ -177,6 +177,13 @@
 3. Deepen P subjects; for D subjects perform a chapter-specific acceptance review and extend when the chapter question is not completely answered.
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
+
+## Canonical owner reconciliation checkpoint — V09/C03 and C04
+
+- Added independent original [distributed tracing/context/sampling](../book/observability/distributed-tracing-context-and-sampling.md) and [structured logs/audit/lineage](../book/observability/logs-audit-and-data-lineage.md) draft chapters. The former combined [tracing/logging/lineage/audit research page](../book/observability/trace-context-lineage-and-audit.md) remains preserved for evidence migration.
+- These two new primary chapter paths eliminate the **second** confirmed duplicate-owner group at source-path level, while retaining cross-links to common context where needed. **69 D / 0 P / 0 M remains topical coverage only**, not independently validated publication content.
+- Source guidance inspected: W3C Trace Context Recommendation (2021), OpenTelemetry Logs Data Model, OpenLineage Run/Job/Dataset/Facet spec and lineage facet semantics. The new illustrations are synthetic. No audit database, collector, traced distributed system or human technical review was used.
+- Current primary-target/overlap counts are recomputed from the 69-row matrix in the next checkpoint; do not treat any planned owner as accepted on file-existence evidence.
 
 ## Canonical-owner reconciliation checkpoint — observability C01/C02
 
