@@ -6,8 +6,8 @@
 ## Executive result
 
 - The proposed outline contains **10 volumes and 69 chapters**. All 10 volume rows were compared against titles and section headings in currently reachable technical prose.
-- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine previously missing subjects and one formerly partial subject received new chapter drafts on this feature branch; the branch now has at least 43 known directly linked technical files, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
-- Of 69 proposed questions: **47 directly addressed**, **22 partially addressed**, **0 without a focused book treatment verified**, after nine new *unreviewed* chapter drafts on this branch (V02/C05; V03/C06; V07/C04 and C06; V09/C06 and C07; V10/C01, C02 and C06). **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
+- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine previously missing subjects and one formerly partial subject received new chapter drafts on this feature branch; the branch now has at least 44 known directly linked technical files, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
+- Of 69 proposed questions: **48 directly addressed**, **21 partially addressed**, **0 without a focused book treatment verified**, after nine new *unreviewed* chapter drafts on this branch (V02/C05; V03/C06; V07/C04 and C06; V09/C06 and C07; V10/C01, C02 and C06). **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
 - Source discovery was limited to current root/topic navigation and linked Markdown files accessed from GitHub. The entire Git tree was **not exhaustively enumerated** and repository-wide executable checks **were not run**. Reconcile this matrix with a full local inventory and content review before presenting the classification as comprehensive proof.
 - Educational graph storage/traversal remains a legitimate V06/C06 topic; a curated concept/decision graph for Tycho is **not required**. Search/MCP/deployment infrastructure work is excluded from this manuscript completion gate.
 
@@ -23,7 +23,7 @@
 
 | Planned chapter | Coverage | Observed primary material | Outstanding work |
 |---|---|---|---|
-| V01/C01 — Problem framing and system boundaries | P | [Technical page](../book/application/quality-drivers-and-architecture-views.md) | Need a focused system-context/problem-frame walkthrough with actors, interfaces, outcomes and exclusions. |
+| V01/C01 — Problem framing and system boundaries | D | [New system boundaries chapter](../book/application/problem-framing-and-system-boundaries.md) | Independently public arc42/C4 scope, original diagrams and synthetic boundary contract; expert review pending. |
 | V01/C02 — Workload and demand models | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Expand a complete measurable workload/demand profile beyond experimental mechanics. |
 | V01/C03 — Quality attributes and trade-offs | D | [Technical page](../book/application/quality-drivers-and-architecture-views.md) | Deepen systematic quality conflict evaluation and acceptance across stakeholder perspectives. |
 | V01/C04 — Evidence, hypotheses and architecture experiments | P | [Technical page](../book/performance/workload-profiles-and-capacity-experiments.md) | Separate hypothesis/evidence design and experimental validity from capacity examples. |
@@ -141,7 +141,11 @@
 ## Content remediation recorded in this branch
 
 - **Nine original new draft chapters moved from M to D (not accepted):** V02/C05, V03/C06, V07/C04/C06, V09/C06/C07, V10/C01/C02/C06.  V02/C05 details:  new original [HTTP and RPC compatibility chapter](../book/application/http-rpc-contracts-and-compatibility.md), using independently verified RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers documentation. Its application landing now links to it. Other new drafts cover diagnostics, tail latency, autoscaling, incident response, agent-access safety, requirements/workload decisions, legacy baselines and progressive reading routes. No executable client/provider tests, independent review or full-repository validation has run; publication completeness is not claimed.
-- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **47 D / 22 P / 0 M**, all still subject to inventory and quality review.
+- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **48 D / 21 P / 0 M**, all still subject to inventory and quality review.
+
+## V01 problem-frame remediation
+
+- **V01/C01 changed from P to D (unreviewed):** the original [system boundaries and business/technical context chapter](../book/application/problem-framing-and-system-boundaries.md) now explains actors, system control scope, authoritative effects, external partners and failure contracts, with separate context/technical maps and exact public arc42/C4 reference boundaries. It contains only original fictional reservations and no observed application claims.
 
 ## Latest partial-coverage remediation
 
@@ -168,8 +172,8 @@
 **Performed directly against the PR feature branch** rather than inferred from authored claims:
 
 - Re-fetched the provisional TOC and audited matrix: **69 actual planned chapter rows**, **69 distinct Vxx/Cxx IDs**, all recorded once; current classification **47 D / 22 P / 0 M**. These numbers indicate topic coverage, **not 47 accepted chapters**.
-- Re-fetched all **10 new technical Markdown files**. Each has an H1, source/evidence or research limitation statements, independently original prose and 1–2 Mermaid illustrations. They total approximately **20,537 Markdown whitespace-separated words**, 12 Mermaid diagrams, and matching code-fence delimiters. This is an editorial inventory, not readability or semantic correctness certification.
-- Extracted relative Markdown links from the 10 new technical pages and fetched each of the **45 unique local destination files** using the same GitHub branch reference: **45/45 files exist**. This checks target presence only—not fragments/anchors, referenced symbol truth, external URL availability, or exact version-to-claim support.
+- Re-fetched all **11 new technical Markdown files**. Each has an H1, source/evidence or research limitation statements, independently original prose and 1–2 Mermaid illustrations. They total approximately **22,706 Markdown whitespace-separated words**, 13 Mermaid diagrams, and matching code-fence delimiters. This is an editorial inventory, not readability or semantic correctness certification.
+- Extracted relative Markdown links from the first 10 new technical pages and fetched each of the **45 unique local destination files** using the same GitHub branch reference: **45/45 files exist (first ten pages only; the newly added V01/C01 links require their own separate pass)**. This checks target presence only—not fragments/anchors, referenced symbol truth, external URL availability, or exact version-to-claim support.
 - Checked that new topic landings link the newly written drafts and that the root book landing and root project README correctly state the book-first scope.
 - **Not performed:** full checkout tree inventory; local Python `check_boundary.py` / `premerge_check.py`; metadata normalization, complete routing index regeneration, full anchors/fences/source validation; rendered Mermaid preview; independent technical/copyright editor or an architecture expert review; benchmark, live system test, whole-volume acceptance or milestone-close GitHub CI. These remain explicit acceptance work.
 - **Branch acceptance result:** new work is a substantial, traceable **draft corpus checkpoint**, not a complete release-ready manuscript. Keep PR #215 in draft and Issues #213 and #214 open.
