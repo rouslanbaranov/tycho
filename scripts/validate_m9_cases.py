@@ -44,11 +44,15 @@ def require(condition: bool, message: str) -> None:
 def iso_date(value: object, label: str, nullable: bool = False) -> None:
     if value is None and nullable:
         return
-    require(isinstance(value, str), label + ": expected YYYY-MM-DD")
+    require(isinstance(value, str) and
+            re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value) is not None,
+            label + ": expected YYYY-MM-DD calendar date")
+    # date.fromisoformat also accepts YYYYMMDD and ISO week dates, unlike
+    # JSON Schema's format:date (RFC 3339 full-date). Enforce syntax above.
     try:
         dt.date.fromisoformat(value)
     except ValueError:
-        fail(label + ": invalid ISO date " + repr(value))
+        fail(label + ": invalid calendar date " + repr(value))
 
 
 def json_read(path: Path) -> object:
@@ -222,7 +226,7 @@ def self_test() -> None:
     malformed_records = []
     mutations = ("wrong_collection", "orphan_source", "bad_claim", "missing_review", "future_window",
                  "integer_title", "short_statement", "non_string_source_ref", "non_string_pattern",
-                 "non_string_review_limitation")
+                 "non_string_review_limitation", "basic_date", "week_date", "invalid_calendar_date")
     for mutation in mutations:
         candidate = json.loads(json.dumps(good))
         if mutation == "wrong_collection":
@@ -247,13 +251,20 @@ def self_test() -> None:
             candidate["patterns"]["selected"] = [123]
         if mutation == "non_string_review_limitation":
             candidate["review"]["limitations"] = [False]
+        if mutation == "basic_date":
+            candidate["observed_on"] = "20261019"
+        if mutation == "week_date":
+            candidate["claims"][0]["accessed_on"] = "2026-W43-1"
+        if mutation == "invalid_calendar_date":
+            candidate["claims"][0]["accessed_on"] = "2026-02-30"
         malformed_records.append(candidate)
         try:
             validate_record(candidate, schema, refs)
         except ValueError:
             failures += 1
-    require(failures == 10, "one or more negative contract tests incorrectly accepted")
-    print("PASS: 10 malformed records rejected by built-in strict subset; valid example accepted")
+    require(failures == len(mutations), "one or more negative contract tests incorrectly accepted")
+    print("PASS: " + str(len(mutations)) +
+          " malformed records rejected by built-in strict subset; valid example accepted")
     try:
         import jsonschema  # type: ignore
     except ImportError:
@@ -276,7 +287,8 @@ def self_test() -> None:
         require(not list(validator.iter_errors(reversed_window)),
                 "expected both inverted-window date strings to satisfy the base schema")
         # The semantic validator above already rejected the inverted window.
-        print("PASS: Draft2020-12 engine rejects 9 schema violations; "
+        print("PASS: Draft2020-12 engine rejects " +
+              str(len(schema_mutations)) + " schema violations; "
               "semantic validator rejects 1 inverted validity window")
 
 
