@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "scope": "Illustrative MCP 2026-07-28 and 2025-11-25 method/metadata shape, not tested network exchanges or a deployed Tycho server.",
+  "cases": [
+    {
+      "name": "modern-discovery",
+      "revision": "2026-07-28",
+      "method": "server/discover",
+      "transport": "streamable-http-post",
+      "headers": {
+        "MCP-Protocol-Version": "2026-07-28",
+        "Mcp-Method": "server/discover",
+        "Content-Type": "application/json",
+        "Accept": "application/json, text/event-stream"
+      },
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "server/discover",
+        "params": {
+          "_meta": {
+            "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+            "io.modelcontextprotocol/clientCapabilities": {},
+            "io.modelcontextprotocol/clientInfo": {
+              "name": "synthetic-tycho-test",
+              "version": "0.0.0"
+            }
+          }
+        }
+      },
+      "expected_response_class": "server-discover-result-with-supported-revisions",
+      "does_not_need_session": true
+    },
+    {
+      "name": "modern-tool-call",
+      "revision": "2026-07-28",
+      "method": "tools/call",
+      "transport": "streamable-http-post",
+      "headers": {
+        "MCP-Protocol-Version": "2026-07-28",
+        "Mcp-Method": "tools/call",
+        "Mcp-Name": "tycho_search",
+        "Content-Type": "application/json",
+        "Accept": "application/json, text/event-stream"
+      },
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "tools/call",
+        "params": {
+          "name": "tycho_search",
+          "arguments": {
+            "query": "bounded retries",
+            "snapshot_id": "fixture-only"
+          },
+          "_meta": {
+            "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+            "io.modelcontextprotocol/clientCapabilities": {}
+          }
+        }
+      },
+      "expected_response_class": "standard-call-tool-result-or-explicit-not-implemented",
+      "does_not_need_session": true
+    },
+    {
+      "name": "legacy-initialize",
+      "revision": "2025-11-25",
+      "method": "initialize",
+      "transport": "streamable-http-post",
+      "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json, text/event-stream"
+      },
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "initialize",
+        "params": {
+          "protocolVersion": "2025-11-25",
+          "clientInfo": {
+            "name": "synthetic-tycho-legacy",
+            "version": "0.0.0"
+          },
+          "capabilities": {}
+        }
+      },
+      "expected_response_class": "legacy-initialize-result-then-initialized-notification",
+      "does_not_need_session": false
+    }
+  ],
+  "requirements": [
+    "Modern request metadata is NOT a legacy initialize handshake.",
+    "Modern MCP uses explicit discovery and no protocol-level session ID.",
+    "Modern Mcp-Method header must match the JSON-RPC method; tool name header when applicable.",
+    "The tycho_search tool name is illustrative and MUST NOT be advertised before it is implemented.",
+    "No actual server was started and these are not captured wire traces."
+  ]
+}
