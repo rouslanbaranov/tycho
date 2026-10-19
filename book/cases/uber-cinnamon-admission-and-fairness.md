@@ -36,9 +36,9 @@ flowchart TD
 | Scorecard | Per-tenant fairness during normal operation and stress | Doesn't independently detect every hot key or large write payload |
 | Cinnamon throughput under overload | **~3,000 → ~5,400 QPS (80% higher)** | Specific comparison to prior token-bucket-style limiter, not a guarantee for arbitrary DB |
 | Upsert p99 under overload | **~3.1s → ~1.0s (~70% lower)** | Publisher's targeted benchmark/incident context |
-| Resource under overload | Peak goroutines **~150k → ~10k**, heap **5–6 GiB spikes → ~1 GiB** | Source-reported conditions; not a universal memory footprint |
+| Resource under overload | Peak goroutines **~150k → ~10k**, heap **5–6 GB spikes → ~1 GB** | **GB is the publisher's unit**, not independently established GiB; reported peaks and aggregates differ, not a universal memory footprint |
 
-The source's 'Lessons Learned' recommends priority-aware admission, early rejection when deadlines are already lost, storage-local signals and observability. **Do not infer** that static rate limits are always wrong: they can complement the dynamic controller for API contract policing, and cannot replace workload capacity measurements.
+The publisher additionally labels heap improvement **~60% lower**, although its stated **5–6 GB spikes versus 1 GB maximum** do not specify an aggregation denominator that reproduces this percentage. Preserve both figures **without silently recalculating** the company's result; see [the source check](../../authoring/cases/M9_NUMERIC_SOURCE_RECHECK_WAVE09.md).\n\nThe source's 'Lessons Learned' recommends priority-aware admission, early rejection when deadlines are already lost, storage-local signals and observability. **Do not infer** that static rate limits are always wrong: they can complement the dynamic controller for API contract policing, and cannot replace workload capacity measurements.
 
 ## Applicability, migration and rollback ADR for another organization
 
