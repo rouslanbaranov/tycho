@@ -46,6 +46,6 @@ All three slices reference existing public source IDs and claim IDs. The optiona
 
 ## Checkpoint and re-review discipline
 
-For any material disputed claim or refreshed source, append an event with exact section/snapshot, `finding`, `claim_ids`, `next_action` and a status. If a digest/revision changes in the [document observations workflow](DOCUMENT-OBSERVATIONS.md) (draft in #30 until merged), treat it as a candidate for targeted re-review, **not** a reason to reconstruct old research records or regenerate unrelated pages. The latest event may move from ready-for-review back to blocked when contrary evidence or missing access emerges; the earlier source reading remains historically visible.
+For any material disputed claim or refreshed source, append an event with exact section/snapshot, `finding`, `claim_ids`, `next_action` and a status. If a digest/revision changes in the [document observations workflow, pending PR #155](https://github.com/rouslanbaranov/tycho/pull/155), treat it as a candidate for targeted re-review, **not** a reason to reconstruct old research records or regenerate unrelated pages. The latest event may move from ready-for-review back to blocked when contrary evidence or missing access emerges; the earlier source reading remains historically visible.
 
 **Not delivered here:** a deployed source crawler, provenance truth engine, automated expert sign-off, semantic graph/index, full Markdown/frontmatter schema, or a means to inspect private employer documents. No M9 case-study files or lock are modified.
