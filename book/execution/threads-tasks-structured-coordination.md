@@ -136,3 +136,11 @@ A reviewable fixture would: fork two tasks then force one to fail; cancel the pa
 All examples and intended outcomes are original teaching material. Full source/version/claim review, actual code-level tests and editorial acceptance remain pending.
 
 **Navigation:** target **V03/C01** in [book outline](../PROPOSED-STRUCTURE.md), current [execution landing](README.md). Expand to [virtual-thread models](platform-threads-executors-and-virtual-threads.md), [reactive scheduling](reactor-webflux-r2dbc-and-backpressure.md), [CPU and blocking diagnosis](cpu-memory-gc-and-blocking-diagnostics.md), [connection pool budgets](../scaling/connection-pools-hikaricp-pgbouncer.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Netflix — gRPC worker-pool regression](../cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md)** illustrates cPU-bound worker pool can regress with virtual threads despite a simpler-looking execution model. **It cannot establish:** a practitioner-reported few-percent regression without a disclosed benchmark is not a numeric forecast for another workload.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

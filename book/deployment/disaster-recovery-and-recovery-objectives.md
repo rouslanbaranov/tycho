@@ -160,3 +160,11 @@ No such drills were performed in this chapter. A green health endpoint or replic
 All services, failures, roles and diagrams are original inventions. No real incident or recovery operation occurred.
 
 **Navigation:** proposed **V08/C07** via [deployment landing](README.md) and [book outline](../PROPOSED-STRUCTURE.md). Read [placement](availability-zones-placement-and-failure-domains.md), [backup and recovery drills](../data/backup-restore-pitr-and-recovery-drills.md), [safe release recovery](../delivery/safe-rollout-and-recovery.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Netflix — Chaos Kong regional simulation](../cases/netflix-chaos-kong-regional-failover.md)** illustrates application-level regional fault simulation can expose cross-service failover dependencies and missing readiness. **It cannot establish:** chaos Kong does not simulate provider-wide physical outage or prove universal multi-region data integrity.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

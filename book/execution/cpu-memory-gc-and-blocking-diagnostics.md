@@ -181,3 +181,11 @@ All diagrams, suspected failures, rates, experiments and recommendations for the
 - Intended book owner: **V03/C06** in [proposed TOC](../PROPOSED-STRUCTURE.md); current section [Java concurrency and execution](README.md).
 - Relevant runtime: [Platform and virtual threads](platform-threads-executors-and-virtual-threads.md); [Reactive execution](reactor-webflux-r2dbc-and-backpressure.md); [Event-loop frameworks](vertx-netty-quarkus-mutiny-and-rxjava.md).
 - Cross-layer: [Connection pool budgets](../scaling/connection-pools-hikaricp-pgbouncer.md); [Queueing](../performance/queueing-littles-law.md); [Tail latency](../performance/tail-latency-fanout-and-deadline-budgets.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Netflix — Generational ZGC workloads](../cases/netflix-generational-zgc-workloads.md)** illustrates gC selection depends on latency, allocation, heap and memory/cpu budgets; some workloads favor alternatives. **It cannot establish:** company-reported JDK21 observations do not prove Generational ZGC is universally best or specify another service's p99.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

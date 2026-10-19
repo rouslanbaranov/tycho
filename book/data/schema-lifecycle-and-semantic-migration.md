@@ -156,3 +156,14 @@ No tests were executed. A future fixture should insert ambiguous identifiers, ba
 The invented schema, example workflow, diagram, test matrix and conclusions are original. No versioned database data or human review was available.
 
 **Navigation:** proposed **V05/C06** in [book outline](../PROPOSED-STRUCTURE.md) and [data landing](README.md). Read [relational modeling](relational-modeling-and-transaction-isolation.md), [mixed-version schema compatibility](../delivery/mixed-version-database-compatibility-and-online-ddl.md), [legacy transition](../decisions/target-and-transition-architecture-states.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Netflix — Casspactor shadow migration](../cases/netflix-casspactor-shadow-migration.md)** illustrates backup identity, shadow comparisons and fallback are distinct evidence gates for pipeline migration. **It cannot establish:** comparing row sets alone does not guarantee semantic correctness or zero downtime; company performance evidence remains scoped.
+- **[Uber — Mezzanine PostgreSQL migration](../cases/uber-mezzanine-pg-to-schemaless.md)** illustrates moving data authority requires compatibility seam, identity migration, mirrored writes and backfill reconciliation. **It cannot establish:** uber's 2014 store change does not prove abandoning relational databases is generally preferable or fully reversible.
+- **[Spotify — Honk data-consumer migration](../cases/spotify-honk-data-consumer-migration.md)** illustrates agent-assisted dataset changes need context, lineage and affected-repository test gates. **It cannot establish:** reported PR counts are not controlled correctness measurements or evidence of fully migrated consumers.
+- **[Meta — Ingestion shadow cutover](../cases/meta-ingestion-shadow-migration-lifecycle.md)** illustrates shadow read/validation, rollout and authority transfer are separate proof obligations for large ingestion migrations. **It cannot establish:** source-reported complete migration is not a formal proof of no semantic corruption or transferable production protocol.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

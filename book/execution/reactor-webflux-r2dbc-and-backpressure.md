@@ -159,3 +159,11 @@ Run **equivalent open-loop offered-load** and bounded concurrency tests; include
 - **[E04] R2DBC SPI 1.0.0.RELEASE specification:** [R2DBC specification](https://r2dbc.io/spec/1.0.0.RELEASE/spec/html/), *Introduction — The R2DBC SPI*, *Compliance — R2DBC SPI Compliance*, *Connections*, *Transactions*. Supports SPI requirements, not a concrete driver's cancellation performance.
 
 **Research status:** inspected the cited published sections and identified untested driver-specific behavior. **Not performed:** compilation, Spring/driver integration, latency measurement, source-code audit, formal backpressure proof or independent human review.
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Netflix — Zuul 2 nonblocking gateway](../cases/netflix-zuul2-nonblocking-gateway.md)** illustrates long-lived connections are a workload-specific reason to consider nonblocking gateway I/O. **It cannot establish:** netflix's company-reported results do not prove reactive execution beats blocking APIs for all workloads or improve every failure mode.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

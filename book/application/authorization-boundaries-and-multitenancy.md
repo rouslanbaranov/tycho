@@ -159,3 +159,11 @@ These are *proposed* tests; nothing was executed. An independent security review
 The software, names, diagrams, resources and attack cases are original invented examples. No policy/tenant/restore tests, deployed service, independent audit, actual cost comparison or final edition chapter metadata exists for this page.
 
 **Navigation:** proposed **V02/C07** in [outline](../PROPOSED-STRUCTURE.md), [application landing](README.md). Related [Domain ownership](domain-boundaries-data-ownership-and-contracts.md), [Identity and service isolation](../security/identity-authorization-and-isolation.md), [Safe agent-accessible knowledge](../security/safe-agent-access-and-knowledge-isolation.md), [Connection pool scaling](../scaling/connection-pools-hikaricp-pgbouncer.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Netflix — Data Project identity](../cases/netflix-data-project-durable-workload-identity.md)** illustrates workload identity can outlive departing human owners; entitlement, execution and ownership identities need separate migration. **It cannot establish:** a first-party deployment account does not prove all Netflix jobs migrated, global least-privilege compliance or an independent audit.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

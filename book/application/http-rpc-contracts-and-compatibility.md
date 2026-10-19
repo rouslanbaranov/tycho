@@ -206,3 +206,11 @@ Inspected independently public reference sections on 2026-10-19, with the follow
 - Before: [Architecture styles and module boundaries](architecture-styles-and-module-boundaries.md).
 - Related: [Transactional outbox and idempotency](../distributed/transactional-outbox-and-idempotency.md), [Safe schema evolution](../delivery/progressive-delivery-and-schema-evolution.md), [Authorization isolation](../security/identity-authorization-and-isolation.md), [Java reactive execution](../execution/reactor-webflux-r2dbc-and-backpressure.md).
 - Next: mixed-version runnable consumer/provider tests and detailed streaming reconnect semantics (unimplemented, future authoring work).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Netflix — DGS and Spring GraphQL](../cases/netflix-dgs-spring-graphql-convergence.md)** illustrates compatibility wrappers and measured overhead can support framework convergence without a big-bang rewrite. **It cannot establish:** a staged 2024 DGS/Spring journey does not guarantee API parity for arbitrary GraphQL implementations or later release versions.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

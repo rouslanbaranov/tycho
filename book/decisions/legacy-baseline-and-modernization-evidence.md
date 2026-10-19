@@ -225,3 +225,11 @@ A signed functional contract that requires isolating import failures from public
 - Mechanisms: [Application architecture evolution](../application/architecture-evolution-and-extraction.md); [Transactional outbox](../distributed/transactional-outbox-and-idempotency.md); [HTTP/RPC compatibility](../application/http-rpc-contracts-and-compatibility.md).
 - Transition owners: [Safe rollout and recovery](../delivery/safe-rollout-and-recovery.md); [Schema evolution](../delivery/progressive-delivery-and-schema-evolution.md).
 - Supporting method (not book chapter): [Legacy baseline authoring model](../../authoring/models/legacy-modernization-profile.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Netflix — Cloud rearchitecture](../cases/netflix-seven-year-cloud-rearchitecture.md)** illustrates a datacenter failure and multiyear gradual change illustrate staged removal of concentrated dependencies. **It cannot establish:** an historical cloud migration does not prove microservices or cloud would improve a different monolith's TCO or reliability.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

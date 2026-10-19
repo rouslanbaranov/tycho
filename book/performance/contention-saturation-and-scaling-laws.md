@@ -167,3 +167,11 @@ All numerical values, diagrams, equations applied to imagined inputs and archite
 ## Navigation
 
 Proposed **V07/C02** in [book outline](../PROPOSED-STRUCTURE.md), [performance entry](README.md). Read before: [workload demand](workload-demand-and-arrival-models.md), [queueing](queueing-littles-law.md). Next: [load-test validity](load-testing-and-benchmark-validity.md), [connection pools](../scaling/connection-pools-hikaricp-pgbouncer.md), [autoscaling lag](autoscaling-lag-and-capacity-limits.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Netflix — HotSpot sharing](../cases/netflix-hotspot-false-true-sharing.md)** illustrates cPU scaling must test true/false sharing at representative offered load, not equal low-load canaries. **It cannot establish:** hotSpot behavior from the historical version is not evidence of the same bug in current JVMs or all low-CPU-scaling incidents.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

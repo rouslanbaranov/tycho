@@ -147,3 +147,12 @@ For a migration, inspect actual executors and drivers, then compare equivalent a
 - **[E04] Published Spring Boot 3.3.13 documentation:** [Task Execution and Scheduling](https://docs.spring.io/spring-boot/3.3/reference/features/task-execution-and-scheduling.html), *Task Execution* and *Task Scheduling*. Framework documentation, not a runtime test.
 
 **Research state:** named primary sections inspected; diagrams and workload invented. **Not performed:** compilation, JFR capture, load testing, actual Spring configuration testing, full JEP 491 body inspection or independent human review.
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Netflix — Java platform convergence](../cases/netflix-java-platform-convergence.md)** illustrates separate GraphQL composition and Java platform modernization; staged compatibility changes coordination ownership. **It cannot establish:** the historical talk and later abstract do not establish a universal RxJava-versus-Spring performance ranking or identical fleet versions.
+- **[Netflix — Java 21 virtual-thread pinning](../cases/netflix-java21-virtual-thread-pinning.md)** illustrates jDK21 monitor-related carrier starvation makes tracing/instrumentation part of concurrency acceptance. **It cannot establish:** an observed JVM incident is not a general virtual-thread failure rate and must not be extrapolated unchanged to later JDKs.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.
