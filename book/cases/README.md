@@ -1,5 +1,14 @@
 # M9 — Historical Architecture Modernization Case Studies
 
+## Purpose and mission
+
+Use dated, first-party accounts to understand why a modernization approach fit
+its original constraints, how its transition and failure boundaries worked,
+and which evidence would justify or reject transferring it to a new system.
+Start with the case families below, then compare their mechanisms through the
+decision playbooks. Published outcomes remain source-reported historical
+observations; the playbooks provide explicitly synthetic decision reasoning.
+
 **Evidence state:** original author-reviewed **drafts**, not independent-reviewed/accepted Tycho cases. As of 2026-10-19 this collection contains **29** case pages: **12 Netflix** and **17 from 9 other organizations**. A publisher's architectural write-up is evidence of its historical account, not independent validation of an experiment. Do not represent the case counts as finished milestone acceptance until E16-01 and E16-08 gates pass.
 
 ## Position inside the single Tycho book (M1–M9 integration)

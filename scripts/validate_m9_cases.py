@@ -95,7 +95,7 @@ def validate_record(record: dict, schema: dict, registered_sources: dict[str, st
     require(all(isinstance(ref, str) and SOURCE_ID.fullmatch(ref) is not None
                 for ref in record["source_refs"]), "source ref not a valid string ID")
     require(len(record["source_refs"]) == len(set(record["source_refs"])), "duplicate source ref")
-    require(set(record["source_refs"]) <= registered_sources, "unregistered case source")
+    require(set(record["source_refs"]) <= registered_sources.keys(), "unregistered case source")
     require(isinstance(record["claims"], list) and len(record["claims"]) > 0, "case has no claims")
     iso_date(record["observed_on"], "observed_on", nullable=True)
     review = record["review"]
@@ -312,10 +312,10 @@ def check(root: Path = ROOT) -> dict:
         validate_record(item, schema, registered)
         require(item["case_id"] in ids, "sample case missing from book")
     query_data = json_read(root / "tests/fixtures/m9-case-queries.json")
-    counts = validate_fixtures(query_data, ids, registered)
+    counts = validate_fixtures(query_data, ids, set(registered))
     facet_pilot = validate_evidence_facet_pilot(
         json_read(root / "tests/fixtures/m9-q042-evidence-facets.proposed.json"),
-        query_data["questions"], ids, registered)
+        query_data["questions"], ids, set(registered))
     validation_engine = "portable strict subset"
     try:
         import jsonschema  # type: ignore
