@@ -1,0 +1,113 @@
+{
+  "schema_version": "m9-facet-coverage-pilot-0.1",
+  "status": "proposed_for_independent_label_review",
+  "purpose": "Capture distinct evidentiary roles in query m9-q042 without silently rewriting frozen benchmark labels or claiming one company implemented an end-to-end AI+shadow design.",
+  "query_id": "m9-q042",
+  "original_question": "How can immutable Big Data shadow comparisons be used to gate an agent-generated data migration?",
+  "frozen_primary_expected_case_ids": [
+    "case.netflix.casspactor-to-analytics",
+    "case.stripe.online-subscriptions"
+  ],
+  "required_facets": [
+    {
+      "facet_id": "agent_generated_migration_code",
+      "definition": "First-party account of coding agents generating actual data consumer migration PRs, with explicit limitations and ownership of semantic validation.",
+      "required_for_complete_synthesis": true,
+      "case_support": [
+        {
+          "case_id": "case.spotify.honk-dataset-consumer-migration",
+          "source_ids": [
+            "SP03"
+          ],
+          "role": "direct_evidence",
+          "claim": "Honk created migration PRs for standardized dbt/BigQuery Runner, while ambiguous mappings and repositories lacking automated tests needed human review."
+        }
+      ]
+    },
+    {
+      "facet_id": "immutable_shadow_reconciliation",
+      "definition": "Two-sided set comparisons between legacy and replacement outputs from comparable immutable snapshot inputs.",
+      "required_for_complete_synthesis": true,
+      "case_support": [
+        {
+          "case_id": "case.netflix.casspactor-to-analytics",
+          "source_ids": [
+            "N11"
+          ],
+          "role": "direct_evidence",
+          "claim": "Netflix used C−M and M−C comparisons plus controlled fallback when replacing its Cassandra backup processing path; article does not claim this was an LLM-generated migration."
+        }
+      ]
+    },
+    {
+      "facet_id": "domain_oracle_and_human_gate",
+      "definition": "Define source and target snapshot/equivalence semantics, avoid unsupported automatic data mappings, hold rollout when validation or owner approval fails.",
+      "required_for_complete_synthesis": true,
+      "case_support": [
+        {
+          "case_id": "case.spotify.honk-dataset-consumer-migration",
+          "source_ids": [
+            "SP03"
+          ],
+          "role": "direct_evidence",
+          "claim": "Missing data-field mapping and tests necessitated explicit mapping instructions, owner approval, and exclusion of complex Scio consumers."
+        },
+        {
+          "case_id": "case.netflix.casspactor-to-analytics",
+          "source_ids": [
+            "N11"
+          ],
+          "role": "direct_evidence",
+          "claim": "Two-sided shadow set differences under a declared comparison rule and fallback from the replacement path."
+        }
+      ]
+    }
+  ],
+  "contextual_evidence": [
+    {
+      "case_id": "case.meta.ingestion-shadow-lifecycle",
+      "source_ids": [
+        "ME03"
+      ],
+      "role": "related_but_distinct",
+      "reason": "Pre-production shadow, reverse shadow, checksum, row count and landing-latency gates support a data-ingestion migration, not an AI-generated code-migration claim."
+    },
+    {
+      "case_id": "case.stripe.online-subscriptions",
+      "source_ids": [
+        "ST01"
+      ],
+      "role": "contrast_not_immutable",
+      "reason": "Online mutable subscription migration used dual-write and shadow-read comparisons; useful for authority switching but not evidence of immutable Spark batch equivalence or generated PR safety."
+    },
+    {
+      "case_id": "case.linkedin.kafka-tier-audit",
+      "source_ids": [
+        "LI01"
+      ],
+      "role": "related_but_distinct",
+      "reason": "End-to-end tier counting/auditing for Kafka message delivery, not a code-agent or immutable output-set migration."
+    }
+  ],
+  "answer_requirements": {
+    "must_attribute_each_mechanism_to_its_actual_company": true,
+    "must_not_claim_a_company_combined_these_mechanisms": true,
+    "require_two_distinct_primary_company_sources_for_complete_synthesis": true,
+    "require_warning_that_shadow_set_equality_is_only_as_good_as_defined_semantics": true,
+    "require_disclosure_that_no_production_agentic_correctness_benchmark_is_established": true
+  },
+  "baseline_diagnostic": {
+    "reference": "authoring/cases/M9_BM25_CANDIDATE_BASELINE_2026-10-19.json",
+    "old_gold_ranks": {
+      "case.netflix.casspactor-to-analytics": 15,
+      "case.stripe.online-subscriptions": 11
+    },
+    "top3": [
+      "case.spotify.honk-dataset-consumer-migration",
+      "case.linkedin.kafka-tier-audit",
+      "case.meta.ingestion-shadow-lifecycle"
+    ],
+    "implication": "Top3 satisfies the agent-generated facet via Spotify but misses the primary immutable two-sided reconciliation facet. Flat hit@k against two author labels conflates this with a complete failure."
+  },
+  "review_decision": "pending_independent_relevance_adjudication"
+}
