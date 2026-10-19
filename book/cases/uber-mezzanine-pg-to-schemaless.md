@@ -83,6 +83,39 @@ A hypothetical high-growth transaction system can emulate the ordering **identit
 
 **Stop conditions:** unsupported query semantics, secondary index not backfilled, mirrored write divergence, pending-write backlog without bounded recovery, old client misinterpreting UUIDs, or inability to route reads back without losing new-only committed facts. Choosing append-only or UUIDs does not by itself guarantee zero data loss. Compare the [Stripe online-subscription migration](stripe-online-subscriptions-migration.md) as a contrasting mutable data-authority strategy and the [data-migration decision guide](decisions/data-migration-correctness.md) for scenario selection.
 
+## The 2014 requirements: migrate semantics before storage
+
+The [July 28, 2015 first-party retrospective](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/) (U02, **Background**, **The New Trip Store**) dates the project to **2014**, with publisher-reported trip growth around **20% monthly** at the time. A single PostgreSQL instance still carried the largest and fastest-growing trip dataset; a mature network of services did not by itself remove this storage concentration. The stated target required scalable IOPS/capacity, backup and multi-datacenter replication, online index changes and high write availability, even when short-term read availability had to degrade.
+
+Schemaless retained **MySQL underneath a sharded append-only column model**; it was not the removal of SQL storage engines from the company. The original report describes a fixed initial set of typically **4,096 logical shards**, movable between physical MySQL hosts, plus secondary-index versions and write buffering to an available server when the responsible shard was temporarily unavailable. Those implementation details carry a crucial semantic precondition: record updates must be representable as append-only, idempotent/commutative cell writes. A legacy transactional update that depends on an atomic join cannot silently be assumed equivalent.
+
+## A compatibility API before any authority switch
+
+Uber reports hundreds of SQLAlchemy queries, including ORM relationship traversal, that depended on integer trip IDs and relational joins. A new `lib/tripstore` interface exposed the restricted query shape needed by Schemaless while initially supporting **PostgreSQL as an implementation**. This meant query callers could be migrated to a new *interface contract* independently of the underlying persistence switch. Mirrored writes to Schemaless and sampled background query comparison then checked whether the candidate store produced usable results before serving it. [U02, **From SQLAlchemy to Schemaless**].
+
+| Transition | Reported responsibility | Risk if the step is skipped |
+|---|---|---|
+| Integer ID → UUID | Global caller/reference migration | Old and new systems identify different logical trips |
+| Schema/query surface | Restrict joins and model column layout | Callers unknowingly depend on unsupported relational operations |
+| Stable library interface | Implement Schemaless-compatible API over old PostgreSQL | One incompatible storage cutover also forces all client releases |
+| Backfill + mirror | Populate old history and follow current writes | Candidate target is missing historical or most recent state |
+| Sampled read comparison | Reissue queries under bounded extra source load | New store appears correct from row counts while query values diverge |
+| Flip read authority | Controlled release after broad validation | A single nonreversible migration couples all teams to the new store |
+
+The publisher says the final intense migration phase took **about six weeks**, with the first successful switch in **late September 2014**; it does not provide a controlled p99 or an independently audited zero-error rate. A further reported doubling of trip-store capacity without downtime is a later outcome claim, not general database throughput evidence.
+
+## Failure oracles for a different store
+
+For a synthetic high-volume trip lifecycle, compare create, edit, cancel, recompute, retry, arrival-order change and offline/batch reads under exactly specified identity and time-window rules. An append-only model needs explicit materialization logic: what wins when multiple cells represent distinct revisions, how deletions or corrections work, and whether a replay has new side effects. The source's append-only assertions cannot serve as a proof for unrelated mutable business models.
+
+Test a missing index replica, buffered writes awaiting replay, duplicate events, a stale secondary index alias, incompatible joins and a partially completed backfill. Keep the old authority available until replay and query semantics are reconciled; **do not** treat “all rows copied” as sufficient for a read cutover. When the new query API cannot preserve a required relational operation, stop and redesign the domain contract rather than implement a surprising approximate join.
+
+## Alternative architecture and stop conditions
+
+Staying on a PostgreSQL-based design with partitioning and targeted indexing may be less risky if current scaling margins, migration ownership and online schema-change needs can be met. A distributed append-only model is justified by measured write/storage scaling and predictable domain semantics, not simply because the original application now has many services. The historical engineering team evaluated alternatives, but this is Tycho's **independent option analysis**.
+
+**Refuse a cutover** when UUID mapping is incomplete, old clients still issue direct ORM queries, buffered writes cannot be replayed idempotently, secondary-index and current-data views differ, or business invariants require atomic relations absent in the target API. Retain the historical **2014/2015** time boundary; no claim about 2026 Uber data-store state follows from U02.
+
 ## Applicability to legacy modernization
 
 Prefer API strangling and explicit change of identifiers when a storage migration crosses many teams. If the original relational store still meets capacity and operational requirements, a new distributed engine may not justify this migration. Before a roadmap is approved, require a baseline with data ownership and blast radius, a comparison to a smaller intervention, and measurable acceptance gates. An agent should retrieve this case as **evidence for conditions and counterconditions**, not as a universal preferred architecture.
