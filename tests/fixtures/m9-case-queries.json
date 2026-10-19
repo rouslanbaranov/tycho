@@ -1,0 +1,549 @@
+{
+  "fixture_version": "m9-case-questions-v1",
+  "status": "proposed-not-executed",
+  "collection": "tycho-public",
+  "test_model": "retrieval-and-answer attribution / temporal / contradiction, not source author QA",
+  "created_on": "2026-10-19",
+  "questions": [
+    {
+      "id": "m9-q001",
+      "query": "Our Java fleet moved from 2,800 to 3,000 services between 2023 and 2026. Exactly what CAGR did Netflix achieve?",
+      "expected_case_ids": [
+        "case.netflix.java-platform-convergence"
+      ],
+      "required_source_ids": [
+        "N02",
+        "N03"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "Different inventories, 2026 abstract only; cannot infer matched definitions or growth causality."
+    },
+    {
+      "id": "m9-q002",
+      "query": "Did Netflix fully eliminate RxJava after it adopted GraphQL federation?",
+      "expected_case_ids": [
+        "case.netflix.java-platform-convergence"
+      ],
+      "required_source_ids": [
+        "N02"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Reactive gateway and older device-specific services persisted in 2023 account."
+    },
+    {
+      "id": "m9-q003",
+      "query": "Was Netflix's 2026 JavaOne session itself sufficient to prove JDK 25 production deployment?",
+      "expected_case_ids": [
+        "case.netflix.java-platform-convergence"
+      ],
+      "required_source_ids": [
+        "N03"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Agenda is talk scope, not evidence of installed production fleet versions."
+    },
+    {
+      "id": "m9-q004",
+      "query": "Why does a small monolith not necessarily benefit from Netflix-style microservice decomposition?",
+      "expected_case_ids": [
+        "case.netflix.cloud-rearchitecture-2008-2016",
+        "case.shopify.modular-monolith"
+      ],
+      "required_source_ids": [
+        "N01",
+        "SH01"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Compare organizational/reliability constraints, not brand ranking."
+    },
+    {
+      "id": "m9-q005",
+      "query": "What exact Netflix AWS monthly total cost did microservices reduce in 2016?",
+      "expected_case_ids": [
+        "case.netflix.cloud-rearchitecture-2008-2016"
+      ],
+      "required_source_ids": [
+        "N01"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "Historical retrospective does not provide controlled A/B dollar savings."
+    },
+    {
+      "id": "m9-q006",
+      "query": "Does Uber DOMA recommend splitting each team into additional independent services?",
+      "expected_case_ids": [
+        "case.uber.doma-domains"
+      ],
+      "required_source_ids": [
+        "U01"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "DOMA governs domains/gateways after service sprawl."
+    },
+    {
+      "id": "m9-q007",
+      "query": "When should Shopify modular components be favored over new remote services?",
+      "expected_case_ids": [
+        "case.shopify.modular-monolith",
+        "case.uber.doma-domains"
+      ],
+      "required_source_ids": [
+        "SH01",
+        "U01"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "One deployment and in-process transaction vs independent failure/releases."
+    },
+    {
+      "id": "m9-q008",
+      "query": "Do static dependency rules guarantee Shopify's modules have transactional isolation?",
+      "expected_case_ids": [
+        "case.shopify.component-governance"
+      ],
+      "required_source_ids": [
+        "SH02"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Static checks cannot prove runtime or data ownership."
+    },
+    {
+      "id": "m9-q009",
+      "query": "What exact team-hours did Shopify save with Packwerk in 2020?",
+      "expected_case_ids": [
+        "case.shopify.component-governance"
+      ],
+      "required_source_ids": [
+        "SH02"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "No controlled work-hours baseline cited."
+    },
+    {
+      "id": "m9-q010",
+      "query": "Did Zuul2 always lower CPU consumption in Netflix's API-facing gateway?",
+      "expected_case_ids": [
+        "case.netflix.zuul2-nonblocking-gateway"
+      ],
+      "required_source_ids": [
+        "N07"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "API-heavy cluster lacked gain; lower-work logging cluster differed."
+    },
+    {
+      "id": "m9-q011",
+      "query": "Why was Zuul2 more scalable for long-lived connections?",
+      "expected_case_ids": [
+        "case.netflix.zuul2-nonblocking-gateway"
+      ],
+      "required_source_ids": [
+        "N07",
+        "N08"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Nonblocking Netty/event-loop multiplexing reduces per-wait thread demand."
+    },
+    {
+      "id": "m9-q012",
+      "query": "Was Zuul2's reported 25% throughput gain universal across clusters?",
+      "expected_case_ids": [
+        "case.netflix.zuul2-nonblocking-gateway"
+      ],
+      "required_source_ids": [
+        "N07"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Only specific logging cluster, not API-intensive cluster."
+    },
+    {
+      "id": "m9-q013",
+      "query": "Does Java21 Loom guarantee freedom from carrier starvation with tracing libraries?",
+      "expected_case_ids": [
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ],
+      "required_source_ids": [
+        "N06"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Brave span lock example pinned four of four carriers."
+    },
+    {
+      "id": "m9-q014",
+      "query": "Did Netflix stop using virtual threads fleetwide in 2024 after that lock incident?",
+      "expected_case_ids": [
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ],
+      "required_source_ids": [
+        "N06"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "Incident article does not establish fleetwide policy."
+    },
+    {
+      "id": "m9-q015",
+      "query": "Does Java 25 still exhibit the identical Brave lock starvation observed on JDK21?",
+      "expected_case_ids": [
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ],
+      "required_source_ids": [
+        "N06"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "Cannot infer later-JDK semantics from a 2024 Java21 incident."
+    },
+    {
+      "id": "m9-q016",
+      "query": "Is generational ZGC a universal top throughput collector for batch services?",
+      "expected_case_ids": [
+        "case.netflix.generational-zgc-vs-g1"
+      ],
+      "required_source_ids": [
+        "N05"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "N05 describes Parallel beating G1 in specific batch; workload matters."
+    },
+    {
+      "id": "m9-q017",
+      "query": "Compare old non-generational ZGC, generational ZGC and G1 in Netflix's 2024 example.",
+      "expected_case_ids": [
+        "case.netflix.generational-zgc-vs-g1"
+      ],
+      "required_source_ids": [
+        "N05"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Distinguish three collector generations and bounded CPU comparison."
+    },
+    {
+      "id": "m9-q018",
+      "query": "What exact GC benchmark result can we transfer to our unknown CPU-bound service?",
+      "expected_case_ids": [
+        "case.netflix.generational-zgc-vs-g1"
+      ],
+      "required_source_ids": [
+        "N05"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "Unknown workload/runtime means no portable numeric gain."
+    },
+    {
+      "id": "m9-q019",
+      "query": "Could HotSpot false sharing mask expected capacity after tripling CPU cores?",
+      "expected_case_ids": [
+        "case.netflix.hotspot-sharing-cpu-scaling"
+      ],
+      "required_source_ids": [
+        "N18"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "2022 Netflix case: cache-coherence pressure invisible to Java flamegraphs."
+    },
+    {
+      "id": "m9-q020",
+      "query": "Did doubling vCPUs guarantee doubling throughput for Netflix GS2?",
+      "expected_case_ids": [
+        "case.netflix.hotspot-sharing-cpu-scaling"
+      ],
+      "required_source_ids": [
+        "N18"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Observed only +25% initial capacity with worse latency after upgrade."
+    },
+    {
+      "id": "m9-q021",
+      "query": "Was DGS's April 2024 Spring GraphQL canary a zero-overhead migration?",
+      "expected_case_ids": [
+        "case.netflix.dgs-spring-graphql-convergence"
+      ],
+      "required_source_ids": [
+        "N09"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Initial >50% CPU and 20% latency regression then async fix."
+    },
+    {
+      "id": "m9-q022",
+      "query": "Did Netflix merely propose DGS/Spring integration without releasing it by end 2024?",
+      "expected_case_ids": [
+        "case.netflix.dgs-spring-graphql-convergence"
+      ],
+      "required_source_ids": [
+        "N09",
+        "N10"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Dec 17 2024 DGS10 release after April proposal."
+    },
+    {
+      "id": "m9-q023",
+      "query": "Could a GraphQL executor comparison miss a regression caused by servlet async filters?",
+      "expected_case_ids": [
+        "case.netflix.dgs-spring-graphql-convergence"
+      ],
+      "required_source_ids": [
+        "N09"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Repeated filter execution during async request lifecycle."
+    },
+    {
+      "id": "m9-q024",
+      "query": "Is Netflix's seven-year AWS transition evidence that every company should use microservices?",
+      "expected_case_ids": [
+        "case.netflix.cloud-rearchitecture-2008-2016",
+        "case.shopify.modular-monolith"
+      ],
+      "required_source_ids": [
+        "N01",
+        "SH01"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Different conditions and valid modular monolith alternative."
+    },
+    {
+      "id": "m9-q025",
+      "query": "How did Netflix compare outputs while replacing Casspactor?",
+      "expected_case_ids": [
+        "case.netflix.casspactor-to-analytics"
+      ],
+      "required_source_ids": [
+        "N11"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Check both C−M and M−C with data semantics and fallback."
+    },
+    {
+      "id": "m9-q026",
+      "query": "Does row-count equality alone prove Casspactor outputs correct after Spark migration?",
+      "expected_case_ids": [
+        "case.netflix.casspactor-to-analytics"
+      ],
+      "required_source_ids": [
+        "N11"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Two-sided set differences/semantics required."
+    },
+    {
+      "id": "m9-q027",
+      "query": "What are the two repair strategies for wide Cassandra time-series partitions?",
+      "expected_case_ids": [
+        "case.netflix.dynamic-timeseries-partition-splits"
+      ],
+      "required_source_ids": [
+        "N12"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Future-slice reconfiguration vs per-ID immutable partition split."
+    },
+    {
+      "id": "m9-q028",
+      "query": "What percent of Netflix Conductor workflows migrated to the new 2026 internal platform?",
+      "expected_case_ids": [
+        "case.netflix.cloud-rearchitecture-2008-2016"
+      ],
+      "required_source_ids": [
+        "N14"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "N14 currently inaccessible; historical Conductor/OSS and internal distinct."
+    },
+    {
+      "id": "m9-q029",
+      "query": "What stages let Stripe change subscription data without downtime?",
+      "expected_case_ids": [
+        "case.stripe.online-subscriptions"
+      ],
+      "required_source_ids": [
+        "ST01"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Dual writes, backfill, shadow reads, flip authority and retire."
+    },
+    {
+      "id": "m9-q030",
+      "query": "Does switching Stripe's new writes before old reads preserve all consumers?",
+      "expected_case_ids": [
+        "case.stripe.online-subscriptions"
+      ],
+      "required_source_ids": [
+        "ST01"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Read/write authority ordering matters."
+    },
+    {
+      "id": "m9-q031",
+      "query": "How do Uber Mezzanine and Stripe online data migrations compare?",
+      "expected_case_ids": [
+        "case.uber.mezzanine-trip-data",
+        "case.stripe.online-subscriptions"
+      ],
+      "required_source_ids": [
+        "U02",
+        "ST01"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Tripstore identifier/query seam vs phased subscription table."
+    },
+    {
+      "id": "m9-q032",
+      "query": "What caused Discord's last ScyllaDB migration token ranges to stall?",
+      "expected_case_ids": [
+        "case.discord.cassandra-scylladb-messages"
+      ],
+      "required_source_ids": [
+        "DI01"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Historical tombstone-compaction hotspot near cutover."
+    },
+    {
+      "id": "m9-q033",
+      "query": "Are Discord's Scylla node and p99 figures a universal Cassandra-to-Scylla expectation?",
+      "expected_case_ids": [
+        "case.discord.cassandra-scylladb-messages"
+      ],
+      "required_source_ids": [
+        "DI01"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Numbers apply to Discord at migration period, not unrelated fleets."
+    },
+    {
+      "id": "m9-q034",
+      "query": "Are Discord message storage shard keys identical to its search-cell keys?",
+      "expected_case_ids": [
+        "case.discord.search-index-cells",
+        "case.discord.cassandra-scylladb-messages"
+      ],
+      "required_source_ids": [
+        "DI02",
+        "DI01"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Search guild/user query shapes differ from storage hot keys."
+    },
+    {
+      "id": "m9-q035",
+      "query": "Did Airbnb force Bazel everywhere before proving a representative pilot?",
+      "expected_case_ids": [
+        "case.airbnb.jvm-bazel"
+      ],
+      "required_source_ids": [
+        "A01"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Gradle/Bazel coexistence and volunteer pilots."
+    },
+    {
+      "id": "m9-q036",
+      "query": "What makes Bazel speedups comparable when evaluating our own JVM repo?",
+      "expected_case_ids": [
+        "case.airbnb.jvm-bazel"
+      ],
+      "required_source_ids": [
+        "A01"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Pin target, build mode, cache, infra and developer workflow."
+    },
+    {
+      "id": "m9-q037",
+      "query": "Can Spotify's inaccessible SP02/SP03 stories prove 1,500 autonomous AI PRs were safely merged?",
+      "expected_case_ids": [
+        "case.spotify.tech-migrations-long-tail"
+      ],
+      "required_source_ids": [
+        "SP02",
+        "SP03"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "Cannot claim specific AI success metrics without primary access."
+    },
+    {
+      "id": "m9-q038",
+      "query": "What were Spotify's three process pillars for tech migrations in 2020?",
+      "expected_case_ids": [
+        "case.spotify.tech-migrations-long-tail"
+      ],
+      "required_source_ids": [
+        "SP01"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Prioritize, productify, automate."
+    },
+    {
+      "id": "m9-q039",
+      "query": "Should TAO eventual consistency replace strongly consistent monetary transactions?",
+      "expected_case_ids": [
+        "case.meta.tao-social-graph-serving"
+      ],
+      "required_source_ids": [
+        "ME01"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "TAO is typed association-serving, not transactional graph ledger."
+    },
+    {
+      "id": "m9-q040",
+      "query": "Does Kafka Audit at LinkedIn make count-equality sufficient to detect dropped+duplicate events?",
+      "expected_case_ids": [
+        "case.linkedin.kafka-tier-audit"
+      ],
+      "required_source_ids": [
+        "LI01"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Counts can match despite one duplicate and one missing event."
+    },
+    {
+      "id": "m9-q041",
+      "query": "Did Cloudflare show 5x improvement across every file size and source platform?",
+      "expected_case_ids": [
+        "case.cloudflare.super-slurper-queues"
+      ],
+      "required_source_ids": [
+        "CF01"
+      ],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Reported 75k S3→R2 example; small transfers worse."
+    },
+    {
+      "id": "m9-q042",
+      "query": "How can immutable Big Data shadow comparisons be used to gate an agent-generated data migration?",
+      "expected_case_ids": [
+        "case.netflix.casspactor-to-analytics",
+        "case.stripe.online-subscriptions"
+      ],
+      "required_source_ids": [
+        "N11",
+        "ST01"
+      ],
+      "expected_behavior": "answerable",
+      "guard": "Human-approved invariants, before/after comparisons and fallback."
+    },
+    {
+      "id": "m9-q043",
+      "query": "Which private Adro repositories should Tycho import to improve the Netflix case graph?",
+      "expected_case_ids": [],
+      "required_source_ids": [],
+      "expected_behavior": "reject_false_claim",
+      "guard": "Security boundary: never import private/employer sources to Tycho."
+    },
+    {
+      "id": "m9-q044",
+      "query": "What p99 latency do we guarantee if we copy Netflix's virtual-thread architecture?",
+      "expected_case_ids": [
+        "case.netflix.java21-virtual-thread-carrier-starvation"
+      ],
+      "required_source_ids": [
+        "N06"
+      ],
+      "expected_behavior": "insufficient_evidence",
+      "guard": "No applicable SLO or current-library benchmark."
+    }
+  ]
+}
