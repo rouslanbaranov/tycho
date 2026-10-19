@@ -27,7 +27,7 @@ All repository content is written in English. Reading the book must not require 
 
 ## Current implementation
 
-The project contains governance, authoring rules, a curated public-source inventory, coverage and implementation maps, a generated catalogue and structural source checks. Research and authoring take place in the ChatGPT project; GitHub stores the book. No technical chapters have been researched or validated. Metadata schemas, generated indexes, graph validators, and retrieval evaluation are planned, not implemented.
+The repository contains governance, authoring rules, independently admitted public sources, technical System Design research drafts, generated catalogues, strict metadata/schema foundations and deterministic index/validation tooling. It is **not** a publication-complete ten-volume book: [the proposed 69-chapter contents](book/PROPOSED-STRUCTURE.md) and [living coverage audit](authoring/BOOK_COMPLETENESS_AUDIT.md) distinguish directly addressed questions from partial content and independent-review gaps. [Issue #213](https://github.com/rouslanbaranov/tycho/issues/213) owns completing the manuscript, and [Issue #214](https://github.com/rouslanbaranov/tycho/issues/214) owns the final volume/chapter/page edition assembly. The hosted ranked/semantic retrieval, MCP and shared specialist are later roadmap work. A manually curated concept graph is **not** part of Tycho's planned infrastructure. Source evidence and drafts do not certify independent editorial review, measured performance or deployment.
 
 Run `python3 scripts/check_boundary.py` from the repository root. A successful scan detects none of the configured patterns; it does not certify independent origin or semantic correctness.
 
