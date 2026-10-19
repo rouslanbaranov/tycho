@@ -6,7 +6,11 @@
 
 **Graph work is STOPPED for M9**, consistently with [Tycho's accepted graph-retirement ADR](ADR-RETIRE-CURATED-KNOWLEDGE-GRAPH.md). Do not implement, improve, validate, wire, version, serve, operate, or maintain a curated case graph, graph schema, graph shards, graph traversal, case-to-pattern graph edge pipeline, or graph-dependent MCP/search contracts. Explicit Markdown cross-links, stable IDs, frontmatter/indexable fields, claim-to-source provenance, ranked retrieval and bounded MCP evidence reads are the supported alternatives. This policy applies to both new M9 work and unfinished historical graph language below; the historical text is not authorization to resume graph work. Graph databases, GraphQL schemas, organization-reported relationship systems and native Mermaid illustrations can still be subjects of technical prose: they are not Tycho product graph infrastructure.
 
-## Current execution state — 2026-10-19 (supersedes the historical start-readiness snapshot below)
+## Current execution state — 2026-10-19
+
+**Latest 2026-10-19 draft PR #212 checkpoint:** substantive case-depth work now covers **29/29 case pages** and **6/6 decision guides**. This is complete *authoring-wave coverage*, **not 35 independently accepted documents**. GitHub-tree checks inspected stable case identities, balanced Mermaid fences, H2 duplicates and relative Markdown file targets; the reviewer, full pinned local validation, source-by-source semantic/license audit and real integrated MCP evaluation remain outstanding. See [latest matrix](cases/M9_REVIEW_ACCEPTANCE_MATRIX.md). Graph support remains fully retired. M9 and #121 must remain OPEN.
+
+ (supersedes the historical start-readiness snapshot below)
 
 **M9 remains OPEN**. GitHub source intake **#114** and authoring/draft contract deliverables **#115–#120** are closed, but these are writing and source-disposition checkpoints, not independent case acceptance. There are **29 source-bounded *draft* case pages** (12 Netflix, 17 across nine other organizations), **6 analytical decision playbooks**, **43 source dispositions** (41 bounded/scope-only and 2 deferred technical bodies, N14/ST02), and **60 public-only answer/refusal/evidence fixtures** (21 answerable; 26 reject_false_claim; 13 insufficient_evidence). The M9 Epic #113 and independent acceptance issue [#121](https://github.com/rouslanbaranov/tycho/issues/121) remain open.
 
