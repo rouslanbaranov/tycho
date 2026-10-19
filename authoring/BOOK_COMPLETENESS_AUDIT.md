@@ -118,8 +118,8 @@
 
 | Planned chapter | Coverage | Observed primary material | Outstanding work |
 |---|---|---|---|
-| V09/C01 — SLIs, SLOs and error budgets | D | [Technical page](../book/observability/metrics-slo-timeseries-architecture.md) | Ensure measurable service outcome and error-budget alert decisions. |
-| V09/C02 — Metrics ingestion, cardinality and time-series storage | D | [Technical page](../book/observability/metrics-slo-timeseries-architecture.md) | Extend cardinality/resource/retention budgets with reviewable calculations. |
+| V09/C01 — SLIs, SLOs and error budgets | D | [Dedicated SLI/SLO manuscript](../book/observability/service-level-indicators-objectives-and-alerts.md) | Original user-visible SLI/SLO/error-budget reasoning and proposed tests; exact citation/editorial acceptance still pending. |
+| V09/C02 — Metrics ingestion, cardinality and time-series storage | D | [Dedicated metrics pipeline manuscript](../book/observability/metric-pipelines-cardinality-and-retention.md) | Source-grounded OTel/Prometheus temporality, cardinality, storage/cost and synthetic examples; exact review/tests pending. |
 | V09/C03 — Distributed tracing and propagation | D | [Technical page](../book/observability/trace-context-lineage-and-audit.md) | Keep W3C-context propagation and sampling limitations distinct from proof. |
 | V09/C04 — Logging, audit and lineage | D | [Technical page](../book/observability/trace-context-lineage-and-audit.md) | Separate log, immutable business audit and lineage ownership. |
 | V09/C05 — Identity, authorization and threat modeling | D | [Technical page](../book/security/identity-authorization-and-isolation.md) | Retain explicit object authorization, trust model and service boundaries. |
@@ -177,6 +177,14 @@
 3. Deepen P subjects; for D subjects perform a chapter-specific acceptance review and extend when the chapter question is not completely answered.
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
+
+## Canonical-owner reconciliation checkpoint — observability C01/C02
+
+- An independent [shared-owner analysis](CHAPTER_OWNER_RECONCILIATION.md) found the 69 planned chapter questions previously mapped to **60 distinct primary article targets**, across eight overlapping legacy articles (17 owner assignments on 8 files). This is the first **actual content-ownership blocker** found after all 69 topics were marked directly addressed.
+- Implemented **two original stand-alone manuscript chapters**, [V09/C01 SLIs, SLOs and error-budget decisions](../book/observability/service-level-indicators-objectives-and-alerts.md) and [V09/C02 metric pipelines, cardinality and retention](../book/observability/metric-pipelines-cardinality-and-retention.md). They now hold **separate primary target paths** in the chapter matrix while the preexisting [combined research article](../book/observability/metrics-slo-timeseries-architecture.md) remains as supporting source material, not deleted or silently duplicated.
+- Revised distinct target count should be independently recomputed after this change (historical value 60); **both chapters remain unreviewed**, and moving them to separate paths does not prove final depth or independent acceptance. Other seven overlapping legacy article groups remain to be reconciled.
+- **69 D / 0 P / 0 M remains unchanged** because D is topical substantive coverage, not one-file-per-chapter compliance or book readiness.
+- No new worker/M9 material, manually curated Tycho concept graph, MCP/service, deployment or metadata schema change.
 
 ## 2026-10-19 evening: GitHub branch file/link checkpoint for last 14 drafts
 
