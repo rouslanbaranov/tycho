@@ -11,9 +11,9 @@ A legacy API gateway has 40,000 mostly idle TLS/client connections, occasional C
 
 | Actual company case | What its primary source does and does not establish |
 |---|---|
-| [Netflix gateway](../cases/netflix-zuul2-nonblocking-gateway.md) | N07: Zuul2 gained connection scale; CPU gain differed by cluster |
-| [Netflix Java](../cases/netflix-java21-virtual-thread-pinning.md) | N06: four carrier threads pinned by tracing in Java21 REST stack |
-| [Cloudflare](../cases/cloudflare-super-slurper-queues.md) | CF01: I/O copy fan-out via queues/workers, small-test regression |
+| [Netflix gateway](../netflix-zuul2-nonblocking-gateway.md) | N07: Zuul2 gained connection scale; CPU gain differed by cluster |
+| [Netflix Java](../netflix-java21-virtual-thread-pinning.md) | N06: four carrier threads pinned by tracing in Java21 REST stack |
+| [Cloudflare](../cloudflare-super-slurper-queues.md) | CF01: I/O copy fan-out via queues/workers, small-test regression |
 
 **Why the apparent conflict is useful:** Zuul2 exposes network connection scaling as a primary win even without universal CPU gains; Netflix's Loom incident exposes hidden synchronization risk; Cloudflare's queue fan-out addresses asynchronous tasks at a different durability granularity.
 
