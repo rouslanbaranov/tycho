@@ -23,6 +23,9 @@ Text alternative: start from quality drivers, identify cohesive responsibilities
 
 | Reader question | Canonical page | Status |
 |---|---|---|
+| How should evidence and competing hypotheses be tested before deciding on an architecture? | [Architecture evidence and decision experiments](architecture-evidence-hypotheses-and-experiments.md) | V01/C04 original controlled decision method; no experiment executed |
+| How do context, static, runtime and deployment views remain coherent with ADRs? | [Architecture views and decision records](architecture-views-and-decision-records.md) | V01/C05 public arc42 view/decision sources; fictional example and review pending |
+| What do internal events, transactions and module checks guarantee inside a modular monolith? | [Modular monolith and internal events](modular-monolith-and-internal-events.md) | V02/C03 public Spring transactions/Modulith reference; no code/test run |
 | Which actors, external interfaces and authoritative effects define the system before choosing a style? | [Problem framing and system boundaries](problem-framing-and-system-boundaries.md) | V01/C01 original arc42/C4 context and evidence-scope draft; independent review pending |
 | What outcomes, constraints and quality attributes should drive architecture choices? | [Architecture drivers, quality scenarios and readable views](quality-drivers-and-architecture-views.md) | Source-grounded draft: arc42, public SRE Workbook and C4 |
 | Where are business models, data authority, contracts and cross-context mappings owned? | [Domain boundaries, data ownership and contract evolution](domain-boundaries-data-ownership-and-contracts.md) | V02/C02 public bounded-context/arc42 evidence and original makerspace cases; unreviewed |
