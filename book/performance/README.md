@@ -1,6 +1,6 @@
 # Performance, scaling and resilience — research landing
 
-Status: **initial researched content**, not a completed volume. This landing page only links to pages that exist and states which questions remain open; it does not stand in for an approved table of contents.
+Status: **several independently researched technical pages**, not a completed volume. This landing page only links to pages that exist and states which questions remain open; it does not stand in for an approved table of contents.
 
 ## Purpose and mission
 
@@ -31,20 +31,23 @@ flowchart LR
     T --> R["Validate under normal and degraded load"]
 ```
 
-The chart is an **original reading and decision map**, not a simulated production system. Only the queueing/measurement page below has been researched; the remaining boxes are diagnostic steps and future research questions, not links to nonexistent chapters.
+The chart is an **original reading and decision map**, not a simulated production system. The linked queueing, capacity-experiment, fan-out and autoscaling pages are researched drafts; other diagram boxes are diagnostic steps, not claims that a complete volume exists.
 
 ## Available research
 
 | Reader question | Canonical researched page | Status / evidence |
 |---|---|---|
 | What can mean in-flight work, throughput and residence time establish, and when is Little's Law misapplied? | [Queueing, Little's Law and measurement boundaries](queueing-littles-law.md) | Public-source-grounded draft from a fixed 2013 paper and specifically inspected k6/SRE documentation; not a benchmark or human-reviewed capacity study |
+| How should offered load, failure and capacity hypotheses be tested? | [Workload profiles and capacity experiments](workload-profiles-and-capacity-experiments.md) | Source-bound methodology and synthetic examples; not a production load test |
+| Why do p99 and user-visible deadlines worsen under dependency fan-out? | [Tail latency, fan-out and deadline budgets](tail-latency-fanout-and-deadline-budgets.md) | New V07/C04 evidence-based draft; no live tail benchmark |
+| When does autoscaling help, and what do startup lag and shared limits invalidate? | [Autoscaling lag and capacity limits](autoscaling-lag-and-capacity-limits.md) | New V07/C06 draft against Kubernetes/AWS public docs; no executed platform test |
 
 ## Planned questions — **not yet written**
 
 - Contention, coordination and scaling laws: evidence of shared-bottleneck saturation.
 - Representative load tests, arrival distributions, coordinated omission and response-time percentiles.
-- Tail latency, retries, fan-out and dependent-service time budgets.
-- Overload shedding, autoscaling lag, recovery capacity, degraded-mode behavior and cost trade-offs.
+- Deeper cross-resource contention and capacity scaling-law comparisons.
+- Overload shedding, recovery capacity and cost trade-offs beyond the bounded existing fan-out/autoscaling pages.
 
 The planning owners are listed in the [proposed book structure](../PROPOSED-STRUCTURE.md). The source-reading procedure and stopping conditions are in the [research workflow](../../authoring/RESEARCH-WORKFLOW.md).
 
