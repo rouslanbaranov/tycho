@@ -1,4 +1,4 @@
-# Real-World Modernization Case Study Program (Proposed M9)
+# Real-World Modernization Case Study Program (M9)
 
 **Status:** planned; initial 43-source discovery set and detailed Netflix dossier researched, **zero accepted case-study chapters**. Prepared 2026-10-19. This is an independent Tycho content wave, not a change to the autonomous E14 authoring run and not authorization to regenerate or re-enrich existing chapters.
 
@@ -19,11 +19,11 @@ Focus: Netflix's changing Java/JVM, Spring Boot, RxJava, gRPC/GraphQL, Zuul, ZGC
 - Protect the current autonomous E14 run: this program uses its own feature branches and own file namespace (`book/cases/`, `authoring/cases/`, source case registers). Do not merge, rebase or edit concurrent E14 chapters implicitly. Concurrency/merge conflicts are resolved in later integration review.
 - No extra GitHub Actions triggers: honor milestone-close-only CI and local premerge checks; never close M9 just to trigger CI while open work remains.
 
-## Proposed new GitHub milestone
+## GitHub milestone
 
 **M9 — Real-World Architecture Modernization: Case Studies and Decision Transfer**
 
-Proposed **new milestone**, separate from existing M1–M8 and existing E14/M8 coverage wave. **Native GitHub milestone not yet created** if unavailable through the connected repository tool; no due date fabricated. Its acceptance scope is evidence-backed case publication, comparative reasoning, evaluated retrieval readiness and traceable work, **not** deployment of MCP/semantic search (already owned by existing epics).
+Created [native M9](https://github.com/rouslanbaranov/tycho/milestone/9) on 2026-10-19, separate from existing M1–M8 and E14/M8. Epic #113 and all nine tasks #114–#122 are assigned; no due date asserted. Its acceptance scope is evidence-backed case publication, comparative reasoning, evaluated retrieval readiness and traceable work, **not** deployment of MCP/semantic search (already owned by existing epics).
 
 Gate M9-A (research intake): source links live, corporate authorship or speaker verified, rights noted, historical versions and source sections identified, contradictions recorded. Initial discovery register is only a candidate list.
 
@@ -86,7 +86,7 @@ Comparative exemplars:
 
 ## Definition of completion
 
-Do not close the proposed milestone until the required **actual book case pages**, cross-company synthesis, tests, provenance/rights review, verification matrix and reviewer disposition are recorded. This planning document and source discovery are not a chapter corpus and should never close those issues by themselves.
+Do not close the milestone until the required **actual book case pages**, cross-company synthesis, tests, provenance/rights review, verification matrix and reviewer disposition are recorded. This planning document and source discovery are not a chapter corpus and should never close those issues by themselves.
 
 ## GitHub execution records (created 2026-10-19)
 
@@ -99,6 +99,18 @@ Do not close the proposed milestone until the required **actual book case pages*
 - [E16-06 #119](https://github.com/rouslanbaranov/tycho/issues/119) comparison and decision transfer
 - [E16-07 #120](https://github.com/rouslanbaranov/tycho/issues/120) provenance/retrieval integration design
 - [E16-08 #121](https://github.com/rouslanbaranov/tycho/issues/121) acceptance and review
-- [E16-09 #122](https://github.com/rouslanbaranov/tycho/issues/122) **native M9 milestone creation and issue assignment still required**
+- [E16-09 #122](https://github.com/rouslanbaranov/tycho/issues/122) native M9 setup and readiness verification
 
-These are linked GitHub issues. Native GitHub sub-issue parenting and M9 milestone assignments have **not** been applied by this plan; references in descriptions carry ownership until those metadata operations are available.
+Native ownership: Program #1 → Epic #113 → tasks #114–#122. All ten E16 issues belong to [M9](https://github.com/rouslanbaranov/tycho/milestone/9). Closed duplicate issues #123–#130 are excluded.
+
+## Start-readiness checkpoint — 2026-10-19
+
+Ready to begin **source verification #114**, not accepted case publication. The program, 43-candidate register, Netflix dossier and case template are in main. No `book/cases/` pages exist yet. The 43 candidates are separate from the 169-record canonical source register; admission and exact claim verification remain #114 work.
+
+Execution order: #114 → #115–#118 → #119; #120 can design portable contracts/fixtures after source admission; #121 audits completed content and records independent reviewer disposition. Do not wait for all M1–M8 completion to research cases. Actual schema/index/graph adapters wait for their stable owning contracts; record deferred integration explicitly rather than claiming deployment.
+
+The Netflix task minima are three cases each (#115–#117), hence **at least nine distinct cases** if all three minima apply; this exceeds the eight-case milestone floor. Count unique case IDs once and satisfy both task and milestone criteria. #118 requires twelve additional cases across six other companies; #119 requires six comparisons; #120/#121 require at least thirty evaluation queries.
+
+Before closure, name an independent technical reviewer and record the review event under #121; no reviewer has been asserted by this checkpoint. Start with bounded source admission, preserve missing metrics and historical contradictions, then author only admitted slices.
+
+Local premerge validation against main `a31a0d86e0831e0c7a6701f84ca292cd6ca4c4fd`: boundary, 169 source records/references, generated catalogue, branch naming and all 50 regression tests passed. These checks do not validate the 43 new case sources or their claims. No GitHub Actions run was requested; M9 remains open.
