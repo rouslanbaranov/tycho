@@ -198,6 +198,27 @@ def compose(root, previous=None):
     return stable, result, reused
 
 
+def require_fts5():
+    """Fail explicitly when the supported SQLite/FTS5 BM25 profile is absent."""
+    require(sqlite3.sqlite_version_info >= (3, 26, 0),
+            "SQLite 3.26.0 or newer is required")
+    try:
+        with sqlite3.connect(":memory:") as db:
+            db.execute("CREATE VIRTUAL TABLE __tycho_fts_probe USING fts5("
+                       "id UNINDEXED,title,body,tokenize='unicode61')")
+            db.execute("INSERT INTO __tycho_fts_probe VALUES(?,?,?)",
+                       ("probe", "Architecture", "bounded retrieval"))
+            hit = db.execute(
+                "SELECT id,bm25(__tycho_fts_probe,0.0,5.0,1.0)"
+                " FROM __tycho_fts_probe WHERE __tycho_fts_probe MATCH ?",
+                ("retrieval",)).fetchone()
+            require(hit is not None and hit[0] == "probe"
+                    and isinstance(hit[1], (int, float)),
+                    "Required SQLite FTS5 weighted BM25 features are unavailable")
+    except sqlite3.DatabaseError as exc:
+        raise ValueError("Required SQLite FTS5 features are unavailable") from exc
+
+
 def output_path(root, supplied=None):
     root = Path(root).resolve()
     folder = root / "generated"
@@ -210,6 +231,7 @@ def output_path(root, supplied=None):
 
 
 def publish(root, supplied=None, *, full=False):
+    require_fts5()
     target = output_path(root, supplied)
     previous = ({}, None) if full else old_sections(target)
     manifest, sections, reused = compose(root, previous)
@@ -244,9 +266,10 @@ def publish(root, supplied=None, *, full=False):
             require(db.execute("PRAGMA integrity_check").fetchone()[0] == "ok",
                     "SQLite integrity failure")
             db.commit()
-        require(json.loads(sqlite3.connect(temp).execute(
-            "SELECT value FROM meta WHERE key='manifest'").fetchone()[0]) == manifest,
-            "Metadata readback failed")
+        with sqlite3.connect("file:" + temp.as_posix() + "?mode=ro", uri=True) as check_db:
+            require(json.loads(check_db.execute(
+                "SELECT value FROM meta WHERE key='manifest'").fetchone()[0]) == manifest,
+                "Metadata readback failed")
         os.replace(temp, target)
         temp = None
     finally:
@@ -257,6 +280,7 @@ def publish(root, supplied=None, *, full=False):
 
 
 def verify(root, supplied=None):
+    require_fts5()
     target = output_path(root, supplied)
     cached, manifest = old_sections(target)
     require(manifest is not None, "No published section index")
