@@ -47,6 +47,39 @@ For an organization considering this approach, Tycho proposes reference-system i
 
 **Negative case:** Without a reliable reference runtime, a visual-only translation can pass screenshots while breaking interaction, accessibility or state persistence. A native rewrite may increase parity maintenance and duplicated platform expertise versus a stable shared UI stack. If the existing cross-platform app meets goals, adopting native solely because AI writes code quickly can be the wrong architecture decision.
 
+## Why checkpoint size changes the proof obligation
+
+The [September 21, 2026 Shopify source](https://shopify.engineering/helix) (SH04, **Checkpoints that can be reviewed at a glance**) explicitly rejects the “collect all reference code, write a huge spec, and then generate everything” strategy. Its target artifact begins with a **screen skeleton**, then one small section, then increasingly complex sections only after prior decisions have passed review. Each checkpoint's description is short enough for an engineer to approve scope without reading a wall of pre-generated prose. Crucially, the **running React Native application and reference code are the specification**: the agent can inspect that bounded source directly rather than trust a stale, gigantic summary.
+
+This is a process design around **reviewability**. A large final diff can contain several interacting defects and hide which early interpretation was wrong; committing independently verified small steps makes the failure location and allowable rollback surface easier to understand. It does **not** prove small commits are intrinsically correct—each must still pass its evidence gates.
+
+## Four sequential proofs and independent failure paths
+
+| Shopify gate (SH04) | Actual mechanism reported | Unproven or risky case |
+|---|---|---|
+| Behavior | CLI exposes reference screen state/actions; a subagent proposes user-perspective integration tests, executable without a simulator | A test suite may omit an unobserved gesture, accessibility feature, auth state or side effect |
+| Visual review | Matching reference and native screenshots are compared; reviewer reports location/severity of discrepancies | Two screenshots in different UI states make the comparison invalid; screenshot similarity cannot prove data correctness |
+| Adversarial code review | **Two context-isolated reviewer agents** enforce separately documented target architecture and code-quality guidelines | Same organization/model family may share an unknown blind spot; “two reviewers” is not external independent acceptance |
+| Engineer approval | Human reviews code and running result, feedback becomes the next checkpoint's memory | Approval can be explicitly relaxed; not proof a human inspected every autonomous checkpoint |
+
+The source names an instructive **invalid-comparison branch**: when the orchestrator presents screenshots from different states, its visual reviewer can mark the review **INVALID**, requiring recapture of equivalent states. This is a more precise safety rule than repeatedly tweaking CSS until an arbitrary image score improves.
+
+The authors also state that after adversarial code changes **affected tests run again**, and visual review runs again if the patch changes the appearance. A gate's prior success is not indefinitely reusable after a change to the artifact it checked. Every checkpoint ends in a commit, with test/visual/reviewer evidence available for later inspection. These are source-reported workflow mechanics, not independent defect-rate measurements. [SH04, **Gate 1**, **The UI review gate**, **The adversarial reviews gate**, **An engineer closes the loop**].
+
+## Explicit autonomous mode is not removal of testing
+
+In the company-reported process, **engineer approval is required by default**. A developer can request several checkpoints in one autonomous run or bypass human approval; **behavior, visual and two adversarial review gates remain required**. Therefore “autonomous” in this description means *which approval step is delegated*, not “generate without validation”. The source does not publish an independent audit of reviewer quality, maximum parallel safe branches, defects escaping production or total human review hours.
+
+**Temporal status:** the **Shop** consumer app was described as rebuilt and shipped natively in about **12 weeks**. The separate **Shopify App** with more than **300 screens** was still being migrated in September 2026. The article cannot establish that every Shopify mobile app was complete or that the 12-week outcome transfers to every native rewrite.
+
+## Synthetic transfer to non-UI and unsafe legacy changes
+
+The same gate structure can be adapted to a **hypothetical backend refactor**: divide work by one invariant-preserving change, read the exact old behavior, write contract tests, run integration comparison, perform independent code review, then explicitly approve or reject the step before advancing. A nonvisual change omits the **visual gate**, as Shopify's source also notes, but must replace it with a relevant correctness oracle (schema/transaction compatibility, authorization, replay invariants).
+
+**Fail/stop conditions:** reference behavior inaccessible or insufficiently instrumented; generated tests unable to exercise a consequential branch; screenshots not matched to one state; reviewer finding ignored or bypassed; unclear approval policy; or rollback requiring a data migration that the checkpoint never modeled. A source generator may produce correct code quickly but that does not confer permission to alter business meaning or security boundaries silently.
+
+Compare [Spotify Honk's incomplete dataset testing](spotify-honk-data-consumer-migration.md) and [the independent decision guide](decisions/agentic-migration-safety.md). The important **contraindication** is absence of an oracle: a gated harness cannot certify equivalence if it has no trustworthy reference, and the right outcome is *human decision required / insufficient evidence*.
+
 ## Evidence / claims / uncertainty
 
 SH04 reports that **Shop** was already shipped natively after approximately **12 weeks** and Shopify App rebuild work was continuing. The article does not publish a controlled comparison of bug escape rates, total cost, long-term maintenance or productivity across identical teams; these remain **unknown**. The opt-in autonomous mode is not a universal safety guarantee. Original diagrams/text are not copied; source URL and section-level attribution only.
