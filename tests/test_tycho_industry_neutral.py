@@ -51,7 +51,7 @@ class NeutralTerminologyTests(unittest.TestCase):
                 self.assertEqual(guard.main(), 1)
 
     def test_existing_local_link_rule_preserved(self):
-        findings = guard.violations("test.md", "file://" + "private/notes.md")
+        findings = guard.violations("test.md", "file:" + "//" + "private/notes.md")
         self.assertIn("non-self-contained local link", findings)
 
     def test_guard_has_no_literal_restricted_words(self):
