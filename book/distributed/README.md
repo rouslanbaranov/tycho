@@ -1,6 +1,6 @@
 # Distributed coordination, transactions and events
 
-**Status:** five bounded public-source-grounded technical pages; the distributed-systems volume is **not** complete. Source revision verification and independent domain review remain separate work. A manually curated knowledge graph is not part of Tycho infrastructure.
+**Status:** independently researched technical manuscript pages, with two distinct new V04/C04–C05 owner drafts; the distributed-systems volume is **not** complete. Source revision verification and independent domain review remain separate work. A manually curated knowledge graph is not part of Tycho infrastructure.
 
 ## Purpose and mission
 
@@ -27,7 +27,9 @@ Text alternative: understand ordering and consensus before applying transactiona
 | What survives leader changes, minority partitions and quorum reconfiguration? | [Replication, quorum and leader change](replication-consensus-and-leader-change.md) | V04/C02; Raft/etcd public protocol scope and synthetic failure matrix; no cluster exercised |
 | What is causality, and when does a replicated log need consensus? | [Causality, ordering and consensus](causality-ordering-and-consensus.md) | Lamport 1978 abstract/bibliographic record; extended Raft 2014 §§2,5. Full Lamport PDF not reviewed |
 | Which invariants fit local transactions, and what does a saga compensate? | [Transaction isolation and sagas](transaction-isolation-and-sagas.md) | PostgreSQL 17 §§13.2,13.5; Richardson public saga patterns |
-| What happens after source commit, broker delay or duplicate delivery? | [Outbox publication and idempotency](transactional-outbox-and-idempotency.md) | Debezium 3.6, PostgreSQL 17, RFC 9110, public API-idempotence reference |
+| How should request IDs, retries and lost acknowledgments avoid duplicate domain effects? | [Retries, idempotency and ambiguous effects](retries-idempotency-and-ambiguous-effects.md) | V04/C04; RFC 9110 and scoped idempotent-consumer reference; no tests executed |
+| What can local outbox/inbox transactions and durable saga steps guarantee? | [Outbox, inbox, sagas and durable workflows](outbox-inbox-sagas-and-durable-workflows.md) | V04/C05; Debezium 3.6 and independent transactional-outbox/saga sources; not executed |
+| What was the combined earlier outbox/idempotency research? | [Earlier publication and retry research](transactional-outbox-and-idempotency.md) | Preserved supporting evidence for editorial claim reconciliation; not the primary owner of either V04/C04 or C05 |
 | When is an event the authority, and what does CQRS introduce? | [CQRS, event sourcing and projections](cqrs-event-sourcing-and-projections.md) | Fowler 2005/2011/2017, Richardson CQRS pattern |
 
 All examples and Mermaid sequences are original **fictional models**; no public primary source is copied into the book. Claims are bounded by each page's explicit evidence ledger. There is no verified production system or independent expert review.
