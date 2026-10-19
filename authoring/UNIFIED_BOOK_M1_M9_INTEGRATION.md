@@ -1,5 +1,14 @@
 # Unified Tycho book — M1–M8 foundational chapters + M9 applied cases
 
+## Current acceptance disposition — 2026-10-20
+
+Independent acceptance is **COMPLETED, owner-confirmed**. Visual rendering and
+live MCP checks are **CANCELLED by the owner**, not passed by execution. Full
+pinned Python validation passed with 178 main and 17 M9 tests. The binding
+[acceptance record](ACCEPTANCE_DISPOSITION_2026-10-20.md) supersedes earlier
+pending/blocking language below for these gates. The remaining dated sections
+preserve the integration history; no merge or milestone closure is recorded.
+
 **Integration checkpoint:** 2026-10-19.  
 **Branch:** `integration/tycho-m1-m9-unified-manuscript-20261019` — **DRAFT, not merged to main**.  
 **Frozen parents:** core PR [#215](https://github.com/rouslanbaranov/tycho/pull/215) at `baaede83f09db3897965d07a7b0300dc3101da34`; M9 PR [#212](https://github.com/rouslanbaranov/tycho/pull/212) at `af83315ecf539caf5c95d1b9d944ce0d8d100903`. Both parent commit histories are preserved by the merge commit. Source PRs and M9 remain open/draft; [#121](https://github.com/rouslanbaranov/tycho/issues/121) and [#213](https://github.com/rouslanbaranov/tycho/issues/213) remain open.

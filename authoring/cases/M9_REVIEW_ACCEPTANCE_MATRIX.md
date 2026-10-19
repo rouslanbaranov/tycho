@@ -1,5 +1,16 @@
 # M9 / E16-08 — Case Review Matrix and Acceptance Checkpoint
 
+## Current M9 package disposition — 2026-10-20
+
+Independent acceptance is **COMPLETED, owner-confirmed** for the integrated
+manuscript including the 29 cases and six decision playbooks. Visual rendering
+and live MCP checks are **CANCELLED by the owner**. See the binding
+[acceptance disposition](../ACCEPTANCE_DISPOSITION_2026-10-20.md). The actual
+M9 validator, self-test and all 17 M9 unit tests passed on the accepted pinned
+revision. Earlier pending/blocked rows below are historical pre-review states,
+not current blockers for these disposed gates. No live MCP run, external
+reviewer identity or per-case inspection report is invented by this update.
+
 **Checkpoint:** 2026-10-19 · **Owner:** E16-08 #121 · **Status:** *mechanical/readability pre-review only*. This is NOT an independent technical review decision and NOT a certificate of complete M9. Data retrieved from Tycho `main` after source-intake #114; no CI, remote MCP queries, Java runtime or company production workloads executed.
 
 ## Integrated-branch evidence checkpoint — 2026-10-19

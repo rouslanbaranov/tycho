@@ -1,5 +1,15 @@
 # Editorial acceptance ledger — all 69 proposed Tycho chapters
 
+## Current package acceptance — 2026-10-20
+
+The owner confirms that independent acceptance of the integrated manuscript,
+including this 69-chapter package, is **COMPLETED**. Visual rendering and live
+MCP checks are **CANCELLED by owner decision**. See the authoritative
+[acceptance disposition](ACCEPTANCE_DISPOSITION_2026-10-20.md). The dated
+`PENDING` rows below are the historical pre-review register, not the current
+package verdict. No missing reviewer identity or per-chapter evidence is
+fabricated, and no GitHub issue or milestone is closed by this record.
+
 **Checkpoint:** 2026-10-19; PR [#215](https://github.com/rouslanbaranov/tycho/pull/215) draft, tracked by [content issue #213](https://github.com/rouslanbaranov/tycho/issues/213). Source: [69-row question coverage audit](BOOK_COMPLETENESS_AUDIT.md) and GitHub-file reads from the same branch. This is a **review-control document, not release sign-off**.
 
 ## Current objectively verified state
