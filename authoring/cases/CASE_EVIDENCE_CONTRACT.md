@@ -52,7 +52,7 @@ Graph endpoint IDs must be stable, direction explicit, evidence-bound and versio
 
 ## Acceptance and evaluation
 
-The sibling `tests/fixtures/m9-case-queries.json` contains 60 labelled queries covering answerable, uncertain, and false-claim rejection. It is a **fixture specification**, not 36 verified retrieval results or an executed MCP benchmark. A future production evaluator should run these against actual K18/K19/K20/MCP endpoints, record tool-token/latency/citation fidelity, p95 and policy/negative-truth detection, and fail on attribution, historical/date inversion, overconfident source extrapolation or cross-provider leakage. Until the retrieval platform exists, **do not label the evaluation executed**.
+The sibling `tests/fixtures/m9-case-queries.json` contains 60 labelled queries covering answerable, uncertain, and false-claim rejection. It is a **fixture specification**, not 60 executed retrieval results or a completed MCP benchmark. A future production evaluator should run these against actual K18/K19/K20/MCP endpoints, record tool-token/latency/citation fidelity, p95 and policy/negative-truth detection, and fail on attribution, historical/date inversion, overconfident source extrapolation or cross-provider leakage. Until the retrieval platform exists, **do not label the evaluation executed**.
 
 Companion records `authoring/cases/examples/case-records.json` instantiate two proposed case records drawn from admitted/practitioner primary sources. Their `status` remains `draft`; they do not grant copied source-text rights.
 
