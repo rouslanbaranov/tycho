@@ -218,11 +218,17 @@ def read_case_catalog(root: Path = ROOT) -> tuple[set[str], list[Path]]:
             "case README index escapes its collection")
     # Inspect paths before opening any README/index content.
     page_index = index_path.read_text(encoding="utf-8")
-    local = [
-        case_dir / path.split("#", 1)[0]
-        for path in re.findall(r"\]\(([^)#]+\.md(?:#[^)]*)?)\)", page_index)
-        if not path.startswith("../")
-    ]
+    listed = re.findall(r"\]\(([^)#]+\.md(?:#[^)]*)?)\)", page_index)
+    local = [case_dir / ref.split("#", 1)[0]
+             for ref in listed if not ref.startswith("../")]
+    # References to shared root-level source/authoring files are legitimate,
+    # but cannot be silently dropped: they too must exist inside this snapshot.
+    context = [case_dir / ref.split("#", 1)[0]
+               for ref in listed if ref.startswith("../")]
+    require(all(ref.resolve().is_relative_to(root_boundary) for ref in context),
+            "case index contextual link escapes selected root")
+    require(all(ref.is_file() for ref in context),
+            "case index contains broken contextual link")
     require(len(local) == len(set(local)), "case index duplicate Markdown paths")
     # resolve() also protects against symlinks that point outside the snapshot.
     require(all(path.resolve().is_relative_to(case_boundary) for path in local),
