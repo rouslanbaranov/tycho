@@ -180,3 +180,11 @@ Use the [saga/isolation research](../distributed/transaction-isolation-and-sagas
 | E05 | [RabbitMQ quorum queues](https://www.rabbitmq.com/docs/quorum-queues), *When Not to Use Quorum Queues* | Documented contraindications and durability trade-offs, version observed 4.3 |
 
 **Review state:** bounded documentation comparison, synthetic illustrations only. No software installed, measurements collected, benchmark conducted, broker disaster recovery rehearsed, full product alternatives researched or external domain review completed.
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Cloudflare — Super Slurper queues](../cases/cloudflare-super-slurper-queues.md)** illustrates at-least-once queue workers need durable progress and explicit dedup boundaries during object import. **It cannot establish:** a company fivefold result has a particular workload and baseline; it does not prove queue use always increases throughput.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

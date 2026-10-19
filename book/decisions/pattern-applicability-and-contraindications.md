@@ -238,3 +238,11 @@ Cross-domain examples belong in the separate [decision synthesis](cross-domain-m
 All matrix entries and the resource reservation example are original educational statements under explicit assumptions. No live workload, executed migration, independently reviewed pattern suitability, cost study or deployed architecture selection agent is claimed. Validation of a real decision requires source/version evidence and domain review.
 
 **Navigation:** planned **V10/C03** in [book outline](../PROPOSED-STRUCTURE.md), current [decision support landing](README.md); prerequisite [requirements/workload](requirements-and-workload-architecture-profiles.md), [legacy baseline](legacy-baseline-and-modernization-evidence.md); next [cross-domain decisions](cross-domain-modernization-and-adr-examples.md), [target-vs-transition](../../authoring/models/target-transition-architecture.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Monolith vs services](../cases/decisions/monolith-vs-services.md)** illustrates synthetic ADR contrasts Shopify modularity and Netflix/Uber distribution under explicit ownership and team cost. **It cannot establish:** the proposed monolith-first choice is Tycho's fictional decision, never a decision those companies jointly evaluated.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

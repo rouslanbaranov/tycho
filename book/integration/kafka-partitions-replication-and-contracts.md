@@ -182,3 +182,11 @@ No architecture can be chosen solely by a claimed RPS threshold, feature list or
 | E04 | [Kafka 4.1 Kafka Streams configuration](https://kafka.apache.org/41/configuration/kafka-streams-configs/), **processing.guarantee** | Names documented processing options `at_least_once` and `exactly_once_v2`, not arbitrary external system guarantees |
 
 Research state: original manuscript, no executed Kafka cluster, request traces, broker tuning comparison, fault-injection or independently reviewed exactly-once proof. All examples and Mermaid diagrams here are explicitly synthetic.
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[LinkedIn — Kafka tiers](../cases/linkedin-kafka-tiered-completeness.md)** illustrates kafka broker health and acknowledged writes do not substitute for end-to-end tier/consumer completeness audits. **It cannot establish:** historical LinkedIn tier scale and audit numbers do not establish universal Kafka exactly-once external effects.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.

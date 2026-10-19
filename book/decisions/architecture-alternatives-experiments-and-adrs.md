@@ -192,3 +192,12 @@ All sample identities, outcomes, weights and experiments here are **independent 
 ## Navigation
 
 Proposed home: **V10/C04** in [proposed contents](../PROPOSED-STRUCTURE.md). Current landing: [Decision support](README.md). Read [Requirements/workload](requirements-and-workload-architecture-profiles.md), [Pattern applicability](pattern-applicability-and-contraindications.md), [Legacy baseline](legacy-baseline-and-modernization-evidence.md), then [target and transition planning](../../authoring/models/target-transition-architecture.md) for implementation readiness.
+
+## Applied M9 evidence: what transfers and what does not
+
+The following historical cases are **time-scoped publisher/practitioner reports**, not a Tycho benchmark or proof of a universal architecture choice. Any associated decision playbook is an **original synthetic comparison**, not a decision made by the companies cited. These cases inform the specific mechanism and contraindications above:
+
+- **[Reactive vs virtual threads](../cases/decisions/reactive-vs-virtual-threads.md)** illustrates synthetic comparison separates connection wait, CPU bound work, scheduler pinning and downstream pool budget. **It cannot establish:** company observations are different workloads/JDK vintages, not a controlled head-to-head benchmark.
+- **[GC vs tail latency](../cases/decisions/gc-and-tail-latency.md)** illustrates synthetic ADR chooses GC from SLO/cost workload objectives, using contrasting Netflix and contention cases. **It cannot establish:** the stated decision and candidate thresholds are hypothetical, not actual Netflix/Discord collector evaluations.
+
+A different system must recheck its workload, source date, version, authority boundary and failure/recovery acceptance criteria before transferring any decision. See the case's own evidence ledger for exact public references and unresolved claims.
