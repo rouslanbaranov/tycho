@@ -15,7 +15,7 @@ import sys
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-FENCE = re.compile(r"^\s*(`{3,}|~{3,})(?:\s|$)")
+FENCE = re.compile(r"^\s*(`{3,}|~{3,})[^\r\n]*$")
 HEAD = re.compile(r"^\s{0,3}(#{1,6})\s+(.+?)\s*$")
 LINK = re.compile(r"(?<!!)\[[^\]\n]{1,1500}\]\(([^)\n]+)\)")
 INLINE = re.compile(r"`[^`\n]*`")
@@ -76,7 +76,7 @@ def resolve_target(repo_root,source,raw):
         return None
     target=unquote(parts.path)
     fragment=unquote(parts.fragment)
-    if target.startswith("/") or "\\" in target or any(seg in {".git",".."} for seg in target.split("/")):
+    if target.startswith("/") or "\\" in target or ".git" in target.split("/"):
         raise ValueError("unsafe-local-path")
     source_relative=source.relative_to(repo_root).as_posix()
     combined=posixpath.normpath(posixpath.join(posixpath.dirname(source_relative),target)) if target else source_relative
