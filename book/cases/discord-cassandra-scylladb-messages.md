@@ -33,7 +33,7 @@ A **synthetic migration readiness checklist** for applying the lesson elsewhere 
 
 ## Measured or reported outcome
 
-Discord reports changing from 177 Cassandra nodes to 72 ScyllaDB nodes. Its historical message-read p99 shifted from **40–125 ms** to around **15 ms**, and insert p99 from **5–70 ms** to around **5 ms** in described workloads. These are company comparisons, not reproducible universal savings.
+Discord reports changing from 177 Cassandra nodes to 72 ScyllaDB nodes. **These node counts are not like-for-like units:** the original article specifies approximately **4 TB of disk per Cassandra node** versus **9 TB per ScyllaDB node**. Its historical message-read p99 shifted from **40–125 ms** to around **15 ms**, and insert p99 from **5–70 ms** to around **5 ms** in described workloads. These are company comparisons, not reproducible universal savings. The first-party numeric and capacity caveats were [rechecked separately](../../authoring/cases/M9_NUMERIC_SOURCE_RECHECK_WAVE09.md).
 
 ## Failed assumptions and when not to transfer the design
 
