@@ -25,7 +25,7 @@ The script reads the existing canonical public inventory and two issue-specific 
 | Evidence `source_id` | Must resolve to the existing registered public source ID; registration alone is NOT a read event |
 | Evidence `relation` | `supports`: narrow scope; `qualifies`: narrows premises; `contradicts`: conflicts with the stated claim/inference, **not necessarily with another source**; `unavailable`: cannot establish a factual passage |
 | Evidence `reasoning / observed_at` | Human/agent rationale and actual inspection or access observation date |
-| Evidence `verification` | `section-inspected`, `identifier-only`, `not-accessible`. These are manually supplied declarations; a structural validator **cannot verify their honesty** |
+| Evidence `verification` | `section-inspected`, `code-inspected`, `identifier-only`, `not-accessible`. These are manually supplied declarations; a structural validator **cannot verify their honesty** |
 | `document-section` location | Exact HTTPS URL hosted by the registered public source owner plus explicit section; unlike a general website search result |
 | `source-code` location | Exact pinned Git revision, relative repository path and optional symbol. Exact reference identity is mechanically checked against lock, **not** content truth |
 
