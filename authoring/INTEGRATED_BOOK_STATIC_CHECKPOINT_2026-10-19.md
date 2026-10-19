@@ -42,6 +42,23 @@ These bounded GitHub reads used the sorted path list of all 136 files. The links
 5. **No full 60-scenario MCP evaluation:** there is no verified end-to-end graph-free MCP service for M9 in this checkpoint, and no formally approved dependency waiver.
 6. **No independent accepted chapter or case:** \`authoring/CHAPTER_EDITORIAL_ACCEPTANCE_LEDGER.md\` and \`authoring/cases/M9_REVIEW_ACCEPTANCE_MATRIX.md\` remain the authoritative separate review registers.
 
+## Separate integration runner added after pinned Git-tree scan
+
+The existing `scripts/premerge_check.py` invokes `scripts/check_feature_branch.py`, which validates only executable sub-issue branches shaped like `feature/TYCHO-<issue-number>-<issue-title-slug>`. Our already approved integration branch is intentionally not one of those issue branches. **Do not weaken or skip that existing governance rule.**
+
+A new **opt-in** [`scripts/premerge_integration_check.py`](../scripts/premerge_integration_check.py) therefore targets exactly `integration/tycho-m1-m9-unified-manuscript-20261019` and requires an explicit full 40-character `--expected-head` commit SHA, an identical local Git `HEAD`, correct attached branch (or a detached pinned checkout), and a clean worktree. It invokes existing boundary, source-inventory, source catalogue, claim-ref, JSON-Schema-example, book navigation, M9 case/main-and-self-test and both core/M9 unittest discovery suites. [Separate offline unit tests](../tests/test_tycho_integration_premerge.py) cover branch, SHA and command-list restrictions.
+
+Once a **complete clone is accessible**, run from the checkout root, **replacing the placeholder with the latest full integration commit SHA**:
+
+```sh
+python3 -m pip install -r requirements-validation.txt
+python3 scripts/premerge_integration_check.py \
+  --branch integration/tycho-m1-m9-unified-manuscript-20261019 \
+  --expected-head <FULL_PINNED_40_CHARACTER_SHA>
+```
+
+**These commands were not run in the GitHub-only integration environment.** No output/log, successful suite execution, local metadata validation, acceptance signal or milestone-closure decision is claimed by creating the runner and unit tests. The runner also cannot evaluate live MCP quality or independent rights/technical claims. It does not change the milestone-only GitHub Actions policy.
+
 ## Focused historical-claim correction found in further review
 
 A source comparison of Shopify's 2019 and 2020 first-party reports found that the early [modular-monolith case](../book/cases/shopify-modular-monolith.md) had an **overstrong introductory shorthand** implying completed enforced component boundaries as of 2019. The original 2019 publication expressly describes enforcement as unfinished; in September 2020 only about one third of 37 main components used Packwerk restrictions. This was corrected in the integrated branch **after** the pinned structural snapshot. See the [12-claim Shopify source-check register](cases/M9_SHOPIFY_SOURCE_SPOTCHECK_2026-10-19.md). None of these facts establishes the 2026 company architecture or independent M9 acceptance.
