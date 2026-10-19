@@ -51,6 +51,36 @@ A tuned blocking gateway may be appropriate when connection counts are moderate,
 
 **Decision rule:** compare *connection waiting capacity*, *CPU per request class*, and *p99 under saturation* separately. For a traffic mix that is 90% low-work I/O and 10% high CPU, test both distributions rather than assume the aggregate reflects both segments. This ratio is a synthetic test suggestion—not a Netflix traffic statistic.
 
+## A two-stage compatibility transition before network replacement
+
+The [September 21, 2016 first-party account](https://netflixtechblog.com/zuul-2-the-netflix-journey-to-asynchronous-non-blocking-systems-45947377fb5c) (N07, **Building Non-Blocking Zuul**) describes a counterintuitive migration sequence. The team **first made Zuul filters and filter chaining asynchronous**, using RxJava, **while they could still run on the blocking gateway**. The same logical filters could then be shared by old Servlet-based Zuul and a new Netty-based gateway. This preserved one application-behavior layer while replacing connection and execution machinery beneath it; it was not an instantaneous rewrite of every filter.
+
+The change required investigating **thread-local request context**, hidden blocking network-library assumptions and code that needed to be forked or reimplemented asynchronously. The publisher mentions **Reactive-Audit** as one diagnostic tool for surfacing blocking calls. Its authors distinguished async filters for I/O from synchronous filters for local operations, rather than declaring that every task needed an async API. The historical account does not publish a complete per-filter migration ledger or independent proof that no blocking operation remained after rollout.
+
+## Why reliability was not automatically improved
+
+In the Servlet model a thread can remain attached to a request while it waits on a downstream dependency. A downstream latency spike and repeated device retries can amplify open connections, threads, memory and scheduler pressure. A Netty event loop lowers the cost of *waiting connections*, but this trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup. Netflix describes difficult-to-debug **ByteBuf leaks, file-descriptor leaks and dropped responses** as possible failures of incomplete async error paths. These are publisher-identified failure classes, not a confirmed list of every Zuul 2 production incident. [N07, **Differences Between Blocking vs. Non-Blocking Systems**].
+
+**Operating guards for a different gateway (Tycho synthesis):** explicit event-loop blocking detector; bounded offload executor for unavoidable synchronous dependencies; request context and principal propagation across callbacks; cancellation/deadline cleanup; leak detection for reference-counted buffers; retry/hedging and upstream admission limits; p99 measured by route and connection cohort rather than aggregated at cluster level. A partially converted framework must support a known rollback version while downstream contract and security behavior are stable. No universal Netflix rollback threshold is documented.
+
+## Historical result table: distinguish two gateway workloads
+
+| 2016 company-reported comparison | Result | Why not universal |
+|---|---|---|
+| Persistent client connections | Substantially cheaper connection-scale behavior; product capability driver | The source does not publish a transferable fixed connection-per-vCPU benchmark |
+| API-facing Zuul cluster | **No significant CPU-efficiency increase** at comparable work; similarly bounded throughput/node | On-box encryption, compression and logging kept this cluster compute-heavy |
+| Logging Zuul cluster | Approximately **25% greater throughput** with approximately **25% less CPU use** | Write-heavy, smaller responses and a different per-request workload; not the same cohort |
+| Retry-storm resilience | Authors report some benefit, **requiring tuning** | Not a measured zero-failure guarantee |
+| Developer/operator cost | Harder debug, code and test cycle, context and lifecycle management | Cost was described qualitatively, not in audited team-hours |
+
+These are the actual distinctions in N07, **Results of Zuul 2 in Production**. A second modern Java case about a CPU-bound [gRPC worker-pool regression under virtual threads](netflix-grpc-cpu-workerpool-virtual-thread-regression.md) is a different scheduling experiment and must not be collapsed into this 2016 result. The [2024 tracing-lock virtual-thread incident](netflix-java21-virtual-thread-pinning.md) is likewise a different failure mechanism.
+
+## Two incompatible architecture choices for a hypothetical legacy gateway
+
+For a legacy entry service with relatively few connections and heavy per-request transformation, an existing blocking or bounded-thread gateway may satisfy all objectives with less risk. For very many persistent idle connections and asynchronous downstream waits, Netty/event-loop I/O may materially reduce resource cost. For a mixed request population, isolate request classes and quantify: blocked wait time; active connection count; event-loop queue delay; completed requests/CPU; per-class p99; retry volume; cancelled but still running upstream work; trace and authorization-context errors; and leaked buffers.
+
+The **selection criterion** is what each scheduler is waiting for, not the number of fashionable concurrency abstractions. A gateway handling large CPU-bound cryptography cannot rely on an event loop to do more useful CPU work, and a per-request virtual thread is not proof that a tracing library is safe. A migration without request-context verification, leak/error-path tests or a representative traffic baseline should remain **insufficient evidence**, not automatic approval of the reactive rewrite.
+
 ## Provenance and limits
 
 - N07: [Zuul 2 — The Netflix Journey to Asynchronous, Non-Blocking Systems](https://netflixtechblog.com/zuul-2-the-netflix-journey-to-asynchronous-non-blocking-systems-45947377fb5c), company 2016 article, especially "Results of Zuul 2 in Production."
