@@ -123,6 +123,17 @@ def old_sections(index_path):
                     "FTS records diverge from canonical section rows")
         cols = ("section_key","document_id","section_id","path","heading",
                 "title","content","char_start","char_end","document_sha256")
+        required_keys = {"format_version","route_snapshot_sha256","coverage",
+                         "unannotated_paths","document_count","section_count",
+                         "document_sha256","index_semantics","snapshot_id"}
+        require(set(schema) == required_keys, "Unexpected snapshot manifest fields")
+        parts = [{"section_key": r[0], "char_start": r[7], "char_end": r[8],
+                  "document_sha256": r[9]} for r in rows]
+        parts.sort(key=lambda r: (r["section_key"].split("#")[0],
+                                  r["char_start"], r["section_key"].split("#")[-1]))
+        stable = {k:v for k,v in schema.items() if k != "snapshot_id"}
+        require(digest(canonical_json(stable) + "\n" + canonical_json(parts))
+                == schema["snapshot_id"], "Snapshot ID does not match indexed sections")
         grouped = {}
         for row in rows:
             section = dict(zip(cols, row))
