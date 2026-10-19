@@ -1,0 +1,37 @@
+{
+  "report_type": "independent-local-reconstruction-cross-check-not-exact-github-script-execution",
+  "date": "2026-10-19",
+  "environment": {
+    "sqlite": "3.46.1",
+    "platform": "container-local",
+    "benchmark": "sequential single-process warm-cache; 100 repeats/query"
+  },
+  "corpus": {
+    "synthetic_original_documents": 12,
+    "labeled_queries": 14,
+    "alias_cases": 2
+  },
+  "results": {
+    "fts5": {
+      "mrr_at_5": 0.8571,
+      "mean_recall_at_5": 0.8571,
+      "median_query_ms": 0.02207,
+      "p95_query_ms": 0.04486
+    },
+    "parameterized_sql_scan": {
+      "mrr_at_5": 0.9286,
+      "mean_recall_at_5": 0.9286,
+      "median_query_ms": 0.02529,
+      "p95_query_ms": 0.03507
+    },
+    "combined_data_and_fts_db_bytes": 32768,
+    "combined_build_ms": 7.69945
+  },
+  "scope": [
+    "The 12 synthetic excerpts and 14 question labels were manually reconstructed from the GitHub issue fixture, not downloaded and executed from exact GitHub script/fixture blobs.",
+    "The SQL search expressions match the branch implementation, but this is a separate local reconstruction and is not a passing test of the committed source.",
+    "The equality of MRR with the earlier independently reconstructed report does not guarantee FTS5 outranks the SQL scan; here it does not.",
+    "Query latency and build time differ even between two local reconstructions; no stable production performance comparison.",
+    "No Lucene, Elasticsearch, actual Tycho chapter indexing, agent tokens, concurrent load, cold cache or index-only storage measurement."
+  ]
+}
