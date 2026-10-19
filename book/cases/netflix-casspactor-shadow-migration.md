@@ -47,6 +47,36 @@ flowchart TD
 | Wide partitions caused old connector OOM | Reported negative condition | Requires reproducing workload skew for any new migration |
 | Fallback after new connector failure | Source-described Maestro/Decider behavior | Degradation may be longer runtime; quantify before declaring zero-impact in a new organization |
 
+## What made legacy backup identification brittle
+
+The [May 18, 2026 first-party account](https://netflixtechblog.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1) (N11, **Casspactor: The Engine We Outgrew**, **Fragile Metadata Dependencies**) reports approximately **1,200 data movements/day** and **3 PB transferred** in the stated legacy operating scale. The post does not provide an independently reproducible distribution of object sizes, exact comparison duration for the 3 PB figure or per-job cost. These numbers are scale context, **not** benchmark targets for another company.
+
+The old Casspactor path combined multiple metadata services to decide which Cassandra backup existed and how to construct it. Because individual services had different update schedules and failure modes, its assembled picture could lag the actual S3 SSTables. A node replacement during scheduled snapshots could make a region's data-movement workflow unavailable because the connector assumed all nodes took snapshots in a region at the same clock second. For a schema/topology change, the composite metadata also made **historical point-in-time reconstruction** impossible. These are concrete correctness and availability defects in the *source snapshot identification*, not just slow Spark execution.
+
+The new Cassandra Analytics Wrapper directly reads the **S3 backup representation plus its associated schema/topology metadata** as one source of truth. Spark DataFrames then expose a normalized execution interface; a connector factory applies model-specific Key Value / Time Series transformations through Java UDFs without unnecessary intermediate Iceberg staging tables. The report describes handling wide partitions by moving mutation compaction to Spark executors to avoid excessive shuffle/driver OOM; it also describes **automatic job sizing**. This does not prove that every possible Cassandra data model is automatically supported or that a backup is transactionally atomic across independent clusters. [N11, **The New Stack**].
+
+## Three separate gates on the production data-movement workflow
+
+| Gate | Observed source control | Evidence the gate supplies | Negative test for a different implementation |
+|---|---|---|---|
+| **Validation** | Shadow legacy Casspactor and candidate Move Data runs on comparable inputs; inspect both row-set differences | Missing rows C−M **and** added rows M−C are surfaced; discrepancies investigated by timestamp, TTL, consistency and backup choice | Same total row count but different IDs, values or TTL; old and new snapshots not aligned |
+| **Visibility** | Central progress/runtime/cost dashboards, dependency metrics, fallback and mismatch alerts | Cohort-level view of which jobs migrated and what failed | Quiet failure in backup-metadata APIs or an old connector silently taking over |
+| **Safety** | Maestro **Decider** + Connector Controller selects connector per job/cohort/parameters; conditional fallback to Casspactor on candidate failure | Stable user job configuration and recoverable execution when a new connector fails | Candidate fails after partial materialization; old connector retries without cleaning unsafe intermediate output |
+
+The gate names and control-plane components come from N11, **Pillar 1**, **Pillar 2**, **Pillar 3**, **Leveraging Abstraction**. The negative-test column is **Tycho's original proposal**; neither the article nor this page claims those injected failures were all run at Netflix.
+
+## Equality is an observable contract, not automatically domain truth
+
+The publisher's goal was exact equality of final Iceberg row content, schema and metadata between the two connector outcomes for a comparable job. That is stronger than counting rows. It is still a **relative parity guarantee**, not independent verification that historical Casspactor semantics were always right. The first-party account specifically records investigations into TTL reference timestamps, consistency levels, backup choice and internal data-model interpretation: an extra row can be caused by a legitimate snapshot/interpretation difference rather than only a defective new connector.
+
+A different implementation needs a **comparison key, snapshot identity, temporal window, schema version and conflict adjudicator**. A user may prefer correcting an old bug over faithfully replicating it, but that is a product decision requiring separately approved output changes, not a hidden migration side effect. Fallback can protect job completion yet may increase execution duration; the report claims downstream users were shielded, but does not publish a fleet-wide fallback rate, true failure probability or canary rollback thresholds.
+
+## Falsifiable adoption conditions
+
+Adopt a layered backup-reader + model-specific transformation approach when metadata from multiple services demonstrably diverge, source snapshots can be consistently identified, and the same processing engine serves materially different data abstractions. Prefer smaller targeted repairs when one existing connector meets all backup, skew and domain-correctness requirements.
+
+**Stop or reverse** when SSTable manifests cannot establish a stable snapshot, old/new comparisons use different TTL/consistency windows, wide-partition execution still OOMs, fallback produces stale customer tables, or the controller cannot guarantee one authoritative publication of a job's final artifact. Track both functional parity and operational fallback, not only new connector runtime. A [related data-authority decision guide](decisions/data-migration-correctness.md) contrasts this immutable/batch style with mutable Stripe subscriptions and streaming Meta ingestion.
+
 ## Decision transfer and contraindications
 
 The crucial design is **stable customer contract + shadow evidence + configurable fallback**, not a compulsory adoption of Spark. If legacy output is demonstrably incorrect, equality with old output can replicate bugs; discrepancies must be adjudicated against independent semantics and business invariants before accepting either side. If data is mutable during snapshot capture, prove comparable transaction/snapshot boundaries; otherwise C−M is noisy rather than diagnostic.
