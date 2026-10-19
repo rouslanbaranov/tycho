@@ -11,9 +11,9 @@ A hypothetical legacy commerce platform has one deployment, 25 developers, share
 
 | Actual company case | What its primary source does and does not establish |
 |---|---|
-| [Netflix](../cases/netflix-seven-year-cloud-rearchitecture.md) | N01: seven-year cloud decomposition after concentrated datacenter failures |
-| [Shopify](../cases/shopify-modular-monolith.md) | SH01: one deployable app and explicit component boundaries |
-| [Uber](../cases/uber-doma-domains.md) | U01: governance and gateways for an existing many-service fleet |
+| [Netflix](../netflix-seven-year-cloud-rearchitecture.md) | N01: seven-year cloud decomposition after concentrated datacenter failures |
+| [Shopify](../shopify-modular-monolith.md) | SH01: one deployable app and explicit component boundaries |
+| [Uber](../uber-doma-domains.md) | U01: governance and gateways for an existing many-service fleet |
 
 **Why the apparent conflict is useful:** Netflix's original incident and global replatforming justify a different scale of change; Uber's DOMA starts from the opposite initial state—too many independently deployed services. Neither should be treated as evidence that extracting services solves this hypothetical coupling pain.
 
