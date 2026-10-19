@@ -167,3 +167,26 @@ The linked [PR #212](https://github.com/rouslanbaranov/tycho/pull/212) improves 
 **Mechanical GitHub-only scan on the current wave:** reviewed the Markdown bodies on the feature branch against the `main` path inventory: 21 changed Markdown files at check time had balanced code fences, no repeated identical second-level headings and no missing relative Markdown file targets in the scanned subset. This does **not** verify anchors, external source reachability, diagram rendering, full repository checks, publisher claim accuracy, copyright or independence. Local `premerge_check.py` and `validate_m9_cases.py` were **not executed**: the execution container cannot resolve `github.com` for a full checkout. The feature branch was ahead of and behind current main; reconcile concurrent main changes before merge.
 
 **Completion contract:** continue page-by-page research until every existing case/decision page meets the substantive checklist; then obtain named independent technical/copyright review and an authorized, evidence-backed search/MCP dependency disposition. Keep #121/E16/M9 open. Retired knowledge-graph features cannot be reintroduced as blockers or “missing coverage.”
+
+## Latest full-corpus authoring checkpoint — 2026-10-19 (supersedes partial-wave counts above)
+
+**Highest-priority case-content work reached the complete corpus at this draft checkpoint:** all **29/29 case pages**, including **12 Netflix and 17 other-company cases**, and all **6/6 comparative decision pages** have received substantive expansion in [draft PR #212](https://github.com/rouslanbaranov/tycho/pull/212). Earlier checkpoints in this file saying 7/29, 14/29 or 22 outstanding refer to intermediate commits of the same work and **are not the latest count**. Work covers historical baseline/transition and ownership, alternative hypotheses, failure/correctness/rollback boundaries, dated publisher-reported outcome limits, contraindications, and original reproducible *proposed* experiments where source measurements are absent. Authored analysis must remain distinguishable from published facts.
+
+### Executed remote GitHub-tree checks for the 35-page current branch set
+
+| Check | Observed result | Scope / caveat |
+|---|---|---|
+| Edited substantive corpus | **29/29 case files, 6/6 decision guides** occur in PR diff | Counts files with source-bounded depth passes, **not** independently signed-off pages |
+| Source-backed case identity | **29/29** first-party URLs present and stable `case.*` identity labels visible | Not a human audit of URL accuracy or each claim against original section |
+| Native illustration structure | **29/29** case pages have balanced Mermaid code fences | A syntactic check, not an actual GitHub/Mermaid renderer execution |
+| Markdown file links | All 35 pages' **relative Markdown file targets** inspected against the GitHub `main` file inventory; **zero missing target files** | Target anchors, dynamic links and external HTTP reachability not certified |
+| Repeated level-2 headings | No repeated identical H2 headings observed in 35 pages | Editorial coherency and duplication between differently named sections still require review |
+| Decision guides | **6/6** have expanded domain-specific scenario, counterevidence, refusal and reversal discussions | No independent architecture decision fitness test or executing agent evidence |
+| Provenance/runtime tests | Full pinned-checkout `validate_m9_cases.py`, `premerge_check.py`, local source and quality suites: **NOT EXECUTED** in this GitHub-only pass | Structural inspection **must not** be converted into a test-suite PASS |
+| External human technical/copyright review | **NONE** supplied | No case is approved as `independent_reviewed` by this edit |
+| Live K18–K23 lexical/hybrid/MCP evaluation | **NOT EXECUTED**; core service availability/authorized dependency decision still gates final M9 acceptance | Historic candidate BM25 data is not this production evaluation |
+| Curated knowledge graphs | **EXCLUDED** from M9 by binding ADR | Not a missing implementation, coverage defect or release blocker |
+
+**Content-depth coverage is 100% of the existing 35-page corpus; independently confirmed complete/accepted coverage is NOT 100%.** A “depth pass” certifies that extra content was authored and links were scanned, not that every claim is correct, fresh, license-cleared and externally reviewed. The 43 public source candidates have their previous scoped admission/disposition; two unavailable technical source bodies remain excluded from positive engineering claims.
+
+**Next acceptance gate:** named qualified independent reviewer records a case-by-case source/section/date/metric/contraindication/rights verdict, amendments to every high-severity error, pinned repo-checkout execution with commands/output hashes, and authentic search/MCP evaluation or explicitly authorized exception. **Do not close #121, Epic #113 or M9** merely because 35/35 pages now have substantive drafts. Keep PR #212 **draft** until these controls and main-branch integration review pass. No renewed graph work is required or permitted.
