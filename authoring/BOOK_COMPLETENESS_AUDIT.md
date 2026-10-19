@@ -178,6 +178,15 @@
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
 
+## 2026-10-19 evening: GitHub branch file/link checkpoint for last 14 drafts
+
+- Read **all 14 newly authored book pages** directly from the PR branch. Each has exactly one H1, an original technical or decision-based explanation, an explicit limitations/evidence section and correctly paired code fences. Combined: **19,174 Markdown whitespace-separated words**, **15 Mermaid diagrams**, with no unbalanced fenced blocks detected. This is a **limited structural** check, not source/technical peer review.
+- Extracted relative Markdown link destinations across those fourteen files. Fetched **53 distinct local target paths** in bounded batches against the same branch; **53/53 target files exist**. This does not validate anchor fragments, diagrams rendered, external URLs, semantic references or current provenance revisions.
+- Fetched both the authoritative 69-question proposed outline and the updated coverage matrix: **69 matrix rows / 69 distinct planned chapter IDs / 69 D / 0 P / 0 M**. The PR has no edits to M9 case-study materials, worker locks, curated graph components, search/MCP implementation or deployment infrastructure.
+- Exact public source segments consulted in this writing pass include arc42 sections 2/3/5/6/7/9/10, Java SE 25 ExecutorService and preview StructuredTaskScope, Spring Framework transaction events and Spring Modulith events, Reactive Streams 1.0.4, gRPC cancellation/flow control, Raft project and etcd v3.6 quorum FAQ, Neo4j Cypher pattern/path manuals, TREC qrels, BEIR retrieval evaluation, Fowler Strangler Fig, and AWS cost principles. None is a substitute for an independent **claim-by-claim** editorial provenance review.
+- **Critically unresolved:** an exhaustive Git-tree/content census, one canonical owner and full required depth for each of the 69 chapter questions, checking exact source citations/versions and artifact admissibility for *every* existing and new chapter, all-anchors and external URL validation, full schema/frontmatter/index regeneration, rendered diagrams, local premerge/boundary checks, human technical/editorial acceptance and final volume/chapter/page edition build.
+- **Decision:** this is an **all-topics-addressed manuscript draft milestone**, not a completed book, nor a final publication acceptance. Keep #213 and PR #215 open/draft; #214 edition assembly follows actual content/quality acceptance.
+
 ## 2026-10-19 content-coverage milestone — all 69 proposed topics have direct prose
 
 - The last seven topics previously assessed as partial now have dedicated original research chapters: **V01/C06, V02/C07, V03/C01, V03/C04, V04/C02, V06/C06 and V06/C07**, in addition to the seven earlier P→D changes this evening. They are linked from their topic landings.
