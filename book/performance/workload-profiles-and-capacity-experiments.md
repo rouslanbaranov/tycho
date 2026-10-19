@@ -86,3 +86,51 @@ Use two independent request classes, A (healthy dependency) and B (degraded depe
 - [Microsoft Azure Architecture Center, *Bulkhead pattern*](https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead): isolation trade-offs; documentation version not freshly checked.
 
 These references are candidate primary documentation, **not** a verified claim-to-section ledger. No load generator was run and no independent review occurred for this addition.
+
+
+## Verified reference review and reproducible synthetic trace
+
+Editorial inspection of the linked public documentation below was performed on 2026-10-19. These are **scope-specific source inspections**, not proof that the versions of components used by any real deployment match, or that an independent expert approved the interpretation. Living documentation URLs can change; the listed headings and inspection date are the reference boundary.
+
+### Source-to-claim ledger (scope verified)
+
+| Ref | Public source and inspected section | Narrow supported claim | Not established |
+|---|---|---|---|
+| V01 | [Kubernetes, Horizontal Pod Autoscaling](https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/), *Algorithm details* and *Pod readiness and autoscaling metrics*, accessed 2026-10-19 | HPA's per-pod CPU scaling calculation sets aside missing metrics and not-yet-ready pods; CPU initialization and readiness timing influence effective scale decisions | A specific cluster's actual autoscaling delay, policy configuration, readiness, or ability to serve a burst |
+| V02 | [Grafana k6, Open and closed models](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/), *Open Model* / *Closed Model*, accessed 2026-10-19 | Arrival-rate executors schedule work independently of iteration completion; closed-model iteration pacing responds to service duration | That any configured run generated its intended traffic at saturation |
+| V03 | [Grafana k6, Dropped iterations](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/dropped-iterations/), *Dropped iterations*, accessed 2026-10-19 | For arrival-rate executors, lack of free virtual users may cause scheduled iterations not to start; the counter must be captured for honest offered-load analysis | Whether a drop was caused by the SUT rather than under-provisioned generator capacity without additional evidence |
+| V04 | [HdrHistogram, AbstractHistogram implementation](https://github.com/HdrHistogram/HdrHistogram/blob/master/src/main/java/org/HdrHistogram/AbstractHistogram.java), *addWhileCorrectingForCoordinatedOmission* API documentation, inspected master 2026-10-19 | Correction adds modeled samples when a known expected interval is supplied; corrected distributions are not direct observations of requests never sent | A uniquely correct latency reconstruction from an unknown intended arrival schedule |
+| V05 | [Google SRE book, Chapter 21: Handling Overload](https://sre.google/sre-book/handling-overload/), *The Pitfalls of Queries per Second*, *Client-Side Throttling*, *Criticality* and *Deciding to Retry*, accessed 2026-10-19 | Operation resource costs vary; client-side throttling, criticality-aware shedding and per-request/per-client retry budgets address cascading overload | Universally safe request quotas or direct applicability of Google's example thresholds to another system |
+| V06 | [Microsoft Azure Architecture Center, Bulkhead pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead), *Solution* and *Problems and considerations*, accessed 2026-10-19 | Isolated service instances, queues, or connection pools limit shared-resource failure propagation, at utilization and management cost | That particular pool sizes or isolation boundaries improve any unmeasured workload |
+| V07 | [Envoy 1.24.9, Circuit breaking](https://www.envoyproxy.io/docs/envoy/v1.24.9/intro/arch_overview/upstream/circuit_breaking), *Circuit breaking*, version 1.24.9 inspected 2026-10-19 | Configurable per-upstream-cluster/per-priority connection and request limits provide network-level backpressure; overflow counters and limit semantics are observable and may be approximate | That all Envoy versions/configurations have identical behavior or guarantee no requests beyond a specified limit |
+
+The AWS Builders' Library references listed earlier remain **unverified source pointers** for this review because the English entry URLs redirected to a different publishing host; this ledger does not claim their body text was re-inspected. The Microsoft entry above *was* inspected and narrows the earlier pending pointer. Historic Gunther and Little references still need editorial line/section review before being labeled independently verified.
+
+### Reproducible, explicitly limited model
+
+The repository includes a standard-library, deterministic trace demonstration: [capacity_trace_lab.py](../../scripts/capacity_trace_lab.py) and [its tests](../../tests/test_tycho_capacity_trace_lab.py). To reproduce from the repository root with Python 3.10+:
+
+~~~sh
+python3 scripts/capacity_trace_lab.py
+python3 -m unittest discover -s tests -p 'test_tycho_capacity_trace_lab.py' -v
+~~~
+
+The Python 3.10+ floor is required by the type-annotation syntax, not a benchmark prerequisite. A separate isolated local execution of these four tests on 2026-10-19 passed. This is **not** a claim that the entire repository's premerge suite ran, that a load generator drove an actual service, or that the GitHub PR's environment was verified.
+
+Trace (all times in seconds, intentionally fictional): B at 0.00 and 0.01 with service duration 5.00; A at 0.02 and 0.12 with service duration 0.05. Compare two **total concurrent slots** in (i) one shared pool and (ii) dedicated A=1, B=1 pools. Admission is immediate with **no queue**. The deterministic model yields:
+
+| Model | A admitted | A rejected | B admitted | B rejected |
+|---|---:|---:|---:|---:|
+| Shared two slots | 0 | 2 | 2 | 0 |
+| Dedicated A=1, B=1 | 2 | 0 | 1 | 1 |
+
+This shows a **constructed** example of a trade-off: isolation protects class A's opportunities by reserving capacity, but rejects one B request. It is NOT empirical evidence that an isolated deployment improves p99 latency or cost. The open example schedules starts at 0.0, 0.1, 0.2, 0.3, 0.4; a closed single virtual user with service time 0.5 and think time 0.1 schedules starts at 0.0, 0.6, 1.2, 1.8, 2.4. Because both schedules are synthetic, these demonstrate pacing semantics and not measured coordinated omission.
+
+**Missing experimental fidelity:** No waiting queue, capacity-dependent service times, autoscaler warm-up, bursty operating system scheduling, network retries, virtual-user availability, downstream failures, fairness, or actual latency histograms are modeled. For real architecture selection, preserve offered/started/completed counters and timestamps, use the chosen k6 executor with a monitored load generator, capture dropped iterations, inject faults safely, repeat trials and judge explicitly named SLOs and correctness invariants. Report *insufficient evidence* until the target system has been measured.
+
+### Editorial acceptance remaining
+
+- Review Little's Law and USL primary passages precisely and ensure chapter statements align with bounded assumptions.
+- Reconcile the branch with current main, verify all relative links and run repository-wide local premerge checks.
+- Inspect the full PR diff and request independent architectural/domain review; **self-authorship and four synthetic unit tests are not independent review**.
+- Only after source/structure/correctness gates should #86 be considered for completion; completion of this trace is not completion of the milestone.
