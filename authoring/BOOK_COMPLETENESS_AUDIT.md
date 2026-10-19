@@ -7,7 +7,7 @@
 
 - The proposed outline contains **10 volumes and 69 chapters**. All 10 volume rows were compared against titles and section headings in currently reachable technical prose.
 - The current book is **not assembled** into those volume/chapter/page paths. Across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. They contain real prose; they are not 69 separate canonical chapter units.
-- Of 69 proposed questions: **37 directly addressed**, **23 partially addressed**, **9 without a focused book treatment verified**. **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
+- Of 69 proposed questions: **38 directly addressed**, **23 partially addressed**, **8 without a focused book treatment verified**, counting the new unreviewed V02/C05 draft on this branch. **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
 - Source discovery was limited to current root/topic navigation and linked Markdown files accessed from GitHub. The entire Git tree was **not exhaustively enumerated** and repository-wide executable checks **were not run**. Reconcile this matrix with a full local inventory and content review before presenting the classification as comprehensive proof.
 - Educational graph storage/traversal remains a legitimate V06/C06 topic; a curated concept/decision graph for Tycho is **not required**. Search/MCP/deployment infrastructure work is excluded from this manuscript completion gate.
 
@@ -38,7 +38,7 @@
 | V02/C02 — Domain boundaries, data ownership and contracts | P | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Add explicit domain ownership, data contracts, mapping and boundary evolution. |
 | V02/C03 — Modular monolith and internal events | P | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Expand modular-monolith lifecycle, internal events, invariants and deployment countercases. |
 | V02/C04 — SOA, microservices and distributed boundaries | D | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Deepen SOA versus microservices decisions with independent deployment conditions. |
-| V02/C05 — Public APIs, HTTP/RPC and compatibility | M | No focused book page verified | Write canonical HTTP/RPC/API compatibility chapter: deadlines, idempotency, versioning and contract tests. |
+| V02/C05 — Public APIs, HTTP/RPC and compatibility | D | [New chapter draft](../book/application/http-rpc-contracts-and-compatibility.md) | Newly written; pending independent technical review, full local verification and final V02 chapter/page assembly. |
 | V02/C06 — Integration adapters and anti-corruption boundaries | P | [Technical page](../book/application/architecture-evolution-and-extraction.md) | Write anti-corruption adapter contracts and long-lived coexistence with original failure scenarios. |
 | V02/C07 — Authorization boundaries and multitenancy | P | [Technical page](../book/security/identity-authorization-and-isolation.md) | Move/link ownership-specific multitenancy boundaries without duplicating security chapter. |
 
@@ -138,9 +138,14 @@
 | V10/C06 — Search and question routes for architecture agents | M | No focused book page verified | Write self-contained agent-oriented question/reading routes independent of an implemented MCP/search service. |
 | V10/C07 — Cross-domain worked comparisons and unresolved cases | D | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Expand original cross-domain worked decisions and insufficient-evidence outcomes. |
 
+## Content remediation recorded in this branch
+
+- **V02/C05 moved from M to D (not accepted):** new original [HTTP and RPC compatibility chapter](../book/application/http-rpc-contracts-and-compatibility.md), using independently verified RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers documentation. Its application landing now links to it. No executable client/provider tests, independent review or full-repository validation has run; publication completeness is not claimed.
+- Initial main-at-audit classification before this new chapter was **37 D / 23 P / 9 M**. The current feature-branch classification is **38 D / 23 P / 8 M**, all still subject to inventory and quality review.
+
 ## High-priority confirmed editorial gaps
 
-1. **Unwritten focused subject coverage (M):** API and RPC compatibility; CPU/GC diagnostic decision-making; tail latency/fan-out budgets; autoscaling delay and stabilization; incident response; agent-facing trust/privacy controls; V10 requirements and legacy synthesis; agent-oriented reading route. Each needs original substantial material and precise admissible sources.
+1. **Unwritten focused subject coverage (M):** CPU/GC diagnostic decision-making; tail latency/fan-out budgets; autoscaling delay and stabilization; incident response; agent-facing trust/privacy controls; V10 requirements and legacy synthesis; agent-oriented reading route. Each needs original substantial material and precise admissible sources.
 2. **Deepen fragmented subjects (P):** requirements and quality experimentation, modernization transitions, bounded architecture styles, graph concepts as *book content*, retrieval evaluation, cost modeling, recovery validation, and supply-chain acceptance.
 3. **Normalize ownership:** current topical research pages often span multiple intended chapters. Preserve their proven material; split by genuinely separate reader question only, and establish one canonical source of explanation. Do not copy the same mechanism into every mapped chapter.
 4. **Validate maturity:** confirm all claims with exact independently public versioned sources; review original diagrams, failure matrices, tests and limits. Existing self-authored researched pages are not evidence of independent domain approval or of real system benchmarking.
