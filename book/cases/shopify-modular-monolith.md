@@ -9,7 +9,7 @@ A large Rails monolith mixed commerce domains in one codebase. Cross-domain refe
 
 ## Chosen architectural change
 
-Shopify explicitly chose one deployable application with enforced domain components. A component has an allowed interface and dependency shape but need not own a separate process or network endpoint. The choice preserves cheap in-process refactors while forcing architects to control logical coupling.
+Shopify explicitly chose to **move toward** one deployable application organized as domain components rather than extract every boundary into independently operated services. **Full enforcement of component APIs and dependencies was not complete in the 2019 report**; the 2020 follow-up still describes incomplete component isolation and partial Packwerk adoption. A component is an intended ownership/interface boundary, not necessarily a separate process or network endpoint. The historical design direction aimed to retain the simplicity of in-process change while incrementally reducing accidental coupling.
 
 ```mermaid
 flowchart LR
@@ -81,5 +81,7 @@ For a different large monolith with many authors, begin with one well-understood
 ## Applicability to legacy modernization
 
 Choose modularity within one runtime when operational simplicity and many shared transactions outweigh independent deployment; extract services only at proven scale/team boundaries with clear data ownership. Before a roadmap is approved, require a baseline with data ownership and blast radius, a comparison to a smaller intervention, and measurable acceptance gates. An agent should retrieve this case as **evidence for conditions and counterconditions**, not as a universal preferred architecture.
+
+**2026-10-19 bounded recheck:** [SH01](https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity) and [SH02](https://shopify.engineering/shopify-monolith) were reopened for the [specific dated-claim verification register](../../authoring/cases/M9_SHOPIFY_SOURCE_SPOTCHECK_2026-10-19.md). This supports selected historical facts and corrects the earlier overstrong shorthand about fully enforced domains; it does **not** establish independent acceptance, full legal reuse review or present-day topology.
 
 **Provenance:** [SH01 primary](https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity), sections Microservice Architecture; Modular Monoliths; Componentization. Cross-case comparisons must retain the original company's architecture and historical observation window. **Case review:** not yet independently approved under #121.
