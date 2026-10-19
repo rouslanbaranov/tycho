@@ -261,10 +261,25 @@ def self_test() -> None:
         jsonschema.Draft202012Validator.check_schema(schema)
         validator = jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker())
         require(not list(validator.iter_errors(good)), "jsonschema unexpectedly rejected valid sample")
-        for i, candidate in enumerate(malformed_records, start=1):
+        # JSON Schema 2020-12 "format: date" checks individual dates; it
+        # cannot compare values of two sibling fields. Our extra semantic
+        # invariant valid_from <= valid_until must run in validate_record.
+        schema_mutations = [
+            candidate for name, candidate in zip((
+                "wrong_collection", "orphan_source", "bad_claim", "missing_review",
+                "future_window", "integer_title", "short_statement",
+                "non_string_source_ref", "non_string_pattern",
+                "non_string_review_limitation",
+            ), malformed_records) if name != "future_window"
+        ]
+        for i, candidate in enumerate(schema_mutations, start=1):
             require(bool(list(validator.iter_errors(candidate))),
-                    "jsonschema accepted invalid sample mutation " + str(i))
-        print("PASS: Draft2020-12 engine also rejects all 10 malformed records")
+                    "jsonschema accepted schema-invalid sample " + str(i))
+        require(not list(validator.iter_errors(malformed_records[4])),
+                "expected both inverted-window date strings to satisfy the base schema")
+        # The semantic validator above already rejected the inverted window.
+        print("PASS: Draft2020-12 engine rejects 9 schema violations; "
+              "semantic validator rejects 1 inverted validity window")
 
 
 if __name__ == "__main__":
