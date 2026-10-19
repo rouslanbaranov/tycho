@@ -6,8 +6,8 @@
 ## Executive result
 
 - The proposed outline contains **10 volumes and 69 chapters**. All 10 volume rows were compared against titles and section headings in currently reachable technical prose.
-- The current book is **not assembled** into those volume/chapter/page paths. Across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. They contain real prose; they are not 69 separate canonical chapter units.
-- Of 69 proposed questions: **42 directly addressed**, **23 partially addressed**, **4 without a focused book treatment verified**, including five new unreviewed book drafts on this branch (V02/C05; V07/C04 and C06; V10/C01 and C02). **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
+- The current book is **not assembled** into those volume/chapter/page paths. At the original main-based audit, across 13 inspected topical landing pages, **33 directly reachable technical prose files** were identified and their headings and size checked. Nine new source-grounded chapter drafts were added on this feature branch; the branch now has at least 42 known directly linked technical files, without an exhaustive tree scan. They contain real prose; they are not 69 separate canonical chapter units.
+- Of 69 proposed questions: **46 directly addressed**, **23 partially addressed**, **0 without a focused book treatment verified**, after nine new *unreviewed* chapter drafts on this branch (V02/C05; V03/C06; V07/C04 and C06; V09/C06 and C07; V10/C01, C02 and C06). **None is independently certified publication-complete by this desk audit.** The middle category is not “done”; even directly addressed material must be checked for the chapter's entire scope and admitted evidence.
 - Source discovery was limited to current root/topic navigation and linked Markdown files accessed from GitHub. The entire Git tree was **not exhaustively enumerated** and repository-wide executable checks **were not run**. Reconcile this matrix with a full local inventory and content review before presenting the classification as comprehensive proof.
 - Educational graph storage/traversal remains a legitimate V06/C06 topic; a curated concept/decision graph for Tycho is **not required**. Search/MCP/deployment infrastructure work is excluded from this manuscript completion gate.
 
@@ -51,7 +51,7 @@
 | V03/C03 — Reactive streams, demand and cancellation | D | [Technical page](../book/execution/reactor-webflux-r2dbc-and-backpressure.md) | Complete demand, scheduling and end-to-end backpressure decision examples. |
 | V03/C04 — Asynchronous APIs and streaming | P | [Technical page](../book/execution/reactor-webflux-r2dbc-and-backpressure.md) | Add explicit async API/protocol streaming/cancellation and deadline interoperability. |
 | V03/C05 — Thread, connection and buffer pools | D | [Technical page](../book/scaling/connection-pools-hikaricp-pgbouncer.md) | Integrate thread, connection and buffer budgets into one cross-layer model. |
-| V03/C06 — Memory, GC, CPU and blocking diagnostics | M | No focused book page verified | Write focused CPU/memory/GC/blocking diagnosis and instrumentation contract with versioned primary references. |
+| V03/C06 — Memory, GC, CPU and blocking diagnostics | D | [New diagnosis chapter](../book/execution/cpu-memory-gc-and-blocking-diagnostics.md) | Source-bound JVM profiling and original symptom matrix; pending independent/editorial validation. |
 
 ### V04 — Distributed coordination and event integration
 
@@ -123,8 +123,8 @@
 | V09/C03 — Distributed tracing and propagation | D | [Technical page](../book/observability/trace-context-lineage-and-audit.md) | Keep W3C-context propagation and sampling limitations distinct from proof. |
 | V09/C04 — Logging, audit and lineage | D | [Technical page](../book/observability/trace-context-lineage-and-audit.md) | Separate log, immutable business audit and lineage ownership. |
 | V09/C05 — Identity, authorization and threat modeling | D | [Technical page](../book/security/identity-authorization-and-isolation.md) | Retain explicit object authorization, trust model and service boundaries. |
-| V09/C06 — Incident response and operational change | M | No focused book page verified | Write focused incident command, diagnostic chronology, containment and learning/recovery process. |
-| V09/C07 — Safety, isolation and privacy in agent-accessible services | M | No focused book page verified | Write agent-access safety, privacy/isolation, untrusted retrieved content and source resolution at the book-concept level. |
+| V09/C06 — Incident response and operational change | D | [New incident response chapter](../book/observability/incident-response-and-operational-change.md) | Incident-role and state-machine research plus synthetic drill; review pending. |
+| V09/C07 — Safety, isolation and privacy in agent-accessible services | D | [New agent-access safety chapter](../book/security/safe-agent-access-and-knowledge-isolation.md) | OWASP-based bounded trust and privacy architecture; no implemented service; review pending. |
 
 ### V10 — Decision support and modernization playbooks
 
@@ -135,17 +135,17 @@
 | V10/C03 — Pattern applicability and contraindications | P | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Turn method cards/contraindications into a navigable pattern-selection book chapter. |
 | V10/C04 — Alternatives, experiments and ADRs | P | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Expand condition-gated alternative analysis and ADR falsification examples. |
 | V10/C05 — Target architecture versus transition states | P | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Develop target versus transition states with reversible and non-reversible steps. |
-| V10/C06 — Search and question routes for architecture agents | M | No focused book page verified | Write self-contained agent-oriented question/reading routes independent of an implemented MCP/search service. |
+| V10/C06 — Search and question routes for architecture agents | D | [New question/reading routes chapter](../book/decisions/question-routes-for-architecture-analysis.md) | Original evidence-first progressive reading and decision route; no implemented search/MCP; review pending. |
 | V10/C07 — Cross-domain worked comparisons and unresolved cases | D | [Technical page](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Expand original cross-domain worked decisions and insufficient-evidence outcomes. |
 
 ## Content remediation recorded in this branch
 
-- **V02/C05 and V07/C04/C06 and V10/C01/C02 moved from M to D (not accepted):** V02/C05 details:  new original [HTTP and RPC compatibility chapter](../book/application/http-rpc-contracts-and-compatibility.md), using independently verified RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers documentation. Its application landing now links to it. The other new drafts cover tail latency, autoscaling, requirements/workload decisions and legacy architecture. No executable client/provider tests, independent review or full-repository validation has run; publication completeness is not claimed.
-- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **42 D / 23 P / 4 M**, all still subject to inventory and quality review.
+- **Nine original new draft chapters moved from M to D (not accepted):** V02/C05, V03/C06, V07/C04/C06, V09/C06/C07, V10/C01/C02/C06.  V02/C05 details:  new original [HTTP and RPC compatibility chapter](../book/application/http-rpc-contracts-and-compatibility.md), using independently verified RFC 9110, RFC 9457, OpenAPI 3.2.1, gRPC and Protocol Buffers documentation. Its application landing now links to it. Other new drafts cover diagnostics, tail latency, autoscaling, incident response, agent-access safety, requirements/workload decisions, legacy baselines and progressive reading routes. No executable client/provider tests, independent review or full-repository validation has run; publication completeness is not claimed.
+- Initial main-at-audit classification was **37 D / 23 P / 9 M**. After V02/C05, V07/C04 and C06, and V10/C01 and C02 draft chapters, the feature-branch classification is **46 D / 23 P / 0 M**, all still subject to inventory and quality review.
 
 ## High-priority confirmed editorial gaps
 
-1. **Unwritten focused subject coverage (M):** CPU/GC diagnostic decision-making; incident response; agent-facing trust/privacy controls; agent-oriented reading route. Drafts for the four other former M rows above are now present; deeper semantic review is outstanding. Each needs original substantial material and precise admissible sources.
+1. **Remaining missing-focused (M) at the reviewed navigation level:** none. All nine previously missing topics have now received a substantial draft. This does **not** mean that 69 proposed chapters are content-complete: 23 remain partial and all 46 direct-coverage chapters still need full scope, canonical ownership and evidence/quality review.
 2. **Deepen fragmented subjects (P):** requirements and quality experimentation, modernization transitions, bounded architecture styles, graph concepts as *book content*, retrieval evaluation, cost modeling, recovery validation, and supply-chain acceptance.
 3. **Normalize ownership:** current topical research pages often span multiple intended chapters. Preserve their proven material; split by genuinely separate reader question only, and establish one canonical source of explanation. Do not copy the same mechanism into every mapped chapter.
 4. **Validate maturity:** confirm all claims with exact independently public versioned sources; review original diagrams, failure matrices, tests and limits. Existing self-authored researched pages are not evidence of independent domain approval or of real system benchmarking.
@@ -154,7 +154,7 @@
 ## Recommended execution order
 
 1. Establish a complete repository Markdown inventory and reconcile every page/link with this 69-row table.
-2. Write the M subjects in dependency order, prioritizing interoperability, runtime diagnosis, capacity, safety and V10 decision guidance. Use bounded reviewable authoring slices and independent public sources.
+2. Validate the nine new D-class drafts against their full source/claim scope, then deepen P chapters in dependency order, prioritizing the largest uncovered questions. Use bounded reviewable authoring slices and independent public sources.
 3. Deepen P subjects; for D subjects perform a chapter-specific acceptance review and extend when the chapter question is not completely answered.
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
