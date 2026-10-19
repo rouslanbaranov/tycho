@@ -44,12 +44,12 @@ class LexicalPilotTests(unittest.TestCase):
 
     def test_benchmark_metrics_and_size_have_units(self):
         result = b.bench(self.fixtures, repeats=2)
-        self.assertEqual(result["queries"], 12)
+        self.assertEqual(result["queries"], 14)
         self.assertGreater(result["index_and_content_db_bytes"], 0)
         self.assertGreaterEqual(result["fts5_and_table_build_ms"], 0)
         for engine in ("fts5", "like"):
             item = result["engines"][engine]
-            self.assertEqual(len(item["results"]), 12)
+            self.assertEqual(len(item["results"]), 14)
             self.assertGreaterEqual(item["median_ms"], 0)
             self.assertGreaterEqual(item["p95_ms"], 0)
             self.assertGreaterEqual(item["mrr_at_5"], 0)
