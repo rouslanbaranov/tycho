@@ -8,7 +8,7 @@
 2. **Curated reasoning relationships**: original Tycho analysis connects a user `requirement`, `constraint`, `pattern`, `concept`, `mechanism`, `decision` or `evidence`. `candidate_for`, `contraindicated_by`, `depends_on`, `supports`, `qualifies`, `contradicts` require named applicability, rationale and exact evidence. A source or neighboring chapter mentioning two names does **not** create such an edge.
 3. **Book navigation**: `contains`, `next_read` and `canonical_owner` link stable document identities to reading routes and source claims. These links cannot claim runtime causation, transitivity or unmeasured implementation.
 
-These planes are distinct graph namespaces, not interchangeable projections. Graph semantics never override the canonical prose, [metadata ID contract](../authoring/models/document-metadata-identity.md), [claim provenance](../sources/CLAIM-PROVENANCE.md), [source register](../sources/register.json), or exact-commit [repository lock](../sources/public-repositories.lock.json).
+These planes are distinct graph namespaces, not interchangeable projections. Graph semantics never override the canonical prose, [metadata ID contract](document-metadata-identity.md), [claim provenance](../../sources/CLAIM-PROVENANCE.md), [source register](../../sources/register.json), or exact-commit [repository lock](../../sources/public-repositories.lock.json).
 
 ## Directed multigraph model
 
