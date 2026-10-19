@@ -219,6 +219,7 @@ def self_test() -> None:
     good = json_read(SAMPLES)[0]
     validate_record(good, schema, refs)
     failures = 0
+    malformed_records = []
     for mutation in ("wrong_collection", "orphan_source", "bad_claim", "missing_review", "future_window",
                      "integer_title", "short_statement", "non_string_source_ref", "non_string_pattern",
                      "non_string_review_limitation"):
@@ -245,12 +246,25 @@ def self_test() -> None:
             candidate["patterns"]["selected"] = [123]
         if mutation == "non_string_review_limitation":
             candidate["review"]["limitations"] = [False]
+        malformed_records.append(candidate)
         try:
             validate_record(candidate, schema, refs)
         except ValueError:
             failures += 1
     require(failures == 10, "one or more negative contract tests incorrectly accepted")
-    print("PASS: 10 malformed records rejected; valid example accepted")
+    print("PASS: 10 malformed records rejected by built-in strict subset; valid example accepted")
+    try:
+        import jsonschema  # type: ignore
+    except ImportError:
+        print("NOT RUN: Draft2020-12 JSON Schema negative suite (jsonschema package absent)")
+    else:
+        jsonschema.Draft202012Validator.check_schema(schema)
+        validator = jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker())
+        require(not list(validator.iter_errors(good)), "jsonschema unexpectedly rejected valid sample")
+        for i, candidate in enumerate(malformed_records, start=1):
+            require(bool(list(validator.iter_errors(candidate))),
+                    "jsonschema accepted invalid sample mutation " + str(i))
+        print("PASS: Draft2020-12 engine also rejects all 10 malformed records")
 
 
 if __name__ == "__main__":
