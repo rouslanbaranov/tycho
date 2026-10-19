@@ -277,7 +277,7 @@ def read_case_catalog(root: Path = ROOT, source_urls: dict[str, str] | None = No
             # must accompany its source ID in every case draft. Other mentions
             # may intentionally be contextual, not separately linked.
             cited = set(re.findall(
-                r"\\b(?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}\\b", text))
+                r"\b(?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}\b", text))
             require(any(source_id in cited and url in text
                         for source_id, url in source_urls.items()),
                     path.name + ": no matching curated source ID + primary URL")
