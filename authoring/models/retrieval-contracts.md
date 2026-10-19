@@ -50,6 +50,6 @@ Request: exact claim, source or document-section ID at the same snapshot. Result
 
 ## Example fixtures and acceptance boundaries
 
-[Request/response fixtures](../../fixtures/retrieval-contract-v1.json) demonstrate one small search and one stale-snapshot refusal. They are **illustrative envelopes**, not working endpoints, and are intentionally sparse. Later retrieval #48–#51, graph #46 and MCP #57+ own actual engines, schema gates, adapters and evaluation. This specification does not promise that any engine can fulfill all operations today.
+[Request/response fixtures](../../fixtures/retrieval-contract-v1.json) demonstrate one small search and one stale-snapshot refusal. They are **illustrative envelopes**, not working endpoints, and are intentionally sparse. Retrieval issues #48–#51 and MCP #57+ own actual engines, evidence lookup, schema gates, adapters and evaluation. The former #46 graph query scope was closed as not planned. This specification does not promise that any engine can fulfill all operations today.
 
 A strict future validator must enforce types/limits, required operation-specific fields, deterministic cursor ownership, source-ID resolution and no substantive payload on snapshot mismatch; integration tests must simulate changed snapshots, missing sections, partial coverage, truncation and contradictory evidence. Tests, independent technical review and production evaluation are **not** claimed here.
