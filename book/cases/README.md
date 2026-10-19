@@ -2,6 +2,12 @@
 
 **Evidence state:** original author-reviewed **drafts**, not independent-reviewed/accepted Tycho cases. As of 2026-10-19 this collection contains **29** case pages: **12 Netflix** and **17 from 9 other organizations**. A publisher's architectural write-up is evidence of its historical account, not independent validation of an experiment. Do not represent the case counts as finished milestone acceptance until E16-01 and E16-08 gates pass.
 
+## Position inside the single Tycho book (M1–M9 integration)
+
+This existing M9 collection is now linked to the **69 canonical draft chapter owners** across Tycho's ten proposed volumes. It is an **applied casebook/reference layer of the same book**, not an eleventh conceptual volume, an independent book requiring another agent, or proof of publication acceptance. The [complete 29-case + six-playbook mapping](../../authoring/UNIFIED_BOOK_M1_M9_INTEGRATION.md) supplies proposed concept-to-case reading routes; readers can enter from [the main book](../README.md).
+
+The foundational chapters explain **mechanisms and invariant conditions**; a historical case reports a **particular company's published experience** within a stated period; the decision playbooks are **Tycho's synthetic transfer reasoning**. Do not convert source-reported outcomes into universal benchmark claims. Both #213 and #121 stay open pending independent review, real validators and the graph-free MCP dependency disposition.
+
 ## Netflix — Java and runtime (#115/#116/#117)
 
 - [Java service platform convergence](netflix-java-platform-convergence.md)
