@@ -75,7 +75,7 @@
 | V05/C03 — Query planning, indexes and access paths | D | [Separate draft](../book/data/postgresql-indexes-statistics-and-query-plans.md) | New independent PostgreSQL 17 indexing/EXPLAIN/planner-statistics chapter; no benchmark or query execution. |
 | V05/C04 — Alternative data models and stores | D | [Technical page](../book/data/storage-model-alternatives-and-workload-fit.md) | Add selection examples where competing data models fail hard gates. |
 | V05/C05 — Partitioning, sharding and rebalancing | D | [Technical page](../book/scaling/shard-keys-hotspots-and-resharding.md) | Reconcile ownership movement and online resharding with data invariants. |
-| V05/C06 — Schema evolution, data migration and retention | D | [Technical page](../book/delivery/progressive-delivery-and-schema-evolution.md) | Make schema/data lifecycle, compatibility and retention canonical in this volume. |
+| V05/C06 — Schema evolution, data migration and retention | D | [Independent chapter draft](../book/data/schema-lifecycle-and-semantic-migration.md) | Dedicated domain identity, backfill/reconciliation and retention contract; no migration executed. |
 | V05/C07 — Replication, backups and restore drills | D | [New backup/PITR and restore drills chapter](../book/data/backup-restore-pitr-and-recovery-drills.md) | PostgreSQL 17 archive, backup chain and user-level recovery model; no exercised restore or expert review. |
 
 ### V06 — Caching, indexing and information retrieval
@@ -109,10 +109,10 @@
 | V08/C01 — CI/CD architecture and artifact provenance | D | [Technical page](../book/delivery/ci-cd-provenance-and-gitops.md) | Unify build/test/promotion/release contracts. |
 | V08/C02 — Supply chain and release verification | D | [New supply-chain verification chapter](../book/delivery/sbom-attestation-and-release-verification.md) | SLSA 1.2, SPDX/CycloneDX, Sigstore and negative policy tests; no signing or scanning performed. |
 | V08/C03 — VMs, containers, orchestration and serverless | D | [Technical page](../book/deployment/runtime-placement-and-control-plane.md) | Keep VM/container/managed/serverless and control-plane failure distinctions. |
-| V08/C04 — GitOps, rollout and progressive delivery | D | [Technical page](../book/delivery/progressive-delivery-and-schema-evolution.md) | Integrate GitOps reconciliation and rollout decision under mixed versions. |
-| V08/C05 — Backward-compatible database change | D | [Technical page](../book/delivery/progressive-delivery-and-schema-evolution.md) | Make expand/migrate/contract and rollback/no-return boundaries explicit. |
-| V08/C06 — High availability and failure-domain placement | D | [Technical page](../book/deployment/multi-region-disaster-recovery-contracts.md) | Explain failure domains, multi-zone placement and measurable failover. |
-| V08/C07 — Multi-region recovery and data reconciliation | D | [Technical page](../book/deployment/multi-region-disaster-recovery-contracts.md) | Give recovery drill, data reconciliation and fencing primary ownership. |
+| V08/C04 — GitOps, rollout and progressive delivery | D | [Independent chapter draft](../book/delivery/gitops-canary-and-progressive-rollout.md) | Dedicated rollout/controller/exposure and safety gates; no cluster deployment. |
+| V08/C05 — Backward-compatible database change | D | [Independent chapter draft](../book/delivery/mixed-version-database-compatibility-and-online-ddl.md) | Dedicated mixed-version readers/writers, DDL and rollback boundary; no DDL/test executed. |
+| V08/C06 — High availability and failure-domain placement | D | [Independent chapter draft](../book/deployment/availability-zones-placement-and-failure-domains.md) | Dedicated zonal placement, shared dependencies and HA failure tests; no deployment. |
+| V08/C07 — Multi-region recovery and data reconciliation | D | [Independent chapter draft](../book/deployment/disaster-recovery-and-recovery-objectives.md) | Dedicated DR RTO/RPO, fencing and user-level reconciliation; no restore executed. |
 
 ### V09 — Observability, security and operational architecture
 
@@ -177,6 +177,14 @@
 3. Deepen P subjects; for D subjects perform a chapter-specific acceptance review and extend when the chapter question is not completely answered.
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
+
+## Final two primary-content ownership groups split — 2026-10-19
+
+- **V05/C06, V08/C04 and V08/C05:** three distinct new original book manuscripts own (respectively) [semantic schema/data lifecycle](../book/data/schema-lifecycle-and-semantic-migration.md), [rolling/blue-green/canary release exposure](../book/delivery/gitops-canary-and-progressive-rollout.md), and [old/new binaries, schema compatibility and online DDL](../book/delivery/mixed-version-database-compatibility-and-online-ddl.md). Former [combined rollout/schema study](../book/delivery/progressive-delivery-and-schema-evolution.md) remains preserved for line-level evidence reconciliation.
+- **V08/C06 and V08/C07:** two distinct new original manuscripts own [failure-domain placement/HA](../book/deployment/availability-zones-placement-and-failure-domains.md) and [disaster recovery, RPO/RTO and fenced reconciliation](../book/deployment/disaster-recovery-and-recovery-objectives.md). Former [combined regional/DR study](../book/deployment/multi-region-disaster-recovery-contracts.md) is preserved for editorial review.
+- Public primary references used in these five drafts: Danilo Sato's Parallel Change, Kubernetes Deployment and Pod Topology Spread, Argo Rollouts Canary, PostgreSQL 17 PITR and ALTER TABLE, Confluent Schema Registry compatibility and public Well-Architected recovery-strategy guidance. These are **bounded mechanism references**, not proof a fictitious migration, rollback or DR drill succeeded.
+- The original ten-volume **69 D / 0 P / 0 M** question-coverage rubric does not change. The 69-row primary-target uniqueness count must be independently recomputed and checked; **one unique link target per chapter is not complete technical chapter acceptance**.
+- No prior combined research text was erased or silently promoted. Independent technical/copyright/security editorial approval, full bibliography claims, strict metadata/frontmatter, diagram rendering and actual code/restore tests remain open.
 
 ## 2026-10-19 canonical cache-owner split — V06/C01 and C02
 
