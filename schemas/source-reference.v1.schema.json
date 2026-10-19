@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.example.invalid/schemas/source-reference.v1.schema.json",
+  "title": "Tycho resolved source reference v1 (not source-discovery register v2)",
+  "description": "Per-claim citation record, not an assertion that publisher content was read or licensed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source_id",
+    "canonical_url",
+    "source_version",
+    "location",
+    "admission",
+    "verification",
+    "access_checked",
+    "content_verified_at",
+    "reuse_rights"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "source_id": {
+      "type": "string",
+      "pattern": "^src\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "canonical_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://"
+    },
+    "source_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "location": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "section",
+            "url"
+          ],
+          "properties": {
+            "kind": {
+              "const": "document-section"
+            },
+            "section": {
+              "type": "string",
+              "minLength": 1
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "revision",
+            "path",
+            "symbol"
+          ],
+          "properties": {
+            "kind": {
+              "const": "git-code"
+            },
+            "revision": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$"
+            },
+            "path": {
+              "type": "string",
+              "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.?/)(?!.*\\\\)[a-zA-Z0-9._/-]+$"
+            },
+            "symbol": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "admission": {
+      "enum": [
+        "admitted-for-research",
+        "bibliography-only",
+        "pending-content-access"
+      ]
+    },
+    "verification": {
+      "enum": [
+        "identifier-only",
+        "section-inspected",
+        "code-inspected",
+        "unavailable"
+      ]
+    },
+    "access_checked": {
+      "type": "string",
+      "format": "date"
+    },
+    "content_verified_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reuse_rights": {
+      "enum": [
+        "unassessed",
+        "link-only",
+        "approved-with-specific-permission"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "admission": {
+            "enum": [
+              "bibliography-only",
+              "pending-content-access"
+            ]
+          }
+        },
+        "required": [
+          "admission"
+        ]
+      },
+      "then": {
+        "properties": {
+          "verification": {
+            "enum": [
+              "identifier-only",
+              "unavailable"
+            ]
+          },
+          "content_verified_at": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "verification": {
+            "enum": [
+              "section-inspected",
+              "code-inspected"
+            ]
+          }
+        },
+        "required": [
+          "verification"
+        ]
+      },
+      "then": {
+        "properties": {
+          "admission": {
+            "const": "admitted-for-research"
+          },
+          "content_verified_at": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "verification": {
+            "const": "code-inspected"
+          }
+        },
+        "required": [
+          "verification"
+        ]
+      },
+      "then": {
+        "properties": {
+          "location": {
+            "properties": {
+              "kind": {
+                "const": "git-code"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "verification": {
+            "const": "section-inspected"
+          }
+        },
+        "required": [
+          "verification"
+        ]
+      },
+      "then": {
+        "properties": {
+          "location": {
+            "properties": {
+              "kind": {
+                "const": "document-section"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

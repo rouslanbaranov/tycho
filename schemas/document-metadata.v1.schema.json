@@ -1,0 +1,491 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.example.invalid/schemas/document-metadata.v1.schema.json",
+  "title": "Tycho canonical document metadata v1",
+  "description": "Schema syntax checks, not source/claim truth, ID uniqueness across files, or reviewer approvals.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata_version",
+    "id",
+    "kind",
+    "parent_id",
+    "canonical_path",
+    "title",
+    "topic_ids",
+    "perspectives",
+    "summary",
+    "route_hints",
+    "evidence_scope",
+    "content_review",
+    "authored_at",
+    "updated_at",
+    "source_inspection_date",
+    "content_verified_at"
+  ],
+  "properties": {
+    "metadata_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^tycho\\.(book|volume|chapter|page|landing|decision)\\.[a-z0-9]{6,32}$"
+    },
+    "kind": {
+      "enum": [
+        "book",
+        "volume",
+        "chapter",
+        "page",
+        "landing",
+        "decision"
+      ]
+    },
+    "parent_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^tycho\\.(book|volume|chapter|page|landing|decision)\\.[a-z0-9]{6,32}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "canonical_path": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.?/)(?!.*\\\\)[a-zA-Z0-9._/-]+\\.md$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 180
+    },
+    "topic_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      }
+    },
+    "perspectives": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "requirements",
+          "architecture",
+          "implementation",
+          "operations",
+          "security",
+          "migration",
+          "evaluation"
+        ]
+      }
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 700
+    },
+    "route_hints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "questions",
+        "prerequisites",
+        "related_ids",
+        "excludes",
+        "keywords"
+      ],
+      "properties": {
+        "questions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 250
+          }
+        },
+        "prerequisites": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^tycho\\.(book|volume|chapter|page|landing|decision)\\.[a-z0-9]{6,32}$"
+          }
+        },
+        "related_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^tycho\\.(book|volume|chapter|page|landing|decision)\\.[a-z0-9]{6,32}$"
+          }
+        },
+        "excludes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 70
+          }
+        }
+      }
+    },
+    "evidence_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_ids",
+        "claim_ids",
+        "status",
+        "notes"
+      ],
+      "properties": {
+        "source_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^src\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        },
+        "claim_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^claim\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        },
+        "status": {
+          "enum": [
+            "unknown",
+            "discovery-only",
+            "source-linked",
+            "contested",
+            "independently-verified"
+          ]
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      }
+    },
+    "content_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reviewed_at",
+        "reviewer",
+        "proof_uri"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "draft",
+            "self-checked",
+            "independent-reviewed",
+            "accepted"
+          ]
+        },
+        "reviewed_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reviewer": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "proof_uri": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "authored_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "source_inspection_date": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "content_verified_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "book"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "parent_id": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "parent_id": {
+            "type": "string",
+            "pattern": "^tycho\\.(book|volume|chapter|page|landing|decision)\\.[a-z0-9]{6,32}$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "content_review": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "independent-reviewed",
+                  "accepted"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "content_review": {
+            "properties": {
+              "reviewed_at": {
+                "type": "string",
+                "format": "date"
+              },
+              "reviewer": {
+                "type": "string",
+                "minLength": 1
+              },
+              "proof_uri": {
+                "type": "string",
+                "format": "uri",
+                "pattern": "^https://"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidence_scope": {
+            "properties": {
+              "status": {
+                "const": "independently-verified"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "content_verified_at": {
+            "type": "string",
+            "format": "date"
+          },
+          "evidence_scope": {
+            "properties": {
+              "claim_ids": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "book"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^tycho\\.book\\.[a-z0-9]{6,32}$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "volume"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^tycho\\.volume\\.[a-z0-9]{6,32}$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "chapter"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^tycho\\.chapter\\.[a-z0-9]{6,32}$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "page"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^tycho\\.page\\.[a-z0-9]{6,32}$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "landing"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^tycho\\.landing\\.[a-z0-9]{6,32}$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "decision"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^tycho\\.decision\\.[a-z0-9]{6,32}$"
+          }
+        }
+      }
+    }
+  ]
+}
