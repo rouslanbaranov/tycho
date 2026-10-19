@@ -1,6 +1,6 @@
 # M9 — Historical Architecture Modernization Case Studies
 
-**Evidence state:** original author-reviewed **drafts**, not independent-reviewed/accepted Tycho cases. As of 2026-10-19 this collection contains **24** case pages: **9 Netflix** and **15 from 9 other organizations**. A publisher's architectural write-up is evidence of its historical account, not independent validation of an experiment. Do not represent the case counts as finished milestone acceptance until E16-01 and E16-08 gates pass.
+**Evidence state:** original author-reviewed **drafts**, not independent-reviewed/accepted Tycho cases. As of 2026-10-19 this collection contains **25** case pages: **10 Netflix** and **15 from 9 other organizations**. A publisher's architectural write-up is evidence of its historical account, not independent validation of an experiment. Do not represent the case counts as finished milestone acceptance until E16-01 and E16-08 gates pass.
 
 ## Netflix — Java and runtime (#115/#116/#117)
 
@@ -11,6 +11,7 @@
 - [Generational ZGC workload choice](netflix-generational-zgc-workloads.md)
 - [HotSpot false/true sharing](netflix-hotspot-false-true-sharing.md)
 - [Seven-year cloud rearchitecture](netflix-seven-year-cloud-rearchitecture.md)
+- [Chaos Kong region-failure simulation and resilience](netflix-chaos-kong-regional-failover.md)
 - [Casspactor shadow migration](netflix-casspactor-shadow-migration.md)
 - [Cassandra TimeSeries dynamic split](netflix-cassandra-dynamic-time-series-splits.md)
 
