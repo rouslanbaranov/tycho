@@ -216,6 +216,12 @@ def read_case_catalog(root: Path = ROOT) -> tuple[set[str], list[Path]]:
         if not path.startswith("../")
     ]
     require(len(local) == len(set(local)), "case index duplicate Markdown paths")
+    # Treat the selected root as an explicit provenance/security boundary.
+    # resolve() also protects against symlinks that point outside the snapshot.
+    case_boundary = case_dir.resolve()
+    root_boundary = root.resolve()
+    require(all(path.resolve().is_relative_to(case_boundary) for path in local),
+            "case index escapes the selected case collection")
     case_pages = [p for p in local if "decisions" not in p.parts]
     require(len(case_pages) >= 20, "case index lost required cases")
     require(all(p.is_file() for p in local), "missing local case index path")
@@ -239,7 +245,10 @@ def read_case_catalog(root: Path = ROOT) -> tuple[set[str], list[Path]]:
             if not candidate:
                 continue
             if candidate.endswith(".md"):
-                require((path.parent / candidate).resolve().is_file(), path.name + ": broken relative link " + link)
+                target = (path.parent / candidate).resolve()
+                require(target.is_relative_to(root_boundary),
+                        path.name + ": relative link escapes selected root: " + link)
+                require(target.is_file(), path.name + ": broken relative link " + link)
     return ids, local
 
 

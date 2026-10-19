@@ -22,6 +22,7 @@ from validate_m9_cases import (  # noqa: E402
     check,
     iso_date,
     json_read,
+    read_case_catalog,
     self_test,
     validate_record,
 )
@@ -49,6 +50,68 @@ class PinnedRootAndFormatTest(unittest.TestCase):
                 check(selected_root)
             with self.assertRaises(FileNotFoundError):
                 self_test(selected_root)
+
+    @staticmethod
+    def _synthetic_cases(root: Path) -> Path:
+        case_dir = root / "book/cases"
+        case_dir.mkdir(parents=True)
+        lines = []
+        for i in range(20):
+            filename = "case-%02d.md" % i
+            lines.append("- [Case %02d](%s)" % (i, filename))
+            (case_dir / filename).write_text(
+                "# Case %02d\n\nCase ID: `case.synthetic.example-%02d`\n\n"
+                "```mermaid\nflowchart TD\n  A --> B\n```\n\n"
+                "https://example.org/engineering\n" % (i, i), encoding="utf-8")
+        (case_dir / "README.md").write_text("\n".join(lines) + "\n",
+                                            encoding="utf-8")
+        return case_dir
+
+    def test_valid_case_links_inside_snapshot(self) -> None:
+        with tempfile.TemporaryDirectory() as workspace:
+            root = Path(workspace) / "pinned"
+            case_dir = self._synthetic_cases(root)
+            source = root / "sources" / "public.md"
+            source.parent.mkdir(parents=True)
+            source.write_text("Synthetic source", encoding="utf-8")
+            first = case_dir / "case-00.md"
+            first.write_text(first.read_text(encoding="utf-8") +
+                             "\n[Public source](../../sources/public.md)\n",
+                             encoding="utf-8")
+            ids, links = read_case_catalog(root)
+            self.assertEqual(20, len(ids))
+            self.assertEqual(20, len(links))
+
+    def test_existing_file_outside_snapshot_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as workspace:
+            root = Path(workspace) / "pinned"
+            case_dir = self._synthetic_cases(root)
+            outside = Path(workspace) / "private.md"
+            outside.write_text("Must never be accepted as Tycho source",
+                               encoding="utf-8")
+            first = case_dir / "case-00.md"
+            first.write_text(first.read_text(encoding="utf-8") +
+                             "\n[Outside](../../../private.md)\n",
+                             encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "escapes selected root"):
+                read_case_catalog(root)
+
+    def test_case_index_symlink_escape_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as workspace:
+            root = Path(workspace) / "pinned"
+            case_dir = self._synthetic_cases(root)
+            outside = Path(workspace) / "outside.md"
+            outside.write_text("case.synthetic.outside\n", encoding="utf-8")
+            alias = case_dir / "alias.md"
+            try:
+                alias.symlink_to(outside)
+            except (NotImplementedError, OSError):
+                self.skipTest("filesystem does not support test symlinks")
+            index = case_dir / "README.md"
+            index.write_text(index.read_text(encoding="utf-8") +
+                             "- [Alias](alias.md)\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "escapes the selected case collection"):
+                read_case_catalog(root)
 
     def test_independent_review_needs_nonempty_reviewer_and_date(self) -> None:
         schema = json_read(ROOT / "authoring/cases/case-record.schema.json")
