@@ -34,7 +34,7 @@ This improves concurrency properties but doesn't mean two transactions checking 
 | Isolation / mechanism | PostgreSQL 17 documented behavior | Decision risk |
 |---|---|---|
 | Read Committed (default) | Ordinary SELECT gets statement-level committed snapshot; successive queries may see different committed changes | Read-check-write logic can race and must be protected |
-| Repeatable Read | Stable transaction snapshot; PostgreSQL disallows phantom reads at this level, but serialization anomalies remain possible | Snapshot stability is not proof of a serializable invariant |
+| Repeatable Read | Stable snapshot beginning at the first non-transaction-control statement, not necessarily at BEGIN; PostgreSQL disallows phantom reads at this level, but serialization anomalies remain possible | Snapshot stability is not proof of a serializable invariant |
 | Serializable | Committed transactions behave as some serial execution if transactions handle serialization failures correctly | Application must retry the complete transaction safely |
 | Uniqueness / exclusion constraint | DB enforces the declared key/overlap restriction for relevant writes | Restriction must encode the *actual* domain rule |
 | Explicit locks / conditional update | Can coordinate selected rows/keys where appropriate | Locks may be missing for absent rows, cause deadlocks or bottlenecks |
@@ -62,6 +62,40 @@ sequenceDiagram
 **Text alternative:** separate snapshots can both report an empty interval; subsequent inserts may violate an exclusivity requirement unless the complete business restriction is enforced at a valid transactional authority boundary. This example is a *proposed failure model*, not an executed PostgreSQL trace.
 
 Mitigations depend on actual semantics: use a well-designed exclusion constraint, a serializable transaction with correct retries, or an explicit single-owner conditional state model. Simply introducing a mutex inside one application instance does not protect a deployment with multiple replicas.
+
+### Source-scoped executable-looking SQL example: an exclusion invariant
+
+PostgreSQL 17 provides range types and [exclusion constraints](https://www.postgresql.org/docs/17/ddl-constraints.html). The [range-types chapter, §8.17.10](https://www.postgresql.org/docs/17/rangetypes.html) shows how ranges can prevent time overlaps, and the supplied [\`btree_gist\` module, Appendix F.8](https://www.postgresql.org/docs/17/btree-gist.html) provides a GiST-compatible equality operator class for ordinary integer identities. **The following is an original teaching sketch, not SQL run or independently checked in a database.**
+
+```sql
+-- Assumes permission to install the public, bundled extension.
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+CREATE TABLE tool_reservations (
+    reservation_id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    tool_unit_id integer NOT NULL,
+    reserved_during tstzrange NOT NULL,
+    accepted boolean NOT NULL DEFAULT true,
+    CHECK (NOT isempty(reserved_during)),
+    EXCLUDE USING gist (
+        tool_unit_id WITH =,
+        reserved_during WITH &&
+    ) WHERE (accepted)
+);
+
+-- Proposed behavioral check, not a recorded execution:
+INSERT INTO tool_reservations (tool_unit_id, reserved_during)
+VALUES (7, tstzrange('2026-01-01 10:00+00', '2026-01-01 11:00+00', '[)'));
+
+-- Same unit with overlap: expect exclusion violation, not a second
+-- accepted booking, provided this schema and configuration are valid.
+INSERT INTO tool_reservations (tool_unit_id, reserved_during)
+VALUES (7, tstzrange('2026-01-01 10:30+00', '2026-01-01 11:30+00', '[)'));
+```
+
+This **single-database guard** protects overlapping rows satisfying \`accepted\` under the schema's declared definition. It does not decide who is authorized, how two independent state authorities coordinate, whether delayed clients can retry safely, or whether a booking is actually accepted before notification. The half-open interval \`[)\` permits adjacent reservations to meet exactly at one endpoint; requirements might demand a turnover buffer instead. Empty ranges, null bounds, cancellation transitions and data retention need intentional tests.
+
+A general \`CHECK\` constraint is **not** an appropriate substitute for a cross-row overlap invariant: PostgreSQL §5.5 warns that CHECK conditions referring to other rows cannot guarantee ongoing consistency. Neither an application-level SELECT nor a standalone non-unique GiST index automatically enforces the full restriction; the exclusion constraint expresses the rule at the database authority.
 
 ## 4. Serializable still needs a retry protocol
 
@@ -94,6 +128,8 @@ A normalized relational schema is not always the optimal storage model for large
 |---|---|---|
 | [PostgreSQL 17, §5.5 Constraints](https://www.postgresql.org/docs/17/ddl-constraints.html) | PK/FK, unique/check/exclusion constraint types | Exact domain overlap constraint and DDL execution |
 | [PostgreSQL 17, §13.1 MVCC](https://www.postgresql.org/docs/17/mvcc-intro.html) | Snapshot visibility and read/write behavior | Benchmark performance or correctness under a real schema |
+| [PostgreSQL 17, §8.17 Range Types](https://www.postgresql.org/docs/17/rangetypes.html) | Range boundaries, overlap operator and time interval modeling | Actual tested reservation schema |
+| [PostgreSQL 17, Appendix F.8 `btree_gist`](https://www.postgresql.org/docs/17/btree-gist.html) | GiST-equivalent integer equality operators for multicolumn exclusion constraints | Actual installed extension/DDL success |
 | [PostgreSQL 17, §13.2 Transaction Isolation](https://www.postgresql.org/docs/17/transaction-iso.html) | Read Committed/Repeatable Read/Serializable, anomaly and retry semantics | Executed isolation test or actual transaction outcome |
 | [Tycho earlier combined source](postgresql-mvcc-indexes-and-query-plans.md) | Previous version-scoped relational/index discussion | Independent final chapter review |
 
