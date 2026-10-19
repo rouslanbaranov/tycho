@@ -11,12 +11,14 @@ An engineering organization wants an AI coding agent to update a few thousand se
 
 | Actual company case | What its primary source does and does not establish |
 |---|---|
-| [Spotify](../spotify-tech-migration-long-tail.md) | SP01: automated PRs as a fleet-migration tactic, not proof of AI agent success |
+| [Spotify long-tail](../spotify-tech-migration-long-tail.md) | SP01 (2020): automation as a fleet-migration tactic, not an AI-agent outcome |
+| [Spotify Honk](../spotify-honk-data-consumer-migration.md) | SP02/SP03 (2025–26): >1,500 reported merged PRs overall; 240 rolled-out dataset PRs, Scio exclusion, test gaps and owner review |
+| [Shopify Helix](../shopify-helix-checkpoint-gated-native-migration.md) | SH04 (2026): checkpoint-level behavior, visual and two adversarial gates, human sign-off by default |
 | [Stripe](../stripe-online-subscriptions-migration.md) | ST01: comparable old/new reads with Scientist and phased write authority |
 | [Airbnb](../airbnb-jvm-monorepo-bazel.md) | A01: parallel build/test parity and voluntary adoption |
 | [Netflix](../netflix-casspactor-shadow-migration.md) | N11: set-difference proof and fallback selector |
 
-**Why the apparent conflict is useful:** Spotify's 2020 report supports *general automation* and reviewed PRs, not necessarily LLM-generated migration reliability. Stripe supplies correctness checks for mutable data and Netflix supplies set comparisons for batch data; Airbnb shows dual-run build parity. These are separate, evidence-backed guardrails that can be composed into an agentic proposal, not proof that these firms used the same AI harness.
+**Why the apparent conflict is useful:** Spotify's 2020 report supports *general automation*; its separate 2025–26 reports describe actual LLM-backed PR workflows and their limits. Shopify's Helix describes gated native-app migration. Neither publisher reports independently audited escaped-defect or universal correctness rates. Stripe supplies correctness checks for mutable data and Netflix supplies set comparisons for batch data; Airbnb shows dual-run build parity. These are separate, evidence-backed guardrails that can be composed into an agentic proposal, not proof that these firms used the same AI harness.
 
 ## Decision tree and chosen ADR
 
@@ -35,7 +37,7 @@ flowchart TD
 **ADR — Proposed for the synthetic system, not a historical company ADR.**  
 **Status:** proposed, subject to measured baseline and security review.  
 **Context:** An engineering organization wants an AI coding agent to update a few thousand service repositories and simultaneously change a critical datastore schema. The team lacks enough explicit invariants to determine whether generated changes preserve behavior.  
-**Decision:** Limit unattended agent changes to transformations with a machine-checkable contract (API, tests, schema, static analysis), and require human review for semantics or ownership changes. Stage PR cohorts and replay deterministic validation before merge; use online shadow comparisons for data migrations.  
+**Decision:** Require checkpoint-level behavior and approval gates analogous to Shopify SH04; where automatic tests do not exist, route PRs to qualified owner review as Spotify SP03 did. Limit unattended agent changes to transformations with a machine-checkable contract (API, tests, schema, static analysis), and require human review for semantics or ownership changes. Stage PR cohorts and replay deterministic validation before merge; use online shadow comparisons for data migrations.  
 **Rejected for now:** a large irreversible rearchitecture without a verified bottleneck, tests, source/data provenance or fallback.  
 **Consequences:** additional migration observability and temporary dual-state complexity are acceptable while the rollout is reversible; these costs must be budgeted explicitly.
 
@@ -43,7 +45,7 @@ flowchart TD
 
 **Use this evidence when:** a real system has the same dominant constraint, the relevant execution model/data semantics have been measured and its team can operate the new architecture.
 
-**Do not generalize when:** If no reliable test oracle exists or the migration touches hidden business meaning, autopilot is not justified. Diff size, compilation or PR-merge statistics are not correctness; an agent producing 1,500 PRs is not in itself an acceptance metric. SP02/SP03 first-party article bodies currently failed retrieval and are **not admitted** as proof of specific AI success rates.
+**Do not generalize when:** If no reliable test oracle exists or the migration touches hidden business meaning, autopilot is not justified. Diff size, compilation or PR-merge statistics are not correctness; an agent producing 1,500 PRs is not in itself an acceptance metric. SP02/SP03 and Shopify SH04 have now been inspected at their original publishers and admitted for **bounded first-party claims**; none establishes an independent AI-agent escaped-defect rate. Spotify's ~1,800 direct pipelines were scope, not proof of completion; 240 PRs were rolled out, not necessarily merged, and Scio was excluded.
 
 **Independent decision dimensions to measure:** Behavioral regression and invariant failures, source coverage, contract test pass, human review findings, canary rollback, escaped defect rate, PR acceptance/revert ratio measured over observation window.
 
