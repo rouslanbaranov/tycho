@@ -1,6 +1,6 @@
 # Transport-independent retrieval contracts, version 1
 
-> E07-01 [issue #47](https://github.com/rouslanbaranov/tycho/issues/47), M4. Original design contract, 2026-10-19. These envelopes are **specified**, not deployed: no lexical engine, MCP endpoint, graph query service, measured token saving or production performance is claimed.
+> E07-01 [issue #47](https://github.com/rouslanbaranov/tycho/issues/47), M4. Original design contract, 2026-10-19. These envelopes are **specified**, not deployed: no lexical engine, MCP endpoint, measured token saving or production performance is claimed. **Scope revision 2026-10-19:** previously proposed graph operations were retired; only search/read/evidence are mandatory.
 
 ## Common envelope, errors and identity
 
@@ -10,13 +10,13 @@ The same request/response semantics apply to local CLI, Python harness and a fut
 |---|---|
 | `protocol_version` | Exact major integer `1`; unknown versions fail closed |
 | `request_id` | Caller correlation identifier, not authentication |
-| `operation` | `search`, `read`, `graph` or `evidence` |
-| `snapshot_id` | Immutable published index/graph/book snapshot. Null is accepted only for *initial* discovery; returned ID pins all subsequent operations |
+| `operation` | `search`, `read` or `evidence`; optional decision-method guidance resolves canonical documents and evidence |
+| `snapshot_id` | Immutable published book/index/evidence snapshot. Null is accepted only for *initial* discovery; returned ID pins all subsequent operations |
 | `filters` | Exact document ID, kinds, topics, perspectives, source IDs, evidence statuses and optional section boundary |
-| `limits` | `max_results`, `max_chars`, `max_evidence_items`, `max_depth` and timeout; validate positive finite bounded inputs per operation |
+| `limits` | `max_results`, `max_chars`, `max_evidence_items` and timeout; validate positive finite bounded inputs per operation |
 | `cursor` | Opaque continuation bound to snapshot ID, normalized query, filters, sort mode and limit. Tampering/staleness fails closed |
 | `status` | `ok`, `partial`, `no-results`, `snapshot-mismatch`, `incomplete-coverage`, `invalid-request`, `not-available` |
-| `coverage` | Indexed document and section scope, excluded/unbuilt areas and source/graph availability. A zero-hit result is not proof of system-wide absence |
+| `coverage` | Indexed document/section scope, excluded/unbuilt areas and source/evidence availability. A zero-hit result is not proof of system-wide absence |
 | `warnings` | Specific missing evidence, unimplemented semantic features and recheck actions |
 
 Every result repeats protocol version, request ID, *actual* snapshot, status, coverage and warnings; no errors are rendered as ordinary factual citations. A requested snapshot mismatch returns **no new-snapshot result payload** and includes both requested and current identifiers so the caller can restart deliberately.
@@ -33,9 +33,9 @@ Request: `document_id`, optionally `section_id`, exact snapshot, optional `expec
 
 An implementation may prefer paragraph-aligned splitting, but only if it preserves correctly reported offsets and requested budget. Truncated text cannot gain invented source line numbers. Read must not cause enrichment, external fetches, writes or automatic index rebuild.
 
-## Graph: typed, directed, budget-limited neighbors
+## Retired graph operation (2026-10-19)
 
-Request: start node IDs, `outgoing`/`incoming`/`both`, exact allowed relation types and node kinds, `max_depth`, `max_results`, snapshot, cursor. Result: explicit `edge_id`, `from`, `to`, kind, `plane` (code, curated, navigation), conditions, limitations, pinned source version and `evidence_claim_ids`. Use the [graph vocabulary](graph-vocabulary-and-shards.md). A traversal never manufactures transitive `supports`, `candidate_for` or `contradicts` relationships. Missing graph shards return `incomplete-coverage` or `not-available`, not plausible invented neighbors.
+The graph operation originally specified here is **not part of Tycho's required retrieval contract**. No graph neighbors, edge traversal, shard index, graph cursor or graph-related MCP feature should be built or advertised. Historical proposal details were superseded by [the scope ADR](../ADR-RETIRE-CURATED-KNOWLEDGE-GRAPH.md). Conceptual cross-topic navigation uses ranked canonical document reads and explicit source-to-claim evidence instead.
 
 ## Evidence: verification is separate from retrieval
 
