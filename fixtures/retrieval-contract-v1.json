@@ -1,0 +1,86 @@
+{
+  "fixture_set": "Transport-independent examples; no live service",
+  "protocol_version": 1,
+  "cases": [
+    {
+      "name": "bounded-search",
+      "request": {
+        "protocol_version": 1,
+        "request_id": "synthetic-001",
+        "operation": "search",
+        "snapshot_id": null,
+        "query": "idempotent retry effects",
+        "filters": {
+          "document_kinds": [
+            "page"
+          ],
+          "evidence_status": [
+            "section-linked"
+          ]
+        },
+        "limits": {
+          "max_results": 3,
+          "max_chars": 1200
+        }
+      },
+      "response": {
+        "protocol_version": 1,
+        "request_id": "synthetic-001",
+        "snapshot_id": "fixture:book-v1",
+        "status": "incomplete-coverage",
+        "coverage": {
+          "indexed_documents": 1,
+          "graph_available": false,
+          "vector_available": false
+        },
+        "results": [
+          {
+            "document_id": "tycho.page.synthetic-outbox",
+            "section_id": "retry",
+            "path": "book/distributed/transactional-outbox-and-idempotency.md",
+            "heading": "Retry and duplicate effects",
+            "citation": "tycho.page.synthetic-outbox#retry",
+            "snippet": "Illustrative route only; do not infer read verification.",
+            "evidence_status": "discovery-only",
+            "source_ids": [],
+            "claim_ids": []
+          }
+        ],
+        "next_cursor": null,
+        "warnings": [
+          "Synthetic fixture; not an actual index response"
+        ]
+      }
+    },
+    {
+      "name": "stale-read-rejected",
+      "request": {
+        "protocol_version": 1,
+        "request_id": "synthetic-002",
+        "operation": "read",
+        "snapshot_id": "fixture:outdated",
+        "document_id": "tycho.page.synthetic-outbox",
+        "section_id": "retry",
+        "offset": 0,
+        "limits": {
+          "max_chars": 1200
+        }
+      },
+      "response": {
+        "protocol_version": 1,
+        "request_id": "synthetic-002",
+        "snapshot_id": "fixture:book-v1",
+        "requested_snapshot_id": "fixture:outdated",
+        "status": "snapshot-mismatch",
+        "coverage": {
+          "indexed_documents": 1
+        },
+        "results": [],
+        "next_cursor": null,
+        "warnings": [
+          "Do not silently read another snapshot"
+        ]
+      }
+    }
+  ]
+}
