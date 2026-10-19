@@ -80,6 +80,38 @@ The same gate structure can be adapted to a **hypothetical backend refactor**: d
 
 Compare [Spotify Honk's incomplete dataset testing](spotify-honk-data-consumer-migration.md) and [the independent decision guide](decisions/agentic-migration-safety.md). The important **contraindication** is absence of an oracle: a gated harness cannot certify equivalence if it has no trustworthy reference, and the right outcome is *human decision required / insufficient evidence*.
 
+## What a checkpoint certifies—and what it cannot
+
+The September 2026 first-party SH04 description separates **three review oracles**: expected reference behavior, visual correspondence, and adversarial code/architecture review. They do not certify the same thing. A script can correctly navigate a screen while violating the intended data authorization boundary; a screenshot can look correct while accessibility or state persistence fails; two AI reviewers can agree while sharing an incorrect assumption. Treat each as a **separate veto** over a bounded change.
+
+| Checkpoint evidence | Positive result permits | Additional evidence needed |
+|---|---|---|
+| Reference interaction states | Move to the next implementation/test gate | Failure-path state, offline/disconnected operation and test determinism |
+| Generated behavior tests | Assert observed mappings for exercised user actions | Real product invariants not represented in the reference |
+| Visual comparison | Validate layout, typography, spacing and state variants in tested viewport | Accessibility, localization, keyboard navigation, hardware/OS variants |
+| Adversarial code review | Catch implementation anti-patterns and unsupported assumptions | Human architecture and security ownership; reviewer disagreement resolution |
+| Approval/commit gate | Fix one checkpoint's state in version control | Deploy/canary telemetry, release safety and end-to-end defect monitoring |
+
+The table is **Tycho analytical categorization**; the source does not publish a universal coverage percentage for these oracles or an independently audited escaped-defect benchmark. Shopify's report distinguishes a shipped native **Shop** app from an **ongoing larger Shopify App** rewrite. A successful app-specific project cannot be treated as 100%-fleet migration.
+
+## Original decision record for an unrelated UI modernization
+
+**Hypothetical baseline:** a cross-platform mobile product has shared-state screens, device-specific APIs, multiple languages, accessibility requirements and an independently released backend. Native Swift and Kotlin may improve OS integration but create duplicated maintenance and two sets of platform-specific defects. The alternatives are (a) keep the existing shared runtime and modernize it, (b) extract only the device-specific feature layer, or (c) rebuild native screens incrementally behind stable API contracts.
+
+The decision should not be “AI makes code cheap.” It should depend on native-platform capability, responsiveness, build/release cost, ability to keep reference behavior testable, and staffed ownership of both native apps. SH04's reported checkpoint approach is transferable as a *review method* even when a full native rewrite is not the correct architecture.
+
+## A reversible proof strategy
+
+Begin with one screen whose source behavior can be driven deterministically. Record the complete state machine: initial and error states, navigation transitions, identity/permission checks, persistence and network failure. Implement the smallest native slice behind an opt-in route or experiment flag. At each step, run original-reference behavior tests, native integration tests, visual/accessibility checks, static analysis and architecture review independently. Do not carry a failing checkpoint forward by masking its test; expose uncertainty to an authorized owner.
+
+After checkpoint acceptance, validate app lifecycle behavior, feature flags, serialization and backend contract evolution before canary release. Preserve a rollback to the former screen implementation until user telemetry and incident response validate the replacement. **Stop** if the reference runtime is inaccessible, a visual metric hides a functional regression, platform code cannot respect security constraints, or reviewer disagreements cannot be adjudicated.
+
+This is an **original Tycho migration design**, not a description of Shopify's private deployment stages. The reported 12-week Shop app delivery is a company outcome with project-specific resources; no reproducible claim about total cost or a universal release interval follows.
+
+## Authority and autonomy are explicit choices
+
+The source's default engineer approval and opt-in autonomous mode make approval a **configurable authority boundary**. For any high-risk migration, human signoff should be governed by the risk of irreversible user state change, access-control impact and test-oracle uncertainty—not by the size of a diff or a model's confidence. A checkpoint with no independent oracle should result in a *review task or refusal*, not an autonomously merged change. Contrast Spotify's [missing-test dataset migration](spotify-honk-data-consumer-migration.md): an automated patch is not verified merely because the generator completed.
+
 ## Evidence / claims / uncertainty
 
 SH04 reports that **Shop** was already shipped natively after approximately **12 weeks** and Shopify App rebuild work was continuing. The article does not publish a controlled comparison of bug escape rates, total cost, long-term maintenance or productivity across identical teams; these remain **unknown**. The opt-in autonomous mode is not a universal safety guarantee. Original diagrams/text are not copied; source URL and section-level attribution only.
