@@ -34,10 +34,10 @@
 
 | Planned chapter | Coverage | Observed primary material | Outstanding work |
 |---|---|---|---|
-| V02/C01 — Layered, modular and ports-and-adapters design | D | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Confirm full layered/ports/adapters mechanics, dependency enforcement and limits. |
+| V02/C01 — Layered, modular and ports-and-adapters design | D | [Separate draft](../book/application/layered-hexagonal-ports-and-adapters.md) | Dedicated layered/ports/adapters design, invented invariants and test boundaries; no build/test or peer sign-off. |
 | V02/C02 — Domain boundaries, data ownership and contracts | D | [New domain ownership chapter](../book/application/domain-boundaries-data-ownership-and-contracts.md) | Separate domain/data/deployment authority and contract evolution; review pending. |
 | V02/C03 — Modular monolith and internal events | D | [New modular monolith and internal events chapter](../book/application/modular-monolith-and-internal-events.md) | Versioned Spring event semantics and module boundaries, original transaction/crash examples; review pending. |
-| V02/C04 — SOA, microservices and distributed boundaries | D | [Technical page](../book/application/architecture-styles-and-module-boundaries.md) | Deepen SOA versus microservices decisions with independent deployment conditions. |
+| V02/C04 — SOA, microservices and distributed boundaries | D | [Separate draft](../book/application/service-orientation-microservices-and-distribution.md) | Dedicated public SOA/microservices comparison with remote-boundary failure trade-offs; no deployment or source-by-claim approval. |
 | V02/C05 — Public APIs, HTTP/RPC and compatibility | D | [New chapter draft](../book/application/http-rpc-contracts-and-compatibility.md) | Newly written; pending independent technical review, full local verification and final V02 chapter/page assembly. |
 | V02/C06 — Integration adapters and anti-corruption boundaries | D | [New anti-corruption adapters chapter](../book/application/anti-corruption-adapters-and-coexistence.md) | Original semantic mappings, lost-acknowledgment contract and migration tests; review pending. |
 | V02/C07 — Authorization boundaries and multitenancy | D | [Focused draft](../book/application/authorization-boundaries-and-multitenancy.md) | OWASP/tenancy model plus original isolation/negative tests; no security assessment. |
@@ -60,8 +60,8 @@
 | V04/C01 — Time, causality and ordering | D | [Technical page](../book/distributed/causality-ordering-and-consensus.md) | Maintain separate causal-order guarantees and counterexamples. |
 | V04/C02 — Replication, consensus and leader changes | D | [Focused draft](../book/distributed/replication-consensus-and-leader-change.md) | Raft/etcd quorum and failure model with synthetic partitions; no cluster tests. |
 | V04/C03 — Consistency and distributed transactions | D | [Technical page](../book/distributed/transaction-isolation-and-sagas.md) | Test invariant scope and real cross-boundary limitations of transaction choices. |
-| V04/C04 — Retries, idempotency and duplicate effects | D | [Technical page](../book/distributed/transactional-outbox-and-idempotency.md) | Preserve scoped idempotency identities and duplicate-effect failure cases. |
-| V04/C05 — Outbox, inbox, sagas and durable workflows | D | [Technical page](../book/distributed/transactional-outbox-and-idempotency.md) | Integrate saga ownership and durable-workflow recovery without canonical duplication. |
+| V04/C04 — Retries, idempotency and duplicate effects | D | [Separate draft](../book/distributed/retries-idempotency-and-ambiguous-effects.md) | Dedicated logical operation/effect identity and lost-acknowledgment semantics; no executable fixture. |
+| V04/C05 — Outbox, inbox, sagas and durable workflows | D | [Separate draft](../book/distributed/outbox-inbox-sagas-and-durable-workflows.md) | Dedicated outbox/inbox/saga/workflow state and failure recovery; no broker/DB/workflow execution. |
 | V04/C06 — Messaging families and delivery contracts | D | [Technical page](../book/integration/messaging-families-and-durable-workflows.md) | Reconcile per-broker ordering/ack/retention guarantees and limits. |
 | V04/C07 — Kafka logs, partitions and transactions | D | [Technical page](../book/integration/kafka-partitions-replication-and-contracts.md) | Deepen producer/consumer transaction, version and replay failure edge cases. |
 | V04/C08 — Stateful/event-time stream processing | D | [Technical page](../book/integration/stateful-stream-processing-and-cdc.md) | Verify watermarks, checkpoint/savepoint and CDC recovery cases. |
@@ -177,6 +177,14 @@
 3. Deepen P subjects; for D subjects perform a chapter-specific acceptance review and extend when the chapter question is not completely answered.
 4. Resolve canonical owners and evidence states; keep this matrix updated as chapters become genuinely ready.
 5. After all 69 are editorially content-complete, move to [final ten-volume book assembly #214](https://github.com/rouslanbaranov/tycho/issues/214): chapter/page structure, metadata, full navigation, end-to-end checks and an edition release.
+
+## 2026-10-19 additional canonical-owner separation — V02 and V04
+
+- Four independent original, English, source-led technical manuscript drafts now own proposed **V02/C01** [layered/hexagonal ports](../book/application/layered-hexagonal-ports-and-adapters.md), **V02/C04** [service orientation and microservices](../book/application/service-orientation-microservices-and-distribution.md), **V04/C04** [retries and effect identity](../book/distributed/retries-idempotency-and-ambiguous-effects.md), and **V04/C05** [outbox, inbox, sagas and durable workflows](../book/distributed/outbox-inbox-sagas-and-durable-workflows.md).
+- Prior combined [application styles](../book/application/architecture-styles-and-module-boundaries.md) and [outbox/idempotency](../book/distributed/transactional-outbox-and-idempotency.md) research articles remain preserved as *research input* until exact source/claim and duplicate-mechanism reconciliation. Neither is still mapped as a primary sole chapter destination for the four owners.
+- Re-fetched the four chapter files on this branch: **5,865 Markdown whitespace-separated words**, **five original Mermaid diagrams**, exactly one H1 each, all code fences balanced. Retrieved **18/18 distinct local Markdown target files** referenced by the four drafts on the same branch. Target existence does not mean anchors, cited external URLs or full technical claim validity were verified.
+- Public reference sections checked while writing: Cockburn's 2005 hexagonal architecture, Lewis/Fowler 2014 microservices, OASIS SOA Reference Model v1.0, RFC 9110 §9.2.2, Debezium 3.6 Outbox Event Router, Richardson's transactional-outbox, idempotent-consumer and saga pattern descriptions. Independently published sources describe narrow mechanisms; no real system tests or independent full claim review were performed.
+- **Status remains 69 D / 0 P / 0 M** as an *indicative topical prose classification*, not completed chapter or volume acceptance. Update the canonical-owner overlap count from the branch matrix separately; do not guess from the number of new files. No graph infrastructure, worker, M9 case, MCP/search/deployment implementation or scheduled task was touched.
 
 ## Editorial structure QA — four distinct V09 manuscripts
 
