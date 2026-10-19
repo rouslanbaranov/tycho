@@ -1,0 +1,40 @@
+# M9 — Historical Architecture Modernization Case Studies
+
+**Evidence state:** original author-reviewed **drafts**, not independent-reviewed/accepted Tycho cases. As of 2026-10-19 this collection contains **22** case pages: **9 Netflix** and **13 from 9 other organizations**. A publisher's architectural write-up is evidence of its historical account, not independent validation of an experiment. Do not represent the case counts as finished milestone acceptance until E16-01 and E16-08 gates pass.
+
+## Netflix — Java and runtime (#115/#116/#117)
+
+- [Java service platform convergence](netflix-java-platform-convergence.md)
+- [Zuul 2 async gateway](netflix-zuul2-nonblocking-gateway.md)
+- [DGS and Spring GraphQL](netflix-dgs-spring-graphql-convergence.md)
+- [Java 21 virtual-thread pinning](netflix-java21-virtual-thread-pinning.md)
+- [Generational ZGC workload choice](netflix-generational-zgc-workloads.md)
+- [HotSpot false/true sharing](netflix-hotspot-false-true-sharing.md)
+- [Seven-year cloud rearchitecture](netflix-seven-year-cloud-rearchitecture.md)
+- [Casspactor shadow migration](netflix-casspactor-shadow-migration.md)
+- [Cassandra TimeSeries dynamic split](netflix-cassandra-dynamic-time-series-splits.md)
+
+## Other companies (#118)
+
+- [Uber DOMA](uber-doma-domains.md)
+- [Uber Mezzanine trip migration](uber-mezzanine-pg-to-schemaless.md)
+- [Uber MyRocks](uber-mysql-to-myrocks.md)
+- [Shopify modular monolith](shopify-modular-monolith.md)
+- [Shopify component governance](shopify-packwerk-boundary-evolution.md)
+- [Airbnb Bazel JVM build migration](airbnb-jvm-monorepo-bazel.md)
+- [Stripe online data migration](stripe-online-subscriptions-migration.md)
+- [Discord ScyllaDB messages](discord-cassandra-scylladb-messages.md)
+- [Discord search index cells](discord-search-index-cells.md)
+- [Spotify long-tail platform migrations](spotify-tech-migration-long-tail.md)
+- [Cloudflare queue-backed Super Slurper](cloudflare-super-slurper-queues.md)
+- [Meta TAO graph serving](meta-tao-social-graph-serving.md)
+- [LinkedIn audited Kafka tiers](linkedin-kafka-tiered-completeness.md)
+
+## Reading and agent retrieval policy
+
+Every document should be read with its original publication period, exact first-party article sections, claim uncertainty and counter-architectures. The cases contrast incompatible answers: Netflix's microservice/cloud move and Shopify's modular-monolith choice; Zuul 2 async connection scale and Java 21 virtual-thread incident; ZGC tail latency and Parallel GC batch throughput; storage engine swaps and incremental schema changes.
+
+- Sources and access status: [initial company register](../../sources/REAL_WORLD_ARCHITECTURE_CASES.md), [43-source audit](../../sources/REAL_WORLD_CASES_CANDIDATE_AUDIT.md), [first Netflix claim ledger](../../sources/REAL_WORLD_CASES_ADMISSION_WAVE_01.md).
+- Program and acceptance: [M9 case-study program](../../authoring/REAL_WORLD_CASE_STUDY_PROGRAM.md), [E16-01 #114](https://github.com/rouslanbaranov/tycho/issues/114), [E16-08 #121](https://github.com/rouslanbaranov/tycho/issues/121).
+- The source register's five inaccessible entries (N14, N15, SH04, SP02, SP03) remain out of the authored case set until resolved. The Stripe TypeScript redirect currently exposes insufficient article body for substantive technical assertions; it is also excluded from case authoring.
+- All Mermaid diagrams are newly authored conceptual schematics. Any reported performance numbers are explicitly scoped by source and period. No independent technical peer review or system benchmarks have yet been completed.
