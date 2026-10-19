@@ -5,7 +5,7 @@
 ## Current objectively verified state
 
 - **69 distinct proposed Vxx/Cxx IDs, 69 distinct primary Markdown paths, 69/69 files fetched from the active branch**. No primary article is now assigned to two planned chapter IDs; the eight historical multi-owner overlap groups have been separated **at file-path ownership level**.
-- **110,922 whitespace-separated Markdown tokens/words** across the 69 primary drafts at this checkpoint (sum of simple `trim().split(/\s+/)` counts returned while re-reading files). This **includes Markdown syntax, tables, reference URLs, diagram labels and citations**: it is neither prose word count nor pagination, and indicates no completeness or quality threshold. It excludes preserved earlier shared research and unlisted supplementary pages.
+- **111,272 whitespace-separated Markdown tokens/words** across the 69 primary drafts at this checkpoint (sum of simple `trim().split(/\s+/)` counts returned while re-reading files). This **includes Markdown syntax, tables, reference URLs, diagram labels and citations**: it is neither prose word count nor pagination, and indicates no completeness or quality threshold. It excludes preserved earlier shared research and unlisted supplementary pages.
 - **All 69 chapter content/technical/source acceptance states are still PENDING**. No chapter is certified merely by having an H1, source links, 1,000 words or a Mermaid diagram. The editorial contract explicitly rejects fixed page or word quotas.
 - **44/44 distinct local link-target files** referenced by the preceding 13 newly authored owner drafts were re-fetched and existed. This tests target file existence **only**; anchors, individual assertions, bibliography versions, diagram rendering and complete repo navigation remain unchecked.
 - **Four narrow public reference samples** independently rechecked during this checkpoint: RFC-compatible consumer deduplication pattern (Microservices.io), saga local-transaction/compensation semantics (Microservices.io), PostgreSQL 17 isolation behaviors, and Kubernetes topology spread constraints; independent URL/document checks do not establish full source-to-claim acceptance or runtime tests. Published AWS recovery automation guidance was also inspected for its fail-safe stop rule.
@@ -19,13 +19,13 @@
 | V02 | 7 | 11,453 | 1,354–2,357 |
 | V03 | 6 | 8,620 | 1,018–1,861 |
 | V04 | 8 | 12,552 | 1,219–1,787 |
-| V05 | 7 | 10,600 | 1,131–2,065 |
+| V05 | 7 | 10,950 | 1,131–2,065 |
 | V06 | 7 | 9,743 | 1,113–1,711 |
 | V07 | 7 | 13,367 | 1,408–3,068 |
 | V08 | 7 | 9,646 | 1,045–1,841 |
 | V09 | 7 | 11,015 | 1,173–1,856 |
 | V10 | 7 | 13,947 | 1,617–2,453 |
-| **All** | **69** | **110,922** | **1,018–3,068** |
+| **All** | **69** | **111,272** | **1,018–3,068** |
 
 These numbers are **triage signals, not required word targets**. A relatively short chapter may be complete if the question is narrow and well explained; a relatively long one may be repetitive or contain unverified claims.
 
@@ -62,7 +62,7 @@ These numbers are **triage signals, not required word targets**. A relatively sh
 | V04/C06 | Messaging families and delivery contracts | [Primary draft](../book/integration/messaging-families-and-durable-workflows.md) | 1,564 | PENDING |
 | V04/C07 | Kafka logs, partitions and transactions | [Primary draft](../book/integration/kafka-partitions-replication-and-contracts.md) | 1,715 | PENDING |
 | V04/C08 | Stateful/event-time stream processing | [Primary draft](../book/integration/stateful-stream-processing-and-cdc.md) | 1,596 | PENDING |
-| V05/C01 | Relational modeling and transaction isolation | [Primary draft](../book/data/relational-modeling-and-transaction-isolation.md) | 1,224 | PENDING |
+| V05/C01 | Relational modeling and transaction isolation | [Primary draft](../book/data/relational-modeling-and-transaction-isolation.md) | 1,574 | PENDING |
 | V05/C02 | PostgreSQL MVCC, WAL and recovery | [Primary draft](../book/data/postgresql-wal-replication-and-recovery.md) | 1,569 | PENDING |
 | V05/C03 | Query planning, indexes and access paths | [Primary draft](../book/data/postgresql-indexes-statistics-and-query-plans.md) | 1,456 | PENDING |
 | V05/C04 | Alternative data models and stores | [Primary draft](../book/data/storage-model-alternatives-and-workload-fit.md) | 2,065 | PENDING |
@@ -124,6 +124,13 @@ A chapter can change from `PENDING` only after all applicable gates have records
 - Pay extra attention to compact but high-consequence technical pages such as **V03/C01** (task cancellation), **V08/C04** (rollout gating), **V08/C06–C07** (HA/DR), and **V06/C06** (graph query semantics as a topic, not an infrastructure feature). Compactness is not a failure classification.
 - Audit the **whole Git source tree** for manuscript content not listed as a primary target. This register verifies *assigned primary drafts only*. Do not delete or migrate old pages solely because a mapping exists.
 - Defer final ten-volume/69-chapter/page packaging until chapters pass content/source/depth acceptance. Issue #214 is an edition build task, not a substitute for #213.
+
+## Focused source verification and manuscript deepening — V05/C01
+
+- Rechecked exact PostgreSQL **17** published sections for [transaction isolation](https://www.postgresql.org/docs/17/transaction-iso.html), [constraints](https://www.postgresql.org/docs/17/ddl-constraints.html), [range types and range constraints](https://www.postgresql.org/docs/17/rangetypes.html), and [`btree_gist` operator classes](https://www.postgresql.org/docs/17/btree-gist.html). Their documented behavior was used to add a **clearly unexecuted** example of an overlapping-booking exclusion constraint to [V05/C01](../book/data/relational-modeling-and-transaction-isolation.md). It now has **1,574** whitespace-separated Markdown terms at the new checkpoint (previously 1,224).
+- Clarified a PostgreSQL-specific nuance: the Repeatable Read snapshot begins with the first non-transaction-control statement rather than simply at `BEGIN`; serialization anomaly limits and transaction retry requirements were checked against §13.2.
+- **The SQL example was not run.** No `psql` or PostgreSQL server executable was detected in the working runtime (only `pg_config`), and a static Markdown/link check cannot establish SQL correctness. A real PostgreSQL 17 fixture and concurrent-write/restore experiment remain required for operational acceptance.
+- This is a **partial evidence verification**, not comprehensive technical chapter sign-off. Its status remains PENDING. The recorded book-primary aggregate was updated by the measured 350-term difference.
 
 ## Reproducibility and open limitations
 
