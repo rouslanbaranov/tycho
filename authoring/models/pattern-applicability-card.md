@@ -6,7 +6,7 @@
 
 An architecture pattern is useful only under a defined problem, workload, correctness invariant and operating environment. A card describes **when to consider the pattern and when to reject or defer it**, its mechanism-specific evidence, alternatives, costs and a falsifiable validation experiment. No pattern is `best` across unspecified workloads. A software product is an implementation candidate, not a synonym for a pattern; a broad architecture style is not the same as a protocol mechanism.
 
-Related canonical sources: the [requirements/workload model](requirements-workload-profile.md), [legacy baseline model](legacy-modernization-profile.md), [queueing research](../../book/performance/queueing-littles-law.md) and [outbox and idempotency pilot](../../book/distributed/transactional-outbox-and-idempotency.md). Use the [blank reusable template](../../templates/pattern-applicability-card.md). The worked [admission-control example](../../examples/synthetic-admission-control-card.md) is fiction.
+Related canonical sources: the [requirements/workload model](requirements-workload-profile.md), [legacy baseline model (pending draft PR #140)](https://github.com/rouslanbaranov/tycho/pull/140), [queueing research](../../book/performance/queueing-littles-law.md) and [outbox and idempotency pilot](../../book/distributed/transactional-outbox-and-idempotency.md). Use the [blank reusable template](../../templates/pattern-applicability-card.md). The worked [admission-control example](../../examples/synthetic-admission-control-card.md) is fiction.
 
 ## Card identity and classification
 
