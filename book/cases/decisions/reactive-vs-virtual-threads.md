@@ -13,9 +13,10 @@ A legacy API gateway has 40,000 mostly idle TLS/client connections, occasional C
 |---|---|
 | [Netflix gateway](../netflix-zuul2-nonblocking-gateway.md) | N07: Zuul2 gained connection scale; CPU gain differed by cluster |
 | [Netflix Java](../netflix-java21-virtual-thread-pinning.md) | N06: four carrier threads pinned by tracing in Java21 REST stack |
+| [Netflix gRPC worker pool](../netflix-grpc-cpu-workerpool-virtual-thread-regression.md) | N02: 2023 practitioner account of a CPU-intensive outgoing gRPC worker pool that became a **few percent slower** after trying virtual threads; no exact benchmark published |
 | [Cloudflare](../cloudflare-super-slurper-queues.md) | CF01: I/O copy fan-out via queues/workers, small-test regression |
 
-**Why the apparent conflict is useful:** Zuul2 exposes network connection scaling as a primary win even without universal CPU gains; Netflix's Loom incident exposes hidden synchronization risk; Cloudflare's queue fan-out addresses asynchronous tasks at a different durability granularity.
+**Why the apparent conflict is useful:** Zuul2 exposes network connection scaling as a primary win even without universal CPU gains; Netflix's Loom incident exposes hidden synchronization risk, while its separate CPU-intensive gRPC worker-pool experiment became slower without any carrier-pinning incident; Cloudflare's queue fan-out addresses asynchronous tasks at a different durability granularity.
 
 ## Decision tree and chosen ADR
 
@@ -34,7 +35,7 @@ flowchart TD
 **ADR — Proposed for the synthetic system, not a historical company ADR.**  
 **Status:** proposed, subject to measured baseline and security review.  
 **Context:** A legacy API gateway has 40,000 mostly idle TLS/client connections, occasional CPU-heavy authentication and several blocking JDBC clients. A second workload is a batched object copy with long cloud-storage RTTs. The two workloads must not inherit one universal concurrency pattern.  
-**Decision:** For connection-heavy gateway layers, test event-loop multiplexing with strict isolation of blocking components; for blocking Java request handlers, test virtual threads **only after** all instrumentation and synchronization code is known safe on the target JDK. For durable bulk copy, queues/worker backpressure may be more relevant than either thread model.  
+**Decision:** For connection-heavy gateway layers, test event-loop multiplexing with strict isolation of blocking components; for I/O-bound blocking Java request handlers, test virtual threads **only after** all instrumentation and synchronization code is known safe on the target JDK; keep **CPU-intensive gRPC worker execution** on a bounded platform-thread pool unless workload-specific measurements justify another model. For durable bulk copy, queues/worker backpressure may be more relevant than either thread model.  
 **Rejected for now:** a large irreversible rearchitecture without a verified bottleneck, tests, source/data provenance or fallback.  
 **Consequences:** additional migration observability and temporary dual-state complexity are acceptable while the rollout is reversible; these costs must be budgeted explicitly.
 
@@ -42,13 +43,13 @@ flowchart TD
 
 **Use this evidence when:** a real system has the same dominant constraint, the relevant execution model/data semantics have been measured and its team can operate the new architecture.
 
-**Do not generalize when:** Do not put CPU-intensive crypto or JDBC on Netty's event loop. Do not expect Loom to accelerate CPU instructions or automatically eliminate pinning in Java21. Do not use queue fan-out for tiny synchronous requests where enqueue latency dominates.
+**Do not generalize when:** Do not put CPU-intensive crypto or JDBC on Netty's event loop. Netflix reported a *few-percent regression* in an outgoing CPU-intensive gRPC pool (N02); do not treat it as a numeric benchmark or the later 2024 tracing-lock incident. Do not expect Loom to accelerate CPU instructions or automatically eliminate pinning in Java21. Do not use queue fan-out for tiny synchronous requests where enqueue latency dominates.
 
 **Independent decision dimensions to measure:** Active connections/thread, carrier pinning/queue, event-loop stalls, canceled and retried requests, CPU per operation, p99 by class, queue age and dead-letter counts.
 
 ## Modernization plan
 
-Categorize I/O waits vs CPU work → trace blocking library calls → pin JDK/runtime and HTTP implementation → introduce reversible canary per endpoint → inject stalled dependencies and trace-context failures → guard downstream concurrency with budgets.
+Categorize I/O waits vs CPU work *separately for outgoing gRPC worker pools, inbound REST handlers and event-loop callbacks* → trace blocking library calls → pin JDK/runtime and HTTP implementation → introduce reversible canary per endpoint → inject stalled dependencies and trace-context failures → guard downstream concurrency with budgets.
 
 **Reversal triggers / insufficient evidence:** If I/O waiting becomes negligible and CPU-heavy tasks dominate, retain a simpler bounded worker design. If tracing or locks cannot be made carrier-safe, postpone Loom and test later JDKs.
 
