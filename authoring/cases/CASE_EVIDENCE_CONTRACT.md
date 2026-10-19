@@ -21,6 +21,7 @@
 - `case-record.schema.json` is a portable **Draft 2020-12 proposal**. The owning K11 implementation may promote/adapt it after compatibility review; until then this is not declared the book's canonical production schema.
 - Fields `case_id`, `title`, `company`, `status`, `observed_on`, `legacy_state`, `target_state`, `source_refs`, `claims`, `patterns`, `constraints`, `failure_modes`, `review` must be present. Schema is strict about allowed fields.
 - Individual claims require `source_ref_id`, source `section` or `timestamp`, source-reported vs synthesized `evidence_type`, `validity_window` and `qualification`. Unknown unsupported claims may be represented as `insufficient_evidence`, but never silently admitted.
+- **Two-layer date checks:** Draft 2020-12 + `FormatChecker` validates the syntax of `valid_from` and `valid_until` individually; it does **not** express their relative chronological ordering in this schema. The portable Python `validate_record` semantic check rejects `valid_from > valid_until` when both exist. Future K11 adapters MUST retain this distinct business invariant. Test classification: **nine invalid schema shapes + one semantically inverted date window**; reporting ten JSON Schema failures is wrong.
 - The contract describes logical, not physical index formats. No Elasticsearch/Lucene/vector embedding shape is mandated by M9.
 
 ## Proposed graph relations (K15/K16 owners implement only after review)
