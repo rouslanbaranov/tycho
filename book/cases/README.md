@@ -1,6 +1,6 @@
 # M9 — Historical Architecture Modernization Case Studies
 
-**Evidence state:** original author-reviewed **drafts**, not independent-reviewed/accepted Tycho cases. As of 2026-10-19 this collection contains **28** case pages: **11 Netflix** and **17 from 9 other organizations**. A publisher's architectural write-up is evidence of its historical account, not independent validation of an experiment. Do not represent the case counts as finished milestone acceptance until E16-01 and E16-08 gates pass.
+**Evidence state:** original author-reviewed **drafts**, not independent-reviewed/accepted Tycho cases. As of 2026-10-19 this collection contains **29** case pages: **12 Netflix** and **17 from 9 other organizations**. A publisher's architectural write-up is evidence of its historical account, not independent validation of an experiment. Do not represent the case counts as finished milestone acceptance until E16-01 and E16-08 gates pass.
 
 ## Netflix — Java and runtime (#115/#116/#117)
 
@@ -9,6 +9,7 @@
 - [Zuul 2 async gateway](netflix-zuul2-nonblocking-gateway.md)
 - [DGS and Spring GraphQL](netflix-dgs-spring-graphql-convergence.md)
 - [Java 21 virtual-thread pinning](netflix-java21-virtual-thread-pinning.md)
+- [CPU-heavy gRPC worker-pool virtual-thread regression](netflix-grpc-cpu-workerpool-virtual-thread-regression.md)
 - [Generational ZGC workload choice](netflix-generational-zgc-workloads.md)
 - [HotSpot false/true sharing](netflix-hotspot-false-true-sharing.md)
 - [Seven-year cloud rearchitecture](netflix-seven-year-cloud-rearchitecture.md)
