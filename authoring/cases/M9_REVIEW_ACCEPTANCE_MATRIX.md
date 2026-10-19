@@ -5,7 +5,7 @@
 ## Scope frozen for this review preparation
 
 - Source register: **43 unique candidates**, **41** with at least one bounded public claim or deliberately narrow publisher-scoped abstract/team-charter statement, **2 deferred** (N14 Conductor primary original not readable; ST02 Stripe TypeScript primary redirects to metadata). These two are **excluded from asserting technical outcomes**.
-- Pages: **25** bounded original case drafts, including **10 Netflix** and **15 other-company** cases, indexed from `book/cases/README.md`.
+- Pages: **28** bounded original case drafts, including **11 Netflix** and **17 other-company** cases, indexed from `book/cases/README.md`.
 - Comparisons: **6** case-backed synthetic decision playbooks, not company ADRs.
 - Agent evaluation: **44** proposed retrieval test fixtures (14 answerable, 21 unsupported/false-claim rejection, 9 insufficient evidence) plus **2** example records and a Draft 2020-12 *proposed* JSON schema.
 - Case-specific provenance: stable human-readable `case.*` IDs in all reviewed draft pages; first-party URL reference and Mermaid diagram present in each sampled path; no source article image imported.
@@ -16,8 +16,8 @@
 | Check | Evidence / result | Status |
 |---|---|---|
 | Source register vs admission matrix | 43 registered source IDs correspond one-to-one with 43 audit rows, no duplicates; N14/ST02 explicitly deferred | **PASS** for identity/disposition |
-| Case index | 25 pages individually fetched from `main`, stable `case.<company>.<slug>` IDs observed | **PASS** for presence/shape |
-| Mermaid/Markdown structural check | In 25/25 case pages: ≥1 Mermaid block, paired backtick fences, first-party cited URL, review state clearly identified | **PASS** for observed text patterns; not a Mermaid renderer check |
+| Case index | 28 pages individually fetched from `main`, stable `case.<company>.<slug>` IDs observed | **PASS** for presence/shape |
+| Mermaid/Markdown structural check | In 28/28 case pages: ≥1 Mermaid block, paired backtick fences, first-party cited URL, review state clearly identified | **PASS** for observed text patterns; not a Mermaid renderer check |
 | Decision corpus | Six linked comparison pages, each with synthetic constraints and at least two contrasting cases plus decision guardrails | **PASS** for existence, not substantive independent endorsement |
 | Candidate-specific numeric evidence | Company 2013–2026 windows and negative results available in waves 01–08, including Netflix ZGC, Uber MyRocks, Discord, Airbnb, Shopify and Cloudflare | **PARTIAL**, high-risk numeric claims still require independent source-by-source review |
 | Proposed schema/fixtures | 2 sample JSON records, 44 unique fixture IDs, 14/21/9 behavior groups; fixture source IDs from 43-source register | **STRUCTURAL PASS**, not full Python/schema engine run |
@@ -31,6 +31,7 @@
 | Review ID | Case file | Primary provenance IDs | Required semantic adversarial check | Acceptance |
 |---|---|---|---|---|
 | NF01 | [netflix-java-platform-convergence.md](../../book/cases/netflix-java-platform-convergence.md) | N02/N03/N04 | 2023 vs 2026 Java fleet; abstract not deployment | Draft; pending independent review |
+| NF11 | [netflix-data-project-durable-workload-identity.md](../../book/cases/netflix-data-project-durable-workload-identity.md) | N17 | Durable project identity vs overbroad grants; future rightsizing still planned | Draft; pending independent review |
 | NF02 | [netflix-zuul2-nonblocking-gateway.md](../../book/cases/netflix-zuul2-nonblocking-gateway.md) | N07/N08 | CPU gain workload-specific; dynamic wiki revision unpinned | Draft; pending independent review |
 | NF03 | [netflix-dgs-spring-graphql-convergence.md](../../book/cases/netflix-dgs-spring-graphql-convergence.md) | N09/N10 | 2024 initial CPU regression vs DGS10 later parity | Draft; pending independent review |
 | NF04 | [netflix-java21-virtual-thread-pinning.md](../../book/cases/netflix-java21-virtual-thread-pinning.md) | N06 | Java21 only; 4 carriers, not permanent Loom ban | Draft; pending independent review |
@@ -41,6 +42,7 @@
 | NF09 | [netflix-casspactor-shadow-migration.md](../../book/cases/netflix-casspactor-shadow-migration.md) | N11 | Two-sided set comparison, shadow and fallback | Draft; pending independent review |
 | NF10 | [netflix-cassandra-dynamic-time-series-splits.md](../../book/cases/netflix-cassandra-dynamic-time-series-splits.md) | N12 | Partition split checksum and fallback vs future time slice | Draft; pending independent review |
 | UB01 | [uber-doma-domains.md](../../book/cases/uber-doma-domains.md) | U01 | Historical service sprawl, domain gateway not arbitrary service split | Draft; pending independent review |
+| UB04 | [uber-cinnamon-admission-and-fairness.md](../../book/cases/uber-cinnamon-admission-and-fairness.md) | U06 | Failed query-tier quotas vs PID/storage-local enforcement; 5,400/3,000 QPS context | Draft; pending independent review |
 | UB02 | [uber-mezzanine-pg-to-schemaless.md](../../book/cases/uber-mezzanine-pg-to-schemaless.md) | U02 | 2014 trip storage, API/ID seam; not 2020 DOMA | Draft; pending independent review |
 | UB03 | [uber-mysql-to-myrocks.md](../../book/cases/uber-mysql-to-myrocks.md) | U03 | MySQL 8 preparatory migration >1yr, read/space trade-off | Draft; pending independent review |
 | SH01 | [shopify-modular-monolith.md](../../book/cases/shopify-modular-monolith.md) | SH01 | Modular monolith decision not proof zero services | Draft; pending independent review |
@@ -53,6 +55,7 @@
 | SP01 | [spotify-tech-migration-long-tail.md](../../book/cases/spotify-tech-migration-long-tail.md) | SP01 | 2020 non-LLM process; 99% hidden migrations was aspiration | Draft; pending independent review |
 | SP02 | [spotify-honk-data-consumer-migration.md](../../book/cases/spotify-honk-data-consumer-migration.md) | SP02/SP03 | 240 rolled-out PRs != merged; 1,800 are dependencies | Draft; pending independent review |
 | CF01 | [cloudflare-super-slurper-queues.md](../../book/cases/cloudflare-super-slurper-queues.md) | CF01 | 5x benchmark 75k objects; queue duplicate/idempotency | Draft; pending independent review |
+| ME02 | [meta-ingestion-shadow-migration-lifecycle.md](../../book/cases/meta-ingestion-shadow-migration-lifecycle.md) | ME03 | Shadow row counts/checksums vs business truth; 100% transition is company reported | Draft; pending independent review |
 | ME01 | [meta-tao-social-graph-serving.md](../../book/cases/meta-tao-social-graph-serving.md) | ME01 | 2013 graph association serving, eventual consistency default | Draft; pending independent review |
 | LI01 | [linkedin-kafka-tiered-completeness.md](../../book/cases/linkedin-kafka-tiered-completeness.md) | LI01 | 2015 cluster counts not current; audit totals not event equality | Draft; pending independent review |
 
@@ -92,6 +95,10 @@ A reviewer should produce a signed/verifiable matrix with case file, claim ID, o
 
 ## Decision as of this checkpoint
 
-**Accepted mechanically:** existence of 25 well-scoped drafts, 6 guides, source ID mapping, 44 proposed fixtures.  
+**Accepted mechanically:** existence of 28 well-scoped drafts, 6 guides, source ID mapping, 44 proposed fixtures.  
 **Not accepted:** final external-source semantic review of all pages, complete production search evaluation, independently reproduced performance, external review signoff.  
 **Milestone M9:** **OPEN — acceptance gate E16-08 not met**. This is an evidence-grounded delivery checkpoint, not a license to claim finished architecture modernization transfer.
+
+## Addendum: October 19, 2026 — expanded coverage
+
+Merged [case batch #168](https://github.com/rouslanbaranov/tycho/pull/168) added durable Netflix Data Projects identity, Uber Cinnamon overload control and Meta's shadow-validated ingestion transition. This checkpoint **mechanically inspected** each new page's case ID, original-source link and paired Mermaid fence, bringing observed presence checks to 28/28. It did **not** independently verify security-token semantics, Uber PID benchmarks or Meta checksum equivalence. A human reviewer should start from the new rows above and record evidence-specific verdicts separately.
