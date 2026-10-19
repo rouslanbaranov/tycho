@@ -11,10 +11,10 @@ An online billing platform must move active invoice state out of a shared Custom
 
 | Actual company case | What its primary source does and does not establish |
 |---|---|
-| [Stripe](../cases/stripe-online-subscriptions-migration.md) | ST01: four-phase dual-write/read/write/retire and Scientist comparison |
-| [Netflix](../cases/netflix-casspactor-shadow-migration.md) | N11: row-set differences and cohort selector/fallback |
-| [Uber](../cases/uber-mezzanine-pg-to-schemaless.md) | U02: query/ID seam, backfill and mirrored writes |
-| [Discord](../cases/discord-cassandra-scylladb-messages.md) | DI01: token range checkpoints, tombstone final-range blocker |
+| [Stripe](../stripe-online-subscriptions-migration.md) | ST01: four-phase dual-write/read/write/retire and Scientist comparison |
+| [Netflix](../netflix-casspactor-shadow-migration.md) | N11: row-set differences and cohort selector/fallback |
+| [Uber](../uber-mezzanine-pg-to-schemaless.md) | U02: query/ID seam, backfill and mirrored writes |
+| [Discord](../discord-cassandra-scylladb-messages.md) | DI01: token range checkpoints, tombstone final-range blocker |
 
 **Why the apparent conflict is useful:** Stripe's Scientist compares online read behavior; Netflix compares **C−M and M−C** on materialized output while leaving user job contracts stable; Uber first needed a client API/ID compatibility seam; Discord's last tombstone ranges showed why 99.9999% progress is not 'done'.
 
