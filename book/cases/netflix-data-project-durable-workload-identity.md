@@ -33,7 +33,7 @@ evidence_scope:
     - "src.m9-n17"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -48,15 +48,15 @@ content_verified_at: null
 # Netflix Data Projects — From Human-Tied Credentials to Durable Data-Workload Identity
 
 **Case ID:** `case.netflix.durable-data-project-identity` · **Issue:** E16-05 #118 · **Status:** evidence-bounded draft; independent acceptance pending.  
-**Primary:** N17, Amer Hesson, Marcelo Mayworm, James Mulcahy and Brittany Truong, [Netflix TechBlog, 2026-05-11](https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e). Exact source sections: **Problem 1**, **Problem 2**, **Enter Data Projects**, **Grants and Roles**, **The Identity Umbrella**, **Securing Data Workflows**, **Data Projects: Durable Identity**, **Success Stories**, **Using Data Projects**, **What's Next**. Public article and original paraphrase only; no private Netflix IAM implementation or screenshots imported.
+**Primary:** src.m9-n17, Amer Hesson, Marcelo Mayworm, James Mulcahy and Brittany Truong, [Netflix TechBlog, 2026-05-11](https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e). Exact source sections: **Problem 1**, **Problem 2**, **Enter Data Projects**, **Grants and Roles**, **The Identity Umbrella**, **Securing Data Workflows**, **Data Projects: Durable Identity**, **Success Stories**, **Using Data Projects**, **What's Next**. Public article and original paraphrase only; no private Netflix IAM implementation or screenshots imported.
 
 ## Legacy security and reliability failure
 
-Netflix's data warehouse had **millions of tables** and **tens of thousands of scheduled workloads**, according to the May 2026 report. Access management was primarily per-asset, and many asynchronous jobs ran under their human creator's identity. An organization reallocation required rewriting many ACLs, leading either to support backlogs or overly broad grants. A scheduled job could also fail when the person whose delegated identity it used changed teams or left; replacing that person with another operator frequently revealed missing permissions in a chain of failures. This was simultaneously a **least-privilege, ownership and service-continuity** defect, not just inconvenient login. [N17, 'The Problem', 'Problem 1', 'Problem 2'].
+Netflix's data warehouse had **millions of tables** and **tens of thousands of scheduled workloads**, according to the May 2026 report. Access management was primarily per-asset, and many asynchronous jobs ran under their human creator's identity. An organization reallocation required rewriting many ACLs, leading either to support backlogs or overly broad grants. A scheduled job could also fail when the person whose delegated identity it used changed teams or left; replacing that person with another operator frequently revealed missing permissions in a chain of failures. This was simultaneously a **least-privilege, ownership and service-continuity** defect, not just inconvenient login. [src.m9-n17, 'The Problem', 'Problem 1', 'Problem 2'].
 
 ## A different security principal, not a longer-lived human token
 
-Netflix introduced *Data Projects*: logical containers grouping related assets (tables, jobs, secrets) and a project-owned, durable identity which workloads may assume. Grants to people, groups, applications and CI jobs are assigned project-level roles; an optional IAM role may be exchanged using the platform identity for AWS tasks. The workflow manager can mint identity for authorized scheduled work rather than borrowing a departed engineer's credentials. Under the feature called **gravity**, new assets created by a project workload are attached automatically to the project. [N17, 'Enter Data Projects', 'Grants and Roles', 'The Identity Umbrella', 'Securing Data Workflows'].
+Netflix introduced *Data Projects*: logical containers grouping related assets (tables, jobs, secrets) and a project-owned, durable identity which workloads may assume. Grants to people, groups, applications and CI jobs are assigned project-level roles; an optional IAM role may be exchanged using the platform identity for AWS tasks. The workflow manager can mint identity for authorized scheduled work rather than borrowing a departed engineer's credentials. Under the feature called **gravity**, new assets created by a project workload are attached automatically to the project. [src.m9-n17, 'Enter Data Projects', 'Grants and Roles', 'The Identity Umbrella', 'Securing Data Workflows'].
 
 ```mermaid
 flowchart TD
@@ -103,7 +103,7 @@ In the section **Using Data Projects**, the authors acknowledge that moving exis
 
 ## Separate ownership, entitlement and execution identities
 
-The [May 2026 first-party report](https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e) (N17) identifies **two different defects**: an asset-by-asset ACL model makes reorganization costly, while long-running workloads inherit the lifecycle of a particular human creator. A project container addresses the management unit; its assumable identity addresses execution continuity. One does not logically guarantee the other.
+The [May 2026 first-party report](https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e) (src.m9-n17) identifies **two different defects**: an asset-by-asset ACL model makes reorganization costly, while long-running workloads inherit the lifecycle of a particular human creator. A project container addresses the management unit; its assumable identity addresses execution continuity. One does not logically guarantee the other.
 
 For a new platform, distinguish four principals: **asset owner** (accountability), **project administrators** (who can delegate roles), **workload identity** (runtime authentication), and **caller** (who initiated or authorized a job). Project grouping makes access policy easier to operate, but it can also spread an excessive permission grant across more resources. Durable credentials are not automatically least-privilege credentials. These distinctions are Tycho security reasoning, not a claim about Netflix's unpublished IAM internals.
 
@@ -123,7 +123,7 @@ A safe migration cannot simply replace the username in a scheduler. The project 
 
 **Tycho synthetic release sequence:** inventory jobs and owners; map table/secret/resource access; create a project with bounded role grants; run *shadow authorization decisions* against real planned operations; execute a canary job with project identity; compare outputs, audit trail, retries and failure handling; migrate remaining jobs by cohort; stop the dependency on departed human credentials only after successful token revocation and disaster-recovery tests. Do not reuse the old human token indefinitely as a “fallback,” because that recreates the original security failure.
 
-A good test deliberately changes a project administrator's team membership while a scheduled workload runs. Durable operation may continue if policy permits, but the removed human must lose administrative influence, and the audit must identify both the actual job principal and originating approval. These are normative security requirements, **not** independently established outcomes of N17.
+A good test deliberately changes a project administrator's team membership while a scheduled workload runs. Durable operation may continue if policy permits, but the removed human must lose administrative influence, and the audit must identify both the actual job principal and originating approval. These are normative security requirements, **not** independently established outcomes of src.m9-n17.
 
 ## Failure cases and alternative choices
 
@@ -133,4 +133,4 @@ A **per-job service account** may be preferable for a small fleet with strict is
 
 ## Evidence and reviewer gaps
 
-Company self-report from a May 2026 production description; not an independently reproduced audit. **Do not infer** a complete fleet migration or verified platform-wide policy reduction. This draft closes a *security/identity subject-matter gap in the case set*, while acceptance and rights remain with #121. The original source remains [N17](https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e).
+Company self-report from a May 2026 production description; not an independently reproduced audit. **Do not infer** a complete fleet migration or verified platform-wide policy reduction. This draft closes a *security/identity subject-matter gap in the case set*, while acceptance and rights remain with #121. The original source remains [src.m9-n17](https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e).

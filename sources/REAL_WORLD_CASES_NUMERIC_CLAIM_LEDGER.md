@@ -1,14 +1,14 @@
 # M9 E16-01 — Admission Wave 03: Numeric Claims Rechecked Against Original Engineers
 
-**Read / reverified:** 2026-10-19. **Scope:** A01, DI01, DI02, CF01 and LI01, already represented in the 43-candidate register. Publisher-original blog pages were re-opened and their named authors, original dates and exact relevant sections inspected. **Admission:** primary statements and *company-reported* measurements only. Tycho did not reproduce any benchmark, gain access to internal metrics, check source-code revisions or acquire rights to republish graphics, tables or article body.
+**Read / reverified:** 2026-10-19. **Scope:** src.m9-a01, src.m9-di01, src.m9-di02, src.m9-cf01 and src.m9-li01, already represented in the 43-candidate register. Publisher-original blog pages were re-opened and their named authors, original dates and exact relevant sections inspected. **Admission:** primary statements and *company-reported* measurements only. Tycho did not reproduce any benchmark, gain access to internal metrics, check source-code revisions or acquire rights to republish graphics, tables or article body.
 
 | ID | Publisher authors and publication date | Original public source | Bounded use |
 |---|---|---|---|
-| A01 | Airbnb Engineering; Jack Dai, Howard Ho, Loc Dinh, Stepan Goncharov, Ted Tenedorio, Thomas Bao; **2025-09-17** | [Migrating Airbnb's JVM Monorepo to Bazel](https://airbnb.tech/infrastructure/migrating-airbnbs-jvm-monorepo-to-bazel/) | Adopted build system, migration stages, company-measured build changes; not universal savings |
-| DI01 | Discord Engineering; Bo Ingram; **2023-03-06** | [How Discord Stores Trillions of Messages](https://discord.com/blog/how-discord-stores-trillions-of-messages) | Cassandra→ScyllaDB historical migration and request-service behavior |
-| DI02 | Discord Engineering; Vicki Niu; **2025-04-24** | [How Discord Indexes Trillions of Messages](https://discord.com/blog/how-discord-indexes-trillions-of-messages) | Search indexing/search-cell redesign, *not* message storage or universal index SLA |
-| CF01 | Cloudflare Blog; Connor Maddox, Siddhant Sinha, Prasanna Sai Puvvada; **2025-04-10** | [Making Super Slurper 5x faster](https://blog.cloudflare.com/making-super-slurper-five-times-faster/) | S3→R2 migration run, Workers/Queues/DO architecture, bounded test |
-| LI01 | LinkedIn Engineering; Todd Palino; **2015-03-20** | [Running Kafka At Scale](https://engineering.linkedin.com/kafka/running-kafka-scale) | Dated Kafka broker and message counts and auditing; not modern Kafka limits |
+| src.m9-a01 | Airbnb Engineering; Jack Dai, Howard Ho, Loc Dinh, Stepan Goncharov, Ted Tenedorio, Thomas Bao; **2025-09-17** | [Migrating Airbnb's JVM Monorepo to Bazel](https://airbnb.tech/infrastructure/migrating-airbnbs-jvm-monorepo-to-bazel/) | Adopted build system, migration stages, company-measured build changes; not universal savings |
+| src.m9-di01 | Discord Engineering; Bo Ingram; **2023-03-06** | [How Discord Stores Trillions of Messages](https://discord.com/blog/how-discord-stores-trillions-of-messages) | Cassandra→ScyllaDB historical migration and request-service behavior |
+| src.m9-di02 | Discord Engineering; Vicki Niu; **2025-04-24** | [How Discord Indexes Trillions of Messages](https://discord.com/blog/how-discord-indexes-trillions-of-messages) | Search indexing/search-cell redesign, *not* message storage or universal index SLA |
+| src.m9-cf01 | Cloudflare Blog; Connor Maddox, Siddhant Sinha, Prasanna Sai Puvvada; **2025-04-10** | [Making Super Slurper 5x faster](https://blog.cloudflare.com/making-super-slurper-five-times-faster/) | S3→R2 migration run, Workers/Queues/DO architecture, bounded test |
+| src.m9-li01 | LinkedIn Engineering; Todd Palino; **2015-03-20** | [Running Kafka At Scale](https://engineering.linkedin.com/kafka/running-kafka-scale) | Dated Kafka broker and message counts and auditing; not modern Kafka limits |
 
 ## Numeric claim ledger, sections and caveats
 
@@ -35,7 +35,7 @@
 ## Corrections / architecture applicability
 
 1. **Bazel build parity:** the article names startup/integration and runtime reflection/library errors. Agentic migration checks must include *actual deploy artifacts*, not just syntax and tests. If Tycho claims the migration was effortless, mark that claim false.
-2. **Discord's two migrations differ:** DI01 is message datastore and Rust demand shaping; DI02 is Elasticsearch/search-cell architecture, with its own p99 and indexing benchmarks. Their figures must **never** be pooled or compared as one test.
+2. **Discord's two migrations differ:** src.m9-di01 is message datastore and Rust demand shaping; src.m9-di02 is Elasticsearch/search-cell architecture, with its own p99 and indexing benchmarks. Their figures must **never** be pooled or compared as one test.
 3. **Discord last 0.0001%:** progress count can hide unhandled tombstones, requiring special-case recovery. An unfinished migration is not success at 99.9999%.
 4. **Cloudflare:** the '5×' title refers to a specific 75k-object S3→R2 test, while queues need idempotent consumers. Do not apply this factor to any arbitrary file size distribution.
 5. **LinkedIn historical time:** the 2015 scale numbers do not establish current production capacity or justify choosing Kafka with no traffic baseline.
@@ -44,6 +44,6 @@
 ## Admission disposition
 
 - Five additional IDs **source-reviewed for the bounded claims above**, not for every potentially relevant statement on their pages.
-- Previously reviewed specific public references: wave 01 (N01/N02/N05/N06/N07) and wave 02 (SH04/SP02/SP03).
+- Previously reviewed specific public references: wave 01 (src.m9-n01/src.m9-n02/src.m9-n05/src.m9-n06/src.m9-n07) and wave 02 (src.m9-sh04/src.m9-sp02/src.m9-sp03).
 - Remaining registered candidate references still require full article-specific creator/date/claim gate or explicit rejected status. Do not declare all 43 admitted.
 - Independent reviewer, production retrieval execution, source-code SHA pins and copyright rights beyond hyperlink/paraphrase remain pending.

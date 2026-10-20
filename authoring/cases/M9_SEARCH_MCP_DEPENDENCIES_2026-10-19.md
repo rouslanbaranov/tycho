@@ -35,7 +35,7 @@ These are **issues and status at observation time**, not promises about which im
 When the owning core team exposes a usable pinned K18/K20/K21 service, run the **unchanged** `tests/fixtures/m9-case-queries.json` and separately record:
 
 1. **Environment and identity:** build/commit SHA, collection `tycho-public`, source snapshot ID, index and optional embedding version (if implemented), MCP server/SDK/client/transport versions, relevant client request budget.
-2. **Candidate retrieval:** case/section IDs and ranked positions at 1/3/5, evidence/decision coverage, explicitly excluded sources N14/ST02, stale/missing snapshot cases.
+2. **Candidate retrieval:** case/section IDs and ranked positions at 1/3/5, evidence/decision coverage, explicitly excluded sources src.m9-n14/src.m9-st02, stale/missing snapshot cases.
 3. **Claim verification:** resolved primary URL and source section, publication/observation date, reported vs measured vs synthetic inference and negative counterexamples, unsupported-company-claim rejection.
 4. **Actual agent answer behavior:** citation fidelity, multi-hop evidence synthesis vs falsely attributing company work, refusal for 26 false-claim and 13 insufficient-evidence questions, with independent human adjudication of ambiguous labels.
 5. **Cost and failure:** p50/p95 latency, per-query input/output/tool tokens, truncation, retries, response payload, 5xx/timeout and fallback reasons; never substitute document recall for token cost or correct final reasoning.

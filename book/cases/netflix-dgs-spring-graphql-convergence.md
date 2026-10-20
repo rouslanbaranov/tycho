@@ -34,7 +34,7 @@ evidence_scope:
     - "src.m9-n10"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -50,11 +50,11 @@ content_verified_at: null
 
 **Case ID:** `case.netflix.dgs-spring-graphql-convergence` · **Owner:** M9 E16-02 #115 · **Status:** evidence-backed draft; human review pending  
 **Period:** April 2024 plan → December 17, 2024 reported release/adoption.  
-**Primary:** N09 (Srinivasan and Bakker, 2024-04-08), N10 (official DGS 8.5.0 and 10.0.0 release notes). Do not blend proposed and subsequently completed states.
+**Primary:** src.m9-n09 (Srinivasan and Bakker, 2024-04-08), src.m9-n10 (official DGS 8.5.0 and 10.0.0 release notes). Do not blend proposed and subsequently completed states.
 
 ## Architecture question
 
-Netflix's open-source DGS provided Java application teams a Spring Boot programming model, schema and test helpers around `graphql-java`. A separate Spring GraphQL framework matured to overlapping functionality. Permanently maintaining two HTTP and query-execution stacks would duplicate maintenance effort, but simply deleting DGS would impose a costly rewrite on hundreds of services relying on DGS APIs and instrumentation. The modernization problem was **compatibility-preserving consolidation**, not replacing GraphQL itself. [N09: "Why not retire the DGS Framework or Spring GraphQL?"].
+Netflix's open-source DGS provided Java application teams a Spring Boot programming model, schema and test helpers around `graphql-java`. A separate Spring GraphQL framework matured to overlapping functionality. Permanently maintaining two HTTP and query-execution stacks would duplicate maintenance effort, but simply deleting DGS would impose a costly rewrite on hundreds of services relying on DGS APIs and instrumentation. The modernization problem was **compatibility-preserving consolidation**, not replacing GraphQL itself. [src.m9-n09: "Why not retire the DGS Framework or Spring GraphQL?"].
 
 ## Three temporal architecture states
 
@@ -76,13 +76,13 @@ flowchart LR
   T -->|legacy module retirement| F
 ```
 
-**Text alternative:** application-facing DGS programming constructs are preserved while HTTP transport/execution internals shift to Spring GraphQL. Once compatibility is demonstrated, the retired DGS-specific modules can disappear. This flow intentionally simplifies several modules and is independently drawn; refer to N09 for exact implementation diagrams.
+**Text alternative:** application-facing DGS programming constructs are preserved while HTTP transport/execution internals shift to Spring GraphQL. Once compatibility is demonstrated, the retired DGS-specific modules can disappear. This flow intentionally simplifies several modules and is independently drawn; refer to src.m9-n09 for exact implementation diagrams.
 
-The April 2024 article identifies a modular DGS schema provider that wires data fetchers and an executor API also used by tests. During integration the DGS query executor delegates to Spring GraphQL and the web MVC/WebFlux handling switches to Spring GraphQL transports. This keeps the application's annotation model stable while removing duplicated underlying mechanisms. The new starter made adoption opt-in during a transition. [N09: "Framework Architecture with Spring GraphQL", "What does this mean for my applications?", "Going Forward"].
+The April 2024 article identifies a modular DGS schema provider that wires data fetchers and an executor API also used by tests. During integration the DGS query executor delegates to Spring GraphQL and the web MVC/WebFlux handling switches to Spring GraphQL transports. This keeps the application's annotation model stable while removing duplicated underlying mechanisms. The new starter made adoption opt-in during a transition. [src.m9-n09: "Framework Architecture with Spring GraphQL", "What does this mean for my applications?", "Going Forward"].
 
 ## A revealing failed performance assumption
 
-Early canary comparisons against existing services were **worse**, not automatically equivalent: Netflix authors reported more than **50% CPU degradation** and around **20% slower request latency**. Framework improvements helped, but a residual **10–20% CPU degradation** remained. They traced an important source of overhead to automatic asynchronous HTTP processing: existing service filters were not designed with the new async lifecycle, so they executed repeatedly. Disabling async request processing returned the integrated path to reported baseline parity for the measured services; opting into async remained possible. [N09: "Performance"].
+Early canary comparisons against existing services were **worse**, not automatically equivalent: Netflix authors reported more than **50% CPU degradation** and around **20% slower request latency**. Framework improvements helped, but a residual **10–20% CPU degradation** remained. They traced an important source of overhead to automatic asynchronous HTTP processing: existing service filters were not designed with the new async lifecycle, so they executed repeatedly. Disabling async request processing returned the integrated path to reported baseline parity for the measured services; opting into async remained possible. [src.m9-n09: "Performance"].
 
 | Step | Source-reported result | Interpretation |
 |---|---|---|
@@ -91,17 +91,17 @@ Early canary comparisons against existing services were **worse**, not automatic
 | Disable implicit async processing | Performance comparable to former DGS baseline | Preserve synchronous semantics until applications are explicitly async-aware |
 | DGS 10.0.0, 2024-12-17 | Removed legacy modules; maintainers report Netflix services migrated with little application code change | Release-owner fleet claim; not an independently audited per-service success rate |
 
-The December 2024 announcement is **later evidence** than the April target dates: it states legacy code removal and Netflix migration in 10.0.0. Therefore it would be incorrect to say the April roadmap alone proves the fleet was migrated. [N10: "DGS Framework 10.0.0 released!"].
+The December 2024 announcement is **later evidence** than the April target dates: it states legacy code removal and Netflix migration in 10.0.0. Therefore it would be incorrect to say the April roadmap alone proves the fleet was migrated. [src.m9-n10: "DGS Framework 10.0.0 released!"].
 
 ## The migration surface: preserve semantics, not merely annotations
 
-The April 2024 [engineering account](https://netflixtechblog.com/a-tale-of-two-frameworks-the-domain-graph-service-framework-meets-spring-graphql-f8237f09c389) (N09, **Framework Architecture with Spring GraphQL**) names the compatibility seam more precisely. DGS retained its schema provider and data-fetcher wiring. Its query executor became a compatibility interface delegating to Spring GraphQL; Spring GraphQL handled the HTTP/WebSocket request paths previously maintained by DGS. Applications could therefore preserve common DGS annotations and schema/code-generation workflows while changing the underlying transport and execution engine. This is narrower than “all GraphQL applications need no changes”: custom web filters, test configuration, direct use of deprecated classes and subscription clients may still cross altered boundaries.
+The April 2024 [engineering account](https://netflixtechblog.com/a-tale-of-two-frameworks-the-domain-graph-service-framework-meets-spring-graphql-f8237f09c389) (src.m9-n09, **Framework Architecture with Spring GraphQL**) names the compatibility seam more precisely. DGS retained its schema provider and data-fetcher wiring. Its query executor became a compatibility interface delegating to Spring GraphQL; Spring GraphQL handled the HTTP/WebSocket request paths previously maintained by DGS. Applications could therefore preserve common DGS annotations and schema/code-generation workflows while changing the underlying transport and execution engine. This is narrower than “all GraphQL applications need no changes”: custom web filters, test configuration, direct use of deprecated classes and subscription clients may still cross altered boundaries.
 
 In the publisher's **Performance** section, the team describes comparison by running **two builds** with production traffic against some of its largest services and observing CPU utilization, memory and request latency. The roughly **>50% CPU and 20% latency regressions** occurred in this preliminary comparison, **not** in the eventual December release. After framework fixes there was still **10–20%** CPU degradation. The identification of repeated non-async-aware filters under implicit asynchronous HTTP handling was a lifecycle correctness insight, not just a JVM hotspot. The adjustment was to **disable async processing by default for compatibility**, allowing an application to enable it deliberately. The full traffic mix, per-service confidence interval and long-run defect rates are not published; reported parity is scoped to the tested services.
 
 ## Specific module and protocol consequences after the 10.0 release
 
-The official [December 17, 2024 release notice](https://netflix.github.io/dgs/announcements/) (N10, **DGS Framework 10.0.0 released!**, **Detailed list of changes**) is stronger evidence than the April schedule because it names removed modules and known compatibility changes:
+The official [December 17, 2024 release notice](https://netflix.github.io/dgs/announcements/) (src.m9-n10, **DGS Framework 10.0.0 released!**, **Detailed list of changes**) is stronger evidence than the April schedule because it names removed modules and known compatibility changes:
 
 | Compatibility seam | Publisher's 10.0.0 action | Test or migration implication |
 |---|---|---|
@@ -115,13 +115,13 @@ The official [December 17, 2024 release notice](https://netflix.github.io/dgs/an
 
 ## Historical chronology and unverified transitions
 
-1. **Early 2021:** DGS was made public (N09 retrospective); installed application-specific instrumentation had grown thereafter.
-2. **March 29, 2024:** the official release notes list **DGS 8.5.0** with Spring GraphQL integration (N10). The new starter was opt-in, not evidence of immediate global cutover.
+1. **Early 2021:** DGS was made public (src.m9-n09 retrospective); installed application-specific instrumentation had grown thereafter.
+2. **March 29, 2024:** the official release notes list **DGS 8.5.0** with Spring GraphQL integration (src.m9-n10). The new starter was opt-in, not evidence of immediate global cutover.
 3. **April 8, 2024:** the engineering post describes intended broad adoption through Q2, a later default switch in Q3, and legacy removal before end of year (**plans**, not observed results for those dates).
 4. **December 17, 2024:** the official **10.0.0** announcement states legacy DGS transport modules were removed and Netflix had migrated its services, mostly without application changes. This is a **maintainer-reported outcome**, not an independently counted 100%-service migration.
 5. **After December 2024:** the cited release notes do not validate 2025/2026 deployment characteristics, request mixes or framework performance across every consumer. Independent follow-up requires dated later sources, not interpolation.
 
-The historical 2023 DGS 6.0.0 release (N10) had already required **Spring Boot 3 / JDK 17** and included its own context compatibility caveat. Avoid treating that prior baseline upgrade as a consequence of the 2024 DGS/Spring GraphQL transport merger.
+The historical 2023 DGS 6.0.0 release (src.m9-n10) had already required **Spring Boot 3 / JDK 17** and included its own context compatibility caveat. Avoid treating that prior baseline upgrade as a consequence of the 2024 DGS/Spring GraphQL transport merger.
 
 ## Decision criteria and reversible tests for a different platform
 
@@ -146,6 +146,6 @@ These are **Tycho recommendations** distilled from the case, not a claim the tea
 
 Treat opt-in adoption, performance canary and removal of legacy modules as separate gates. A proposed rollback before legacy retirement can restore the old starter, but this document does not establish Netflix's exact rollback implementation, threshold or percentage of adopting services. Claims about 2026 DGS or Spring Boot internals need newer source revisions. Do not infer upstream Spring contributor rankings from collaboration alone.
 
-**Source pointers:** [N09 — Netflix first-party integration account](https://netflixtechblog.com/a-tale-of-two-frameworks-the-domain-graph-service-framework-meets-spring-graphql-f8237f09c389), sections "Framework Architecture with Spring GraphQL", "Performance", "Going Forward"; [N10 — DGS official announcements](https://netflix.github.io/dgs/announcements/), sections "8.5.0 with Spring GraphQL" and "10.0.0 released!".
+**Source pointers:** [src.m9-n09 — Netflix first-party integration account](https://netflixtechblog.com/a-tale-of-two-frameworks-the-domain-graph-service-framework-meets-spring-graphql-f8237f09c389), sections "Framework Architecture with Spring GraphQL", "Performance", "Going Forward"; [src.m9-n10 — DGS official announcements](https://netflix.github.io/dgs/announcements/), sections "8.5.0 with Spring GraphQL" and "10.0.0 released!".
 
 **Review state:** draft; acceptance requires independent verification of numerics and current semantic correctness in #121, no invented deployment measurements.

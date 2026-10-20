@@ -62,10 +62,10 @@ A legacy API gateway has 40,000 mostly idle TLS/client connections, occasional C
 
 | Actual company case | What its primary source does and does not establish |
 |---|---|
-| [Netflix gateway](../netflix-zuul2-nonblocking-gateway.md) | N07: Zuul2 gained connection scale; CPU gain differed by cluster |
-| [Netflix Java](../netflix-java21-virtual-thread-pinning.md) | N06: four carrier threads pinned by tracing in Java21 REST stack |
-| [Netflix gRPC worker pool](../netflix-grpc-cpu-workerpool-virtual-thread-regression.md) | N02: 2023 practitioner account of a CPU-intensive outgoing gRPC worker pool that became a **few percent slower** after trying virtual threads; no exact benchmark published |
-| [Cloudflare](../cloudflare-super-slurper-queues.md) | CF01: I/O copy fan-out via queues/workers, small-test regression |
+| [Netflix gateway](../netflix-zuul2-nonblocking-gateway.md) | src.m9-n07: Zuul2 gained connection scale; CPU gain differed by cluster |
+| [Netflix Java](../netflix-java21-virtual-thread-pinning.md) | src.m9-n06: four carrier threads pinned by tracing in Java21 REST stack |
+| [Netflix gRPC worker pool](../netflix-grpc-cpu-workerpool-virtual-thread-regression.md) | src.m9-n02: 2023 practitioner account of a CPU-intensive outgoing gRPC worker pool that became a **few percent slower** after trying virtual threads; no exact benchmark published |
+| [Cloudflare](../cloudflare-super-slurper-queues.md) | src.m9-cf01: I/O copy fan-out via queues/workers, small-test regression |
 
 **Why the apparent conflict is useful:** Zuul2 exposes network connection scaling as a primary win even without universal CPU gains; Netflix's Loom incident exposes hidden synchronization risk, while its separate CPU-intensive gRPC worker-pool experiment became slower without any carrier-pinning incident; Cloudflare's queue fan-out addresses asynchronous tasks at a different durability granularity.
 
@@ -94,7 +94,7 @@ flowchart TD
 
 **Use this evidence when:** a real system has the same dominant constraint, the relevant execution model/data semantics have been measured and its team can operate the new architecture.
 
-**Do not generalize when:** Do not put CPU-intensive crypto or JDBC on Netty's event loop. Netflix reported a *few-percent regression* in an outgoing CPU-intensive gRPC pool (N02); do not treat it as a numeric benchmark or the later 2024 tracing-lock incident. Do not expect Loom to accelerate CPU instructions or automatically eliminate pinning in Java21. Do not use queue fan-out for tiny synchronous requests where enqueue latency dominates.
+**Do not generalize when:** Do not put CPU-intensive crypto or JDBC on Netty's event loop. Netflix reported a *few-percent regression* in an outgoing CPU-intensive gRPC pool (src.m9-n02); do not treat it as a numeric benchmark or the later 2024 tracing-lock incident. Do not expect Loom to accelerate CPU instructions or automatically eliminate pinning in Java21. Do not use queue fan-out for tiny synchronous requests where enqueue latency dominates.
 
 **Independent decision dimensions to measure:** Active connections/thread, carrier pinning/queue, event-loop stalls, canceled and retried requests, CPU per operation, p99 by class, queue age and dead-letter counts.
 
@@ -108,10 +108,10 @@ Categorize I/O waits vs CPU work *separately for outgoing gRPC worker pools, inb
 
 | Source-bounded precedent | Resource under pressure | Reported gain or failure | What it does **not** establish |
 |---|---|---|---|
-| [Netflix Zuul 2, 2016](../netflix-zuul2-nonblocking-gateway.md) (N07) | Many concurrent network connections; blocking waiting cost | Connection scale benefit; logging gateway ~25% throughput gain, API gateway no clear CPU efficiency improvement | Netty event loops increase CPU throughput for every workload |
-| [Netflix outgoing gRPC pool, QCon 2023](../netflix-grpc-cpu-workerpool-virtual-thread-regression.md) (N02) | CPU-intensive worker execution rather than blocked network threads | Virtual-thread experiment was **a few percent slower** | An exact quantified benchmark or global prohibition of virtual threads |
-| [Netflix REST tracing failure, 2024](../netflix-java21-virtual-thread-pinning.md) (N06) | Four JDK21 carrier threads pinned inside synchronized reporter wait | Request starvation despite live JVM and a lock with no running owner | A universal, current-JDK limitation independent of dependency versions |
-| [Cloudflare object copying, 2025](../cloudflare-super-slurper-queues.md) (CF01) | Long remote-object transfer waits and centralized job coordination | Large-object-count queue migration sped up; small-object proof of concept regressed | Queues and worker orchestration reduce tiny request latency or provide exactly-once delivery |
+| [Netflix Zuul 2, 2016](../netflix-zuul2-nonblocking-gateway.md) (src.m9-n07) | Many concurrent network connections; blocking waiting cost | Connection scale benefit; logging gateway ~25% throughput gain, API gateway no clear CPU efficiency improvement | Netty event loops increase CPU throughput for every workload |
+| [Netflix outgoing gRPC pool, QCon 2023](../netflix-grpc-cpu-workerpool-virtual-thread-regression.md) (src.m9-n02) | CPU-intensive worker execution rather than blocked network threads | Virtual-thread experiment was **a few percent slower** | An exact quantified benchmark or global prohibition of virtual threads |
+| [Netflix REST tracing failure, 2024](../netflix-java21-virtual-thread-pinning.md) (src.m9-n06) | Four JDK21 carrier threads pinned inside synchronized reporter wait | Request starvation despite live JVM and a lock with no running owner | A universal, current-JDK limitation independent of dependency versions |
+| [Cloudflare object copying, 2025](../cloudflare-super-slurper-queues.md) (src.m9-cf01) | Long remote-object transfer waits and centralized job coordination | Large-object-count queue migration sped up; small-object proof of concept regressed | Queues and worker orchestration reduce tiny request latency or provide exactly-once delivery |
 
 The underlying categories are **network wait**, **CPU cycles**, **monitor/carrier scheduling**, and **durable asynchronous batch work**. They have different latency, scaling and rollback goals. The examples come from different organizations and years and are not one A/B experiment.
 
@@ -123,7 +123,7 @@ For an independent **I/O-bound Java request service** that uses simple sequentia
 
 For a **CPU-heavy gRPC worker pool**, retaining bounded platform threads is a defensible initial decision when useful CPU work saturates cores. The 2023 Netflix counterexample warns that replacing such a pool with many virtual threads can add scheduling overhead without increasing compute capacity. Test CPU-per-completed-work, queueing delay and p99 rather than process thread count.
 
-For **hours-long high-volume copy tasks**, a queue system solves durable work identity, checkpointing, fan-out and recovery, not in-process coroutine scheduling. Queue retries need deduplication, dead-letter inspection and idempotent external writes. Cloudflare CF01's 75,000-object test is a bounded transfer observation and not a universal speed gain.
+For **hours-long high-volume copy tasks**, a queue system solves durable work identity, checkpointing, fan-out and recovery, not in-process coroutine scheduling. Queue retries need deduplication, dead-letter inspection and idempotent external writes. Cloudflare src.m9-cf01's 75,000-object test is a bounded transfer observation and not a universal speed gain.
 
 ## Synthetic migration sequence and fault-injection oracles
 

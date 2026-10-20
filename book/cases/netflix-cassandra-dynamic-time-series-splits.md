@@ -34,7 +34,7 @@ evidence_scope:
     - "src.m9-n12"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -49,16 +49,16 @@ content_verified_at: null
 # Netflix — evolving Cassandra partition keys without destabilizing Time Series readers
 
 **Case ID:** `case.netflix.dynamic-timeseries-partition-splits` | **M9:** E16-04 #117 | **Period:** Netflix first-party article **2026-06-03** | **Status:** evidence-backed draft  
-**Primary:** N12, Rajiv Shringi, Kaidan Fullerton, Oleksii Tkachuk and Kartik Sathyanarayanan, [Dynamic Repartitioning for Time Series Workloads](https://medium.com/netflix-techblog/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456), sections "Impact of Wide Partitions", "Solution 1: Time Slice Re-Partitioning", "Solution 2: Dynamic Partitioning per ID", "Detection" through "Fallbacks".
+**Primary:** src.m9-n12, Rajiv Shringi, Kaidan Fullerton, Oleksii Tkachuk and Kartik Sathyanarayanan, [Dynamic Repartitioning for Time Series Workloads](https://medium.com/netflix-techblog/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456), sections "Impact of Wide Partitions", "Solution 1: Time Slice Re-Partitioning", "Solution 2: Dynamic Partitioning per ID", "Detection" through "Fallbacks".
 
 ## From a correct provisioning estimate to an incorrect future
 
-The Netflix TimeSeries abstraction operated over Cassandra 4.x with time slices, time buckets and event buckets. Its initial provisioning pipeline used workload estimates and simulations to derive partitioning. This is sensible until traffic distribution, retention or individual high-volume IDs deviate from the estimate. **Wide partitions** then magnify read cost, garbage collection, queues and worst-case query latency; splitting every table aggressively also causes read amplification. In some datasets the article reports average queries in single-digit milliseconds yet outlier partitions taking seconds. These measurements are source-reported and dataset-specific. [N12: "Impact of Wide Partitions", "Picking the Partitioning Strategy"].
+The Netflix TimeSeries abstraction operated over Cassandra 4.x with time slices, time buckets and event buckets. Its initial provisioning pipeline used workload estimates and simulations to derive partitioning. This is sensible until traffic distribution, retention or individual high-volume IDs deviate from the estimate. **Wide partitions** then magnify read cost, garbage collection, queues and worst-case query latency; splitting every table aggressively also causes read amplification. In some datasets the article reports average queries in single-digit milliseconds yet outlier partitions taking seconds. These measurements are source-reported and dataset-specific. [src.m9-n12: "Impact of Wide Partitions", "Picking the Partitioning Strategy"].
 
 ## Two different levers for different skew shapes
 
 1. **Future-slice reconfiguration:** a background worker inspects Cassandra partition histograms, estimates density and adjusts the *next time slices'* bucketing. This avoids expensive rewriting of already written historical data and works when many IDs share the same excessive or insufficient partition size. The Netflix example describes a configurable density often around **2–10 MiB**, not a universal Cassandra target.
-2. **Per-ID asynchronous split:** for a few anomalously wide IDs, detect high read byte counts and emit events. Plan/split in the background, focusing initially on **immutable partitions** to simplify ordering and correctness. Persist checkpoints and metadata state. Verify pre- and post-split checksums, mark completion only after matching, and update read routing (including Bloom-filter lookup) to split physical partitions. [N12: "Detection", "Immutability", "Checkpointing", "Validating Splits", "Serving Reads"].
+2. **Per-ID asynchronous split:** for a few anomalously wide IDs, detect high read byte counts and emit events. Plan/split in the background, focusing initially on **immutable partitions** to simplify ordering and correctness. Persist checkpoints and metadata state. Verify pre- and post-split checksums, mark completion only after matching, and update read routing (including Bloom-filter lookup) to split physical partitions. [src.m9-n12: "Detection", "Immutability", "Checkpointing", "Validating Splits", "Serving Reads"].
 
 ```mermaid
 flowchart TD
@@ -90,13 +90,13 @@ A split must preserve original event ordering, sort semantics and query complete
 
 ## Why over-partitioning and wide partitions can both harm the same system
 
-The [June 3, 2026 first-party report](https://medium.com/netflix-techblog/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456) (N12, **Picking the Partitioning Strategy**, **The Problem with the Current Approach**) says TimeSeries provisioning used workload inputs plus **Monte Carlo simulations** to choose time slices and buckets. That approach assumes the future distribution resembles the input estimates. Actual datasets can be very different months later, or a small number of valid IDs can receive disproportionate traffic.
+The [June 3, 2026 first-party report](https://medium.com/netflix-techblog/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456) (src.m9-n12, **Picking the Partitioning Strategy**, **The Problem with the Current Approach**) says TimeSeries provisioning used workload inputs plus **Monte Carlo simulations** to choose time slices and buckets. That approach assumes the future distribution resembles the input estimates. Actual datasets can be very different months later, or a small number of valid IDs can receive disproportionate traffic.
 
 Both extremes matter. An oversized partition may take **seconds** to read, creating retries and queueing. An **over-partitioned** dataset whose generated time buckets contain **under 10 KB** forces a read to fan out across many small partitions: the report describes an illustrative change from **60-second to 604,800-second** time buckets for future time slices after observing histogram percentiles. Neither “always smaller partitions” nor “always bigger partitions” is a rational policy. The article mentions an often-configured target density around **2–10 MiB**, explicitly dependent on workload.
 
 ## Distinct runtime algorithms, not one global rewrite
 
-| Mechanism observed in N12 | When it acts | What it changes | What it cannot fix |
+| Mechanism observed in src.m9-n12 | When it acts | What it changes | What it cannot fix |
 |---|---|---|---|
 | Dataset-level Time Slice worker | Background inspection of histogram percentiles | Partition strategy for **future** time slices | Historical wide partitions already written |
 | Per-ID hot-partition detector | **Read path** bytes exceed configured threshold | Emits Kafka event with time slice, ID, existing buckets, immutability and version | Current request may already be slow; per-read detection does not prevent first spike |
@@ -105,7 +105,7 @@ Both extremes matter. An oversized partition may take **seconds** to read, creat
 | Read-path router | After completed split metadata published | Bloom-filter candidate test and metadata read-through cache select parallel partition reads | Filter false positives, stale metadata or consistency bugs still need fallback |
 | Original-data fallback | Source physical partition retained | Re-read original when split routing/data unavailable | Costs extra storage; cannot erase errors already exposed by an unsafe cutover |
 
-**Source anchors:** N12, **Solution 1**, **Detection**, **Immutability**, **Checkpointing**, **Splitting**, **Validating Splits**, **Serving Reads**, **Fallbacks**. The high-level policy is reported; the table is a Tycho synthesis and not a copy of provider diagrams.
+**Source anchors:** src.m9-n12, **Solution 1**, **Detection**, **Immutability**, **Checkpointing**, **Splitting**, **Validating Splits**, **Serving Reads**, **Fallbacks**. The high-level policy is reported; the table is a Tycho synthesis and not a copy of provider diagrams.
 
 ## Shadow read parity and additional safeguards
 
@@ -119,7 +119,7 @@ The article reports Bloom-filter lookup usually taking **single-digit microsecon
 
 The company reports that the **average latency for affected wide-partition reads** fell from **seconds** to **low double-digit milliseconds**, while their tail latency fell from several seconds to approximately **200 ms or less**, with fewer timeouts. This is **a scoped before/after for selected wide partitions**, not the full TimeSeries read-p99 or an independent A/B study. The published charts are not reproduced and do not supply enough population/time-window metadata here to build universal confidence intervals.
 
-Crucially, the same article includes an extreme **500 MB+** partition read returning paginated data while still taking roughly **41 seconds** in its example. That is a correct and useful negative boundary: partitioning improved availability and common tails but did **not** guarantee a millisecond SLO for every pathological dataset. The reported future work includes **splitting mutable partitions** and reprocessing previously failed splits; neither should be marked completed as of June 2026. [N12, **Results**, **Conclusion**].
+Crucially, the same article includes an extreme **500 MB+** partition read returning paginated data while still taking roughly **41 seconds** in its example. That is a correct and useful negative boundary: partitioning improved availability and common tails but did **not** guarantee a millisecond SLO for every pathological dataset. The reported future work includes **splitting mutable partitions** and reprocessing previously failed splits; neither should be marked completed as of June 2026. [src.m9-n12, **Results**, **Conclusion**].
 
 ## Architectural selection and migration falsification
 
@@ -129,7 +129,7 @@ For another temporal datastore, profile partition-byte percentiles **and** read 
 
 ## Repartitioning is two different problems, not one universal background rewrite
 
-The [June 2026 first-party report](https://netflixtechblog.com/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456) (N12) identifies one failure mode from **bad initial forecasts** and another from a **few exceptional event IDs**. A table-wide future time-slice adjustment addresses the first; rewriting all historical data to solve it would introduce unnecessary risk. The per-ID asynchronous pipeline addresses the second while leaving ordinary IDs untouched. The article explicitly discusses a third choice, a **partial return** after an SLO threshold, but only where the client contract accepts incomplete results. That is not equivalent to a complete read with lower latency.
+The [June 2026 first-party report](https://netflixtechblog.com/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456) (src.m9-n12) identifies one failure mode from **bad initial forecasts** and another from a **few exceptional event IDs**. A table-wide future time-slice adjustment addresses the first; rewriting all historical data to solve it would introduce unnecessary risk. The per-ID asynchronous pipeline addresses the second while leaving ordinary IDs untouched. The article explicitly discusses a third choice, a **partial return** after an SLO threshold, but only where the client contract accepts incomplete results. That is not equivalent to a complete read with lower latency.
 
 ### Source-reported split lifecycle and exact read ownership
 
@@ -143,11 +143,11 @@ The [June 2026 first-party report](https://netflixtechblog.com/dynamically-split
 | **Fallback** | Retain the original wide partition to support old-path reads | Extra storage is intentional; old data cannot be deleted prematurely |
 | **Additional confidence** | Offline Data Bridge comparison and staged shadow byte comparisons | A transition to live reads requires more than the checksum predicate |
 
-**Primary locations:** N12, **Detection** through **Results**. Split-reader correctness must address old/new keys, ordered pagination, TTL and source value representation. The source explicitly calls **mutable-partition splitting** and retries of failed splits further work; neither is accepted as already deployed at June 2026.
+**Primary locations:** src.m9-n12, **Detection** through **Results**. Split-reader correctness must address old/new keys, ordered pagination, TTL and source value representation. The source explicitly calls **mutable-partition splitting** and retries of failed splits further work; neither is accepted as already deployed at June 2026.
 
 ## Outcome and what the published examples cannot show
 
-N12 reports wide-partition average reads moving from **seconds to low double-digit milliseconds**, tails declining from **several seconds to about 200 ms or better**, and fewer timeouts. It also shows an exceptional **500 MB-plus** paginated partition still requiring roughly **41 seconds** for one request in the published example. These can coexist: reducing most affected request latency is not proof that the worst giant partition becomes cheap, nor a guarantee for every data distribution. Numerical figures are **first-party observational**, not independently replayed traffic or published confidence intervals.
+src.m9-n12 reports wide-partition average reads moving from **seconds to low double-digit milliseconds**, tails declining from **several seconds to about 200 ms or better**, and fewer timeouts. It also shows an exceptional **500 MB-plus** paginated partition still requiring roughly **41 seconds** for one request in the published example. These can coexist: reducing most affected request latency is not proof that the worst giant partition becomes cheap, nor a guarantee for every data distribution. Numerical figures are **first-party observational**, not independently replayed traffic or published confidence intervals.
 
 ## Separate physical state from logical query identity
 

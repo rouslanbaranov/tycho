@@ -35,7 +35,7 @@ evidence_scope:
     - "src.m9-u02"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -50,7 +50,7 @@ content_verified_at: null
 # Uber — Project Mezzanine: moving trip data behind a compatibility seam
 
 **Case ID:** `case.uber.mezzanine-trip-data` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-bound original draft; technical review pending.  
-**Source:** U02 — [original company engineering article](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/) (historical Uber engineering account); primary evidence: From SQLAlchemy to Schemaless; Changing trip ids; Backfilling; Mirrored Writes; Validation. Source reuse: original link and attributable paraphrase only; no copied diagrams or pages.
+**Source:** src.m9-u02 — [original company engineering article](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/) (historical Uber engineering account); primary evidence: From SQLAlchemy to Schemaless; Changing trip ids; Backfilling; Mirrored Writes; Validation. Source reuse: original link and attributable paraphrase only; no copied diagrams or pages.
 
 ## Situation — the legacy architecture and constraint
 
@@ -97,13 +97,13 @@ This is a company-reported historical result, not an independently reproduced be
 
 ## A dated 2014 migration with a real launch constraint
 
-René Schmidt's [July 28, 2015 first-party retrospective](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/) (U02, **Background**, **The New Trip Store**) describes **2014** conditions, not Uber's 2020 DOMA structure. Trip volume was growing around **20% per month**. A large shared PostgreSQL store still served many near-100-service backend components; trip rows consumed the greatest storage/IOPS share, and adding an index/column to the largest table could require downtime. Uber projected the store would exhaust capacity during the year and set a high-traffic **October 31** deadline.
+René Schmidt's [July 28, 2015 first-party retrospective](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/) (src.m9-u02, **Background**, **The New Trip Store**) describes **2014** conditions, not Uber's 2020 DOMA structure. Trip volume was growing around **20% per month**. A large shared PostgreSQL store still served many near-100-service backend components; trip rows consumed the greatest storage/IOPS share, and adding an index/column to the largest table could require downtime. Uber projected the store would exhaust capacity during the year and set a high-traffic **October 31** deadline.
 
-The target tripstore had published requirements: backup/replication, online capacity/index expansion, high write availability, secondary lookups and stable operator behavior. The team rejected several externally evaluated NoSQL products **for its own maturity/operational-experience reasons**, then built a sharded **Schemaless** API backed by MySQL. This is *not* an assertion that PostgreSQL generally cannot scale or that building a new database is usually the right choice. [U02, **The New Trip Store**].
+The target tripstore had published requirements: backup/replication, online capacity/index expansion, high write availability, secondary lookups and stable operator behavior. The team rejected several externally evaluated NoSQL products **for its own maturity/operational-experience reasons**, then built a sharded **Schemaless** API backed by MySQL. This is *not* an assertion that PostgreSQL generally cannot scale or that building a new database is usually the right choice. [src.m9-u02, **The New Trip Store**].
 
 ## The data semantics made the cutover tractable
 
-The target organized JSON-style cell data by **trip UUID**, column name and optional timestamp. Its fixed initial logical shard count was typically **4,096**, with shards movable among MySQL hosts for online capacity balancing. The model was **append-only**: a cell was not changed after being written. That property enabled application-defined idempotent and commutative operations for retries and replay. When a target shard was temporarily unavailable, writes could enter a **pending table on another healthy MySQL node** and be replayed later. Secondary indexes were themselves sharded and could be versioned/backfilled before an alias switch. [U02, **The New Trip Store**].
+The target organized JSON-style cell data by **trip UUID**, column name and optional timestamp. Its fixed initial logical shard count was typically **4,096**, with shards movable among MySQL hosts for online capacity balancing. The model was **append-only**: a cell was not changed after being written. That property enabled application-defined idempotent and commutative operations for retries and replay. When a target shard was temporarily unavailable, writes could enter a **pending table on another healthy MySQL node** and be replayed later. Secondary indexes were themselves sharded and could be versioned/backfilled before an alias switch. [src.m9-u02, **The New Trip Store**].
 
 These design decisions require explicit **domain semantics**. A cancellation, price recalculation or correction must be represented as new versioned facts if the record cannot be updated in place. Appending data is not equivalent to a full relational ACID transaction across arbitrary tables; idempotency and ordering constraints must be demonstrated for each effect. The source does not publish a generalized formal proof covering every downstream user/business projection.
 
@@ -118,7 +118,7 @@ These design decisions require explicit **domain semantics**. A cancellation, pr
 | Query migration | Replace **hundreds** of direct/indirect ORM queries with a restricted tripstore query API | Missing joins, wrong projection order or incompatible filters |
 | Read validation and switch | Replay queries on Schemaless and compare results while PostgreSQL served callers | Comparison sampling can miss rare operations or ordering differences |
 
-**Observed API seam:** `lib/tripstore` initially implemented the *new restricted API* over **old PostgreSQL**, then used a switch to route the same operation to Schemaless. That is a strong ordering decision: migrate consumers to one stable abstraction **before** making their storage source change. The source explicitly says mirrored writes and shadow-query comparisons began early and progressed alongside backfill and code changes; validation was **sampled probabilistically** to limit additional load on the already pressured PostgreSQL system. [U02, **From SQLAlchemy to Schemaless**].
+**Observed API seam:** `lib/tripstore` initially implemented the *new restricted API* over **old PostgreSQL**, then used a switch to route the same operation to Schemaless. That is a strong ordering decision: migrate consumers to one stable abstraction **before** making their storage source change. The source explicitly says mirrored writes and shadow-query comparisons began early and progressed alongside backfill and code changes; validation was **sampled probabilistically** to limit additional load on the already pressured PostgreSQL system. [src.m9-u02, **From SQLAlchemy to Schemaless**].
 
 ## Measured historical results and negative evidence
 
@@ -134,13 +134,13 @@ A hypothetical high-growth transaction system can emulate the ordering **identit
 
 ## The 2014 requirements: migrate semantics before storage
 
-The [July 28, 2015 first-party retrospective](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/) (U02, **Background**, **The New Trip Store**) dates the project to **2014**, with publisher-reported trip growth around **20% monthly** at the time. A single PostgreSQL instance still carried the largest and fastest-growing trip dataset; a mature network of services did not by itself remove this storage concentration. The stated target required scalable IOPS/capacity, backup and multi-datacenter replication, online index changes and high write availability, even when short-term read availability had to degrade.
+The [July 28, 2015 first-party retrospective](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/) (src.m9-u02, **Background**, **The New Trip Store**) dates the project to **2014**, with publisher-reported trip growth around **20% monthly** at the time. A single PostgreSQL instance still carried the largest and fastest-growing trip dataset; a mature network of services did not by itself remove this storage concentration. The stated target required scalable IOPS/capacity, backup and multi-datacenter replication, online index changes and high write availability, even when short-term read availability had to degrade.
 
 Schemaless retained **MySQL underneath a sharded append-only column model**; it was not the removal of SQL storage engines from the company. The original report describes a fixed initial set of typically **4,096 logical shards**, movable between physical MySQL hosts, plus secondary-index versions and write buffering to an available server when the responsible shard was temporarily unavailable. Those implementation details carry a crucial semantic precondition: record updates must be representable as append-only, idempotent/commutative cell writes. A legacy transactional update that depends on an atomic join cannot silently be assumed equivalent.
 
 ## A compatibility API before any authority switch
 
-Uber reports hundreds of SQLAlchemy queries, including ORM relationship traversal, that depended on integer trip IDs and relational joins. A new `lib/tripstore` interface exposed the restricted query shape needed by Schemaless while initially supporting **PostgreSQL as an implementation**. This meant query callers could be migrated to a new *interface contract* independently of the underlying persistence switch. Mirrored writes to Schemaless and sampled background query comparison then checked whether the candidate store produced usable results before serving it. [U02, **From SQLAlchemy to Schemaless**].
+Uber reports hundreds of SQLAlchemy queries, including ORM relationship traversal, that depended on integer trip IDs and relational joins. A new `lib/tripstore` interface exposed the restricted query shape needed by Schemaless while initially supporting **PostgreSQL as an implementation**. This meant query callers could be migrated to a new *interface contract* independently of the underlying persistence switch. Mirrored writes to Schemaless and sampled background query comparison then checked whether the candidate store produced usable results before serving it. [src.m9-u02, **From SQLAlchemy to Schemaless**].
 
 | Transition | Reported responsibility | Risk if the step is skipped |
 |---|---|---|
@@ -163,10 +163,10 @@ Test a missing index replica, buffered writes awaiting replay, duplicate events,
 
 Staying on a PostgreSQL-based design with partitioning and targeted indexing may be less risky if current scaling margins, migration ownership and online schema-change needs can be met. A distributed append-only model is justified by measured write/storage scaling and predictable domain semantics, not simply because the original application now has many services. The historical engineering team evaluated alternatives, but this is Tycho's **independent option analysis**.
 
-**Refuse a cutover** when UUID mapping is incomplete, old clients still issue direct ORM queries, buffered writes cannot be replayed idempotently, secondary-index and current-data views differ, or business invariants require atomic relations absent in the target API. Retain the historical **2014/2015** time boundary; no claim about 2026 Uber data-store state follows from U02.
+**Refuse a cutover** when UUID mapping is incomplete, old clients still issue direct ORM queries, buffered writes cannot be replayed idempotently, secondary-index and current-data views differ, or business invariants require atomic relations absent in the target API. Retain the historical **2014/2015** time boundary; no claim about 2026 Uber data-store state follows from src.m9-u02.
 
 ## Applicability to legacy modernization
 
 Prefer API strangling and explicit change of identifiers when a storage migration crosses many teams. If the original relational store still meets capacity and operational requirements, a new distributed engine may not justify this migration. Before a roadmap is approved, require a baseline with data ownership and blast radius, a comparison to a smaller intervention, and measurable acceptance gates. An agent should retrieve this case as **evidence for conditions and counterconditions**, not as a universal preferred architecture.
 
-**Provenance:** [U02 primary](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/), sections From SQLAlchemy to Schemaless; Changing trip ids; Backfilling; Mirrored Writes; Validation. Cross-case comparisons must retain the original company's architecture and historical observation window. **Case review:** not yet independently approved under #121.
+**Provenance:** [src.m9-u02 primary](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/), sections From SQLAlchemy to Schemaless; Changing trip ids; Backfilling; Mirrored Writes; Validation. Cross-case comparisons must retain the original company's architecture and historical observation window. **Case review:** not yet independently approved under #121.

@@ -1,5 +1,7 @@
 # M9 source identity normalization — issue #213
 
+Historical checkpoint: this first correction changed frontmatter only. The subsequent [canonical M9 source-ID migration](M9_CANONICAL_SOURCE_IDS.md) supersedes its statements about retaining active short source labels in the table and page bodies. Old labels now remain only for legacy lookup and distinct historical claim-row identities.
+
 Date: 2026-10-20. Bounded corrective contract: repair the separation between M9 short source aliases and canonical book source IDs, regenerate derived indexes, and execute the complete existing Python validation inventory.
 
 ## Defect and correction

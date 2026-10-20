@@ -31,7 +31,7 @@ evidence_scope:
     - "src.m9-st01"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -46,7 +46,7 @@ content_verified_at: null
 # Stripe — four-stage online migration of subscription data ownership
 
 **Case ID:** `case.stripe.online-subscriptions` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-grounded draft, pending reviewer.  
-**Public primary:** ST01 [official engineering account](https://stripe.com/blog/online-migrations), 2017-02-02, Jacqueline Xu / Stripe; source anchors: A pattern for online migrations; Part 1: Dual writing; Part 2: Changing all read paths; Part 3: Changing all write paths; Part 4: Removing old data. No private materials or copyrighted graphics reproduced.
+**Public primary:** src.m9-st01 [official engineering account](https://stripe.com/blog/online-migrations), 2017-02-02, Jacqueline Xu / Stripe; source anchors: A pattern for online migrations; Part 1: Dual writing; Part 2: Changing all read paths; Part 3: Changing all write paths; Part 4: Removing old data. No private materials or copyrighted graphics reproduced.
 
 ## Original pressure and baseline
 
@@ -90,7 +90,7 @@ A lesser change (query optimization, archive policy, package boundary, deploy-tu
 
 ## Observed migration: preserve the subscription API while changing authority
 
-Jacqueline Xu's [February 2, 2017 practitioner account](https://stripe.com/blog/online-migrations) (ST01) is unusually explicit about **source-of-truth transition order**. At the beginning a Customer record could contain one subscription, then an array of subscriptions. Updates to that array required updating the entire Customer; queries needed to find subscription records within customers. The intended destination was a dedicated Subscriptions table. The report names **hundreds of millions** of existing subscription objects but no independently audited total, exact elapsed migration time or final p99.
+Jacqueline Xu's [February 2, 2017 practitioner account](https://stripe.com/blog/online-migrations) (src.m9-st01) is unusually explicit about **source-of-truth transition order**. At the beginning a Customer record could contain one subscription, then an array of subscriptions. Updates to that array required updating the entire Customer; queries needed to find subscription records within customers. The intended destination was a dedicated Subscriptions table. The report names **hundreds of millions** of existing subscription objects but no independently audited total, exact elapsed migration time or final p99.
 
 This was neither an online schema rename nor a one-off database copy. During the transition, **old and new representations coexisted** and different application paths moved at different times. The safety condition is that a reader sees equivalent subscription semantics regardless of which representation supplies a result. Such equivalence cannot be assumed from equal row counts.
 
@@ -102,7 +102,7 @@ This was neither an online schema rename nor a one-off database copy. During the
 | 3 — write migration | Gradually refactor mutation paths; write to the new table first and keep the old copy in sync temporarily | New table | Validate each mutation path, not just create; detect accidental access to old Customer array |
 | 4 — cleanup | New Subscriptions table is the sole writer/authority | New table | Remove old write path; empty and eventually delete old embedded arrays only after no code depends on them |
 
-**Source anchors:** ST01, **Part 1: Dual writing**, **Part 2: Changing all read paths**, **Part 3: Changing all write paths**, **Part 4: Removing old data**. The direction of write authority during stage 3 matters: switching the reads alone is *not* equivalent to retiring the original write representation.
+**Source anchors:** src.m9-st01, **Part 1: Dual writing**, **Part 2: Changing all read paths**, **Part 3: Changing all write paths**, **Part 4: Removing old data**. The direction of write authority during stage 3 matters: switching the reads alone is *not* equivalent to retiring the original write representation.
 
 ## Why the data copy did not overload the live database
 
@@ -120,7 +120,7 @@ A negative-path test matters just as much as a matching successful response: the
 
 ## Write cutover is the hard part: changing mutation semantics
 
-ST01 calls the write-path migration especially difficult because subscription **updates, renewals and prorations** span multiple services and thousands of lines. It describes slicing the changes into small increments and preserving consistency between old and new tables while the new representation becomes authoritative. The team then intentionally caused errors for uses of the now-obsolete Customer subscription field to discover straggling read/mutation paths. That guard came **after** a staged migration; putting it into the first release would have broken old consumers.
+src.m9-st01 calls the write-path migration especially difficult because subscription **updates, renewals and prorations** span multiple services and thousands of lines. It describes slicing the changes into small increments and preserving consistency between old and new tables while the new representation becomes authoritative. The team then intentionally caused errors for uses of the now-obsolete Customer subscription field to discover straggling read/mutation paths. That guard came **after** a staged migration; putting it into the first release would have broken old consumers.
 
 The order of operations offers a causal lesson: a backfill is an **inventory operation**, a dual write is a **coexistence mechanism**, a shadow read is a **behavioral oracle**, and changing write authority is a **semantic cutover**. None substitutes for the others. Before removing old data, every live writer, async job and retry path must be accounted for in a new implementation. The source reports final cleanup but does not provide externally reproducible migration logs, failure counts, rollout cohorts, error budgets or independent correctness testing.
 
@@ -143,4 +143,4 @@ For an illustrative service that must preserve external API behavior, define a s
 
 ## Provenance and acceptance boundary
 
-Evidence is company-authored and scoped to the publication date and sections: [ST01](https://stripe.com/blog/online-migrations), **A pattern for online migrations; Part 1: Dual writing; Part 2: Changing all read paths; Part 3: Changing all write paths; Part 4: Removing old data**. Numerical results, where stated, are publisher-reported; no Tycho benchmark, source reproduction or copyright permissions inferred. Source status must be reconciled with [the candidate audit](../../sources/REAL_WORLD_CASES_CANDIDATE_AUDIT.md) and E16-01 #114. This case remains a draft until independent #121 correctness and source review.
+Evidence is company-authored and scoped to the publication date and sections: [src.m9-st01](https://stripe.com/blog/online-migrations), **A pattern for online migrations; Part 1: Dual writing; Part 2: Changing all read paths; Part 3: Changing all write paths; Part 4: Removing old data**. Numerical results, where stated, are publisher-reported; no Tycho benchmark, source reproduction or copyright permissions inferred. Source status must be reconciled with [the candidate audit](../../sources/REAL_WORLD_CASES_CANDIDATE_AUDIT.md) and E16-01 #114. This case remains a draft until independent #121 correctness and source review.

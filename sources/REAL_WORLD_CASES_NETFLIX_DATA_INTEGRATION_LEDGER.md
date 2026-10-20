@@ -1,13 +1,13 @@
 # M9 E16-01 — Netflix Primary Claim Admission Wave 05: GraphQL and Cassandra
 
-**Date of direct source inspection:** 2026-10-19. **Admitted IDs:** N09, N10, N11, N12, each restricted to the historical source-specific claims below. Company-authored articles/release notes; figures remain *publisher reports*, not Tycho-reproduced measurements. Copyright allows linked citations/original paraphrase, not copied charts or bulk reproductions.
+**Date of direct source inspection:** 2026-10-19. **Admitted IDs:** src.m9-n09, src.m9-n10, src.m9-n11, src.m9-n12, each restricted to the historical source-specific claims below. Company-authored articles/release notes; figures remain *publisher reports*, not Tycho-reproduced measurements. Copyright allows linked citations/original paraphrase, not copied charts or bulk reproductions.
 
 | ID | Verified source identity | Original URL and date | Temporal boundary |
 |---|---|---|---|
-| N09 | Kavitha Srinivasan and Paul Bakker; Netflix TechBlog | [A Tale of Two Frameworks](https://netflixtechblog.medium.com/a-tale-of-two-frameworks-the-domain-graph-service-framework-meets-spring-graphql-f8237f09c389), **2024-04-08** | Integration/opt-in phase and plans, not a proof every service already migrated |
-| N10 | Netflix DGS Framework maintainers, official release notes | [New and Noteworthy: DGS 8.5.0 and 10.0.0](https://netflix.github.io/dgs/announcements/), **2024-03-29** and **2024-12-17** | Versioned release-owner evidence subsequent to N09 |
-| N11 | Guil Pires, Jennifer Prince, Jose Camacho, Ken Kurzweil, Phanindra Chunduru; Netflix TechBlog | [Evolution of Cassandra Data Movement](https://netflixtechblog.medium.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1), **2026-05-18** | Reported production migration and company assertions, not audited savings |
-| N12 | Rajiv Shringi, Kaidan Fullerton, Oleksii Tkachuk, Kartik Sathyanarayanan; Netflix TechBlog | [Dynamic Repartitioning for Time Series Workloads](https://medium.com/netflix-techblog/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456), **2026-06-03** | Cassandra 4.x workload- and date-bound implementation |
+| src.m9-n09 | Kavitha Srinivasan and Paul Bakker; Netflix TechBlog | [A Tale of Two Frameworks](https://netflixtechblog.medium.com/a-tale-of-two-frameworks-the-domain-graph-service-framework-meets-spring-graphql-f8237f09c389), **2024-04-08** | Integration/opt-in phase and plans, not a proof every service already migrated |
+| src.m9-n10 | Netflix DGS Framework maintainers, official release notes | [New and Noteworthy: DGS 8.5.0 and 10.0.0](https://netflix.github.io/dgs/announcements/), **2024-03-29** and **2024-12-17** | Versioned release-owner evidence subsequent to src.m9-n09 |
+| src.m9-n11 | Guil Pires, Jennifer Prince, Jose Camacho, Ken Kurzweil, Phanindra Chunduru; Netflix TechBlog | [Evolution of Cassandra Data Movement](https://netflixtechblog.medium.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1), **2026-05-18** | Reported production migration and company assertions, not audited savings |
+| src.m9-n12 | Rajiv Shringi, Kaidan Fullerton, Oleksii Tkachuk, Kartik Sathyanarayanan; Netflix TechBlog | [Dynamic Repartitioning for Time Series Workloads](https://medium.com/netflix-techblog/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456), **2026-06-03** | Cassandra 4.x workload- and date-bound implementation |
 
 ## Evidence locations, numbers and failure/negative controls
 
@@ -35,9 +35,9 @@
 
 ## Correct historical decision transfer
 
-1. **N09→N10:** An April roadmap must be read together with a December release announcement, not rewritten as a one-date migration.
-2. **N11:** Data movement correctness requires both set differences and transactional/temporal comparability; job-interface stability and fallback matter as much as peak throughput.
-3. **N12:** The two repartitioning levers address different skews. A future time-slice adjustment is not an existing partition split. Netflix intentionally reduced initial scope to immutable rows and maintained original storage to avoid irreversible failure.
+1. **src.m9-n09→src.m9-n10:** An April roadmap must be read together with a December release announcement, not rewritten as a one-date migration.
+2. **src.m9-n11:** Data movement correctness requires both set differences and transactional/temporal comparability; job-interface stability and fallback matter as much as peak throughput.
+3. **src.m9-n12:** The two repartitioning levers address different skews. A future time-slice adjustment is not an existing partition split. Netflix intentionally reduced initial scope to immutable rows and maintained original storage to avoid irreversible failure.
 4. **Original sources / rights:** all documentation is Tycho-authored summaries and independently designed diagrams; the original graphs, logs, private connectors and specific source snapshots are not mirrored.
 5. **Cross-company unknown:** a method that worked in one Netflix Cassandra 4.x cluster does not decide if a different company should choose Cassandra, DynamoDB, ScyllaDB or a lake storage layer.
 

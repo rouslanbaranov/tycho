@@ -33,7 +33,7 @@ evidence_scope:
     - "src.m9-u03"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -48,7 +48,7 @@ content_verified_at: null
 # Uber — MySQL to MyRocks: storage engine economics under real workloads
 
 **Case ID:** `case.uber.mysql-to-myrocks` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-bound original draft; technical review pending.  
-**Source:** U03 — [original company engineering article](https://www.uber.com/us/en/blog/mysql-to-myrocks-migration-in-uber-distributed-datastores/) (2022 Uber engineering account); primary evidence: Migration overview; datastore trade-offs; operational rollout. Source reuse: original link and attributable paraphrase only; no copied diagrams or pages.
+**Source:** src.m9-u03 — [original company engineering article](https://www.uber.com/us/en/blog/mysql-to-myrocks-migration-in-uber-distributed-datastores/) (2022 Uber engineering account); primary evidence: Migration overview; datastore trade-offs; operational rollout. Source reuse: original link and attributable paraphrase only; no copied diagrams or pages.
 
 ## Situation — the legacy architecture and constraint
 
@@ -95,15 +95,15 @@ This is a company-reported historical result, not an independently reproduced be
 
 ## Exact motivation and preparatory version dependency
 
-The [September 1, 2022 first-party report](https://www.uber.com/us/en/blog/mysql-to-myrocks-migration-in-uber-distributed-datastores/) (U03, **Motivation** and **Challenges**) distinguishes **disk-capacity pressure** from a generic demand for a faster database. Schemaless and Docstore stored tens of petabytes and served tens of millions of requests per second in the published operating environment. Disk footprint constrained node density and slowed backup/resynchronization while CPU and memory were underutilized. Node splitting could hit sharding limits, and InnoDB table compression saved only about **5%** because an upstream query-engine layer already compressed payloads. An early MyRocks benchmark reported **over 30% space saving** at acceptable read latency, with the same MySQL client protocol: a **storage-engine replacement**, not a client API rewrite.
+The [September 1, 2022 first-party report](https://www.uber.com/us/en/blog/mysql-to-myrocks-migration-in-uber-distributed-datastores/) (src.m9-u03, **Motivation** and **Challenges**) distinguishes **disk-capacity pressure** from a generic demand for a faster database. Schemaless and Docstore stored tens of petabytes and served tens of millions of requests per second in the published operating environment. Disk footprint constrained node density and slowed backup/resynchronization while CPU and memory were underutilized. Node splitting could hit sharding limits, and InnoDB table compression saved only about **5%** because an upstream query-engine layer already compressed payloads. An early MyRocks benchmark reported **over 30% space saving** at acceptable read latency, with the same MySQL client protocol: a **storage-engine replacement**, not a client API rewrite.
 
-The source reports a prerequisite that is easy to omit from a short modernization plan: Uber initially ran **MySQL 5.7** while its chosen XtraBackup tooling supported MyRocks beginning with **MySQL 8.0**. That prerequisite version upgrade took **more than a year**. Reported blockers included increased 8.0 memory use, changed optimizer plans, slow data-dictionary population on installations with many tables, stalls during resource release and an InnoDB index/tablespace corruption defect. These were encountered during the upgrade and should not all be falsely attributed to the later RocksDB engine. [U03, **MySQL 8.0 Upgrade**].
+The source reports a prerequisite that is easy to omit from a short modernization plan: Uber initially ran **MySQL 5.7** while its chosen XtraBackup tooling supported MyRocks beginning with **MySQL 8.0**. That prerequisite version upgrade took **more than a year**. Reported blockers included increased 8.0 memory use, changed optimizer plans, slow data-dictionary population on installations with many tables, stalls during resource release and an InnoDB index/tablespace corruption defect. These were encountered during the upgrade and should not all be falsely attributed to the later RocksDB engine. [src.m9-u03, **MySQL 8.0 Upgrade**].
 
 ## Two distinct migrations and their source-reported safety gates
 
 The underlying datastore used shards mapped to physical partitions, with multiple Raft-backed replicas within one region and replication to other geographic regions. The 5.7→8.0 binary upgrade followed **follower → other followers → leader, then next partition, then next region**. An engine migration, however, needed a **newly built replica and table conversion** rather than just replacing a binary. The difference matters to availability, data checks and how rollback is possible.
 
-| Gate in U03 | Source-reported sequence | What can still fail |
+| Gate in src.m9-u03 | Source-reported sequence | What can still fail |
 |---|---|---|
 | Candidate build | Add a MySQL 8.0 node by XtraBackup; collect table count and checksums | Snapshot/backup compatibility and the time required to resynchronize |
 | Engine conversion | Convert user tables to RocksDB with bulk-load mode and worker threads | Out-of-memory interruption; source authors found **missing tables after restart** |
@@ -113,7 +113,7 @@ The underlying datastore used shards mapped to physical partitions, with multipl
 | Region gate | Convert other partitions in region, then pause and compare **latency, errors, CPU and I/O across regions** | Regression relative to a MySQL region; remote MySQL region retained as a failover option |
 | Other regions | Once first-region results acceptable, replace nodes in subsequent regions without extra capacity | Earlier validation may not represent regional workload differences |
 
-**Primary source anchors:** U03, **Upgrade and Migration**, **MySQL 8.0 Upgrade**, **MyRocks Migration**. The sequence is a reported production method. The article does not provide a reproducible code revision or recovery point objective for every intermediate state.
+**Primary source anchors:** src.m9-u03, **Upgrade and Migration**, **MySQL 8.0 Upgrade**, **MyRocks Migration**. The sequence is a reported production method. The article does not provide a reproducible code revision or recovery point objective for every intermediate state.
 
 ## The two failure findings that invalidate a purely structural cutover
 
@@ -144,4 +144,4 @@ For a different Raft-replicated MySQL store, perform a **separate version-upgrad
 
 Consider LSM engines when persistent footprint and sustained ingestion dominate and the team can operate compaction/recovery. Prefer retaining a familiar B-tree engine when read behavior, licensing, replication or troubleshooting costs make that safer. Before a roadmap is approved, require a baseline with data ownership and blast radius, a comparison to a smaller intervention, and measurable acceptance gates. An agent should retrieve this case as **evidence for conditions and counterconditions**, not as a universal preferred architecture.
 
-**Provenance:** [U03 primary](https://www.uber.com/us/en/blog/mysql-to-myrocks-migration-in-uber-distributed-datastores/), sections Migration overview; datastore trade-offs; operational rollout. Cross-case comparisons must retain the original company's architecture and historical observation window. **Case review:** not yet independently approved under #121.
+**Provenance:** [src.m9-u03 primary](https://www.uber.com/us/en/blog/mysql-to-myrocks-migration-in-uber-distributed-datastores/), sections Migration overview; datastore trade-offs; operational rollout. Cross-case comparisons must retain the original company's architecture and historical observation window. **Case review:** not yet independently approved under #121.

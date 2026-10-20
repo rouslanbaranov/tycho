@@ -33,7 +33,7 @@ evidence_scope:
     - "src.m9-u01"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -48,7 +48,7 @@ content_verified_at: null
 # Uber — DOMA: governing service ownership after microservice explosion
 
 **Case ID:** `case.uber.doma-domains` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-bound original draft; technical review pending.  
-**Source:** U01 — [original company engineering article](https://www.uber.com/us/en/blog/microservice-architecture/) (2020 engineering retrospective); primary evidence: Microservices at Uber; Domain-Oriented Microservice Architecture; Layer Design; Gateways; Extensions. Source reuse: original link and attributable paraphrase only; no copied diagrams or pages.
+**Source:** src.m9-u01 — [original company engineering article](https://www.uber.com/us/en/blog/microservice-architecture/) (2020 engineering retrospective); primary evidence: Microservices at Uber; Domain-Oriented Microservice Architecture; Layer Design; Gateways; Extensions. Source reuse: original link and attributable paraphrase only; no copied diagrams or pages.
 
 ## Situation — the legacy architecture and constraint
 
@@ -95,7 +95,7 @@ This is a company-reported historical result, not an independently reproduced be
 
 ## Why domain boundaries were introduced after independent services
 
-The dated [Uber Engineering account](https://www.uber.com/us/en/blog/microservice-architecture/) (U01, **Motivations**) separates two earlier architecture pressures: in approximately 2012–2013, large shared deployables impaired independent release and operational isolation; by 2018 the replacement service network had accumulated its own integration and debugging burden. A reported debugging investigation traversed roughly **50 services owned by 12 teams**; a different illustrative feature path needed **10 touchpoints** before DOMA. These examples identify coordination/coupling failure modes, not median trace length or a published p99.
+The dated [Uber Engineering account](https://www.uber.com/us/en/blog/microservice-architecture/) (src.m9-u01, **Motivations**) separates two earlier architecture pressures: in approximately 2012–2013, large shared deployables impaired independent release and operational isolation; by 2018 the replacement service network had accumulated its own integration and debugging burden. A reported debugging investigation traversed roughly **50 services owned by 12 teams**; a different illustrative feature path needed **10 touchpoints** before DOMA. These examples identify coordination/coupling failure modes, not median trace length or a published p99.
 
 The July 2020 proposal therefore **does not advocate collapsing 2,200 services back into one monolith**. It introduces a stable level of organizational and API ownership *above* individual implementations: one domain can contain a single service or many, and teams interact through a domain gateway, not through every implementation's changing RPC surface. The primary source reports that **2,200 critical microservices had been classified into 70 domains**, **roughly half implemented**, at that point in the rollout. Classification, implementation and full migration are separate denominators.
 
@@ -109,7 +109,7 @@ The July 2020 proposal therefore **does not advocate collapsing 2,200 services b
 | Logic extension | Typed provider/plugin interface attached at a documented domain extension point | Unbounded plugins can change latency, fault isolation and safety behavior despite a stable API |
 | Data extension | A domain accepts extensible context; the report describes Protocol Buffers **Any** as one option | Serialized payloads still require schema/version, authentication, size, privacy and retention controls |
 
-**Publisher basis:** U01, sections **Domains**, **Layer Design**, **Gateways**, **Logic Extensions**, **Data Extensions**. The risk column is an original Tycho analysis: it should not be read as a record of every incident experienced by Uber. The paper explicitly allows domain size to vary; **80 microservices in the Maps organization behind three gateways** illustrate grouping, not a default gateway-to-service ratio.
+**Publisher basis:** src.m9-u01, sections **Domains**, **Layer Design**, **Gateways**, **Logic Extensions**, **Data Extensions**. The risk column is an original Tycho analysis: it should not be read as a record of every incident experienced by Uber. The paper explicitly allows domain size to vary; **80 microservices in the Maps organization behind three gateways** illustrate grouping, not a default gateway-to-service ratio.
 
 For a hypothetical domain owner, the meaningful migration seam is external **contract identity**. The owner can replace, split or consolidate services behind a gateway while maintaining caller-visible semantics and a documented exception mechanism. In contrast, letting clients query implementation tables across domains would preserve the old source-of-truth coupling under a new name.
 
@@ -123,7 +123,7 @@ For a hypothetical domain owner, the meaningful migration seam is external **con
 | One platform integration from 3 days to 3 hours | Named experience with extensions, not a randomized comparison | Every change became ten times faster |
 | Service half-life estimated at 1.5 years | Source-reported fleet churn estimate used to justify stable gateway interfaces | Every service expires exactly at 18 months or every domain changes at the same rate |
 
-The post also reports **two large platform rewrites hidden behind gateways** instead of forcing all upstream consumers onto a new internal API. It does **not** provide reproducible control cohorts, an independently measured broad p99 or an invariant organizational velocity model. An agent should return the historical observation window, population and confidence caveats along with any quoted percentage. [U01, **Benefits**, **Reduced Complexity**, **Future Migrations**].
+The post also reports **two large platform rewrites hidden behind gateways** instead of forcing all upstream consumers onto a new internal API. It does **not** provide reproducible control cohorts, an independently measured broad p99 or an invariant organizational velocity model. An agent should return the historical observation window, population and confidence caveats along with any quoted percentage. [src.m9-u01, **Benefits**, **Reduced Complexity**, **Future Migrations**].
 
 ## Transfer: staged migration and reversal gates (Tycho original proposal)
 
@@ -135,6 +135,6 @@ A different distributed fleet can start with one operationally costly cross-team
 
 Favor domains and API ownership when a *preexisting* large distributed fleet suffers escalating coordination cost. For a small product that can change one deployable application cheaply, prefer module-level domain boundaries before adding network hops. Before a roadmap is approved, require a baseline with data ownership and blast radius, a comparison to a smaller intervention, and measurable acceptance gates. An agent should retrieve this case as **evidence for conditions and counterconditions**, not as a universal preferred architecture.
 
-**2026-10-19 publisher-source spot check:** [The dated U01 verification register](../../authoring/cases/M9_UBER_DOMA_SOURCE_SPOTCHECK_2026-10-19.md) matched 11 narrow source-specific statements and classified the Uber/Shopify comparison as Tycho's own inference. This does not establish a qualified independent review, copyright approval or reproduced benchmark.
+**2026-10-19 publisher-source spot check:** [The dated src.m9-u01 verification register](../../authoring/cases/M9_UBER_DOMA_SOURCE_SPOTCHECK_2026-10-19.md) matched 11 narrow source-specific statements and classified the Uber/Shopify comparison as Tycho's own inference. This does not establish a qualified independent review, copyright approval or reproduced benchmark.
 
-**Provenance:** [U01 primary](https://www.uber.com/us/en/blog/microservice-architecture/), sections Microservices at Uber; Domain-Oriented Microservice Architecture; Layer Design; Gateways; Extensions. Cross-case comparisons must retain the original company's architecture and historical observation window. **Case review:** not yet independently approved under #121.
+**Provenance:** [src.m9-u01 primary](https://www.uber.com/us/en/blog/microservice-architecture/), sections Microservices at Uber; Domain-Oriented Microservice Architecture; Layer Design; Gateways; Extensions. Cross-case comparisons must retain the original company's architecture and historical observation window. **Case review:** not yet independently approved under #121.

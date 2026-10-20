@@ -2,7 +2,7 @@
 
 **Status:** researched case candidates for Tycho, **not** finished book chapters. 2026-10-19. Netflix is a major open-source/microservices engineering contributor, but its status as a leading contributor to the OpenJDK/Java Foundation or Spring's core project is **not established by these sources**. Distinguish Netflix's Java platform use, its own OSS frameworks, Spring collaboration and any separately verified upstream commits.
 
-**Principle:** Netflix is not a universal architecture recommendation. Use its changing choices, reversals, measurements and failure cases to reason from constraints. Sources are listed in [the primary register](REAL_WORLD_ARCHITECTURE_CASES.md), N01–N20. Before chapter acceptance, independently examine the complete original article/talk and source sections.
+**Principle:** Netflix is not a universal architecture recommendation. Use its changing choices, reversals, measurements and failure cases to reason from constraints. Sources are listed in [the primary register](REAL_WORLD_ARCHITECTURE_CASES.md), src.m9-n01–src.m9-n20. Before chapter acceptance, independently examine the complete original article/talk and source sections.
 
 ## Case NF-01 — Seven-year datacenter-to-cloud architectural transformation
 

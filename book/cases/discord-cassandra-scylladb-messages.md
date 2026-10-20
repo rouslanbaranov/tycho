@@ -33,7 +33,7 @@ evidence_scope:
     - "src.m9-di01"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -48,7 +48,7 @@ content_verified_at: null
 # Discord — trillions of messages: ScyllaDB plus Rust request coalescing
 
 **Case ID:** `case.discord.cassandra-scylladb-messages` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-grounded draft, pending reviewer.  
-**Public primary:** DI01 [official engineering account](https://discord.com/blog/how-discord-stores-trillions-of-messages), 2023-03-06, Bo Ingram / Discord; source anchors: Data Services Serving Data; A Very Big Migration; Several Months Later. No private materials or copyrighted graphics reproduced.
+**Public primary:** src.m9-di01 [official engineering account](https://discord.com/blog/how-discord-stores-trillions-of-messages), 2023-03-06, Bo Ingram / Discord; source anchors: Data Services Serving Data; A Very Big Migration; Several Months Later. No private materials or copyrighted graphics reproduced.
 
 ## Original pressure and baseline
 
@@ -92,19 +92,19 @@ A lesser change (query optimization, archive policy, package boundary, deploy-tu
 
 ## Partition hot spots and why a database replacement alone was insufficient
 
-The [March 6, 2023 Discord report](https://discord.com/blog/how-discord-stores-trillions-of-messages) (DI01, **Our Cassandra Troubles**) describes a specific read-amplification mechanism. Messages were partitioned by **channel ID plus fixed time bucket** and replicated across nodes. A busy channel/bucket caused high concurrent reads on the same storage replicas. Cassandra read operations had to reconcile memtables and SSTables; accumulated compaction debt and JVM pauses made service time unpredictable. The company describes its maintenance workaround of temporarily draining individual nodes, compacting, then reintegrating them through hinted handoff. That is an on-call cost and availability warning, not simply a high benchmark latency.
+The [March 6, 2023 Discord report](https://discord.com/blog/how-discord-stores-trillions-of-messages) (src.m9-di01, **Our Cassandra Troubles**) describes a specific read-amplification mechanism. Messages were partitioned by **channel ID plus fixed time bucket** and replicated across nodes. A busy channel/bucket caused high concurrent reads on the same storage replicas. Cassandra read operations had to reconcile memtables and SSTables; accumulated compaction debt and JVM pauses made service time unpredictable. The company describes its maintenance workaround of temporarily draining individual nodes, compacting, then reintegrating them through hinted handoff. That is an on-call cost and availability warning, not simply a high benchmark latency.
 
-By **early 2022**, the message database had **177 Cassandra nodes**, versus 12 in the company's 2017 account. Discord had moved its other Cassandra clusters to ScyllaDB by **2020**, but delayed the largest message cluster while gaining experience and waiting for **reverse-order query performance** to improve. This is a documented rejected-early-cutover reason: a database may be compatible at a basic query/API level yet unacceptable for a critical sorting direction. [DI01, **Changing Our Architecture**].
+By **early 2022**, the message database had **177 Cassandra nodes**, versus 12 in the company's 2017 account. Discord had moved its other Cassandra clusters to ScyllaDB by **2020**, but delayed the largest message cluster while gaining experience and waiting for **reverse-order query performance** to improve. This is a documented rejected-early-cutover reason: a database may be compatible at a basic query/API level yet unacceptable for a critical sorting direction. [src.m9-di01, **Changing Our Architecture**].
 
 ## Request shaping: the extra architecture boundary
 
-The Rust/Tokio gRPC **data services** are not simply another generic microservice tier. The original describes one endpoint per underlying query, deliberately **without domain logic**. Upstream requests are routed using **channel ID** so that requests for the same hot channel tend to reach the same service instance. The first in-flight request for a row starts a database operation; simultaneous requests subscribe to its result. The goal is to collapse redundant reads *before* they reach an already overloaded partition. [DI01, **Data Services Serving Data**].
+The Rust/Tokio gRPC **data services** are not simply another generic microservice tier. The original describes one endpoint per underlying query, deliberately **without domain logic**. Upstream requests are routed using **channel ID** so that requests for the same hot channel tend to reach the same service instance. The first in-flight request for a row starts a database operation; simultaneous requests subscribe to its result. The goal is to collapse redundant reads *before* they reach an already overloaded partition. [src.m9-di01, **Data Services Serving Data**].
 
 A single-flight cache of in-progress work must still be bounded by request identity and semantics. Different authorization contexts, mutable reads or different consistency levels may disqualify coalescing. Those are **Tycho's transfer risks**, not a claim that Discord exposed customer data across authorization boundaries. The report explicitly says hot partitions still occurred on Cassandra after coalescing, merely less frequently: request shaping bought migration time but did not remove the storage bottleneck.
 
 ## What changed in the migration plan
 
-The first company proposal would have **dual-written** new messages, sent newer reads to ScyllaDB using a time cutoff, and migrated old data in the background. The publisher says a conventional Spark migrator estimated roughly **three months**. Instead the team reused its Rust database client to build a token-range migrator with **SQLite checkpoints**; the new estimate was **nine days**, making a simpler whole-database cutover feasible. An observed peak transfer rate was **up to 3.2 million messages/second**—a peak *migration* throughput, not production request capacity. [DI01, **A Very Big Migration**].
+The first company proposal would have **dual-written** new messages, sent newer reads to ScyllaDB using a time cutoff, and migrated old data in the background. The publisher says a conventional Spark migrator estimated roughly **three months**. Instead the team reused its Rust database client to build a token-range migrator with **SQLite checkpoints**; the new estimate was **nine days**, making a simpler whole-database cutover feasible. An observed peak transfer rate was **up to 3.2 million messages/second**—a peak *migration* throughput, not production request capacity. [src.m9-di01, **A Very Big Migration**].
 
 | Phase | Source-reported action | Correctness boundary |
 |---|---|---|
@@ -118,7 +118,7 @@ The tombstone stall is especially instructive. Percent complete can conceal path
 
 ## Outcomes and unlike-for-like resources
 
-DI01 reports **177 Cassandra nodes versus 72 ScyllaDB nodes** after the migration, but the node configurations were not equal: approximately **4 TB disk/node** in Cassandra versus **9 TB/node** in ScyllaDB. Historical message-read p99 changed from **40–125 ms to ~15 ms**, and insert p99 from **5–70 ms to ~5 ms** in the publisher's workloads. These are dated vendor-operator measurements, not a controlled cross-database benchmark over identical hardware. Other capabilities (maintenance/repair burden, hot-key tolerance, team expertise) may determine actual total cost of ownership.
+src.m9-di01 reports **177 Cassandra nodes versus 72 ScyllaDB nodes** after the migration, but the node configurations were not equal: approximately **4 TB disk/node** in Cassandra versus **9 TB/node** in ScyllaDB. Historical message-read p99 changed from **40–125 ms to ~15 ms**, and insert p99 from **5–70 ms to ~5 ms** in the publisher's workloads. These are dated vendor-operator measurements, not a controlled cross-database benchmark over identical hardware. Other capabilities (maintenance/repair burden, hot-key tolerance, team expertise) may determine actual total cost of ownership.
 
 This **message-store** latency must not be conflated with the much later [Discord message-search index modernization](discord-search-index-cells.md), whose reported median/p99 concern Elasticsearch query response, not ScyllaDB message retrieval.
 
@@ -130,4 +130,4 @@ A hypothetical high-volume message service should first profile read/write ampli
 
 ## Provenance and acceptance boundary
 
-Evidence is company-authored and scoped to the publication date and sections: [DI01](https://discord.com/blog/how-discord-stores-trillions-of-messages), **Data Services Serving Data; A Very Big Migration; Several Months Later**. Numerical results, where stated, are publisher-reported; no Tycho benchmark, source reproduction or copyright permissions inferred. Source status must be reconciled with [the candidate audit](../../sources/REAL_WORLD_CASES_CANDIDATE_AUDIT.md) and E16-01 #114. This case remains a draft until independent #121 correctness and source review.
+Evidence is company-authored and scoped to the publication date and sections: [src.m9-di01](https://discord.com/blog/how-discord-stores-trillions-of-messages), **Data Services Serving Data; A Very Big Migration; Several Months Later**. Numerical results, where stated, are publisher-reported; no Tycho benchmark, source reproduction or copyright permissions inferred. Source status must be reconciled with [the candidate audit](../../sources/REAL_WORLD_CASES_CANDIDATE_AUDIT.md) and E16-01 #114. This case remains a draft until independent #121 correctness and source review.

@@ -35,7 +35,7 @@ evidence_scope:
     - "src.m9-di02"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -50,7 +50,7 @@ content_verified_at: null
 # Discord — search cells: splitting Elasticsearch clusters and changing shard keys
 
 **Case ID:** `case.discord.search-index-cells` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-grounded draft, pending reviewer.  
-**Public primary:** DI02 [official engineering account](https://discord.com/blog/how-discord-indexes-trillions-of-messages), Discord Engineering report, 2025; source anchors: The Problems; The Solutions; Multi-cluster cell architecture; Supporting new search use cases. No private materials or copyrighted graphics reproduced.
+**Public primary:** src.m9-di02 [official engineering account](https://discord.com/blog/how-discord-indexes-trillions-of-messages), Discord Engineering report, 2025; source anchors: The Problems; The Solutions; Multi-cluster cell architecture; Supporting new search use cases. No private materials or copyrighted graphics reproduced.
 
 ## Original pressure and baseline
 
@@ -94,7 +94,7 @@ A lesser change (query optimization, archive policy, package boundary, deploy-tu
 
 ## Three separate failure mechanisms in the legacy search fleet
 
-The [Discord Engineering account](https://discord.com/blog/how-discord-indexes-trillions-of-messages) (DI02, **The Problems**) describes a linked set of bottlenecks. They should not be reduced to the claim that “Elasticsearch was slow”:
+The [Discord Engineering account](https://discord.com/blog/how-discord-indexes-trillions-of-messages) (src.m9-di02, **The Problems**) describes a linked set of bottlenecks. They should not be reduced to the claim that “Elasticsearch was slow”:
 
 1. **Lossy ingest buffer:** when the Redis-backed realtime indexing queue accumulated a backlog during search-node failures, Redis could become CPU-saturated and begin **dropping messages**. Querying a healthy shard later could not recover documents that never made it to the index pipeline.
 2. **Failure-amplifying bulk ingestion:** a batch of 50 message writes could target 50 different Elasticsearch nodes. A single node outage could fail the entire bulk operation, causing **all records** to be retried. The article illustrates a 100-node cluster with one unavailable node where a 50-message random fan-out batch has roughly **40%** probability of touching the failed node. This is an illustrative probability conditioned on the example distribution, not a measured fleet-wide incident rate.
@@ -104,11 +104,11 @@ These are distinct fault surfaces: **transport durability**, **batch destination
 
 ## Source-reported new topology and recovery limits
 
-DI02, **The Solutions**, reports a move to Kubernetes using Elastic Cloud on Kubernetes (ECK) and a greater number of smaller Elasticsearch clusters. Each logical **cell** groups multiple clusters. Dedicated master-eligible, ingest and data nodes separate coordination, ingestion and storage/queries; the source says **three master-eligible nodes across zones**, at least three ingest nodes and awareness-aware primary/replica placement. This addresses availability and maintenance windows, but it does not make a whole-cell outage impossible.
+src.m9-di02, **The Solutions**, reports a move to Kubernetes using Elastic Cloud on Kubernetes (ECK) and a greater number of smaller Elasticsearch clusters. Each logical **cell** groups multiple clusters. Dedicated master-eligible, ingest and data nodes separate coordination, ingestion and storage/queries; the source says **three master-eligible nodes across zones**, at least three ingest nodes and awareness-aware primary/replica placement. This addresses availability and maintenance windows, but it does not make a whole-cell outage impossible.
 
 The team moved realtime indexing from Redis to a **PubSub queue** able to retain backlogs when Elasticsearch was unavailable. Then a Rust/Tokio router grouped incoming messages by **destination cluster and index**, issuing bulk writes whose members target the same index rather than potentially many unrelated nodes. A single failed destination therefore no longer forces all other destinations in one batch to retry. Those destination keys are **ingest grouping keys**, not necessarily the shard ID used to satisfy each user search. The implementation discussed here belongs to Discord; Tycho is not building an ingest-graph service.
 
-| Original issue | Design response described in DI02 | Still requires separate validation |
+| Original issue | Design response described in src.m9-di02 | Still requires separate validation |
 |---|---|---|
 | Redis backlog dropped messages | PubSub retention and retry during search outages | Queue redelivery/idempotency, prolonged outage retention and consistent index checkpoint |
 | Batch fan-out coupled failures | Destination-specific router and bulk operations | Ordering, retry storms, queue age by cell/index, backpressure |
@@ -119,7 +119,7 @@ The team moved realtime indexing from Redis to a **PubSub queue** able to retain
 
 ## Query patterns determine when data duplication is justified
 
-The design keeps ordinary guild messages indexed by **guild ID**, enabling localized guild queries. Search across all of a user's direct-message conversations could not efficiently be implemented by fanning out one query to every DM. Discord therefore introduced a separate **user-ID-sharded direct-message cell** so one user's messages could be retrieved in one logical search path. A two-person direct message then has **two indexed copies**, one per recipient, a deliberately accepted storage amplification for the new user-facing cross-DM search. [DI02, **Supporting new search use cases**].
+The design keeps ordinary guild messages indexed by **guild ID**, enabling localized guild queries. Search across all of a user's direct-message conversations could not efficiently be implemented by fanning out one query to every DM. Discord therefore introduced a separate **user-ID-sharded direct-message cell** so one user's messages could be retrieved in one logical search path. A two-person direct message then has **two indexed copies**, one per recipient, a deliberately accepted storage amplification for the new user-facing cross-DM search. [src.m9-di02, **Supporting new search use cases**].
 
 A different corner case required the opposite optimization: most guilds benefit from **one primary shard** to avoid scattering each query, while exceptionally large guilds approaching Lucene MAX_DOC require **multiple primary shards** and higher query fan-out to fit the document set. One universal shard key and shard count cannot serve both workloads optimally.
 
@@ -127,7 +127,7 @@ The article gives a bounded **live reindex sequence** for such large guilds: det
 
 ## Quantified reported outcome, with non-transferable denominators
 
-As published, Discord reports **twice the legacy indexing throughput**, **median search latency from 500 ms to below 100 ms**, **p99 from about 1 second to below 500 ms**, and **40 Elasticsearch clusters with thousands of indices**, while indexing **trillions** of messages. It also reports automated cluster upgrades/rolling restarts with no service impact during its observation. [DI02, **How are things going?**]. The blog does not give enough reproducible benchmark method, traffic composition, hardware mix, sample duration or independent replication to generalize the multipliers.
+As published, Discord reports **twice the legacy indexing throughput**, **median search latency from 500 ms to below 100 ms**, **p99 from about 1 second to below 500 ms**, and **40 Elasticsearch clusters with thousands of indices**, while indexing **trillions** of messages. It also reports automated cluster upgrades/rolling restarts with no service impact during its observation. [src.m9-di02, **How are things going?**]. The blog does not give enough reproducible benchmark method, traffic composition, hardware mix, sample duration or independent replication to generalize the multipliers.
 
 **Critical disambiguation:** these numbers are for the **message search index**. They are not p99 measurements from Discord's separate [Cassandra-to-Scylla message-storage case](discord-cassandra-scylladb-messages.md). A system-design agent must refuse to transfer one subsystem's latency gains to the other.
 
@@ -139,4 +139,4 @@ For another large searchable event corpus, Tycho recommends: snapshot the author
 
 ## Provenance and acceptance boundary
 
-Evidence is company-authored and scoped to the publication date and sections: [DI02](https://discord.com/blog/how-discord-indexes-trillions-of-messages), **The Problems; The Solutions; Multi-cluster cell architecture; Supporting new search use cases**. Numerical results, where stated, are publisher-reported; no Tycho benchmark, source reproduction or copyright permissions inferred. Source status must be reconciled with [the candidate audit](../../sources/REAL_WORLD_CASES_CANDIDATE_AUDIT.md) and E16-01 #114. This case remains a draft until independent #121 correctness and source review.
+Evidence is company-authored and scoped to the publication date and sections: [src.m9-di02](https://discord.com/blog/how-discord-indexes-trillions-of-messages), **The Problems; The Solutions; Multi-cluster cell architecture; Supporting new search use cases**. Numerical results, where stated, are publisher-reported; no Tycho benchmark, source reproduction or copyright permissions inferred. Source status must be reconciled with [the candidate audit](../../sources/REAL_WORLD_CASES_CANDIDATE_AUDIT.md) and E16-01 #114. This case remains a draft until independent #121 correctness and source review.

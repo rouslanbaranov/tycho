@@ -13,6 +13,7 @@ import json
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,10 +27,46 @@ from validate_m9_cases import (  # noqa: E402
     read_case_catalog,
     self_test,
     validate_record,
+    SOURCE_ID,
 )
 
 
 class PinnedRootAndFormatTest(unittest.TestCase):
+    def test_self_test_uses_canonical_source_ids(self) -> None:
+        self_test(ROOT)
+
+    def test_source_pattern_matches_global_document_schema(self) -> None:
+        schema = json_read(ROOT / 'schemas/document-metadata.v1.schema.json')
+        pattern = schema['properties']['evidence_scope']['properties']['source_ids']['items']['pattern']
+        self.assertEqual(SOURCE_ID.pattern, pattern)
+
+    def test_legacy_source_alias_is_rejected_by_both_engines(self) -> None:
+        schema = json_read(ROOT / 'authoring/cases/case-record.schema.json')
+        item = copy.deepcopy(json_read(ROOT / 'authoring/cases/examples/case-records.json')[0])
+        refs = parse_source_registry((ROOT / 'sources/REAL_WORLD_ARCHITECTURE_CASES.md').read_text())
+        item['source_refs'] = ['N11']
+        item['claims'][0]['source_ref_id'] = 'N11'
+        with self.assertRaisesRegex(ValueError, 'source ref not a valid string ID'):
+            validate_record(item, schema, refs)
+        try:
+            import jsonschema
+        except ImportError:
+            self.skipTest('jsonschema optional; full schema engine not executed')
+        self.assertTrue(list(jsonschema.Draft202012Validator(schema).iter_errors(item)))
+
+    def test_m9_registry_requires_global_exact_url_binding(self) -> None:
+        original_read = json_read
+        def altered_read(path):
+            result = original_read(path)
+            if path == ROOT / 'sources/register.json':
+                for source in result['sources']:
+                    if source['id'] == 'src.m9-n11':
+                        source['url'] += '-wrong-article'
+            return result
+        with patch('validate_m9_cases.json_read', side_effect=altered_read):
+            with self.assertRaisesRegex(ValueError, 'disagrees with global source register'):
+                check(ROOT)
+
     def test_complete_catalog_and_retrieval_contracts(self) -> None:
         # Exercise the orchestration path, not only individual records. This
         # catches registry mappings accidentally passed into set comparisons.
@@ -48,7 +85,7 @@ class PinnedRootAndFormatTest(unittest.TestCase):
             ROOT / "authoring/cases/examples/case-records.json")[0])
         refs = parse_source_registry(
             (ROOT / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8"))
-        item["source_refs"] = ["N99"]
+        item["source_refs"] = ["src.m9-n99"]
         with self.assertRaisesRegex(ValueError, "unregistered case source"):
             validate_record(item, schema, refs)
 
@@ -241,9 +278,9 @@ class PinnedRootAndFormatTest(unittest.TestCase):
             with self.subTest(valid=record["case_id"]):
                 validate_record(record, schema, refs)
 
-        case = next(record for record in records if record["source_refs"] == ["N11"])
-        for url in (refs["ST01"], refs["N11"] + "-different-article",
-                    "https://evil.example.org/" + refs["N11"].rsplit("/", 1)[-1]):
+        case = next(record for record in records if record["source_refs"] == ["src.m9-n11"])
+        for url in (refs["src.m9-st01"], refs["src.m9-n11"] + "-different-article",
+                    "https://evil.example.org/" + refs["src.m9-n11"].rsplit("/", 1)[-1]):
             with self.subTest(invalid_url=url):
                 wrong = copy.deepcopy(case)
                 wrong["claims"][0]["primary_url"] = url
@@ -254,18 +291,18 @@ class PinnedRootAndFormatTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as workspace:
             root = Path(workspace) / "pinned"
             case_dir = self._synthetic_cases(root)
-            registered = {"N11": "https://example.org/engineering/primary"}
+            registered = {"src.m9-n11": "https://example.org/engineering/primary"}
             for case_path in case_dir.glob("case-*.md"):
                 case_path.write_text(
                     case_path.read_text(encoding="utf-8") +
-                    "\nEvidence N11: https://example.org/engineering/primary\n",
+                    "\nEvidence src.m9-n11: https://example.org/engineering/primary\n",
                     encoding="utf-8")
             ids, pages = read_case_catalog(root, registered)
             self.assertEqual(20, len(ids))
             self.assertEqual(20, len(pages))
             first = case_dir / "case-00.md"
             first.write_text(first.read_text(encoding="utf-8").replace(
-                registered["N11"], "https://example.org/engineering/different"),
+                registered["src.m9-n11"], "https://example.org/engineering/different"),
                 encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "no matching curated source"):
                 read_case_catalog(root, registered)
@@ -274,12 +311,12 @@ class PinnedRootAndFormatTest(unittest.TestCase):
         raw = (ROOT / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8")
         refs = parse_source_registry(raw)
         self.assertEqual(43, len(refs))
-        first = next(line for line in raw.splitlines() if line.startswith("| N11 |"))
+        first = next(line for line in raw.splitlines() if line.startswith("| src.m9-n11 |"))
         with self.assertRaisesRegex(ValueError, "duplicate primary source ID"):
             parse_source_registry(raw + "\n" + first + "\n")
         with self.assertRaisesRegex(ValueError, "missing HTTPS primary link"):
             parse_source_registry(raw.replace(first, first.replace(
-                refs["N11"], "http://untrusted.example/blog"), 1))
+                refs["src.m9-n11"], "http://untrusted.example/blog"), 1))
 
     def test_full_schema_rejects_empty_review_metadata_when_installed(self) -> None:
         try:

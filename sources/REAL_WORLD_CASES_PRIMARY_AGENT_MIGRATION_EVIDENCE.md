@@ -1,14 +1,14 @@
 # E16-01 — Source Admission Wave 02: First-party AI-assisted Modernization Reports
 
-**Recorded 2026-10-19.** This document *corrects* a false negative from the 43-link first-pass access audit. Access failure in one reader is not proof of a missing source. SH04, SP02 and SP03 were subsequently read through their first-party publishers. Their content is source-reported historical evidence, **not** independent proof that AI-agent work is correct. Original copyright, screenshots, charts, full transcripts and internal code are not licensed for incorporation into Tycho.
+**Recorded 2026-10-19.** This document *corrects* a false negative from the 43-link first-pass access audit. Access failure in one reader is not proof of a missing source. src.m9-sh04, src.m9-sp02 and src.m9-sp03 were subsequently read through their first-party publishers. Their content is source-reported historical evidence, **not** independent proof that AI-agent work is correct. Original copyright, screenshots, charts, full transcripts and internal code are not licensed for incorporation into Tycho.
 
 ## Source identity, dates, exact claim locations
 
 | ID | Creator / venue / original date | Primary original | Disposition |
 |---|---|---|---|
-| SH04 | Talha Naqvi, Shopify Engineering, **2026-09-21** | [Helix — native app migration](https://shopify.engineering/helix) | **Admitted as a bounded historical engineering report** for the checkpoint-and-gate procedure; not a blanket proof of safety |
-| SP02 | Max Charas and Marc Bruggmann, Spotify Engineering, **2025-11-06** | [1,500+ PRs Later — Honk Part 1](https://www.engineering.atspotify.com/2025/11/spotifys-background-coding-agent-part-1) | **Admitted for self-reported merged PR count, process and estimated savings**; independent defect rate unknown |
-| SP03 | Devon Edwards Joseph, Spotify Engineering, **2026-04-22** | [Background Coding Agents — Dataset Migration, Honk Part 4](https://www.engineering.atspotify.com/2026/4/background-coding-agents-dataset-migrations-honk-part-4) | **Admitted for scoped rollout and explicit failed approaches**, not the claim all 1,800 dependencies were migrated |
+| src.m9-sh04 | Talha Naqvi, Shopify Engineering, **2026-09-21** | [Helix — native app migration](https://shopify.engineering/helix) | **Admitted as a bounded historical engineering report** for the checkpoint-and-gate procedure; not a blanket proof of safety |
+| src.m9-sp02 | Max Charas and Marc Bruggmann, Spotify Engineering, **2025-11-06** | [1,500+ PRs Later — Honk Part 1](https://www.engineering.atspotify.com/2025/11/spotifys-background-coding-agent-part-1) | **Admitted for self-reported merged PR count, process and estimated savings**; independent defect rate unknown |
+| src.m9-sp03 | Devon Edwards Joseph, Spotify Engineering, **2026-04-22** | [Background Coding Agents — Dataset Migration, Honk Part 4](https://www.engineering.atspotify.com/2026/4/background-coding-agents-dataset-migrations-honk-part-4) | **Admitted for scoped rollout and explicit failed approaches**, not the claim all 1,800 dependencies were migrated |
 
 ## Claim anchors and limits
 
@@ -30,15 +30,15 @@
 
 ## Modernization contrasts that become evidence-backed
 
-- **Spotify 2020 (SP01) versus 2025–2026 (SP02/SP03):** 2020 discusses automation as a platform-migration capability; subsequent first-party reports give actual AI-assisted PR experience and its failure conditions. Do not label 2020 data 'LLM-agent results'.
-- **Shopify SH04 versus Spotify SP03:** Shopify reports four mandatory gates and default human review for a mobile UI migration; Spotify found absent unit tests and therefore depended on owner verification for many data-pipeline changes. Both are valid responses to different testing oracles, not interchangeable recipes.
-- **Stripe ST01 / Netflix N11:** old/new behavioral comparison and shadow output equivalence remain domain-specific correctness mechanisms; a passing PR or visual gate is not a substitute for billing consistency.
+- **Spotify 2020 (src.m9-sp01) versus 2025–2026 (src.m9-sp02/src.m9-sp03):** 2020 discusses automation as a platform-migration capability; subsequent first-party reports give actual AI-assisted PR experience and its failure conditions. Do not label 2020 data 'LLM-agent results'.
+- **Shopify src.m9-sh04 versus Spotify src.m9-sp03:** Shopify reports four mandatory gates and default human review for a mobile UI migration; Spotify found absent unit tests and therefore depended on owner verification for many data-pipeline changes. Both are valid responses to different testing oracles, not interchangeable recipes.
+- **Stripe src.m9-st01 / Netflix src.m9-n11:** old/new behavioral comparison and shadow output equivalence remain domain-specific correctness mechanisms; a passing PR or visual gate is not a substitute for billing consistency.
 - **Private-source boundary:** These sources are public accounts only. Do not copy the companies' private code, metrics telemetry, schemas or prompt files into Tycho.
 
-## N14 / N15 status
+## src.m9-n14 / src.m9-n15 status
 
-N14 Netflix Conductor (2026-10-14): original [Netflix-hosted URL](https://netflixtechblog.com/netflix-conductor-the-next-chapter-41ad21067649) failed direct retrieval in this session; an [attributed syndication](https://noise.getoto.net/2026/10/14/netflix-conductor-the-next-chapter/) contains the article, including the internal fork/OSS distinction, Cassandra/Timestone data plane, terminal partition precedence and async evaluation, but this is **secondary carriage of a named first-party article**, not direct-source review or independent validation. Record as **corroborated publisher attribution, direct article verification pending**. Do not rehost or quote the syndication in full.
+src.m9-n14 Netflix Conductor (2026-10-14): original [Netflix-hosted URL](https://netflixtechblog.com/netflix-conductor-the-next-chapter-41ad21067649) failed direct retrieval in this session; an [attributed syndication](https://noise.getoto.net/2026/10/14/netflix-conductor-the-next-chapter/) contains the article, including the internal fork/OSS distinction, Cassandra/Timestone data plane, terminal partition precedence and async evaluation, but this is **secondary carriage of a named first-party article**, not direct-source review or independent validation. Record as **corroborated publisher attribution, direct article verification pending**. Do not rehost or quote the syndication in full.
 
-N15 'Chaos Engineering Upgraded': original Medium article timed out; original text/sections were **not inspected** this run. Leave **unadmitted** rather than assume the company still follows a 2015 test topology.
+src.m9-n15 'Chaos Engineering Upgraded': original Medium article timed out; original text/sections were **not inspected** this run. Leave **unadmitted** rather than assume the company still follows a 2015 test topology.
 
 This wave records the publication dates and bounded source sections but does not validate every unrelated claim in the 43-candidate register. It remains an input to issue #114's acceptance gate. **Independent technical review pending #121.**

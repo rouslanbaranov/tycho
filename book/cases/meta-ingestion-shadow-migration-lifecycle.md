@@ -34,7 +34,7 @@ evidence_scope:
     - "src.m9-me03"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -49,7 +49,7 @@ content_verified_at: null
 # Meta — Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation
 
 **Case ID:** `case.meta.ingestion-shadow-lifecycle` · **M9:** E16-05 #118 · **Status:** evidence-backed draft; independent review pending.  
-**Public first-party ME03:** Zihao Tao, Mohan Perumal Swamy, Grace Gong, Ailyn Tong, Peishan Wang, Nilay Kapadia, Md Mustafijur Rahman Faysal, Saurav Sen and Jameel Mohamed. [Meta Engineering, 2026-05-12: Migrating Data Ingestion Systems at Meta Scale](https://engineering.fb.com/2026/05/12/data-infrastructure/migrating-data-ingestion-systems-at-meta-scale/). Relevant original sections: **The Migration Challenge**, **Ensuring a Seamless Transition**, **The Migration Lifecycle**, **Phase 1: The Shadow Phase**, and subsequent migration/rollout sections. No internal job manifests, query results or screenshots were copied.
+**Public first-party src.m9-me03:** Zihao Tao, Mohan Perumal Swamy, Grace Gong, Ailyn Tong, Peishan Wang, Nilay Kapadia, Md Mustafijur Rahman Faysal, Saurav Sen and Jameel Mohamed. [Meta Engineering, 2026-05-12: Migrating Data Ingestion Systems at Meta Scale](https://engineering.fb.com/2026/05/12/data-infrastructure/migrating-data-ingestion-systems-at-meta-scale/). Relevant original sections: **The Migration Challenge**, **Ensuring a Seamless Transition**, **The Migration Lifecycle**, **Phase 1: The Shadow Phase**, and subsequent migration/rollout sections. No internal job manifests, query results or screenshots were copied.
 
 ## Legacy architecture, tension and reported outcome
 
@@ -57,7 +57,7 @@ Meta's data-warehouse ingestion moved daily changes of multiple petabytes of MyS
 
 ## Concrete migration safety mechanism
 
-The company established a per-job migration lifecycle, not one global cutover switch. Its acceptance criteria required **matching row counts and data checksums**, **no landing latency regression**, and resource usage at least comparable to the legacy job. Critical tables had extra criteria negotiated with their owners. The initial shadow phase ran the new ingestion job against production-realistic source inputs while writing to an **isolated shadow table** in pre-production. Teams compared that output with the live production table and investigated mismatches before advancing the job. [ME03, 'The Migration Lifecycle', 'Phase 1: The Shadow Phase'].
+The company established a per-job migration lifecycle, not one global cutover switch. Its acceptance criteria required **matching row counts and data checksums**, **no landing latency regression**, and resource usage at least comparable to the legacy job. Critical tables had extra criteria negotiated with their owners. The initial shadow phase ran the new ingestion job against production-realistic source inputs while writing to an **isolated shadow table** in pre-production. Teams compared that output with the live production table and investigated mismatches before advancing the job. [src.m9-me03, 'The Migration Lifecycle', 'Phase 1: The Shadow Phase'].
 
 ```mermaid
 flowchart TD
@@ -87,7 +87,7 @@ flowchart TD
 | Resources | New compute/storage use comparable or improved | Capital cost, engineering time and operational ownership beyond reported utilization need separate analysis |
 | Critical data | Extra criteria agreed with dependent teams | Requirements vary by domain; no universal numerical thresholds given |
 
-### Meta's reported three-phase authority transition (ME03)
+### Meta's reported three-phase authority transition (src.m9-me03)
 
 1. **Shadow phase:** initial shadow ingestion runs in pre-production on production-like source inputs, writes to isolated shadow tables and compares partitions with production via **row counts and checksums** while also checking landing latency and resource utilization. After validation the candidate can run in production and progress.
 2. **Reverse shadow phase:** the **new** ingestion job writes to the consumer-facing production table, while the **old** job begins writing to a shadow table. Both still run and comparisons continue; a rollback can restore the previous path without rebuilding it. The first live switch is **not** the end of verification.
@@ -111,7 +111,7 @@ A control failure should be recorded as a counterexample: an equal number of row
 
 ## What a green shadow comparison cannot guarantee
 
-ME03 documents **job-level authority transitions**: legacy production/new shadow, followed by new production/legacy reverse shadow, then cleanup. This choreography solves a different problem from changing all reads before writes in Stripe's mutable subscription migration. There is no safe universal “dual-write” shortcut that represents both histories.
+src.m9-me03 documents **job-level authority transitions**: legacy production/new shadow, followed by new production/legacy reverse shadow, then cleanup. This choreography solves a different problem from changing all reads before writes in Stripe's mutable subscription migration. There is no safe universal “dual-write” shortcut that represents both histories.
 
 For a different warehouse, materialized output can match row count and checksum while *still* diverging semantically when time windows differ, null/value canonicalization is lossy or the fingerprint excludes business-critical fields. Model each comparison as a tuple of `source snapshot + schema version + partition identity + job revision + equality rule + freshness window`. An audit should reject comparisons whose tuple differs in a way the domain owner has not explicitly normalized.
 
@@ -124,7 +124,7 @@ For a different warehouse, materialized output can match row count and checksum 
 | Legacy shadow job is retired too early | No independently runnable old path and no accepted recovery plan | Block cleanup, preserve reverse operation until post-cutover evidence |
 | Resource demand spikes when many jobs shadow together | Capacity budget and priority-aware migration scheduler | Reduce or pause migration cohorts rather than overload production |
 
-These are **Tycho synthetic error-injection tests** based on the categories of output authority, CDC/partition corruption and capacity limits described in ME03, not a company incident log. The report says the migration was complete as of its May 2026 publication; it does not expose full private comparison queries or independently audited zero-loss statistics.
+These are **Tycho synthetic error-injection tests** based on the categories of output authority, CDC/partition corruption and capacity limits described in src.m9-me03, not a company incident log. The report says the migration was complete as of its May 2026 publication; it does not expose full private comparison queries or independently audited zero-loss statistics.
 
 ## Explicit completion and rollback contract
 
@@ -138,4 +138,4 @@ A synthetic accepted job can be `SHADOW_VERIFIED` only after representative sour
 
 Meta reports 100% transition/deprecation of the ingestion workloads but does not give public access to its full comparator queries, private storage topology, total failed attempts, customer-specific SLOs or independently reproducible audit logs. Numerical performance improvements must be quoted only if pinned to a specific relevant source section. The design is a correctness-first migration precedent, contrasting Stripe's *mutable subscription read/write authority* and Netflix's *Cassandra backup-to-Iceberg set comparisons*. All three address equivalence with different sources, authority changes and failure conditions.
 
-**Reviewer checklist:** original Meta source date, author group, row count/checksum semantics, shadow isolation, no-regression guards, and accepted 100%-completed statement; do not imply formal proof of no corruption. Source: [ME03](https://engineering.fb.com/2026/05/12/data-infrastructure/migrating-data-ingestion-systems-at-meta-scale/). **Review pending #121.**
+**Reviewer checklist:** original Meta source date, author group, row count/checksum semantics, shadow isolation, no-regression guards, and accepted 100%-completed statement; do not imply formal proof of no corruption. Source: [src.m9-me03](https://engineering.fb.com/2026/05/12/data-infrastructure/migrating-data-ingestion-systems-at-meta-scale/). **Review pending #121.**

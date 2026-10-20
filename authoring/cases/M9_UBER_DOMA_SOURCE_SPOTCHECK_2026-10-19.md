@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-19.  
 **Reviewer type:** bounded AI-assisted primary-source comparison, **not** an independent qualified technical reviewer or copyright/license acceptance.  
-**Case:** [Uber DOMA](../../book/cases/uber-doma-domains.md), \`case.uber.doma-domains\`; source **U01** from [the public case register](../../sources/REAL_WORLD_ARCHITECTURE_CASES.md). Related [monolith-versus-services playbook](../../book/cases/decisions/monolith-vs-services.md), [Shopify countercase source recheck](M9_SHOPIFY_SOURCE_SPOTCHECK_2026-10-19.md).
+**Case:** [Uber DOMA](../../book/cases/uber-doma-domains.md), \`case.uber.doma-domains\`; source **src.m9-u01** from [the public case register](../../sources/REAL_WORLD_ARCHITECTURE_CASES.md). Related [monolith-versus-services playbook](../../book/cases/decisions/monolith-vs-services.md), [Shopify countercase source recheck](M9_SHOPIFY_SOURCE_SPOTCHECK_2026-10-19.md).
 
 ## Public first-party material and temporal boundary
 
@@ -25,11 +25,11 @@ The observed quantities represent Uber's own historic design/progress statements
 | Single early platform extension example: three days to three hours | **Benefits → Products & Platforms** reports a particular consumer experience | **Matched specific example**, not all integrations made 8× or 10× faster |
 | Approximate service half-life of 1.5 years | **Benefits → Future Migrations** states Uber's estimate that half of services churn over 1.5 years | **Matched an estimate**, not empirical half-life for every service or a survival-law guarantee |
 | Two large platform rewrites hidden behind domain gateways | **Benefits → Future Migrations** reports two historical rewrites | **Matched publisher report**; no detailed independently reproducible consumer migration log was inspected |
-| Separate microservice vs modular-monolith recommendations | Uber advises contextual use of services and notes startup overhead; Shopify SH01/SH02 document a different choice | **Tycho comparison inference**, NOT controlled Uber vs Shopify A/B evidence or Uber's exact ADR |
+| Separate microservice vs modular-monolith recommendations | Uber advises contextual use of services and notes startup overhead; Shopify src.m9-sh01/src.m9-sh02 document a different choice | **Tycho comparison inference**, NOT controlled Uber vs Shopify A/B evidence or Uber's exact ADR |
 
 ## Findings and disposition
 
-The case's existing [U01 quantitative and domain-contract section](../../book/cases/uber-doma-domains.md) uses the major 2020 numbers with appropriately bounded interpretations. No factual contradiction was identified among the **eleven directly matched source-specific claims**, though their evidence is explicitly **company-reported**. The twelfth row is a **cross-company editorial interpretation**, not a first-party numeric assertion.
+The case's existing [src.m9-u01 quantitative and domain-contract section](../../book/cases/uber-doma-domains.md) uses the major 2020 numbers with appropriately bounded interpretations. No factual contradiction was identified among the **eleven directly matched source-specific claims**, though their evidence is explicitly **company-reported**. The twelfth row is a **cross-company editorial interpretation**, not a first-party numeric assertion.
 
 The case remains **DRAFT / PENDING independent review**. No copyright reuse or licensing sign-off, no technical runtime reproduction, no present-day source revalidation and no source-to-claim check of *every* line and diagram. The [M9 review acceptance matrix](M9_REVIEW_ACCEPTANCE_MATRIX.md) and issue [#121](https://github.com/rouslanbaranov/tycho/issues/121) remain OPEN.
 

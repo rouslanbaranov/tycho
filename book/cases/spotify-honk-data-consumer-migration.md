@@ -37,7 +37,7 @@ evidence_scope:
     - "src.m9-sp03"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -52,19 +52,19 @@ content_verified_at: null
 # Spotify — Honk: why data-lineage context and tests determine safe AI migration scope
 
 **Case ID:** `case.spotify.honk-dataset-consumer-migration` | **Owner:** M9 E16-05 #118 | **Status:** first-party evidence-backed draft; independent reviewer pending.  
-**Primary:** SP03, Devon Edwards Joseph, [Spotify Engineering, 2026-04-22](https://www.engineering.atspotify.com/2026/4/background-coding-agents-dataset-migrations-honk-part-4), sections **Dataset migrations can be painful**, **Simplifying fleet migrations with Backstage**, **With Honk, context is key**, **What did we learn for the future**. Secondary context: SP02, [Honk Part 1](https://www.engineering.atspotify.com/2025/11/spotifys-background-coding-agent-part-1), Nov 6, 2025. These report distinct populations and dates.
+**Primary:** src.m9-sp03, Devon Edwards Joseph, [Spotify Engineering, 2026-04-22](https://www.engineering.atspotify.com/2026/4/background-coding-agents-dataset-migrations-honk-part-4), sections **Dataset migrations can be painful**, **Simplifying fleet migrations with Backstage**, **With Honk, context is key**, **What did we learn for the future**. Secondary context: src.m9-sp02, [Honk Part 1](https://www.engineering.atspotify.com/2025/11/spotifys-background-coding-agent-part-1), Nov 6, 2025. These report distinct populations and dates.
 
 ## Original migration and constraints
 
 Spotify planned to deprecate two heavily used datasets to release richer replacements. Its lineage graph indicated approximately **1,800 direct downstream data pipelines**, and several thousand indirect dependencies, spanning **BigQuery Runner, dbt and Scio**. The manual work estimate was about **10 engineering weeks**. That estimated baseline is *not* an independently controlled timer.
 
-The engineering team used Backstage endpoint lineage/Codesearch to identify affected repositories and Fleetshift to orchestrate changes. Honk could create code PRs, but it did not have the feature-rich tools and external context retrieval options now often assumed for coding agents. This made precise per-framework field mappings critical. [SP03, background and platform sections].
+The engineering team used Backstage endpoint lineage/Codesearch to identify affected repositories and Fleetshift to orchestrate changes. Honk could create code PRs, but it did not have the feature-rich tools and external context retrieval options now often assumed for coding agents. This made precise per-framework field mappings critical. [src.m9-sp03, background and platform sections].
 
 ## Iteration: three failure boundaries
 
 The first attempt to derive migration instructions from a human-oriented guide let the agent infer wrong field mappings. The team corrected this by writing **explicit mapping tables** and by telling the agent to **leave ambiguous business-meaning transformations unchanged**, inserting comments for a human owner. That is an important *positive use of refusal* in code migration.
 
-Scio pipelines were too varied for a general instruction set; the team **stopped attempting to automate that framework's migration in this wave**. BigQuery Runner and dbt were more standardized and could be handled with narrower context. However, many of those repositories had **little or no build-time unit testing**. Consequently, Honk could not verify itself using its usual correction loop; pipeline owners had to perform manual tests before merging changes. [SP03, "With Honk, context is key"].
+Scio pipelines were too varied for a general instruction set; the team **stopped attempting to automate that framework's migration in this wave**. BigQuery Runner and dbt were more standardized and could be handled with narrower context. However, many of those repositories had **little or no build-time unit testing**. Consequently, Honk could not verify itself using its usual correction loop; pipeline owners had to perform manual tests before merging changes. [src.m9-sp03, "With Honk, context is key"].
 
 ```mermaid
 flowchart TD
@@ -87,11 +87,11 @@ flowchart TD
 
 | Period / source | Publisher-reported number | Correct interpretation |
 |---|---|---|
-| SP03 April 2026 | **~1,800** direct downstream pipelines | Original potential migration scope for two deprecated datasets |
-| SP03 April 2026 | **240** automated migration PRs **rolled out** | Rollout metric; **not** proof of 240 merges or of 1,800 migrations complete |
-| SP03 April 2026 | **~10 engineering weeks** | Hypothetical estimated manual effort; not measured savings or quality |
-| SP02 Nov 2025 | **>1,500 AI-generated PRs merged** across Spotify | Earlier cross-fleet background-agent total; **not** identical to SP03's 240 targeted PRs |
-| SP02 Nov 2025 | **60–90% estimated development time saving** on described migrations | Self-reported estimate; no claim of independently audited defect rate |
+| src.m9-sp03 April 2026 | **~1,800** direct downstream pipelines | Original potential migration scope for two deprecated datasets |
+| src.m9-sp03 April 2026 | **240** automated migration PRs **rolled out** | Rollout metric; **not** proof of 240 merges or of 1,800 migrations complete |
+| src.m9-sp03 April 2026 | **~10 engineering weeks** | Hypothetical estimated manual effort; not measured savings or quality |
+| src.m9-sp02 Nov 2025 | **>1,500 AI-generated PRs merged** across Spotify | Earlier cross-fleet background-agent total; **not** identical to src.m9-sp03's 240 targeted PRs |
+| src.m9-sp02 Nov 2025 | **60–90% estimated development time saving** on described migrations | Self-reported estimate; no claim of independently audited defect rate |
 
 ## Counterevidence and decision transfer
 
@@ -101,7 +101,7 @@ For another organization, test one standardized framework cohort, pin dataset sc
 
 ## A versioned transformation contract for each consumer cohort
 
-The SP03 article distinguishes **discovering affected repositories**, **generating patches**, **testing their semantic correctness**, and **merging/rolling out**. These are different acceptance states. The cited lineage population of about **1,800 direct pipelines** is an impact estimate for two datasets; it must not be reported as the set successfully changed. The **240 rolled-out PRs** are a narrower migration cohort, not proof every PR merged, every affected pipeline migrated or every data value preserved business meaning.
+The src.m9-sp03 article distinguishes **discovering affected repositories**, **generating patches**, **testing their semantic correctness**, and **merging/rolling out**. These are different acceptance states. The cited lineage population of about **1,800 direct pipelines** is an impact estimate for two datasets; it must not be reported as the set successfully changed. The **240 rolled-out PRs** are a narrower migration cohort, not proof every PR merged, every affected pipeline migrated or every data value preserved business meaning.
 
 For a different platform, each eligible transformation should have a versioned contract containing: original dataset fields and types; replacement field mappings; acceptable null/default transformations; affected query engine; data-owner-approved invariants; executable verification procedure; a repository/source revision; and a refusal policy. This should be **machine-readable enough to constrain a coding agent** and human-readable enough that a downstream owner can challenge the mapping.
 

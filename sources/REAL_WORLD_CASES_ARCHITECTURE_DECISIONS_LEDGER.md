@@ -1,15 +1,15 @@
 # M9 / E16-01 — Source Admission Wave 04: Ownership Boundaries and Online Migration
 
-**Verified:** 2026-10-19, directly against six original first-party blog publications. **Evidence class:** the original publisher's design narrative, with some dated quantitative context; not an independent performance experiment, archival license or 2026 deployment inventory. This wave covers **U01, U02, SH01, SH02, SP01 and ST01** and preserves source-specific sections and historical time windows.
+**Verified:** 2026-10-19, directly against six original first-party blog publications. **Evidence class:** the original publisher's design narrative, with some dated quantitative context; not an independent performance experiment, archival license or 2026 deployment inventory. This wave covers **src.m9-u01, src.m9-u02, src.m9-sh01, src.m9-sh02, src.m9-sp01 and src.m9-st01** and preserves source-specific sections and historical time windows.
 
 | ID | First-party author/date | Original link | Historical context |
 |---|---|---|---|
-| U01 | Adam Gluck; Uber Engineering; **2020-07-23** | [Introducing Domain-Oriented Microservice Architecture](https://www.uber.com/us/en/blog/microservice-architecture/) | DOMA after large multi-team service sprawl |
-| U02 | René W. Schmidt; Uber Engineering; **2015-07-28** | [Project Mezzanine: The Great Migration](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/) | 2014 trip-store migration |
-| SH01 | Kirsten Westeinde; Shopify Engineering; **2019-02-21** | [Deconstructing the Monolith](https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity) | Initial modular-monolith decision |
-| SH02 | Philip Müller; Shopify Engineering; **2020-09-16** | [Under Deconstruction](https://shopify.engineering/shopify-monolith) | Follow-up describing unfinished componentization |
-| SP01 | Saunak 'Jai' Chakrabarti and Jenni Lee; Spotify Engineering; **2020-06-25** | [Tech Migrations, the Spotify Way](https://engineering.atspotify.com/2020/6/tech-migrations-the-spotify-way) | Pre-LLM fleet-change governance |
-| ST01 | Jacqueline Xu Atlas; Stripe Engineering; **2017-02-02** | [Online migrations at scale](https://stripe.com/blog/online-migrations) | Active subscription data-model rewrite |
+| src.m9-u01 | Adam Gluck; Uber Engineering; **2020-07-23** | [Introducing Domain-Oriented Microservice Architecture](https://www.uber.com/us/en/blog/microservice-architecture/) | DOMA after large multi-team service sprawl |
+| src.m9-u02 | René W. Schmidt; Uber Engineering; **2015-07-28** | [Project Mezzanine: The Great Migration](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/) | 2014 trip-store migration |
+| src.m9-sh01 | Kirsten Westeinde; Shopify Engineering; **2019-02-21** | [Deconstructing the Monolith](https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity) | Initial modular-monolith decision |
+| src.m9-sh02 | Philip Müller; Shopify Engineering; **2020-09-16** | [Under Deconstruction](https://shopify.engineering/shopify-monolith) | Follow-up describing unfinished componentization |
+| src.m9-sp01 | Saunak 'Jai' Chakrabarti and Jenni Lee; Spotify Engineering; **2020-06-25** | [Tech Migrations, the Spotify Way](https://engineering.atspotify.com/2020/6/tech-migrations-the-spotify-way) | Pre-LLM fleet-change governance |
+| src.m9-st01 | Jacqueline Xu Atlas; Stripe Engineering; **2017-02-02** | [Online migrations at scale](https://stripe.com/blog/online-migrations) | Active subscription data-model rewrite |
 
 ## Specific bounded claims and contradictory lessons
 
@@ -36,12 +36,12 @@
 
 ## Decision-transfer corrections
 
-- **Netflix N01 versus Shopify SH01/SH02:** choosing cloud-native services or component-enforced monolith is context-dependent. Shopify also extracted select high-throughput/sensitive responsibilities; 'Shopify never uses services' is false.
-- **Uber U01 versus U02:** U02 covers a **2014 transactional data-store scaling** migration; U01 addresses **2018–2020 coordination** in thousands of microservices. Do not collapse into one timeline/state.
-- **Spotify 2020 SP01 versus 2025/2026 SP02/SP03:** three separate historical periods. Earlier platform PR automation does not establish LLM use before later reports.
-- **Stripe ST01:** a passing migration must preserve the intended data semantics at every authority switch; a simple total-row count is insufficient.
+- **Netflix src.m9-n01 versus Shopify src.m9-sh01/src.m9-sh02:** choosing cloud-native services or component-enforced monolith is context-dependent. Shopify also extracted select high-throughput/sensitive responsibilities; 'Shopify never uses services' is false.
+- **Uber src.m9-u01 versus src.m9-u02:** src.m9-u02 covers a **2014 transactional data-store scaling** migration; src.m9-u01 addresses **2018–2020 coordination** in thousands of microservices. Do not collapse into one timeline/state.
+- **Spotify 2020 src.m9-sp01 versus 2025/2026 src.m9-sp02/src.m9-sp03:** three separate historical periods. Earlier platform PR automation does not establish LLM use before later reports.
+- **Stripe src.m9-st01:** a passing migration must preserve the intended data semantics at every authority switch; a simple total-row count is insufficient.
 - **Copyright:** link the original section/URL/author; no reuse of original proprietary production schematics, screenshots or full text. Diagrams in `book/cases/` are newly authored abstractions.
 
 ## Status and remaining admissions
 
-This is a **bounded first-party source review**, not a reread of every sentence of the six articles or reproduction of internal results. In combination with wave 01 (5 sources), wave 02 (3), and wave 03 (5), **19/43** sources now have at least one explicitly anchored historical claim. **24** candidates still need direct scoped claims or a documented exclusion decision. Inaccessible primary bodies N14/N15 remain unresolved. #114 and independent cross-case review #121 remain open.
+This is a **bounded first-party source review**, not a reread of every sentence of the six articles or reproduction of internal results. In combination with wave 01 (5 sources), wave 02 (3), and wave 03 (5), **19/43** sources now have at least one explicitly anchored historical claim. **24** candidates still need direct scoped claims or a documented exclusion decision. Inaccessible primary bodies src.m9-n14/src.m9-n15 remain unresolved. #114 and independent cross-case review #121 remain open.

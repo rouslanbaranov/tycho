@@ -38,7 +38,7 @@ evidence_scope:
     - "src.m9-n04"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -54,15 +54,15 @@ content_verified_at: null
 
 **Case ID:** `case.netflix.java-platform-convergence` · **Owner:** M9 E16-02 #115 · **Status:** source-backed draft; human technical review pending  
 **Company / period:** Netflix, practitioner's account at QCon SF on 2023-10-03, contrasted with a March 2026 JavaOne *session abstract*.  
-**Source IDs:** N02, N03 (scope only), N04. **Source disposition:** public reference/paraphrase; reproduction permissions for talk/slides not established.
+**Source IDs:** src.m9-n02, src.m9-n03 (scope only), src.m9-n04. **Source disposition:** public reference/paraphrase; reproduction permissions for talk/slides not established.
 
 ## Decision and boundary
 
-Netflix's platform story is not a simple technology flip from RxJava to Spring Boot. Paul Bakker describes a change of *where* composition complexity belongs: client-specific backends formerly did elaborate fan-out across microservices, often using Groovy and reactive primitives; later GraphQL federation introduced schema-guided composition boundaries while the Java platform became a more consistent paved road for services. At the same time, the system remains distributed, its gateway can still use reactive I/O, and individual transports still differ. The platform team is responsible for frameworks, libraries, upgrades and integration, not the business domain decisions of every service. [N02: "The Groovy Era", "GraphQL Federation", "What Does that Mean for Our Java Stack?"].
+Netflix's platform story is not a simple technology flip from RxJava to Spring Boot. Paul Bakker describes a change of *where* composition complexity belongs: client-specific backends formerly did elaborate fan-out across microservices, often using Groovy and reactive primitives; later GraphQL federation introduced schema-guided composition boundaries while the Java platform became a more consistent paved road for services. At the same time, the system remains distributed, its gateway can still use reactive I/O, and individual transports still differ. The platform team is responsible for frameworks, libraries, upgrades and integration, not the business domain decisions of every service. [src.m9-n02: "The Groovy Era", "GraphQL Federation", "What Does that Mean for Our Java Stack?"].
 
 ## Before — coupling hidden by fan-out
 
-In the Groovy era, a presentation screen such as the list-of-lists interface required artwork, personalized recommendations and other independently owned data sources. Teams used device-tailored backend logic and fan-out. Reactive composition helped keep many concurrent downstream requests from tying up a platform thread per wait; it also moved error handling, context propagation and programming conventions into a complex layer. This does **not** imply that RxJava was a mistake or that all use of it vanished later. There is no independently measured global throughput baseline in the talk. [N02: "The Groovy Era", "Limitations"].
+In the Groovy era, a presentation screen such as the list-of-lists interface required artwork, personalized recommendations and other independently owned data sources. Teams used device-tailored backend logic and fan-out. Reactive composition helped keep many concurrent downstream requests from tying up a platform thread per wait; it also moved error handling, context propagation and programming conventions into a complex layer. This does **not** imply that RxJava was a mistake or that all use of it vanished later. There is no independently measured global throughput baseline in the talk. [src.m9-n02: "The Groovy Era", "Limitations"].
 
 ```mermaid
 flowchart LR
@@ -76,7 +76,7 @@ flowchart LR
 
 ## After — schema boundaries plus Java integration
 
-The 2023 practitioner presentation explains a GraphQL federated gateway, shared domain-backed GraphQL services, and converging Java infrastructure around Spring Boot/JDK 17. The gateway still has a reactive client: replacing reactive fan-out everywhere is **not** the outcome. Netflix's Java Integration Framework (JIF) team states that it ships composable Spring Boot starters for REST, gRPC, GraphQL, security, observability and resilience. A platform starter makes infrastructure standards easy to assemble while domain owners can choose their application features. [N02: "GraphQL Federation", "Java at Netflix"; N04: "OUR work"].
+The 2023 practitioner presentation explains a GraphQL federated gateway, shared domain-backed GraphQL services, and converging Java infrastructure around Spring Boot/JDK 17. The gateway still has a reactive client: replacing reactive fan-out everywhere is **not** the outcome. Netflix's Java Integration Framework (JIF) team states that it ships composable Spring Boot starters for REST, gRPC, GraphQL, security, observability and resilience. A platform starter makes infrastructure standards easy to assemble while domain owners can choose their application features. [src.m9-n02: "GraphQL Federation", "Java at Netflix"; src.m9-n04: "OUR work"].
 
 ```mermaid
 flowchart LR
@@ -102,25 +102,25 @@ The QCon account identifies **at least three distinct, interacting change axes**
 | Service framework | Homegrown, Guice-based stack plus outdated Java EE libraries across roughly half the services about a year earlier | Platform described as standardized on **Spring Boot**, with infrastructure auto-configuration | Release-by-release schedule, how every exceptional service was treated |
 | API composition | Screen/device-specific Groovy BFF fan-out needed custom RxJava and Hystrix orchestration | Progressive **GraphQL federation** with independent domain-owned schemas; older device APIs still served | A fleet-wide date for removal of BFF endpoints or reactive libraries |
 
-**Primary evidence:** N02, transcript sections [The Java 17 Upgrade, Spring Boot Netflix, GraphQL Federation, The Road to Spring Boot 3, and Questions and Answers](https://www.infoq.com/presentations/netflix-java/). The speaker explicitly says that the **JDK upgrade's performance benefit** helped persuade service owners; the Spring Boot migration came later. Thus an architectural write-up claiming that a Guice-to-Spring framework change *caused* the Java 17 CPU result would invert the reported sequence.
+**Primary evidence:** src.m9-n02, transcript sections [The Java 17 Upgrade, Spring Boot Netflix, GraphQL Federation, The Road to Spring Boot 3, and Questions and Answers](https://www.infoq.com/presentations/netflix-java/). The speaker explicitly says that the **JDK upgrade's performance benefit** helped persuade service owners; the Spring Boot migration came later. Thus an architectural write-up claiming that a Guice-to-Spring framework change *caused* the Java 17 CPU result would invert the reported sequence.
 
-The migration also had compatibility seams that a short “adopt Spring” summary misses. In the account, the Spring Boot 3 baseline requires Java 17 and moves parts of the ecosystem from javax namespaces to Jakarta equivalents. Netflix's platform team described an open-source **artifact-resolution bytecode translation plugin** to help with older libraries. This is a reported integration technique, **not** evidence that every incompatible library or behavioral difference can be corrected automatically. For a prospective adopter, bytecode transformation is a candidate bridge requiring tests, legal/operational review and a clear removal plan; it is not a replacement for maintaining supported dependencies. [N02: The Road to Spring Boot 3].
+The migration also had compatibility seams that a short “adopt Spring” summary misses. In the account, the Spring Boot 3 baseline requires Java 17 and moves parts of the ecosystem from javax namespaces to Jakarta equivalents. Netflix's platform team described an open-source **artifact-resolution bytecode translation plugin** to help with older libraries. This is a reported integration technique, **not** evidence that every incompatible library or behavioral difference can be corrected automatically. For a prospective adopter, bytecode transformation is a candidate bridge requiring tests, legal/operational review and a clear removal plan; it is not a replacement for maintaining supported dependencies. [src.m9-n02: The Road to Spring Boot 3].
 
 ## Architecture ownership and the shared-runtime contract
 
-N02 describes Gradle with Nebula plugins for library-version selection and locking. For a many-service fleet, reproducible dependency resolution is part of the transition architecture: without it, an apparent JDK or framework regression may instead arise from a drifting transitive dependency. This does not establish that Netflix published a reproducible snapshot of every production deployment.
+src.m9-n02 describes Gradle with Nebula plugins for library-version selection and locking. For a many-service fleet, reproducible dependency resolution is part of the transition architecture: without it, an apparent JDK or framework regression may instead arise from a drifting transitive dependency. This does not establish that Netflix published a reproducible snapshot of every production deployment.
 
-The reported Spring Boot Netflix layer provided integrations for gRPC client/server communication, security and single sign-on, tracing, metrics, distributed logging, HTTP clients and mutual TLS. It used ordinary Spring Boot auto-configuration and embedded Tomcat. The organizational division matters: the platform team owns shared crosscutting defaults and upgrade tooling; service teams still own domain correctness, data, API compatibility and rollout behavior. [N02: Java at Netflix; Spring Boot Netflix; Why Spring Boot?].
+The reported Spring Boot Netflix layer provided integrations for gRPC client/server communication, security and single sign-on, tracing, metrics, distributed logging, HTTP clients and mutual TLS. It used ordinary Spring Boot auto-configuration and embedded Tomcat. The organizational division matters: the platform team owns shared crosscutting defaults and upgrade tooling; service teams still own domain correctness, data, API compatibility and rollout behavior. [src.m9-n02: Java at Netflix; Spring Boot Netflix; Why Spring Boot?].
 
 This is **not** an argument to hide every architectural choice inside a starter. A starter upgrade can couple dependency versions, security defaults and instrumentation across services. A transferable guard is to publish a versioned compatibility matrix, test critical integration boundaries and canary one coherent workload cohort before broad distribution. These are **Tycho recommendations**, not a claim that Netflix followed these exact gates.
 
 ## Quantitative results, negative evidence and denominator discipline
 
-Bakker reported **approximately 20% better CPU use** when moving Java 8 to Java 17 *without application code changes*, attributing it to G1 improvements; he stressed in the Q&A that the actual benefit depended on the service. The result motivated upgrades but the transcript does **not** publish a benchmark harness, CPU utilization distribution, fixed-throughput comparison, number of workloads sampled, p99 change or aggregate cost saving. Do not convert “20% better CPU use” to an audited 20% total cloud bill reduction or an invariant throughput gain. [N02: The Java 17 Upgrade; Questions and Answers].
+Bakker reported **approximately 20% better CPU use** when moving Java 8 to Java 17 *without application code changes*, attributing it to G1 improvements; he stressed in the Q&A that the actual benefit depended on the service. The result motivated upgrades but the transcript does **not** publish a benchmark harness, CPU utilization distribution, fixed-throughput comparison, number of workloads sampled, p99 change or aggregate cost saving. Do not convert “20% better CPU use” to an audited 20% total cloud bill reduction or an invariant throughput gain. [src.m9-n02: The Java 17 Upgrade; Questions and Answers].
 
-Other choices were explicitly workload-selective. Most workloads used **G1** in that historical account, while **Zuul** was identified as an exception using **Shenandoah**. Java 21 generational ZGC was still a prospective experiment at the presentation date. These facts undercut a simplistic “one collector and one scheduling model for every service” roadmap. In the same talk, virtual threads slowed a **CPU-intensive outgoing gRPC worker pool** by a few percent; see the separate [CPU-bound counterexample](netflix-grpc-cpu-workerpool-virtual-thread-regression.md). Neither the 20% historical JVM result nor this negative virtual-thread result is a controlled A/B across the same cohort. [N02: The Java 17 Upgrade; Java 21+; Virtual Threads].
+Other choices were explicitly workload-selective. Most workloads used **G1** in that historical account, while **Zuul** was identified as an exception using **Shenandoah**. Java 21 generational ZGC was still a prospective experiment at the presentation date. These facts undercut a simplistic “one collector and one scheduling model for every service” roadmap. In the same talk, virtual threads slowed a **CPU-intensive outgoing gRPC worker pool** by a few percent; see the separate [CPU-bound counterexample](netflix-grpc-cpu-workerpool-virtual-thread-regression.md). Neither the 20% historical JVM result nor this negative virtual-thread result is a controlled A/B across the same cohort. [src.m9-n02: The Java 17 Upgrade; Java 21+; Virtual Threads].
 
-**Coexistence is also a negative result for simplistic completion metrics:** the talk acknowledges that older devices could continue to use the former endpoint architecture while the federation-based approach expanded. Therefore “the platform standardized” cannot legitimately be rewritten as “all legacy API paths disappeared”. [N02: The Groovy Era; GraphQL Federation].
+**Coexistence is also a negative result for simplistic completion metrics:** the talk acknowledges that older devices could continue to use the former endpoint architecture while the federation-based approach expanded. Therefore “the platform standardized” cannot legitimately be rewritten as “all legacy API paths disappeared”. [src.m9-n02: The Groovy Era; GraphQL Federation].
 
 ## Transferable transition plan — synthetic, not Netflix's runbook
 
@@ -143,10 +143,10 @@ The source supports a **historical practitioner account of platform standardizat
 
 | Claim | Period and original location | Type |
 |---|---|---|
-| About 2,800 Java apps and ~1,500 internal libraries, majority Java 17 | N02, 2023, "Java at Netflix"/"The Java 17 Upgrade" | Practitioner-reported inventory; not 2026 fleet |
-| Backend evolution from Groovy BFF reactive fan-out to federated GraphQL | N02, 2023, "The Groovy Era", "GraphQL Federation" | Practitioner architecture account |
-| Netflix JIF composable Spring Boot service starters | N04, "OUR work", undated living team page accessed 2026-10-19 | Team description, not independently measured adoption |
-| More than 3,000 Java services and current upgrade themes | N03, March 2026 JavaOne session summary | Conference abstract, **scope only**; no detailed result admission |
+| About 2,800 Java apps and ~1,500 internal libraries, majority Java 17 | src.m9-n02, 2023, "Java at Netflix"/"The Java 17 Upgrade" | Practitioner-reported inventory; not 2026 fleet |
+| Backend evolution from Groovy BFF reactive fan-out to federated GraphQL | src.m9-n02, 2023, "The Groovy Era", "GraphQL Federation" | Practitioner architecture account |
+| Netflix JIF composable Spring Boot service starters | src.m9-n04, "OUR work", undated living team page accessed 2026-10-19 | Team description, not independently measured adoption |
+| More than 3,000 Java services and current upgrade themes | src.m9-n03, March 2026 JavaOne session summary | Conference abstract, **scope only**; no detailed result admission |
 
 ## Decision transfer / alternatives
 
@@ -157,12 +157,12 @@ The source supports a **historical practitioner account of platform standardizat
 | Standardized Boot starters across services | Large fleet with repeatable crosscutting requirements | Requires ownership/version compatibility and careful rollout; starter sprawl can recreate the old problem |
 | Consolidate a small monolith first | Small domain set, low operational maturity | Does not solve independent organization-level release if that is the actual bottleneck |
 
-**Counterexample:** Moving a CPU-bound data transformation into virtual threads offers no CPU throughput guarantee; the Java service runtime choice is orthogonal to whether a federated API is useful. A small product with one deployment boundary may prefer a modular monolith. [Compare SH01; N06].
+**Counterexample:** Moving a CPU-bound data transformation into virtual threads offers no CPU throughput guarantee; the Java service runtime choice is orthogonal to whether a federated API is useful. A small product with one deployment boundary may prefer a modular monolith. [Compare src.m9-sh01; src.m9-n06].
 
 ## Explicit unknowns and checks
 
 The source does not provide a controlled A/B comparison of developer productivity for this entire migration; do not invent one. The JavaOne 2026 abstract is insufficient to assert adoption details not recorded in a transcript. A new adopter should measure schema breakage, downstream fan-out, per-field cost, tracing propagation, p99, and deployment lead time, while maintaining a reversible client-facing API. Identity of every underlying library/upgrade revision is not established here.
 
-**Original public references:** [N02 — QCon/InfoQ transcript](https://www.infoq.com/presentations/netflix-java/), [N03 — JavaOne 2026 abstract](https://dev.java/community/javaone-2026/sessions/lrn1058/), [N04 — JIF team](https://sites.google.com/netflix.com/javaplatformnetflix/jif). See [source admission](../../sources/REAL_WORLD_CASES_ADMISSION_WAVE_01.md) and [candidate audit](../../sources/REAL_WORLD_CASES_CANDIDATE_AUDIT.md).
+**Original public references:** [src.m9-n02 — QCon/InfoQ transcript](https://www.infoq.com/presentations/netflix-java/), [src.m9-n03 — JavaOne 2026 abstract](https://dev.java/community/javaone-2026/sessions/lrn1058/), [src.m9-n04 — JIF team](https://sites.google.com/netflix.com/javaplatformnetflix/jif). See [source admission](../../sources/REAL_WORLD_CASES_ADMISSION_WAVE_01.md) and [candidate audit](../../sources/REAL_WORLD_CASES_CANDIDATE_AUDIT.md).
 
 **Review state:** drafted, not independent-peer-reviewed; pending #114 source admission completion and #121 cross-case review.

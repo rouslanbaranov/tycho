@@ -58,9 +58,9 @@ A hypothetical legacy commerce platform has one deployment, 25 developers, share
 
 | Actual company case | What its primary source does and does not establish |
 |---|---|
-| [Netflix](../netflix-seven-year-cloud-rearchitecture.md) | N01: seven-year cloud decomposition after concentrated datacenter failures |
-| [Shopify](../shopify-modular-monolith.md) | SH01: one deployable app and explicit component boundaries |
-| [Uber](../uber-doma-domains.md) | U01: governance and gateways for an existing many-service fleet |
+| [Netflix](../netflix-seven-year-cloud-rearchitecture.md) | src.m9-n01: seven-year cloud decomposition after concentrated datacenter failures |
+| [Shopify](../shopify-modular-monolith.md) | src.m9-sh01: one deployable app and explicit component boundaries |
+| [Uber](../uber-doma-domains.md) | src.m9-u01: governance and gateways for an existing many-service fleet |
 
 **Why the apparent conflict is useful:** Netflix's original incident and global replatforming justify a different scale of change; Uber's DOMA starts from the opposite initial state—too many independently deployed services. Neither should be treated as evidence that extracting services solves this hypothetical coupling pain.
 
@@ -101,7 +101,7 @@ Baseline actual dependency graph → map domain models → enforce package/API b
 
 ## The actual design variables: code ownership versus deployment autonomy
 
-The three company reports answer **different starting problems**. [Shopify's February 2019 monolith decision](../shopify-modular-monolith.md) (SH01) favored domain boundaries inside a shared Rails application, accepting one broad release unit while reducing accidental cross-domain dependencies. The [2020 component follow-up](../shopify-packwerk-boundary-evolution.md) (SH02) still recorded incomplete enforcement and selective service extraction. [Netflix's 2016 cloud migration](../netflix-seven-year-cloud-rearchitecture.md) (N01) responded to concentrated failure and global growth over seven years, not an isolated package-structure inconvenience. [Uber's DOMA account](../uber-doma-domains.md) (U01) begins *after* service extraction created its own tangled ownership: 2,200 critical services were classified into 70 domains, with only around half implemented when reported.
+The three company reports answer **different starting problems**. [Shopify's February 2019 monolith decision](../shopify-modular-monolith.md) (src.m9-sh01) favored domain boundaries inside a shared Rails application, accepting one broad release unit while reducing accidental cross-domain dependencies. The [2020 component follow-up](../shopify-packwerk-boundary-evolution.md) (src.m9-sh02) still recorded incomplete enforcement and selective service extraction. [Netflix's 2016 cloud migration](../netflix-seven-year-cloud-rearchitecture.md) (src.m9-n01) responded to concentrated failure and global growth over seven years, not an isolated package-structure inconvenience. [Uber's DOMA account](../uber-doma-domains.md) (src.m9-u01) begins *after* service extraction created its own tangled ownership: 2,200 critical services were classified into 70 domains, with only around half implemented when reported.
 
 These sources are not measurements of three alternative architectures applied to the same organization. Their **historical periods, transaction boundaries, operating skills and scaling needs differ**. A transferable method must therefore extract *decision conditions*, not rank vendors or architectures.
 

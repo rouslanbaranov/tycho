@@ -35,7 +35,7 @@ evidence_scope:
     - "src.m9-sh04"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -50,13 +50,13 @@ content_verified_at: null
 # Shopify — Helix: replace one-shot AI migrations with small provable checkpoints
 
 **Case ID:** `case.shopify.helix-checkpoint-gates` | **Owner:** M9 E16-05 #118 | **Status:** source-grounded draft; independent reviewer pending.  
-**Source:** SH04, Talha Naqvi, [Shopify Engineering, 2026-09-21](https://shopify.engineering/helix), sections **The loop at a glance**, **Checkpoints that can be reviewed at a glance**, **Reviews are gates instead of advice**, **Gate 1: Behavior**, **The UI review gate**, **An engineer closes the loop**, **Helix can also run autonomously**. Related [2026 native strategy](https://shopify.engineering/back-to-native) and [Shop app migration](https://shopify.engineering/shop-app-migration) are distinct articles.
+**Source:** src.m9-sh04, Talha Naqvi, [Shopify Engineering, 2026-09-21](https://shopify.engineering/helix), sections **The loop at a glance**, **Checkpoints that can be reviewed at a glance**, **Reviews are gates instead of advice**, **Gate 1: Behavior**, **The UI review gate**, **An engineer closes the loop**, **Helix can also run autonomously**. Related [2026 native strategy](https://shopify.engineering/back-to-native) and [Shop app migration](https://shopify.engineering/shop-app-migration) are distinct articles.
 
 ## Decision pressure and temporal state
 
 Shopify's mobile team had previously favored React Native to share implementation between platforms. By 2026, improvements in coding-agent workflows changed *development economics*: the publisher reports that a native Swift/Kotlin rebuild of the **Shop app** was shipped in 12 weeks. A separate larger **Shopify App** migration, with over 300 screens, was under way. These are **two apps**: the source does not say all Shopify mobile products were already rewritten. The transition does not retroactively mean React Native was a bad decision in 2020.
 
-A single agent request to translate a large React Native screen tends to generate an unreviewable diff whose product behavior, UI details and architecture are difficult to validate together. The Helix response was to make a reference implementation observable and divide translation into small checkpoints where failures cannot silently pass to the next step. [SH04, opening and "Why Helix works"].
+A single agent request to translate a large React Native screen tends to generate an unreviewable diff whose product behavior, UI details and architecture are difficult to validate together. The Helix response was to make a reference implementation observable and divide translation into small checkpoints where failures cannot silently pass to the next step. [src.m9-sh04, opening and "Why Helix works"].
 
 ## Actual reported architecture and verification loop
 
@@ -98,13 +98,13 @@ For an organization considering this approach, Tycho proposes reference-system i
 
 ## Why checkpoint size changes the proof obligation
 
-The [September 21, 2026 Shopify source](https://shopify.engineering/helix) (SH04, **Checkpoints that can be reviewed at a glance**) explicitly rejects the “collect all reference code, write a huge spec, and then generate everything” strategy. Its target artifact begins with a **screen skeleton**, then one small section, then increasingly complex sections only after prior decisions have passed review. Each checkpoint's description is short enough for an engineer to approve scope without reading a wall of pre-generated prose. Crucially, the **running React Native application and reference code are the specification**: the agent can inspect that bounded source directly rather than trust a stale, gigantic summary.
+The [September 21, 2026 Shopify source](https://shopify.engineering/helix) (src.m9-sh04, **Checkpoints that can be reviewed at a glance**) explicitly rejects the “collect all reference code, write a huge spec, and then generate everything” strategy. Its target artifact begins with a **screen skeleton**, then one small section, then increasingly complex sections only after prior decisions have passed review. Each checkpoint's description is short enough for an engineer to approve scope without reading a wall of pre-generated prose. Crucially, the **running React Native application and reference code are the specification**: the agent can inspect that bounded source directly rather than trust a stale, gigantic summary.
 
 This is a process design around **reviewability**. A large final diff can contain several interacting defects and hide which early interpretation was wrong; committing independently verified small steps makes the failure location and allowable rollback surface easier to understand. It does **not** prove small commits are intrinsically correct—each must still pass its evidence gates.
 
 ## Four sequential proofs and independent failure paths
 
-| Shopify gate (SH04) | Actual mechanism reported | Unproven or risky case |
+| Shopify gate (src.m9-sh04) | Actual mechanism reported | Unproven or risky case |
 |---|---|---|
 | Behavior | CLI exposes reference screen state/actions; a subagent proposes user-perspective integration tests, executable without a simulator | A test suite may omit an unobserved gesture, accessibility feature, auth state or side effect |
 | Visual review | Matching reference and native screenshots are compared; reviewer reports location/severity of discrepancies | Two screenshots in different UI states make the comparison invalid; screenshot similarity cannot prove data correctness |
@@ -113,7 +113,7 @@ This is a process design around **reviewability**. A large final diff can contai
 
 The source names an instructive **invalid-comparison branch**: when the orchestrator presents screenshots from different states, its visual reviewer can mark the review **INVALID**, requiring recapture of equivalent states. This is a more precise safety rule than repeatedly tweaking CSS until an arbitrary image score improves.
 
-The authors also state that after adversarial code changes **affected tests run again**, and visual review runs again if the patch changes the appearance. A gate's prior success is not indefinitely reusable after a change to the artifact it checked. Every checkpoint ends in a commit, with test/visual/reviewer evidence available for later inspection. These are source-reported workflow mechanics, not independent defect-rate measurements. [SH04, **Gate 1**, **The UI review gate**, **The adversarial reviews gate**, **An engineer closes the loop**].
+The authors also state that after adversarial code changes **affected tests run again**, and visual review runs again if the patch changes the appearance. A gate's prior success is not indefinitely reusable after a change to the artifact it checked. Every checkpoint ends in a commit, with test/visual/reviewer evidence available for later inspection. These are source-reported workflow mechanics, not independent defect-rate measurements. [src.m9-sh04, **Gate 1**, **The UI review gate**, **The adversarial reviews gate**, **An engineer closes the loop**].
 
 ## Explicit autonomous mode is not removal of testing
 
@@ -131,7 +131,7 @@ Compare [Spotify Honk's incomplete dataset testing](spotify-honk-data-consumer-m
 
 ## What a checkpoint certifies—and what it cannot
 
-The September 2026 first-party SH04 description separates **three review oracles**: expected reference behavior, visual correspondence, and adversarial code/architecture review. They do not certify the same thing. A script can correctly navigate a screen while violating the intended data authorization boundary; a screenshot can look correct while accessibility or state persistence fails; two AI reviewers can agree while sharing an incorrect assumption. Treat each as a **separate veto** over a bounded change.
+The September 2026 first-party src.m9-sh04 description separates **three review oracles**: expected reference behavior, visual correspondence, and adversarial code/architecture review. They do not certify the same thing. A script can correctly navigate a screen while violating the intended data authorization boundary; a screenshot can look correct while accessibility or state persistence fails; two AI reviewers can agree while sharing an incorrect assumption. Treat each as a **separate veto** over a bounded change.
 
 | Checkpoint evidence | Positive result permits | Additional evidence needed |
 |---|---|---|
@@ -147,7 +147,7 @@ The table is **Tycho analytical categorization**; the source does not publish a 
 
 **Hypothetical baseline:** a cross-platform mobile product has shared-state screens, device-specific APIs, multiple languages, accessibility requirements and an independently released backend. Native Swift and Kotlin may improve OS integration but create duplicated maintenance and two sets of platform-specific defects. The alternatives are (a) keep the existing shared runtime and modernize it, (b) extract only the device-specific feature layer, or (c) rebuild native screens incrementally behind stable API contracts.
 
-The decision should not be “AI makes code cheap.” It should depend on native-platform capability, responsiveness, build/release cost, ability to keep reference behavior testable, and staffed ownership of both native apps. SH04's reported checkpoint approach is transferable as a *review method* even when a full native rewrite is not the correct architecture.
+The decision should not be “AI makes code cheap.” It should depend on native-platform capability, responsiveness, build/release cost, ability to keep reference behavior testable, and staffed ownership of both native apps. src.m9-sh04's reported checkpoint approach is transferable as a *review method* even when a full native rewrite is not the correct architecture.
 
 ## A reversible proof strategy
 
@@ -163,6 +163,6 @@ The source's default engineer approval and opt-in autonomous mode make approval 
 
 ## Evidence / claims / uncertainty
 
-SH04 reports that **Shop** was already shipped natively after approximately **12 weeks** and Shopify App rebuild work was continuing. The article does not publish a controlled comparison of bug escape rates, total cost, long-term maintenance or productivity across identical teams; these remain **unknown**. The opt-in autonomous mode is not a universal safety guarantee. Original diagrams/text are not copied; source URL and section-level attribution only.
+src.m9-sh04 reports that **Shop** was already shipped natively after approximately **12 weeks** and Shopify App rebuild work was continuing. The article does not publish a controlled comparison of bug escape rates, total cost, long-term maintenance or productivity across identical teams; these remain **unknown**. The opt-in autonomous mode is not a universal safety guarantee. Original diagrams/text are not copied; source URL and section-level attribution only.
 
 **Compare:** [Spotify's dataset consumer migration](spotify-honk-data-consumer-migration.md) lacks build-time tests in many affected repositories and must rely on human downstream-owner validation. Helix's quality gates are not automatically transferable to untestable pipelines. [General agentic decision guide](decisions/agentic-migration-safety.md). **Review pending #121.**

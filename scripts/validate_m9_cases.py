@@ -22,7 +22,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CID = re.compile(r"^case\.[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*$")
 CLAIM_ID = re.compile(r"^claim\.[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*\.[0-9]{3}$")
-SOURCE_ID = re.compile(r"^(N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}$")
+SOURCE_ID = re.compile(r"^src\.[a-z0-9]+(?:-[a-z0-9]+)*$")
 EXPECTED_BEHAVIORS = {"answerable", "reject_false_claim", "insufficient_evidence"}
 DATE_FIELDS = ("event_date", "publication_date", "accessed_on")
 
@@ -60,15 +60,16 @@ def parse_source_registry(raw: str) -> dict[str, str]:
     No network calls or redirects: this is a local provenance-binding check.
     """
     rows: dict[str, str] = {}
-    source_row = re.compile(r"^\| ((?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}) \|")
+    source_row = re.compile(r"^\| (src\.[^ |]+) \|")
     link_row = re.compile(
-        r"^\| ((?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}) "
+        r"^\| (src\.[a-z0-9]+(?:-[a-z0-9]+)*) "
         r"\| [^|]+ \| \[[^\]]+\]\((https://[^)\s]+)\) \|")
     for line in raw.splitlines():
         match = source_row.match(line)
         if not match:
             continue
         source_id = match.group(1)
+        require(SOURCE_ID.fullmatch(source_id) is not None, "invalid global source ID: " + source_id)
         full = link_row.match(line)
         require(full is not None, "source registry row missing HTTPS primary link: " + source_id)
         require(source_id not in rows, "duplicate primary source ID: " + source_id)
@@ -84,7 +85,7 @@ def validate_record(record: dict, schema: dict, registered_sources: dict[str, st
     allowed = set(schema["properties"])
     require(set(record) <= allowed, "unknown case keys " + str(sorted(set(record) - allowed)))
     require(record["collection"] == "tycho-public", "case corpus isolation violation")
-    require(record["schema_version"] == "m9-case-1.0-proposal", "invalid schema version")
+    require(record["schema_version"] == "m9-case-1.1-proposal", "invalid schema version")
     # Keep the no-dependency fallback faithful to declared JSON Schema types.
     for key, minimum in (("title", 12), ("company", 2), ("legacy_state", 12), ("target_state", 12)):
         require(isinstance(record[key], str) and len(record[key]) >= minimum,
@@ -277,7 +278,7 @@ def read_case_catalog(root: Path = ROOT, source_urls: dict[str, str] | None = No
             # must accompany its source ID in every case draft. Other mentions
             # may intentionally be contextual, not separately linked.
             cited = set(re.findall(
-                r"\b(?:N|U|A|SH|SP|ST|DI|ME|LI|CF)[0-9]{2}\b", text))
+                r"\bsrc\.[a-z0-9]+(?:-[a-z0-9]+)*\b", text))
             require(any(source_id in cited and url in text
                         for source_id, url in source_urls.items()),
                     path.name + ": no matching curated source ID + primary URL")
@@ -305,6 +306,9 @@ def check(root: Path = ROOT) -> dict:
             "proposed M9 schema must use scoped Tycho URN")
     raw_sources = (root / "sources/REAL_WORLD_ARCHITECTURE_CASES.md").read_text(encoding="utf-8")
     registered = parse_source_registry(raw_sources)
+    global_sources = {s['id']: s['url'] for s in json_read(root / 'sources/register.json')['sources']}
+    require(all(global_sources.get(sid) == url for sid, url in registered.items()),
+            "M9 source ID/URL disagrees with global source register")
     ids, links = read_case_catalog(root, registered)
     examples = json_read(root / "authoring/cases/examples/case-records.json")
     require(isinstance(examples, list) and len(examples) >= 2, "missing portable examples")
@@ -352,7 +356,7 @@ def self_test(root: Path = ROOT) -> None:
         if mutation == "wrong_collection":
             candidate["collection"] = "other-private-corpus"
         if mutation == "orphan_source":
-            candidate["claims"][0]["source_ref_id"] = "XX99"
+            candidate["claims"][0]["source_ref_id"] = "src.m9-missing"
         if mutation == "bad_claim":
             candidate["claims"][0]["claim_id"] = "claim.invalid"
         if mutation == "missing_review":
@@ -366,7 +370,7 @@ def self_test(root: Path = ROOT) -> None:
         if mutation == "short_statement":
             candidate["claims"][0]["statement"] = "too short"
         if mutation == "non_string_source_ref":
-            candidate["source_refs"][0] = ["N11"]
+            candidate["source_refs"][0] = ["src.m9-n11"]
         if mutation == "non_string_pattern":
             candidate["patterns"]["selected"] = [123]
         if mutation == "non_string_review_limitation":
@@ -388,9 +392,9 @@ def self_test(root: Path = ROOT) -> None:
             candidate["review"]["reviewer"] = "   "
             candidate["review"]["reviewed_on"] = "2026-10-19"
         if mutation == "wrong_source_url":
-            candidate["claims"][0]["primary_url"] = refs["ST01"]
+            candidate["claims"][0]["primary_url"] = refs["src.m9-st01"]
         if mutation == "foreign_url_same_host":
-            candidate["claims"][0]["primary_url"] = refs["N11"] + "-another-article"
+            candidate["claims"][0]["primary_url"] = refs["src.m9-n11"] + "-another-article"
         malformed_records.append(candidate)
         try:
             validate_record(candidate, schema, refs)
@@ -410,7 +414,7 @@ def self_test(root: Path = ROOT) -> None:
         # JSON Schema 2020-12 "format: date" checks individual dates; it
         # cannot compare values of two sibling fields. Our extra semantic
         # invariant valid_from <= valid_until must run in validate_record.
-        semantic_only = {"future_window", "wrong_source_url", "foreign_url_same_host"}
+        semantic_only = {"orphan_source", "future_window", "wrong_source_url", "foreign_url_same_host"}
         schema_mutations = [
             (name, candidate) for name, candidate in zip(mutations, malformed_records)
             if name not in semantic_only
@@ -421,14 +425,14 @@ def self_test(root: Path = ROOT) -> None:
         reversed_window = malformed_records[mutations.index("future_window")]
         require(not list(validator.iter_errors(reversed_window)),
                 "expected both inverted-window date strings to satisfy the base schema")
-        for name in ("wrong_source_url", "foreign_url_same_host"):
+        for name in ("orphan_source", "wrong_source_url", "foreign_url_same_host"):
             candidate = malformed_records[mutations.index(name)]
             require(not list(validator.iter_errors(candidate)),
-                    "base schema unexpectedly constrains external source URL: " + name)
+                    "base schema unexpectedly constrains registered source identity or URL: " + name)
         # The semantic validator already rejected both mismatched source URLs.
         print("PASS: Draft2020-12 engine rejects " +
               str(len(schema_mutations)) + " schema violations; "
-              "semantic validator rejects inverted window and 2 source URL mismatches")
+              "semantic validator rejects unknown source, inverted window and 2 source URL mismatches")
 
 
 if __name__ == "__main__":

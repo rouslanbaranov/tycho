@@ -4,7 +4,7 @@
 
 ## Why the current labels alone are insufficient
 
-The original query asks how **immutable Big Data shadow comparisons** could gate an **agent-generated data migration**. The frozen query fixture names only Netflix Casspactor→Cassandra Analytics (N11) and Stripe subscription storage migration (ST01). These are valuable correctness precedents but **neither is public evidence of the company using an AI coding agent for that particular migration**.
+The original query asks how **immutable Big Data shadow comparisons** could gate an **agent-generated data migration**. The frozen query fixture names only Netflix Casspactor→Cassandra Analytics (src.m9-n11) and Stripe subscription storage migration (src.m9-st01). These are valuable correctness precedents but **neither is public evidence of the company using an AI coding agent for that particular migration**.
 
 The executed [29-page BM25 baseline](M9_BM25_CANDIDATE_BASELINE_2026-10-19.md) ranked the named Netflix case **15th** and Stripe **11th**. It ranked Spotify Honk, LinkedIn Kafka audit and Meta ingestion shadow lifecycle at positions 1–3. The Spotify case actually covers **LLM-assisted migration PRs**; Meta's case covers **shadow / reverse-shadow validation of data ingestion**; LinkedIn provides a distinct stream auditing precedent. These results cannot be judged solely by whether Netflix/Stripe appear in top three. Conversely, Spotify + Meta + LinkedIn do **not** establish the exact two-sided immutable set comparison documented by Netflix.
 
@@ -12,11 +12,11 @@ The executed [29-page BM25 baseline](M9_BM25_CANDIDATE_BASELINE_2026-10-19.md) r
 
 | Essential facet | Source-backed case | Can establish | Cannot establish |
 |---|---|---|---|
-| Agent-generated changes | [Spotify Honk (SP03)](../../book/cases/spotify-honk-data-consumer-migration.md) | Real rollout of generated dbt/BigQuery Runner migration PRs; explicit ambiguous field-mapping rejection, missing tests and owner verification | That every automated migration passed semantic parity or all 1,800 downstream pipelines were migrated |
-| Immutable snapshot/output proof | [Netflix Casspactor (N11)](../../book/cases/netflix-casspactor-shadow-migration.md) | Comparison of **C−M** and **M−C** to detect missing/extra rows with controlled fallback | That Netflix generated this migration with an LLM coding agent |
-| Human-defined oracle and rollout gate | Spotify SP03 **plus** Netflix N11 | Combine field-mapping/owner judgement and two-sided equivalence on comparable snapshot inputs | That either company's original product already combined both methods |
+| Agent-generated changes | [Spotify Honk (src.m9-sp03)](../../book/cases/spotify-honk-data-consumer-migration.md) | Real rollout of generated dbt/BigQuery Runner migration PRs; explicit ambiguous field-mapping rejection, missing tests and owner verification | That every automated migration passed semantic parity or all 1,800 downstream pipelines were migrated |
+| Immutable snapshot/output proof | [Netflix Casspactor (src.m9-n11)](../../book/cases/netflix-casspactor-shadow-migration.md) | Comparison of **C−M** and **M−C** to detect missing/extra rows with controlled fallback | That Netflix generated this migration with an LLM coding agent |
+| Human-defined oracle and rollout gate | Spotify src.m9-sp03 **plus** Netflix src.m9-n11 | Combine field-mapping/owner judgement and two-sided equivalence on comparable snapshot inputs | That either company's original product already combined both methods |
 
-**Relevant but distinct contrasts:** [Meta ingestion (ME03)](../../book/cases/meta-ingestion-shadow-migration-lifecycle.md) used shadow and reverse-shadow migration with row-count/checksum/freshness/resource gates; [Stripe online migration (ST01)](../../book/cases/stripe-online-subscriptions-migration.md) demonstrates mutable dual writes, read comparison and authority handoff; [LinkedIn Kafka audit (LI01)](../../book/cases/linkedin-kafka-tiered-completeness.md) describes stream tier auditing. None alone answers the composite immutable+agent question.
+**Relevant but distinct contrasts:** [Meta ingestion (src.m9-me03)](../../book/cases/meta-ingestion-shadow-migration-lifecycle.md) used shadow and reverse-shadow migration with row-count/checksum/freshness/resource gates; [Stripe online migration (src.m9-st01)](../../book/cases/stripe-online-subscriptions-migration.md) demonstrates mutable dual writes, read comparison and authority handoff; [LinkedIn Kafka audit (src.m9-li01)](../../book/cases/linkedin-kafka-tiered-completeness.md) describes stream tier auditing. None alone answers the composite immutable+agent question.
 
 ## Safe proposed synthesis for a new, hypothetical legacy system
 
@@ -25,7 +25,7 @@ The executed [29-page BM25 baseline](M9_BM25_CANDIDATE_BASELINE_2026-10-19.md) r
 3. Require explicit owner-approved invariants and a controlled fallback. If a case lacks an oracle, the recommendation is **no automatic cutover**; this is Tycho synthesis, not a reproduced vendor release pipeline.
 4. For a mutable target store, use the alternate staged read/write ownership model (**Stripe**) rather than incorrectly treating its online subscriptions as an immutable batch.
 
-A useful future agent answer must cite **at least SP03 and N11**, identify them as distinct companies/periods, and disclose which steps are synthesized. It must reject a statement that any publisher independently proved autonomous AI migration correctness.
+A useful future agent answer must cite **at least src.m9-sp03 and src.m9-n11**, identify them as distinct companies/periods, and disclose which steps are synthesized. It must reject a statement that any publisher independently proved autonomous AI migration correctness.
 
 ## Proposed secondary evaluation contract
 

@@ -34,7 +34,7 @@ evidence_scope:
     - "src.m9-n01"
   claim_ids: []
   status: "unknown"
-  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Short M9 aliases remain in the body. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
+  notes: "Global source IDs resolve by exact URL via sources/m9-source-aliases.json. Canonical source IDs are used in the body; legacy claim labels retain their own identity. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -49,7 +49,7 @@ content_verified_at: null
 # Netflix — seven years from datacenter dependency to cloud-native service architecture
 
 **Case ID:** `case.netflix.cloud-rearchitecture-2008-2016` | **M9:** E16-04 #117 | **Status:** evidence-backed historical draft  
-**Period:** incident August 2008; project completed early January 2016; [Netflix first-party retrospective, February 12, 2016](https://about.netflix.com/en/news/completing-the-netflix-cloud-migration), N01.
+**Period:** incident August 2008; project completed early January 2016; [Netflix first-party retrospective, February 12, 2016](https://about.netflix.com/en/news/completing-the-netflix-cloud-migration), src.m9-n01.
 
 ## The original problem and why a 'lift and shift' was rejected
 
@@ -78,10 +78,10 @@ flowchart LR
 
 | Observation | Time / origin | What it proves and what it does not |
 |---|---|---|
-| Major database corruption interrupted DVD shipments | August 2008, N01 opening | A triggering operational failure, not controlled evidence that all monoliths are unavailable |
-| Datacenter-to-cloud effort spanned roughly seven years | N01 overall retrospective | Replatforming touched data, services, operations and release practice; not a forklift |
-| Most customer-facing services migrated earlier | N01 narrative of staged migration | Sensitive back-office state and some services remained later; no simultaneous big bang |
-| Final remaining streaming datacenter components shut down | Early January 2016, N01 | Project milestone, not proof every later Netflix workload would always remain in the same topology |
+| Major database corruption interrupted DVD shipments | August 2008, src.m9-n01 opening | A triggering operational failure, not controlled evidence that all monoliths are unavailable |
+| Datacenter-to-cloud effort spanned roughly seven years | src.m9-n01 overall retrospective | Replatforming touched data, services, operations and release practice; not a forklift |
+| Most customer-facing services migrated earlier | src.m9-n01 narrative of staged migration | Sensitive back-office state and some services remained later; no simultaneous big bang |
+| Final remaining streaming datacenter components shut down | Early January 2016, src.m9-n01 | Project milestone, not proof every later Netflix workload would always remain in the same topology |
 
 Netflix also describes services and engineering autonomy at dramatically expanded scale, but the retrospective's company growth figures are **not causal A/B evidence** that adopting microservices produces that growth. Its technology narrative is intentionally historical; a current architecture diagram would require 2026-specific evidence.
 
@@ -93,11 +93,11 @@ The reusable principle is a **migration dependency graph**, not an AWS mandate. 
 
 ## What the 2016 retrospective actually establishes
 
-The [Netflix first-party retrospective of February 12, 2016](https://about.netflix.com/en/news/completing-the-netflix-cloud-migration) (N01) places the **August 2008 database-corruption event** at the start of the project and says **all customer-facing systems** had moved before 2015. The slowest final stage involved sensitive, durable operational data and subscription/customer management. The remaining data-center infrastructure used by the streaming service was retired in **early January 2016**. These are separate milestones, not evidence of a single all-service deployment in January.
+The [Netflix first-party retrospective of February 12, 2016](https://about.netflix.com/en/news/completing-the-netflix-cloud-migration) (src.m9-n01) places the **August 2008 database-corruption event** at the start of the project and says **all customer-facing systems** had moved before 2015. The slowest final stage involved sensitive, durable operational data and subscription/customer management. The remaining data-center infrastructure used by the streaming service was retired in **early January 2016**. These are separate milestones, not evidence of a single all-service deployment in January.
 
-Netflix's architects explicitly contrasted the simpler **lift-and-shift** option—run unchanged datacenter systems in rented cloud machines—with rebuilding virtually all of the platform. The retrospective reports moving from a monolithic application toward hundreds of independently operated services and denormalized NoSQL data models. This is a **reported historical design direction**, not proof that every one of Netflix's databases became nonrelational or that relational transactions were eliminated from every workload. [N01, the migration rationale and final engineering reflection].
+Netflix's architects explicitly contrasted the simpler **lift-and-shift** option—run unchanged datacenter systems in rented cloud machines—with rebuilding virtually all of the platform. The retrospective reports moving from a monolithic application toward hundreds of independently operated services and denormalized NoSQL data models. This is a **reported historical design direction**, not proof that every one of Netflix's databases became nonrelational or that relational transactions were eliminated from every workload. [src.m9-n01, the migration rationale and final engineering reflection].
 
-The text identifies an **operating-model** migration as well as a hosting migration: long provisioning and coordinated approvals were replaced by infrastructure self-service and continuous delivery, while service teams assumed more independent release decisions. That combination created capabilities that merely rehosting the monolith would not have yielded. Its trade-off is an increase in distributed service boundaries, dependency coordination and ownership surfaces. N01 does not identify every intermediate release or attach a numerical SLO to each transition stage.
+The text identifies an **operating-model** migration as well as a hosting migration: long provisioning and coordinated approvals were replaced by infrastructure self-service and continuous delivery, while service teams assumed more independent release decisions. That combination created capabilities that merely rehosting the monolith would not have yielded. Its trade-off is an increase in distributed service boundaries, dependency coordination and ownership surfaces. src.m9-n01 does not identify every intermediate release or attach a numerical SLO to each transition stage.
 
 ## Workload change is not an architecture-controlled experiment
 
@@ -110,7 +110,7 @@ The text identifies an **operating-model** migration as well as a hosting migrat
 | Availability trended toward a target of **four nines** | Reported improving trajectory, with acknowledged cloud outages | Not independent proof of exactly 99.99% uptime or zero incidents |
 | Cloud cost per **streaming start** became a fraction of old datacenter cost | Relative publisher statement; absolute amounts unpublished | Must not be translated into a precise cloud-bill percentage or general cloud TCO law |
 
-The paper also distinguishes cloud execution from **Open Connect**, Netflix's separately distributed video-delivery CDN. The ability to expand stateless or horizontally scalable cloud workers does not mean video bytes were all delivered from the same virtual server tier. Treat distributed content delivery as an adjacent architecture boundary, not an invented microservice count. [N01, mid-article global infrastructure and Open Connect descriptions].
+The paper also distinguishes cloud execution from **Open Connect**, Netflix's separately distributed video-delivery CDN. The ability to expand stateless or horizontally scalable cloud workers does not mean video bytes were all delivered from the same virtual server tier. Treat distributed content delivery as an adjacent architecture boundary, not an invented microservice count. [src.m9-n01, mid-article global infrastructure and Open Connect descriptions].
 
 ## Failure containment and migration ownership
 
@@ -126,4 +126,4 @@ Sharding, async communication, dozens of service owners and decentralized deploy
 
 **Decision test:** identify current systemic availability bottlenecks and split one domain only after proving a smaller change cannot meet the target. A cloud migration is not automatically a microservices migration; those are distinct decisions.
 
-**Citation anchor:** [N01 — Completing the Netflix Cloud Migration](https://about.netflix.com/en/news/completing-the-netflix-cloud-migration), opening incident, migration rationale, timeline and final shutdown paragraphs. Source-reported historical account; no copied diagrams, independent measurements or private data. **Review:** pending #121.
+**Citation anchor:** [src.m9-n01 — Completing the Netflix Cloud Migration](https://about.netflix.com/en/news/completing-the-netflix-cloud-migration), opening incident, migration rationale, timeline and final shutdown paragraphs. Source-reported historical account; no copied diagrams, independent measurements or private data. **Review:** pending #121.
