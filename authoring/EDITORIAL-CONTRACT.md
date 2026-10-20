@@ -8,6 +8,10 @@ The first accepted authoring target is **one researched question**, not a volume
 
 The proposed structure lives in [the question-driven book plan](../book/PROPOSED-STRUCTURE.md). It is not an approved full TOC and should be revised based on the first real written chapters. No empty volume/chapter/page directory tree is required.
 
+## Volume and chapter directory names
+
+The owner requires readable directory names under `book/volumes`: `vNN-<description>/cNN-<description>/`, for example `v01-requirements-and-architecture/c01-problem-framing/`. [The directory naming policy](DIRECTORY-NAMING.md) defines description syntax, identity preservation and acceptance for the existing-path migration. Use it with the landing templates; the edition outline records each selected complete path. Earlier planning statements below retain their original scope.
+
 ## Template contracts
 
 | Document kind | Canonical responsibility | Template or boundary |

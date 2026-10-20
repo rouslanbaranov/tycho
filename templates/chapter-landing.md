@@ -2,6 +2,8 @@
 
 > Draft chapter landing template. A chapter is not evidence-reviewed because its landing page exists.
 
+**Canonical directory:** `book/volumes/vNN-<volume-description>/cNN-<chapter-description>/`; landing: `README.md`. Chapter numbering is local to its volume. Choose a concise English description under [the naming policy](../authoring/DIRECTORY-NAMING.md), preserve the opaque chapter ID, and record the selected path in the edition outline. This example is a path template, not a live link.
+
 ## Purpose and mission
 
 Explain the single canonical question this chapter owns, the applicability boundary and the outcomes a reader should be able to verify. State prerequisites and explicit exclusions.

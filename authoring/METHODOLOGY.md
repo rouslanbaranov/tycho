@@ -4,6 +4,10 @@
 
 The minimal [editorial and navigation contract](EDITORIAL-CONTRACT.md) defines volume/chapter landing pages, researched question pages, link discipline, compact diagrams/source excerpts and review gates. Use its [volume landing](../templates/volume-landing.md), [chapter landing](../templates/chapter-landing.md) and [technical page](../templates/technical-page.md) templates only for bounded approved research slices; do not manufacture empty pages. Pattern cards and ADRs are separate later work, not substitutes for evidence-backed chapter explanations.
 
+## Directory naming and stable identity
+
+Use [readable volume and chapter directory names](DIRECTORY-NAMING.md): `book/volumes/vNN-<description>/cNN-<description>/README.md`. Keep existing zero-padded ordinals, derive concise English descriptions from the titles, and record selected paths in the edition outline. Persistent document IDs and review/source provenance remain independent of these names. Migrate existing numbered-only paths with an explicit map, updated links/metadata/tooling and rebuilt indexes/inventory; recording this requirement alone does not perform or validate that migration.
+
 ## Question before prose
 
 Begin each bounded slice with a research contract: reader, primary question, practical significance, subquestions, exclusions, required evidence, and completion criteria. Apply depth according to consequences of error, coupling, and uncertainty. Word counts and diagram counts are not quality targets. Mermaid is the standard native diagram format for explanatory figures in volume introductions, chapter landings and technical pages where visualization clarifies real relationships. Diagrams need nearby plain-text explanations, provenance and applicability/assumption labels; they are optional when purely decorative.

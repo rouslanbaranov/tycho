@@ -2,6 +2,8 @@
 
 > Draft landing-page template. Replace placeholders, remove unused sections; do not mark chapters complete before researched content exists. Future metadata fields and JSON Schema are owned by later issues.
 
+**Canonical directory:** `book/volumes/vNN-<description>/`; landing: `README.md`. Choose a concise English title-based description under [the naming policy](../authoring/DIRECTORY-NAMING.md), and record the selected path in the edition outline. This example is a path template, not a live link.
+
 ## Purpose and mission
 
 - **Why this volume exists:** <the engineering decisions and failure questions addressed>
