@@ -200,6 +200,23 @@ Text alternative: requirements are translated into a workload and hard gates; in
 
 All booking numbers, diagrams, decision tables, tests, hypotheses and outcomes are **original invented teaching material**. They were not exercised on a running service. No independent review, real cost study, workload collection or whole-volume coverage is claimed. For an actual project, obtain consented stakeholder requirements and telemetry before moving a provisional decision to accepted. The method's machine-readable integration remains independent future work.
 
+## Engineering walkthrough — Complete intake without choosing a style first
+
+**Original fictional platform:** 12,000 registered accounts, a short launch-day surge proposed at 120 distinct booking intents/s, one exclusive-resource invariant and partner clients that cannot all upgrade together. "Cloud native" is not a requirement. The actual observed arrival distribution, retry amplification, hot-key share and current release lead time are unknown.
+
+| Kind | Assumed requirement | Gate and missing evidence |
+|---|---|---|
+| Functional | One confirmed allocation per physical item and interval | Concurrency, lost acknowledgment and unique state-owner tests |
+| Workload | 15-second burst of 120 new intents/s | Calibrated offered vs delivered arrivals; unknown actual baseline |
+| Quality | Correct outcome within a bounded user deadline | Stakeholder-approved SLI/SLO and eligible population needed |
+| Security/operations | Object-level tenant authorization, one maintainable state authority | Reject an unowned new privileged writer |
+| Compatibility | Legacy clients/events coexist during change | Consumer inventory and retention horizon unknown |
+| Economics | Account for on-call, storage and migration recovery | No valid actual price or staffing measurements provided |
+
+**Decision:** `MEASURE_FIRST`. Preserve the current authoritative booking boundary while profiling the actual bottleneck. A queue is not an equivalent solution when the business insists on immediate *final* confirmation; a service split cannot be approved without fenced ownership transfer. The architecture may change when controlled evidence demonstrates that smaller changes fail a hard requirement and a candidate meets it with operational support.
+
+**Proposed, not executed:** collect versioned workload/profile evidence, test a hot resource under concurrent confirmations and document allowed degraded states. The arc42 and SEI architecture evaluation references guide concern/decision structure but do not prove this fictional choice.
+
 ## Navigation
 
 - Planned owner: **V10/C01** in [book outline](../PROPOSED-STRUCTURE.md); current section [System Design decision support](README.md).

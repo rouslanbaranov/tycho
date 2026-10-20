@@ -226,6 +226,21 @@ A signed functional contract that requires isolating import failures from public
 - Transition owners: [Safe rollout and recovery](../delivery/safe-rollout-and-recovery.md); [Schema evolution](../delivery/progressive-delivery-and-schema-evolution.md).
 - Supporting method (not book chapter): [Legacy baseline authoring model](../../authoring/models/legacy-modernization-profile.md).
 
+## Engineering walkthrough — Observed legacy baseline versus hypothetical future benefit
+
+**Original fictional estate:** a Java catalogue imports vendor records nightly to PostgreSQL while exposing lookup APIs. A planned microservice extraction claims it will shorten imports; yet no current SQL timing, lock and pool profile, startup time, replay correctness or team release-lead-time data has been collected.
+
+| Baseline question | Required observation | Candidate assumption, not yet fact |
+|---|---|---|
+| Why nightly import is slow | Batch sizes, explain plans, lock/pool waits and retries | A queue/service split will improve processing |
+| Who owns item identity | Mapping, invariant, reader/writer and partner versions | New datastore can replace old authority |
+| What failure means | Commit and checkpoint positions, partial updates, replay | New workflow is restart-safe |
+| Why deployments are expensive | Actual collaboration/approval and release history | Autonomous service saves meaningful effort |
+
+**Counterexample:** a measured query plan later exposes one expensive scan; an index or staged batch repair meets the latency goal while retaining the same transaction and interface. That falsifies the *performance* case for extraction. Conversely, externally imposed fault isolation or independently owned data may still justify a new boundary, but it must carry compatibility and recovery obligations.
+
+**Proposed test, not run:** pin identical vendor snapshots, apply equivalent offered import work and compare retained+optimized versus separated-worker paths under interrupted backfill and old partner clients. A target diagram is **hypothesis**, original measurements would be **observations**, while Fowler's Strangler/displacement sources describe candidate methods. No modernization or benchmark is asserted.
+
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
