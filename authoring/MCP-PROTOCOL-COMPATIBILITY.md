@@ -1,5 +1,8 @@
 # MCP protocol, client capability and transport decision — Tycho
 
+> **Current-state overlay — 2026-10-20 (unmerged PR #218):** This protocol compatibility report retains its historically scoped tool/dependency checks. A protocol fixture or planned contract is not a deployed MCP server. The book-first final-content issue #213 and edition issue #214 remain open; visual rendering and live MCP checks were owner-cancelled for the earlier integrated-draft acceptance. Do not claim a hosted endpoint or a new live run. See [canonical project state](STATE.md) and [reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 > **Issue #56 / E09-01 / M5, 2026-10-19.** Evidence-based transport and compatibility **design**, not a deployed MCP server, tested external client or authenticated remote instance. Only independently public protocol specifications and Tycho knowledge are in scope.
 
 ## Decision: target 2026-07-28; support a bounded legacy client path

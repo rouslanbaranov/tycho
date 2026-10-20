@@ -1,5 +1,8 @@
 # M9 / E16-08 — Case Review Matrix and Acceptance Checkpoint
 
+> **Current-state overlay — 2026-10-20 (unmerged PR #218):** The older 'do not close #121/M9' and 'PR #212 Draft' statements are historical, from before owner-scoped integrated-draft acceptance and #216 merge. M9 #121 is now CLOSED. Do not invent a named external reviewer or a new independent claim-by-claim certificate. The 35 applied items remain 29 historical cases plus six synthetic decision playbooks. See [canonical project state](../STATE.md) and [reconciliation](../PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 ## Current M9 package disposition — 2026-10-20
 
 Independent acceptance is **COMPLETED, owner-confirmed** for the integrated

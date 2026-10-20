@@ -1,5 +1,8 @@
 # Public research sources
 
+> **Current-state overlay — 2026-10-20 (unmerged PR #218):** The source catalogue remains the public-source admission authority, **not** a declaration that all 69 manuscript chapters lack technical research. The current manuscript has 69 deepened primary owners and 29 historical M9 case drafts, but zero independently accepted final-book chapter dispositions. Strict document metadata JSON Schema and offline routing/index tools already exist; the older 'formal JSON Schema planned' sentence refers to the initial source-discovery stage. See [canonical project state](../authoring/STATE.md) and [reconciliation](../authoring/PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 ## Purpose
 
 Provide a curated, independently public research base for the System Design book. The canonical inventory is [register.json](register.json). Browse the generated [catalogue](CATALOG.md), the [coverage map](COVERAGE.md), the [implementation map](IMPLEMENTATIONS.md), the [reading plan](READING-PLAN.md), and [known gaps](GAPS.md).

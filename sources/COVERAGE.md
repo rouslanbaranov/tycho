@@ -1,5 +1,8 @@
 # Research coverage map
 
+> **Current-state overlay — 2026-10-20 (unmerged PR #218):** This table describes initial research routes; it is not the current completion matrix. A later 69-row chapter execution register exists, 69/69 manuscript owners have been deepened and 0/69 final-book chapter acceptances are recorded. Do not equate old 'planned research area' labels with no extant research prose. See [canonical project state](../authoring/STATE.md) and [reconciliation](../authoring/PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 ## Purpose and interpretation
 
 Map engineering questions to public research entry points. Every row is a planned research area; sources are discovered, not yet exhausted or synthesized into a reviewed chapter. IDs resolve through the [register](register.json). This map is not an approved table of contents.

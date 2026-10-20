@@ -1,5 +1,8 @@
 # Complete M9 evidence identity cleanup — issue #213
 
+> **Current-state overlay — 2026-10-20 (unmerged PR #218):** The evidence-ID cleanup described below was completed on the original manuscript commit d8d04e0e3c97e9f364607f640faa9f5aee4866f3. Its 123 payload locations and 116 unique evidence identities were preserved, compatibility aliases removed, and full prior local Python tests reported PASS. Before merging current PR #218, rerun the exact HEAD after documentation edits; this note is not a new verification. See [canonical project state](STATE.md) and [reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 Date: 2026-10-20. Bounded contract: remove the temporary alias compatibility layer and remaining abbreviated evidence-row labels while preserving source bindings, statement payloads, formal case/claim/query identities and review declarations. No new external research, technical acceptance or source rights are asserted.
 
 ## Identity rules

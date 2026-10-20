@@ -1,5 +1,8 @@
 # Real-World Modernization Case Study Program (M9)
 
+> **Current-state overlay — 2026-10-20 (unmerged PR #218):** This is the original M9 research plan; the 29 case drafts and six decision playbooks are already integrated through PR #216, and owner-scoped integrated-draft acceptance closed #121. Earlier 'M9 must remain open' instructions are historical. Final ten-volume edition is still #214, and independent claim-level content review for the 69 core chapters remains open under #213. See [canonical project state](STATE.md) and [reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 ## Binding 2026-10-19 decision: full case-page coverage, no product knowledge graphs
 
 **Primary delivery priority:** finish the substantive content of **every one of the 29 M9 case pages and six comparative decision pages** against the case-study authoring contract. Count completeness by independently checkable question/evidence coverage per page, not by pages present, word count, diagram count, closed authoring issues or source-discovery totals. A missing publisher detail is documented as **unknown** rather than filled with an invented answer. No case is declared 100% content-complete until its own before/decision/alternatives/transition/failures/outcomes/transfer/provenance checks pass; independent approval is a separate gate. The 29 existing pages remain drafts until verified.
