@@ -62,9 +62,9 @@ A company has a JVM monorepo with 45-minute CI waits but a separate polyrepo fle
 
 | Actual company case | What its primary source does and does not establish |
 |---|---|
-| [Airbnb](../airbnb-jvm-monorepo-bazel.md) | A01: Gradle/Bazel coexistence and RBE speed/CSAT report |
-| [Spotify](../spotify-tech-migration-long-tail.md) | SP01: Backstage, prioritized migration ownership and long-tail |
-| [Uber](../uber-doma-domains.md) | U01: coordination costs when services and teams proliferate |
+| [Airbnb](../airbnb-jvm-monorepo-bazel.md) | src.m9-a01: Gradle/Bazel coexistence and RBE speed/CSAT report |
+| [Spotify](../spotify-tech-migration-long-tail.md) | src.m9-sp01: Backstage, prioritized migration ownership and long-tail |
+| [Uber](../uber-doma-domains.md) | src.m9-u01: coordination costs when services and teams proliferate |
 
 **Why the apparent conflict is useful:** Airbnb evaluated developers opting into Bazel while Gradle continued; Spotify coordinated a long-tail across autonomous squads. Uber's DOMA points to a third failure: cross-service change spans ownership boundaries no build tool can abolish.
 
@@ -105,11 +105,11 @@ Build pilot and parity checks → progressive opt-in with IDE support → migrat
 
 ## The two bottlenecks are different subsystems
 
-[Airbnb's multi-year Bazel migration](../airbnb-jvm-monorepo-bazel.md) (A01) identifies expensive, non-hermetic **build and test execution**. The original company account reports 3–5× faster local build/test, 2–3× faster IDE sync and improvement in build satisfaction—but also about 100 of 700 service deployables initially failing startup parity checks and a **4.5-year** migration. A faster compiled artifact was not automatically a correct production artifact. Gradle/Bazel coexistence was deliberately retained while service owners fixed reflective dependency and packaging issues.
+[Airbnb's multi-year Bazel migration](../airbnb-jvm-monorepo-bazel.md) (src.m9-a01) identifies expensive, non-hermetic **build and test execution**. The original company account reports 3–5× faster local build/test, 2–3× faster IDE sync and improvement in build satisfaction—but also about 100 of 700 service deployables initially failing startup parity checks and a **4.5-year** migration. A faster compiled artifact was not automatically a correct production artifact. Gradle/Bazel coexistence was deliberately retained while service owners fixed reflective dependency and packaging issues.
 
-[Spotify's long-tail technology migrations](../spotify-tech-migration-long-tail.md) (SP01, **2020**) instead concern **coordinating version upgrades across owners**. Standardizing workflow, measuring version/dependency inventory and helping engineers perform changes can reduce chronic adoption lag even when every repository already builds quickly. The 2020 Spotify account must not be mislabeled as an LLM-agent migration; the [2025–26 Honk case](../spotify-honk-data-consumer-migration.md) (SP02/SP03) describes a separate, later coding-agent workflow with explicit ambiguous-field refusals, Scio exclusions and incomplete testing.
+[Spotify's long-tail technology migrations](../spotify-tech-migration-long-tail.md) (src.m9-sp01, **2020**) instead concern **coordinating version upgrades across owners**. Standardizing workflow, measuring version/dependency inventory and helping engineers perform changes can reduce chronic adoption lag even when every repository already builds quickly. The 2020 Spotify account must not be mislabeled as an LLM-agent migration; the [2025–26 Honk case](../spotify-honk-data-consumer-migration.md) (src.m9-sp02/src.m9-sp03) describes a separate, later coding-agent workflow with explicit ambiguous-field refusals, Scio exclusions and incomplete testing.
 
-[Uber's service-domain ownership case](../uber-doma-domains.md) (U01, **2020**) adds a third independent variable: the number of consumer teams and contracts touched by one feature. Making a build faster does not make an unstable multi-team interface easier to coordinate. These published cases are **not** one cross-company controlled experiment.
+[Uber's service-domain ownership case](../uber-doma-domains.md) (src.m9-u01, **2020**) adds a third independent variable: the number of consumer teams and contracts touched by one feature. Making a build faster does not make an unstable multi-team interface easier to coordinate. These published cases are **not** one cross-company controlled experiment.
 
 ## Two independent synthetic decision records
 
@@ -135,22 +135,22 @@ The above criteria are **Tycho synthetic alternatives**. Neither company is clai
 
 ## Failure matrix and required counterevidence
 
-- **Hermetic test, non-hermetic runtime:** the same code tests under Bazel but crashes on reflection, generated file discovery or incompatible dependency versions. Airbnb's real rollout surfaced these categories (A01). Require deployment startup and representative integration parity separately.
+- **Hermetic test, non-hermetic runtime:** the same code tests under Bazel but crashes on reflection, generated file discovery or incompatible dependency versions. Airbnb's real rollout surfaced these categories (src.m9-a01). Require deployment startup and representative integration parity separately.
 - **CI faster, releases unchanged:** approvals, environments or unstable service contracts dominate the lead-time distribution. Build speed is a local achievement, not proof of product throughput.
-- **Hundreds of generated PRs, many unsupported changes:** missing business-field mappings or untestable code produce superficially passing diffs; [Spotify's dataset migration](../spotify-honk-data-consumer-migration.md) (SP03) documents narrowed framework scope and manual validation.
+- **Hundreds of generated PRs, many unsupported changes:** missing business-field mappings or untestable code produce superficially passing diffs; [Spotify's dataset migration](../spotify-honk-data-consumer-migration.md) (src.m9-sp03) documents narrowed framework scope and manual validation.
 - **Rollout hidden by source compatibility:** a library compiles but violates data/schema version expectations at the consumer boundary. Track deployed-version inventory, not only repository default-branch versions.
 - **Ownership unassigned:** a fleet upgrade is “95% done” while the remaining 5% includes business-critical consumers and no accountable maintainer. Require explicit exception classification and a dated waiver/escalation.
 
 **Reversal criteria:** keep or restore the old build/deploy path for correctness failures; stop agent-assisted PR waves when semantic defect or manual-rework cost exceeds agreed thresholds; prioritize the oldest/highest-risk unsupported consumers rather than optimizing headline adoption percentage. Metrics with unknown denominators should be returned as **insufficient evidence**.
 
-## What the Rocinante agent should answer
+## What an architecture-analysis agent should answer
 
-Given a legacy system, ask first: Are delayed changes driven by **compile/test time, reproducibility, service interface ownership, or actual deployment adoption**? Which cohort and release revisions were measured? What is the cheapest reversible intervention, and what contrary evidence would invalidate it? Only then recommend a tooling or organization change. Return dated A01/SP01/U01 (and optional later SP03) provenance, the hypothetical assumptions, required parity/fallback checks and a bounded next experiment; never claim a company-reported performance ratio is a universal SLO.
+Given a legacy system, ask first: Are delayed changes driven by **compile/test time, reproducibility, service interface ownership, or actual deployment adoption**? Which cohort and release revisions were measured? What is the cheapest reversible intervention, and what contrary evidence would invalidate it? Only then recommend a tooling or organization change. Return dated src.m9-a01/src.m9-sp01/src.m9-u01 (and optional later src.m9-sp03) provenance, the hypothetical assumptions, required parity/fallback checks and a bounded next experiment; never claim a company-reported performance ratio is a universal SLO.
 
 ## Failure analysis and evidence provenance
 
 The company cases are not A/B comparisons of two architectures under one workload. Published outcomes describe different organizations, production periods, release versions, traffic mixes and operating constraints. This playbook compares *mechanisms and constraints*, not raw numerical results across companies.
 
-Before passing a recommendation to Rocinante, an agent should return: legacy facts, requirement/SLO evidence, selected/avoided pattern, evidence rows with company/date/source ID, alternative mechanism, caveats, a reversible transition sequence, what would falsify the choice, and whether human review is needed. Never invent what original engineering teams rejected.
+Before presenting a recommendation to its user, an architecture-analysis agent should return: legacy facts, requirement/SLO evidence, selected/avoided pattern, evidence rows with company/date/source ID, alternative mechanism, caveats, a reversible transition sequence, what would falsify the choice, and whether human review is needed. Never invent what original engineering teams rejected.
 
 Sources are linked through each original case page above, ultimately referring to [the M9 public source register](../../../sources/REAL_WORLD_ARCHITECTURE_CASES.md). All analytical ADRs are original Tycho examples. **Independent review:** #121, not yet completed.

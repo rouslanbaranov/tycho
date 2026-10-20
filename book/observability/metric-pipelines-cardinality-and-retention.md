@@ -153,6 +153,23 @@ B may seem richer but can create unbounded series and sensitive metadata. A is a
 
 **Falsifiable test (not run):** generate known bounded route/status combinations, inject random client IDs, restart a producer, duplicate exports, drop one collection interval and replay timestamps. Compare series count, ingest resource budget, SLI numerical semantics, query correctness and exposure controls. There is no test data or result in this chapter.
 
+## Engineering walkthrough — How one unbounded metric label multiplies storage
+
+**Original synthetic metric:** a request-duration series records `route` (40 values), `status_class` (5), `zone` (3) and `tenant_id` (2,000). Ignoring labels added by instrumentation, the potential Cartesian product is `40 × 5 × 3 × 2,000 = 1,200,000` separate time series. Removing `tenant_id` reduces that theoretical combination count to `600`. These are *upper-bound dimensionality arithmetic*, not observed active series or a vendor price estimate.
+
+At a purely hypothetical one sample per series every 15 seconds, a full million-plus active series would produce up to 80,000 samples/s; actual active combinations can be far lower and per-sample storage depends on compression, retention, replication and index layout. High-cardinality labels may leak tenant identity and consume query resources even when an app remains healthy.
+
+| Pipeline boundary | Normal contract | Failure interpretation to reject |
+|---|---|---|
+| SDK/exporter | Counter/histogram semantics and bounded attributes | Missing samples imply no user traffic |
+| Collector | Backpressure, aggregation, resource budgets | Dropped telemetry means errors disappeared |
+| Time-series store | Retention and label query budget | A downsampled p99 equals p99 of original raw durations |
+| Dashboard/alert | Distinguish reset, cumulative/delta and missing windows | Counter reset interpreted as negative successful requests |
+
+The existing OpenTelemetry metric data model and Prometheus metric-type references define terminology; they do not certify a given collector's actual temporality conversion or cardinality footprint. A missing histogram bucket or restarted counter can make apparent rates nonsensical without explicit reset/missing-data handling.
+
+**Proposed, unexecuted:** replay the same traffic with bounded route templates versus unbounded tenant/path labels; measure active series, ingestion memory, missing points, query time and retained bytes. Keep high-cardinality user IDs in access-controlled audit or trace context when justified, not automatically in globally aggregatable metric labels. A cheaper dashboard is not sufficient if it hides severe tail errors.
+
 ## 8. Public evidence, caveats and navigation
 
 | Independently inspected public source | Narrow support | What remains unproven |

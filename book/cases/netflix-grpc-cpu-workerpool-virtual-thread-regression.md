@@ -33,10 +33,11 @@ route_hints:
     - "were"
     - "slower"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.m9-n02"
   claim_ids: []
   status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  notes: "Global source IDs resolve directly through sources/register.json. Evidence-row identities use their own namespaced IDs; source URLs and evidence payloads are preserved. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -51,13 +52,13 @@ content_verified_at: null
 # Netflix — CPU-intensive gRPC worker pools: virtual threads were slower
 
 **Case ID:** `case.netflix.grpc-cpu-workerpool-loom-regression` · **M9:** E16-03 #116 · **Status:** source-backed, original case draft; independent technical review pending.  
-**Direct practitioner source:** N02, Paul Bakker (Netflix Java Platform), *How Netflix Really Uses Java*, QCon San Francisco, **2023-10-03**. The publisher-hosted [InfoQ talk and transcript](https://www.infoq.com/presentations/netflix-java/) appeared online later; cite the **talk date** as the observed engineering state. Specifically, locate the part of the transcript describing experimentation with virtual threads, the **outgoing gRPC clients' thread worker pool**, and CPU-intensive work. It reports a slowdown of **a few percent**, but provides no exact benchmark data. This case is not based on the 2024 JDK21 Tomcat deadlock investigation (N06), which is a separate failure mode.
+**Direct practitioner source:** src.m9-n02, Paul Bakker (Netflix Java Platform), *How Netflix Really Uses Java*, QCon San Francisco, **2023-10-03**. The publisher-hosted [InfoQ talk and transcript](https://www.infoq.com/presentations/netflix-java/) appeared online later; cite the **talk date** as the observed engineering state. Specifically, locate the part of the transcript describing experimentation with virtual threads, the **outgoing gRPC clients' thread worker pool**, and CPU-intensive work. It reports a slowdown of **a few percent**, but provides no exact benchmark data. This case is not based on the 2024 JDK21 Tomcat deadlock investigation (src.m9-n06), which is a separate failure mode.
 
 ## Why replacing a pool looked appealing
 
 Virtual threads preserve direct-looking synchronous Java programming while allowing many *I/O-blocked* requests to yield their carrier platform threads. A migration from a bounded OS-thread executor to a per-task virtual-thread executor can therefore reduce the need for large platform-thread pools when tasks spend much of their lives waiting for sockets.
 
-The Netflix practitioner account gives an immediate counterexample. A platform-team experiment replaced the worker pool used with **outgoing gRPC calls**, anticipating reduced scheduling overhead. Its work was **CPU intensive**, however; changing the thread abstraction introduced overhead without creating useful new compute capacity. Bakker reported that performance became **a few percent worse**, not better. He used the example to explain that virtual threads should be enabled only at points where their waiting behavior is advantageous. [N02, discussion of virtual threads following JDK17/JDK21 upgrades].
+The Netflix practitioner account gives an immediate counterexample. A platform-team experiment replaced the worker pool used with **outgoing gRPC calls**, anticipating reduced scheduling overhead. Its work was **CPU intensive**, however; changing the thread abstraction introduced overhead without creating useful new compute capacity. Bakker reported that performance became **a few percent worse**, not better. He used the example to explain that virtual threads should be enabled only at points where their waiting behavior is advantageous. [src.m9-n02, discussion of virtual threads following JDK17/JDK21 upgrades].
 
 ## Before/after and source-supported outcome
 
@@ -77,19 +78,19 @@ flowchart LR
 
 | Evidence question | Historical source | Qualification |
 |---|---|---|
-| What was modified? | N02: gRPC clients' thread worker pool | This is an outbound-client worker pool, not necessarily the entire gRPC service tier |
-| What was the result? | N02: performance decreased by **a few percent** | **No exact number, hardware, load generator or p99 distribution provided**; never re-express as a precise percent |
-| Why? | N02: the workers were CPU intensive | Mechanistic interpretation: virtual threads are cheaper to *block*, not faster at CPU instructions |
-| Did Netflix abandon all virtual threads? | **Not established** by N02 | Bakker discusses finding appropriate adoption points rather than global prohibition |
-| Was this the same as the 2024 Brave/Zipkin pinned-carrier outage? | **No**: separate N06 evidence, later time, different mechanism | Never mix CPU-contention overhead with synchronized carrier pinning |
+| What was modified? | src.m9-n02: gRPC clients' thread worker pool | This is an outbound-client worker pool, not necessarily the entire gRPC service tier |
+| What was the result? | src.m9-n02: performance decreased by **a few percent** | **No exact number, hardware, load generator or p99 distribution provided**; never re-express as a precise percent |
+| Why? | src.m9-n02: the workers were CPU intensive | Mechanistic interpretation: virtual threads are cheaper to *block*, not faster at CPU instructions |
+| Did Netflix abandon all virtual threads? | **Not established** by src.m9-n02 | Bakker discusses finding appropriate adoption points rather than global prohibition |
+| Was this the same as the 2024 Brave/Zipkin pinned-carrier outage? | **No**: separate src.m9-n06 evidence, later time, different mechanism | Never mix CPU-contention overhead with synchronized carrier pinning |
 
 ## Three contrasting execution models
 
 1. **Bounded platform-thread pool:** preferable for a CPU-intensive worker where the number of simultaneously useful executions is constrained by cores, and queue/admission limits need explicit operational control.
 2. **Per-task virtual threads:** a candidate when many tasks block on network/disk I/O, provided the target JDK and tracing/dependency stack do not pin carriers in dangerous blocking regions. Virtual-thread count is **not** a downstream concurrency or rate limit.
-3. **Asynchronous/reactive network event loops:** suitable for persistent-connection handling and certain fan-out workloads with guaranteed nonblocking callbacks. Netflix's Zuul 2 (N07) shows connection-scaling benefits but a CPU-heavy gateway cluster did **not** get a comparable CPU-efficiency win. Event-loop code must not run blocking database clients or expensive crypto on loop threads.
+3. **Asynchronous/reactive network event loops:** suitable for persistent-connection handling and certain fan-out workloads with guaranteed nonblocking callbacks. Netflix's Zuul 2 (src.m9-n07) shows connection-scaling benefits but a CPU-heavy gateway cluster did **not** get a comparable CPU-efficiency win. Event-loop code must not run blocking database clients or expensive crypto on loop threads.
 
-The three are **not interchangeable workloads**. The experiment described in N02 shows CPU pressure; the production failure in N06 shows carrier starvation from a tracing synchronization path; Zuul 2 in N07 targets network waiting and connection count. None proves a universal ranking.
+The three are **not interchangeable workloads**. The experiment described in src.m9-n02 shows CPU pressure; the production failure in src.m9-n06 shows carrier starvation from a tracing synchronization path; Zuul 2 in src.m9-n07 targets network waiting and connection count. None proves a universal ranking.
 
 ## Migration and test design for a different legacy system
 
@@ -101,9 +102,9 @@ Proposed reversible method: profile worker actual runnable/blocking time → pin
 
 ## The nearby positive experiments do not cancel the negative one
 
-The [QCon practitioner transcript](https://www.infoq.com/presentations/netflix-java/) (N02, **Virtual Threads**) describes **three distinct adoption points** in one discussion. A Tomcat **thread-per-request** execution pool and Spring asynchronous task execution were promising because service code frequently waits for other network calls; some large services were reportedly already using virtual threads with neutral or modest results. GraphQL per-field execution was discussed as a future opportunity for network fan-out, **not an already measured fleet migration**. Then the speaker gives the specific counterexample: outgoing **gRPC client worker pools** had enough CPU-intensive work that moving to virtual threads made them **a few percent slower**.
+The [QCon practitioner transcript](https://www.infoq.com/presentations/netflix-java/) (src.m9-n02, **Virtual Threads**) describes **three distinct adoption points** in one discussion. A Tomcat **thread-per-request** execution pool and Spring asynchronous task execution were promising because service code frequently waits for other network calls; some large services were reportedly already using virtual threads with neutral or modest results. GraphQL per-field execution was discussed as a future opportunity for network fan-out, **not an already measured fleet migration**. Then the speaker gives the specific counterexample: outgoing **gRPC client worker pools** had enough CPU-intensive work that moving to virtual threads made them **a few percent slower**.
 
-The speaker's conclusion is about **placement**, not a binary choice to adopt or ban Loom. Platform-level support can allow application teams to benefit without rewriting every service, but only where blocking wait dominates execution and the exact library/JDK stack is compatible. The later 2024 tracing-induced carrier starvation [incident](netflix-java21-virtual-thread-pinning.md) (N06) is independent: one is extra overhead on CPU-heavy workers, the other a scheduler starvation failure under synchronized locks.
+The speaker's conclusion is about **placement**, not a binary choice to adopt or ban Loom. Platform-level support can allow application teams to benefit without rewriting every service, but only where blocking wait dominates execution and the exact library/JDK stack is compatible. The later 2024 tracing-induced carrier starvation [incident](netflix-java21-virtual-thread-pinning.md) (src.m9-n06) is independent: one is extra overhead on CPU-heavy workers, the other a scheduler starvation failure under synchronized locks.
 
 ## How to design an actual controlled comparison
 
@@ -126,7 +127,7 @@ A recommendation to change the executor is unsupported when no CPU-vs-wait profi
 
 ## Workload decomposition: a scheduling change is not a compute optimization
 
-The historical N02 source gives a **qualitative negative experiment**, not a complete benchmark. An outgoing gRPC client can perform both network waiting and CPU-heavy work, but merely labeling an executor “gRPC” does not establish which phase consumes its threads. What matters is the proportion of **runnable computation, socket waiting and synchronization** on the actual executor whose implementation is being changed.
+The historical src.m9-n02 source gives a **qualitative negative experiment**, not a complete benchmark. An outgoing gRPC client can perform both network waiting and CPU-heavy work, but merely labeling an executor “gRPC” does not establish which phase consumes its threads. What matters is the proportion of **runnable computation, socket waiting and synchronization** on the actual executor whose implementation is being changed.
 
 For another Java platform, the correct unit of experimentation is the worker's *actual task class*, not a whole mixed gateway. Split end-to-end traces into serialization, authorization, local transformation, send/wait and response processing. Record carrier/platform-thread occupancy, CPU per *completed useful request*, queue age, downstream connection limits, p99 and cancellation. Hold transport/library/JDK versions fixed when changing the scheduling model.
 
@@ -145,10 +146,10 @@ A safe migration begins in instrumentation-only mode. Identify which executor ow
 
 Virtual threads are **not** admission control. Even if waiting no longer holds OS threads, too many simultaneous downstream RPCs can overwhelm the peer or connection pool. The migration must preserve semaphores, deadlines, retry budgets and endpoint-specific circuit breakers independently of the thread type.
 
-**Stop and rollback** if CPU cost increases for comparable successful work, p99 rises, downstream errors grow, or an instrumentation lock consumes carriers. The last failure mode is from the **different 2024 tracing incident** documented in [Java21 carrier starvation](netflix-java21-virtual-thread-pinning.md); it must not be retroactively attributed to N02's 2023 CPU-pool experiment. A future JDK/library upgrade may change results, requiring a new measured comparison.
+**Stop and rollback** if CPU cost increases for comparable successful work, p99 rises, downstream errors grow, or an instrumentation lock consumes carriers. The last failure mode is from the **different 2024 tracing incident** documented in [Java21 carrier starvation](netflix-java21-virtual-thread-pinning.md); it must not be retroactively attributed to src.m9-n02's 2023 CPU-pool experiment. A future JDK/library upgrade may change results, requiring a new measured comparison.
 
 ## Evidence and non-claims
 
 This is one engineer's **first-party qualitative performance report**, not a published peer-reviewed benchmark or a quantified Netflix fleet-wide rollout. Runtime version details for the specific outbound gRPC pool are not sufficiently pinned by this transcript; do not assert it used Java 21 production for that experiment. The transcript's later online publication date is distinct from its October 2023 presentation. No copied publisher diagrams, transcribed passages or company-private source code are included.
 
-Related independently authored cases: [Java21 tracing-induced carrier starvation](netflix-java21-virtual-thread-pinning.md) (N06), [Zuul 2 I/O multiplexing](netflix-zuul2-nonblocking-gateway.md) (N07), and [Generational ZGC workload selectivity](netflix-generational-zgc-workloads.md) (N05). Comparative pattern selection: [Reactive versus virtual threads](decisions/reactive-vs-virtual-threads.md). Final acceptance still requires E16-08 #121 independent review and source-grounded claim verification.
+Related independently authored cases: [Java21 tracing-induced carrier starvation](netflix-java21-virtual-thread-pinning.md) (src.m9-n06), [Zuul 2 I/O multiplexing](netflix-zuul2-nonblocking-gateway.md) (src.m9-n07), and [Generational ZGC workload selectivity](netflix-generational-zgc-workloads.md) (src.m9-n05). Comparative pattern selection: [Reactive versus virtual threads](decisions/reactive-vs-virtual-threads.md). Final acceptance still requires E16-08 #121 independent review and source-grounded claim verification.

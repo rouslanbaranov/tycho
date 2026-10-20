@@ -1,94 +1,45 @@
-# Current state
+# Current state — Tycho
 
-Updated: 2026-10-18.
+**Updated:** 2026-10-20. This is the authoritative live-status narrative. Historical reports remain valid only for their dated sources, scope and revision. See [status reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md) and [roadmap](ROADMAP.md).
 
-## Implemented
+## Book and manuscript
 
-- Independent English charter and source-admissibility boundary, without employer names or abbreviations.
-- Repository-wide agent instructions. Work is conducted in the ChatGPT project; GitHub is the book's versioned repository. No coding-assistant delegation is configured.
-- Initial authoring methodology, research contract, roadmap and checkpoint.
-- Curated public-source inventory, generated catalogue, topic coverage and implementation maps, reading priorities and explicit gaps.
-- Workload-to-architecture research dimensions and proposed pilot questions.
-- Structural inventory/reference checks, catalogue freshness checks, limited local-link boundary scan and CI workflow.
+- Tycho is an independent, English-only System Design book based on admitted public sources and original synthetic examples. Curated knowledge-graph infrastructure is excluded; graph technology remains valid textbook subject matter.
+- The M1–M9 integrated draft was merged to main through [PR #216](https://github.com/rouslanbaranov/tycho/pull/216), merge commit `e2267a87882bb9935b2451368aa75a6fd05f87c1`.
+- There are **69 distinct primary manuscript owner files**, **29 publicly sourced historical case studies**, and **six synthetic decision playbooks**. The 35 applied readings have contextual transfers to 26 primary chapters.
+- **69/69 primary chapter manuscripts have been substantively deepened; 0/69 are independently accepted under the reopened final-book chapter-completeness criterion.** Earlier owner-approved independent *integrated-draft package* acceptance has a narrower scope. See [the 69-row completion register](BOOK_COMPLETION_EXECUTION_REGISTER_2026-10-20.md), [editorial review](EDITORIAL_SEMANTIC_ACCEPTANCE_REVIEW_2026-10-20.md) and [acceptance decision](ACCEPTANCE_DISPOSITION_2026-10-20.md).
+- **No completed physical 10-volume / 69-chapter / bounded-page edition exists yet.** The [selected TOC](FINAL_TOC_AND_OWNER_BOUNDARIES_2026-10-20.md) is an editorial target, not a published edition.
 
-## Evidence state
+## Current GitHub state
 
-Discovery/entry-page inspection is complete for the first inventory pass. Commercial books remain bibliography-only. Canonical pages that could not be fully fetched remain pending-content-access, with accessible official companions recorded. No full-book reading, source-code inspection, benchmark execution, production validation or domain/human review is claimed.
+| Object | Status |
+|---|---|
+| [PR #216](https://github.com/rouslanbaranov/tycho/pull/216) | Merged, integrated-draft baseline in main |
+| [PR #217](https://github.com/rouslanbaranov/tycho/pull/217) | Closed, unmerged; replaced by #218 |
+| [PR #218](https://github.com/rouslanbaranov/tycho/pull/218) | Open, non-draft, previously mergeable; **not merged**; branch `feature/TYCHO-213-audit-and-complete-all-69-planned-system-design-chapters` |
+| [Issue #213](https://github.com/rouslanbaranov/tycho/issues/213) and [E14 #15](https://github.com/rouslanbaranov/tycho/issues/15) | Open; substantive chapter claim/source/editorial acceptance |
+| [Issue #214](https://github.com/rouslanbaranov/tycho/issues/214) | Open; final volume/chapter/page assembly and publication |
+| [M9 review #121](https://github.com/rouslanbaranov/tycho/issues/121) | Closed under scoped owner-approved integrated-draft package acceptance |
 
-## Planned decision layer
+## Implemented vs planned
 
-The [architecture decision layer](architecture-decision-layer-plan.md) is now part of the roadmap: requirements/workload and legacy profiles, applicability cards, option comparison, ADRs, target/transition architecture and four decision-navigation routes. Only the requirements/workload model (#17) is implemented as a bounded authoring method. Legacy/applicability and the evaluated architecture-selection workflow remain unimplemented.
+**Implemented:** source-admission/evidence registers, strict document JSON Schema, metadata/frontmatter and stable IDs, local validation, a 136-document deterministic offline Route → Read → Verify index, M9 identity migration guards, independently written draft prose, milestone-only CI policy.
 
-## Required knowledge-service delivery
+**Not accepted/implemented:** 69 final independently reviewed chapters, finished physical ten-volume edition, complete per-claim/copyright proof, externally reproduced real technical benchmarks, hosted ranked/vector/hybrid retrieval, deployed MCP/onboarding, shared Rocinante specialist runtime, container operations and published release. Existing tooling must not be re-designed as if absent.
 
-The [knowledge platform and MCP plan](knowledge-platform-and-mcp-plan.md) defines mandatory capabilities K01–K30: reproducible sources/provenance, automatic metadata and schemas, routing and validation, static code and curated graphs, ranked lexical retrieval, vector/hybrid evaluation, read-only MCP, generic onboarding, shared Rocinante integration, immutable snapshots, independent deployment, access controls, observability, quality/cost evaluation and maintenance. This is a plan, not a completed service. These capabilities are no longer deferred product scope.
+## Verification and limits
 
-## Not implemented
+- PR #218 records a **PASS** on its original pinned manuscript commit `d8d04e0e3c97e9f364607f640faa9f5aee4866f3`: full **13/13 validation groups and 215/215 unit tests** (194 general + 21 M9), no skips; 136 indexed documents, old snapshot `fcfd4992a6a72f15beb75163d8e63d8ce432d7ce534af7f301cd94fc0626cd1a`.
+- **These are not new HEAD test results.** This status-update series also changes the indexed book landing and its generated index; a new actual Python full premerge check plus deterministic index rebuild/check is required on the final PR revision.
+- Owner-cancelled visual rendering and live MCP checks remain **cancelled, not passed**. No GitHub Actions PR-head/milestone-close run, human reviewer identity, new independent claim acceptance or deployment is implied by this document.
 
-A complete multi-volume book corpus; finalized table of contents; formal JSON Schema; chapter frontmatter/index/link/anchor validation; evidence-backed graph; retrieval benchmark; semantic search; MCP delivery.
+## Next actions
 
-## GitHub delivery tracking
+1. Before merging PR #218, finish document reconciliation and run exact-HEAD Python/index/branch premerge checks; review diff. **Do not merge now.**
+2. Complete #213 by checking and recording content/source acceptance of every chapter, not by counting 69 files.
+3. Complete #214 by assembling 10 substantial volume landings, 69 meaningful chapter landings and properly bounded pages with reversible ID/path/parent migration, source/claim and navigation validation, index build and named frozen edition.
+4. Only after book publication, implement and evaluate lexical/hybrid retrieval, MCP/onboarding, shared Rocinante integration and deployment. Curated graph infrastructure remains excluded.
 
-Originally validated on 2026-10-18: [Program #1](https://github.com/rouslanbaranov/tycho/issues/1) owns 15 native epic sub-issues (#2–#16), which own all 78 work items (#17–#94). Eight GitHub milestones (M1–M8) cover the epic and work-item acceptance stages. The initial dependency tree was revised for book-first delivery on 2026-10-18. The scoped revision of native GitHub dependencies completed successfully in the book-first workflow linked from Issue #23. The original count of 112 is superseded and should not be assumed to be the current count. [The delivery map](GITHUB-DELIVERY-MAP.md) provides navigable milestone → epic → issue references and the M1 entry point. The historical [hierarchy reconciliation run](https://github.com/rouslanbaranov/tycho/actions/runs/39151315650) completed successfully. The old reconciliation workflow is retired to prevent unnecessary or unsafe reruns.
+## History
 
-The original 94 issues formed the initial plan; #17, #23–#26 and #38–#41 were closed after bounded deliverables were merged. Issue #104 independently tracks milestone-only CI. The remaining backlog is not completed book research, code, retrieval, MCP or rollout. Due dates and assignees are intentionally unasserted.
-
-## Completed bounded work / current book priority
-
-- [#17](https://github.com/rouslanbaranov/tycho/issues/17) closed after [PR #95](https://github.com/rouslanbaranov/tycho/pull/95) was merged and configured CI passed. A requirements/workload model, template, original fictional illustration and bounded research contract now exist. K30 as a whole is **not** complete.
-- Branch convention `feature/TYCHO-<issue-number>-<task-desc-slug>` remains mandatory. Per-PR CI is retired in favor of local pre-merge checks and one milestone-close verification. Administrative branch protection has not been established by this work.
-- Book structure [#23](https://github.com/rouslanbaranov/tycho/issues/23) was delivered as a **proposal** through [PR #96](https://github.com/rouslanbaranov/tycho/pull/96) and closed; the five adjusted GitHub issue dependencies passed verification. Issues #24 and #25 were delivered and closed through PRs #97 and #98. Editorial templates and a bounded research workflow exist, while #26 formally scopes the first three source-reading pilots. Neither the outline nor the templates constitutes a researched technical chapter.
-- #18/#19 decision-support development should be refined from researched pilot content rather than treated as a precondition for beginning the book. Manual evidence checks remain mandatory during pilots while full validators are developed in parallel.
-
-## Milestone-only CI policy (Issue #104)
-
-Only the [milestone verification workflow](../.github/workflows/boundary.yml) remains active. GitHub Actions now runs only when a **milestone is closed with zero open issues**. Normal commits and PRs incur no GitHub-hosted CI run; pre-merge checks run locally via [premerge_check.py](../scripts/premerge_check.py). See [the policy](MILESTONE-CI.md). This is a configuration change, **not** a claim that a milestone-wide verification has already passed.
-
-## Next action
-
-Editorial templates #24 and research workflow #25 have been merged and closed. Issue #26 is closed after PR #99 merged the [three bounded pilot contracts](PILOT-WAVE-01.md). First technical pilot #38 is merged and closed via PR #100; the [queueing chapter](../book/performance/queueing-littles-law.md) is now in main. Pilots #38 and #39 are merged and closed through PRs #100/#101; researched [queueing](../book/performance/queueing-littles-law.md) and [outbox/idempotency](../book/distributed/transactional-outbox-and-idempotency.md) chapters are in main. Pilot #40 was merged through PR #102 and closed; [rollout and recovery](../book/delivery/safe-rollout-and-recovery.md) joins [queueing](../book/performance/queueing-littles-law.md) and [outbox](../book/distributed/transactional-outbox-and-idempotency.md) as the first three source-grounded technical pages. Issue #41 now evaluates these pilots against a [25-question set](../evaluation/pilot-questions.json) and [bounded methodology assessment](../evaluation/PILOT-ASSESSMENT.md). This does not imply whole-volume or whole-book completion. Run existing independent-source and structural checks; perform exact manual source/claim verification while comprehensive validators (#27–#37) are built in parallel. Only then ground broad applicability and legacy-modernization cards in real researched findings (#18/#19). No implicit full-book generation or unverified technical claims.
-
-## Immediate expansion path
-
-Run the pilot methodology check in Issue #41 (author-only review and tiny in-sample retrieval smoke, not LLM answer acceptance). Then begin [#79 foundational architecture research](https://github.com/rouslanbaranov/tycho/issues/79) in its own feature branch. Full source pinning, structured metadata/validation, lexical/hybrid search and MCP are still required. The corpus is not complete.
-
-## Foundations corpus expansion — Issue #79
-
-Three original source-grounded pages now describe [quality-driven architecture views](../book/application/quality-drivers-and-architecture-views.md), [module and service styles](../book/application/architecture-styles-and-module-boundaries.md), and [architecture evolution](../book/application/architecture-evolution-and-extraction.md). A [navigation landing](../book/application/README.md) links them. These are bounded research chapters with original Mermaid diagrams and explicit limitations, not a complete System Design corpus, measured case study or independently reviewed architecture. Issue-level GitHub Actions checks are no longer triggered; verification is batched at milestone closure per [the current CI policy](MILESTONE-CI.md).
-
-## Distributed-system corpus — Issue #80
-
-Added three original source-grounded chapters on [causality and consensus](../book/distributed/causality-ordering-and-consensus.md), [transaction isolation and sagas](../book/distributed/transaction-isolation-and-sagas.md), and [CQRS/event sourcing](../book/distributed/cqrs-event-sourcing-and-projections.md). They extend the existing [outbox/idempotency chapter](../book/distributed/transactional-outbox-and-idempotency.md) without duplicating its canonical mechanisms. The [landing page](../book/distributed/README.md) routes questions among the four sources. All examples are synthetic; no production tests or independent domain review claimed. Full GitHub CI still runs **only at milestone acceptance**.
-
-**Next corpus issue:** [#81 — Integration, messaging, Kafka and stream processing](https://github.com/rouslanbaranov/tycho/issues/81). The present pages do not constitute the entirety of the distributed-systems volume.
-
-## Integration and stream-processing corpus — Issue #81
-
-Three new independently grounded [integration pages](../book/integration/README.md) now cover [Kafka 4.1 partition/replication/transaction contracts](../book/integration/kafka-partitions-replication-and-contracts.md), [RabbitMQ/NATS/Pulsar messaging families and durable workflow boundaries](../book/integration/messaging-families-and-durable-workflows.md), and [stateful Kafka Streams, Flink checkpointing and CDC](../book/integration/stateful-stream-processing-and-cdc.md). Each page has original Mermaid diagrams, failure/repair paths and a bounded public-source ledger; all numerical examples are synthetic. Version scope (including archived Flink 2.1 docs) is explicit. No running broker, benchmark or independent human review has been performed.
-
-Milestone-only CI remains the sole GitHub Actions trigger; issue PRs do **not** run automated GitHub pipelines. The next content issue is [#82](https://github.com/rouslanbaranov/tycho/issues/82). Full book coverage and shared Rocinante/MCP remain incomplete.
-
-## Review limits
-
-The private remote repository is established. Branch protection has not been configured. Discovery and mechanical checks do not establish technical truth or independent human review.
-
-## Java execution research — Issue #82
-
-Three original public-source-grounded chapters now cover platform/virtual threads (JDK 21 and 24), Reactor/WebFlux/R2DBC, and Netty/Vert.x/Quarkus/Mutiny/RxJava. See [execution navigation](../book/execution/README.md). Version and evidence limitations are recorded in each page. No compilation, runtime measurement, independent review, full-book coverage or MCP implementation is claimed. Next content issue: #83. Milestone-only GitHub Actions policy remains unchanged.
-
-
-## Database architecture corpus — Issue #83
-
-Three original, version-aware [data research chapters](../book/data/README.md) now cover PostgreSQL 17 MVCC, isolation, indexes and planner evidence; PostgreSQL WAL, physical/logical replication and recovery limits; and a bounded trade-off comparison of SQLite, CockroachDB, FoundationDB, MongoDB, Cassandra, ClickHouse, Neo4j and time-series workloads. Synthetic Mermaid diagrams and provenance tables identify what is documented versus merely proposed. No database cluster or benchmark was run, and milestone-only CI has not yet executed for this issue.
-
-Next corpus task: [#84](https://github.com/rouslanbaranov/tycho/issues/84). The full book and machine-readable knowledge platform are still incomplete.
-
-
-## Scaling mechanisms research — Issue #84
-
-Three [scaling research chapters](../book/scaling/README.md) now cover shard-key/hotspot/resharding migration, connection budgets across HikariCP/PgBouncer/PostgreSQL, and local/shared-cache staleness/invalidation/stampede scenarios. Original Mermaid diagrams, synthetic counterexamples and source/version ledgers make scope explicit. No actual shard migration, application pool test, Redis installation, cache benchmark or independent review has occurred. CI remains milestone-only. Next planned content issue is [#85](https://github.com/rouslanbaranov/tycho/issues/85).
-
-
-## Search architecture research — Issue #85
-
-Three original evidence-based technical pages now cover [lexical/BM25/SQL FTS](../book/search/lexical-indexing-bm25-and-sql-fts.md), [exact/ANN vectors, pgvector and Faiss](../book/search/vector-hnsw-faiss-pgvector.md), and [hybrid ranking, typed graph traversal and answer-quality evaluation](../book/search/hybrid-ranking-graph-and-evaluation.md). A [question-driven landing](../book/search/README.md) links only existing canonical pages. These are **knowledge content**, not an implemented vector index, graph database, search API or shared Rocinante/MCP deployment. Human-relevance evaluation, retrieval benchmarks and exact source/index freshness checks remain planned; no GitHub PR pipeline is triggered under the milestone-only policy.
+The 2026-10-18 pilot-first STATE and ROADMAP are historical, not active backlog instructions. Older audit, M9 and integration checkpoints retain their explicitly dated observations in Git history and original reports.

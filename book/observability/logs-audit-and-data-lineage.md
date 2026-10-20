@@ -146,6 +146,22 @@ Proposed fixture only:
 
 **No test ran** for any of these cases.
 
+## Engineering walkthrough — One approved business change, three incompatible records
+
+**Original fictional request:** an authorized operator changes a booking from PENDING to CONFIRMED. The application emits a diagnostic log, persists a business audit entry and updates a derived analytics dataset with a lineage event. All three may carry the same operation correlation ID; they still prove different things.
+
+| Record type | Source of truth for | Cannot prove by itself |
+|---|---|---|
+| Application log/span | Diagnostic execution observations | Every relevant event was captured when telemetry sampling/export failed |
+| Durable business audit | Who attempted/authorized which object mutation and resulting authoritative state, under a specified tamper/retention policy | That a downstream data warehouse is fresh |
+| OpenLineage job/run event | Which source/target datasets and transformation run are related | That business approval or row-level correctness was achieved |
+
+**Partial failure:** the booking state and required audit entry are committed under a chosen domain transaction/obligation, then telemetry export fails and lineage processing stalls. The correct user outcome may still be committed; a missing log is not proof that booking disappeared. Conversely, a successful log write preceding a rolled-back transaction cannot certify a durable business mutation. If legal obligations require atomic audit recording, architect the local commit or durable audit handoff explicitly; arbitrary asynchronous logs are insufficient.
+
+**Recovery:** replay or reconstruct lineage from versioned source change positions and job IDs, while preserving independent business audit completeness; never silently regenerate an "approved" event merely because a process ran. [OpenTelemetry Logs Data Model](https://opentelemetry.io/docs/specs/otel/logs/data-model/) and the chapter's OpenLineage references support separate record semantics, not tamper-proof implementation.
+
+**Proposed negative tests, not executed:** drop the collector, rerun a lineage job, change authorization mid-flight and roll back a transaction; require correct audit/lineage distinctions and minimal confidential data retention. If there is no mandatory forensic retention, costly immutable business audit infrastructure may be unnecessary for ordinary verbose debug logs.
+
 ## 7. Public source ledger and nonclaims
 
 | Public evidence inspected | Narrow support | Unverified |

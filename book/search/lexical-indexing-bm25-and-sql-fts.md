@@ -144,7 +144,7 @@ Text alternative: a page enters the index at a known revision. Source changes ma
 
 ### What to measure before choosing a product
 
-Index disk size by field/segment and N documents, indexing/refresh time, query p95/p99, ranking quality, corpus change rate, tombstone and recovery overhead, and agent payload tokens to get **sufficient evidence**. A 900-page book does not automatically need a distributed search cluster.
+Index disk size by field/segment and N documents, indexing/refresh time, query p95/p99, ranking quality, corpus change rate, tombstone and recovery overhead, and agent payload tokens to get **sufficient evidence**. A small or mid-sized standalone reference corpus does not automatically need a distributed search cluster; scale requirements depend on its measured indexing and retrieval workload.
 
 An exact query like `jdk.VirtualThreadPinned` should retrieve the versioned Java pinning page ahead of a generic scheduling document. A query like "why does a rollback fail after new-schema writes?" may benefit from semantic/hybrid navigation. The [hybrid retrieval chapter](hybrid-ranking-graph-and-evaluation.md) defines how to evaluate this distinction.
 
@@ -160,6 +160,20 @@ An exact query like `jdk.VirtualThreadPinned` should retrieve the versioned Java
 | Synonyms expand too broadly | "Partition" finds unrelated DB/network/stream concepts | Domain context and exact canonical owner filtering |
 
 **Insufficient evidence:** "Lucene is faster than PostgreSQL FTS because it is a search engine." Not established. Need representative queries, corpus fields, analyzer configs, hardware, data volumes, warmup, freshness, quality labels and total maintenance cost.
+
+## Engineering walkthrough — Analyzer compatibility and a stale index generation
+
+**Original fictional search:** an engineer queries `Http2GoAwayException` and expects a document containing that exact symbol. A tokenizer that splits CamelCase or punctuation differently between indexing and searching may miss an otherwise relevant record. Stemming can help natural-language variants but can also reduce exact API-symbol fidelity. A raw query string is not an immutable analysis contract.
+
+| Option | Fit condition | Negative example |
+|---|---|---|
+| PostgreSQL 17 FTS | Operational simplicity and suitable token dictionaries/query workload | Exact code identifier lost by text-search tokenization |
+| Lucene inverted index/BM25 | Tunable per-field analyzers, term ranking and index lifecycle | Analyzer version mismatch between old and new generations |
+| Exact term/keyword field | Exception/API identifier lookup | Pure keyword matching misses synonyms and explanations |
+
+**Index transition:** an API document changes from revision R1 to R2, removing the old identifier. An index rebuild publishes R2 content but an old cache still returns a R1 citation. A high BM25 rank is not evidence that R1 remains authoritative. Bind results to an index generation and source revision; invalidate stale snippets and offer an exact-source fallback when generation comparison fails.
+
+The existing PostgreSQL FTS and Lucene BM25 documentation specify ranking/analyzer mechanisms, not quality for this made-up corpus. **Proposed, not executed:** define human-judged questions that include code symbols, morphological variants and deprecated terms; evaluate keyword, FTS and Lucene under a frozen analyzer/version snapshot, while deliberately injecting stale citations. Choose lexical/hybrid retrieval based on eligible relevance and operational freshness, not headline index technology.
 
 ## Evidence and status
 

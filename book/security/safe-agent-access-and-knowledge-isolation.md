@@ -146,6 +146,25 @@ Agent interactions may include user questions, selected snippets, query filters,
 
 [Tycho trace, logs and audit chapter](../observability/trace-context-lineage-and-audit.md) explains why sampled tracing is not an authoritative audit trail. [Tycho security boundaries](identity-authorization-and-isolation.md) describes object-level authorization and isolation independent of agent-specific prompts.
 
+
+### Worked cross-tenant retrieval failure: a valid citation is not a permission
+
+**Original fictional scenario:** two engineering teams, A and B, share an index. The agent for A is authenticated and may read public pages and A's private notes, but not B's. A public page includes a Markdown link to a B-only incident and a previously cached citation ID. The search result for that public page is allowed; following its link is **not** a grant to access B's target.
+
+| Step | Authority and required check | Failure if omitted |
+|---|---|---|
+| Query and initial ranking | Validate caller and restrict candidate visibility *before exposing* titles, snippets and counts | A learns the existence or title of B's private incident |
+| Follow related citation | Resolve stable target ID, verify target access **again** under caller A | A public source launders a B-only document into authorized content |
+| Read cached snippet | Cache key includes effective collection/object entitlement and snapshot, or is demonstrably public | B's previously cached text is returned to A |
+| Summarize and cite | Only permitted text, source identity and revision may support the answer | Answer or "supporting evidence" leaks B's restricted assertion |
+| Agent asks to perform a write | An independent action authority requires its own ACL and explicit effect contract | Text inside B's note induces a privileged tool invocation |
+
+A deliberately untrusted retrieved note says, in the fictional scenario, that a reviewer should follow a protected URL before answering. **That instruction remains data**; it cannot override access policy. Merely telling the language model to ignore injection is insufficient. Every document/section-level read must pass deterministic authorization, regardless of how the agent reached it. The [OWASP Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html) supports deny-by-default and resource-level enforcement principles; it does not certify this unimplemented design.
+
+**Failure/recovery:** revoke A's access to a document between the initial search and an expansion. The next read must be denied; stale route hints and cached snippets must not bypass the new policy. Record a security event containing minimally necessary principal/object identifiers without copying private content into general telemetry. A correct response can cite *only* allowed sources or state that required evidence is inaccessible—never disclose the forbidden source to justify refusal.
+
+**Proposed negative test, not executed:** use two tenant identities, shared index/cache, a public-to-private cross-link, delayed ACL update, forged citation ID and an injected tool directive. Require zero unauthorized result/metadata exposure and zero unauthorized writes before considering ranked retrieval correct. No hosted Tycho MCP service, model agent, authorization deployment or penetration test exists from this chapter.
+
 ## 6. A synthetic negative test matrix
 
 | Attack or failure scenario | Correct server behavior | What does not prove it |

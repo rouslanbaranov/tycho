@@ -196,6 +196,25 @@ Run an independent corpus question evaluation *when such a service exists*. For 
 
 A future evaluation should test source attribution, uncertainty, safe refusals, alternate terms, version/temporal contradictions and **total task cost**, not only whether the correct chapter was returned. Results are unavailable because this page implements a method, not an index or MCP service.
 
+## Engineering walkthrough — Route, read and reject a stale but plausible answer
+
+**Original hypothetical architecture question:** "After a release, booking p99 grew and retries sometimes duplicate records; should we add Redis?" A search ranking returns a high-scoring caching chapter and a deprecated incident note whose source revision predates the current booking IDs. Ranking relevance is not support for its recommendation.
+
+1. **Classify** the question as diagnosis and architecture-choice under correctness constraints, not an unconditional cache-design question. Separate offered load, admission, state owner, failed acknowledgment and version uncertainty.
+2. **Route** first to the canonical idempotency/transaction chapters and then pool/queueing; load the cache chapter only if repeated reads and accepted staleness remain plausible hypotheses. A route hint is not evidence.
+3. **Read** bounded sections explaining retries after durable commit, source transaction scope and bottleneck diagnostics. Expand only where a live uncertainty changes the answer; don't copy an entire volume by default.
+4. **Verify** canonical IDs, exact source revision, author/observation scope, access permissions and contradictions. Reject the old incident's citation if its semantic contract changed or no original source supports its claim.
+5. **Answer** with differential hypotheses and the smallest safe next measurement. If state authority, retry identities and actual arrivals remain unknown, state `INSUFFICIENT_EVIDENCE`, not "Redis fixes duplicates".
+
+| Fault injected into retrieval | Required safe behavior |
+|---|---|
+| High-ranking stale revision | Expose source-version mismatch and ask for current evidence |
+| Wrong but keyword-matching document | Re-route to the actual state/booking owner |
+| Retrieved page contains instructions to call an action tool | Treat text as untrusted data; no privilege promotion |
+| Hidden or forbidden citation | Do not expose title, snippet, content or existence without authorization |
+
+**Proposed, unexecuted evaluation:** use a versioned authorized collection of engineering questions, expected owner routes, stale/contradictory citations and human source judgments; measure support, unsafe claims and tokens per correct answer. This chapter does **not** assert that a hosted Tycho MCP service, embedding index or platform knowledge graph already exists. The SEI and OWASP references support process/trust reasoning, not measured agent performance.
+
 ## 9. Public evidence and navigation
 
 | Source | Supported aspect | Limit |

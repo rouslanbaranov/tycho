@@ -130,6 +130,21 @@ A backup restore may have to be performed as a **separately authorized disaster-
 
 These are proposed test cases, not results. Safety proofs require precise protocol assumptions, implementation/version checks and independent review.
 
+## Engineering walkthrough — New leader, old client and a lost acknowledgment
+
+**Original three-node quorum illustration:** nodes A, B and C replicate one state machine. A was leader. A's network connection to B and C fails; B and C may form a quorum and eventually select a new leader. A can remain reachable to some clients, but must not be allowed to commit new authoritative writes without a valid quorum/term contract. A client whose response was lost before the partition cannot decide whether its operation committed.
+
+| Failure point | Safety claim requiring proof | Liveness limitation |
+|---|---|---|
+| A isolated from B,C | Quorum/term enforcement prevents conflicting committed log entries | Some clients of A cannot complete writes |
+| B/C elect successor | New leader reconciles log according to protocol | Election delay may exceed request deadline |
+| Old A reappears with stale state | Reject stale leader commands, catch up log | Cannot blindly serve fresh reads before state catches up |
+| Membership changes | Respect the protocol's configuration transition safety | Removing too many voters can lose progress |
+
+An acknowledged write's durability depends on the actual replication/commit acknowledgment boundary; a client timeout is ambiguous and requires stable operation identity on retry. Read consistency depends on the concrete algorithm and read path, not simply on "three replicas". Raft's public paper and the etcd versioned FAQ support protocol discussion, but do not certify an invented deployment's failover timings.
+
+**Proposed, not run:** partition old leader, issue reads/writes on both sides, restore connectivity and change membership while checking committed-history invariants, stale-term rejection, duplicate effects and correct client error classification. For read-mostly telemetry where temporary staleness is acceptable, simpler asynchronous replicas may avoid quorum overhead; if single-key linearizable authority is mandatory, that alternative may fail the requirement.
+
 ## 7. Source ledger and limitations
 
 | Public source reviewed | Narrow support | Not established |

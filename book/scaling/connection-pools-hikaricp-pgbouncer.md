@@ -149,6 +149,23 @@ Text alternative: in transaction mode, one client uses a server connection for i
 
 PgBouncer `max_client_conn` limits accepted client sessions; `default_pool_size` is a default maximum **server connections per user/database pool**. The actual total server connections can exceed one pool size when multiple database/user pairs exist, and file descriptors/memory limits must be considered. [E02]
 
+### Version-scoped prepared statement compatibility: PgBouncer is not a binary yes/no
+
+A blanket statement that transaction pooling **never supports prepared statements** is outdated. The [PgBouncer FAQ — prepared statements in transaction pooling](https://www.pgbouncer.org/faq.html) states that since **PgBouncer 1.21.0**, protocol-level prepared statements can be tracked and prepared on the selected backend when `max_prepared_statements` is nonzero. The [configuration reference — max_prepared_statements](https://www.pgbouncer.org/config#max_prepared_statements) explains this tracked *protocol-level named-statement* behavior; it does **not** turn a client session into a permanently attached backend.
+
+The relevant compatibility matrix is more specific:
+
+| Client dependency | Transaction pooling disposition | Verification gate |
+|---|---|---|
+| Plain SQL with no session state | Plausible fit | Measure backend reuse, transaction scope and pool wait |
+| Extended-protocol **named prepared** statement | Conditional support in PgBouncer 1.21.0+ with the feature enabled | Pin PgBouncer/libpq/JDBC driver versions and `max_prepared_statements`; execute prepare/execute across different backend leases |
+| SQL-level `PREPARE` / `EXECUTE` or other session-affine state | **Do not assume** protocol rewrite makes it safe | Identify server-side statement/session semantics and test; otherwise use session pooling or remove the dependence |
+| Session-only `SET`, temporary object, advisory/session lock, `LISTEN` | Not made transaction-independent by prepared-statement support | Identify lifecycle and use an appropriate session/transaction model |
+
+**Synthetic negative test (not run):** client A prepares one named statement, finishes a transaction, then executes in another transaction assigned to a different backend. Repeat with `max_prepared_statements=0` and with nonzero tracking. Then issue SQL `PREPARE` and a session setting in separate transactions to demonstrate why those are **different** contracts. A passing prepared-statement test does not certify every PostgreSQL driver feature or prove pool capacity.
+
+This nuance updates the general compatibility warning above, rather than claiming a configured PgBouncer service or recommending transaction pooling universally.
+
 ## 4. Connection pooling is not queuing-capacity magic
 
 Suppose a stable hypothetical service has a single pool of 20 connections and every operation holds a connection **0.10 seconds on average**. Even under unrealistic perfect utilization and no additional bottleneck, the simple upper-bound arithmetic would be **20 / 0.10 = 200 connection-holding operations/s**. This is *not* a measured throughput SLO and not a queueing-theoretic tail latency prediction; locks, CPU, I/O, variance and overhead can lower achieved throughput dramatically.
@@ -185,6 +202,21 @@ Client cancellation can occur after a database has committed. Returning the conn
 8. Test failure recovery and auto-scale spikes, then change settings from evidence.
 
 **Insufficient evidence:** "An API has 30,000 concurrent users, so the JDBC pool should have 30,000 connections." Cannot infer that. Concurrency of logged-in users is not active DB operation count; actual pool budget depends on query/transaction demand, holds, topology, DB service capacity and SLOs.
+
+## Engineering walkthrough — Pool capacity is a fleet equation, not a per-replica setting
+
+**Original synthetic budget:** eight application replicas each configure HikariCP maximum 20 connections; PgBouncer mediates 60 server-side database connections. A simplistic calculation of 8×20 = 160 client leases is **not 160 simultaneous database executions**. Transaction-pooling behavior can reuse physical server connections between transactions but has session-state compatibility constraints; a lease held across a long transaction retains scarce capacity.
+
+| Resource | Hypothetical fleet ceiling | Safety observation |
+|---|---:|---|
+| App JDBC leases | 8×20 = 160 | Waiting client requests and heap still require bounded admission |
+| PgBouncer server connections | 60 shared slots | Observed active transactions and wait time, not configured number alone |
+| Database heavy write path | Unknown, key- and lock-dependent | Must be measured; neither pool limit equals true throughput |
+| Request buffers | E.g. 1,000 queued × 16 KiB = ~15.6 MiB payload only | Objects, TLS, headers and fragmentation add overhead |
+
+If a request holds a leased connection for 400 ms, the idealized service bound at 60 independent leases is at most 150 starts/s under uniform service-time assumptions—**not** a safe p99 guarantee, nor a forecast under lock contention or transaction pooling limitations. Doubling application replicas could increase waiting clients and retry amplification while leaving server DB connections fixed.
+
+**Failure/recovery:** inject a database outage where all 60 slots are unavailable, then recover. A bounded waiting queue, deadline and distinct overload response must prevent unbounded user memory and retry storms. [PgBouncer configuration](https://www.pgbouncer.org/config) distinguishes pooling modes; HikariCP public documentation describes client pool behavior. Proposed comparison of transaction mode vs session mode must audit session-affine features (e.g. temporary state and prepared statements under version/configuration rules). No deployment or benchmark was run.
 
 ## Source-to-claim ledger
 

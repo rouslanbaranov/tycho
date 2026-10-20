@@ -191,3 +191,34 @@ The example, diagrams, client versions, recovery gates and migration states are 
 ## Navigation
 
 Proposed **V10/C05**, currently [decision support landing](README.md). Prerequisites: [legacy baseline](legacy-baseline-and-modernization-evidence.md), [API compatibility](../application/http-rpc-contracts-and-compatibility.md), [data ownership](../application/domain-boundaries-data-ownership-and-contracts.md). Next: [architecture alternatives/ADR](architecture-alternatives-experiments-and-adrs.md), [safe rollout](../delivery/safe-rollout-and-recovery.md), and [question-driven decision routes](question-routes-for-architecture-analysis.md).
+
+## Engineering walkthrough — New-only persisted effects turn image rollback into forward repair
+
+**Original fictional migration:** a catalogue has one legacy identity field and an external API that still serves old clients. The target separates models from physical units. An engineer plans to introduce new binaries and treat container image rollback as the recovery strategy even after clients start writing new-only identity states.
+
+| Transition | Authority and compatibility | Reversible response |
+|---|---|---|
+| S0 baseline | Old writer, old schema/decoder, recorded snapshot and operation horizon | Restore pinned baseline under actual data policy |
+| S1 expand | Old writer authoritative; new decoder reads old representation | Disable new reads without changing durable business meaning |
+| S2 shadow | New model is a projection with versioned mappings/checkpoints | Rebuild projection; old writer still accepts mutations |
+| S3 fenced cutover | Exactly one authorized writer, mixed-version readers covered by tests | Return to old compatible reads only before new-only effects |
+| S4 new-only writes | New persisted state old binary cannot understand | **No automatic image-only rollback**; stop further incompatible writes and forward-repair or restore with approved loss/reconciliation |
+| S5 retire | Proved no required legacy replay/consumer remains | Explicit irreversible approval; retain audit/restore records |
+
+**Failure:** one S4 write reaches durable storage, then a canary alarm fires. Rolling pods back to the S0 image makes some records unreadable. Even a previously successful shadow row-count comparison does not prove old-client semantic compatibility or reversibility. An idempotent replay also needs stable logical intent identity and a single authoritative operation/result record.
+
+**Decision:** delay the no-return stage until every necessary old reader is removed or a verified compatible forward path exists. The Strangler Fig sources describe incremental replacement, not a proof that each phase supports rollback. This chronology is a proposed synthetic contract; no cutover, recovery or code-path compatibility test was executed.
+
+## Applied M9 evidence: what transfers and what does not
+
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
+
+**Case lens — [Shopify — Helix migration gates](../cases/shopify-helix-checkpoint-gated-native-migration.md)**. **Relevant mechanism or architectural contrast:** Small migration checkpoints with behavior and human-review gates reduce unbounded AI-change scope. **Not established by this report/playbook:** An opt-in autonomous mode and company report are not evidence of zero escaped defects or safe unsupervised database migration.
+
+**Case lens — [Spotify — Long-tail platform migration](../cases/spotify-tech-migration-long-tail.md)**. **Relevant mechanism or architectural contrast:** Fleet modernization fails without ownership, adoption telemetry and managing the long tail. **Not established by this report/playbook:** A governance report does not prove one automation tactic guarantees 100% fleet adoption or any technical runtime improvement.
+
+**Case lens — [Data migration correctness](../cases/decisions/data-migration-correctness.md)**. **Relevant mechanism or architectural contrast:** Synthetic ADR contrasts transactional cutover, shadow-equality and client-version migration contracts. **Not established by this report/playbook:** Stripe, Netflix and Meta operated different data authorities; no shared company-endorsed proof or universal checksum.
+
+**Case lens — [Build and delivery migration](../cases/decisions/build-delivery-migration.md)**. **Relevant mechanism or architectural contrast:** Synthetic ADR separates build reproducibility from adoption governance using Airbnb and Spotify. **Not established by this report/playbook:** Historical publisher outcomes do not establish the invented organization's savings or a single canonical CI tool.
+
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

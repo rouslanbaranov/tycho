@@ -180,3 +180,25 @@ Use the [saga/isolation research](../distributed/transaction-isolation-and-sagas
 | E05 | [RabbitMQ quorum queues](https://www.rabbitmq.com/docs/quorum-queues), *When Not to Use Quorum Queues* | Documented contraindications and durability trade-offs, version observed 4.3 |
 
 **Review state:** bounded documentation comparison, synthetic illustrations only. No software installed, measurements collected, benchmark conducted, broker disaster recovery rehearsed, full product alternatives researched or external domain review completed.
+
+## Engineering walkthrough — Work queue versus ephemeral fan-out versus replayable history
+
+**Synthetic requirement triad:** an order system needs (A) a transient dashboard refresh, (B) a durable image-processing job and (C) an audit-replayable history of order transitions. They do not require the same message transport. A broker feature list without consumer durability, ordering key, retention and acknowledgment semantics is insufficient.
+
+| Demand | Plausible mechanism | Negative case and recovery |
+|---|---|---|
+| Dashboard may lose interim updates | Ephemeral publish/subscribe or state snapshot feed | Disconnected subscriber gets current snapshot; no invented replay promise |
+| Job must eventually complete or be classified failed | Work queue with persistent acceptance and explicit ack/nack / redelivery policy | Worker commits effect then crashes before ack; durable job/effect identity suppresses repeats |
+| Auditor must rebuild ordered state transitions | Retained per-key log with offset and replay horizon | Consumer lags beyond retention or key-order scope; declare gap and restore authoritative snapshot |
+
+RabbitMQ quorum queues, NATS JetStream and Pulsar expose different storage/consumer controls under their documented versions; "NATS" without saying Core NATS or JetStream obscures durability. No general broker makes a non-transactional external payment exactly once. A durable workflow adds step identity, state, deadlines and human repair responsibilities beyond queuing one message.
+
+**Proposed test, not run:** disconnect a dashboard, kill a job worker after its database commit, truncate replay history at a declared horizon and restart a consumer across a partition change. Acceptance is per-use-case: no unjustified data replay claim for the dashboard, one logical job effect for work, and declared completeness/recovery for audit. For a small single-transaction process, a local durable table and worker may be less complex than a distributed broker family.
+
+## Applied M9 evidence: what transfers and what does not
+
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
+
+**Case lens — [Cloudflare — Super Slurper queues](../cases/cloudflare-super-slurper-queues.md)**. **Relevant mechanism or architectural contrast:** At-least-once queue workers need durable progress and explicit dedup boundaries during object import. **Not established by this report/playbook:** A company fivefold result has a particular workload and baseline; it does not prove queue use always increases throughput.
+
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

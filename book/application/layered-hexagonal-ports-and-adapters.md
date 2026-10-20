@@ -157,3 +157,24 @@ The synthetic project, figure, tables and acceptance protocols are original. No 
 ## Navigation
 
 Proposed **V02/C01** in the [10-volume outline](../PROPOSED-STRUCTURE.md). See [application landing](README.md), then [domain/data ownership](domain-boundaries-data-ownership-and-contracts.md), [modular monoliths](modular-monolith-and-internal-events.md), [SOA/microservice boundaries](service-orientation-microservices-and-distribution.md), [safe extraction](architecture-evolution-and-extraction.md).
+
+## Engineering walkthrough — The same adapter error in local and remote architectures
+
+**Original synthetic equipment booking.** The application defines an `InventoryPort.reserve(unitId, interval, operationId)` capability. One JDBC adapter implements the port with a database transaction. An HTTP adapter might instead talk to a remote inventory service. Neither implementation changes the *domain invariant*: a confirmed reservation must have one authoritative result for its logical operation. The port is a **source dependency direction and semantic contract**, not automatically a network port.
+
+| Boundary | Normal execution | Failure or incorrect assumption |
+|---|---|---|
+| Domain and use case | Validate authorized unit, interval and exclusive booking rule | Unit tests with a fake adapter prove domain decisions only under the fake's assumptions |
+| JDBC adapter | Map domain types, commit under declared isolation and uniqueness constraints | SQL timeout after commit is not proof of no booking |
+| Remote adapter | Serialize versioned operation ID, use deadlines and resolve uncertain effect | New RPC does not make the former transaction globally atomic |
+| Composition root | Wire concrete adapters and compatible versions | Dependency-inversion in source alone does not prove deploy-time isolation |
+
+When a unique constraint rejects a competing booking, the adapter must translate the database exception into an explicit domain conflict, not a generic retry. A fake repository test cannot demonstrate concurrent DB constraints, credential scope, real connection cancellation or remote transport semantics. Conversely, a full integration test cannot substitute for a clear domain invariant. **Proposed test (not run):** inject concurrent booking, lost database reply and unexpected remote response while asserting the same domain-visible classifications for both adapters. If the application will always have one simple persistence choice, avoid a hierarchy of adapters that adds indirection without needed substitution. Follow the existing Cockburn hexagonal architecture source for the boundary principle, not as evidence that this implementation works.
+
+## Applied M9 evidence: what transfers and what does not
+
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
+
+**Case lens — [Shopify — Packwerk boundaries](../cases/shopify-packwerk-boundary-evolution.md)**. **Relevant mechanism or architectural contrast:** Automated dependency checking and gradually tightened boundaries can make modularity executable. **Not established by this report/playbook:** Reference checks alone do not establish business-domain cohesion, latency isolation or independent deployability.
+
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

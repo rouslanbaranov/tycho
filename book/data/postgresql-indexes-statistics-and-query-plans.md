@@ -175,6 +175,23 @@ The procedure is a design proposal. No steps were run or published as performanc
 
 Every query scenario, diagram and table was independently authored for education. No PostgreSQL engine, SQL statements, index DDL or independent technical acceptance were executed.
 
+## Engineering walkthrough — Same index, different workload distribution
+
+**Original synthetic query:** `SELECT ... WHERE tenant_id=? AND state='OPEN' ORDER BY created_at DESC LIMIT 20`. A compound index appears useful under a uniform tenant distribution. Later one tenant holds 60% of rows and most records are closed. PostgreSQL's planner may estimate different selectivities from stored statistics; the mere presence of an index does not guarantee it is chosen or useful under that skew.
+
+| Observation | Can support | Cannot prove alone |
+|---|---|---|
+| `EXPLAIN` estimated rows/cost | Planner's modeled access-path preference | Measured end-to-end latency |
+| `EXPLAIN ANALYZE` actual rows/time | Execution behavior for that statement and environment | The entire user population p99 or all tenant distributions |
+| Stale histogram or correlation stats | A plausible cause of incorrect row estimates | That adding arbitrary indexes is safest |
+| Pool wait/lock time | Architecture latency outside scan plan | Query optimization alone will restore availability |
+
+**Two controlled cases:** A has 100,000 balanced rows; B has the same row count but a hot tenant and correlated `state` values. Use pinned query parameters, data shape, planner settings, statistics collection, available memory and cold/warm cache state. Compare index-only eligibility, actual buffer reads, estimated vs actual row counts and user-visible latency. A plan change may improve B and worsen A; that is a **decision condition**, not a universal index rule.
+
+A read-model/materialized projection may be justified for analytically different queries, but introduces freshness and rebuild cost. A simple index/statistics repair is preferable if measured against the actual distribution. The PostgreSQL 17 planning/EXPLAIN references define versioned behavior; **no SQL workload was executed**, and the two data distributions are invented.
+
+
+**Verification status:** The preceding original example and its predicted outcomes are synthetic. No implementation experiment, benchmark or independent technical review was executed for this example.
 ## Navigation
 
 Proposed **V05/C03** in [draft outline](../PROPOSED-STRUCTURE.md), [data landing](README.md). Prerequisite [relational modeling and isolation](relational-modeling-and-transaction-isolation.md). Related [PostgreSQL WAL/recovery](postgresql-wal-replication-and-recovery.md), [query distribution/performance](../performance/workload-demand-and-arrival-models.md), [lexical full-text ranking](../search/lexical-indexing-bm25-and-sql-fts.md).

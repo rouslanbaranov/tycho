@@ -28,10 +28,11 @@ route_hints:
     - "completeness"
     - "audits"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.m9-li01"
   claim_ids: []
   status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  notes: "Global source IDs resolve directly through sources/register.json. Evidence-row identities use their own namespaced IDs; source URLs and evidence payloads are preserved. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -46,7 +47,7 @@ content_verified_at: null
 # LinkedIn — tiered Kafka transport needs end-to-end completeness audits
 
 **Case ID:** `case.linkedin.kafka-tier-audit` | **M9:** E16-05 #118 | **Status:** original case draft; independent reviewer pending.  
-**Public primary:** LI01 [company engineering report](https://engineering.linkedin.com/kafka/running-kafka-scale) (2015-03-20, Todd Palino); source location: How Big is Big?; multi-datacenter tiers; Auditing Completeness; Bringing It All Together. Attributed public paraphrase, no mirrored graphs or copyrighted assets.
+**Public primary:** src.m9-li01 [company engineering report](https://engineering.linkedin.com/kafka/running-kafka-scale) (2015-03-20, Todd Palino); source location: How Big is Big?; multi-datacenter tiers; Auditing Completeness; Bringing It All Together. Attributed public paraphrase, no mirrored graphs or copyrighted assets.
 
 ## Pressure, legacy baseline and actual chosen direction
 
@@ -83,7 +84,7 @@ Counts alone can be equal despite one lost and one duplicated message. Clock ske
 
 ## Exact historical topology and tier contracts
 
-Todd Palino's [March 20, 2015 first-party report](https://engineering.linkedin.com/kafka/running-kafka-scale) (LI01, **How Big is Big?**, **Tiers and Aggregation**) differentiates four message **categories** rather than one homogeneous log: *queuing*, *metrics*, *logging* and *tracking*. Categories were placed in separate Kafka clusters. The report notes that logging and metrics had previously shared a cluster but were separated as their volume diverged. This is historical evidence of a **workload-isolation decision**, not a requirement to build four clusters in every deployment.
+Todd Palino's [March 20, 2015 first-party report](https://engineering.linkedin.com/kafka/running-kafka-scale) (src.m9-li01, **How Big is Big?**, **Tiers and Aggregation**) differentiates four message **categories** rather than one homogeneous log: *queuing*, *metrics*, *logging* and *tracking*. Categories were placed in separate Kafka clusters. The report notes that logging and metrics had previously shared a cluster but were separated as their volume diverged. This is historical evidence of a **workload-isolation decision**, not a requirement to build four clusters in every deployment.
 
 Every data center had local clusters for categories; aggregate clusters combined those local feeds with **MirrorMaker**, copying from local to aggregate instead of between pairs of local clusters. That routing choice reduced the need for repeated cross-data-center transfers and avoided copy loops. A local consumer could remain unaware of more remote topology; a globally scoped consumer could read aggregation. The architecture created additional consistency/failure boundaries, however, so the health of any one cluster was not proof of complete end-to-end delivery.
 
@@ -106,7 +107,7 @@ The final section credits a dedicated platform team and client libraries. For ex
 
 ## Workload numbers: preserve their units and date
 
-The March 2015 report states **over 800 billion messages produced per day**, **over 175 TB input per day**, **over 650 TB consumed per day**, a busy-period intake of **over 13 million messages/sec** or **2.75 GB/sec**, and **more than 1,100 brokers across more than 60 clusters**. These have *different denominators and observation windows*: consumer volume can exceed input because Kafka supports many readers of one event. Daily averages cannot be used as peak throughput, and 2015 figures cannot be interpreted as the organization's 2026 topology or Kafka's vendor-independent capacity specification. [LI01: How Big is Big?]
+The March 2015 report states **over 800 billion messages produced per day**, **over 175 TB input per day**, **over 650 TB consumed per day**, a busy-period intake of **over 13 million messages/sec** or **2.75 GB/sec**, and **more than 1,100 brokers across more than 60 clusters**. These have *different denominators and observation windows*: consumer volume can exceed input because Kafka supports many readers of one event. Daily averages cannot be used as peak throughput, and 2015 figures cannot be interpreted as the organization's 2026 topology or Kafka's vendor-independent capacity specification. [src.m9-li01: How Big is Big?]
 
 Do not calculate a per-broker “safe throughput” by naively dividing these totals: category mix, replicas, replication links, disk retention, number of reads per event, regional skew and hardware are not published at the granularity such a capacity recommendation would require.
 
@@ -124,4 +125,4 @@ Implement auditable event transport when replay correctness and cross-region fan
 
 **Metrics required before reuse:** actual p95/p99, throughput versus CPU/storage, error and retry rate, divergence/correctness, rollback time and SRE toil, with historical time window. No new performance measurement or independent replication was performed by Tycho. All source-reported numbers are scoped to this publisher's observations.
 
-**Provenance:** [LI01](https://engineering.linkedin.com/kafka/running-kafka-scale), How Big is Big?; multi-datacenter tiers; Auditing Completeness; Bringing It All Together. Source-admission review [#114](https://github.com/rouslanbaranov/tycho/issues/114); independent technical review [#121](https://github.com/rouslanbaranov/tycho/issues/121). **Status remains draft** pending both gates.
+**Provenance:** [src.m9-li01](https://engineering.linkedin.com/kafka/running-kafka-scale), How Big is Big?; multi-datacenter tiers; Auditing Completeness; Bringing It All Together. Source-admission review [#114](https://github.com/rouslanbaranov/tycho/issues/114); independent technical review [#121](https://github.com/rouslanbaranov/tycho/issues/121). **Status remains draft** pending both gates.

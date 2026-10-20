@@ -147,6 +147,23 @@ Nested retries can multiply calls; a bounded outer retry policy may still overlo
 
 A successful API response is not a guarantee that unrelated optional notification is completed. Use a durable accepted/pending contract when the business effect truly spans time.
 
+
+### Worked race: two simultaneous first requests
+
+**Original fictional scenario:** two requests A and B for the same tenant-scoped operation key K42 arrive concurrently. Both look up K42 before either commits. An implementation that checks for absence and then creates a booking without an atomic uniqueness/conditional-write rule can commit two different bookings despite sending the same key.
+
+| Failure stage | Necessary authority rule |
+|---|---|
+| Concurrent first attempts | One atomic key-and-payload decision across all replicas; no local-only mutex |
+| A commits R7 but its reply is lost | Retrying K42 resolves to R7, never creates R8 |
+| B reuses K42 with changed booking parameters | Detect a parameter conflict; returning R7 would affirm the wrong intent |
+| Old request replays after key expiry | A finite retention window cannot promise deduplication forever; reconcile by durable business identity |
+| Downstream consumer repeats a side effect | Consumer-effect identity must be enforced at that effect's actual durability boundary |
+
+**Alternative designs:** use a transactionally unique operation record, a queryable pending command or serialized per-key processing, provided their own failover/retention semantics are demonstrable. [RFC 9110 §9.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) describes HTTP idempotent method meaning, not a POST key contract. The [Idempotent Consumer pattern](https://microservices.io/patterns/communication-style/idempotent-consumer.html) describes duplicate-message protection, not universal external exactly-once effects.
+
+**Proposed, not executed:** start A and B at a synchronization barrier, lose A's response after commit, restart the server, change K42's payload and replay it beyond the declared horizon. Count logical intents, durable outcomes and unresolved effects separately. Publication after commit belongs to the [outbox/workflow owner](outbox-inbox-sagas-and-durable-workflows.md).
+
 ## 7. Negative and acceptance tests
 
 An independent fixture would test two simultaneous requests with the same K/P, K reused with different payload, lost acknowledgment after commit, crash before/after the atomic outcome record, redelivered message to two consumers, delayed replay after key expiry and a downstream side effect without readback.

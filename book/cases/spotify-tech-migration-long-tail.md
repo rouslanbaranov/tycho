@@ -30,10 +30,11 @@ route_hints:
     - "and"
     - "Backstage"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.m9-sp01"
   claim_ids: []
   status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  notes: "Global source IDs resolve directly through sources/register.json. Evidence-row identities use their own namespaced IDs; source URLs and evidence payloads are preserved. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -48,7 +49,7 @@ content_verified_at: null
 # Spotify — removing long-tail platform migrations through ownership and Backstage
 
 **Case ID:** `case.spotify.tech-migrations-long-tail` | **M9:** E16-05 #118 | **Status:** original case draft; independent reviewer pending.  
-**Public primary:** SP01 [company engineering report](https://engineering.atspotify.com/2020/6/tech-migrations-the-spotify-way) (2020-06-25, Saunak Chakrabarti and Jenni Lee); source location: Stuck in the long tail; Ruthlessly prioritize; Product-ify migrations; Automate, automate. Attributed public paraphrase, no mirrored graphs or copyrighted assets.
+**Public primary:** src.m9-sp01 [company engineering report](https://engineering.atspotify.com/2020/6/tech-migrations-the-spotify-way) (2020-06-25, Saunak Chakrabarti and Jenni Lee); source location: Stuck in the long tail; Ruthlessly prioritize; Product-ify migrations; Automate, automate. Attributed public paraphrase, no mirrored graphs or copyrighted assets.
 
 ## Pressure, legacy baseline and actual chosen direction
 
@@ -85,7 +86,7 @@ A migration dashboard is not proof that consumers can upgrade safely. Aggressive
 
 ## The actual 2017-to-2020 transition in migration governance
 
-The [June 25, 2020 Spotify Engineering post](https://engineering.atspotify.com/2020/6/tech-migrations-the-spotify-way) (SP01, **Going back in time**, **More carrot, less stick**) traces the problem to **2017**, when infrastructure teams independently emailed deadlines and deprecations to around **300 globally distributed engineering squads**. Messages sometimes lacked usable upgrade instructions; teams had to triage many incompatible priorities without one reliable view of why an upgrade mattered. Migrations that should have taken weeks sometimes stretched for months. This is a **work ownership and attention-budget failure**, not evidence that Gradle, Kafka or any one runtime was technically inadequate.
+The [June 25, 2020 Spotify Engineering post](https://engineering.atspotify.com/2020/6/tech-migrations-the-spotify-way) (src.m9-sp01, **Going back in time**, **More carrot, less stick**) traces the problem to **2017**, when infrastructure teams independently emailed deadlines and deprecations to around **300 globally distributed engineering squads**. Messages sometimes lacked usable upgrade instructions; teams had to triage many incompatible priorities without one reliable view of why an upgrade mattered. Migrations that should have taken weeks sometimes stretched for months. This is a **work ownership and attention-budget failure**, not evidence that Gradle, Kafka or any one runtime was technically inadequate.
 
 Around eighteen months before publication, Spotify began creating a **single company-wide migration map**, negotiating priority with its technical architecture group (TAG). Each candidate had an estimated engineering cost, affected consumers and deadline before being put on the roadmap. Its developer portal **Backstage** surfaced current/future-quarter work. The post states that aligning **45+ infrastructure product managers** plus many engineers took significant negotiation; the new governance was not automatically free or universally welcomed.
 
@@ -103,7 +104,7 @@ The source contrasts autonomy with centralized mandates. Its culture-specific ap
 | Backstage **Tech Insights** | Tracks visible migration status by team and segment | Version metadata does not prove the deployed binary or business result |
 | Automation / PRs | Removes some repeatable work from service owners | PR generated is not PR merged, deployed, tested or monitored |
 
-**Primary anchors:** SP01, **Ruthlessly prioritize**, **Product-ify migrations**, **Automate, automate, and move up the stack!**. The row-by-row cautions are **Tycho analytical checks**, not source-reported Spotify incidents.
+**Primary anchors:** src.m9-sp01, **Ruthlessly prioritize**, **Product-ify migrations**, **Automate, automate, and move up the stack!**. The row-by-row cautions are **Tycho analytical checks**, not source-reported Spotify incidents.
 
 ## The explicit incompleteness trap: the last few percent
 
@@ -135,4 +136,4 @@ Use the platform-product migration playbook where there are hundreds of independ
 
 **Metrics required before reuse:** actual p95/p99, throughput versus CPU/storage, error and retry rate, divergence/correctness, rollback time and SRE toil, with historical time window. No new performance measurement or independent replication was performed by Tycho. All source-reported numbers are scoped to this publisher's observations.
 
-**Provenance:** [SP01](https://engineering.atspotify.com/2020/6/tech-migrations-the-spotify-way), Stuck in the long tail; Ruthlessly prioritize; Product-ify migrations; Automate, automate. Source-admission review [#114](https://github.com/rouslanbaranov/tycho/issues/114); independent technical review [#121](https://github.com/rouslanbaranov/tycho/issues/121). **Status remains draft** pending both gates.
+**Provenance:** [src.m9-sp01](https://engineering.atspotify.com/2020/6/tech-migrations-the-spotify-way), Stuck in the long tail; Ruthlessly prioritize; Product-ify migrations; Automate, automate. Source-admission review [#114](https://github.com/rouslanbaranov/tycho/issues/114); independent technical review [#121](https://github.com/rouslanbaranov/tycho/issues/121). **Status remains draft** pending both gates.

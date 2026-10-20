@@ -1,5 +1,8 @@
 # Tycho — ten-volume, 69-chapter content coverage audit
 
+> **Coverage audit, not final acceptance:** all earlier provisional D/P/M classifications and incomplete GitHub-only test disclaimers are historical at their recorded SHA. The later 69/69 manuscript deepening and pinned full Python pass are recorded in PR #218; neither creates 69 independently approved chapters. **Live state (2026-10-20, before merging PR #218):** M1–M9 integrated draft merged via PR #216; PR #217 closed/unmerged and replaced by open/non-draft **unmerged PR #218**. M9 #121 closed under scoped owner acceptance; #213/E14 and final edition #214 remain open. **69/69 primary chapter manuscripts deepened, 0/69 independently accepted for final-book completeness.** The 10-volume edition, hosted MCP and deployment do not exist. Reported 13/13 groups and 215/215 tests passed on prior manuscript SHA `d8d04e0e3c97e9f364607f640faa9f5aee4866f3`, **not** on the subsequently edited status documents. Visual rendering and live MCP were owner-cancelled, not PASSED. See [canonical current state](STATE.md) and [reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 **Assessment:** 2026-10-19; **scope:** content-first editorial baseline for [Issue #213](https://github.com/rouslanbaranov/tycho/issues/213).
 **Authority:** the provisional chapter questions in [the proposed table of contents](../book/PROPOSED-STRUCTURE.md). This is a verification snapshot, not a publication certificate.
 

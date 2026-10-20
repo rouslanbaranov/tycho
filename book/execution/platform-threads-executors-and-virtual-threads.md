@@ -127,6 +127,44 @@ sequenceDiagram
 ```
 Text alternative: a virtual task temporarily uses a carrier. Supported blocking I/O normally frees the carrier until completion. JDK 21 monitor pinning differs from JDK 24 behavior; the diagram does not promise unmounting for every native library.
 
+
+### Worked counterexample: fixing monitor pinning cannot fix a DB bottleneck
+
+[JEP 444](https://openjdk.org/jeps/444) describes JDK 21 virtual threads and warns against pooling them like scarce platform workers. [JEP 491](https://openjdk.org/jeps/491) addresses carrier pinning due to synchronized monitors in JDK 24; it does **not** guarantee that native/foreign calls always release carriers, eliminate lock contention or increase downstream capacity. The [Netflix JDK 21 case](../cases/netflix-java21-virtual-thread-pinning.md) is an historical failure tied to its instrumentation and JDK vintage.
+
+**Original synthetic scenario:** 1,000 accepted virtual tasks contend for twelve database connections. A driver holds one while an unrelated remote call waits; a monitor protects an in-memory counter. Moving to a JDK with changed monitor-pinning behavior could reduce one scheduler hazard, but cannot expand the twelve-connection resource, undo a previously committed request or make the counter authoritative across replicas.
+
+| Possible observed result | Plausible boundary | Discriminating observation |
+|---|---|---|
+| Fewer carrier stalls, same DB wait | Monitor pinning improved but connections remain scarce | Pool acquisition time and active leases |
+| More accepted requests, heap growth | Unbounded pending task admission | Live task count, heap and rejection rate |
+| Saturated CPU with little blocking | Task threads cannot add CPU throughput | CPU profile at equal offered work |
+| Lost response after durable write | Cancellation is not rollback | Stable logical key and durable result lookup |
+
+A **proposed, unexecuted comparison** would pin JVM/driver versions and flags, offered demand, downstream quotas and workload skew while comparing platform workers, virtual threads with bounded admission, and nonblocking execution. Report correct completions, p99, connection waits, heap and ambiguous effects. For bounded CPU work a conventional pool may remain preferable; for many independent I/O waits virtual threads can improve programming simplicity; for existing end-to-end reactive protocols nonblocking flow control may suit the contract. See [task lifecycle](threads-tasks-structured-coordination.md) and [connection budgets](../scaling/connection-pools-hikaricp-pgbouncer.md) for separate ownership.
+
+
+### Version-bound failure contrast: less pinning is not higher downstream capacity
+
+[JEP 444](https://openjdk.org/jeps/444) documents JDK 21 virtual threads as inexpensive waiting tasks, not faster CPU workers. JDK 24's [JEP 491](https://openjdk.org/jeps/491) changed the monitor-pinning behavior discussed for JDK 21, but cannot eliminate an application lock's mutual exclusion, native/foreign-call constraints, or database connection scarcity. The [Netflix JDK 21 incident](../cases/netflix-java21-virtual-thread-pinning.md) is historical and cannot establish what happens on a later JVM.
+
+**Original hypothetical:** 1,000 virtual tasks wait for twelve database leases. A driver holds a lease across an unrelated remote call, while a monitor guards one process-local counter. Changing monitor behavior might remove one carrier stall, but cannot increase the twelve-lease downstream budget, enforce that counter across replicas or undo a committed request whose response was lost.
+
+| Symptom | Owner to inspect | Unsafe inference |
+|---|---|---|
+| Carrier pinning drops; connection wait stays high | Database lease lifecycle | Virtual threads fixed throughput |
+| More live tasks, rising heap and p99 | Admission/queue budget | Cheap thread means cheap request |
+| High CPU, few parked tasks | Computation and contention | More virtual threads add cores |
+| Cancellation after external commit | Durable operation identity | Interruption reverses the commit |
+
+**Proposed, not run:** compare platform workers, virtual tasks plus admission, and a truly nonblocking implementation under the *same delivered arrival trace*, pinned JDK and driver revisions, pool size, downstream quota and error injection. Measure correct completions, heap, tail latency, blocked carriers, leased connections and unknown effects. Retain a bounded platform pool for CPU-heavy tasks when appropriate; choose virtual threads for suitable blocking I/O, or reactive execution if flow-controlled asynchronous APIs already fit the system. Detailed parent-child cancellation belongs to [task coordination](threads-tasks-structured-coordination.md), while [pool budgets](../scaling/connection-pools-hikaricp-pgbouncer.md) owns connection capacity.
+
+### Canonical-release cross-check — JDK 24 JEP 491 (editorial update, 2026-10-20)
+
+The original 2026-10-18 research note above says the canonical JEP text was not fully accessible *during that research*. This limitation remains part of the historical provenance; it is **not** evidence that JEP 491 was merely proposed. The [Oracle JDK 24 release notes](https://www.oracle.com/java/technologies/javase/24-relnote-issues.html) and [Oracle's Java 24 release announcement](https://blogs.oracle.com/java/the-arrival-of-java-24) explicitly list **JEP 491, Synchronize Virtual Threads without Pinning**, as a JDK 24 feature. The [OpenJDK implementation-review thread](https://mail.openjdk.org/pipermail/nio-dev/2024-November/018122.html) specifies that the monitor fix addressed default `LM_LIGHTWEIGHT` and `LM_MONITOR` locking modes, **but not legacy `LM_LEGACY` mode** in that review. The [canonical JEP](https://openjdk.org/jeps/491) remains the normative feature reference; its full page could not be independently retrieved in this editorial environment, so this verification explicitly rests on the two linked release announcements and the dated OpenJDK implementation discussion.
+
+**Revised bounded claim:** in normal JDK 24 HotSpot monitor handling, blocking while owning or entering a Java monitor no longer implies the JDK 21 monitor-pinning problem; this does **not** imply that every native/foreign callback unmounts, that a Java monitor ceases to serialize protected logic, or that database/backpressure limits disappear. Before applying this to a deployed JDK build, record exact runtime, locking-mode flags, JFR/observations and a controlled comparison. No JVM experiment or pinning measurement was performed by Tycho.
+
 ## Cancellation, context, failures
 
 Interruption is a cancellation request, not a transaction rollback. A client can time out after the server committed an external effect. Retrying requires an idempotency identity and reconciliation, as explained in [outbox/idempotency](../distributed/transactional-outbox-and-idempotency.md). Propagate deadline and cancellation through executor queue, permit acquisition, driver operations and remote calls. Record what happens if each layer ignores cancellation.
@@ -147,3 +185,13 @@ For a migration, inspect actual executors and drivers, then compare equivalent a
 - **[E04] Published Spring Boot 3.3.13 documentation:** [Task Execution and Scheduling](https://docs.spring.io/spring-boot/3.3/reference/features/task-execution-and-scheduling.html), *Task Execution* and *Task Scheduling*. Framework documentation, not a runtime test.
 
 **Research state:** named primary sections inspected; diagrams and workload invented. **Not performed:** compilation, JFR capture, load testing, actual Spring configuration testing, full JEP 491 body inspection or independent human review.
+
+## Applied M9 evidence: what transfers and what does not
+
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
+
+**Case lens — [Netflix — Java platform convergence](../cases/netflix-java-platform-convergence.md)**. **Relevant mechanism or architectural contrast:** Separate GraphQL composition and Java platform modernization; staged compatibility changes coordination ownership. **Not established by this report/playbook:** The historical talk and later abstract do not establish a universal RxJava-versus-Spring performance ranking or identical fleet versions.
+
+**Case lens — [Netflix — Java 21 virtual-thread pinning](../cases/netflix-java21-virtual-thread-pinning.md)**. **Relevant mechanism or architectural contrast:** JDK21 monitor-related carrier starvation makes tracing/instrumentation part of concurrency acceptance. **Not established by this report/playbook:** An observed JVM incident is not a general virtual-thread failure rate and must not be extrapolated unchanged to later JDKs.
+
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

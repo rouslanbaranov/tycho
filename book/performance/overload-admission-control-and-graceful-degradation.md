@@ -177,3 +177,26 @@ All example data, percentages, capacity statements and system behavior are hypot
 - Proposed **V07/C05** in [planned TOC](../PROPOSED-STRUCTURE.md), current [Performance landing](README.md).
 - Prerequisite: [Workload demand](workload-demand-and-arrival-models.md), [Queueing](queueing-littles-law.md).
 - Related: [Autoscaling delay](autoscaling-lag-and-capacity-limits.md), [Tail latency](tail-latency-fanout-and-deadline-budgets.md), [Benchmark validity](load-testing-and-benchmark-validity.md), [Outbox/idempotency](../distributed/transactional-outbox-and-idempotency.md).
+
+## Engineering walkthrough — Optional dependency failure creates core-work starvation
+
+**Original fictional traffic:** checkout needs an authoritative booking transaction and optionally calls a recommendation service. The optional service stalls for one second. A single shared outbound pool of twenty slots is consumed by recommendations, delaying bookings even though the database remains healthy. An API-edge quota alone does not protect the specific scarce pool.
+
+| Phase | Controller's legitimate action | Unsafe behavior |
+|---|---|---|
+| Normal | Reserve core dependency budget; optional calls use a separate small bulkhead | One pool handles all classes without priority or cap |
+| Optional service timeout | Stop admitting optional work, return core success with explicit absent recommendations | Retry stalled optional call before completing critical booking |
+| Overload persists | Circuit may remain open with bounded retry/backoff and fair tenant budgets | Every failed request immediately probes again, amplifying load |
+| Dependency recovers | Permit bounded trial probes; increase flow only after stable correct responses | Flood the recovering service as soon as first probe succeeds |
+
+A circuit breaker monitors a declared *failure signal*, while admission protects a chosen scarce resource. Neither restores an ambiguous external effect after commit. Rejection codes and retry hints must prevent all clients from retrying in lockstep. The same mechanism that protects total completions can unfairly starve low-traffic tenants unless admission policy declares fairness and per-principal limits.
+
+**Proposed negative experiment (not run):** stall recommendation service, then restore it intermittently. Measure correct booking completion, per-tenant rejection shares, pool wait, queue age, retry amplification and stabilization time. Reject a policy with great mean latency that systematically denies one tenant or hides committed unknown outcomes. The Google SRE and AWS load-shedding references motivate overload design, not the invented thresholds.
+
+## Applied M9 evidence: what transfers and what does not
+
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
+
+**Case lens — [Uber — Cinnamon fairness](../cases/uber-cinnamon-admission-and-fairness.md)**. **Relevant mechanism or architectural contrast:** Static edge quotas may fail to protect storage; storage-local feedback can handle load and fairness. **Not established by this report/playbook:** Uber's reported later controller improvements are not proof that every database or customer tier supports the same policy.
+
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

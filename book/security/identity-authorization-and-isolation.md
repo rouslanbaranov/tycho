@@ -151,6 +151,25 @@ Hypothetical incident:
 
 Repair requires policy scope/expiry and delegation fixes, restricted export job permissions, destination ownership validation, intentional fail-closed choices for high-risk actions, secure audit reconciliation and negative cross-tenant tests. This is a teaching scenario, not a discovered vulnerability.
 
+
+### Worked multi-tenant object authorization: a valid token is not an object grant
+
+A **fictional** client from tenant A authenticates successfully and sends `GET /tenants/B/bookings/R7`. The API gateway validates the token signature and expiry, then forwards the call to an internal booking service. If the service assumes that any gateway-approved request is authorized, it may return B's booking despite valid authentication.
+
+| Control point | Correct decision | Negative case |
+|---|---|---|
+| Identity verification | Validate issuer, audience, lifetime and applicable credential binding | Token accepted for another audience |
+| Object authorization | Check caller subject, tenant, object ownership and intended action at the actual authority | A reads or modifies B's booking through guessed ID |
+| Cache and search | Apply object ACLs to cached bodies, summaries, result IDs and linked records | A receives B's cached incident via a permitted public page |
+| Event consumer | Preserve an authorized purpose and target during asynchronous processing | Service credential expands a user's denied mutation into an allowed background job |
+| Audit/recovery | Record accountable subject, object, policy version and denied/allowed outcome with minimal retained data | Sampled trace presented as a complete security audit |
+
+[OWASP Authorization](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html) prescribes deny-by-default and checks on every request. Its [Authorization Patterns guidance](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Patterns_Cheat_Sheet.html) distinguishes policy decision and enforcement responsibilities. These are public design rules, **not a security assessment of this fictional deployment**. In a distributed service, a gateway-level authentication check and an internal network address cannot replace resource-level authorization.
+
+**Proposed, not run:** test two tenants sharing a cache, guessed object IDs, stale privileges after revocation, background message replay, service-account scope and authorization timeout. A failure or unavailable policy evaluator must have an explicit fail-closed or separately approved safe-degradation rule; defaulting to allow in the name of availability violates the protected outcome. Token rotation and revocation may require cache invalidation and re-evaluation, not merely a one-time login.
+
+**Decision boundary:** a single application with consistent object policy enforcement can be safer and simpler than a split service fleet with duplicated, drifting policies. A service split is justified only with verified operational ownership, isolation and tests of the cross-boundary privilege flow. Agent-specific untrusted retrieval belongs to [the separate V09/C07 owner](safe-agent-access-and-knowledge-isolation.md).
+
 ## 7. Verification and decision gates
 
 For each candidate architecture, preserve at least the following test classes:

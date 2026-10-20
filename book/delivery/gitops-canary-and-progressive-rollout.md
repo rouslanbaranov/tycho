@@ -107,6 +107,24 @@ flowchart TD
 
 Even a very small canary can alter shared schema or deliver an irreversible external effect. A metric-based analysis cannot repair those effects after an unsafe write has already committed.
 
+
+### Worked decision: five-percent canary with a shared write schema
+
+A fictional service is currently running release N in three zones. Release N+1 adds a required `reservation_state = CONFIRMED_V2` value. Old release N does not recognize that value. Even if N+1 receives only five percent of traffic, it writes the same authoritative database accessed by N. The **exposure percentage does not bound the fraction of old-version readers that can encounter the new state**.
+
+| Phase | Required operating invariant | Negative observation and next action |
+|---|---|---|
+| P0 — Compatibility preparation | N can read every value that N+1 is allowed to write, or N+1 must not write new-only values yet | If old-reader compatibility fails, reject the canary before exposure |
+| P1 — Deployment without behavior activation | Artifact digest and configuration are pinned; feature remains disabled | A healthy pod label is not sufficient promotion evidence |
+| P2 — Small cohort | Both candidate and baseline use the same authorized tenant/operation/long-tail acceptance checks | Missing rare tenant operations means measurement is incomplete, not green |
+| P3 — Partial failure | Candidate error or cross-version invariant break freezes promotion | First fence new-only writes, then decide routing rollback versus forward repair |
+| P4 — Promotion | Every remaining old consumer and delayed message version is inventoried | Old binary still reading incompatible persisted state blocks release completion |
+| P5 — Retire | No-return change is separately authorized with recovery evidence | A replica rollback is not evidence of safe schema restoration |
+
+The minimal safe option may be **retain the old write format** while rolling out N+1 readers and collecting compatibility evidence. Only then allow a new writer behind an explicit gate. If N+1 has already emitted a state that N cannot read, changing Kubernetes deployment replicas back to N could *increase* failures. The correct recovery is a version-compatible forward repair or verified data restoration, under the authority policy of the data owner; the rollout controller alone cannot decide it.
+
+For this synthetic rollout, an actionable go/no-go record includes offered traffic by cohort, exact N/N+1 binary mix, new-state write count, domain-result failures, reconciliation lag, deadline and the named approver of irreversible changes. A falsification experiment would deliberately let a N+1 canary commit one incompatible record and verify that automatic rollback is **refused** until the repair path is proven. This scenario is an **unexecuted proposed test**, not a claim about an Argo Rollouts or Kubernetes deployment. The [schema/compatibility chapter](mixed-version-database-compatibility-and-online-ddl.md) owns reader-writer combination checks, not this release controller.
+
 ## 4. Release identity and evidence gates
 
 A controlled rollout needs:

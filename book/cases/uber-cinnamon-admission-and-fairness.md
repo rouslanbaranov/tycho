@@ -30,10 +30,11 @@ route_hints:
     - "Tenant"
     - "Fairness"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.m9-u06"
   claim_ids: []
   status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  notes: "Global source IDs resolve directly through sources/register.json. Evidence-row identities use their own namespaced IDs; source URLs and evidence payloads are preserved. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -48,7 +49,7 @@ content_verified_at: null
 # Uber — Failed Static Quotas to Storage-Local Overload Control and Tenant Fairness
 
 **Case ID:** `case.uber.cinnamon-database-overload-control` · **M9:** E16-05 #118 · **Status:** source-backed draft, independent review pending.  
-**Primary U06:** Dhyanam Vaidya, Prathamesh Deshpande, Mike Ma et al., Uber Engineering, **2026-04-20**, [How Uber Conquered Database Overload](https://www.uber.com/us/en/blog/from-static-rate-limiting-to-intelligent-load-management/), sections **Quota-Based Rate Limiting in the Query Engine Layer**, **Identifying the Right Signal**, **Balancing Resilience and Fairness**, **Controlled Delay**, **Scorecard Engine**, **Regulators**, **The Unified Load Shedding Engine**, **The Payoff**, **Lessons Learned**. All measurements below company-reported, not independently reproduced.
+**Primary src.m9-u06:** Dhyanam Vaidya, Prathamesh Deshpande, Mike Ma et al., Uber Engineering, **2026-04-20**, [How Uber Conquered Database Overload](https://www.uber.com/us/en/blog/from-static-rate-limiting-to-intelligent-load-management/), sections **Quota-Based Rate Limiting in the Query Engine Layer**, **Identifying the Right Signal**, **Balancing Resilience and Fairness**, **Controlled Delay**, **Scorecard Engine**, **Regulators**, **The Unified Load Shedding Engine**, **The Payoff**, **Lessons Learned**. All measurements below company-reported, not independently reproduced.
 
 ## Why the first idea failed in production
 
@@ -56,7 +57,7 @@ Uber's distributed Docstore/Schemaless database services have stateless query en
 
 ## Revised boundary: storage-local and multi-signal
 
-The team moved protection into the stateful engine with three complementary mechanisms. **CoDel** initially considered request sojourn time in queues separated by read, write and slow jobs; **Scorecard** provided tenant-specific concurrency fairness even without systemwide overload; **regulators** protected against unusual write-byte volume, hot partition keys, memory and goroutine pressure. Static delay and simple queue policies still caused inappropriate rejection of high-priority traffic or required manual tuning. The later **Cinnamon** controller incorporated PID feedback and pluggable local/remote signals, including follower commit lag, with priority-aware decisions. [U06, named sections].
+The team moved protection into the stateful engine with three complementary mechanisms. **CoDel** initially considered request sojourn time in queues separated by read, write and slow jobs; **Scorecard** provided tenant-specific concurrency fairness even without systemwide overload; **regulators** protected against unusual write-byte volume, hot partition keys, memory and goroutine pressure. Static delay and simple queue policies still caused inappropriate rejection of high-priority traffic or required manual tuning. The later **Cinnamon** controller incorporated PID feedback and pluggable local/remote signals, including follower commit lag, with priority-aware decisions. [src.m9-u06, named sections].
 
 ```mermaid
 flowchart TD
@@ -91,7 +92,7 @@ The source's 'Lessons Learned' recommends priority-aware admission, early reject
 
 ## Model the protection boundaries separately
 
-The [2026 first-party account](https://www.uber.com/us/en/blog/from-static-rate-limiting-to-intelligent-load-management/) (U06) separates three jobs that are easy to conflate: **systemwide overload shedding**, **per-tenant fairness in healthy periods**, and **specific resource protection** for hot keys, large writes, memory or goroutine budgets. Its architecture evolved from fixed query-layer quotas through CoDel queues/Scorecard and regulators to a priority-aware Cinnamon controller using feedback from storage-local and remote replica conditions.
+The [2026 first-party account](https://www.uber.com/us/en/blog/from-static-rate-limiting-to-intelligent-load-management/) (src.m9-u06) separates three jobs that are easy to conflate: **systemwide overload shedding**, **per-tenant fairness in healthy periods**, and **specific resource protection** for hot keys, large writes, memory or goroutine budgets. Its architecture evolved from fixed query-layer quotas through CoDel queues/Scorecard and regulators to a priority-aware Cinnamon controller using feedback from storage-local and remote replica conditions.
 
 | Control | What it regulates | Why another controller cannot simply replace it |
 |---|---|---|
@@ -101,7 +102,7 @@ The [2026 first-party account](https://www.uber.com/us/en/blog/from-static-rate-
 | Feedback-based Cinnamon admission | Current workload delay/error/replica-lag against priority | Feedback may oscillate, be delayed, or reflect conditions different from the request cohort |
 | Client retry/deadline | Limits useful time and retry amplification outside the store | Admission alone cannot stop irresponsible client retry storms |
 
-The table's explanatory contraindications are Tycho reasoning; U06 describes these mechanisms and some historic missteps, not an externally standardized load-management specification.
+The table's explanatory contraindications are Tycho reasoning; src.m9-u06 describes these mechanisms and some historic missteps, not an externally standardized load-management specification.
 
 ## Admission must optimize useful completed work, not accepted requests
 
@@ -109,7 +110,7 @@ A retryable request with a deadline shorter than predicted queue wait can create
 
 **Synthetic comparison test:** replay equivalent read, write, scan, long-lived background and hot-key traffic at a fixed offered load. Use priority classes with immutable test metadata, inject follower replication lag and a burst of large writes, and run the old fixed limiter versus the candidate controller independently. Compare successful results by class, p95/p99, queue age, retries, admission rate, heap/goroutines, replica lag and fairness (per-tenant share and starvation). A controller that increases total throughput while starving an essential tenant **fails** the requirement.
 
-The publisher reports **5,400 vs 3,000 QPS** and **1.0s vs 3.1s upsert p99** in its overload comparison, plus large goroutine/heap reductions. Its stated heap reduction percentage and peak examples use different aggregations and cannot be mathematically normalized from the public post alone. These are **reported test observations**, not guarantees for another store. [U06, **The Payoff**].
+The publisher reports **5,400 vs 3,000 QPS** and **1.0s vs 3.1s upsert p99** in its overload comparison, plus large goroutine/heap reductions. Its stated heap reduction percentage and peak examples use different aggregations and cannot be mathematically normalized from the public post alone. These are **reported test observations**, not guarantees for another store. [src.m9-u06, **The Payoff**].
 
 ## Controller failure and safe rollback
 
@@ -125,7 +126,7 @@ For a small stateless API, a fixed bounded concurrency limit and per-caller quot
 
 ## Three kinds of admission are not interchangeable
 
-The [April 20, 2026 first-party report](https://www.uber.com/us/en/blog/from-static-rate-limiting-to-intelligent-load-management/) (U06, **Balancing Resilience and Fairness**, **Scorecard Engine**, **Regulators**) distinguishes **global overload**, **one noisy tenant** and **one hot resource**. A system-wide PID shedder can preserve the total storage process yet allow a single tenant to monopolize admitted slots; per-tenant Scorecard enforces concurrency limits even when aggregate capacity is healthy; regulators detect high write bytes, one hot partition, low process memory or excessive goroutine count that aggregate QPS may not reveal.
+The [April 20, 2026 first-party report](https://www.uber.com/us/en/blog/from-static-rate-limiting-to-intelligent-load-management/) (src.m9-u06, **Balancing Resilience and Fairness**, **Scorecard Engine**, **Regulators**) distinguishes **global overload**, **one noisy tenant** and **one hot resource**. A system-wide PID shedder can preserve the total storage process yet allow a single tenant to monopolize admitted slots; per-tenant Scorecard enforces concurrency limits even when aggregate capacity is healthy; regulators detect high write bytes, one hot partition, low process memory or excessive goroutine count that aggregate QPS may not reveal.
 
 The first quota experiment failed partly because **output bytes were a bad proxy for consumed work**: a table scan returning one row looked as cheap as a one-row point lookup. Moving the admission decision closer to the stateful storage executor exposed more relevant load signals, while avoiding Redis network dependency on every request. This placement is the historical architectural decision, not an instruction to remove all edge/API contractual rate limits.
 
@@ -138,13 +139,13 @@ The first quota experiment failed partly because **output bytes were a bad proxy
 | Priority-aware Cinnamon | Priority ranks **t0–t5**, with online-important **t1**; simplify to read/write queues; dynamic timeout and inflight limits | Storage-local health alone cannot detect a healthy leader whose followers are lagging |
 | Unified Cinnamon + regulators | PID control with external follower **commit-index lag** and pluggable resource signals in one decision path | Requires robust signal freshness, priority governance and feedback stability; detailed operator thresholds are not public |
 
-**Evidence:** U06, **Controlled Delay**, **Limitations**, **Cinnamon Replaces CoDel**, **Areas for Improvement**, **The Unified Load Shedding Engine**. The exact total-cost and all-cohort incident counts are not published.
+**Evidence:** src.m9-u06, **Controlled Delay**, **Limitations**, **Cinnamon Replaces CoDel**, **Areas for Improvement**, **The Unified Load Shedding Engine**. The exact total-cost and all-cohort incident counts are not published.
 
 One subtle protocol issue matters: the source reports using **adaptive FIFO-to-LIFO behavior under queue pressure** in early CoDel, reducing wasted work on aged requests. This can be appropriate for **new independent lookups**, but a datastore performing ordered writes or transactions cannot blindly reorder conflicting mutations. Tycho's separate consistency test must establish that any reordering is confined to admissible independent tasks. This is a synthetic contraindication, not a documented Uber ordering incident.
 
 ## The actual feedback loop and non-equivalent performance figures
 
-Cinnamon uses request priority and an adaptive time budget based on observed **p90 latency** plus a **PID-controlled inflight limit**; later it accepts remote follower-lag signals. The first-party report compares a specific overloaded test/reference condition: average throughput **~3,000 → ~5,400 QPS**, upsert p99 **~3.1 → ~1.0 seconds**, peak goroutines **150,000 → 10,000**, peak heap **5–6 GB → about 1 GB**. The company's own headline “~60% lower heap” is not exactly derivable from the separately quoted spike/max values; do not silently overwrite its percentage with an arithmetic reduction from unlike denominators. These are **publisher-scoped results**, not arbitrary QPS capacity predictions or independent randomized trials. [U06, **The Payoff**].
+Cinnamon uses request priority and an adaptive time budget based on observed **p90 latency** plus a **PID-controlled inflight limit**; later it accepts remote follower-lag signals. The first-party report compares a specific overloaded test/reference condition: average throughput **~3,000 → ~5,400 QPS**, upsert p99 **~3.1 → ~1.0 seconds**, peak goroutines **150,000 → 10,000**, peak heap **5–6 GB → about 1 GB**. The company's own headline “~60% lower heap” is not exactly derivable from the separately quoted spike/max values; do not silently overwrite its percentage with an arithmetic reduction from unlike denominators. These are **publisher-scoped results**, not arbitrary QPS capacity predictions or independent randomized trials. [src.m9-u06, **The Payoff**].
 
 **Control-loop hazard (Tycho analysis):** a PID controller with stale metrics, delayed actions, badly chosen gains or priority override can oscillate and shed the wrong cohort. Therefore measuring lower rejected-request counts is not enough: simultaneously record successful **goodput by priority**, queue wait, fraction already past client deadline, leader/follower lag, retries, memory and per-tenant fairness.
 

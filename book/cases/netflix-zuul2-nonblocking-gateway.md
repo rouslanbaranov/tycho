@@ -30,10 +30,12 @@ route_hints:
     - "workload-dependent"
     - "efficiency"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.m9-n07"
+    - "src.m9-n08"
   claim_ids: []
   status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  notes: "Global source IDs resolve directly through sources/register.json. Evidence-row identities use their own namespaced IDs; source URLs and evidence payloads are preserved. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -48,11 +50,11 @@ content_verified_at: null
 # Netflix — Zuul 2: async gateway architecture with workload-dependent efficiency
 
 **Case ID:** `case.netflix.zuul2-nonblocking-gateway` · **Owner:** M9 E16-02 #115 · **Status:** evidence-backed draft; independent technical review pending  
-**Primary:** N07, Netflix Cloud Gateway Team, September 2016, "Results of Zuul 2 in Production"; N08, Netflix Zuul 2.0 public architecture wiki (living documentation; snapshot not pinned). Company-reported results, not Tycho measurements.
+**Primary:** src.m9-n07, Netflix Cloud Gateway Team, September 2016, "Results of Zuul 2 in Production"; src.m9-n08, Netflix Zuul 2.0 public architecture wiki (living documentation; snapshot not pinned). Company-reported results, not Tycho measurements.
 
 ## Engineering pressure
 
-A blocking request-per-connection gateway can be simple and effective when each request completes quickly. Persistent downstream connections change the arithmetic: a connection with low activity may still occupy a worker in a blocking implementation, and the load balancer's resource budget becomes tied to waiting rather than useful work. Netflix's existing gateway platform was exposed to growing device and persistent-connection needs. The migration targeted **concurrent connection scalability** and I/O handling, not a universally faster CPU implementation. [N07: motivation and "Results of Zuul 2 in Production"].
+A blocking request-per-connection gateway can be simple and effective when each request completes quickly. Persistent downstream connections change the arithmetic: a connection with low activity may still occupy a worker in a blocking implementation, and the load balancer's resource budget becomes tied to waiting rather than useful work. Netflix's existing gateway platform was exposed to growing device and persistent-connection needs. The migration targeted **concurrent connection scalability** and I/O handling, not a universally faster CPU implementation. [src.m9-n07: motivation and "Results of Zuul 2 in Production"].
 
 ## Before and after: execution ownership
 
@@ -77,7 +79,7 @@ The benefit is conditional. It depends on the share of time spent waiting, the n
 
 ## What Netflix actually reported
 
-The Netflix gateway write-up describes significant persistent-connection scalability benefits with Zuul 2. But the production outcome was not a uniform CPU-efficiency win. For the API-facing, computation-heavier cluster, CPU efficiency did **not** materially improve. For a logging cluster doing less work per request, the company reported about **25% throughput improvement with associated CPU-use reduction**. This is precisely why a simple 'no gain' or 'Netty 10x better' summary is false. [N07: "Results of Zuul 2 in Production"].
+The Netflix gateway write-up describes significant persistent-connection scalability benefits with Zuul 2. But the production outcome was not a uniform CPU-efficiency win. For the API-facing, computation-heavier cluster, CPU efficiency did **not** materially improve. For a logging cluster doing less work per request, the company reported about **25% throughput improvement with associated CPU-use reduction**. This is precisely why a simple 'no gain' or 'Netty 10x better' summary is false. [src.m9-n07: "Results of Zuul 2 in Production"].
 
 | Measurement | Observed result | External-validity boundary |
 |---|---|---|
@@ -100,13 +102,13 @@ A tuned blocking gateway may be appropriate when connection counts are moderate,
 
 ## A two-stage compatibility transition before network replacement
 
-The [September 21, 2016 first-party account](https://netflixtechblog.com/zuul-2-the-netflix-journey-to-asynchronous-non-blocking-systems-45947377fb5c) (N07, **Building Non-Blocking Zuul**) describes a counterintuitive migration sequence. The team **first made Zuul filters and filter chaining asynchronous**, using RxJava, **while they could still run on the blocking gateway**. The same logical filters could then be shared by old Servlet-based Zuul and a new Netty-based gateway. This preserved one application-behavior layer while replacing connection and execution machinery beneath it; it was not an instantaneous rewrite of every filter.
+The [September 21, 2016 first-party account](https://netflixtechblog.com/zuul-2-the-netflix-journey-to-asynchronous-non-blocking-systems-45947377fb5c) (src.m9-n07, **Building Non-Blocking Zuul**) describes a counterintuitive migration sequence. The team **first made Zuul filters and filter chaining asynchronous**, using RxJava, **while they could still run on the blocking gateway**. The same logical filters could then be shared by old Servlet-based Zuul and a new Netty-based gateway. This preserved one application-behavior layer while replacing connection and execution machinery beneath it; it was not an instantaneous rewrite of every filter.
 
 The change required investigating **thread-local request context**, hidden blocking network-library assumptions and code that needed to be forked or reimplemented asynchronously. The publisher mentions **Reactive-Audit** as one diagnostic tool for surfacing blocking calls. Its authors distinguished async filters for I/O from synchronous filters for local operations, rather than declaring that every task needed an async API. The historical account does not publish a complete per-filter migration ledger or independent proof that no blocking operation remained after rollout.
 
 ## Why reliability was not automatically improved
 
-In the Servlet model a thread can remain attached to a request while it waits on a downstream dependency. A downstream latency spike and repeated device retries can amplify open connections, threads, memory and scheduler pressure. A Netty event loop lowers the cost of *waiting connections*, but this trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup. Netflix describes difficult-to-debug **ByteBuf leaks, file-descriptor leaks and dropped responses** as possible failures of incomplete async error paths. These are publisher-identified failure classes, not a confirmed list of every Zuul 2 production incident. [N07, **Differences Between Blocking vs. Non-Blocking Systems**].
+In the Servlet model a thread can remain attached to a request while it waits on a downstream dependency. A downstream latency spike and repeated device retries can amplify open connections, threads, memory and scheduler pressure. A Netty event loop lowers the cost of *waiting connections*, but this trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup. Netflix describes difficult-to-debug **ByteBuf leaks, file-descriptor leaks and dropped responses** as possible failures of incomplete async error paths. These are publisher-identified failure classes, not a confirmed list of every Zuul 2 production incident. [src.m9-n07, **Differences Between Blocking vs. Non-Blocking Systems**].
 
 **Operating guards for a different gateway (Tycho synthesis):** explicit event-loop blocking detector; bounded offload executor for unavoidable synchronous dependencies; request context and principal propagation across callbacks; cancellation/deadline cleanup; leak detection for reference-counted buffers; retry/hedging and upstream admission limits; p99 measured by route and connection cohort rather than aggregated at cluster level. A partially converted framework must support a known rollback version while downstream contract and security behavior are stable. No universal Netflix rollback threshold is documented.
 
@@ -120,7 +122,7 @@ In the Servlet model a thread can remain attached to a request while it waits on
 | Retry-storm resilience | Authors report some benefit, **requiring tuning** | Not a measured zero-failure guarantee |
 | Developer/operator cost | Harder debug, code and test cycle, context and lifecycle management | Cost was described qualitatively, not in audited team-hours |
 
-These are the actual distinctions in N07, **Results of Zuul 2 in Production**. A second modern Java case about a CPU-bound [gRPC worker-pool regression under virtual threads](netflix-grpc-cpu-workerpool-virtual-thread-regression.md) is a different scheduling experiment and must not be collapsed into this 2016 result. The [2024 tracing-lock virtual-thread incident](netflix-java21-virtual-thread-pinning.md) is likewise a different failure mechanism.
+These are the actual distinctions in src.m9-n07, **Results of Zuul 2 in Production**. A second modern Java case about a CPU-bound [gRPC worker-pool regression under virtual threads](netflix-grpc-cpu-workerpool-virtual-thread-regression.md) is a different scheduling experiment and must not be collapsed into this 2016 result. The [2024 tracing-lock virtual-thread incident](netflix-java21-virtual-thread-pinning.md) is likewise a different failure mechanism.
 
 ## Two incompatible architecture choices for a hypothetical legacy gateway
 
@@ -130,8 +132,8 @@ The **selection criterion** is what each scheduler is waiting for, not the numbe
 
 ## Provenance and limits
 
-- N07: [Zuul 2 — The Netflix Journey to Asynchronous, Non-Blocking Systems](https://netflixtechblog.com/zuul-2-the-netflix-journey-to-asynchronous-non-blocking-systems-45947377fb5c), company 2016 article, especially "Results of Zuul 2 in Production."
-- N08: [Netflix/zuul Wiki, How It Works 2.0](https://github.com/Netflix/zuul/wiki/How-It-Works-2.0), public evolving architecture. Do not attribute fixed-version runtime behavior without an immutable Git revision.
+- src.m9-n07: [Zuul 2 — The Netflix Journey to Asynchronous, Non-Blocking Systems](https://netflixtechblog.com/zuul-2-the-netflix-journey-to-asynchronous-non-blocking-systems-45947377fb5c), company 2016 article, especially "Results of Zuul 2 in Production."
+- src.m9-n08: [Netflix/zuul Wiki, How It Works 2.0](https://github.com/Netflix/zuul/wiki/How-It-Works-2.0), public evolving architecture. Do not attribute fixed-version runtime behavior without an immutable Git revision.
 - Numerical outcomes are author-reported. Independent replication, exact contemporary source revision, full benchmark setup and cross-version comparison are not documented here.
 
 **Review state:** authored and content-scoped; pending overall #114 verification gate and #121 independent review. Relevant conceptual material: event loops, async boundaries, backpressure and gateway capacity.

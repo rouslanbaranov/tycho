@@ -179,6 +179,25 @@ The original [queueing chapter](queueing-littles-law.md) explains why finite mea
 
 **Falsifiable claim:** at the same offered request mix and resource budget, limiting optional waits produces fewer user-visible deadline misses *without* suppressing mandatory content or worsening sustained backend overload. Measure p95/p99 and outcome ratio with a defined window; if not supported, revert the treatment.
 
+
+### Original latency-budget counterexample: a retry consumes the same deadline
+
+Suppose a fictional API has a **300 ms total caller deadline**, two parallel dependency reads and a 40 ms response/composition allowance. A proposal grants each dependency a 280 ms timeout plus one 280 ms retry. These independent timers do **not** fit inside one 300 ms user deadline; a retry made after 280 ms cannot be treated as a fresh 300 ms operation without violating the caller contract.
+
+| Hypothetical timeline | Budget principle |
+|---|---|
+| T=0–20 ms: admission/authentication | The downstream work inherits **remaining** deadline, not initial 300 ms |
+| T=20–240 ms: first dependency attempts | Protect capacity with bounded per-hop work and cancellation propagation |
+| T=240 ms: one dependency times out | Only about 60 ms remain; a full 280 ms retry cannot complete on time |
+| T=240–300 ms: optional fallback | Return degraded/explicit failure if allowed, not fabricated fully successful data |
+| After T=300 ms: late commit/reply arrives | User timeout means outcome **unknown**, not that a prior write did not occur |
+
+A hedge to a second replica can sometimes improve a read tail, but it multiplies dependency work and may exacerbate shared saturation. Hedging **mutations** without a stable intent/effect identity can create duplicate user-visible effects. Retry eligibility must consider idempotency and the *remaining* deadline; retry storms should be bounded by admission budgets and backoff policy.
+
+The [gRPC deadline guidance](https://grpc.io/docs/guides/deadlines/) supports propagation of time budgets and the [AWS Builders' Library retries analysis](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/) discusses retry amplification. They are design references, not a tested latency prediction. **Proposed, not run:** inject a slow dependency and a shared overload condition under the same offered requests, compare deadline correctness, successful results, duplicate effects and additional backend calls with and without hedging.
+
+**Reversal:** if correct partial responses are impossible, prefer a clear deadline error and reconciliation to a misleading success; if one dependency is optional, a bounded fallback may be preferable to a retry that cannot fit. Actual workload correlations and observed distributions—not independent p99 multiplication—must determine architecture choice.
+
 ## 7. Source-to-claim ledger and review boundary
 
 | Public source inspected | Narrow supported role | Evidence boundary |

@@ -1,5 +1,8 @@
 # Snapshot-bound Route–Read–Verify index
 
+> **Implementation update:** the earlier paragraph claiming the book is mostly unannotated and no complete index exists is *historical*. On PR #218's pinned manuscript, **136/136** book documents have strict metadata and a generated deterministic **complete** route index. This is offline token-overlap routing, not a hosted BM25/vector/semantic/MCP service. A change to an indexed page requires a rebuilt exact index and Python freshness check on final HEAD. **Live state (2026-10-20, before merging PR #218):** M1–M9 integrated draft merged via PR #216; PR #217 closed/unmerged and replaced by open/non-draft **unmerged PR #218**. M9 #121 closed under scoped owner acceptance; #213/E14 and final edition #214 remain open. **69/69 primary chapter manuscripts deepened, 0/69 independently accepted for final-book completeness.** The 10-volume edition, hosted MCP and deployment do not exist. Reported 13/13 groups and 215/215 tests passed on prior manuscript SHA `d8d04e0e3c97e9f364607f640faa9f5aee4866f3`, **not** on the subsequently edited status documents. Visual rendering and live MCP were owner-cancelled, not PASSED. See [canonical current state](STATE.md) and [reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 > Tycho E04-04 [issue #35](https://github.com/rouslanbaranov/tycho/issues/35). This is a **local deterministic routing engine** over already annotated canonical Markdown files. It does not generate new frontmatter, copy content into a hosted service, invent source evidence or access M9.
 
 ## What is indexed
@@ -8,7 +11,7 @@ The [strict document schema](../schemas/document-metadata.v1.schema.json) and [f
 
 **Source of truth:** annotated canonical Markdown. The generated index is disposable; it does not claim to be an authoritative knowledge graph, provenance database or content review. A page body change, metadata change, added/removed page or index-field alteration invalidates the stored snapshot. Search/read/verify refuses stale index state until explicitly rebuilt.
 
-The current book contains numerous unannotated pages. Do NOT generate a falsely complete index or count prototype fixtures as full coverage. Default `build` fails if even one scanned Markdown file lacks valid frontmatter; `--allow-partial` records all uncovered file paths and marks `coverage=partial`. An entirely unannotated corpus cannot produce a useful routing snapshot. **No full-book index is checked in by this issue**; source conversion and resulting coverage must be reviewed before an agent treats the book as fully indexed.
+**Updated corpus state (2026-10-20):** All **136/136** current `book/**/*.md` documents are annotated and recorded in the checked-in `generated/route-index.v1.json` with `coverage=complete`. The original issue #35 checkpoint was written before corpus conversion; its warning about *numerous unannotated pages/no checked-in complete index* is now historical. The tool retains fail-closed behavior for **future** unannotated pages: default `build` rejects partial coverage and `--allow-partial` must disclose it. An indexed page change always requires deterministic index rebuilding and a fresh Python `check` against the final branch commit. Indexed coverage is not proof of claim truth or completion of the ten-volume book.
 
 ## How to operate locally
 

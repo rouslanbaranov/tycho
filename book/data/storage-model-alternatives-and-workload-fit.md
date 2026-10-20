@@ -225,3 +225,30 @@ A credible selection compares:
 | E07 | [Neo4j property graph concepts](https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/), *Introduction; Node; Relationship; Schema*, rolling official docs observed 2026-10-19 | Property graph model, not universal graph query speed advantage |
 
 **Review state:** explanatory comparison, fictional workload diagrams only; no engine installed or benchmark run, no independent domain review, no comprehensive time-series vendor comparison and no measured migration. This page does **not** give a database product recommendation for a real user system.
+
+## Engineering walkthrough — Four storage choices with disqualifying gates
+
+**Original synthetic workload:** a reservation service must atomically prevent two confirmed allocations for the same physical unit and time interval, expose relational staff joins, support a 24-hour offline export and handle bursts against a few hot resources. The team knows PostgreSQL operations but has no 24/7 expertise for an additional distributed datastore.
+
+| Candidate | Best possible rationale | Gate / disposition |
+|---|---|---|
+| Single relational authority | Constraints, transactional joins and understood operations | **Conditional fit**; verify scale, hot keys and restore |
+| Document store | Flexible nested catalogue descriptions | **Hard fail as replacement** until equivalent cross-booking exclusivity and join/authority plan is proven; viable read projection |
+| Wide-column / partitioned KV | High-key-volume access with predicted partition shape | **Not justified** for one extremely hot exclusive key or unmodeled cross-key transaction |
+| Distributed SQL | Horizontal SQL with stronger global transaction potential | **Conditional but infeasible under stated ops staffing**, plus test contention/cost |
+
+Separate "a useful additional read model" from "a second authoritative writer". A search index or document projection may accelerate public descriptions while booking correctness stays relational. Moving only query presentation is fundamentally different from moving business mutations to a new engine.
+
+**Failure sequence:** a migration writes a booking to old SQL and attempts the same update in a new store; the second write times out. Neither a success count nor matching row totals can establish atomic cross-store identity. Use one fenced writer plus a versioned projection/reconciliation path, or reject the change. If the relational authority demonstrably cannot meet a hard availability/isolation requirement and sufficient operational support exists, reconsider distributed SQL under measured constraints. The existing official storage references define mechanisms; this shortlist and all capacity assumptions are **synthetic**; no database comparison was executed.
+
+
+**Verification status:** The preceding original example and its predicted outcomes are synthetic. No implementation experiment, benchmark or independent technical review was executed for this example.
+## Applied M9 evidence: what transfers and what does not
+
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
+
+**Case lens — [Uber — MyRocks](../cases/uber-mysql-to-myrocks.md)**. **Relevant mechanism or architectural contrast:** Storage-engine choice must include operational write amplification, workload shape and production rollout gates. **Not established by this report/playbook:** Company-reported MyRocks savings do not transfer to arbitrary datasets, hardware, version or query patterns.
+
+**Case lens — [Discord — Cassandra to ScyllaDB](../cases/discord-cassandra-scylladb-messages.md)**. **Relevant mechanism or architectural contrast:** Combining data engine migration with request coalescing addresses hot partitions and latency feedback. **Not established by this report/playbook:** Publisher-reported results cannot isolate the new engine as sole cause or compare equal server resources without adjustment.
+
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

@@ -147,6 +147,21 @@ A transport's popularity is not evidence of fit. Prefer a unary bounded API when
 
 These fixtures are **not executed**, and a published Reactive Streams or gRPC specification does not prove the tested implementation conforms.
 
+## Engineering walkthrough — Reconnect cannot recover unpersisted stream items
+
+**Synthetic scenario:** a device-status server streams numbered updates over gRPC to a remote consumer. The network drops after the server sends sequence 41 but before the consumer can acknowledge it; the server emits 42 while the client is offline. Transport flow-control windows influence buffered bytes **while connected** but do not constitute a durable event log or replay cursor.
+
+| Contract decision | Option A: transient live feed | Option B: resumable durable subscription |
+|---|---|---|
+| Owner of buffered state | Process/session with bounded bytes | Named storage/log with retention and sequence identity |
+| Disconnect after sending 41 | Missing/duplicate 41 may be acceptable, explicitly labeled | Client resumes from last *durably processed* sequence; dedup and replay required |
+| Slow consumer | Backpressure, drop/coalesce or explicit disconnect | Lag budget, quotas and replay horizon must be declared |
+| Publisher restart | Session resumes from current state only | Rebuild cursor from durable authority; cannot replay what was never persisted |
+
+If updates mean *current temperature*, dropping interim samples may be an acceptable product policy. If updates mean *irrevocable financial postings*, an ephemeral stream is not sufficient. Cancellation of a receive loop does not roll back a posting that another system already committed. This trade-off is separate from choosing gRPC vs WebSocket vs SSE.
+
+**Proposed protocol (not implemented):** include `stream_id`, monotonically interpreted position within a declared partition, schema version, snapshot ID and retention boundary. Client checkpoints a position only after its required local effect is durable. Inject disconnect before/after acknowledgment, server restart, slow consumer and position expiry; return an explicit "resnapshot required" response when replay is impossible. The chapter's gRPC flow-control and Reactive Streams sources support bounded transport/demand semantics, not a durable replay guarantee.
+
 ## 7. Public source ledger and limits
 
 | Published source | Narrow support | Unknown |

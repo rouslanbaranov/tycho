@@ -107,6 +107,16 @@ In Spring Framework, [transaction-bound event listeners](https://docs.spring.io/
 
 Spring Modulith's [publication registry](https://docs.spring.io/spring-modulith/reference/events.html) documents listener-specific publication records and retry/resubmission mechanisms; check its actual version and storage implementation before using these guarantees. Event publication durability is **separate** from downstream external side-effect identity. A listener retried after partial external success can duplicate a notification unless the effect has its own deduplication/reconciliation semantics.
 
+### Post-commit listeners are not a fresh durable transaction (Spring-specific caveat)
+
+The [official Spring Framework `@TransactionalEventListener` JavaDoc](https://docs.spring.io/spring-framework/docs/6.0.7/javadoc-api/org/springframework/transaction/event/TransactionalEventListener.html) warns that, for `AFTER_COMMIT` (default), `AFTER_ROLLBACK` and `AFTER_COMPLETION`, the underlying transaction has **already completed** although bound resources can remain accessible. An unguarded database update triggered there may *appear to participate* in the original context but have **no later commit**. Do not design mandatory follow-up state mutation on the assumption that an `AFTER_COMMIT` listener automatically begins a new commit.
+
+For an intentionally separate database write, use an explicitly configured **new transaction boundary** (e.g. a correctly invoked `PROPAGATION_REQUIRES_NEW` operation or transaction template, with the actual transaction manager and framework generation checked), and treat failure of that new transaction as a separate partial outcome. A fresh transaction is not equivalent to a durable event obligation: the process may still crash *before* it is entered or *after* the second commit but before acknowledgment. For mandatory effects, persist an outbox/publication intent atomically with the authoritative reservation and reconcile/redeliver using stable effect IDs.
+
+**No-active-transaction trap:** according to that same JavaDoc, a transactional event listener normally does not process an event if no transaction is active, unless `fallbackExecution` is explicitly enabled. Turning on fallback changes when listeners may execute; it does **not** create a missing transaction or guarantee after-commit behavior for such publications. Reactive transaction context has its own event-source requirements and must not be inferred from a thread-local model.
+
+**Proposed negative test, not executed:** publish an event inside, outside and immediately after a transaction; verify committed primary state, visibility of any follow-up write, an intentional new transaction, process death after commit and duplicate resubmission. The expected result under missing durable publication must be represented as potentially lost, rather than silently accepted.
+
 ## 4. Transaction boundary determines which outcome is correct
 
 **Synthetic failure:** reservation state commits but the process crashes before an in-memory notification event reaches its listener.
@@ -163,3 +173,25 @@ All modules, diagrams, events and failure cases are original invented teaching m
 ## Navigation
 
 Proposed owner **V02/C03** in [planned table of contents](../PROPOSED-STRUCTURE.md), [application landing](README.md). Start with [bounded contexts and ownership](domain-boundaries-data-ownership-and-contracts.md), then [module/service styles](architecture-styles-and-module-boundaries.md), [internal vs external outbox](../distributed/transactional-outbox-and-idempotency.md) and [safe extraction](architecture-evolution-and-extraction.md).
+
+## Engineering walkthrough — An internal event that survives neither process death nor commit
+
+**Original fictional workflow:** `BookingModule` reserves a resource and emits `BookingCreated`. `NotificationModule` subscribes. Three superficially similar deliveries have different durability: calling subscribers inside the transaction, invoking after-commit listeners, and storing a durable publication intention for later dispatch.
+
+| Crash window | Synchronous in-process listener | After-commit listener | Durable outbox-like publication |
+|---|---|---|---|
+| Before booking commit | Subscriber might have run before rollback if misconfigured | Should not run as a committed-event observer | Neither booking nor outbox entry becomes durable if transaction rolls back |
+| Immediately after commit, process dies | Prior callback result varies with order | May never run | Pending committed event can be found and retried |
+| Callback fails | May poison or alter initiating transaction, according to design | Booking cannot be undone by callback exception alone | Relay retries; consumer must deduplicate |
+
+The [Spring transaction event documentation](https://docs.spring.io/spring-framework/reference/7.1/data-access/transaction/event.html) describes phase-bound listeners; it does **not** make arbitrary callbacks durable. A module split into separate processes increases latency, authorization and retry costs without solving the lost-after-commit callback by itself. Keep notification optional when business semantics permit; if a legally required notice must eventually occur, persist the obligation and its effect identity.
+
+**Proposed negative experiment:** terminate the process exactly after booking commit but before notification, then restart, reconcile booking and ensure a durable publication method eventually resolves the obligation without duplication. This is a plan, not a run. The distinct distributed outbox owner V04/C05 supplies detailed delivery semantics; modular architecture owns the local dependency boundary.
+
+## Applied M9 evidence: what transfers and what does not
+
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
+
+**Case lens — [Shopify — Modular monolith](../cases/shopify-modular-monolith.md)**. **Relevant mechanism or architectural contrast:** A modular monolith can be a legitimate target when domain ownership matters more than release separation. **Not established by this report/playbook:** The 2019 report does not imply Shopify achieved perfectly enforced modules everywhere or that service decomposition always fails.
+
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

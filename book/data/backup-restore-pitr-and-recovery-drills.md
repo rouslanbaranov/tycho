@@ -144,6 +144,23 @@ A reproducible drill should use safe isolated environments and synthetic/admitte
 
 For each drill retain raw start/end timestamps, selected point, actual restored version, errors, accepted/rejected checks and deviations from the runbook. **A drill in one failure class cannot certify all disaster classes.** An untested production outage must not be created merely to validate this educational design.
 
+
+### Worked restore paradox: a complete backup is not a usable booking state
+
+**Original fictional drill:** a service has a PostgreSQL 17 base backup and archived WAL up to an intended time T. An accidental bulk deletion happens at T+1; customers create legitimate new bookings at T+2. Recovering to T may remove the deletion **and** erase valid post-T bookings. Simply starting a database from the backup is not equivalent to recovering a correct current business history.
+
+| Restoration step | Evidence needed | Unsafe shortcut |
+|---|---|---|
+| Select restore point | Exact backup chain, WAL continuity, timestamp/timeline mapping | Assume latest archived file covers desired point |
+| Recover into isolated environment | Compatible software/schema, keys and verified recovery logs | Overwrite live authority before inspecting restored state |
+| Compare user outcomes | Deleted/restored records, operation IDs, valid post-point writes and their dependencies | Compare row counts alone |
+| Reconcile legitimate later effects | Business-approved replay/mapping of post-T bookings; one authoritative writer | Blindly replay operations without idempotency or authorization |
+| Return traffic | Correct booking journey, explicit loss interval and measured time | Declare RPO/RTO met when PostgreSQL process is merely healthy |
+
+[PostgreSQL 17 continuous archiving](https://www.postgresql.org/docs/17/continuous-archiving.html) documents base backups, required WAL segments and recovery timelines; it does not prove that an operator has preserved an intact chain or can restore post-point business meaning. If valid operations cannot be reconciled, the correct result may be to keep the affected workflow paused and disclose the bounded loss, rather than assert full recovery.
+
+**Proposed, not executed:** create known reservations before and after a synthetic destructive event, restore the earlier point in isolation, rebuild later accepted operations from an independent durable ledger and verify exclusive booking invariants. Use measured impact-to-correct-service time and committed-operation loss to evaluate RTO/RPO; neither a configured target nor an archived WAL name establishes an observed result. Region-level fencing and failover belong to [V08/C07](../deployment/disaster-recovery-and-recovery-objectives.md).
+
 ## 6. Failure classes change the preferred architecture
 
 - **Accidental deletion:** time-selective historical restore and reconciliation, not simply failover.

@@ -31,10 +31,11 @@ route_hints:
     - "tracing"
     - "locks"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.m9-n06"
   claim_ids: []
   status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  notes: "Global source IDs resolve directly through sources/register.json. Evidence-row identities use their own namespaced IDs; source URLs and evidence payloads are preserved. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -49,11 +50,11 @@ content_verified_at: null
 # Netflix — Java 21 virtual-thread starvation hidden behind tracing locks
 
 **Case ID:** `case.netflix.java21-virtual-thread-carrier-starvation` | **M9:** E16-03 #116 | **Status:** source-backed draft, not independently reviewed  
-**Original first-party source:** N06, Netflix TechBlog, Filanovsky, Huang, Thomas and Chalupa, **2024-07-29**; sections "The problem", "Collected diagnostics", "Why is Tomcat stuck?", "Who has the lock?", "Inspecting the lock". [Original article](https://netflixtechblog.com/java-21-virtual-threads-dude-wheres-my-lock-3052540e231d).
+**Original first-party source:** src.m9-n06, Netflix TechBlog, Filanovsky, Huang, Thomas and Chalupa, **2024-07-29**; sections "The problem", "Collected diagnostics", "Why is Tomcat stuck?", "Who has the lock?", "Inspecting the lock". [Original article](https://netflixtechblog.com/java-21-virtual-threads-dude-wheres-my-lock-3052540e231d).
 
 ## The actual failure—not a synthetic throughput benchmark
 
-Some Netflix Java 21, Spring Boot 3, embedded Tomcat REST instances intermittently stopped responding, though their JVM processes stayed alive. An increasing number of sockets entered `CLOSE_WAIT`. Conventional platform-thread dumps appeared idle. The engineers switched to virtual-thread aware `jcmd Thread.dump_to_file` and heap inspection and found many virtual threads with no stack yet, created but never scheduled. They ultimately traced carrier-thread starvation through tracing/span finishing and a contended lock, not a general inability of virtual threads to serve requests. [N06, named sections above].
+Some Netflix Java 21, Spring Boot 3, embedded Tomcat REST instances intermittently stopped responding, though their JVM processes stayed alive. An increasing number of sockets entered `CLOSE_WAIT`. Conventional platform-thread dumps appeared idle. The engineers switched to virtual-thread aware `jcmd Thread.dump_to_file` and heap inspection and found many virtual threads with no stack yet, created but never scheduled. They ultimately traced carrier-thread starvation through tracing/span finishing and a contended lock, not a general inability of virtual threads to serve requests. [src.m9-n06, named sections above].
 
 In the reproduced incident context a VM had **four vCPUs** and thus an effective default carrier pool of four OS threads. **Four virtual threads were pinned** while traversing a synchronized span-finish path and waiting on a lock in the Brave/Zipkin tracing ecosystem. These four carrier threads could not run newly scheduled request virtual threads; accepted connections accumulated while Tomcat could not drain them. The article describes a lock-owner diagnostic that ordinary Java 21 dumps did not expose clearly. This is a **specific lock + scheduler + version** failure and must not be generalized to newer JDKs without retesting.
 
@@ -88,17 +89,17 @@ These are the authors' observations. We have not reproduced their stack trace or
 
 The *proposed Tycho adoption strategy* is to retain a platform-thread baseline, identify all blocking work inside monitors and native calls, inspect tracing/security/metrics filters under load, turn on virtual threads for representative I/O-heavy endpoints, and run cancellation/stalled-request fault injection. Concurrency should be constrained by downstream capacity, not by the number of cheap virtual-thread objects. Canary on small-core instances as well as large ones; compare runnable-queue depth, carrier utilization, pinning events, timeouts and `CLOSE_WAIT`, not only mean latency.
 
-**Negative decision:** if the service is CPU-bound or uses libraries that block carrier threads, virtual threads may increase apparent concurrency without improving throughput. A reactive event-loop boundary may suit high fan-out but also requires prohibiting hidden blocking operations; compare N07. A platform-thread pool with an explicit admission limit may be safer until monitoring is trustworthy.
+**Negative decision:** if the service is CPU-bound or uses libraries that block carrier threads, virtual threads may increase apparent concurrency without improving throughput. A reactive event-loop boundary may suit high fan-out but also requires prohibiting hidden blocking operations; compare src.m9-n07. A platform-thread pool with an explicit admission limit may be safer until monitoring is trustworthy.
 
 **Rollback:** reverting request execution to the known platform-thread mode and restoring deployment configuration is a proposed guardrail; the Netflix article does not supply a complete production rollback sequence or prove a specific permanent patch version.
 
 ## Causal sequence: a free lock with no available carrier
 
-The [July 29, 2024 first-party incident investigation](https://netflixtechblog.com/java-21-virtual-threads-dude-wheres-my-lock-3052540e231d) (N06, **Why is Tomcat stuck?**, **Who has the lock?**, **The lock with no place to run**) exposes a subtle form of starvation. The queue contained **six contenders**: **five virtual threads** and **one platform reporter thread**. Four virtual threads were **pinned to four OS carriers** while waiting in a tracing span-finalization path that entered Java monitor synchronization and then tried to acquire a reporter lock. A fifth virtual thread had been notified that it could progress, but was **unmounted and needed a free carrier** to run.
+The [July 29, 2024 first-party incident investigation](https://netflixtechblog.com/java-21-virtual-threads-dude-wheres-my-lock-3052540e231d) (src.m9-n06, **Why is Tomcat stuck?**, **Who has the lock?**, **The lock with no place to run**) exposes a subtle form of starvation. The queue contained **six contenders**: **five virtual threads** and **one platform reporter thread**. Four virtual threads were **pinned to four OS carriers** while waiting in a tracing span-finalization path that entered Java monitor synchronization and then tried to acquire a reporter lock. A fifth virtual thread had been notified that it could progress, but was **unmounted and needed a free carrier** to run.
 
 The source's heap inspection found the shared reentrant lock in a state where **its recorded owner was null and its lock state was zero**. This disambiguates the failure: it was not enough to find a single ordinary thread that had “forgotten to release the lock.” The lock had been released and a waiter signaled, but the signaled *unmounted* virtual thread could not execute because all **four carrier permits** were occupied by other virtual threads *pinned while waiting* for that same lock. Those pinned threads could not unmount to free a carrier. The result was a scheduler/resource deadlock even though the lock's release pathway had run.
 
-This causal chain matters for incident triage. A conventional monitor deadlock detector could miss a wait-state cycle whose decisive capacity constraint is **carrier availability**, not merely mutex ownership. A heap view of AQS wait nodes plus virtual-thread scheduling state can be necessary when thread dumps do not show a conventional lock owner. These details are explicitly tied to the **Java 21** state described in N06; do not extrapolate the same tooling limitations or pinning behavior across all newer JVMs.
+This causal chain matters for incident triage. A conventional monitor deadlock detector could miss a wait-state cycle whose decisive capacity constraint is **carrier availability**, not merely mutex ownership. A heap view of AQS wait nodes plus virtual-thread scheduling state can be necessary when thread dumps do not show a conventional lock owner. These details are explicitly tied to the **Java 21** state described in src.m9-n06; do not extrapolate the same tooling limitations or pinning behavior across all newer JVMs.
 
 ## Diagnostics and safety gates from the documented failure
 
@@ -111,7 +112,7 @@ This causal chain matters for incident triage. A conventional monitor deadlock d
 | Reporter lock appears free in heap state | The signaled successor still needed a carrier to run | Inspect scheduler and AQS state before asserting a permanently held mutex |
 | Reproducible isolated example constructed | Source authors could reproduce the unusual wait/resource interlock | A reproducer is a local causal test, not a company-wide frequency estimate |
 
-**Source:** N06, **Collected diagnostics**, **Analysis**, **Inspecting the lock**. The original article references a minimal external reproducer; this Tycho case does not claim to have executed it or reproduced the production trace.
+**Source:** src.m9-n06, **Collected diagnostics**, **Analysis**, **Inspecting the lock**. The original article references a minimal external reproducer; this Tycho case does not claim to have executed it or reproduced the production trace.
 
 ## Proposed safe migration test for an unrelated Java REST service
 

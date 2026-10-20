@@ -177,6 +177,31 @@ Likewise, evaluate *total operating cost*: components, retention/egress, high-ca
 
 The [arc42 architecture decisions guidance](https://docs.arc42.org/section-9/) explains why important decisions should record alternatives and rationale; this original ADR is **not** an implementation of an accepted organization-specific governance process.
 
+
+### Complete synthetic ADR: improve a legacy reservation service without a forced decomposition
+
+**Original fictional baseline (not a real benchmark):** one Java modular application and one PostgreSQL authority manage 12,000 accounts. A timed event presents a proposed 120 new intents/s during 15 seconds; no verified ingress trace exists. SLO requirement: correct exclusive booking decisions with a bounded user-visible deadline. Constraints: the current public contract must remain supported, no simultaneous independent booking writers, limited on-call capacity, and a reversible first rollout. No real organizational approval or cost quotes exist.
+
+| Candidate | Hypothesis | Hard gate | Observation that reverses preference |
+|---|---|---|---|
+| A — Retain modular architecture, improve SQL/admission | Database and queue behavior may be optimized without remote calls | One authoritative booking transaction; old clients supported | Controlled load still misses accepted completion requirement after safe changes |
+| B — Durable admission queue for booking commands | Queue protects one hot authority during burst | Product permits pending/async responses; durable operation ID and backlog visibility | Clients require immediate final confirmation or backlog recovery breaches deadline |
+| C — Extract booking service with independent datastore | Boundary-specific scaling and team autonomy repay distribution cost | Verified migration of state authority, fencing, mixed-client compatibility and on-call ownership | No independently measured boundary gain, or invariant fails in coexistence |
+
+**Decision:** `MEASURE_FIRST`, provisionally A; this is not approval to deploy. Collect offered-versus-delivered load, correct completions, DB pool waits, per-key contention, retries, p99 and an explicit source snapshot. If A fails a fair test and product semantics accept pending work, evaluate B next. Candidate C requires a separate source-of-truth migration and a demonstrated operating benefit, not simply a higher peak RPS estimate.
+
+| Transition state | What is deployed and authoritative | Gate and recovery |
+|---|---|---|
+| T0 baseline | Existing Java service and PostgreSQL writer | Capture trace/model, pinned code and restorable data |
+| T1 observe and bound | Instrumentation and bounded admission, **same database writer** | Revert configuration if admission harms correct outcomes; no domain-data move |
+| T2 pilot alternate | Canary queue/adapter for a permitted cohort, old API semantics preserved | Reconcile accepted command IDs; hold promotion on unknown/duplicate effects |
+| T3 optional authority transition | Only after evidence favors C: compatible old/new clients, a *fenced* single writer | Prove identity mapping, replay and failback; never let two owners independently confirm |
+| T4 stabilize / retire | Remove legacy path only after replay horizon and restore proof | Document irreversible state and forward-repair route; old binary rollback may be unsafe |
+
+**Failure test:** commit a booking before losing the response, then retry while the canary is switching. Correctness is *one logical booking and a discoverable outcome*, not "one HTTP request." An interrupted migration must preserve one accepted authority and known restoration options. If real requirements, acceptable queue semantics or authoritative failure telemetry remain unknown, the final recommendation stays **INSUFFICIENT_EVIDENCE**.
+
+**Transfer evidence limits:** the [Shopify modular-monolith case](../cases/shopify-modular-monolith.md) supports conditional modularity, [Uber DOMA](../cases/uber-doma-domains.md) illustrates governing distributed domain dependencies, and [Stripe's online migration](../cases/stripe-online-subscriptions-migration.md) illustrates staged change of data ownership. None establishes that this invented application should adopt its historical architecture. The numbers, options, states and acceptance tests above are invented; **no modernization, rollback or benchmark was performed**.
+
 ## 8. Verification and question-answering contract
 
 A complete answer for an engineering choice should include:
@@ -197,3 +222,11 @@ This synthesis relies on canonical Tycho material rather than inventing a hidden
 Source grounding: existing inspected-source ledgers in [queueing](../performance/queueing-littles-law.md), [outbox](../distributed/transactional-outbox-and-idempotency.md), [Kafka](../integration/kafka-partitions-replication-and-contracts.md), [safe rollout](../delivery/safe-rollout-and-recovery.md) and [security](../security/identity-authorization-and-isolation.md); [arc42 §9](https://docs.arc42.org/section-9/) inspected 2026-10-19 for decision documentation principles.
 
 **Open research:** no organization-specific runtime/operational requirements, real data-set or distributed traces, independent architecture review, deployment experiment, SLO/cost budget or results are available for the scenarios. All numerical/comparative recommendations remain conditional and falsifiable. Completion of the manuscript chapter is not a completed architecture modernization project or 100% coverage of the ten-volume outline.
+
+## Applied M9 evidence: what transfers and what does not
+
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
+
+**Case lens — [Agent-assisted migration safety](../cases/decisions/agentic-migration-safety.md)**. **Relevant mechanism or architectural contrast:** Synthetic ADR requires behavior, isolation and evidence gates before agent-generated code can change production. **Not established by this report/playbook:** Shopify/Spotify reports do not provide authorization for fully autonomous unsafe changes or benchmarked universal agent correctness.
+
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

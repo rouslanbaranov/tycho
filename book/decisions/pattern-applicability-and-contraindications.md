@@ -238,3 +238,29 @@ Cross-domain examples belong in the separate [decision synthesis](cross-domain-m
 All matrix entries and the resource reservation example are original educational statements under explicit assumptions. No live workload, executed migration, independently reviewed pattern suitability, cost study or deployed architecture selection agent is claimed. Validation of a real decision requires source/version evidence and domain review.
 
 **Navigation:** planned **V10/C03** in [book outline](../PROPOSED-STRUCTURE.md), current [decision support landing](README.md); prerequisite [requirements/workload](requirements-and-workload-architecture-profiles.md), [legacy baseline](legacy-baseline-and-modernization-evidence.md); next [cross-domain decisions](cross-domain-modernization-and-adr-examples.md), [target-vs-transition](../../authoring/models/target-transition-architecture.md).
+
+## Engineering walkthrough — Two attractive patterns fail the same hot-key workload
+
+**Original synthetic requirement:** a small booking platform has moderate aggregate traffic but one hot exclusive item, one PostgreSQL writer, strict immediate confirmation and limited on-call capacity. The choice cannot be made from fleet RPS alone.
+
+| Pattern | When it may fit | Contraindication here |
+|---|---|---|
+| Modular monolith with admission | Local invariant, current team and release mode fit | Independent deployment mandated by a different hard requirement |
+| Microservices | Independent domain ownership and measured deployment benefit | Extra remote failure and authority migration do not remove one serialized key |
+| Kafka/queue | Pending outcomes and replay are acceptable | Client requires immediate confirmed result |
+| Distributed cache | Stale public catalogue descriptions allowed | Cache cannot confirm exclusive booking independently |
+| Sharding | Load spreads across independent keys | One hot key remains single-owner serialized work |
+| Virtual threads | Large blocking I/O population with bounded downstream | CPU/DB locks dominate current symptom |
+| Reactive | End-to-end nonblocking APIs and flow control are justified | Blocking downstream just relocates the backlog |
+
+**Decision:** retain a single booking authority and test bounded admission and query/lock optimization first. **Reject sharding and service decomposition as unsupported current cures for the single hot-key invariant.** A later team-autonomy or isolation requirement may reverse that choice without invalidating the present analysis.
+
+**Proposed tests, not run:** offered demand with representative key skew, lock and pool wait, correct confirmed completions and change-lead-time measurements. Route specialized claims to their existing canonical chapters instead of reproducing each implementation here. This pattern-selection exercise is original, not a benchmark or general prohibition on distributed services.
+
+## Applied M9 evidence: what transfers and what does not
+
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
+
+**Case lens — [Monolith vs services](../cases/decisions/monolith-vs-services.md)**. **Relevant mechanism or architectural contrast:** Synthetic ADR contrasts Shopify modularity and Netflix/Uber distribution under explicit ownership and team cost. **Not established by this report/playbook:** The proposed monolith-first choice is Tycho's fictional decision, never a decision those companies jointly evaluated.
+
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

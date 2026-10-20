@@ -63,11 +63,11 @@ An online billing platform must move active invoice state out of a shared Custom
 
 | Actual company case | What its primary source does and does not establish |
 |---|---|
-| [Stripe](../stripe-online-subscriptions-migration.md) | ST01: four-phase dual-write/read/write/retire and Scientist comparison |
-| [Netflix](../netflix-casspactor-shadow-migration.md) | N11: row-set differences and cohort selector/fallback |
-| [Uber](../uber-mezzanine-pg-to-schemaless.md) | U02: query/ID seam, backfill and mirrored writes |
-| [Discord](../discord-cassandra-scylladb-messages.md) | DI01: token range checkpoints, tombstone final-range blocker |
-| [Meta](../meta-ingestion-shadow-migration-lifecycle.md) | ME03 (May 2026): per-job shadow **→ reverse shadow (new writes production, old writes shadow) → cleanup**, with CDC bad-partition containment and rollback |
+| [Stripe](../stripe-online-subscriptions-migration.md) | src.m9-st01: four-phase dual-write/read/write/retire and Scientist comparison |
+| [Netflix](../netflix-casspactor-shadow-migration.md) | src.m9-n11: row-set differences and cohort selector/fallback |
+| [Uber](../uber-mezzanine-pg-to-schemaless.md) | src.m9-u02: query/ID seam, backfill and mirrored writes |
+| [Discord](../discord-cassandra-scylladb-messages.md) | src.m9-di01: token range checkpoints, tombstone final-range blocker |
+| [Meta](../meta-ingestion-shadow-migration-lifecycle.md) | src.m9-me03 (May 2026): per-job shadow **→ reverse shadow (new writes production, old writes shadow) → cleanup**, with CDC bad-partition containment and rollback |
 
 **Why the apparent conflict is useful:** Stripe's Scientist compares online read behavior and shifts **all reads before all writes** to a new mutable subscription table. Netflix compares **C−M and M−C** on materialized batch outputs while preserving user-job contracts; Uber created an identifier/client-query seam before trip-store migration. Meta's warehouse ingestion instead preserves the **old job running as shadow *after* the new job starts writing production**, then retires it only after renewed quality/resource checks. Discord demonstrates why migration progress at 99.9999% is not source-independent proof of correctness. **Do not silently apply Stripe's write-path cutover order to Meta's CDC job authority transfer.**
 
@@ -108,9 +108,9 @@ Version contracts → establish old source authority → implement dual-state wr
 
 ## Data-authority decision guard: Stripe versus Meta
 
-**Stripe ST01 (2017):** expand/dual-write from old Customer array to new Subscription rows; backfill; use Scientist read comparisons; route **all reads to the new representation before changing write authority**, then remove obsolete writes and data after callers are migrated.
+**Stripe src.m9-st01 (2017):** expand/dual-write from old Customer array to new Subscription rows; backfill; use Scientist read comparisons; route **all reads to the new representation before changing write authority**, then remove obsolete writes and data after callers are migrated.
 
-**Meta ME03 (2026):** output-equivalence gates on shadow ingestion; switch the **new ingestion job to the production table while the old job begins producing shadow output**; keep comparing and backfilling; on CDC bad-partition detection stop unsafe delta propagation or reconstruct an affected target snapshot and roll back; only then retire the old job. This is an **ingestion job** lifecycle with full/delta/target partitions, not a two-representation online billing schema cutover.
+**Meta src.m9-me03 (2026):** output-equivalence gates on shadow ingestion; switch the **new ingestion job to the production table while the old job begins producing shadow output**; keep comparing and backfilling; on CDC bad-partition detection stop unsafe delta propagation or reconstruct an affected target snapshot and roll back; only then retire the old job. This is an **ingestion job** lifecycle with full/delta/target partitions, not a two-representation online billing schema cutover.
 
 **Transferred decision test:** ask which representation/job is authoritative *at each phase*, whether former execution remains runnable after authority switches, which exact mismatch triggers rollback, and how CDC errors avoid contaminating later partitions. A row-count equality alone cannot answer those questions. For any other legacy system, choose stages from its own data-write semantics and consumer contracts; the above are historically observed, not a universal migration state machine.
 
@@ -120,10 +120,10 @@ A data modernization gate needs to state **which invariant is under test**:
 
 | System and dated first-party example | Authority and observable contract | What a successful comparison establishes | What remains unproved |
 |---|---|---|---|
-| [Stripe online subscriptions, 2017](../stripe-online-subscriptions-migration.md), ST01 | Mutable Customer representation → dedicated subscriptions table; old API behavior preserved | Shadow Scientist reads match for inspected requests and cases | Every mutation race, unobserved client, rollback after old data deletion |
-| [Netflix Cassandra→Iceberg, 2026](../netflix-casspactor-shadow-migration.md), N11 | Immutable backup snapshot and materialized output per workflow | Both set differences **C−M and M−C** are empty at a comparable snapshot | Business truth if *both* connectors implement the same wrong semantics |
-| [Discord Cassandra→Scylla, 2022 reported 2023](../discord-cassandra-scylladb-messages.md), DI01 | One high-volume message store and time/partition query semantics | Migrated ranges, backed by checkpoints and sampled old/new reads | Every historical tombstone, all unique message identities, future hot-partition immunity |
-| [Meta ingestion, 2026](../meta-ingestion-shadow-migration-lifecycle.md), ME03 | Production table updated by one job while the other runs shadow | Row/column checksums and partitions agree for observed data windows | Full end-user business interpretation, all CDC failure handling, indefinite equivalence |
+| [Stripe online subscriptions, 2017](../stripe-online-subscriptions-migration.md), src.m9-st01 | Mutable Customer representation → dedicated subscriptions table; old API behavior preserved | Shadow Scientist reads match for inspected requests and cases | Every mutation race, unobserved client, rollback after old data deletion |
+| [Netflix Cassandra→Iceberg, 2026](../netflix-casspactor-shadow-migration.md), src.m9-n11 | Immutable backup snapshot and materialized output per workflow | Both set differences **C−M and M−C** are empty at a comparable snapshot | Business truth if *both* connectors implement the same wrong semantics |
+| [Discord Cassandra→Scylla, 2022 reported 2023](../discord-cassandra-scylladb-messages.md), src.m9-di01 | One high-volume message store and time/partition query semantics | Migrated ranges, backed by checkpoints and sampled old/new reads | Every historical tombstone, all unique message identities, future hot-partition immunity |
+| [Meta ingestion, 2026](../meta-ingestion-shadow-migration-lifecycle.md), src.m9-me03 | Production table updated by one job while the other runs shadow | Row/column checksums and partitions agree for observed data windows | Full end-user business interpretation, all CDC failure handling, indefinite equivalence |
 
 These reports represent **different data shapes and observation windows**. It is incorrect to generalize one row-count or sample-match gate across mutable OLTP authority, immutable batch output, historical migration ranges and streaming CDC feeds. For a new design, first identify whether the business invariant is *identity*, *value equality*, *operation order*, *referential consistency*, *side-effect exactly-once*, or *bounded freshness*.
 
@@ -164,6 +164,6 @@ No row in this table establishes a universal choice; alternatives are **analytic
 
 The company cases are not A/B comparisons of two architectures under one workload. Published outcomes describe different organizations, production periods, release versions, traffic mixes and operating constraints. This playbook compares *mechanisms and constraints*, not raw numerical results across companies.
 
-Before passing a recommendation to Rocinante, an agent should return: legacy facts, requirement/SLO evidence, selected/avoided pattern, evidence rows with company/date/source ID, alternative mechanism, caveats, a reversible transition sequence, what would falsify the choice, and whether human review is needed. Never invent what original engineering teams rejected.
+Before presenting a recommendation to its user, an architecture-analysis agent should return: legacy facts, requirement/SLO evidence, selected/avoided pattern, evidence rows with company/date/source ID, alternative mechanism, caveats, a reversible transition sequence, what would falsify the choice, and whether human review is needed. Never invent what original engineering teams rejected.
 
 Sources are linked through each original case page above, ultimately referring to [the M9 public source register](../../../sources/REAL_WORLD_ARCHITECTURE_CASES.md). All analytical ADRs are original Tycho examples. **Independent review:** #121, not yet completed.

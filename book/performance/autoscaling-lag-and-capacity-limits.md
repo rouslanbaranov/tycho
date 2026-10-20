@@ -185,6 +185,21 @@ An evaluation should use the same replayable offered demand for baseline and alt
 
 **Unverified:** everything numeric in the burst example, all diagrams, practical thresholds, cost and failure outcomes are synthetic. The chapter was not executed as a cloud/autoscaler experiment, does not prove provider interoperability, and has not been independently reviewed. It must be placed under the final V07/C06 chapter structure after content-completeness acceptance.
 
+## Engineering walkthrough — A burst ends before new replicas become useful
+
+**Original hypothetical control loop:** arrival intensity doubles for 40 seconds. Metrics take 15 seconds to capture and be sampled; the controller decision takes 10 more; node scheduling takes 20; application startup and data warm-up need another 25. The first additional healthy capacity would therefore become useful around `15+10+20+25=70` seconds after the triggering change—**after the burst ends**. These invented delays are not documented Kubernetes defaults or observed service timings.
+
+| Stage | Clock from onset (synthetic) | Required observation |
+|---|---:|---|
+| Measurement + controller | 0–25 s | Distinguish offered load from already-shed load |
+| Scheduling | 25–45 s | Placement quota, spare nodes, topology constraints |
+| Readiness + warm-up | 45–70 s | App and downstream actually ready; cache/pool warming counted |
+| Scale-in | After demand falls and stability window passes | Drain long-lived work and prevent retry oscillation |
+
+**Negative case:** all extra replicas connect to the same database lock on a single hot reservation key. Adding replicas can raise conflict retries and make correct throughput worse while increasing instance cost. A reactive autoscaler cannot replace bounded admission, pre-warming or removal of serialized bottlenecks.
+
+**Proposed evaluation, not performed:** inject a 40-second arrival spike and a separate 10-minute step load, record time from first offered demand to *correct* extra capacity, retries, warm-up, cost and scale-in loss. Compare reserved headroom, pre-scale schedule, dynamic scaling and a simpler DB optimization. Choose according to an actual workload timescale rather than interpreting the number of configured replicas as achieved availability.
+
 ## Navigation
 
 - Current landing: [Performance](README.md), future owner V07/C06 in [proposed TOC](../PROPOSED-STRUCTURE.md).

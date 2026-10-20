@@ -153,6 +153,25 @@ A proposed evaluation would compare:
 
 A method producing fewer tokens but worse claim support has **failed** a correctness gate, even if its query latency is lower. Likewise, reporting a high Recall@k on a toy dataset is not proof that human readers can answer practical architecture questions.
 
+
+### Worked evaluation: a correct-looking rank list can fail authorization and citation freshness
+
+**Original hypothetical test set:** twenty engineering questions have relevance judgments created from a **frozen, authorized corpus snapshot**. One question requests a tenant-specific account-ownership mechanism. A lexical engine returns the only exact authorized canonical section at rank 3; an ANN engine returns two semantically similar but non-authorized records at ranks 1–2, and a hybrid retriever returns an obsolete revision at rank 1. These are invented rankings for method explanation, not a Tycho index run.
+
+A meaningful evaluation needs **three separate correctness gates**:
+
+| Gate | Denominator and observation | Example failure |
+|---|---|---|
+| Eligible retrieval relevance | Judged **authorized** relevant documents for each question; report Recall@k and nDCG@k with unjudged handling declared | High global semantic similarity hides the only eligible owner |
+| Access correctness | All exposed hits, titles, snippets, links and downstream expansions | Even one unauthorized preview is unacceptable regardless of nDCG |
+| Citation/source freshness | Retrieved claim's source revision and canonical document generation at query time | High-ranking old citation supports a removed API contract |
+
+For a simple manual illustration, if a query has two judged eligible relevant documents and only one appears in the first five results, eligible Recall@5 is **1/2**, not "five results returned". Without a complete judgment pool one must disclose that this is recall **against known judgments**, not absolute relevance. A 20-question corpus is much too small to claim general search quality for a broad book.
+
+**Failure/recovery:** after a source edit or permission change, an index generation may temporarily contain old content. Rebuild or delta-update from a pinned snapshot, verify that tombstoned paths and revoked scopes cannot be served through old caches, then atomically publish a coherent generation. If ACL filtering or source revision cannot be trusted, **fail closed** for affected content instead of returning a confident answer from a stale snippet. A lexical fallback can preserve access to exact terms when embeddings drift, but it still must satisfy access and provenance gates.
+
+The [TREC relevance-judgments resource](https://trec.nist.gov/data/reljudge_eng.html) illustrates qrels and judgments; [BEIR](https://github.com/beir-cellar/beir) offers reproducible evaluation methods. Neither establishes a benchmark score or index quality for Tycho. **No corpus evaluation, index rebuild, experiment or answer-quality study was executed.** This chapter owns retrieval evaluation; [ANN](vector-hnsw-faiss-pgvector.md) owns filtered nearest-neighbor mechanics and [security](../security/safe-agent-access-and-knowledge-isolation.md) owns permissions.
+
 ## 7. Failure and recovery
 
 | Failure | Safe behavior or required repair |
@@ -178,3 +197,11 @@ These scenarios are proposed requirements, not observed incidents.
 All queries, scores, data, diagrams, source snapshots and tests here are original hypothetical examples. No index, embeddings, graph, training, test fixture, evaluation run or independent expert review was executed. The chapter adds **System Design education only**, and does not change Tycho's separate retrieval infrastructure roadmap or resurrect a curated knowledge graph.
 
 **Navigation:** proposed **V06/C07** in [book outline](../PROPOSED-STRUCTURE.md), current [search architecture landing](README.md). Read [Lexical full-text](lexical-indexing-bm25-and-sql-fts.md), [Vector/ANN](vector-hnsw-faiss-pgvector.md), [Hybrid retrieval](hybrid-ranking-graph-and-evaluation.md), [Graph traversal as educational topic](graph-data-models-and-traversal.md).
+
+## Applied M9 evidence: what transfers and what does not
+
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
+
+**Case lens — [Discord — Search index cells](../cases/discord-search-index-cells.md)**. **Relevant mechanism or architectural contrast:** Index cells, queue changes and shard-key evolution address different search availability and growth constraints. **Not established by this report/playbook:** Search-cell results do not establish universal optimal shard sizes or retrieval quality for unrelated indexes.
+
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

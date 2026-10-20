@@ -1,5 +1,8 @@
 # M9 / E16-08 — Case Review Matrix and Acceptance Checkpoint
 
+> **Current-state overlay — 2026-10-20 (unmerged PR #218):** The older 'do not close #121/M9' and 'PR #212 Draft' statements are historical, from before owner-scoped integrated-draft acceptance and #216 merge. M9 #121 is now CLOSED. Do not invent a named external reviewer or a new independent claim-by-claim certificate. The 35 applied items remain 29 historical cases plus six synthetic decision playbooks. See [canonical project state](../STATE.md) and [reconciliation](../PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 ## Current M9 package disposition — 2026-10-20
 
 Independent acceptance is **COMPLETED, owner-confirmed** for the integrated
@@ -15,7 +18,7 @@ reviewer identity or per-case inspection report is invented by this update.
 
 ## Integrated-branch evidence checkpoint — 2026-10-19
 
-**Scoped publisher comparison:** [M9 Shopify first-party source spot-check](M9_SHOPIFY_SOURCE_SPOTCHECK_2026-10-19.md) reopened SH01 (2019-02-21) and SH02 (2020-09-16) and checked **12 bounded historical assertions** represented in the [modular-monolith](../../book/cases/shopify-modular-monolith.md) and [Packwerk](../../book/cases/shopify-packwerk-boundary-evolution.md) drafts, also relevant to the [monolith-versus-services comparison](../../book/cases/decisions/monolith-vs-services.md). A misleading introductory suggestion that domain enforcement was already complete in 2019 was **corrected** to reflect the ongoing rollout and later incomplete 2020 component state. Other selected source statements matched publisher-scoped sections and periods; **no independent qualified human technical/copyright review, license clearance, controlled benchmark or 2026 topology was established**.
+**Scoped publisher comparison:** [M9 Shopify first-party source spot-check](M9_SHOPIFY_SOURCE_SPOTCHECK_2026-10-19.md) reopened src.m9-sh01 (2019-02-21) and src.m9-sh02 (2020-09-16) and checked **12 bounded historical assertions** represented in the [modular-monolith](../../book/cases/shopify-modular-monolith.md) and [Packwerk](../../book/cases/shopify-packwerk-boundary-evolution.md) drafts, also relevant to the [monolith-versus-services comparison](../../book/cases/decisions/monolith-vs-services.md). A misleading introductory suggestion that domain enforcement was already complete in 2019 was **corrected** to reflect the ongoing rollout and later incomplete 2020 component state. Other selected source statements matched publisher-scoped sections and periods; **no independent qualified human technical/copyright review, license clearance, controlled benchmark or 2026 topology was established**.
 
 **Whole-book static cross-check:** [pinned integrated source scan](../INTEGRATED_BOOK_STATIC_CHECKPOINT_2026-10-19.md) fetched **136/136 Markdown files under book** at commit `ff88fe334050c6e429941cb514bdd02150fa6be2`; scanned 1,623 link occurrences with no missing local file targets and found no single-H1 or odd-backtick-fence anomalies. This did **not** run the Python premerge/M9 validators, resolve anchors, render Mermaid or verify external sources. Because Shopify content was edited after that pinned scan, rerun whole-tree validators on the eventual integration release candidate.
 
@@ -29,7 +32,7 @@ reviewer identity or per-case inspection report is invented by this update.
 
 ## Scope frozen for this review preparation
 
-- Source register: **43 unique candidates**, **41** with at least one bounded public claim or deliberately narrow publisher-scoped abstract/team-charter statement, **2 deferred** (N14 Conductor primary original not readable; ST02 Stripe TypeScript primary redirects to metadata). These two are **excluded from asserting technical outcomes**.
+- Source register: **43 unique candidates**, **41** with at least one bounded public claim or deliberately narrow publisher-scoped abstract/team-charter statement, **2 deferred** (src.m9-n14 Conductor primary original not readable; src.m9-st02 Stripe TypeScript primary redirects to metadata). These two are **excluded from asserting technical outcomes**.
 - Pages: **29** bounded original case drafts, including **12 Netflix** and **17 other-company** cases, indexed from `book/cases/README.md`.
 - Comparisons: **6** case-backed synthetic decision playbooks, not company ADRs.
 - Agent evaluation: **60** proposed retrieval test fixtures (21 answerable, 26 unsupported/false-claim rejection, 13 insufficient evidence) plus **2** example records and a Draft 2020-12 *proposed* JSON schema.
@@ -40,7 +43,7 @@ reviewer identity or per-case inspection report is invented by this update.
 
 | Check | Evidence / result | Status |
 |---|---|---|
-| Source register vs admission matrix | 43 registered source IDs correspond one-to-one with 43 audit rows, no duplicates; N14/ST02 explicitly deferred | **PASS** for identity/disposition |
+| Source register vs admission matrix | 43 registered source IDs correspond one-to-one with 43 audit rows, no duplicates; src.m9-n14/src.m9-st02 explicitly deferred | **PASS** for identity/disposition |
 | Case index | 29 pages individually fetched from `main`, stable `case.<company>.<slug>` IDs observed | **PASS** for presence/shape |
 | Mermaid/Markdown structural check | In 29/29 case pages: ≥1 Mermaid block, paired backtick fences, first-party cited URL, review state clearly identified | **PASS** for observed text patterns; not a Mermaid renderer check |
 | Decision corpus | Six linked comparison pages, each with synthetic constraints and at least two contrasting cases plus decision guardrails | **PASS** for existence, not substantive independent endorsement |
@@ -55,35 +58,35 @@ reviewer identity or per-case inspection report is invented by this update.
 
 | Review ID | Case file | Primary provenance IDs | Required semantic adversarial check | Acceptance |
 |---|---|---|---|---|
-| NF01 | [netflix-java-platform-convergence.md](../../book/cases/netflix-java-platform-convergence.md) | N02/N03/N04 | 2023 vs 2026 Java fleet; abstract not deployment | Draft; pending independent review |
-| NF11 | [netflix-data-project-durable-workload-identity.md](../../book/cases/netflix-data-project-durable-workload-identity.md) | N17 | Durable project identity vs overbroad grants; future rightsizing still planned | Draft; pending independent review |
-| NF02 | [netflix-zuul2-nonblocking-gateway.md](../../book/cases/netflix-zuul2-nonblocking-gateway.md) | N07/N08 | CPU gain workload-specific; dynamic wiki revision unpinned | Draft; pending independent review |
-| NF03 | [netflix-dgs-spring-graphql-convergence.md](../../book/cases/netflix-dgs-spring-graphql-convergence.md) | N09/N10 | 2024 initial CPU regression vs DGS10 later parity | Draft; pending independent review |
-| NF04 | [netflix-java21-virtual-thread-pinning.md](../../book/cases/netflix-java21-virtual-thread-pinning.md) | N06 | Java21 only; 4 carriers, not permanent Loom ban | Draft; pending independent review |
-| NF12 | [netflix-grpc-cpu-workerpool-virtual-thread-regression.md](../../book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md) | N02, QCon 2023 | CPU-bound outbound gRPC pool got a few percent slower on virtual threads; qualitative, not exact benchmark; distinct from 2024 tracing pinning | Draft; pending independent review |
-| NF05 | [netflix-generational-zgc-workloads.md](../../book/cases/netflix-generational-zgc-workloads.md) | N05 | Generational vs non-generational ZGC, G1, Parallel distinct | Draft; pending independent review |
-| NF06 | [netflix-hotspot-false-true-sharing.md](../../book/cases/netflix-hotspot-false-true-sharing.md) | N18 | 16→48 vCPU, false vs true sharing, fixed 55% CPU target | Draft; pending independent review |
-| NF07 | [netflix-seven-year-cloud-rearchitecture.md](../../book/cases/netflix-seven-year-cloud-rearchitecture.md) | N01 | 2008 trigger to Jan 2016, company retrospective not A/B | Draft; pending independent review |
-| NF08 | [netflix-chaos-kong-regional-failover.md](../../book/cases/netflix-chaos-kong-regional-failover.md) | N15 | Chaos Kong historical 2015; failover not availability guarantee | Draft; pending independent review |
-| NF09 | [netflix-casspactor-shadow-migration.md](../../book/cases/netflix-casspactor-shadow-migration.md) | N11 | Two-sided set comparison, shadow and fallback | Draft; pending independent review |
-| NF10 | [netflix-cassandra-dynamic-time-series-splits.md](../../book/cases/netflix-cassandra-dynamic-time-series-splits.md) | N12 | Partition split checksum and fallback vs future time slice | Draft; pending independent review |
-| UB01 | [uber-doma-domains.md](../../book/cases/uber-doma-domains.md) | U01 | Historical service sprawl, domain gateway not arbitrary service split | Draft; pending independent review |
-| UB04 | [uber-cinnamon-admission-and-fairness.md](../../book/cases/uber-cinnamon-admission-and-fairness.md) | U06 | Failed query-tier quotas vs PID/storage-local enforcement; 5,400/3,000 QPS context | Draft; pending independent review |
-| UB02 | [uber-mezzanine-pg-to-schemaless.md](../../book/cases/uber-mezzanine-pg-to-schemaless.md) | U02 | 2014 trip storage, API/ID seam; not 2020 DOMA | Draft; pending independent review |
-| UB03 | [uber-mysql-to-myrocks.md](../../book/cases/uber-mysql-to-myrocks.md) | U03 | MySQL 8 preparatory migration >1yr, read/space trade-off | Draft; pending independent review |
-| SH01 | [shopify-modular-monolith.md](../../book/cases/shopify-modular-monolith.md) | SH01 | Modular monolith decision not proof zero services | Draft; pending independent review |
-| SH02 | [shopify-packwerk-boundary-evolution.md](../../book/cases/shopify-packwerk-boundary-evolution.md) | SH02 | Component work incomplete by 2020; graph cycle exceptions | Draft; pending independent review |
-| SH03 | [shopify-helix-checkpoint-gated-native-migration.md](../../book/cases/shopify-helix-checkpoint-gated-native-migration.md) | SH04 | Shop shipped vs Shopify App underway, default approval | Draft; pending independent review |
-| AB01 | [airbnb-jvm-monorepo-bazel.md](../../book/cases/airbnb-jvm-monorepo-bazel.md) | A01 | Multi-year rollout, runtime parity, self-reported performance | Draft; pending independent review |
-| ST01 | [stripe-online-subscriptions-migration.md](../../book/cases/stripe-online-subscriptions-migration.md) | ST01 | Read/write authority sequencing and online correctness | Draft; pending independent review |
-| DI01 | [discord-cassandra-scylladb-messages.md](../../book/cases/discord-cassandra-scylladb-messages.md) | DI01 | Sample read equality vs full migration, tombstones | Draft; pending independent review |
-| DI02 | [discord-search-index-cells.md](../../book/cases/discord-search-index-cells.md) | DI02 | Search indexing p99 cannot conflate with message DB p99 | Draft; pending independent review |
-| SP01 | [spotify-tech-migration-long-tail.md](../../book/cases/spotify-tech-migration-long-tail.md) | SP01 | 2020 non-LLM process; 99% hidden migrations was aspiration | Draft; pending independent review |
-| SP02 | [spotify-honk-data-consumer-migration.md](../../book/cases/spotify-honk-data-consumer-migration.md) | SP02/SP03 | 240 rolled-out PRs != merged; 1,800 are dependencies | Draft; pending independent review |
-| CF01 | [cloudflare-super-slurper-queues.md](../../book/cases/cloudflare-super-slurper-queues.md) | CF01 | 5x benchmark 75k objects; queue duplicate/idempotency | Draft; pending independent review |
-| ME02 | [meta-ingestion-shadow-migration-lifecycle.md](../../book/cases/meta-ingestion-shadow-migration-lifecycle.md) | ME03 | Shadow row counts/checksums vs business truth; 100% transition is company reported | Draft; pending independent review |
-| ME01 | [meta-tao-social-graph-serving.md](../../book/cases/meta-tao-social-graph-serving.md) | ME01 | 2013 graph association serving, eventual consistency default | Draft; pending independent review |
-| LI01 | [linkedin-kafka-tiered-completeness.md](../../book/cases/linkedin-kafka-tiered-completeness.md) | LI01 | 2015 cluster counts not current; audit totals not event equality | Draft; pending independent review |
+| NF01 | [netflix-java-platform-convergence.md](../../book/cases/netflix-java-platform-convergence.md) | src.m9-n02/src.m9-n03/src.m9-n04 | 2023 vs 2026 Java fleet; abstract not deployment | Draft; pending independent review |
+| NF11 | [netflix-data-project-durable-workload-identity.md](../../book/cases/netflix-data-project-durable-workload-identity.md) | src.m9-n17 | Durable project identity vs overbroad grants; future rightsizing still planned | Draft; pending independent review |
+| NF02 | [netflix-zuul2-nonblocking-gateway.md](../../book/cases/netflix-zuul2-nonblocking-gateway.md) | src.m9-n07/src.m9-n08 | CPU gain workload-specific; dynamic wiki revision unpinned | Draft; pending independent review |
+| NF03 | [netflix-dgs-spring-graphql-convergence.md](../../book/cases/netflix-dgs-spring-graphql-convergence.md) | src.m9-n09/src.m9-n10 | 2024 initial CPU regression vs DGS10 later parity | Draft; pending independent review |
+| NF04 | [netflix-java21-virtual-thread-pinning.md](../../book/cases/netflix-java21-virtual-thread-pinning.md) | src.m9-n06 | Java21 only; 4 carriers, not permanent Loom ban | Draft; pending independent review |
+| NF12 | [netflix-grpc-cpu-workerpool-virtual-thread-regression.md](../../book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md) | src.m9-n02, QCon 2023 | CPU-bound outbound gRPC pool got a few percent slower on virtual threads; qualitative, not exact benchmark; distinct from 2024 tracing pinning | Draft; pending independent review |
+| NF05 | [netflix-generational-zgc-workloads.md](../../book/cases/netflix-generational-zgc-workloads.md) | src.m9-n05 | Generational vs non-generational ZGC, G1, Parallel distinct | Draft; pending independent review |
+| NF06 | [netflix-hotspot-false-true-sharing.md](../../book/cases/netflix-hotspot-false-true-sharing.md) | src.m9-n18 | 16→48 vCPU, false vs true sharing, fixed 55% CPU target | Draft; pending independent review |
+| NF07 | [netflix-seven-year-cloud-rearchitecture.md](../../book/cases/netflix-seven-year-cloud-rearchitecture.md) | src.m9-n01 | 2008 trigger to Jan 2016, company retrospective not A/B | Draft; pending independent review |
+| NF08 | [netflix-chaos-kong-regional-failover.md](../../book/cases/netflix-chaos-kong-regional-failover.md) | src.m9-n15 | Chaos Kong historical 2015; failover not availability guarantee | Draft; pending independent review |
+| NF09 | [netflix-casspactor-shadow-migration.md](../../book/cases/netflix-casspactor-shadow-migration.md) | src.m9-n11 | Two-sided set comparison, shadow and fallback | Draft; pending independent review |
+| NF10 | [netflix-cassandra-dynamic-time-series-splits.md](../../book/cases/netflix-cassandra-dynamic-time-series-splits.md) | src.m9-n12 | Partition split checksum and fallback vs future time slice | Draft; pending independent review |
+| UB01 | [uber-doma-domains.md](../../book/cases/uber-doma-domains.md) | src.m9-u01 | Historical service sprawl, domain gateway not arbitrary service split | Draft; pending independent review |
+| UB04 | [uber-cinnamon-admission-and-fairness.md](../../book/cases/uber-cinnamon-admission-and-fairness.md) | src.m9-u06 | Failed query-tier quotas vs PID/storage-local enforcement; 5,400/3,000 QPS context | Draft; pending independent review |
+| UB02 | [uber-mezzanine-pg-to-schemaless.md](../../book/cases/uber-mezzanine-pg-to-schemaless.md) | src.m9-u02 | 2014 trip storage, API/ID seam; not 2020 DOMA | Draft; pending independent review |
+| UB03 | [uber-mysql-to-myrocks.md](../../book/cases/uber-mysql-to-myrocks.md) | src.m9-u03 | MySQL 8 preparatory migration >1yr, read/space trade-off | Draft; pending independent review |
+| src.m9-sh01 | [shopify-modular-monolith.md](../../book/cases/shopify-modular-monolith.md) | src.m9-sh01 | Modular monolith decision not proof zero services | Draft; pending independent review |
+| src.m9-sh02 | [shopify-packwerk-boundary-evolution.md](../../book/cases/shopify-packwerk-boundary-evolution.md) | src.m9-sh02 | Component work incomplete by 2020; graph cycle exceptions | Draft; pending independent review |
+| src.m9-sh03 | [shopify-helix-checkpoint-gated-native-migration.md](../../book/cases/shopify-helix-checkpoint-gated-native-migration.md) | src.m9-sh04 | Shop shipped vs Shopify App underway, default approval | Draft; pending independent review |
+| AB01 | [airbnb-jvm-monorepo-bazel.md](../../book/cases/airbnb-jvm-monorepo-bazel.md) | src.m9-a01 | Multi-year rollout, runtime parity, self-reported performance | Draft; pending independent review |
+| src.m9-st01 | [stripe-online-subscriptions-migration.md](../../book/cases/stripe-online-subscriptions-migration.md) | src.m9-st01 | Read/write authority sequencing and online correctness | Draft; pending independent review |
+| src.m9-di01 | [discord-cassandra-scylladb-messages.md](../../book/cases/discord-cassandra-scylladb-messages.md) | src.m9-di01 | Sample read equality vs full migration, tombstones | Draft; pending independent review |
+| src.m9-di02 | [discord-search-index-cells.md](../../book/cases/discord-search-index-cells.md) | src.m9-di02 | Search indexing p99 cannot conflate with message DB p99 | Draft; pending independent review |
+| src.m9-sp01 | [spotify-tech-migration-long-tail.md](../../book/cases/spotify-tech-migration-long-tail.md) | src.m9-sp01 | 2020 non-LLM process; 99% hidden migrations was aspiration | Draft; pending independent review |
+| src.m9-sp02 | [spotify-honk-data-consumer-migration.md](../../book/cases/spotify-honk-data-consumer-migration.md) | src.m9-sp02/src.m9-sp03 | 240 rolled-out PRs != merged; 1,800 are dependencies | Draft; pending independent review |
+| src.m9-cf01 | [cloudflare-super-slurper-queues.md](../../book/cases/cloudflare-super-slurper-queues.md) | src.m9-cf01 | 5x benchmark 75k objects; queue duplicate/idempotency | Draft; pending independent review |
+| src.m9-me02 | [meta-ingestion-shadow-migration-lifecycle.md](../../book/cases/meta-ingestion-shadow-migration-lifecycle.md) | src.m9-me03 | Shadow row counts/checksums vs business truth; 100% transition is company reported | Draft; pending independent review |
+| src.m9-me01 | [meta-tao-social-graph-serving.md](../../book/cases/meta-tao-social-graph-serving.md) | src.m9-me01 | 2013 graph association serving, eventual consistency default | Draft; pending independent review |
+| src.m9-li01 | [linkedin-kafka-tiered-completeness.md](../../book/cases/linkedin-kafka-tiered-completeness.md) | src.m9-li01 | 2015 cluster counts not current; audit totals not event equality | Draft; pending independent review |
 
 ## Comparative playbook review matrix
 
@@ -135,7 +138,7 @@ After [PR #170](https://github.com/rouslanbaranov/tycho/pull/170) and [PR #176](
 
 ## Second review checkpoint — 29 cases and 60 scenarios
 
-[PR #174](https://github.com/rouslanbaranov/tycho/pull/174) added the 2023 Netflix CPU-intensive outgoing gRPC client worker-pool virtual-thread *negative result* as a separate N02 case from the 2024 tracing pinning incident N06. [PR #176](https://github.com/rouslanbaranov/tycho/pull/176) linked this evidence into the cross-company concurrency ADR and added four expectation fixtures (Q57–Q60). The current proposed set is **60**: **21** answerable, **26** false-claim rejection and **13** insufficient-evidence. Repository content was checked manually through connected GitHub for 29 case IDs, original diagrams/paired fences, source links and 60 distinct fixture IDs from the public source register. All current **authoring issues #115–#119 are marked complete**, while **#121 stays open** for independent technical, licensing and temporal verification and genuine retrieval runtime execution. The draft state of every page remains unchanged. No real MCP score or external benchmark can be inferred from these structural checks.
+[PR #174](https://github.com/rouslanbaranov/tycho/pull/174) added the 2023 Netflix CPU-intensive outgoing gRPC client worker-pool virtual-thread *negative result* as a separate src.m9-n02 case from the 2024 tracing pinning incident src.m9-n06. [PR #176](https://github.com/rouslanbaranov/tycho/pull/176) linked this evidence into the cross-company concurrency ADR and added four expectation fixtures (Q57–Q60). The current proposed set is **60**: **21** answerable, **26** false-claim rejection and **13** insufficient-evidence. Repository content was checked manually through connected GitHub for 29 case IDs, original diagrams/paired fences, source links and 60 distinct fixture IDs from the public source register. All current **authoring issues #115–#119 are marked complete**, while **#121 stays open** for independent technical, licensing and temporal verification and genuine retrieval runtime execution. The draft state of every page remains unchanged. No real MCP score or external benchmark can be inferred from these structural checks.
 
 ## Reopening #121 after unsupported closure — acceptance integrity
 

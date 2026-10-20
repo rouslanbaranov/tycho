@@ -1,5 +1,8 @@
 # Public research sources
 
+> **Current-state overlay — 2026-10-20 (unmerged PR #218):** The source catalogue remains the public-source admission authority, **not** a declaration that all 69 manuscript chapters lack technical research. The current manuscript has 69 deepened primary owners and 29 historical M9 case drafts, but zero independently accepted final-book chapter dispositions. Strict document metadata JSON Schema and offline routing/index tools already exist; the older 'formal JSON Schema planned' sentence refers to the initial source-discovery stage. See [canonical project state](../authoring/STATE.md) and [reconciliation](../authoring/PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 ## Purpose
 
 Provide a curated, independently public research base for the System Design book. The canonical inventory is [register.json](register.json). Browse the generated [catalogue](CATALOG.md), the [coverage map](COVERAGE.md), the [implementation map](IMPLEMENTATIONS.md), the [reading plan](READING-PLAN.md), and [known gaps](GAPS.md).
@@ -24,6 +27,6 @@ For every material claim, explain why the exact source supports it and state app
 
 ## Reproducible catalogue
 
-Run `python3 scripts/source_catalog.py` after changing the register. Run `python3 scripts/validate_sources.py` and `python3 scripts/source_catalog.py --check` before committing. Structural checks are implemented in Python; a formal JSON Schema remains planned.
+Run `python3 scripts/source_catalog.py` after changing the register. Run `python3 scripts/validate_sources.py` and `python3 scripts/source_catalog.py --check` before committing. Structural source-register checks are implemented in Python; strict **document metadata** and **normalized individual source-reference** JSON Schemas already exist in `schemas/` and are exercised by dedicated validators. The latter is **not** a wholesale JSON Schema replacement for the v2 source discovery register or a source-truth certificate; additional end-to-end source-register/API contracts may still be planned.
 
 Research, authoring and review are performed in the ChatGPT project. The GitHub repository stores the book and its supporting artifacts. No coding-assistant delegation is configured.

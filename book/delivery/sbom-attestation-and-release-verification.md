@@ -178,6 +178,22 @@ The final release decision additionally checks runtime and data outcomes. A full
 
 The diagrams, failures, candidate designs and validation experiments are original **hypothetical** teaching content. No artifact was built or signed, no tool was executed and no private system was consulted. Compatibility/semantic review and full Tycho editorial acceptance remain open.
 
+## Engineering walkthrough — Authentic artifact, incomplete evidence and denied promotion
+
+**Synthetic release case:** an artifact digest D is accompanied by build provenance referring to D, an SBOM generated from its dependency closure and a signature. Verification succeeds cryptographically but the SBOM omits a dynamically downloaded dependency, while the signer identity is outside the organization's approved builder policy. **No release authorization follows solely from cryptographic validity.**
+
+| Verification question | Required check | Unsafe inference |
+|---|---|---|
+| Subject | Every attestation identifies the exact immutable digest D | Matching filename is equivalent to matching bytes |
+| Builder | SLSA version/track and actual builder identity meet policy | A provenance JSON document proves trusted build execution |
+| Dependencies | SBOM format, subject and completeness limits are declared | SPDX/CycloneDX presence proves vulnerability-free code |
+| Signing | Certificate/key identity, verification chain and allowed issuer match policy | "Signature valid" means "deployment approved" |
+| Deployment | Environment, change authorization and old/new compatibility pass | Artifact integrity guarantees business correctness |
+
+The SLSA 1.2, SPDX, CycloneDX and Sigstore documents cited in this chapter describe distinct evidence classes; they should be used under exact version/verification scope. A missing SBOM can be a hard failure for a regulated release or a documented exception under a more permissive policy—**exception authority must be explicit**, not a silent validator bypass.
+
+**Proposed, not executed:** swap an artifact digest while keeping the original attestation, present an SBOM for another build, sign with an unknown identity and attempt a deployment to a forbidden environment. Assert that authorization fails even where signature parsing succeeds. A reproducible rejection record should state *which gate* failed and what evidence would permit reconsideration, without revealing credentials or granting broad bypass rights.
+
 ## Navigation
 
 - Proposed owner V08/C02 in [planned contents](../PROPOSED-STRUCTURE.md); current [delivery landing](README.md).

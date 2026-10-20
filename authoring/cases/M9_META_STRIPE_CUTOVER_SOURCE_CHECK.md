@@ -4,7 +4,7 @@
 
 ## Two real organizations, different state machines
 
-| | Stripe ST01 | Meta ME03 |
+| | Stripe src.m9-st01 | Meta src.m9-me03 |
 |---|---|---|
 | Original | Jacqueline Xu Atlas, [*Online migrations at scale*](https://stripe.com/blog/online-migrations), **2017-02-02** | Zihao Tao et al., [*Migrating Data Ingestion Systems at Meta Scale*](https://engineering.fb.com/2026/05/12/data-infrastructure/migrating-data-ingestion-systems-at-meta-scale/), **2026-05-12** |
 | Legacy responsibility | Subscription representation embedded on Customer records | Customer-owned CDC ingestion jobs loading MySQL-backed warehouse data |

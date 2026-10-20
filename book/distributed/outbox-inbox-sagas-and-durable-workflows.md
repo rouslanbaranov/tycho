@@ -159,6 +159,24 @@ One service and one database transaction are often simpler than a saga. Move to 
 
 Neither is universally superior. Measure the number of participating owners, duration, idempotency requirements, recoverability, operations burden and business acceptance conditions.
 
+
+### Worked recovery: an outbox relay that dies after delivery
+
+**Original fictional transaction:** a workshop service commits booking R7 and an `outbox_event` row E9 in *one local database transaction*. A relay publishes E9 to a broker, but crashes before marking its local publication checkpoint. After restarting, it publishes E9 again. The source business fact remains one booking; deliveries are two attempts.
+
+| Boundary | Persisted state | Correct failure response |
+|---|---|---|
+| Booking + E9 commit | R7 and E9 durable together | Relay can recover from the outbox; no atomicity is claimed with the broker |
+| First broker publish accepted | Broker may contain E9; relay checkpoint unknown | Retrying publication is possible; duplicate E9 expected |
+| Consumer receives E9 twice | Event ID repeats; two network deliveries | One consumer-local effect using durable inbox/dedup + business update |
+| Compensation requested after downstream shipment | Local cancellation cannot unsend physical shipment | Explicit business compensation and an unresolved/manual state if reversal is impossible |
+
+The [Transactional Outbox pattern](https://microservices.io/patterns/data/transactional-outbox) supports persisting publication intent with the business change and recognizes relay duplication. The [Idempotent Consumer pattern](https://microservices.io/patterns/communication-style/idempotent-consumer.html) addresses duplicate effect handling at the consumer's *own* durability boundary. A [Saga](https://microservices.io/patterns/data/saga.html) coordinates independent local transactions and compensations; compensation is not an automatic global rollback.
+
+**Alternative and limit:** if an operation needs one atomic local invariant, keep it in the same transaction when feasible. Introduce a durable workflow only when independent long-lived participants require it, and describe irreversible steps, retry limits, authorization and operator repair. An external email or payment service may not expose the exact dedup/reconciliation contract this design needs.
+
+**Proposed, not executed:** kill the relay after broker acknowledgment and before its checkpoint; replay E9 twice; crash the consumer after its effect but before broker acknowledgment; interrupt compensation after an irreversible step. Assert one intended local business effect, traceable progress and an explicit manual recovery state where exact undo is impossible. This chapter owns durable choreography; logical operation identity belongs to [V04/C04](retries-idempotency-and-ambiguous-effects.md).
+
 ## 6. Test failures rather than just the happy path
 
 A bounded design verification should inject: crash just before/after local state+outbox commit; relay crash after broker acknowledgment; duplicate deliveries processed concurrently; out-of-order events; restart of an orchestration instance mid-step; definitive failure and compensation failure; old/new event schema coexistence; lost external acknowledgment after irreversible effect.

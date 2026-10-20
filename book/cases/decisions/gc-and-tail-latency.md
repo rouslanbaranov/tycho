@@ -60,9 +60,9 @@ Two hypothetical Java services share a platform. Service A answers online gRPC c
 
 | Actual company case | What its primary source does and does not establish |
 |---|---|
-| [Netflix ZGC](../netflix-generational-zgc-workloads.md) | N05: G1, old ZGC, generational ZGC and Parallel contrasts |
-| [Netflix HotSpot](../netflix-hotspot-false-true-sharing.md) | N18: throughput constrained by sharing below the Java code |
-| [Discord datastore](../discord-cassandra-scylladb-messages.md) | DI01: Java Cassandra GC was one operational factor, but Scylla migration also involved data-service changes |
+| [Netflix ZGC](../netflix-generational-zgc-workloads.md) | src.m9-n05: G1, old ZGC, generational ZGC and Parallel contrasts |
+| [Netflix HotSpot](../netflix-hotspot-false-true-sharing.md) | src.m9-n18: throughput constrained by sharing below the Java code |
+| [Discord datastore](../discord-cassandra-scylladb-messages.md) | src.m9-di01: Java Cassandra GC was one operational factor, but Scylla migration also involved data-service changes |
 
 **Why the apparent conflict is useful:** Netflix reported generational ZGC helping its online service workload, yet described batch counterexamples benefiting Parallel GC; a different Netflix example gained capacity only after HotSpot cache-line fixes. Discord's GC experience motivated a storage-engine migration, which is **not** evidence that Java GC choice alone predicts database success.
 
@@ -91,7 +91,7 @@ flowchart TD
 
 **Use this evidence when:** a real system has the same dominant constraint, the relevant execution model/data semantics have been measured and its team can operate the new architecture.
 
-**Do not generalize when:** Do not treat a collector default as universal; never compare G1 to older non-generational ZGC and attribute the result to current generational ZGC; account for 3% heap native overhead reported in N05 and direct-memory needs.
+**Do not generalize when:** Do not treat a collector default as universal; never compare G1 to older non-generational ZGC and attribute the result to current generational ZGC; account for 3% heap native overhead reported in src.m9-n05 and direct-memory needs.
 
 **Independent decision dimensions to measure:** p99 and max pause, gRPC cancellation, retry multiplier, CPU at equal useful throughput, heap/native footprint, batches/hour, collector JDK/revision, THP configuration.
 
@@ -103,9 +103,9 @@ Choose normalized workload mixes → pin runtime images and collector flags → 
 
 ## Workload before collector: what the source can actually tell us
 
-[Netflix's March 2024 GC report](../netflix-generational-zgc-workloads.md) (N05) reports a significant **request-tail and retry-amplification** problem in latency-sensitive Java services. A stop-the-world pause can cause an upstream request timeout, trigger retries/hedging and thus increase work after the original pause ends. The publication distinguishes **G1**, **older non-generational ZGC**, **Generational ZGC**, and **Parallel GC**. Mixing them would produce a false architectural conclusion: older ZGC was about **36% more CPU-intensive** than G1 in one comparison, **generational** ZGC was around **10% better** than G1 on the described workload, and **Parallel** outperformed G1 by **6–8% throughput** in a particular precompute batch. These are **different experiments and denominators**.
+[Netflix's March 2024 GC report](../netflix-generational-zgc-workloads.md) (src.m9-n05) reports a significant **request-tail and retry-amplification** problem in latency-sensitive Java services. A stop-the-world pause can cause an upstream request timeout, trigger retries/hedging and thus increase work after the original pause ends. The publication distinguishes **G1**, **older non-generational ZGC**, **Generational ZGC**, and **Parallel GC**. Mixing them would produce a false architectural conclusion: older ZGC was about **36% more CPU-intensive** than G1 in one comparison, **generational** ZGC was around **10% better** than G1 on the described workload, and **Parallel** outperformed G1 by **6–8% throughput** in a particular precompute batch. These are **different experiments and denominators**.
 
-The [Netflix HotSpot sharing study](../netflix-hotspot-false-true-sharing.md) (N18) addresses a different cause of CPU waste: microarchitectural contention despite superficially reasonable Java code. The [Discord Cassandra→ScyllaDB migration](../discord-cassandra-scylladb-messages.md) (DI01) exposes GC as only one factor in database-node instability: hot partitions, compaction and request shaping also mattered. This is not an experiment showing that changing a collector would have replaced its storage-engine migration.
+The [Netflix HotSpot sharing study](../netflix-hotspot-false-true-sharing.md) (src.m9-n18) addresses a different cause of CPU waste: microarchitectural contention despite superficially reasonable Java code. The [Discord Cassandra→ScyllaDB migration](../discord-cassandra-scylladb-messages.md) (src.m9-di01) exposes GC as only one factor in database-node instability: hot partitions, compaction and request shaping also mattered. This is not an experiment showing that changing a collector would have replaced its storage-engine migration.
 
 ## Synthetic workload-specific selection matrix
 
@@ -132,7 +132,7 @@ This table is **Tycho synthetic analysis**, not a fleet-wide benchmark at any pu
 
 ## Interpret historical metrics without imaginary precision
 
-The N05 publication reports approximately **3% native memory overhead relative to heap size** for ZGC in its stated configuration and discusses Linux transparent huge pages and direct-buffer processing. Those are engineering considerations, not evidence that every service has the same RSS shift. The **one-hour** batch time saving in its Parallel-GC story is a publisher-reported example, not a prediction for Service B.
+The src.m9-n05 publication reports approximately **3% native memory overhead relative to heap size** for ZGC in its stated configuration and discusses Linux transparent huge pages and direct-buffer processing. Those are engineering considerations, not evidence that every service has the same RSS shift. The **one-hour** batch time saving in its Parallel-GC story is a publisher-reported example, not a prediction for Service B.
 
 For the question “Does Generational ZGC reduce p99 for my Java service?”, an agent needs the target JDK, observed pause-to-timeout causality, load, request class, active retry policy and CPU/native budget. Without those, the correct result is **insufficient evidence** with a proposed canary. It should return the version and historical evidence distinction, not a universal yes.
 
@@ -140,6 +140,6 @@ For the question “Does Generational ZGC reduce p99 for my Java service?”, an
 
 The company cases are not A/B comparisons of two architectures under one workload. Published outcomes describe different organizations, production periods, release versions, traffic mixes and operating constraints. This playbook compares *mechanisms and constraints*, not raw numerical results across companies.
 
-Before passing a recommendation to Rocinante, an agent should return: legacy facts, requirement/SLO evidence, selected/avoided pattern, evidence rows with company/date/source ID, alternative mechanism, caveats, a reversible transition sequence, what would falsify the choice, and whether human review is needed. Never invent what original engineering teams rejected.
+Before presenting a recommendation to its user, an architecture-analysis agent should return: legacy facts, requirement/SLO evidence, selected/avoided pattern, evidence rows with company/date/source ID, alternative mechanism, caveats, a reversible transition sequence, what would falsify the choice, and whether human review is needed. Never invent what original engineering teams rejected.
 
 Sources are linked through each original case page above, ultimately referring to [the M9 public source register](../../../sources/REAL_WORLD_ARCHITECTURE_CASES.md). All analytical ADRs are original Tycho examples. **Independent review:** #121, not yet completed.

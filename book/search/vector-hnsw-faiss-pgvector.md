@@ -147,11 +147,29 @@ Text alternative: ANN produces candidates, which are filtered for required topic
 - **Dedicated vector-search service/database:** may provide distributed ingestion/sharding/metadata features, but product/edition semantics vary. Do not name a winner without pinned documentation and equal evaluation conditions.
 - **Plain arrays in Python:** for a small corpus, exact similarity with a compact local index may be sufficient, easier to rebuild and cheaper to maintain than a distributed ANN platform.
 
-For a 900-page corpus the index size and latency need **measurement using actual chunk count, dimension, precision, metadata, distance and device**, not a universal extrapolation from document pages. A rough raw-vector budget can be calculated as `chunks × dimensions × bytes/component`, then add index graph/codebook, metadata, documents, replicas and persistence overhead.
+For any particular corpus, index size and latency need **measurement using actual chunk count, dimension, precision, metadata, distance and device**, not a universal extrapolation from the number of document pages. A rough raw-vector budget can be calculated as `chunks × dimensions × bytes/component`, then add index graph/codebook, metadata, documents, replicas and persistence overhead.
 
 ### Original size arithmetic
 
 A purely illustrative corpus of **4,500 chunks × 768 dimensions × 4 bytes (FP32)** requires **13,824,000 bytes** (about 13.2 MiB) of raw components. This is **not** a memory/SSD estimate for HNSW, metadata, source text or an actual Tycho build, and it assumes a model/dimension not selected by the project.
+
+
+### Worked filtered-ANN counterexample: vector recall versus authorized recall
+
+**Original synthetic corpus:** a shared knowledge system contains 10,000 vectors, but the requesting tenant is authorized to read only 100. An HNSW candidate scan returns forty approximate neighbors; only two are tenant-eligible after applying an authorization filter. A query with `LIMIT 10` can then return two results even though ten relevant authorized documents exist elsewhere in the corpus. This is a deliberately invented case, **not** a measured recall or a claim about the default behavior of every ANN engine.
+
+The [pgvector README, Filtering and Iterative Index Scans](https://github.com/pgvector/pgvector/blob/master/README.md) documents that with approximate indexes, predicates can be applied after candidate scanning and too few rows can survive. Its **0.8.0+** iterative-scan controls can continue scanning under configured bounds; partitioning or partial indexes can be alternatives for selected filters. These performance mechanisms must not become security gates.
+
+| Retrieval boundary | Required invariant | Falsifying observation |
+|---|---|---|
+| Authorization | Every visible title, snippet, citation and body is permitted for the caller | Any unauthorized result reaches ranking output, even if the final document open is denied |
+| ANN recall | Compare to **exact top-k restricted to eligible documents** | Low eligible recall hidden by high unfiltered recall |
+| Snapshot correctness | Index revision, embedding model and ACL revision remain compatible | Deleted or reclassified document survives through stale cached results |
+| Failure recovery | Able to use exact/lexical fallback or rebuild when ANN quality gate fails | Service declares empty evidence despite known authorized exact neighbors |
+
+A query-time tenant predicate and a policy-enforced access filter are different responsibilities. A shared vector index may choose candidate neighbors based on other tenants even if the final results are filtered; ranking leakage, query timing and insufficient eligible recall require separate threat and quality analysis. The [safe agent-access owner](../security/safe-agent-access-and-knowledge-isolation.md) owns policy enforcement.
+
+**Proposed, not executed:** build a permission-labeled evaluation set with frozen snapshot/model versions and representative tenant skews, then measure *eligible* Recall@10, unauthorized-result count, latency, memory and index rebuild time for exact, ANN, partitioned ANN and lexical/hybrid alternatives. Reject a technique that violates isolation regardless of its unfiltered ranking score. No embedding, index or ACL evaluation has been run for this chapter.
 
 ## 6. Failure cases and evaluation
 

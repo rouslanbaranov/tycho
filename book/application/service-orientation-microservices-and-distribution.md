@@ -155,6 +155,23 @@ An OpenAPI document or protobuf schema can declare message formats. It does not 
 
 No cell is a measured recommendation. A proven hard correctness violation disqualifies an option. If actual service autonomy or cost evidence is missing, **retain/measure first** is a defensible output.
 
+
+### Opposing choices for one workload: why a new service may be the wrong optimization
+
+**Original fictional baseline:** a workshop reservation domain is one module in a deployable application. Its database transaction enforces booking exclusivity. Releases are delayed because a small shared component needs coordinated testing; request throughput itself is within required bounds. A proposed microservice extraction claims to improve both team autonomy and scalability, but those are **two distinct hypotheses**.
+
+| Choice | Candidate benefit | New ownership or failure obligation | Decision-reversing observation |
+|---|---|---|---|
+| Keep a modular monolith with enforced module APIs | Local transactional correctness and simpler operations | Build dependencies and deployment still shared | Module boundary cannot support independent release needs after targeted remediation |
+| Extract stateless edge/API adapter while state stays local | Separate edge scaling or compatibility without relocating authority | Extra RPC and timeout budget, independently managed edge deployment | Increased p99/retries overwhelm modest gains |
+| Extract booking state into an independent service | True autonomous booking deployment and capacity possible | Exclusive-writer transfer, cross-service effects, reconciliation, security and on-call | No measured coordination advantage or unsafe transition behavior |
+
+**Failure trace:** the edge times out after the authoritative monolith commits booking R7. Retrying through the edge must preserve K42 and return the same outcome, rather than create another reservation. A service split moves the *transport* of this ambiguity; it does not solve it. If ownership moves to a separate datastore, the transition needs old/new client compatibility, fenced writes and restore gates.
+
+The [OASIS SOA Reference Model](https://docs.oasis-open.org/soa-rm/v1.0/soa-rm.html) supports the description of services, visibility and real-world effects. The [Lewis/Fowler microservices article](https://www.martinfowler.com/articles/microservices.html) discusses independently deployable services and their operational characteristics. Neither is evidence that a particular organization needs microservices or that a split is safe.
+
+**Proposed, not executed:** compare lead time for independently deployable changes, full business-operation p99, retries after faults, incident ownership and lifecycle operating cost. Retain the monolith unless a hard requirement or reproducible measured benefit outweighs the added remote failure/authority boundary. The [data ownership owner](domain-boundaries-data-ownership-and-contracts.md) defines domain integrity; this page owns the choice to cross a deployment boundary.
+
 ## 7. Test a distributed boundary before deciding
 
 A bounded experiment should compare:

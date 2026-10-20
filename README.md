@@ -25,7 +25,10 @@ Read [the independence policy](governance/INDEPENDENCE.md) before contributing. 
 
 All repository content is written in English. Reading the book must not require access to private repositories, accounts, internal networks, another book, or an external agent service. External citations support verification; essential explanations belong in the book itself. Public source dependencies must be recorded explicitly.
 
-## Current implementation
+## Current implementation — 2026-10-20
+
+**Canonical current checkpoint:** [status](authoring/STATE.md), [roadmap](authoring/ROADMAP.md), [premerge reconciliation](authoring/PROJECT_STATUS_RECONCILIATION_2026-10-20.md). The integrated M1–M9 draft is in main via PR #216; **69/69 deepened primary manuscripts but 0/69 independently accepted final-book chapters**. PR #218 is open and unmerged, replacing #217; #213/E14/#214 are open. No published ten-volume edition or hosted MCP service exists.
+
 
 The repository contains governance, authoring rules, independently admitted public sources, technical System Design research drafts, generated catalogues, strict metadata/schema foundations and deterministic index/validation tooling. It is **not** a publication-complete ten-volume book: [the proposed 69-chapter contents](book/PROPOSED-STRUCTURE.md) and [living coverage audit](authoring/BOOK_COMPLETENESS_AUDIT.md) distinguish directly addressed questions from partial content and independent-review gaps. [Issue #213](https://github.com/rouslanbaranov/tycho/issues/213) owns completing the manuscript, and [Issue #214](https://github.com/rouslanbaranov/tycho/issues/214) owns the final volume/chapter/page edition assembly. The hosted ranked/semantic retrieval, MCP and shared specialist are later roadmap work. A manually curated concept graph is **not** part of Tycho's planned infrastructure. Source evidence and drafts do not certify independent editorial review, measured performance or deployment.
 

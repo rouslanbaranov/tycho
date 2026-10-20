@@ -145,6 +145,23 @@ An old SLO may cease to represent user experience if a new API version changes w
 
 A release can legitimately improve average response time while degrading the worst users. An unrelated region may hide under aggregate metrics; disaggregate by meaningful route/workload where needed without creating dangerous high-cardinality labels or data leakage. The [metrics ingestion/storage chapter](metric-pipelines-cardinality-and-retention.md) owns the telemetry cost and cardinality mechanics.
 
+## Engineering walkthrough — What does a green SLO say about rejected business operations?
+
+**Original fictional service window:** a booking endpoint records 10,000 *eligible* distinct user intents in a 30-day measurement interval, of which 9,970 reach the declared correct final result within the user deadline. A hypothetical target SLO of 99.9% would allow at most 10 failures among 10,000 intents, while this window has 30, **consuming 300% of the target's error allowance**. These values and target are illustrative, not a real SLO or observed incident.
+
+An instrumentation design that counts only HTTP 2xx responses among requests **admitted into the service**, excluding 500 deliberate overload rejections before the handler, can report misleading health. Whether user cancellations, blocked abusive traffic, malformed requests and legitimate overload rejections count must be agreed before measurement; exclusion policy cannot change retrospectively to improve the score.
+
+| Signal | Valid intended meaning | Unacceptable substitution |
+|---|---|---|
+| Eligible intents | Named user population and observation boundary | Completed requests only, hiding admission failures |
+| Correct within deadline | Durable domain result, not merely 2xx | Queue acknowledgment called final reservation |
+| Error-budget burn | Rate/quantity under chosen SLO window | Arbitrary alert threshold with no user consequence |
+| Incident recovery | Correct journey restored and sustained | Process liveness or dashboard green after data divergence |
+
+**Policy decision:** with that invented budget overspend, a sensible organization might delay nonessential risky deployments and prioritize correctness recovery while permitting necessary security fixes through a separately reviewed exception. This is a conditional governance choice, not a rule universally imposed by Google's SRE guidance.
+
+**Proposed, not run:** inject dependency outage, client retries and admission rejections, independently count durable logical intents and compare with telemetry numerator/denominator. Recompute burn under both legitimate and unjustified exclusions and document who authorizes any change. The existing Google SRE SLO and alerting references support measurement principles, not the fictional budget.
+
 ## 7. Evidence and review boundaries
 
 | Public source inspected | Supports | Does not establish |

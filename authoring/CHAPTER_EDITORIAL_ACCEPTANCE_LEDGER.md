@@ -1,5 +1,8 @@
 # Editorial acceptance ledger — all 69 proposed Tycho chapters
 
+> **Current review precedence:** owner-approved *integrated-draft package* acceptance is a historical scoped decision; the 69 final-book chapter-level editorial gates were reopened and have **0/69 independent dispositions**. Dated pending/word-count and older PR #215 views below are original-review records, not a new live test verdict. **Live state (2026-10-20, before merging PR #218):** M1–M9 integrated draft merged via PR #216; PR #217 closed/unmerged and replaced by open/non-draft **unmerged PR #218**. M9 #121 closed under scoped owner acceptance; #213/E14 and final edition #214 remain open. **69/69 primary chapter manuscripts deepened, 0/69 independently accepted for final-book completeness.** The 10-volume edition, hosted MCP and deployment do not exist. Reported 13/13 groups and 215/215 tests passed on prior manuscript SHA `d8d04e0e3c97e9f364607f640faa9f5aee4866f3`, **not** on the subsequently edited status documents. Visual rendering and live MCP were owner-cancelled, not PASSED. See [canonical current state](STATE.md) and [reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 ## Current package acceptance — 2026-10-20
 
 The owner confirms that independent acceptance of the integrated manuscript,

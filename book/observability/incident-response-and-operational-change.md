@@ -177,6 +177,22 @@ For the synthetic index scenario, a useful **hypothesis for prevention** is that
 
 Postmortem publication itself does not ensure issues were remedied; track closure evidence and re-evaluate when source versions, workflow or demand changes.
 
+## Engineering walkthrough — Index divergence masquerading as a database latency incident
+
+**Original fictional incident timeline:** users complain that search results show a deleted product and fail after opening it. A dashboard concurrently reports high API p99. The initial on-call diagnosis is "slow PostgreSQL", but the actual harmful path may be an outdated search index followed by repeated failed lookup/retry; database CPU is not sufficient causal evidence.
+
+| Hypothetical time | Observation (not interpretation) | Response gate |
+|---|---|---|
+| T0 | Correct source row removed; index revision has not advanced | Record authoritative source/index generations and effect scope |
+| T+5m | Spike in link-open 404s and retries | Name affected user journey and safe containment option |
+| T+8m | Database latency graph rises for retrying requests | Do not declare database root cause; compare accepted intents and retry amplification |
+| T+12m | Search traffic suppressed while source remains available | Communicate degraded search; do not hide data-integrity questions |
+| T+30m | Rebuilt index matches source revision in isolated validation | Reopen traffic only after access, freshness and correctness checks |
+
+An incident commander owns coordinated status and reversible containment; subject-matter investigators gather timelines; an authorized state owner decides whether repair or rollback can change durable truth. A process restart that improves latency without fixing stale citations is not evidence of recovery. Postmortems should distinguish **observed** facts, plausible causal explanation, unknowns and specific future tests; blame or a single invented root cause is unsupported.
+
+**Proposed, not executed:** simulate source/index divergence, client retry storm and dropped telemetry. Measure the user-visible impact window, containment reversibility, index-generation coherence, authority for intervention and time to correct outcomes. Google SRE incident/postmortem references support roles and learning practices; they do not supply actual facts for this fictional incident.
+
 ## 8. Source ledger, limitations and navigation
 
 | Independently public source inspected | Supports | Does not prove |

@@ -32,10 +32,11 @@ route_hints:
     - "and"
     - "fallback"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.m9-n11"
   claim_ids: []
   status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  notes: "Global source IDs resolve directly through sources/register.json. Evidence-row identities use their own namespaced IDs; source URLs and evidence payloads are preserved. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -50,15 +51,15 @@ content_verified_at: null
 # Netflix — Casspactor to Cassandra Analytics: migrate data pipelines with proof and fallback
 
 **Case ID:** `case.netflix.casspactor-to-analytics` | **M9:** E16-04 #117 | **Status:** technically detailed evidence-backed draft, reviewer pending  
-**Period:** [Netflix TechBlog, 2026-05-18](https://netflixtechblog.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1), N11, Guil Pires, Jennifer Prince, Jose Camacho, Ken Kurzweil, Phanindra Chunduru. **Source sections:** "Fragile Metadata Dependencies", "The New Stack", "Journey Towards a Safe Migration", "Pillar 1: Validation", "Pillar 2: Visibility", "Pillar 3: Safety", "Leveraging Abstraction: The Decider Pattern".
+**Period:** [Netflix TechBlog, 2026-05-18](https://netflixtechblog.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1), src.m9-n11, Guil Pires, Jennifer Prince, Jose Camacho, Ken Kurzweil, Phanindra Chunduru. **Source sections:** "Fragile Metadata Dependencies", "The New Stack", "Journey Towards a Safe Migration", "Pillar 1: Validation", "Pillar 2: Visibility", "Pillar 3: Safety", "Leveraging Abstraction: The Decider Pattern".
 
 ## Legacy fault model
 
-Netflix's Casspactor connector read Cassandra backups and moved them to Iceberg, but constructed backup identity from several metadata systems. Those independent views could diverge from actual S3 backups. A regional cluster node replacement and snapshot coordination could invalidate a job. The connector was also an overly rigid engine for multiple higher-level Cassandra abstractions: wide/skewed partitions caused OOM, extra intermediate Iceberg tables consumed storage, and abstraction-specific data reconstruction was an afterthought. This was a combination of **data correctness risk, skew resilience and leaky platform abstraction**, not simply 'Spark is faster'. [N11: "Fragile Metadata Dependencies", "Every Connector Inherited Casspactor's Limitations"].
+Netflix's Casspactor connector read Cassandra backups and moved them to Iceberg, but constructed backup identity from several metadata systems. Those independent views could diverge from actual S3 backups. A regional cluster node replacement and snapshot coordination could invalidate a job. The connector was also an overly rigid engine for multiple higher-level Cassandra abstractions: wide/skewed partitions caused OOM, extra intermediate Iceberg tables consumed storage, and abstraction-specific data reconstruction was an afterthought. This was a combination of **data correctness risk, skew resilience and leaky platform abstraction**, not simply 'Spark is faster'. [src.m9-n11: "Fragile Metadata Dependencies", "Every Connector Inherited Casspactor's Limitations"].
 
 ## New stack and where correctness lives
 
-The replacement built a common reading foundation using Cassandra Analytics and S3 backup metadata as the authoritative representation of source schema/topology/data at a point in time. Spark DataFrames supply a reusable intermediate *execution interface* to specialized transformations for Key Value, Time Series and other Cassandra data models. No claim that all data was transacted atomically across Cassandra and Iceberg is made here. [N11: "The New Stack: A Layered Architecture"].
+The replacement built a common reading foundation using Cassandra Analytics and S3 backup metadata as the authoritative representation of source schema/topology/data at a point in time. Spark DataFrames supply a reusable intermediate *execution interface* to specialized transformations for Key Value, Time Series and other Cassandra data models. No claim that all data was transacted atomically across Cassandra and Iceberg is made here. [src.m9-n11: "The New Stack: A Layered Architecture"].
 
 ```mermaid
 flowchart TD
@@ -98,11 +99,11 @@ flowchart TD
 
 ## What made legacy backup identification brittle
 
-The [May 18, 2026 first-party account](https://netflixtechblog.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1) (N11, **Casspactor: The Engine We Outgrew**, **Fragile Metadata Dependencies**) reports approximately **1,200 data movements/day** and **3 PB transferred** in the stated legacy operating scale. The post does not provide an independently reproducible distribution of object sizes, exact comparison duration for the 3 PB figure or per-job cost. These numbers are scale context, **not** benchmark targets for another company.
+The [May 18, 2026 first-party account](https://netflixtechblog.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1) (src.m9-n11, **Casspactor: The Engine We Outgrew**, **Fragile Metadata Dependencies**) reports approximately **1,200 data movements/day** and **3 PB transferred** in the stated legacy operating scale. The post does not provide an independently reproducible distribution of object sizes, exact comparison duration for the 3 PB figure or per-job cost. These numbers are scale context, **not** benchmark targets for another company.
 
 The old Casspactor path combined multiple metadata services to decide which Cassandra backup existed and how to construct it. Because individual services had different update schedules and failure modes, its assembled picture could lag the actual S3 SSTables. A node replacement during scheduled snapshots could make a region's data-movement workflow unavailable because the connector assumed all nodes took snapshots in a region at the same clock second. For a schema/topology change, the composite metadata also made **historical point-in-time reconstruction** impossible. These are concrete correctness and availability defects in the *source snapshot identification*, not just slow Spark execution.
 
-The new Cassandra Analytics Wrapper directly reads the **S3 backup representation plus its associated schema/topology metadata** as one source of truth. Spark DataFrames then expose a normalized execution interface; a connector factory applies model-specific Key Value / Time Series transformations through Java UDFs without unnecessary intermediate Iceberg staging tables. The report describes handling wide partitions by moving mutation compaction to Spark executors to avoid excessive shuffle/driver OOM; it also describes **automatic job sizing**. This does not prove that every possible Cassandra data model is automatically supported or that a backup is transactionally atomic across independent clusters. [N11, **The New Stack**].
+The new Cassandra Analytics Wrapper directly reads the **S3 backup representation plus its associated schema/topology metadata** as one source of truth. Spark DataFrames then expose a normalized execution interface; a connector factory applies model-specific Key Value / Time Series transformations through Java UDFs without unnecessary intermediate Iceberg staging tables. The report describes handling wide partitions by moving mutation compaction to Spark executors to avoid excessive shuffle/driver OOM; it also describes **automatic job sizing**. This does not prove that every possible Cassandra data model is automatically supported or that a backup is transactionally atomic across independent clusters. [src.m9-n11, **The New Stack**].
 
 ## Three separate gates on the production data-movement workflow
 
@@ -112,7 +113,7 @@ The new Cassandra Analytics Wrapper directly reads the **S3 backup representatio
 | **Visibility** | Central progress/runtime/cost dashboards, dependency metrics, fallback and mismatch alerts | Cohort-level view of which jobs migrated and what failed | Quiet failure in backup-metadata APIs or an old connector silently taking over |
 | **Safety** | Maestro **Decider** + Connector Controller selects connector per job/cohort/parameters; conditional fallback to Casspactor on candidate failure | Stable user job configuration and recoverable execution when a new connector fails | Candidate fails after partial materialization; old connector retries without cleaning unsafe intermediate output |
 
-The gate names and control-plane components come from N11, **Pillar 1**, **Pillar 2**, **Pillar 3**, **Leveraging Abstraction**. The negative-test column is **Tycho's original proposal**; neither the article nor this page claims those injected failures were all run at Netflix.
+The gate names and control-plane components come from src.m9-n11, **Pillar 1**, **Pillar 2**, **Pillar 3**, **Leveraging Abstraction**. The negative-test column is **Tycho's original proposal**; neither the article nor this page claims those injected failures were all run at Netflix.
 
 ## Equality is an observable contract, not automatically domain truth
 
@@ -128,7 +129,7 @@ Adopt a layered backup-reader + model-specific transformation approach when meta
 
 ## Migration scale, ownership and unmeasured effects
 
-The May 2026 source (N11, **Casspactor: The Engine We Outgrew**) reports roughly **1,200 movement jobs a day** and approximately **3 PB transferred** by the old connector. These are the publisher's workload observations, not the volume of one job, the size of the Cassandra fleet or a proven speedup. Existing consumers used Data Bridge job definitions and Iceberg table outputs. Maintaining both interfaces was therefore an explicit compatibility requirement: replacing a connector without changing the way consumers request data and interpret results.
+The May 2026 source (src.m9-n11, **Casspactor: The Engine We Outgrew**) reports roughly **1,200 movement jobs a day** and approximately **3 PB transferred** by the old connector. These are the publisher's workload observations, not the volume of one job, the size of the Cassandra fleet or a proven speedup. Existing consumers used Data Bridge job definitions and Iceberg table outputs. Maintaining both interfaces was therefore an explicit compatibility requirement: replacing a connector without changing the way consumers request data and interpret results.
 
 The new read layer combines Cassandra Analytics with backup metadata from object storage. This is a change in the **source of backup truth**, not proof of transactionality across all Cassandra writes and destination Iceberg commits. Abstraction-specific transformations operate over Spark DataFrames; the reported benefits include handling skewed partitions, avoiding repeated intermediate output and supporting historical schema/topology snapshots. The article's **dollar-millions** savings description lacks cost breakdown and is not an independent cost benchmark.
 
@@ -143,7 +144,7 @@ A comparable migration must specify more than the set-equality formula, because 
 | **Meaning over time** | TTL reference instant, tombstones, expiring rows, ordering and consistency rule | Same physical input interpreted at different expiration times |
 | **Consumer contract** | Iceberg table schema, data types, partition layout and downstream query outputs | Row equality passes while nullability or type mapping breaks clients |
 
-N11 specifically reports investigating differences involving TTL reference times, consistency levels, backup choice and logic. The table's adversarial tests and normalization procedure are **original Tycho guidance**, not an assertion that the authors ran every test listed.
+src.m9-n11 specifically reports investigating differences involving TTL reference times, consistency levels, backup choice and logic. The table's adversarial tests and normalization procedure are **original Tycho guidance**, not an assertion that the authors ran every test listed.
 
 ## Fallback is not the same as zero failure
 
@@ -155,7 +156,7 @@ For a hypothetical platform, track: primary attempt count, fallback count and ca
 
 A **smaller alternative** is to strengthen Casspactor's backup manifest selection, add a dedicated skew handler and retain existing interfaces when the connector family is narrow. A **layered replacement** becomes compelling only when multiple data models need different transforms and the shared old engine repeatedly fails correctness/scale boundaries. The choice should follow observable source manifest failures, intermediate-storage cost and repeatable comparison results rather than the company label.
 
-Retire the old connector only after every active job cohort has a supported replacement and the recovery path is tested *without* that old connector. In N11, current and future capability statements are distinct: new Key Value and Time Series connectors are reported; a bulk Cassandra-ingest direction is **future work**. Independent reviewer #121 still must verify the dated claims; neither this page nor its original analytical tests certify the migration's universal correctness.
+Retire the old connector only after every active job cohort has a supported replacement and the recovery path is tested *without* that old connector. In src.m9-n11, current and future capability statements are distinct: new Key Value and Time Series connectors are reported; a bulk Cassandra-ingest direction is **future work**. Independent reviewer #121 still must verify the dated claims; neither this page nor its original analytical tests certify the migration's universal correctness.
 
 ## Decision transfer and contraindications
 
@@ -163,4 +164,4 @@ The crucial design is **stable customer contract + shadow evidence + configurabl
 
 **Tycho's synthetic acceptance proposal** is to require consistency under chosen schema/version/time window, partition-skew representative tests, idempotent reruns, restart checkpoints, backup-manifest integrity, and per-cohort canaries. These are external recommendations, not claims about Netflix's exact control dashboard.
 
-**Unknowns:** independently measured migration cost, complete job-level throughput distribution, company-private code revisions and detailed access-control rules. [Original N11](https://netflixtechblog.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1). **Review:** pending #121.
+**Unknowns:** independently measured migration cost, complete job-level throughput distribution, company-private code revisions and detailed access-control rules. [Original src.m9-n11](https://netflixtechblog.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1). **Review:** pending #121.

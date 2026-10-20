@@ -168,6 +168,40 @@ An operational acceptance record should name actual owners, runbook/recovery evi
 
 Every workload, system, candidate, diagram and conclusion is invented for education. No security test, actual budget, backup exercise, execution evidence or independent review occurred. Metadata, exact chapter boundaries and final edition assembly remain pending.
 
+## Engineering walkthrough — Hard constraints before weighted cost scoring
+
+**Original sensitivity calculation, not market prices.** A fictional small team can support one database on-call rotation, 90-day audit retention, and at most one additional operationally critical service. Suppose option A (retain/optimize) uses 60 engineer-days of change and 10 on-call hours per month; B (extract two services) uses 140 engineer-days, 25 on-call hours per month and separate trace/log retention. These are **invented staffing inputs**, not CHF or cloud quotes.
+
+A three-year model should separately carry implementation person-days, recurring operational time, storage/egress/telemetry units, incident/restore drills, migration coexistence, and potential forward repair after incompatible writes. A simplified staffing subtotal might be `A: 60 + 36×10/8 = 105 engineer-days` versus `B: 140 + 36×25/8 = 252.5 engineer-days`, assuming eight-hour days and no escalation overhead. These are lower-bound educational arithmetic, **not total TCO**, which also depends on external cost inputs and availability outcomes.
+
+| Gate | A | B |
+|---|---|---|
+| Exactly one authoritative booking writer during change | Can preserve | Requires fenced ownership transfer |
+| One additional critical service maximum | Pass | Fail if two independently critical services are introduced |
+| Audit retention and reproducible restore | Must validate | Must validate in each store/trace domain |
+| Expected release autonomy | Lower | Potentially higher, but unmeasured |
+
+**Decision:** exclude B on the stated operational constraint *before* weighted scoring; better potential deployment autonomy cannot erase that gate. If staffing expands or one service replaces a retired critical dependency, re-evaluate with real cost/incident data. Under another requirement set the decision may reverse. No financial estimate, observed labor or vendor offer is claimed.
+
+
+**Verification status:** The preceding original example and its predicted outcomes are synthetic. No implementation experiment, benchmark or independent technical review was executed for this example.
+### Sensitivity across retention, coexistence and no-return recovery (original synthetic units)
+
+The earlier staffing totals are a **lower-bound component** of lifecycle effort, not vendor TCO. Hold a 36-month horizon and an illustrative audit payload of **1 GiB/day** constant. Assume **one logical retained copy** for this toy comparison, no compression, identical user outcomes and no real cloud price:
+
+| Dimension | A: retain and optimize | B: extract two services | Interpretation |
+|---|---:|---:|---|
+| Initial work + 36-month on-call | 105 engineer-days | 252.5 engineer-days | The preceding arithmetic, not money |
+| 90-day audit rolling window | 90 GiB | 270 GiB, if three independent 1-GiB/day audit streams are needed | **Inventory assumption**, not an inherent property of service extraction |
+| Temporary coexistence for 45 days | 0 extra GiB assumed | 45 extra GiB at 1 GiB/day if an additional shadow copy is retained | Temporary capacity, not perpetual retained volume |
+| Recovery after an incompatible persisted write | 0–10 engineer-days if the original representation remains readable | 20–80 engineer-days in a hypothetical forced forward-repair | A *risk range*, not expected effort or guaranteed outcome |
+
+All storage numbers are *invented, logical GiB*, not price quotes or physical volume provisioned; real retention may require backups, replicas, compression, and legal deletion. At **365-day** rather than 90-day retention, the illustrative storage windows become **365 GiB A** versus **1,095 GiB B** before replication. If a storage-specific rate is later supplied, use **GiB-month × authorized price per GiB-month** with the same replication/retention policy, rather than pretending GiB equals CHF. A steady-state rolling window approaches those quantities after its retention horizon; the exact integral over 36 months depends on ramp-up, deletion and coexistence dates.
+
+**Sensitivity and reversal:** in the initially stated small-team scenario, B already **fails the hard limit on additional critical services**, irrespective of its autonomy score or a cheap storage quote; the **correct disposition is infeasible**, not “B loses by 147.5 engineer-days.” If owners raise that cap and *require genuinely independent deployment and credential isolation*, B becomes eligible **conditionally** after testing business authority, restore paths and operations. If retention rises to 365 days or repair risk widens, B's relative resource burden grows under this model; if independently deployable components replace existing systems and reduce duplicated streams, B's assumed tripled audit volume ceases to be valid and must be recalculated. This is a falsifiable sensitivity exercise, not a forecast or a performed incident repair.
+
+**Gate:** request real workload, data growth, audit semantics, legal retention, owner-approved staffing rates, reconciliation method, replication/backup policy and restore drill before converting this table into a financial decision. Quantitative unit-cost optimization across throughput/capacity belongs to [V07/C07](../performance/capacity-planning-and-cost-performance.md), not to this hard-constraint decision.
+
 ## Navigation
 
 Proposed owner **V01/C06** in [outline](../PROPOSED-STRUCTURE.md), [application landing](README.md). Prerequisites [system context](problem-framing-and-system-boundaries.md), [quality drivers](quality-drivers-and-architecture-views.md), [workload demand](../performance/workload-demand-and-arrival-models.md). Next [technical capacity cost](../performance/capacity-planning-and-cost-performance.md) and [alternative decision gates](../decisions/architecture-alternatives-experiments-and-adrs.md).

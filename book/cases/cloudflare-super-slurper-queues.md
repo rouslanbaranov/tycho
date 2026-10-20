@@ -30,10 +30,11 @@ route_hints:
     - "distributed"
     - "workers"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.m9-cf01"
   claim_ids: []
   status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  notes: "Global source IDs resolve directly through sources/register.json. Evidence-row identities use their own namespaced IDs; source URLs and evidence payloads are preserved. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -48,7 +49,7 @@ content_verified_at: null
 # Cloudflare — Super Slurper: copy objects through queues and distributed workers
 
 **Case ID:** `case.cloudflare.super-slurper-queues` | **M9:** E16-05 #118 | **Status:** original case draft; independent reviewer pending.  
-**Public primary:** CF01 [company engineering report](https://blog.cloudflare.com/making-super-slurper-five-times-faster/) (2025-04-10, Connor Maddox, Siddhant Sinha and Prasanna Sai Puvvada); source location: Initial architecture and performance bottlenecks; New architecture: Workers, Queues, and Durable Objects; Results. Attributed public paraphrase, no mirrored graphs or copyrighted assets.
+**Public primary:** src.m9-cf01 [company engineering report](https://blog.cloudflare.com/making-super-slurper-five-times-faster/) (2025-04-10, Connor Maddox, Siddhant Sinha and Prasanna Sai Puvvada); source location: Initial architecture and performance bottlenecks; New architecture: Workers, Queues, and Durable Objects; Results. Attributed public paraphrase, no mirrored graphs or copyrighted assets.
 
 ## Pressure, legacy baseline and actual chosen direction
 
@@ -85,9 +86,9 @@ Adding durable objects, queues and workers creates distributed orchestration, re
 
 ## Observed orchestration stages and persistent state boundaries
 
-The [April 10, 2025 engineering post](https://blog.cloudflare.com/making-super-slurper-five-times-faster/) (CF01, **New architecture: Workers, Queues, and Durable Objects**) documents **more than a simple queue inserted in front of workers**. The original source-copy system reused Kubernetes SourcingKit infrastructure in a core data center. A roughly one-week proof of concept using Workers/Queues/Durable Objects **performed worse for a few hundred objects**, then matched or beat the original at very large object counts. That negative pilot result is a workload threshold, not evidence that event-driven copying always has lower overhead.
+The [April 10, 2025 engineering post](https://blog.cloudflare.com/making-super-slurper-five-times-faster/) (src.m9-cf01, **New architecture: Workers, Queues, and Durable Objects**) documents **more than a simple queue inserted in front of workers**. The original source-copy system reused Kubernetes SourcingKit infrastructure in a core data center. A roughly one-week proof of concept using Workers/Queues/Durable Objects **performed worse for a few hundred objects**, then matched or beat the original at very large object counts. That negative pilot result is a workload threshold, not evidence that event-driven copying always has lower overhead.
 
-| Actual processing phase in CF01 | Responsible reported component | Data it must durably preserve | Distinct failure/retry risk |
+| Actual processing phase in src.m9-cf01 | Responsible reported component | Data it must durably preserve | Distinct failure/retry risk |
 |---|---|---|---|
 | Start a job | API Worker + account Durable Object | Migration options, source/target names and job identity | Duplicate start requests or inaccessible historical state |
 | Enumerate source objects | List Queue consumer | Continuation position, object identifiers and listing state | Replayed list page, reordering or overlapping workers |
@@ -96,7 +97,7 @@ The [April 10, 2025 engineering post](https://blog.cloudflare.com/making-super-s
 | Determine completion | Lifecycle Queue consumer | Pending/failed/completed object counts and job terminal status | Premature completion despite delayed transfer or dead-letter work |
 | Retrieve legacy jobs | Hyperdrive to old PostgreSQL records | Historical migration metadata | New runtime must not silently discard prior migration history |
 
-The publisher describes separate **account job Durable Objects**, **batch Durable Objects** for queued object keys and state, and a sharding mechanism to avoid the SQLite Durable Object **10 GB storage limit** when dealing with billions of keys. This is not a claim that each batch DO supports unlimited keys. Historical job data remain reachable through Hyperdrive, while the new path handles active job orchestration. [CF01, **Database layer: durable storage & legacy data retrieval**].
+The publisher describes separate **account job Durable Objects**, **batch Durable Objects** for queued object keys and state, and a sharding mechanism to avoid the SQLite Durable Object **10 GB storage limit** when dealing with billions of keys. This is not a claim that each batch DO supports unlimited keys. Historical job data remain reachable through Hyperdrive, while the new path handles active job orchestration. [src.m9-cf01, **Database layer: durable storage & legacy data retrieval**].
 
 ## At-least-once semantics: four actual duplicate defenses
 
@@ -109,7 +110,7 @@ Cloudflare names *two* duplicate causes: the delivery contract of Queues (**at l
 
 These defenses address duplicate **work**, not a magic end-to-end atomic transfer between S3 and R2. For another platform, destination-existence and timestamp checks alone are not sufficient to prove byte equality, metadata correctness, same-version source identity or authorization. The account's published approach is a company-specific idempotency design with particular assumptions; do not silently generalize it to mutating sources or arbitrary overwrite semantics.
 
-**Failure branch:** queue consumers retry transient faults; nonretriable work moves to a **dead-letter queue** for later inspection. The listing producer can throttle enqueueing if dependent systems fail. A job controller must distinguish *all queued*, *all acknowledged*, *all verified* and *all failed/review-needed* before declaring completion. CF01 documents its lifecycle consumer; it does not publish full per-object hash verification or an independently reproduced loss bound.
+**Failure branch:** queue consumers retry transient faults; nonretriable work moves to a **dead-letter queue** for later inspection. The listing producer can throttle enqueueing if dependent systems fail. A job controller must distinguish *all queued*, *all acknowledged*, *all verified* and *all failed/review-needed* before declaring completion. src.m9-cf01 documents its lifecycle consumer; it does not publish full per-object hash verification or an independently reproduced loss bound.
 
 ## Performance result, population and negative case
 
@@ -121,7 +122,7 @@ These defenses address duplicate **work**, not a magic end-to-end atomic transfe
 | Last two months of service history | Publisher says **35% of lifetime objects** had been copied in this interval after the new service was adopted | Adoption-volume observation, not throughput-normalized performance experiment |
 | Concurrency at post date | Company notes **3 concurrent migrations per account**; higher concurrency was a future goal | Does not prove arbitrary unbounded parallelism |
 
-The article reports some live transfers were even faster depending on object sizes, but supplies no general latency histogram, operational cost baseline or independent benchmark. The 75,000-object ratio must not be presented as a p99 speedup for every migration. [CF01, **Results**, **What’s next for Super Slurper?**].
+The article reports some live transfers were even faster depending on object sizes, but supplies no general latency histogram, operational cost baseline or independent benchmark. The 75,000-object ratio must not be presented as a p99 speedup for every migration. [src.m9-cf01, **Results**, **What’s next for Super Slurper?**].
 
 ## Why the queue architecture is not automatically the best choice
 
@@ -137,4 +138,4 @@ Use queue fan-out and backpressure when an I/O-bound migration needs sustained p
 
 **Metrics required before reuse:** actual p95/p99, throughput versus CPU/storage, error and retry rate, divergence/correctness, rollback time and SRE toil, with historical time window. No new performance measurement or independent replication was performed by Tycho. All source-reported numbers are scoped to this publisher's observations.
 
-**Provenance:** [CF01](https://blog.cloudflare.com/making-super-slurper-five-times-faster/), Initial architecture and performance bottlenecks; New architecture: Workers, Queues, and Durable Objects; Results. Source-admission review [#114](https://github.com/rouslanbaranov/tycho/issues/114); independent technical review [#121](https://github.com/rouslanbaranov/tycho/issues/121). **Status remains draft** pending both gates.
+**Provenance:** [src.m9-cf01](https://blog.cloudflare.com/making-super-slurper-five-times-faster/), Initial architecture and performance bottlenecks; New architecture: Workers, Queues, and Durable Objects; Results. Source-admission review [#114](https://github.com/rouslanbaranov/tycho/issues/114); independent technical review [#121](https://github.com/rouslanbaranov/tycho/issues/121). **Status remains draft** pending both gates.

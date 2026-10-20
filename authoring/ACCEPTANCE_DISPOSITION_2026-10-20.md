@@ -1,5 +1,8 @@
 # Tycho manuscript acceptance and owner-approved gate dispositions
 
+> **Current-state correction (2026-10-20):** This record's earlier owner acceptance is scoped to the integrated draft. PR #216 has since **merged**, and M9 #121 is closed. The owner subsequently reopened #213 and E14 for **69 final-book chapter-level content/source acceptances, currently 0/69**, even though all 69 primary manuscripts were deepened. Active PR #218 replaces closed/unmerged #217 and is **not merged**. Historical test results remain pinned to their recorded SHA. The original “recording does not merge PR #216” section documents the act of recording at that time, not today's GitHub state. See [STATE.md](STATE.md).
+
+
 Decision recorded: 2026-10-20, Europe/Zurich.
 
 Authority: the project owner's explicit instruction in the Rocinante project

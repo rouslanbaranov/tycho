@@ -119,6 +119,14 @@ Text alternative: a leader appends and replicates a record. The broker's acknowl
 
 **Do not equate "replication factor 3" with "every record always survives any one failure."** The actual durability guarantee depends on producer acks, ISR/min ISR, leader election configuration, storage health, producer retry and how a commit is acknowledged. Loss/corruption and unclean elections have explicit trade-offs. Kafka 4.1's [Eligible Leader Replicas operations guide](https://kafka.apache.org/41/operations/eligible-leader-replicas/) is version-specific and must be consulted before relying on post-4.0 failover behavior. [E03]
 
+### Eligible Leader Replicas are version- and upgrade-configuration scoped
+
+Kafka's official [4.1 Eligible Leader Replicas operations reference](https://kafka.apache.org/41/operations/eligible-leader-replicas/) specifies that ELR was introduced in Kafka **4.0** and is **enabled by default for new clusters starting with 4.1**. That is not equivalent to saying it is active in every existing cluster merely because its brokers were upgraded to 4.1. Explicitly inspect the cluster's ELR protocol/configuration and partition state before using its leader-election behavior as a durability assumption.
+
+The documented ELR logic relies on **strict minimum ISR/high-watermark constraints**, and under eligible conditions can elect a non-ISR replica that is safe according to that protocol. It does not mean an arbitrary stale replica may safely take leadership, nor does it let a client infer whether its lost producer acknowledgment represents an appended record. The actual failover contract still depends on broker release, feature/upgrade status, replication, ISR, producer `acks`, client retries, storage integrity and whether unclean election is permitted.
+
+**Proposed negative test (not run):** compare a freshly created 4.1 cluster with an upgraded cluster for ELR enablement, reduce in-sync replicas below configured limits, lose the producer reply immediately before leader replacement, then inspect eligible leader metadata, acknowledged offsets and consumer-visible records. Reject an unconditional `RF=3 ⇒ no loss` claim. This source check is **about broker-record durability**, not application DB/payment exactly-once effects.
+
 ## 4. Consumer offset, effect and crash points
 
 The consumer must decide when to mark its position consumed, often relative to applying an external business effect.
@@ -151,6 +159,24 @@ Kafka 4.1 documentation **Message Delivery Semantics** and **Using Transactions*
 
 **Insufficient evidence question:** "Kafka transactions are enabled, therefore our external transfer side effect can never happen twice." False inference. Need source input identity, sink transaction/idempotency, replay/failure tests, external provider contract and reconciliation policy.
 
+
+### A Kafka transaction cannot atomically commit an arbitrary business database
+
+The [Kafka 4.1 design reference](https://kafka.apache.org/41/design/design/) explains a transactional read-process-write pattern: published Kafka records and consumed offsets included in the *Kafka transaction* can be committed atomically. It does **not** describe an atomic transaction over an independent PostgreSQL row or email effect.
+
+**Original hypothetical:** a consumer reads Kafka source offset 41, changes an authoritative shipment row in PostgreSQL, emits a new Kafka event and commits its position. Two durability authorities now coexist.
+
+| Crash window | Durable observation | Recovery rule |
+|---|---|---|
+| Before PostgreSQL commit | No business-row change | Reprocess with the original operation identity |
+| After PostgreSQL commit, before Kafka output/offset commit | Row changed; Kafka side can still retry the input | Durable idempotency/effect key must suppress the duplicate row transition |
+| After Kafka output/offset commit, before client acknowledgment | Kafka effects may be durable, response may be missing | Resolve the logical business outcome from its authority; do not infer from reply loss |
+| Kafka output delivered, external email fails | Kafka record exists; mail outcome ambiguous | Separate consumer dedup/retry and reconciliation contract |
+
+Even with transactional producers, the business application must decide how it atomically persists its **own** state and publication intent, for example by a [transactional outbox and consumer inbox](../distributed/outbox-inbox-sagas-and-durable-workflows.md). The outbox itself has repeated-delivery windows and cannot guarantee arbitrary external exactly-once effects. A consumer group offset is a replay position, not proof that every user-visible effect succeeded.
+
+**Decision gate:** if a use case is a simple transient task queue with bounded retries and no retained event history, Kafka's partition/replay operations may be unnecessary. If durable partition history and replay are requirements, test producer fencing, rebalance, source replay, crash-after-database-commit and expired dedup keys. These are **proposed tests, not executed Kafka/PostgreSQL experiments**. Preserve exact Kafka broker/client version and configuration in any eventual results.
+
 ## 5. Failure and recovery matrix
 
 | Condition | Boundary affected | What to check |
@@ -182,3 +208,11 @@ No architecture can be chosen solely by a claimed RPS threshold, feature list or
 | E04 | [Kafka 4.1 Kafka Streams configuration](https://kafka.apache.org/41/configuration/kafka-streams-configs/), **processing.guarantee** | Names documented processing options `at_least_once` and `exactly_once_v2`, not arbitrary external system guarantees |
 
 Research state: original manuscript, no executed Kafka cluster, request traces, broker tuning comparison, fault-injection or independently reviewed exactly-once proof. All examples and Mermaid diagrams here are explicitly synthetic.
+
+## Applied M9 evidence: what transfers and what does not
+
+These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
+
+**Case lens — [LinkedIn — Kafka tiers](../cases/linkedin-kafka-tiered-completeness.md)**. **Relevant mechanism or architectural contrast:** Kafka broker health and acknowledged writes do not substitute for end-to-end tier/consumer completeness audits. **Not established by this report/playbook:** Historical LinkedIn tier scale and audit numbers do not establish universal Kafka exactly-once external effects.
+
+**Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.

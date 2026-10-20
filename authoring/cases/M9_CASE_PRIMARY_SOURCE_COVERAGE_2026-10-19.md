@@ -7,7 +7,7 @@
 All **29** existing `book/cases/*.md` pages were read in three bounded GitHub batches and compared against the **43** literal primary URLs from `sources/REAL_WORLD_ARCHITECTURE_CASES.md`.
 
 - **29/29** pages contained at least one **matching registered ID and exact registered HTTPS URL**.
-- Some cases mention *additional comparison-source IDs* without embedding their first-party URL locally; e.g. the Netflix Java platform case mentions Shopify SH01 and Netflix N06 as contrasts. These mentions are **not automatically invalid** and should not be silently promoted to independently cited technical claims.
+- Some cases mention *additional comparison-source IDs* without embedding their first-party URL locally; e.g. the Netflix Java platform case mentions Shopify src.m9-sh01 and Netflix src.m9-n06 as contrasts. These mentions are **not automatically invalid** and should not be silently promoted to independently cited technical claims.
 - This check establishes one direct primary-source foothold per case, not full coverage of every factual sentence, historical revision or quoted metric.
 - The inspection used connected-GitHub string/ID checks, **not execution of `scripts/validate_m9_cases.py` on a full checkout**.
 

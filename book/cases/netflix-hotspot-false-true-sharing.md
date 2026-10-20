@@ -30,10 +30,11 @@ route_hints:
     - "true"
     - "HotSpot"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.m9-n18"
   claim_ids: []
   status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  notes: "Global source IDs resolve directly through sources/register.json. Evidence-row identities use their own namespaced IDs; source URLs and evidence payloads are preserved. Identity registration does not imply source access, claim-level verification, reproduction rights or independent content acceptance; consult the dated case ledgers."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -48,15 +49,15 @@ content_verified_at: null
 # Netflix — larger JVM instances exposed false sharing, then true sharing in HotSpot
 
 **Case ID:** `case.netflix.hotspot-sharing-cpu-scaling` | **Owner:** M9 E16-03 #116 | **Period:** first-party article **2022-11-09**, workload GS2 | **Status:** source-backed draft  
-**Primary:** N18, Vadim Filanovsky and Harshad Sane, [Seeing through hardware counters: a journey to threefold performance increase](https://netflixtechblog.com/seeing-through-hardware-counters-a-journey-to-threefold-performance-increase-2721924a2822), sections "The problem", "First attempt at solving it", "False Sharing", "True Sharing", "Conclusion".
+**Primary:** src.m9-n18, Vadim Filanovsky and Harshad Sane, [Seeing through hardware counters: a journey to threefold performance increase](https://netflixtechblog.com/seeing-through-hardware-counters-a-journey-to-threefold-performance-increase-2721924a2822), sections "The problem", "First attempt at solving it", "False Sharing", "True Sharing", "Conclusion".
 
 ## The attractive migration that regressed performance
 
-An anonymous Java microservice, GS2, performed CPU-intensive work. Netflix moved it from an AWS **m5.4xl 16-vCPU** configuration to **m5.12xl 48-vCPU** and expected roughly triple per-instance capacity. An equal-traffic initial canary appeared healthy, but at an autoscaling CPU target near **55%**, production throughput improved only about **25%**, and average latency degraded by more than **50%**. Nodes split into persistent fast and slow populations despite similar incoming request rates; about **12%** were fast. More hardware alone did not deliver useful throughput. [N18: "The problem"].
+An anonymous Java microservice, GS2, performed CPU-intensive work. Netflix moved it from an AWS **m5.4xl 16-vCPU** configuration to **m5.12xl 48-vCPU** and expected roughly triple per-instance capacity. An equal-traffic initial canary appeared healthy, but at an autoscaling CPU target near **55%**, production throughput improved only about **25%**, and average latency degraded by more than **50%**. Nodes split into persistent fast and slow populations despite similar incoming request rates; about **12%** were fast. More hardware alone did not deliver useful throughput. [src.m9-n18: "The problem"].
 
 ## Diagnose what conventional profilers miss
 
-Flame graphs, JFR and JIT probes showed similar code paths on fast and slow nodes. Intel performance counters and VTune instead showed extra cycles-per-instruction, cache churn, and machine clears. The team traced one HotSpot secondary-superclass-lookup routine: `_secondary_super_cache` writes and adjacent `_secondary_supers` reads could share an x86 cache line, causing false sharing between otherwise independent memory locations. The reported **one-in-eight** chance of non-overlapping alignment matched approximately the fast-node fraction. This is a diagnosis at the CPU cache-line/JVM-implementation layer, not merely 'inefficient Java code'. [N18: "False Sharing"].
+Flame graphs, JFR and JIT probes showed similar code paths on fast and slow nodes. Intel performance counters and VTune instead showed extra cycles-per-instruction, cache churn, and machine clears. The team traced one HotSpot secondary-superclass-lookup routine: `_secondary_super_cache` writes and adjacent `_secondary_supers` reads could share an x86 cache line, causing false sharing between otherwise independent memory locations. The reported **one-in-eight** chance of non-overlapping alignment matched approximately the fast-node fraction. This is a diagnosis at the CPU cache-line/JVM-implementation layer, not merely 'inefficient Java code'. [src.m9-n18: "False Sharing"].
 
 ```mermaid
 flowchart TD
@@ -75,7 +76,7 @@ flowchart TD
 
 ## Two distinct fixes, not one miracle patch
 
-First, the engineers padded the fields to avoid two unrelated data structures sharing a cache line. Slow nodes disappeared, but throughput remained around **150 requests/second per node**, below the **~250 RPS** goal. This led to identifying *true sharing*: multiple cores wrote the same cached state. A second change bypassed secondary-superclass-cache writes behind a JVM command-line flag. The article reports up to **~350 RPS** at the same CPU target, roughly **3.5×** the initial throughput observed after moving to the large instance; average and tail latency also improved. These numbers describe **one specific service and hardware/JDK configuration**. [N18: "False Sharing", "True Sharing"].
+First, the engineers padded the fields to avoid two unrelated data structures sharing a cache line. Slow nodes disappeared, but throughput remained around **150 requests/second per node**, below the **~250 RPS** goal. This led to identifying *true sharing*: multiple cores wrote the same cached state. A second change bypassed secondary-superclass-cache writes behind a JVM command-line flag. The article reports up to **~350 RPS** at the same CPU target, roughly **3.5×** the initial throughput observed after moving to the large instance; average and tail latency also improved. These numbers describe **one specific service and hardware/JDK configuration**. [src.m9-n18: "False Sharing", "True Sharing"].
 
 | Decision gate | Failing shortcut | Better evidence |
 |---|---|---|
@@ -87,7 +88,7 @@ First, the engineers padded the fields to avoid two unrelated data structures sh
 
 ## Why the original canary produced the wrong conclusion
 
-The first-party 2022 case (N18, **The problem**) reveals a benchmark-design mistake: a **48-vCPU** canary and its **16-vCPU** baseline received **equal traffic**, so the larger host initially looked comfortable. The actual change intended *more throughput per large instance at the same ~55% autoscaling CPU target*. Under this **different** operating point, the reported improvement was only around **25%**, and latency became worse. A successful equal-RPS canary was not a capacity qualification.
+The first-party 2022 case (src.m9-n18, **The problem**) reveals a benchmark-design mistake: a **48-vCPU** canary and its **16-vCPU** baseline received **equal traffic**, so the larger host initially looked comfortable. The actual change intended *more throughput per large instance at the same ~55% autoscaling CPU target*. Under this **different** operating point, the reported improvement was only around **25%**, and latency became worse. A successful equal-RPS canary was not a capacity qualification.
 
 The subsequent fast/slow host split was also a constraint on the hypothesis space. Host groups retained their performance band across JVM lifetimes while receiving similar request rates. Source authors observed approximately **12% fast nodes**, aligning with a cache-line alignment hypothesis. The article does not demonstrate that 12% of every JDK deployment will be lucky, nor does it provide a universal server-throughput law.
 
@@ -113,17 +114,17 @@ For another runtime, the test matrix must include class-loader changes, concurre
 
 The reusable design lesson is **compare useful performance at the new intended operating point and challenge conventional profilers when execution profiles do not explain real CPU stalls**. Before adding host capacity, record workloads by concurrency and tail-latency class. If a node's CPU is inflated by coherence stalls, adding cores may worsen contention. If the true constraint is a network queue or a cache miss unrelated to JVM field sharing, the appropriate remedy is different.
 
-**Refuse an automatic HotSpot patch** when hardware counters are unavailable, the exact problematic source code is not present, or a production-representative correctness test cannot be executed. N18 reports a specific service and historical JDK behavior; upstream bug history, current vendor fixes and complete replication remain unverified under M9 #121.
+**Refuse an automatic HotSpot patch** when hardware counters are unavailable, the exact problematic source code is not present, or a production-representative correctness test cannot be executed. src.m9-n18 reports a specific service and historical JDK behavior; upstream bug history, current vendor fixes and complete replication remain unverified under M9 #121.
 
 ## Why equal-traffic canaries concealed the capacity regression
 
-The [November 9, 2022 practitioner investigation](https://netflixtechblog.com/seeing-through-hardware-counters-a-journey-to-threefold-performance-increase-2721924a2822) (N18, **The problem**) says the initial larger-instance canary received the **same number of requests** as the small instance, rather than the scaled load a three-times-larger CPU allocation was intended to carry. It looked healthy at that workload. Later, with autoscaling held near the same **55% CPU target**, the 48-vCPU node delivered only **~25% more throughput** than the original capacity expectation and had **>50% worse average latency**. Thus the acceptance error was not merely “we failed to look at RPS”; it was a mismatched **workload normalization**.
+The [November 9, 2022 practitioner investigation](https://netflixtechblog.com/seeing-through-hardware-counters-a-journey-to-threefold-performance-increase-2721924a2822) (src.m9-n18, **The problem**) says the initial larger-instance canary received the **same number of requests** as the small instance, rather than the scaled load a three-times-larger CPU allocation was intended to carry. It looked healthy at that workload. Later, with autoscaling held near the same **55% CPU target**, the 48-vCPU node delivered only **~25% more throughput** than the original capacity expectation and had **>50% worse average latency**. Thus the acceptance error was not merely “we failed to look at RPS”; it was a mismatched **workload normalization**.
 
 A robust capacity experiment for an unrelated CPU-bound service would compare: same total traffic to validate compatibility; same requests per core to test scaling efficiency; same CPU-utilization target to model autoscaling; and equal useful output to compare cost, *including* tail latency and variance across instances. These are **Tycho evaluation categories**, not four published Netflix test phases.
 
 ## Separate the true causes, fixes and observation windows
 
-| Evidence phase in N18 | Original diagnostic | What changed | Remaining issue |
+| Evidence phase in src.m9-n18 | Original diagnostic | What changed | Remaining issue |
 |---|---|---|---|
 | Standard profile | Fast and slow nodes had similar flame-graph/JFR/JIT stack distributions | No useful actionable difference discovered | CPU microarchitecture bottleneck still unexplained |
 | Hardware counters | Slow nodes had **almost 3× CPI** and roughly **4× MACHINE_CLEARS** vs fast nodes | Investigators localized HotSpot subtype-check code with Intel VTune and assembly | Needs correct CPU counter interpretation, including sampling skid |
@@ -137,7 +138,7 @@ The **one-in-eight** allocation alignment observation arises from a **64-byte li
 
 First preserve a versioned CPU/JDK/hardware baseline and vary one parameter at a time. If throughput fails to scale despite identical stack-level profiles, collect CPU counters before rewriting Java business logic. Validate the suspected field-layout issue with an isolated JVM patch on representative production traffic; then **repeat all latency and throughput checks after the first fix**, because a second bottleneck can become dominant. Never ship a globally enabled HotSpot behavior change solely on one service's apparent gain: maintain a versioned feature flag, a fallback JDK image and cross-workload regression coverage.
 
-If the CPU profile, cache-line layout or runtime version differs materially, the N18 diagnostic remains a **hypothesis**, not proof. Return **insufficient evidence** for claims about a different runtime's exact hot method or attainable RPS. This case is about scaling correctness within one service—not a recommendation to build graph-based infrastructure for Tycho.
+If the CPU profile, cache-line layout or runtime version differs materially, the src.m9-n18 diagnostic remains a **hypothesis**, not proof. Return **insufficient evidence** for claims about a different runtime's exact hot method or attainable RPS. This case is about scaling correctness within one service—not a recommendation to build graph-based infrastructure for Tycho.
 
 ## Applicability and safer modernization
 
