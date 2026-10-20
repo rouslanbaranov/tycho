@@ -76,6 +76,24 @@ class CorpusMetadataTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'authored date differs'):
             validator.validate(self.root)
 
+    def test_local_m9_alias_is_not_a_global_source_id(self):
+        self.meta['evidence_scope']['source_ids'] = ['A01']
+        self.write_page()
+        with self.assertRaisesRegex(ValueError, 'invalid strict metadata'):
+            validator.validate(self.root)
+
+    def test_registered_m9_identity_is_valid_without_claiming_review(self):
+        self.meta['evidence_scope']['source_ids'] = ['src.m9-a01']
+        self.write_json('register.json', {'sources': [{'id': 'src.m9-a01'}]})
+        self.write_page()
+        self.assertEqual(validator.validate(self.root)['coverage'], 'complete')
+
+    def test_prefix_alone_does_not_register_a_source(self):
+        self.meta['evidence_scope']['source_ids'] = ['src.m9-a01']
+        self.write_page()
+        with self.assertRaisesRegex(ValueError, 'unknown source ID'):
+            validator.validate(self.root)
+
 
 if __name__ == '__main__':
     unittest.main()
