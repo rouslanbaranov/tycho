@@ -183,6 +183,22 @@ These checks compare deliberately narrow statements with official references. Th
 
 **Technical retest status: PENDING.** Previous 13/13 and 195/195 PASS remain valid **only at `8a1bb1f`**. The six new chapters have been read for Markdown H1/fence sanity and source links but the complete repository Python validators, Markdown anchors, SQL/Cypher runtime and independent full-source review have **not** been rerun. A local checkout remains blocked by GitHub DNS resolution in this session. Do not upgrade acceptance status until that follow-up has genuinely run.
 
+## F-07 — standalone Tycho scope contamination risk; corrected
+
+An additional **69/69 canonical-chapter literal-scope scan** checked for explicit `UBS`, `Adro`, `Rocinante`, `900-page`, and distinctive large-system repository/chapter counts. There were **no literal UBS/Adro/Rocinante matches** in the 69 primary chapters. Two V06 search chapters nonetheless contained a **900-page example corpus size**, overlapping a different book's known sizing and unnecessary for a standalone System Design text:
+
+- V06/C03 `book/search/lexical-indexing-bm25-and-sql-fts.md`: removed a prescriptive sentence about a 900-page book needing a distributed cluster and replaced it with a corpus-independent measured-decision criterion.
+- V06/C04 `book/search/vector-hnsw-faiss-pgvector.md`: replaced the 900-page corpus sizing statement with an explicitly input-dependent chunk/vector/metadata/index formula.
+
+**Status:** corrected in `30a524b8ee1b83bee118b3666885e46ab3c890ca`; this is editorial scope hygiene, **not evidence** that these two texts actually contained private data. The lexical scan cannot detect every implicit source provenance or similarity. Tycho remains a public, self-contained System Design book and must not import private architecture facts.
+
+## Latest index and targeted static regression checkpoint
+
+- All **eight** edited book pages from F-01–F-07 are indexed with refreshed per-page SHA-256. Latest deterministic index commit is `3e12b6729cd2639c71c3804d4f974cad38ec6e59`, new snapshot `e0bfb5c986de597d074654caae40b6017c5b22476d56cfbd61b4a452b91eae48`, document count **136**, stable IDs/routing metadata unchanged.
+- **Targeted GitHub-tree scan:** eight changed chapter files and **133 Markdown-link occurrences** checked for local-file target presence. Found **0 missing local targets**, one H1 per file, balanced triple-backtick fences, and no remaining `900-page` expression in these eight files. This is not a full-fragment-anchor parser, source verification or executable test suite.
+- **Python validation status on this latest revision: NOT RUN.** The previous exact-run 13/13 group and 195/195 tests remain evidence **only for `8a1bb1f`**, not for the revised index/book. Before marking any content accepted or promoting PR #217, run the complete Python test/validation suite in a runnable checkout on the new pinned commit and record log artifacts and checked SHA; if the index was rebuilt, verify `scripts/route_index.py` produces exactly the same snapshot and metadata.
+- All eight changed chapters remain **SELF-REVIEW FIXED / INDEPENDENT CLAIM REVIEW OPEN**. Other 61 canonical owners are still queued for full source-by-claim editorial acceptance. **Zero of 69 chapters independently accepted.**
+
 ## Formal acceptance gate and next edit policy
 
 For each of the 69 chapters, record (a) reviewed manuscript revision and editor identity/role, (b) checked claim(s) and precise official source section/version or clearly labeled mathematical derivation, (c) explicit counterexample/recovery behavior and canonical owner, (d) fiction versus observed/public case classification, (e) unresolved contradictions / requested fix, and (f) the exact review disposition **REJECT / REVISE / SELF-REVIEW PASS / INDEPENDENTLY ACCEPTED**. Do **not** set independent acceptance from word counts, index success, reference presence or an AI-written scenario alone.
