@@ -186,6 +186,21 @@ Client cancellation can occur after a database has committed. Returning the conn
 
 **Insufficient evidence:** "An API has 30,000 concurrent users, so the JDBC pool should have 30,000 connections." Cannot infer that. Concurrency of logged-in users is not active DB operation count; actual pool budget depends on query/transaction demand, holds, topology, DB service capacity and SLOs.
 
+## Engineering walkthrough — Pool capacity is a fleet equation, not a per-replica setting
+
+**Original synthetic budget:** eight application replicas each configure HikariCP maximum 20 connections; PgBouncer mediates 60 server-side database connections. A simplistic calculation of 8×20 = 160 client leases is **not 160 simultaneous database executions**. Transaction-pooling behavior can reuse physical server connections between transactions but has session-state compatibility constraints; a lease held across a long transaction retains scarce capacity.
+
+| Resource | Hypothetical fleet ceiling | Safety observation |
+|---|---:|---|
+| App JDBC leases | 8×20 = 160 | Waiting client requests and heap still require bounded admission |
+| PgBouncer server connections | 60 shared slots | Observed active transactions and wait time, not configured number alone |
+| Database heavy write path | Unknown, key- and lock-dependent | Must be measured; neither pool limit equals true throughput |
+| Request buffers | E.g. 1,000 queued × 16 KiB = ~15.6 MiB payload only | Objects, TLS, headers and fragmentation add overhead |
+
+If a request holds a leased connection for 400 ms, the idealized service bound at 60 independent leases is at most 150 starts/s under uniform service-time assumptions—**not** a safe p99 guarantee, nor a forecast under lock contention or transaction pooling limitations. Doubling application replicas could increase waiting clients and retry amplification while leaving server DB connections fixed.
+
+**Failure/recovery:** inject a database outage where all 60 slots are unavailable, then recover. A bounded waiting queue, deadline and distinct overload response must prevent unbounded user memory and retry storms. [PgBouncer configuration](https://www.pgbouncer.org/config) distinguishes pooling modes; HikariCP public documentation describes client pool behavior. Proposed comparison of transaction mode vs session mode must audit session-affine features (e.g. temporary state and prepared statements under version/configuration rules). No deployment or benchmark was run.
+
 ## Source-to-claim ledger
 
 | ID | Primary public reference and inspected scope (2026-10-19) | Supports and limits |

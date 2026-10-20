@@ -164,6 +164,20 @@ A legitimate alternative can be one durable local database with a single authori
 
 **Insufficient-evidence case:** "Our system has five replicas. Can we promise always-available strongly consistent writes during any data-center failure?" **No.** Need explicit voter placement, quorum reachability, regional failure domains, read/write semantics, client routing, persistence/recovery rules and failure tests. The number five alone proves no such service-level guarantee.
 
+## Engineering walkthrough — Wall-clock order cannot prove causality or commit order
+
+**Original synthetic distributed trace:** service A records command X at local clock `10:00:00.200`, sends event E, and service B receives E after applying a 400 ms backward clock adjustment. B writes `09:59:59.950` in a log. B's timestamp is earlier than A's, but E's send causally precedes its receipt. Sorting timestamps would invert that relationship.
+
+Lamport's happened-before relation distinguishes program order and message edges. A Lamport-style logical counter can preserve those causal constraints but does **not** prove that two concurrent events are causally related merely because their counters differ. A total-order service or consensus can choose one sequence for a declared authority, but that adds coordination, availability and latency implications; it is not equivalent to clock synchronization.
+
+| Question | Appropriate scope | Counterexample |
+|---|---|---|
+| What did B learn from A? | Message/causal relation | Clock offset reverses logged timestamps |
+| Which write is legally first for one booking key? | Single authoritative serializing writer/consensus contract | Per-partition queue order across different keys is global order |
+| Can a client observe a completed write on subsequent reads? | Linearizability/consistency contract | Lamport counter on logs proves read-after-write visibility |
+
+**Proposed, unexecuted test:** reorder cross-service messages and skew clocks, then verify which statements remain true without any synchronized wall clocks. If the product requires a global order of conflicting writes, state an explicit ordering authority; if it needs only trace correlation, causal links and operation IDs may suffice without consensus. The original Lamport paper defines the causal abstraction, not any claim of a running global clock or order service.
+
 ## Exact public evidence
 
 | ID | Source and bounded read scope | Supports and limitations |

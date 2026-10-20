@@ -178,6 +178,23 @@ Prefer one authoritative **local** transaction when the high-value invariant fit
 
 Insufficient-evidence question: "Three independent services all use PostgreSQL SERIALIZABLE. Are our cross-service registrations globally serializable?" **No.** Local isolation is not a global cross-database protocol. Need a single authoritative allocation model, participating transaction mechanism or application-level invariant protocol, retry/compensation policy and actual overlapping-failure tests.
 
+## Engineering walkthrough — The cancel-versus-accept invariant crosses a transaction boundary
+
+**Original fictional reservation:** Booking accepts one seat and Payment authorizes a deposit in separate databases. Cancellation can race with payment confirmation. Two transactions may each be locally ACID yet produce a globally invalid result: booking CANCELLED while the external payment is captured as if the booking remained ACTIVE.
+
+A local PostgreSQL serializable transaction can protect a booking-state transition inside one data authority, subject to retries. It cannot atomically roll back a committed capture in an unrelated payment provider. A saga must define valid durable states and compensating actions, including cases where payment capture cannot be reversed instantaneously.
+
+| Event race | Business protocol response | Incorrect shortcut |
+|---|---|---|
+| Cancel before payment authorized | Mark cancellation intent; prevent new capture through fenced operation/state | Assume last message received always wins |
+| Payment captured, cancel then arrives | Transition to refund-pending and reconcile actual refund effect | Rewrite captured to never-happened |
+| Deposit reply lost | Query provider by stable payment intent | Blindly capture a second payment |
+| Compensation fails | Durable retry/manual repair state with accountable owner | Declare saga complete while money remains captured |
+
+**Choice:** if all required state can remain in one local database, prefer its transaction/invariant over a saga for that operation; when independent business authorities are non-negotiable, accept explicit intermediate states and compensation contracts. A message order alone cannot substitute for versioned business transitions. The saga pattern and PostgreSQL isolation documents support bounded mechanisms, not guaranteed reversibility.
+
+**Proposed, not executed:** synchronize cancel and accept operations, lose payment acknowledgments, crash during compensation and replay messages out of order. The test oracle is one legal booking outcome plus independently reconciled payment status, not a globally atomic transaction claim.
+
 ## Bounded public evidence and review state
 
 | ID | Public source, exact inspected section | Supports / limits |

@@ -160,6 +160,21 @@ Run **equivalent open-loop offered-load** and bounded concurrency tests; include
 
 **Research status:** inspected the cited published sections and identified untested driver-specific behavior. **Not performed:** compilation, Spring/driver integration, latency measurement, source-code audit, formal backpressure proof or independent human review.
 
+## Engineering walkthrough — Subscriber demand does not protect an unseen blocking queue
+
+**Original fictional streaming endpoint:** a Reactor service subscribes to a database-backed event stream and transforms updates for WebSocket clients. A downstream subscriber requests `n=1` item at a time, but a library callback invokes a blocking JDBC query on an event-loop thread and enqueues unbounded work before the publisher honors demand. The public Reactive Streams request protocol only coordinates compliant participants; it does not cap an unrelated driver pool or hidden queue.
+
+| Boundary | Normal behavior | Fault injection / observation |
+|---|---|---|
+| Publisher → subscriber | Emit within recorded demand and cancellation state | Slow consumer requests zero additional items; count retained buffers |
+| Scheduler/event loop | Nonblocking callbacks do brief work | Inject 200 ms blocking call; check event-loop delays of unrelated sessions |
+| R2DBC/DB connections | Bounded leases and driver-specific cancellation | Close client while SQL is in flight; prove cleanup separately from transaction effect |
+| Retry/reconnect | Stable event or operation identity | Lost reply after committed mutation cannot be undone by `cancel` |
+
+On cancellation, stop *new* useful work and release buffers/leases where supported; any durable effect already committed requires authoritative reconciliation. Moving the blocking JDBC call to `boundedElastic` can protect event-loop responsiveness but only **relocates** waiting and resource budgeting. It may still saturate the downstream. Reactor 3.7 scheduler/context documentation and R2DBC 1.0 SPI describe API contracts, not proof that any specific driver or application meets them.
+
+**Proposed (not run):** one slow client, one disconnected client and one stalled database under equal offered messages; observe emitted/requested counts, heap growth, queue age, pool leases and final durable effects. Compare bounded reactive path with a simpler thread-per-request architecture. Choose reactive only if its true end-to-end flow control and operational costs satisfy the workload.
+
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.

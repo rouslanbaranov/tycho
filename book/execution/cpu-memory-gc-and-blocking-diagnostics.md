@@ -182,6 +182,21 @@ All diagrams, suspected failures, rates, experiments and recommendations for the
 - Relevant runtime: [Platform and virtual threads](platform-threads-executors-and-virtual-threads.md); [Reactive execution](reactor-webflux-r2dbc-and-backpressure.md); [Event-loop frameworks](vertx-netty-quarkus-mutiny-and-rxjava.md).
 - Cross-layer: [Connection pool budgets](../scaling/connection-pools-hikaricp-pgbouncer.md); [Queueing](../performance/queueing-littles-law.md); [Tail latency](../performance/tail-latency-fanout-and-deadline-budgets.md).
 
+## Engineering walkthrough — High latency with low JVM heap pressure
+
+**Original hypothetical diagnostic:** enabling virtual-thread request handling coincides with doubled p99 and rising RSS memory while GC pause duration remains low. An engineer immediately blames the garbage collector and selects a new collection algorithm. Yet the dominant delay may be a database connection queue; RSS growth might instead arise from native buffers, thread stacks, direct memory or container-level accounting.
+
+| Evidence requested | Supports which diagnosis | Does *not* establish |
+|---|---|---|
+| JVM JFR allocation, GC pause and safepoints | Heap allocation/collection contribution | Native RSS cause or remote DB throughput |
+| Async-profiler CPU and lock modes | Hot CPU paths or contention | Complete network wait accounting |
+| Native memory and process/container telemetry | Off-heap pools and reserved/committed memory | User-visible latency without request spans |
+| Connection-acquire and queue timestamps | Scarce downstream wait | Virtual threads are fundamentally slower |
+
+Suppose synthetic traces show 180 ms of 230 ms request time spent acquiring a DB lease and only 8 ms in GC pauses across the same interval. A collector swap does not target the dominant per-request wait even if collector tuning is useful for a different workload. Releasing connections before unrelated remote waits, bounding admission or optimizing the query is a more discriminating candidate; verify with equal arrivals.
+
+**Negative test (not run):** hold the JDBC pool fixed and alternate execution model, then independently enlarge the pool under a safe DB budget. Correlate JFR, GC, CPU, allocation, native RSS, connection wait and correct completion, including restarts and canceled calls. Source manuals for JFR/jcmd and collectors describe diagnostic mechanisms; they do not certify the fictional decomposition or establish a particular collector choice.
+
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
