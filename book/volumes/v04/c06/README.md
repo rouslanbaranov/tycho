@@ -10,13 +10,16 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "What are the consequences of acknowledgement, retention and consumer state?"
+summary: "What are the consequences of acknowledgement, retention and consumer state? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "What are the consequences of acknowledgement, retention and consumer state?"
   prerequisites:
     - "tycho.chapter.18aa94285a164b6f94530cebcfd87b8b"
-  related_ids: []
+  related_ids:
+    - "tycho.page.98616bdc3c514ea997b2cfe30ad7c070"
+    - "tycho.page.0eee61f261054af0ad728d791036c5f4"
+    - "tycho.page.148a37ff87ca4e42a2fec625c65319b0"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -54,16 +57,13 @@ Acknowledging receipt can precede a durable application effect; delivery termino
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Messaging families: RabbitMQ, Pulsar, NATS and durable workflows](messaging-families-and-durable-workflows.md) | What are the consequences of acknowledgement, retention and consumer state? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. First identify what a consumer must own](messaging-families-and-durable-workflows.md#1-first-identify-what-a-consumer-must-own).
-- [2. Requirement-driven comparison, not a ranking](messaging-families-and-durable-workflows.md#2-requirement-driven-comparison-not-a-ranking).
-- [Engineering walkthrough — Work queue versus ephemeral fan-out versus replayable history](messaging-families-and-durable-workflows.md#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history).
-- [Applied M9 evidence: what transfers and what does not](messaging-families-and-durable-workflows.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](messaging-families-and-durable-workflows.md) | What are the consequences of acknowledgement, retention and consumer state? |
+| [Consumer requirements and messaging families](message-selection.md) | Which ownership, retention and replay contract selects a messaging family? |
+| [Workflow state and messaging failure gates](workflow-failure.md) | When does a queue need an additional durable business-state protocol? |
 
 ## Boundaries and further reading
 
@@ -82,3 +82,22 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.98616bdc3c514ea997b2cfe30ad7c070:5 -->
+## Public evidence and review scope
+
+| ID | Official public source (observed version) and exact inspected section | Supports / does not prove |
+|---|---|---|
+| E01 | [RabbitMQ 4.3 Reliability Guide](https://www.rabbitmq.com/docs/reliability), *Data Safety, Clustering and Queue Content Replication* | Acks, confirms and replicated queue roles, not actual application end-to-end exactly-once |
+| E02 | [RabbitMQ 4.3 Consumer Acknowledgements and Publisher Confirms](https://www.rabbitmq.com/docs/confirms), *The Basics, Publisher Confirms, Consumer Acknowledgements* | Publisher/consumer ack independence and recovery hazards |
+| E03 | [NATS JetStream](https://docs.nats.io/concepts/jetstream), *How It Works, Streams, Consumers*, accessed 2026-10-18 (rolling site) | Core vs JetStream durable state and redelivery, not pinned server binary behavior |
+| E04 | [Apache Pulsar 4.1 Architecture Overview](https://pulsar.apache.org/docs/4.1.x/concepts-architecture-overview/), *Brokers, Persistent storage* | Broker/BookKeeper architecture, not test results or ranking |
+| E05 | [RabbitMQ quorum queues](https://www.rabbitmq.com/docs/quorum-queues), *When Not to Use Quorum Queues* | Documented contraindications and durability trade-offs, version observed 4.3 |
+
+**Review state:** bounded documentation comparison, synthetic illustrations only. No software installed, measurements collected, benchmark conducted, broker disaster recovery rehearsed, full product alternatives researched or external domain review completed.
+
+<!-- /tycho-question-source -->

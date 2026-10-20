@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "What compatibility windows and irreversibility constraints exist?"
+summary: "What compatibility windows and irreversibility constraints exist? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "What compatibility windows and irreversibility constraints exist?"
@@ -19,6 +19,9 @@ route_hints:
   related_ids:
     - "tycho.chapter.7d434d1a41e142d38bb729ee124ac548"
     - "tycho.chapter.0a5e430b39094337aa6a211d9b5b4bd0"
+    - "tycho.page.357c2d162bd44f3aa06a995a1e691551"
+    - "tycho.page.d00c6081ca664f619308712e245ef523"
+    - "tycho.page.7e927696162f48beaa33fc834b36ee76"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -54,16 +57,13 @@ A new value interpreted differently by old readers can break a mixed-version sys
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Schema lifecycle, semantic data migration and data retirement](schema-lifecycle-and-semantic-migration.md) | What compatibility windows and irreversibility constraints exist? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Distinguish syntactic change from semantic change](schema-lifecycle-and-semantic-migration.md#1-distinguish-syntactic-change-from-semantic-change).
-- [2. Original synthetic scenario: two equipment identities](schema-lifecycle-and-semantic-migration.md#2-original-synthetic-scenario-two-equipment-identities).
-- [7. Public sources and nonclaims](schema-lifecycle-and-semantic-migration.md#7-public-sources-and-nonclaims).
-- [Applied M9 evidence: what transfers and what does not](schema-lifecycle-and-semantic-migration.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](schema-lifecycle-and-semantic-migration.md) | What compatibility windows and irreversibility constraints exist? |
+| [Schema shape and preserved meaning](semantic-compatibility.md) | Which old/new representation change can silently alter a domain invariant? |
+| [Migration stages, retention and no-return points](migration-retirement.md) | Which authority and validation gates permit old data or contracts to be retired? |
 
 ## Boundaries and further reading
 
@@ -83,3 +83,22 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.357c2d162bd44f3aa06a995a1e691551:7 -->
+## 7. Public sources and nonclaims
+
+| Independently read source | Supported point | Unproven |
+|---|---|---|
+| [Danilo Sato — Parallel Change](https://martinfowler.com/bliki/ParallelChange.html) | Expand/migrate/contract interface coexistence method | Automatic database consistency |
+| [PostgreSQL 17 ALTER TABLE](https://www.postgresql.org/docs/17/sql-altertable.html) | Operation-specific DDL and lock constraints | Running migration result |
+| [Prior Tycho combined schema study](../../../delivery/progressive-delivery-and-schema-evolution.md) | Original research on mixed versions and data transition | Accepted semantic migration |
+
+The invented schema, example workflow, diagram, test matrix and conclusions are original. No versioned database data or human review was available.
+
+**Navigation:** proposed **V05/C06** in [book outline](../../../PROPOSED-STRUCTURE.md) and [data landing](../../../data/README.md). Read [relational modeling](../c01/relational-modeling-and-transaction-isolation.md), [mixed-version schema compatibility](../../v08/c05/mixed-version-database-compatibility-and-online-ddl.md), [legacy transition](../../v10/c05/target-and-transition-architecture-states.md).
+
+<!-- /tycho-question-source -->

@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "When do fusion and metadata filters improve measured relevance?"
+summary: "When do fusion and metadata filters improve measured relevance? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "When do fusion and metadata filters improve measured relevance?"
@@ -19,6 +19,10 @@ route_hints:
   related_ids:
     - "tycho.chapter.5dc7b18369054daa852565a5dab2502b"
     - "tycho.chapter.e3cf27f8212a455bb53e135ee18bbaa9"
+    - "tycho.page.359813d554c84da794a353d4416b8047"
+    - "tycho.page.b919c3c84861491c82334b6e00bf443e"
+    - "tycho.page.5bee1736b2fe4418af5c50587ee4fbb0"
+    - "tycho.page.a4335241afc0408d9e137bc2a027ebed"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -55,16 +59,14 @@ Combining rankings cannot repair a missing authorized document or an invalid rel
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Hybrid retrieval, graph expansion, reranking and evidence-quality evaluation](hybrid-ranking-graph-and-evaluation.md) | When do fusion and metadata filters improve measured relevance? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Retrieval has multiple independent signals](hybrid-ranking-graph-and-evaluation.md#1-retrieval-has-multiple-independent-signals).
-- [2. Reciprocal Rank Fusion handles incompatible score scales](hybrid-ranking-graph-and-evaluation.md#2-reciprocal-rank-fusion-handles-incompatible-score-scales).
-- [Engineering walkthrough — Hand-computed rank fusion and a false evidence match](hybrid-ranking-graph-and-evaluation.md#engineering-walkthrough-hand-computed-rank-fusion-and-a-false-evidence-match).
-- [Evidence ledger and implementation boundaries](hybrid-ranking-graph-and-evaluation.md#evidence-ledger-and-implementation-boundaries).
+| [Integrated decision and original walkthrough](hybrid-ranking-graph-and-evaluation.md) | When do fusion and metadata filters improve measured relevance? |
+| [Retrieval signals and rank fusion](fusion-signals.md) | How does rank fusion combine rankings without treating scores as comparable probabilities? |
+| [Traversal, evidence and calibrated refusal](evidence-refusal.md) | Which relation or passage supports an answer and when should a system refuse? |
+| [Hybrid evaluation and snapshot consistency](hybrid-evaluation.md) | What matched judgments and snapshot boundaries make an evaluation reproducible? |
 
 ## Boundaries and further reading
 
@@ -84,3 +86,37 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.359813d554c84da794a353d4416b8047:8 -->
+## Engineering walkthrough — Hand-computed rank fusion and a false evidence match
+
+**Original synthetic example:** lexical search ranks documents A, B, C; semantic search ranks C, D, A. Using Reciprocal Rank Fusion with illustrative `k=60`, the score for A is `1/61 + 1/63 ≈ 0.03227`; for C it is `1/63 + 1/61 ≈ 0.03227`; B and D each contribute one list hit. A and C tie under these assumptions, **without any claim that either is factually correct**. Different handling of missing ranks, duplicate IDs or list truncation changes the result.
+
+A restricted document can be top-ranked in one retriever: fusion must not reveal its title or score through results, explanations or related links. Reranking may improve relevance for permitted candidate texts but cannot repair a source-revision mismatch or transform a speculative claim into published evidence. The [Elasticsearch RRF reference](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion) defines the general rank-only fusion mechanism; actual feature/version requirements must be pinned for production.
+
+| Stage | Necessary gate | Failure consequence |
+|---|---|---|
+| Retrieve lexical/vector candidates | Source snapshot and permission scope | Authorized evidence omitted or forbidden text leaked |
+| Fuse ranks | Stable identity and declared missing-rank behavior | Duplicate content treated as independent corroboration |
+| Rerank | Preserve source boundaries and disclose heuristic nature | Plausible but stale claim promoted over current authority |
+| Answer | Verify material claims against original source/version | Confident answer when evidence is insufficient |
+
+**Proposed experiment, not run:** hand-verify small fusion scores, then evaluate real held-out questions with authorized judgment sets and deliberately contradictory/stale snippets. If relevant sources remain absent, **refuse a substantive architectural conclusion and request evidence** instead of increasing model confidence or traversal depth.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.359813d554c84da794a353d4416b8047:9 -->
+## Evidence ledger and implementation boundaries
+
+| ID | Public primary source / examined scope | Supports / exclusions |
+|---|---|---|
+| E01 | [Elasticsearch Reciprocal Rank Fusion reference](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion), RRF score equation and multi-retriever combination; rolling docs observed 2026-10-19 | Rank fusion semantics; no Tycho benchmark |
+| E02 | [Neo4j property graph concepts](https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/), *Node, Relationship, Schema* | Typed directional edges as a graph model, not a verified Tycho relationship dataset |
+| E03 | [PostgreSQL 17 FTS ranking](https://www.postgresql.org/docs/17/textsearch-controls.html), §12.3.3 | Application-dependent lexical rank and structured weighting |
+| E04 | [pgvector official README](https://github.com/pgvector/pgvector), exact vs ANN, filtered search and hybrid notes; rolling revision observed 2026-10-19 | Candidate generation mechanics, not search or agent-answer superiority |
+
+**Review status:** conceptual evaluation method only; no full Tycho hybrid engine, graph traversal service, LLM answer evaluation, ranking judgment, cost measurement or independent reviewer approval has been implemented by this issue.
+<!-- /tycho-question-source -->

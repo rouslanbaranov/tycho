@@ -1,5 +1,4 @@
-"""Migration regression checks: evidence, identity, content and hierarchy loss."""
-import copy
+"""Adversarial split-migration checks, never independent editorial acceptance."""
 import json
 from pathlib import Path
 import shutil
@@ -9,93 +8,89 @@ import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'))
-from validate_edition import check_migration, inventory_members
-from assemble_edition import split, MARKER, rewrite_links
+from validate_decomposition import validate
+from assemble_edition import split
 from frontmatter_generate import render
+from decompose_chapters import extract_blocks,rebase
 
 
 class EditionMigrationTests(unittest.TestCase):
     def setUp(self):
-        self.tmp=tempfile.TemporaryDirectory()
-        self.addCleanup(self.tmp.cleanup)
+        self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup)
         self.root=Path(self.tmp.name)
-        self.outline=json.loads((ROOT/'edition/outline.json').read_text())
-        self.migration=json.loads((ROOT/'edition/migration.json').read_text())
-        paths=['book/README.md']
-        paths += [v['path'] for v in self.outline['volumes']]
-        paths += [c['path'] for c in self.outline['chapters']]
-        paths += [r['new_path'] for r in self.migration['documents']]
-        for path in paths:
-            target=self.root/path;target.parent.mkdir(parents=True,exist_ok=True)
-            shutil.copyfile(ROOT/path,target)
-        self.row=self.migration['documents'][0]
-        self.path=self.root/self.row['new_path']
+        shutil.copytree(ROOT/'book',self.root/'book')
+        (self.root/'edition').mkdir()
+        for name in ('decomposition-plan.json','decomposition-manifest.json','migration.json'):
+            shutil.copyfile(ROOT/'edition'/name,self.root/'edition'/name)
+        self.plan=json.loads((self.root/'edition/decomposition-plan.json').read_text())
+        self.chapter=self.plan['chapters'][0]
+        self.page=self.root/self.chapter['pages'][0]['path']
 
     def check(self):
-        return check_migration(self.root,self.outline,self.migration)
+        return validate(self.root)
 
-    def test_preserved_complete_migration(self):
-        self.assertEqual(self.check()['migrated_pages'],69)
+    def test_complete_payload_and_ownership(self):
+        result=self.check()
+        self.assertEqual(result['preserved_original_manuscripts'],69)
+        self.assertEqual(result['new_question_pages'],sum(len(c['pages']) for c in self.plan['chapters']))
 
-    def test_payload_loss_rejected(self):
-        self.path.write_text(self.path.read_text().replace('## Purpose and mission','## Removed original section',1))
-        with self.assertRaisesRegex(ValueError,'lost-or-altered-payload'):
-            self.check()
+    def test_lost_prose_is_rejected(self):
+        self.page.write_text(self.page.read_text().replace('## 1.','## Removed.',1))
+        with self.assertRaisesRegex(ValueError,'altered-source-payload'):self.check()
 
-    def test_new_page_identity_rejected(self):
-        meta,body=split(self.path.read_text());meta['id']='tycho.page.123456'
-        self.path.write_text(render(meta)+body)
-        with self.assertRaisesRegex(ValueError,'changed-page-id'):
-            self.check()
+    def test_new_page_identity_is_rejected(self):
+        m,b=split(self.page.read_text());m['id']='tycho.page.123456';self.page.write_text(render(m)+b)
+        with self.assertRaisesRegex(ValueError,'question-identity-parent'):self.check()
 
-    def test_wrong_parent_rejected(self):
-        meta,body=split(self.path.read_text());meta['parent_id']=self.row['old_parent_id']
-        self.path.write_text(render(meta)+body)
-        with self.assertRaisesRegex(ValueError,'changed-page-parent'):
-            self.check()
+    def test_wrong_parent_is_rejected(self):
+        m,b=split(self.page.read_text());m['parent_id']='tycho.chapter.123456';self.page.write_text(render(m)+b)
+        with self.assertRaisesRegex(ValueError,'question-identity-parent'):self.check()
 
-    def test_fabricated_verification_rejected(self):
-        meta,body=split(self.path.read_text());meta['source_inspection_date']='2026-10-20'
-        self.path.write_text(render(meta)+body)
-        with self.assertRaisesRegex(ValueError,'changed-evidence-metadata'):
-            self.check()
+    def test_fabricated_source_inspection_is_rejected(self):
+        m,b=split(self.page.read_text());m['source_inspection_date']='2026-10-20';self.page.write_text(render(m)+b)
+        with self.assertRaisesRegex(ValueError,'fabricated-question-verification'):self.check()
 
-    def test_missing_page_rejected(self):
-        self.path.unlink()
-        with self.assertRaisesRegex(ValueError,'missing-primary-page'):
-            self.check()
+    def test_missing_page_is_rejected(self):
+        self.page.unlink()
+        with self.assertRaisesRegex(ValueError,'missing-source-payload'):self.check()
 
-    def test_duplicate_canonical_copy_rejected(self):
-        old=self.root/self.row['old_path'];old.parent.mkdir(parents=True,exist_ok=True);old.write_text('# Duplicate\n')
-        with self.assertRaisesRegex(ValueError,'duplicate-canonical-old-path'):
-            self.check()
+    def test_duplicate_original_payload_is_rejected(self):
+        m,b=split(self.page.read_text());m['id']='tycho.page.123456';m['canonical_path']='book/duplicate.md'
+        (self.root/'book/duplicate.md').write_text(render(m)+b)
+        with self.assertRaisesRegex(ValueError,'duplicate-source-payload'):self.check()
 
-    def test_duplicate_outline_owner_rejected(self):
-        self.outline['chapters'][1]['code']=self.outline['chapters'][0]['code']
-        with self.assertRaisesRegex(ValueError,'duplicate-chapter-code'):
-            self.check()
+    def test_duplicate_owner_is_rejected(self):
+        self.plan['chapters'][1]['code']=self.plan['chapters'][0]['code']
+        (self.root/'edition/decomposition-plan.json').write_text(json.dumps(self.plan))
+        with self.assertRaisesRegex(ValueError,'duplicate-chapter-code'):self.check()
 
-    def test_missing_volume_synthesis_rejected(self):
-        v=self.outline['volumes'][0];p=self.root/v['path']
-        p.write_text(p.read_text().replace(v['counterexample'],'Removed'))
-        with self.assertRaisesRegex(ValueError,'volume-synthesis-content'):
-            self.check()
+    def test_removed_new_walkthrough_is_rejected(self):
+        c=next(c for c in self.plan['chapters'] if c['code']=='V04/C05')
+        p=next(p for p in c['pages'] if p['editorial_addition'])
+        f=self.root/p['path'];f.write_text(f.read_text().replace(p['editorial_addition'],'Removed'))
+        with self.assertRaisesRegex(ValueError,'missing-editorial-deepening'):self.check()
 
-    def test_fragment_external_and_moved_link_semantics(self):
-        moves={'book/a.md':'book/volumes/v01/c01/a.md'}
-        old='[self](#scope) [web](https://example.org/x#y) [page](a.md#details)'
-        result=rewrite_links(old,'book/b.md','book/b.md',moves)
-        self.assertEqual(result,'[self](#scope) [web](https://example.org/x#y) [page](volumes/v01/c01/a.md#details)')
+    def test_external_citation_change_is_rejected(self):
+        manifest=json.loads((self.root/'edition/decomposition-manifest.json').read_text())
+        record=manifest['source_bodies'][0]
+        target=next(s['target'] for s in record['sections'] if any('https://' in b for b in extract_blocks((self.root/s['target']).read_text()).values()))
+        p=self.root/target;p.write_text(p.read_text().replace('https://','http://'))
+        with self.assertRaisesRegex(ValueError,'altered-source-payload'):self.check()
 
-    def test_evidence_url_tampering_rejected_even_with_new_payload_hash(self):
-        from assemble_edition import sha
-        meta,body=split(self.path.read_text())
-        original=self.row['external_urls'][0]
-        body=body.replace(original,'https://example.invalid/replaced')
-        self.path.write_text(render(meta)+body)
-        self.row['migrated_payload_sha256']=sha(body.split(MARKER)[0])
-        with self.assertRaisesRegex(ValueError,'changed-external-citations'):
-            self.check()
+    def test_original_provenance_is_protected(self):
+        p=self.root/self.chapter['source_page'];m,b=split(p.read_text())
+        m['evidence_scope']['status']='independently-verified';p.write_text(render(m)+b)
+        with self.assertRaisesRegex(ValueError,'altered-original-provenance'):self.check()
+
+    def test_missing_chapter_source_ledger_is_rejected(self):
+        p=self.root/self.chapter['chapter_path']
+        p.write_text(p.read_text().replace('## Chapter source ledger','## Removed ledger route'))
+        with self.assertRaisesRegex(ValueError,'missing-chapter-ledger'):self.check()
+
+    def test_fragment_routing_keeps_external_urls(self):
+        routes={('book/a.md','old'):('book/b.md','new')}
+        result=rebase('[local](a.md#old) [external](https://example.org/x#y)','book/a.md','book/a.md',routes)
+        self.assertEqual(result,'[local](b.md#new) [external](https://example.org/x#y)')
 
 
 if __name__=='__main__':

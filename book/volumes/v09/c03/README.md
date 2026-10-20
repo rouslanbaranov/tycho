@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Which context, sampling and async boundaries determine trace usefulness?"
+summary: "Which context, sampling and async boundaries determine trace usefulness? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "Which context, sampling and async boundaries determine trace usefulness?"
@@ -18,6 +18,9 @@ route_hints:
     - "tycho.chapter.ef166b5f7d76454ca4c8a685c6ce033e"
   related_ids:
     - "tycho.chapter.49cb8db3af4e406ea6988c8e5e852acf"
+    - "tycho.page.f921597aae854c6996459fc025a9bca3"
+    - "tycho.page.aac0f46189b74948bedfc30a81ec80e5"
+    - "tycho.page.bc30179a9cda4c12b9deb383e8751d47"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -54,16 +57,13 @@ A missing span does not prove no effect occurred, and untrusted baggage must not
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Distributed tracing: context propagation, sampling and causal limits](distributed-tracing-context-and-sampling.md) | Which context, sampling and async boundaries determine trace usefulness? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. A trace, a span and a request are different entities](distributed-tracing-context-and-sampling.md#1-a-trace-a-span-and-a-request-are-different-entities).
-- [2. Causal and temporal interpretation](distributed-tracing-context-and-sampling.md#2-causal-and-temporal-interpretation).
-- [6. Original diagnostic decision](distributed-tracing-context-and-sampling.md#6-original-diagnostic-decision).
-- [7. Public source ledger and nonclaims](distributed-tracing-context-and-sampling.md#7-public-source-ledger-and-nonclaims).
+| [Integrated decision and original walkthrough](distributed-tracing-context-and-sampling.md) | Which context, sampling and async boundaries determine trace usefulness? |
+| [Trace identity and causal interpretation](trace-causality.md) | What execution relationship can a span and its timing establish? |
+| [Propagation, sampling and untrusted context](sampling-trust.md) | What does a missing span or forged context prevent a trace from proving? |
 
 ## Boundaries and further reading
 
@@ -82,3 +82,21 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.f921597aae854c6996459fc025a9bca3:7 -->
+## 7. Public source ledger and nonclaims
+
+| Public source read | Narrow support | Not proven |
+|---|---|---|
+| [W3C Trace Context Recommendation, 23 Nov 2021](https://www.w3.org/TR/trace-context/) | traceparent/tracestate propagation and privacy/security context | Actual interop between fictional services |
+| [OpenTelemetry sampling concepts](https://opentelemetry.io/docs/concepts/sampling/) | Sampling approaches, trace-data selection limits | Recorded trace completeness or analytical p99 validity |
+| [Tycho earlier tracing/logging research](../../../observability/trace-context-lineage-and-audit.md) | Prior cross-domain conceptual distinctions | Separate owner acceptance or collected evidence |
+
+All example events, diagrams and tracing behaviors are hypothetical educational work. No tracing backend, software build, distributed request, review or sampling evaluation was performed. Former combined tracing/logging research remains preserved for claim-level editorial reconciliation, not reproduced in full.
+
+**Navigation:** proposed **V09/C03** in [book outline](../../../PROPOSED-STRUCTURE.md), current [observability landing](../../../observability/README.md). Related [Metrics and SLOs](../c01/service-level-indicators-objectives-and-alerts.md), [Audit and lineage](../c04/logs-audit-and-data-lineage.md), [Tail latency](../../v07/c04/tail-latency-fanout-and-deadline-budgets.md).
+<!-- /tycho-question-source -->

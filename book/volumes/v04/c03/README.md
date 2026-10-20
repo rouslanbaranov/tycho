@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Which invariants need coordination, isolation or reconciliation?"
+summary: "Which invariants need coordination, isolation or reconciliation? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "Which invariants need coordination, isolation or reconciliation?"
@@ -18,6 +18,10 @@ route_hints:
     - "tycho.chapter.6eba0cf391184a709f2e23e5ecc1c3d2"
   related_ids:
     - "tycho.chapter.f5df10e26e27467887ee2b22b6ce50e7"
+    - "tycho.page.3c78e2b17ac74973b2ae658977843c2a"
+    - "tycho.page.5da19d9b920940fb837bbb28e8fefe77"
+    - "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec"
+    - "tycho.page.db64c44e7af846f9b54a524a37a1b9dd"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +57,14 @@ A compensating action can fail or arrive late; a saga is not an atomic transacti
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Consistency, transaction isolation and sagas across service boundaries](transaction-isolation-and-sagas.md) | Which invariants need coordination, isolation or reconciliation? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Define the invariant before naming consistency](transaction-isolation-and-sagas.md#1-define-the-invariant-before-naming-consistency).
-- [2. PostgreSQL transaction isolation as a concrete bounded example](transaction-isolation-and-sagas.md#2-postgresql-transaction-isolation-as-a-concrete-bounded-example).
-- [Engineering walkthrough — The cancel-versus-accept invariant crosses a transaction boundary](transaction-isolation-and-sagas.md#engineering-walkthrough-the-cancel-versus-accept-invariant-crosses-a-transaction-boundary).
-- [Bounded public evidence and review state](transaction-isolation-and-sagas.md#bounded-public-evidence-and-review-state).
+| [Integrated decision and original walkthrough](transaction-isolation-and-sagas.md) | Which invariants need coordination, isolation or reconciliation? |
+| [Invariants and local transaction isolation](invariants-isolation.md) | Which state owner and anomaly define the required coordination boundary? |
+| [Distributed transactions and business protocols](distributed-protocols.md) | Which obligations remain when local transactions cannot atomically coordinate owners? |
+| [Concurrency, compensation and negative experiments](coordination-failure.md) | What schedule would expose an unsafe cross-owner invariant or failed compensation? |
 
 ## Boundaries and further reading
 
@@ -81,3 +83,20 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.3c78e2b17ac74973b2ae658977843c2a:8 -->
+## Bounded public evidence and review state
+
+| ID | Public source, exact inspected section | Supports / limits |
+|---|---|---|
+| E01 | [PostgreSQL 17, §13.2 Transaction Isolation](https://www.postgresql.org/docs/17/transaction-iso.html), isolation-level table and serializable behavior, accessed 2026-10-18 | Local isolation semantics only; no assurance of a correct arbitrary domain schema or external transaction |
+| E02 | [PostgreSQL 17, §13.5 Serialization Failure Handling](https://www.postgresql.org/docs/17/mvcc-serialization-failure-handling.html), retry requirements | Source transaction may need complete retry, not just repeating a single query |
+| E03 | [Chris Richardson, Saga pattern](https://microservices.io/patterns/data/saga.html), Context/Solution/Resulting context: choreography/orchestration, isolation and compensation | Public pattern description, no production guarantee or measured fit |
+| E04 | [Richardson, *Managing data consistency ... using Sagas — part 1*](https://microservices.io/post/microservices/2019/07/09/developing-sagas-part-1.html), compensating transactions and semantic-lock example (2019) | Identifies a design hazard and countermeasure; not a proof of the fictional workflow |
+
+All diagram states, examples and numerical parameters here are **original synthetic descriptions**, not source-reproduced experiments. Independent human review, formal concurrency verification, distributed 2PC implementation and system deployment are **not** claimed.
+<!-- /tycho-question-source -->

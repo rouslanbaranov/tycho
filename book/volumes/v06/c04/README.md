@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "What are exact versus approximate search and recall trade-offs?"
+summary: "What are exact versus approximate search and recall trade-offs? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "What are exact versus approximate search and recall trade-offs?"
   prerequisites:
     - "tycho.chapter.5dc7b18369054daa852565a5dab2502b"
-  related_ids: []
+  related_ids:
+    - "tycho.page.7a67fd6346a54eff97784465c22bbc74"
+    - "tycho.page.66d2977575264168a8616e09d0900af6"
+    - "tycho.page.9145b7ce81d4461b90d3c6285128c18a"
+    - "tycho.page.411a855b84384e86b3b7fb60a3f63464"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +57,14 @@ A nearby vector can be semantically plausible but wrong, stale or unauthorized; 
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Vector retrieval: exact distance, HNSW, IVF, filtering and pgvector/Faiss](vector-hnsw-faiss-pgvector.md) | What are exact versus approximate search and recall trade-offs? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. The retrieval contract begins before embeddings](vector-hnsw-faiss-pgvector.md#1-the-retrieval-contract-begins-before-embeddings).
-- [2. Exact nearest neighbors are the reference baseline](vector-hnsw-faiss-pgvector.md#2-exact-nearest-neighbors-are-the-reference-baseline).
-- [6. Failure cases and evaluation](vector-hnsw-faiss-pgvector.md#6-failure-cases-and-evaluation).
-- [Source-to-claim evidence](vector-hnsw-faiss-pgvector.md#source-to-claim-evidence).
+| [Integrated decision and original walkthrough](vector-hnsw-faiss-pgvector.md) | What are exact versus approximate search and recall trade-offs? |
+| [Embedding contracts and approximate-neighbor trade-offs](exact-ann.md) | What exact reference and workload define acceptable ANN recall? |
+| [Filtering, authorization and recall](vector-filters.md) | How can filtering change the available neighbor set without granting access? |
+| [Vector engine selection and failure evaluation](vector-architecture.md) | Which lifecycle and operating constraints distinguish an index library from a serving system? |
 
 ## Boundaries and further reading
 
@@ -81,3 +83,19 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.7a67fd6346a54eff97784465c22bbc74:7 -->
+## Source-to-claim evidence
+
+| ID | Primary public source / exact inspected scope | Supports, not empirical Tycho outcomes |
+|---|---|---|
+| E01 | [pgvector project README](https://github.com/pgvector/pgvector), *Indexing, HNSW, IVFFlat, Filtering, Iterative Index Scans, Hybrid Search*, rolling main revision observed 2026-10-19 | Exact default and ANN choices, candidate postfilter and tuning features; pin tag before deployed version-specific instructions |
+| E02 | [Faiss Indexes](https://github.com/facebookresearch/faiss/wiki/Faiss-indexes), table of method classes, HNSW, IVF and PQ; wiki inspected 2026-10-19 | Index family properties, not an installed managed search service |
+| E03 | [Faiss Index factory](https://github.com/facebookresearch/faiss/wiki/The-index-factory), IVF/PQ/HNSW construction overview | Index composition, not measured universal index ranking |
+
+No embeddings were generated, model API invoked, index built, recall computed or human relevance annotated for this page; all numeric examples are synthetic.
+<!-- /tycho-question-source -->

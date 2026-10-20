@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How do active users, offered arrivals, concurrency, operation mix and skew differ?"
+summary: "How do active users, offered arrivals, concurrency, operation mix and skew differ? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How do active users, offered arrivals, concurrency, operation mix and skew differ?"
@@ -18,6 +18,10 @@ route_hints:
     - "tycho.chapter.9d4f989ec9304e418f60f1ad7248094a"
   related_ids:
     - "tycho.chapter.e365b78505784c20a4f3d72fe7904d9b"
+    - "tycho.page.fdb4ef7f69154f8c8c433591f71494f9"
+    - "tycho.page.2a3a20bc92314c7597b1792b8607c9d5"
+    - "tycho.page.f66686aeabca4f5b8f550696bf37e557"
+    - "tycho.page.59682af71a9f435680917ae5ece63088"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +57,14 @@ Two equally sized user populations can impose different bursts and hot-key press
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Workload and demand models: from user behavior to measurable offered work](workload-demand-and-arrival-models.md) | How do active users, offered arrivals, concurrency, operation mix and skew differ? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Workload nouns that must not be interchanged](workload-demand-and-arrival-models.md#1-workload-nouns-that-must-not-be-interchanged).
-- [2. Arrival shape is part of the architecture requirement](workload-demand-and-arrival-models.md#2-arrival-shape-is-part-of-the-architecture-requirement).
-- [7. Architecture implications are conditional](workload-demand-and-arrival-models.md#7-architecture-implications-are-conditional).
-- [8. Public evidence and unverified claims](workload-demand-and-arrival-models.md#8-public-evidence-and-unverified-claims).
+| [Integrated decision and original walkthrough](workload-demand-and-arrival-models.md) | How do active users, offered arrivals, concurrency, operation mix and skew differ? |
+| [Population, arrival and admission models](arrivals-population.md) | How do user population and arrival process change offered work? |
+| [Demand arithmetic and skew](demand-skew.md) | What does a demand estimate conceal about operation mix, bursts and hot keys? |
+| [Workload contracts for architecture choices](workload-contract.md) | What must a workload contract state before it can reject or support an option? |
 
 ## Boundaries and further reading
 
@@ -81,3 +83,28 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.fdb4ef7f69154f8c8c433591f71494f9:8 -->
+## 8. Public evidence and unverified claims
+
+| Source consulted | Scope | Limitation |
+|---|---|---|
+| [Grafana k6 Open and Closed Models](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/) | Arrival coupling and generator model semantics | Not a survey of user behavior |
+| [Grafana k6 Dropped Iterations](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/dropped-iterations/) | Explicit unsent scheduled arrivals and multiple causes | No observed Tycho or fictional system load |
+| [John D. C. Little, 1961 queueing identity (DOI)](https://doi.org/10.1287/opre.9.3.383) | Classical mean occupancy/throughput/residence relation under its assumptions | Not a tail-latency or capacity prediction |
+| [Tycho Little's Law study](../../v07/c01/queueing-littles-law.md) | Original derivation and finite-window caveats | No exercised benchmark |
+
+The user populations, arrival rates, averages, resource budgets, diagrams and work schedules are **wholly synthetic**. No customer data or restricted sources were used. Neither the forecast nor a benchmark has been independently validated. Editorial source-to-claim verification, case selection and final volume/page structure remain open.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.fdb4ef7f69154f8c8c433591f71494f9:9 -->
+## Navigation
+
+- Proposed owner **V01/C02** in [book outline](../../../PROPOSED-STRUCTURE.md); current [performance topic](../../../performance/README.md).
+- First read: [System framing](../c01/problem-framing-and-system-boundaries.md).
+- Expand: [Queueing](../../v07/c01/queueing-littles-law.md), [benchmark validity](../../v07/c03/load-testing-and-benchmark-validity.md), [capacity experiments](../../../performance/workload-profiles-and-capacity-experiments.md), [architecture requirements](../../v10/c01/requirements-and-workload-architecture-profiles.md).
+<!-- /tycho-question-source -->

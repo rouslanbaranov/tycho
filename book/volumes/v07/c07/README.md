@@ -10,13 +10,16 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "What experiments can confirm or falsify a scaling hypothesis?"
+summary: "What experiments can confirm or falsify a scaling hypothesis? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "What experiments can confirm or falsify a scaling hypothesis?"
   prerequisites:
     - "tycho.chapter.1d8d87e683bc428e8dbed087106f37fd"
-  related_ids: []
+  related_ids:
+    - "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8"
+    - "tycho.page.32a5de3daa2d4f74b879165a4119f63a"
+    - "tycho.page.f8f41847ac424c17a5ac3e33fd5b0c6a"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -52,16 +55,13 @@ Raw requests per second per instance ignores rejected work, recovery and shared-
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Capacity planning and cost/performance trade-offs](capacity-planning-and-cost-performance.md) | What experiments can confirm or falsify a scaling hypothesis? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Write a capacity envelope, not a magic instance count](capacity-planning-and-cost-performance.md#1-write-a-capacity-envelope-not-a-magic-instance-count).
-- [2. Cost must include more than infrastructure instance prices](capacity-planning-and-cost-performance.md#2-cost-must-include-more-than-infrastructure-instance-prices).
-- [7. Public sources and nonclaims](capacity-planning-and-cost-performance.md#7-public-sources-and-nonclaims).
-- [Engineering walkthrough — Provision, shed, optimize or simplify under uncertain prices](capacity-planning-and-cost-performance.md#engineering-walkthrough-provision-shed-optimize-or-simplify-under-uncertain-prices).
+| [Integrated decision and original walkthrough](capacity-planning-and-cost-performance.md) | What experiments can confirm or falsify a scaling hypothesis? |
+| [Capacity envelopes and total operating cost](capacity-cost-model.md) | Which correct outcomes and lifecycle costs belong in a capacity comparison? |
+| [Sensitivity, extrapolation and simpler alternatives](sensitivity-options.md) | Which uncertain input or hard constraint can reverse the preferred capacity option? |
 
 ## Boundaries and further reading
 
@@ -80,3 +80,26 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8:7 -->
+## 7. Public sources and nonclaims
+
+| Source reviewed | Supports | Not demonstrated |
+|---|---|---|
+| [AWS Well-Architected: Cost Optimization design principles](https://docs.aws.amazon.com/wellarchitected/latest/framework/cost-dp.html) | Cost attribution, consumption, outcome efficiency and operation | Current provider pricing or a real bill |
+| [AWS Well-Architected: Demand/supply resources](https://docs.aws.amazon.com/wellarchitected/2024-06-27/framework/cost-mandem.html) | Workload-aligned supply, buffers/throttling, scaling-lag consideration | Economic viability of the invented options |
+| [AWS Cost Based on Workload Metrics](https://docs.aws.amazon.com/wellarchitected/latest/framework/cost_monitor_usage_allocate_outcome.html) | Output-based unit economics and allocation principles | Real cost-per-journey data |
+| [Tycho scaling-law chapter](../c02/contention-saturation-and-scaling-laws.md) | Conditions for saturation and diminishing returns | Per-service measured fit |
+
+All amounts, charts, load assumptions and architectural examples are original teaching models. They are not measured prices or actual workloads. The proposed decisions have no independent financial/operational reviewer, validated capacity curve, tool run, or final edition metadata.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8:9 -->
+## Navigation
+
+Proposed owner **V07/C07** in [outline](../../../PROPOSED-STRUCTURE.md), currently [performance landing](../../../performance/README.md). Read first [workload arrivals](../../v01/c02/workload-demand-and-arrival-models.md), [contended resources](../c02/contention-saturation-and-scaling-laws.md); continue with [autoscaling](../c06/autoscaling-lag-and-capacity-limits.md), [overload protection](../c05/overload-admission-control-and-graceful-degradation.md), [full book decision criteria](../../v10/c04/architecture-alternatives-experiments-and-adrs.md).
+<!-- /tycho-question-source -->

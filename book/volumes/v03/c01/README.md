@@ -10,14 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "What creates concurrency and which shared state creates contention?"
+summary: "What creates concurrency and which shared state creates contention? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "What creates concurrency and which shared state creates contention?"
   prerequisites:
     - "tycho.chapter.316b50ac3db440ae82c0986b896ff468"
     - "tycho.chapter.53b6bb88a00549e491949aeb426b83f2"
-  related_ids: []
+  related_ids:
+    - "tycho.page.4e075e4ebc644f0e9b92c05294f62ca4"
+    - "tycho.page.2cdffb0fc6394a1596c8358c852a30e8"
+    - "tycho.page.113050e25ec643da98578b98eba1c519"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +56,13 @@ Cancelling a task requests termination; it cannot undo a downstream commit that 
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Threads, tasks and coordination: cancellation and resource ownership](threads-tasks-structured-coordination.md) | What creates concurrency and which shared state creates contention? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Four distinct concurrency boundaries](threads-tasks-structured-coordination.md#1-four-distinct-concurrency-boundaries).
-- [2. ExecutorService and cooperative cancellation](threads-tasks-structured-coordination.md#2-executorservice-and-cooperative-cancellation).
-- [6. Proposed tests and source ledger](threads-tasks-structured-coordination.md#6-proposed-tests-and-source-ledger).
-- [Applied M9 evidence: what transfers and what does not](threads-tasks-structured-coordination.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](threads-tasks-structured-coordination.md) | What creates concurrency and which shared state creates contention? |
+| [Task ownership, lifetimes and cancellation](task-lifetime.md) | Who owns concurrent work and what happens when its parent leaves? |
+| [Shared invariants and irreversible effects](shared-state-effects.md) | Why do concurrency-safe classes and cancellation not establish a business invariant? |
 
 ## Boundaries and further reading
 
@@ -82,3 +82,24 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.4e075e4ebc644f0e9b92c05294f62ca4:6 -->
+## 6. Proposed tests and source ledger
+
+A reviewable fixture would: fork two tasks then force one to fail; cancel the parent with an outstanding connection; inject a lost response after write commit; force an uncooperative blocking call; vary virtual-thread count while holding the datastore pool fixed; check error, cleanup and duplicate-effect invariants. **None was run** in preparing this chapter.
+
+| Source | Narrow support | Still unknown |
+|---|---|---|
+| [Java SE 25 ExecutorService](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ExecutorService.html) | Submission, shutdown and limits of interruption | Actual library/driver interruption semantics |
+| [Java 25 StructuredTaskScope preview](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/StructuredTaskScope.html) | Child lifetime and structured joins | Future API stability or empirical capacity benefit |
+| [gRPC Cancellation](https://grpc.io/docs/guides/cancellation/) | Signaling no-longer-needed remote work | Undo of committed external effects |
+
+All examples and intended outcomes are original teaching material. Full source/version/claim review, actual code-level tests and editorial acceptance remain pending.
+
+**Navigation:** target **V03/C01** in [book outline](../../../PROPOSED-STRUCTURE.md), current [execution landing](../../../execution/README.md). Expand to [virtual-thread models](../c02/platform-threads-executors-and-virtual-threads.md), [reactive scheduling](../c03/reactor-webflux-r2dbc-and-backpressure.md), [CPU and blocking diagnosis](../c06/cpu-memory-gc-and-blocking-diagnostics.md), [connection pool budgets](../c05/connection-pools-hikaricp-pgbouncer.md).
+
+<!-- /tycho-question-source -->

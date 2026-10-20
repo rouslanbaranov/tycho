@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How does a decision stay falsifiable and attributable to its sources?"
+summary: "How does a decision stay falsifiable and attributable to its sources? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How does a decision stay falsifiable and attributable to its sources?"
   prerequisites:
     - "tycho.chapter.abc85388b50f470493bef4e204d6f2dc"
-  related_ids: []
+  related_ids:
+    - "tycho.page.0ce5d0aaf63f425ebf556ea97e2d24a9"
+    - "tycho.page.2eb290f6307f4797a5981510f1248d70"
+    - "tycho.page.22b12598c23b4fc5ac74b1adc960ebe5"
+    - "tycho.page.aaed70abf79447c89a544eaf84f0da96"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -52,16 +56,14 @@ A historical company's result or a synthetic comparison cannot promise the same 
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Cross-domain architecture decisions and modernization under constraints](cross-domain-modernization-and-adr-examples.md) | How does a decision stay falsifiable and attributable to its sources? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Four valid starting points](cross-domain-modernization-and-adr-examples.md#1-four-valid-starting-points).
-- [2. First example: a burst does not imply a service split](cross-domain-modernization-and-adr-examples.md#2-first-example-a-burst-does-not-imply-a-service-split).
-- [9. Research and review status](cross-domain-modernization-and-adr-examples.md#9-research-and-review-status).
-- [Applied M9 evidence: what transfers and what does not](cross-domain-modernization-and-adr-examples.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](cross-domain-modernization-and-adr-examples.md) | How does a decision stay falsifiable and attributable to its sources? |
+| [Workload and runtime modernization comparisons](workload-runtime.md) | Which bottleneck and migration invariant distinguish the first alternatives? |
+| [Data, availability and hard feasibility gates](data-availability.md) | Which authoritative-state and recovery assumptions reject an appealing design? |
+| [Worked ADR and unresolved conclusions](worked-adr.md) | How is a complete recommendation kept falsifiable and source-scoped? |
 
 ## Boundaries and further reading
 
@@ -80,3 +82,16 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.0ce5d0aaf63f425ebf556ea97e2d24a9:9 -->
+## 9. Research and review status
+
+Source grounding: existing inspected-source ledgers in [queueing](../../v07/c01/queueing-littles-law.md), [outbox](../../../distributed/transactional-outbox-and-idempotency.md), [Kafka](../../v04/c07/kafka-partitions-replication-and-contracts.md), [safe rollout](../../../delivery/safe-rollout-and-recovery.md) and [security](../../v09/c05/identity-authorization-and-isolation.md); [arc42 §9](https://docs.arc42.org/section-9/) inspected 2026-10-19 for decision documentation principles.
+
+**Open research:** no organization-specific runtime/operational requirements, real data-set or distributed traces, independent architecture review, deployment experiment, SLO/cost budget or results are available for the scenarios. All numerical/comparative recommendations remain conditional and falsifiable. Completion of the manuscript chapter is not a completed architecture modernization project or 100% coverage of the ten-volume outline.
+
+<!-- /tycho-question-source -->

@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "What evidence distinguishes recovery, mitigation and restored guarantees?"
+summary: "What evidence distinguishes recovery, mitigation and restored guarantees? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "What evidence distinguishes recovery, mitigation and restored guarantees?"
   prerequisites:
     - "tycho.chapter.3563624d13ca4430aa77abea4f8f0bc2"
-  related_ids: []
+  related_ids:
+    - "tycho.page.d87f9ba3852b49ee8188d150bb679716"
+    - "tycho.page.62e3dca94bf647b98da7394d98232f88"
+    - "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6"
+    - "tycho.page.1810c1f1f11648bdba66aafa5da60d33"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -52,16 +56,14 @@ A redeployed healthy process can leave divergent state untouched; distinguish co
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Incident response, containment and operational change](incident-response-and-operational-change.md) | What evidence distinguishes recovery, mitigation and restored guarantees? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Define impact and correctness before the response procedure](incident-response-and-operational-change.md#1-define-impact-and-correctness-before-the-response-procedure).
-- [2. Functional roles and a single source of operational truth](incident-response-and-operational-change.md#2-functional-roles-and-a-single-source-of-operational-truth).
-- [Engineering walkthrough — Index divergence masquerading as a database latency incident](incident-response-and-operational-change.md#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident).
-- [8. Source ledger, limitations and navigation](incident-response-and-operational-change.md#8-source-ledger-limitations-and-navigation).
+| [Integrated decision and original walkthrough](incident-response-and-operational-change.md) | What evidence distinguishes recovery, mitigation and restored guarantees? |
+| [Impact, response authority and bounded actions](incident-contract.md) | Which user outcome and response role govern incident decisions? |
+| [Incident chronology and competing explanations](incident-evidence.md) | Which observation separates containment from restored state correctness? |
+| [Practice and recovery readiness](incident-practice.md) | What must an incident exercise demonstrate before the runbook is trusted? |
 
 ## Boundaries and further reading
 
@@ -80,3 +82,22 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.d87f9ba3852b49ee8188d150bb679716:9 -->
+## 8. Source ledger, limitations and navigation
+
+| Independently public source inspected | Supports | Does not prove |
+|---|---|---|
+| [Google SRE, Managing Incidents](https://sre.google/sre-book/managing-incidents/) | Delegated incident management roles and coordination | Any actual team's staffing or exercised response |
+| [SRE Workbook, Incident Response](https://sre.google/workbook/incident-response/) | Communication/control and incident procedure design | An approved operational policy for Tycho's fictional example |
+| [SRE Book, Postmortem Culture](https://sre.google/sre-book/postmortem-culture/) | Learning-oriented, evidence-based postmortem practice | Root causes in a hypothetical failure |
+| [Tycho safe rollout and recovery](../../../delivery/safe-rollout-and-recovery.md) | Separation of software rollback, persisted state and tests | A successful real restore drill |
+
+All incident events, system names, mitigations, diagrams and example consequences above are original **synthetic** constructs; no real user incident or operational metric is asserted. A future editor must verify actual versioned source excerpts, authority and compatibility before applying the model in a specific setting.
+
+**Navigation:** proposed owner V09/C06 in [book outline](../../../PROPOSED-STRUCTURE.md); section landing [Observability and audit](../../../observability/README.md). Related [metrics/SLOs](../../../observability/metrics-slo-timeseries-architecture.md), [tracing and audit](../../../observability/trace-context-lineage-and-audit.md), [recovery](../../../deployment/multi-region-disaster-recovery-contracts.md), and [safe deployment](../../../delivery/progressive-delivery-and-schema-evolution.md).
+<!-- /tycho-question-source -->

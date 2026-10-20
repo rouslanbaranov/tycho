@@ -6,7 +6,7 @@ mathematical proof of real performance, or review of external publications.
 from pathlib import Path
 import statistics
 import unittest
-from edition_paths import canonical_path, relative_link
+from edition_paths import canonical_path, relative_link, read_original_manuscript
 
 ROOT = Path(__file__).resolve().parents[1]
 CHAPTER = canonical_path(ROOT / "book/performance/queueing-littles-law.md")
@@ -51,7 +51,7 @@ class QueueingArithmeticTests(unittest.TestCase):
         self.assertNotEqual(observed_occupancy, wrong_finite_estimate)
 
     def test_mermaid_visuals_and_text_alternatives(self):
-        chapter = CHAPTER.read_text(encoding="utf-8")
+        chapter = read_original_manuscript(CHAPTER)
         landing = LANDING.read_text(encoding="utf-8")
         self.assertGreaterEqual(chapter.count("```mermaid"), 3)
         self.assertIn("flowchart LR", chapter)
@@ -61,7 +61,7 @@ class QueueingArithmeticTests(unittest.TestCase):
         self.assertIn("Text alternative:", landing)
 
     def test_source_and_navigation_presence(self):
-        text = CHAPTER.read_text(encoding="utf-8")
+        text = read_original_manuscript(CHAPTER)
         landing = LANDING.read_text(encoding="utf-8")
         self.assertIn("## Evidence-based counterexample", text)
         self.assertIn("## Independent public sources", text)

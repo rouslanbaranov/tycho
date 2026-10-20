@@ -4,7 +4,7 @@ No actual Raft deployment, database test or independently validated claim.
 """
 from pathlib import Path
 import unittest
-from edition_paths import canonical_path, relative_link
+from edition_paths import canonical_path, relative_link, read_original_manuscript
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "book/distributed"
@@ -27,7 +27,7 @@ class DistributedResearchChecks(unittest.TestCase):
     def test_pages_include_visuals_and_precise_sources(self):
         for page, references in PAGES.items():
             with self.subTest(page=page):
-                content = canonical_path(BASE / page).read_text(encoding="utf-8")
+                content = read_original_manuscript(canonical_path(BASE / page))
                 self.assertGreater(len(content), 8000)
                 self.assertGreaterEqual(content.count("```mermaid"), 3)
                 self.assertGreaterEqual(content.count("Text alternative:"), 3)

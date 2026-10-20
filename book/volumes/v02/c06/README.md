@@ -10,13 +10,16 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How can incompatible domains and legacy contracts coexist?"
+summary: "How can incompatible domains and legacy contracts coexist? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How can incompatible domains and legacy contracts coexist?"
   prerequisites:
     - "tycho.chapter.53b6bb88a00549e491949aeb426b83f2"
-  related_ids: []
+  related_ids:
+    - "tycho.page.31c8e450f78c451d90cb6090df330c5a"
+    - "tycho.page.e5195a1aafa640359f05aebc08744584"
+    - "tycho.page.5778597986df46439eee0aa162de2729"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -52,16 +55,13 @@ A syntactically valid mapping can discard domain meaning; coexistence needs a re
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Anti-corruption adapters: semantic translation and safe coexistence](anti-corruption-adapters-and-coexistence.md) | How can incompatible domains and legacy contracts coexist? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. An adapter has a semantic contract, not just a schema mapping](anti-corruption-adapters-and-coexistence.md#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping).
-- [2. Original synthetic case: an equipment catalogue migration](anti-corruption-adapters-and-coexistence.md#2-original-synthetic-case-an-equipment-catalogue-migration).
-- [7. Public source-to-claim ledger](anti-corruption-adapters-and-coexistence.md#7-public-source-to-claim-ledger).
-- [Engineering walkthrough — Lossy translation behind a seemingly compatible API](anti-corruption-adapters-and-coexistence.md#engineering-walkthrough-lossy-translation-behind-a-seemingly-compatible-api).
+| [Integrated decision and original walkthrough](anti-corruption-adapters-and-coexistence.md) | How can incompatible domains and legacy contracts coexist? |
+| [Semantic translation and rejected values](semantic-translation.md) | Which meaning must an adapter preserve and which input must it refuse? |
+| [Coexistence, unknown outcomes and adapter retirement](coexistence-retirement.md) | How is a lost acknowledgment reconciled before old contracts are retired? |
 
 ## Boundaries and further reading
 
@@ -80,3 +80,28 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.31c8e450f78c451d90cb6090df330c5a:7 -->
+## 7. Public source-to-claim ledger
+
+| Inspected public source | Narrow supported point | Not established |
+|---|---|---|
+| [Microsoft ACL pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer) | Boundary translation, operational/latency/trust/consistency trade-offs | Real inventory protocol guarantees |
+| [Fowler — Bounded Context (2014)](https://martinfowler.com/bliki/BoundedContext.html) | Internally consistent but differing domain models | Specific mapping completeness |
+| [Microsoft Strangler Fig pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig) | Controlled coexistence during incremental replacement | Validated cutover of fictional data |
+| [Tycho legacy baseline](../../v10/c02/legacy-baseline-and-modernization-evidence.md) | General evidence-first modernization methodology | Executed migration or accepted target architecture |
+
+All system names, mappings, state-machine decisions, examples and figures are invented for teaching. No proprietary DDD book was reproduced. No integration, failure injection, independent reviewer or real-system validation has been performed. The exact final edition chapter/page hierarchy remains pending.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.31c8e450f78c451d90cb6090df330c5a:9 -->
+## Navigation
+
+- Proposed **V02/C06**, current [application landing](../../../application/README.md).
+- Prerequisites: [Domain boundaries/data ownership](../c02/domain-boundaries-data-ownership-and-contracts.md), [API contract evolution](../c05/http-rpc-contracts-and-compatibility.md).
+- Related: [Outbox/retries](../../../distributed/transactional-outbox-and-idempotency.md), [safe rollout](../../../delivery/safe-rollout-and-recovery.md), [legacy assessment](../../v10/c02/legacy-baseline-and-modernization-evidence.md).
+<!-- /tycho-question-source -->

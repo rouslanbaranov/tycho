@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "When should business capabilities form module or service boundaries?"
+summary: "When should business capabilities form module or service boundaries? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "When should business capabilities form module or service boundaries?"
   prerequisites:
     - "tycho.chapter.c5f8456752f34dd6a5b6b5c7e3e14715"
-  related_ids: []
+  related_ids:
+    - "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3"
+    - "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238"
+    - "tycho.page.91c10dd544b441ddb940aaee24825638"
+    - "tycho.page.461b24a5b47b4b8e82d37125cac20c8d"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -52,16 +56,14 @@ Two teams using the same entity name can disagree on its legal transitions; sche
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Domain boundaries, data ownership and contract evolution](domain-boundaries-data-ownership-and-contracts.md) | When should business capabilities form module or service boundaries? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Model behaviors and invariants before drawing ownership boxes](domain-boundaries-data-ownership-and-contracts.md#1-model-behaviors-and-invariants-before-drawing-ownership-boxes).
-- [2. Authority and storage are separate concerns](domain-boundaries-data-ownership-and-contracts.md#2-authority-and-storage-are-separate-concerns).
-- [Engineering walkthrough — Two teams change the same concept during a schema transition](domain-boundaries-data-ownership-and-contracts.md#engineering-walkthrough-two-teams-change-the-same-concept-during-a-schema-transition).
-- [Applied M9 evidence: what transfers and what does not](domain-boundaries-data-ownership-and-contracts.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](domain-boundaries-data-ownership-and-contracts.md) | When should business capabilities form module or service boundaries? |
+| [Domain semantics and authoritative ownership](domain-authority.md) | When do shared names conceal different invariants and owners? |
+| [Semantic adapters and evolving contracts](boundary-evolution.md) | How can incompatible domain meanings evolve without an atomic release? |
+| [Ownership, isolation and boundary validation](ownership-isolation.md) | Which authorization and invariant tests establish a usable boundary? |
 
 ## Boundaries and further reading
 
@@ -80,3 +82,29 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.4681b3ba9e234c46bdb4b5993634b0e3:8 -->
+## 8. Public evidence ledger and limits
+
+| Independently inspected material | What it supports | What it does not prove |
+|---|---|---|
+| [Fowler — Bounded Context, 2014](https://martinfowler.com/bliki/BoundedContext.html) | Internally consistent domain languages and explicit relationships | Number of processes/databases for any application |
+| [arc42 Context and Scope](https://docs.arc42.org/section-3/) | External business and technical exchanges in architecture descriptions | Tested integration between fictitious contexts |
+| [Microsoft — Anti-corruption layer pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer) | Translation protection and added latency/operations/consistency trade-offs | A validated schema mapping or real migration |
+| [Tycho HTTP/RPC chapter](../c05/http-rpc-contracts-and-compatibility.md) | Explanation of request/response compatibility and effect identity | Actual contract-test execution |
+
+The makerspace, rules, mappings, diagrams, decision alternatives and failures are original synthetic examples. The chapter does **not** claim complete reading of a proprietary DDD book, domain-expert review, executable contract tests or a measured distributed architecture. Canonical ownership and metadata for final edition are pending.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.4681b3ba9e234c46bdb4b5993634b0e3:9 -->
+## Navigation
+
+- Proposed V02/C02, currently [Application architecture landing](../../../application/README.md).
+- Prerequisite: [System boundaries](../../v01/c01/problem-framing-and-system-boundaries.md), [architecture styles](../../../application/architecture-styles-and-module-boundaries.md).
+- Further reading: [API/RPC compatibility](../c05/http-rpc-contracts-and-compatibility.md), [transaction and idempotency limits](../../../distributed/transactional-outbox-and-idempotency.md), [legacy transition](../../v10/c02/legacy-baseline-and-modernization-evidence.md).
+
+<!-- /tycho-question-source -->

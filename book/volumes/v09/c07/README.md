@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "What can remote readers infer or retrieve under bounded permissions?"
+summary: "What can remote readers infer or retrieve under bounded permissions? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "What can remote readers infer or retrieve under bounded permissions?"
   prerequisites:
     - "tycho.chapter.691463ecbf6f44af84274ab3ff798b3d"
-  related_ids: []
+  related_ids:
+    - "tycho.page.0ae1aabac3b64c2f924cc427684bdbab"
+    - "tycho.page.6315cc62b4384a64b31f8694d77d1c35"
+    - "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0"
+    - "tycho.page.b38397b1d9fe456dbdb30e5b2ec2f3c8"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -52,16 +56,14 @@ Relevant source text may contain instructions; retrieval must not grant it autho
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Safe agent-accessible knowledge: trust boundaries, privacy and bounded authority](safe-agent-access-and-knowledge-isolation.md) | What can remote readers infer or retrieve under bounded permissions? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Define distinct security principals](safe-agent-access-and-knowledge-isolation.md#1-define-distinct-security-principals).
-- [2. Treat retrieval as a data pipeline, not a command channel](safe-agent-access-and-knowledge-isolation.md#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel).
-- [7. Architecture decision and limits](safe-agent-access-and-knowledge-isolation.md#7-architecture-decision-and-limits).
-- [8. Public evidence ledger and navigation](safe-agent-access-and-knowledge-isolation.md#8-public-evidence-ledger-and-navigation).
+| [Integrated decision and original walkthrough](safe-agent-access-and-knowledge-isolation.md) | What can remote readers infer or retrieve under bounded permissions? |
+| [Principals, retrieval and bounded tool effects](principal-tools.md) | Which boundary prevents retrieved instructions from acquiring execution authority? |
+| [Collection identity, privacy and retention](collection-privacy.md) | Which content and metadata may each caller observe across snapshots? |
+| [Negative access tests and architecture limits](agent-negative-tests.md) | Which denial or unavailable-evidence outcome must an agent-accessible service preserve? |
 
 ## Boundaries and further reading
 
@@ -80,3 +82,22 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.0ae1aabac3b64c2f924cc427684bdbab:8 -->
+## 8. Public evidence ledger and navigation
+
+| Independently public source consulted | Narrow supported aspect | Open limitation |
+|---|---|---|
+| [OWASP LLM01:2025 Prompt Injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection/) | Untrusted retrieved content, indirect injection, limits of RAG-only mitigation | Effectiveness of any invented controls in deployed agent |
+| [OWASP LLM06:2025 Excessive Agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency/) | Risk from overly broad functions, permissions, autonomy | Validated risk review of a specific tool/plugin runtime |
+| [OWASP Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html) | Least privilege, deny by default and per-object entitlement | All application-specific policy decisions |
+| [OWASP Authorization Patterns](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Patterns_Cheat_Sheet.html) | Policy enforcement/decision point responsibilities | Formal enforcement correctness of imaginary API |
+
+All example data, diagrams, test cases and recommendations are original educational design illustrations. No private corpus was accessed or used as a source, no customer data was processed, and no actual security test was performed. Further source precision, independent review, client compatibility and operating tests remain open.
+
+**Navigation:** future V09/C07 in [proposed book outline](../../../PROPOSED-STRUCTURE.md), current [security landing](../../../security/README.md). Prerequisites: [Authorization and trust boundaries](../c05/identity-authorization-and-isolation.md), [Tracing and audit](../../../observability/trace-context-lineage-and-audit.md). Related: [Search/retrieval architecture](../../v06/c05/hybrid-ranking-graph-and-evaluation.md), [cross-domain architecture decisions](../../v10/c07/cross-domain-modernization-and-adr-examples.md).
+<!-- /tycho-question-source -->

@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How should bottleneck observations constrain execution-model choice?"
+summary: "How should bottleneck observations constrain execution-model choice? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How should bottleneck observations constrain execution-model choice?"
   prerequisites:
     - "tycho.chapter.e436af815dc442f694deb55966077d9e"
-  related_ids: []
+  related_ids:
+    - "tycho.page.b6cecfd7301b408db611228b4cec59c5"
+    - "tycho.page.5567c6c6ca5148a2b117c858d305e0f3"
+    - "tycho.page.e5f63598da754ee181804df0ce297b95"
+    - "tycho.page.0d095fa3993a48f0b70ae375cb60c493"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -52,16 +56,14 @@ Low CPU and many waiting threads do not identify a collector problem; change one
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [CPU, memory, garbage collection and blocking: an evidence-first diagnosis](cpu-memory-gc-and-blocking-diagnostics.md) | How should bottleneck observations constrain execution-model choice? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Divide wall-clock latency before selecting a remedy](cpu-memory-gc-and-blocking-diagnostics.md#1-divide-wall-clock-latency-before-selecting-a-remedy).
-- [2. Working symptom matrix](cpu-memory-gc-and-blocking-diagnostics.md#2-working-symptom-matrix).
-- [Engineering walkthrough — High latency with low JVM heap pressure](cpu-memory-gc-and-blocking-diagnostics.md#engineering-walkthrough-high-latency-with-low-jvm-heap-pressure).
-- [Applied M9 evidence: what transfers and what does not](cpu-memory-gc-and-blocking-diagnostics.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](cpu-memory-gc-and-blocking-diagnostics.md) | How should bottleneck observations constrain execution-model choice? |
+| [Latency decomposition and symptom hypotheses](latency-diagnosis.md) | Which competing bottleneck explanations fit the same slow request? |
+| [Memory domains and diagnostic evidence](memory-tools.md) | What can heap, native-memory, CPU and blocking tools actually establish? |
+| [Discriminating runtime experiments](diagnostic-experiments.md) | What controlled observation would justify changing execution or garbage collection? |
 
 ## Boundaries and further reading
 
@@ -80,3 +82,29 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.b6cecfd7301b408db611228b4cec59c5:7 -->
+## 7. Evidence ledger and honesty boundary
+
+| Public material inspected | Supported scope | Not demonstrated |
+|---|---|---|
+| [Oracle Java 21 G1 GC](https://docs.oracle.com/en/java/javase/21/gctuning/garbage-first-g1-garbage-collector1.html) | Collector concurrency and pause-time target semantics | Runtime characteristics of synthetic service or JDK 25 configuration |
+| [Oracle Java 21 G1 tuning](https://docs.oracle.com/en/java/javase/21/gctuning/garbage-first-garbage-collector-tuning.html) | Documented pause/throughput and full-GC considerations | Any observed improvement from changing flags |
+| [Oracle JDK 25 diagnostic tools/JFR](https://docs.oracle.com/en/java/javase/25/troubleshoot/diagnostic-tools.html) | Diagnostic event, Mission Control and basic tooling purpose | Actual JFR recording or data collection |
+| [Open-source async-profiler usage and profiling modes](https://github.com/async-profiler/async-profiler/blob/master/docs/ProfilingModes.md) | CPU, wall-clock, allocation and lock sample distinctions | Universal cross-platform sampling completeness |
+
+All diagrams, suspected failures, rates, experiments and recommendations for the invented workload are synthetic. No sensitive process was accessed, no profiler was run, and no real user-impact claim is supported. Independent review, version-specific runtime reproduction and full text-to-source precision checks remain open.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.b6cecfd7301b408db611228b4cec59c5:8 -->
+## Navigation
+
+- Intended book owner: **V03/C06** in [proposed TOC](../../../PROPOSED-STRUCTURE.md); current section [Java concurrency and execution](../../../execution/README.md).
+- Relevant runtime: [Platform and virtual threads](../c02/platform-threads-executors-and-virtual-threads.md); [Reactive execution](../c03/reactor-webflux-r2dbc-and-backpressure.md); [Event-loop frameworks](../../../execution/vertx-netty-quarkus-mutiny-and-rxjava.md).
+- Cross-layer: [Connection pool budgets](../c05/connection-pools-hikaricp-pgbouncer.md); [Queueing](../../v07/c01/queueing-littles-law.md); [Tail latency](../../v07/c04/tail-latency-fanout-and-deadline-budgets.md).
+
+<!-- /tycho-question-source -->

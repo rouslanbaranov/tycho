@@ -9,10 +9,10 @@ topic_ids:
   - "search-architecture"
 perspectives:
   - "architecture"
-summary: "Reader entry for Graph data models and traversal: when relationships are the query. Scope includes 1. Clarify the meaning of an edge; 2. Original fictional example: a workshop equipment dependency map; 3. Graph traversal and relational joins can express similar answers."
+summary: "Integrated question, original scenario and transfer limits for Graph relationships and traversal. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
-    - "What are the scope, mechanisms and limits of Graph data models and traversal: when relationships are the query?"
+    - "When is explicit typed connectivity preferable to lexical or vector similarity?"
   prerequisites: []
   related_ids:
     - "tycho.page.359813d554c84da794a353d4416b8047"
@@ -20,6 +20,9 @@ route_hints:
     - "tycho.landing.4348c76938fc4d41b239721b94338436"
     - "tycho.page.c75a11f9786442a5b5456f11c2412df4"
     - "tycho.page.dde63373c50f4f4a80e727b6e160def5"
+    - "tycho.page.ae4febbe43f941f78d825613e126419b"
+    - "tycho.page.6d8377d616c548ef9c3b213d8a2df934"
+    - "tycho.page.64f398c0535345258b1fdf5eebbf4438"
   excludes:
     - "No independent content acceptance or runtime reproduction is implied."
   keywords:
@@ -48,109 +51,22 @@ updated_at: "2026-10-20"
 source_inspection_date: null
 content_verified_at: null
 ---
+<!-- tycho-question-source:tycho.page.d34afc7f27b54431b779f7f75f11e2c3:-1 -->
 
 # Graph data models and traversal: when relationships are the query
 
 > **Tycho educational System Design manuscript V06/C06 (2026-10-19).** Graph models are a general architectural topic; **a manually curated knowledge graph for Tycho itself is explicitly excluded** from the product/infrastructure roadmap. This page is original explanatory prose and synthetic scenarios with public Neo4j Cypher references. No graph database was installed, queried or benchmarked.
 
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.d34afc7f27b54431b779f7f75f11e2c3:0 -->
 ## Purpose and mission
 
 Some questions start from an entity and follow relationships: “Which components depend on this library?”, “What sequence of connections leads from station A to station B?” or “Which permissions allow this user to reach that resource?” A graph model represents **vertices, edges and their identities/attributes**, and graph traversal is useful when relationship paths are central to the workload.
 
 The decision is not simply “use a graph database”. Many bounded relationship queries can be answered by relational joins, adjacency lists or document links. A graph engine becomes plausible only when traversal shape, depth, mutation frequency, transactional requirements and operating cost justify the additional model.
 
-## 1. Clarify the meaning of an edge
-
-A useful graph schema identifies:
-- node identity and node type;
-- relationship type, direction, endpoints and cardinality;
-- whether multiple parallel relationships are allowed;
-- temporal validity/version of the relation;
-- authorization and visibility of nodes **and edges**;
-- whether the relationship is authoritative or derived;
-- deletion, cycle, duplicate and integrity policies.
-
-The [Neo4j Cypher pattern manual](https://neo4j.com/docs/cypher-manual/current/patterns/) explains declarative patterns over nodes and relationships, including traversals and paths. A path is a specific sequence of matched graph elements, not a guarantee that all reachable nodes or every shortest path were enumerated within a query budget.
-
-## 2. Original fictional example: a workshop equipment dependency map
-
-A community event uses portable devices with replaceable parts. A battery pack is compatible with a charger, a projector uses a specific cable, and a setup checklist requires a functioning power supply. The question is whether an unavailable charger affects a set of planned equipment kits.
-
-```mermaid
-flowchart LR
-    C["Charger model"] -->|SUPPLIES| B["Battery pack"]
-    B -->|POWERS| P["Portable projector"]
-    P -->|USED_IN| K["Workshop equipment kit"]
-    K -->|BOOKED_FOR| E["Event"]
-```
-
-**Text alternative:** the fictional charger supplies a battery, which powers a projector used in a kit booked for an event. Querying the paths could show affected event kits. The arrows express modeled relationships, not measured physical behavior, actual inventory or authoritative compatibility certifications.
-
-A direct question “Which chargers supply battery B?” is one hop. “Which events might depend transitively on charger C?” follows a variable-length typed path. But a path is a potential dependency chain, **not automatically a proof that the event cannot proceed**: spare batteries, alternate chargers and temporal availability matter.
-
-## 3. Graph traversal and relational joins can express similar answers
-
-| Requirement | Relational option | Graph-model option |
-|---|---|---|
-| One-hop fixed relationship | Indexed join on foreign keys/link table | Match one typed edge |
-| Small known-depth chain | Several joins or recursive CTE | Bounded path pattern |
-| Arbitrary-depth reachability | Recursive CTE with cycle detection and limits | Variable-length traversal with path/cycle constraints |
-| Frequent evolving relationship types | Schema/model discipline and relation tables | Explicit typed edges/property graph |
-| Complex OLTP transaction | Relational integrity and transactions may be strong fit | Graph engine needs its own ACID/consistency verification |
-| Search by terms/meaning | Full-text/vector index may be simpler | Traversal only helps when reliable relations change result |
-
-Traversal can generate many possible paths in dense/cyclic graphs. Limit max depth, result cardinality, type/direction, visited-state and request resources. A high-degree hub can make a path search expensive even if the graph holds few total nodes. The [Neo4j variable-length pattern guide](https://neo4j.com/docs/cypher-manual/current/patterns/variable-length-paths/) explicitly discusses path explosion, path quantifiers and pruning predicates.
-
-## 4. Query specification must include semantics and bounds
-
-A graph question needs more than a starting node:
-1. Edge types and direction allowed.
-2. Maximum number of hops and maximum returned results.
-3. Whether paths may repeat nodes/relationships.
-4. Snapshot/time validity.
-5. Required filters on nodes/edges, including permission checks.
-6. Whether output expects *all paths*, *any path*, *shortest path*, or just reachable node IDs.
-7. What to do when traversal exceeds budget or a node/edge has missing provenance.
-
-A graph's linked structure can expose sensitive information through edge labels or relationship counts even if hidden node contents are not returned. Enforce authorized scope at query execution and result construction, not solely at UI display.
-
-## 5. Derived graphs and provenance
-
-A dependency edge extracted from a software build has different authority from a human-reviewed architectural statement. A graph constructed from source references should record:
-- source file/version or admitted document;
-- inference/extraction method and date;
-- confidence or evidence status;
-- edge freshness and deprecation/removal rule;
-- ownership of conflict resolution.
-
-An edge is not fact merely because a visualization draws it. Source revision drift can invalidate it. For a system design reference book, **there is no requirement to materialize a graph service**: ordinary cross-references and precise source/claim links may be enough to explain the architecture.
-
-## 6. Architecture decision and falsifiable benchmark
-
-**Original synthetic decision:** keep the equipment dependency model in normalized relational tables at first. A graph engine becomes a conditional candidate if representative deep reachability/path questions dominate, static join/CTE approaches cannot meet the required latency/complexity, and operational/recovery/security constraints favor it.
-
-A fair experiment would compare:
-- identical entity/edge snapshot, degree distribution and mutation volume;
-- equivalent permission/time filters and path semantics;
-- query mix across one-hop, deep reachability and negative cases;
-- p95/p99, CPU, memory, index/build cost and data freshness;
-- update and deletion correctness, cycles and duplicate edges;
-- recovery cost and total operations.
-
-Reject any claimed advantage caused by returning fewer paths, omitting authorization or changing the query semantics. **No such test was performed.**
-
-## 7. Public evidence and explicit product-scope boundary
-
-| Independently inspected public source | Supports | Not established |
-|---|---|---|
-| [Neo4j Cypher — Patterns](https://neo4j.com/docs/cypher-manual/current/patterns/) | Property-graph query patterns and path semantics | Implementation for fictional equipment model |
-| [Neo4j Cypher — Variable-length paths](https://neo4j.com/docs/cypher-manual/current/patterns/variable-length-paths/) | Bounded variable-length traversal and explosion/pruning concerns | Performance of any real graph DB under a target workload |
-| [Tycho hybrid retrieval](../c05/hybrid-ranking-graph-and-evaluation.md) | Prior theoretical distinctions of retrieval mechanisms | Actual hybrid search or graph infrastructure |
-
-All graph nodes, edges, diagrams, inferred rules and experiments are original invented educational examples. No graph was created, indexed, traversed or independently reviewed. **This chapter does not reintroduce a curated Tycho knowledge graph.** It covers graph *architectures as a subject of System Design*, not a product feature.
-
-**Navigation:** proposed **V06/C06** in [planned book contents](../../../PROPOSED-STRUCTURE.md), current [search/data information architecture](../../../search/README.md). Related [Hybrid lexical/vector ranking](../c05/hybrid-ranking-graph-and-evaluation.md), [Storage alternatives](../../v05/c04/storage-model-alternatives-and-workload-fit.md), [Authorization boundaries](../../v09/c05/identity-authorization-and-isolation.md).
-
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.d34afc7f27b54431b779f7f75f11e2c3:8 -->
 ## Engineering walkthrough — A bounded dependency path is not proof of causation
 
 **Original fictional equipment graph:** nodes are physical `Unit`, `Module` and `Supplier`; edges `DEPENDS_ON` have direction, effective date and source identity. Query: "Which currently operational units depend on a part supplied by vendor X within at most three transitions?" A graph path of unlimited depth risks cycles, irrelevant historical dependencies and unbounded query cost.
@@ -214,6 +130,8 @@ The preceding `-[:DEPENDS_ON*1..3]->` is the **legacy variable-length relationsh
 
 **Further distinction:** the illustrative SQL CTE excludes **revisiting any node** through `visited`, while Cypher's default path uniqueness is relationship-based unless additional node/path restrictions are imposed. Both may return the same `DISTINCT unit_id` for the specified six-node toy fixture, but that is **not general bag-of-path equivalence** when cycles, repeated vertices, multiple evidence edges or path counts matter. Before implementing, define node-simple/relationship-simple path semantics, exact authorization on intermediate nodes and edges, deployed language version, and test both queries for the *same agreed result relation*. Neither syntax is an access-control enforcement mechanism by itself.
 
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.d34afc7f27b54431b779f7f75f11e2c3:9 -->
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
@@ -221,16 +139,18 @@ These examples connect the chapter's conditional mechanism to published experien
 **Case lens — [Meta — TAO graph serving](../../../cases/meta-tao-social-graph-serving.md)**. **Relevant mechanism or architectural contrast:** Graph-shaped access over authoritative relational data and tiered caches is a targeted domain serving architecture. **Not established by this report/playbook:** TAO does not imply every domain needs a graph database, eventual consistency policy or manually curated Tycho graph.
 
 **Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.
+<!-- /tycho-question-source -->
 
-<!-- tycho-edition-navigation -->
+## Integrated decision and reading route
 
-## Edition navigation and evidence scope
+Use explicit edge semantics, direction and bounded traversal when the question depends on relationships.
 
-| Route | Destination |
-|---|---|
-| Parent chapter | [Question, conclusions and reading route](README.md) |
-| Parent volume | [Volume synthesis](../README.md) |
-| Book | [Authoritative contents](../../../README.md) |
-| Source versions and access scope | [Registered sources](../../../../sources/README.md) and the exact page-local citation ledger above |
+A path through a graph does not imply causal influence or permission; cycles and fan-out require explicit traversal limits.
 
-The original manuscript was accepted under #213 at the recorded baseline. Earlier draft/review labels describe historical authoring events. Source access, versions, unexecuted experiments and nonclaims retain their original scope; assembly does not assert a new source read or benchmark. The chapter landing adds editorial synthesis and navigation.
+The detailed pages separate the mechanisms that make this decision conditional:
+
+- [Edge meaning and relationship questions](edge-semantics.md) — Which explicit relation is being traversed and what can a path not prove?
+- [Bounded graph traversal and relational alternatives](bounded-traversal.md) — What direction, cycle and result limits make the traversal question precise?
+- [Derived relationships and falsification](graph-provenance.md) — Which source and update contract makes a derived edge usable?
+
+[Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.

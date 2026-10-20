@@ -8,8 +8,8 @@
 |---|---|---|
 | Integrated M1–M9 draft | Merged through PR #216 | Historical baseline retained |
 | #213 — 69-chapter manuscript | Owner-confirmed substantive acceptance at `986b1ddbe985079b7c647182fcf1c2fc8911d96c`; PR #218 merged; #213/E14 completed | Content baseline available for assembly |
-| **#214 — edition assembly/publication** | Edition 2026.10.0 assembled: ten volumes, 69 primary chapters/pages, 215 canonical documents; frozen inventory and publication PR control delivery | Substantive volume/chapter landings, bounded pages, reversible identity/path migration, synthesis/navigation, fresh index, full frozen-tree checks and named release |
-| Knowledge retrieval | Strict schema and complete 215-document offline routing exist; hosted lexical/semantic/hybrid service absent | Evaluated relevance, provenance, consistency and total agent cost |
+| **#214 — edition assembly/publication** | Reopened after structural checkpoint: individual question routes for 69 chapters, 174 new pages, 389 canonical documents; final content acceptance remains open | Substantive volume/chapter landings, bounded pages, reversible identity/path migration, synthesis/navigation, fresh index, full frozen-tree checks and named release |
+| Knowledge retrieval | Strict schema and complete 389-document offline routing exist; hosted lexical/semantic/hybrid service absent | Evaluated relevance, provenance, consistency and total agent cost |
 | MCP/Rocinante | Subsequent roadmap work, not deployed | Read-only search/read/verify, onboarding, specialist integration and isolation |
 | Deployment/operations | Planned | Immutable snapshots, Ansible/container delivery, monitoring and rollback |
 

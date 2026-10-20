@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How do pool sizes, queues and timeouts compose across layers?"
+summary: "How do pool sizes, queues and timeouts compose across layers? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How do pool sizes, queues and timeouts compose across layers?"
@@ -18,6 +18,10 @@ route_hints:
     - "tycho.chapter.7a07973ba5314c3983a4c93acc1d1b89"
   related_ids:
     - "tycho.chapter.4cbc9e1582404965b696a63b79a66e93"
+    - "tycho.page.dc2470904e004a4aa733abcdb25517ed"
+    - "tycho.page.345b19b2f5c1498187048b755b74d876"
+    - "tycho.page.ac83eb7361a94d3fb27101cf7666346c"
+    - "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -54,16 +58,14 @@ Increasing replicas can multiply backend connections beyond the database budget,
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Connection pools: HikariCP, PgBouncer and end-to-end database budgets](connection-pools-hikaricp-pgbouncer.md) | How do pool sizes, queues and timeouts compose across layers? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Capacity belongs to the entire dependency topology](connection-pools-hikaricp-pgbouncer.md#1-capacity-belongs-to-the-entire-dependency-topology).
-- [2. HikariCP bounds per-process JDBC connection use](connection-pools-hikaricp-pgbouncer.md#2-hikaricp-bounds-per-process-jdbc-connection-use).
-- [Engineering walkthrough — Pool capacity is a fleet equation, not a per-replica setting](connection-pools-hikaricp-pgbouncer.md#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting).
-- [Source-to-claim ledger](connection-pools-hikaricp-pgbouncer.md#source-to-claim-ledger).
+| [Integrated decision and original walkthrough](connection-pools-hikaricp-pgbouncer.md) | How do pool sizes, queues and timeouts compose across layers? |
+| [Fleet resource budgets and queueing](fleet-budgets.md) | How do replica count, permits and wait budgets compose across the dependency topology? |
+| [HikariCP and PgBouncer contracts](pool-modes.md) | Which session and transaction assumptions distinguish the pool modes? |
+| [Pool failure and recovery decisions](pool-recovery.md) | What happens to waiters, prepared state and useful capacity during connection failure? |
 
 ## Boundaries and further reading
 
@@ -82,3 +84,19 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.dc2470904e004a4aa733abcdb25517ed:8 -->
+## Source-to-claim ledger
+
+| ID | Primary public reference and inspected scope (2026-10-19) | Supports and limits |
+|---|---|---|
+| E01 | [HikariCP project README](https://github.com/brettwooldridge/HikariCP), **Configuration: frequently used, maximumPoolSize, minimumIdle, connectionTimeout, maxLifetime**; rolling main documentation at inspection | Documented Java pool settings and their bounded behavior, not a benchmark of the synthetic example |
+| E02 | [PgBouncer Configuration](https://www.pgbouncer.org/config), **pool_mode, max_client_conn, default_pool_size** and pooling semantics; rolling public docs observed 2026-10-19 | Session/transaction/statement backend reuse, pool cardinality considerations; actual installed release unpinned |
+| E03 | [PostgreSQL 17 Connection Settings](https://www.postgresql.org/docs/17/runtime-config-connection.html), `max_connections` and limits | Server connection limits, not a universal optimal pool size |
+
+**Review state:** conceptual guidance and original arithmetic, no Java Hikari pool test, real PostgreSQL backend measurement, PgBouncer compatibility integration, failover or independent human approval. The current online HikariCP/PgBouncer docs require commit/release pinning before product-specific operational rollout.
+<!-- /tycho-question-source -->
