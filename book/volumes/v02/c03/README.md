@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Which coupling and deployment constraints fit an in-process architecture?"
+summary: "Which coupling and deployment constraints fit an in-process architecture? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "Which coupling and deployment constraints fit an in-process architecture?"
@@ -18,6 +18,9 @@ route_hints:
     - "tycho.chapter.7031445877fb4f8d831d962d170521c8"
   related_ids:
     - "tycho.chapter.18aa94285a164b6f94530cebcfd87b8b"
+    - "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf"
+    - "tycho.page.4365dbae044244c1b82751a39704e292"
+    - "tycho.page.07bb1f96bdd94195ac8e31644527a217"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +56,13 @@ An after-commit callback is not a durable external delivery mechanism; process d
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Modular monolith architecture and internal domain events](modular-monolith-and-internal-events.md) | Which coupling and deployment constraints fit an in-process architecture? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Stable module boundaries before event buses](modular-monolith-and-internal-events.md#1-stable-module-boundaries-before-event-buses).
-- [2. Original synthetic example: community workshop reservation](modular-monolith-and-internal-events.md#2-original-synthetic-example-community-workshop-reservation).
-- [Engineering walkthrough — An internal event that survives neither process death nor commit](modular-monolith-and-internal-events.md#engineering-walkthrough-an-internal-event-that-survives-neither-process-death-nor-commit).
-- [Applied M9 evidence: what transfers and what does not](modular-monolith-and-internal-events.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](modular-monolith-and-internal-events.md) | Which coupling and deployment constraints fit an in-process architecture? |
+| [Module boundaries and deployment choice](module-enforcement.md) | How can one deployable enforce ownership without imitating remote services? |
+| [Internal events and transaction timing](events-transactions.md) | What can happen between local commit, event handling and process death? |
 
 ## Boundaries and further reading
 
@@ -81,3 +81,27 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.a06fd146f96b4b17a754f4d3b608ebdf:7 -->
+## 7. Source ledger and limits
+
+| Independent source inspected | Narrow support | Not established |
+|---|---|---|
+| [Spring Modulith events](https://docs.spring.io/spring-modulith/reference/events.html) | Module event publication, listener registry and incomplete-publication recovery concepts | Actual project configuration or guarantee in all library versions |
+| [Spring Framework transaction-bound events](https://docs.spring.io/spring-framework/reference/7.1/data-access/transaction/event.html) | Listener phases relative to commit/rollback | Automatically durable after-commit processing |
+| [Tycho architecture styles](../../../application/architecture-styles-and-module-boundaries.md) | Independently researched module and service boundaries | Compiled/enforced module graph for fictional app |
+| [Tycho distributed outbox](../../../distributed/transactional-outbox-and-idempotency.md) | Commit/pub ambiguity, deduplication limits | An implemented event registry or exactly-once external effect |
+
+All modules, diagrams, events and failure cases are original invented teaching materials. No real source code, build output, dependency checker, distributed test or human domain approval was used. The final book volume/chapter/page edition has not been assembled.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.a06fd146f96b4b17a754f4d3b608ebdf:8 -->
+## Navigation
+
+Proposed owner **V02/C03** in [planned table of contents](../../../PROPOSED-STRUCTURE.md), [application landing](../../../application/README.md). Start with [bounded contexts and ownership](../c02/domain-boundaries-data-ownership-and-contracts.md), then [module/service styles](../../../application/architecture-styles-and-module-boundaries.md), [internal vs external outbox](../../../distributed/transactional-outbox-and-idempotency.md) and [safe extraction](../../../application/architecture-evolution-and-extraction.md).
+
+<!-- /tycho-question-source -->

@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "What permits old and new binaries/data schemas to coexist?"
+summary: "What permits old and new binaries/data schemas to coexist? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "What permits old and new binaries/data schemas to coexist?"
@@ -19,6 +19,10 @@ route_hints:
   related_ids:
     - "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f"
     - "tycho.chapter.0a5e430b39094337aa6a211d9b5b4bd0"
+    - "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb"
+    - "tycho.page.96a702434b714ed4906b1301bc6e0248"
+    - "tycho.page.48d9c34e755c4f7ab912ecad14f5794f"
+    - "tycho.page.d1fa0462922e4a37922cea279975a3bd"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -54,16 +58,14 @@ Reverting binaries cannot restore a removed column or reinterpret a new-only per
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Backward-compatible database change: mixed-version reads, writes and online DDL](mixed-version-database-compatibility-and-online-ddl.md) | What permits old and new binaries/data schemas to coexist? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Check the real combinations, including old readers](mixed-version-database-compatibility-and-online-ddl.md#1-check-the-real-combinations-including-old-readers).
-- [2. Expand-migrate-contract includes a compatibility window](mixed-version-database-compatibility-and-online-ddl.md#2-expand-migrate-contract-includes-a-compatibility-window).
-- [7. Source ledger and remaining verification](mixed-version-database-compatibility-and-online-ddl.md#7-source-ledger-and-remaining-verification).
-- [Applied M9 evidence: what transfers and what does not](mixed-version-database-compatibility-and-online-ddl.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](mixed-version-database-compatibility-and-online-ddl.md) | What permits old and new binaries/data schemas to coexist? |
+| [Reader/writer compatibility and migration stages](reader-writer-matrix.md) | Which combinations must work during expansion, coexistence and contraction? |
+| [DDL budgets and event compatibility](ddl-events.md) | Which resource and consumer contracts can fail despite a compatible table shape? |
+| [No-return points and forward repair](no-return-recovery.md) | Which persisted effect makes reverting an old binary unsafe? |
 
 ## Boundaries and further reading
 
@@ -83,3 +85,23 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb:7 -->
+## 7. Source ledger and remaining verification
+
+| Public evidence | Supported point | Not proven |
+|---|---|---|
+| [PostgreSQL 17 ALTER TABLE](https://www.postgresql.org/docs/17/sql-altertable.html) | Versioned DDL/lock/subcommand semantics | Actual online migration time |
+| [Confluent Schema Registry evolution](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html) | Format- and version-specific backward/forward/full compatibility | Business meaning or real consumer compatibility |
+| [Danilo Sato Parallel Change](https://martinfowler.com/bliki/ParallelChange.html) | Expansion, migration and contraction as transition method | DB/backfill safety |
+| [Prior combined Tycho research](../../../delivery/progressive-delivery-and-schema-evolution.md) | Earlier rollout/schema study and failure matrix | Independently accepted chapter split |
+
+Every system, schema, migration diagram and experiment is original synthetic work. No SQL, client/consumer, restore or load test was run and final book metadata remains pending.
+
+**Navigation:** **V08/C05** in [draft outline](../../../PROPOSED-STRUCTURE.md) via [delivery landing](../../../delivery/README.md). Read [data lifecycle](../../v05/c06/schema-lifecycle-and-semantic-migration.md), [canary/rolling](../c04/gitops-canary-and-progressive-rollout.md), [target/transition states](../../v10/c05/target-and-transition-architecture-states.md), [safe recovery](../../../delivery/safe-rollout-and-recovery.md).
+
+<!-- /tycho-question-source -->

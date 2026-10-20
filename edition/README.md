@@ -1,36 +1,34 @@
-# Tycho 2026.10 — First Markdown Edition
+# Tycho — editorial decomposition candidate
 
-Version: **2026.10.0**. Publication state: **First Markdown Edition; frozen content inventory, delivered through #214**.
+Version: **2026.10.1-rc.1**. **#214 is OPEN.** The owner rejected the earlier uniform one-article-per-chapter assembly as sufficient final book structure. Version 2026.10.0 and its named snapshot remain a historical structural checkpoint.
 
-## Read the book
+## Read and inspect
 
-Start with the [authoritative contents](../book/README.md). The edition has ten volumes, 69 primary chapters and 69 bounded primary technical pages. Fifty-one supporting technical/case pages and 15 existing navigation entries remain available: the complete canonical corpus contains **215 documents**. The 29 historical cases and six synthetic playbooks form one applied layer, not an eleventh volume.
+Start at the [book contents](../book/README.md). All 69 chapters now separate an integrated decision/walkthrough from independently named mechanism and failure questions. The current chapter routes contain three to five pages, determined by their actual questions. There is no fixed page-count or word-count completion rule.
 
-Each new volume contributes a cross-chapter synthetic scenario, synthesis, counterexample, prerequisite route and evidence limits. Each chapter states its question, worked conclusion, failure counterexample, actual section route and previous/next/prerequisite/source navigation. The accepted technical explanations retain their existing opaque identities and source ledgers.
+The candidate adds 174 question pages and retains the 69 integrated walkthrough identities, ten volume syntheses, earlier supporting material, 29 historical cases and six synthetic playbooks. The canonical corpus has 389 documents. Counts describe membership, not explanatory sufficiency.
 
-## Scope and acceptance
+[The individual chapter review](../authoring/CHAPTER_DECOMPOSITION_REVIEW_2026-10-20.md) and [explicit plan](decomposition-plan.json) record every question, its original source sections and the reason for a separate owner. Seven short treatments gained worked explanations. A new source-scoped MVCC/snapshot/vacuum page repairs an identified gap in the original PostgreSQL chapter.
 
-The owner confirmed substantive acceptance of the 69 manuscripts at `986b1ddbe985079b7c647182fcf1c2fc8911d96c`; PR #218 merged that content and PR #219 reconciled its status. This assembly starts at main `08ac0da83c30d2f2e6aea3446142ad183987f01c`.
+## Identity and evidence migration
 
-New landing syntheses are original editorial work and are self-checked, not independently certified. The assembly changes placement, hierarchy and relative navigation; it does not rerun research or promote old metadata into fabricated signed reviews. Original source versions, access restrictions, synthetic examples, proposed experiments and historical nonclaims remain explicit in their owning pages. No benchmark or production architecture is implied.
+The [original path migration](migration.json) remains valid history. The [new decomposition manifest](decomposition-manifest.json) records 739 conserved source blocks, old and new owners, normalized payload digests and 839 fragment routes. All 215 identities from the structural checkpoint remain; 174 new question entities have separately minted IDs.
 
-## Reversible migration and provenance
+The original 69 page IDs still resolve to their integrated question, original scenario and transfer limits. They are not silently reassigned to a different mechanism. Chapter READMEs introduce and synthesize the question route and own the original shared evidence rows. Detail pages retain inline citations and explicit source-ledger links. A shared source list is not proof that every listed source supports every page.
 
-- [Selected outline and minted landing IDs](outline.json) records all ten volume and 69 chapter identities, editorial input, original paths and final paths.
-- [Migration map](migration.json) records all 69 old/new paths, unchanged page IDs, old/new parents, original metadata, baseline document/body hashes, migrated-payload hashes and unchanged external URL sets.
-- `sources/document-identities.json` records live canonical paths. IDs are independent of volume numbers and paths.
-- The baseline Git commit preserves the exact pre-migration payload. To reverse the assembly, use a new revert commit or restore the baseline on an isolated branch, then use the map to inspect every reverse path/parent. Never overwrite shared history or simply undo paths while retaining the newer index.
-- Repository-local incoming Markdown links are rewritten to canonical destinations. Old topic-page paths are retired without duplicate canonical stubs. Existing external GitHub commit URLs remain pinned historical evidence. Consumers using an old raw path must resolve it through the migration map or use the old pinned revision; this Markdown edition does not claim HTTP redirects.
+New question pages do not inherit independent approval or fabricated inspection dates. Four specifically inspected public source entries support the newly written WAL, inbox, incident-practice and MVCC treatments; their exact text-inspection scope and non-execution limits are recorded in the source register and chapter review. The attempted JEP 444 direct fetch was blocked; no fresh read is asserted for that attempt.
 
-Every primary manuscript originally answered one bounded chapter question. Original bodies range from 1,373 to 3,348 whitespace-delimited words, including local evidence and examples; no page was split merely to meet a fixed count. The exact range and all hashes are emitted by the edition validator. Additional independently owned subquestions can receive new page IDs in a later edition rather than silently reusing an existing identity.
+## Reproduce and verify
 
-## Reproducible checks
+The one-time `scripts/decompose_chapters.py` tool defaults to dry-run and requires deliberate `--apply`. Start from the structural checkpoint commit recorded in the plan, supply the reviewed plan and script, and apply the explicit source admissions. Reapplying to an already decomposed tree is refused. No source acquisition or automatic acceptance occurs during an index build.
 
-Install the pinned-enough validation dependency ranges from the repository requirements files, then run from the repository root:
+From the repository root:
 
 ```bash
+python3 scripts/source_catalog.py --check
 python3 scripts/route_index.py build
 python3 scripts/route_index.py check
+python3 scripts/validate_decomposition.py
 python3 scripts/validate_edition.py
 python3 scripts/premerge_check.py --branch feature/TYCHO-214-assemble-and-release-the-complete-ten-volume-tycho-book --issue-title '[E14-14] Assemble and release the complete ten-volume Tycho book'
 python3 scripts/validate_knowledge.py --mode strict --json
@@ -39,12 +37,12 @@ python3 scripts/validate_m9_cases.py --self-test
 python3 -m unittest discover -s tests -p 'test_m9*.py' -v
 ```
 
-For actual Mermaid syntax parsing, install the existing package lock with `npm ci --ignore-scripts` inside `tools/mermaid`, then run `node tools/mermaid/check.mjs --root .`. Syntax parsing is distinct from browser layout. Visual rendering and live MCP remain owner-cancelled, not passed. The milestone-only GitHub Actions policy is unchanged.
+`validate_edition.py --write-inventory` deliberately updates the candidate inventory after real changes; ordinary checks never refresh it silently. The inventory freezes book/source/schema/index/mapping membership for a specific candidate. It does not assert final editorial acceptance.
 
-`scripts/assemble_edition.py` is an explicit one-time migration tool: default dry-run, deliberate `--apply`, refusal to apply twice. Reproduce assembly from the recorded baseline plus the reviewed `edition/outline.json` and assembly script. `scripts/validate_edition.py --write-inventory` deliberately freezes the resulting book/provenance/schema/index membership; ordinary validation never rewrites it.
+Use the existing locked Mermaid package with `tools/mermaid/check.mjs` for syntax parsing. Browser rendering and live MCP remain owner-cancelled, not passed. The milestone-only CI policy is unchanged. Prior technology-execution and broad M9 review waivers remain in force.
 
-## Freeze and limitations
+## Remaining substantive gate
 
-The inventory records path and SHA-256 for every canonical Markdown document, source registry, schema, routing index and edition mapping/input. It excludes its own file and validation logs to avoid self-referential hashes. The named release pins the final Git commit, which also preserves the authoring reports, scripts and tests. Validation must pass on that same content tree before release.
+The source manuscript retains #213 acceptance. The newly independent pages still need final reading acceptance for local definitions, adequate examples, failure reasoning, exact evidence support and boundaries between owners. Follow concrete findings into bounded writing/source work; do not promote pages based on their existence or length. New syntheses are self-checked candidates, not invented independent certification.
 
-Offline checks establish structure, retained payloads, metadata, approximate Markdown anchors and parser-valid Mermaid. They do not prove every external server currently responds, every published claim is universally true, or any example runs on a target deployment. Previously documented source-access limitations and owner waivers remain in force. Later lexical/hybrid retrieval, MCP/onboarding, shared specialist and deployment are separate workstreams.
+Final publication, retrieval/MCP and deployment must not be inferred from this larger inventory or a passing validator. The old release snapshot is not rewritten; corrective work uses a new candidate and an explicit Git history.

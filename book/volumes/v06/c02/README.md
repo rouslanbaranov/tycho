@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "When does adding a cache worsen recovery or contention?"
+summary: "When does adding a cache worsen recovery or contention? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "When does adding a cache worsen recovery or contention?"
   prerequisites:
     - "tycho.chapter.4166e932cbd64ce2a63fe0c6d6eb049a"
-  related_ids: []
+  related_ids:
+    - "tycho.page.e0f0d5b68f834acbae94cc6714895dd3"
+    - "tycho.page.028aab692b414bcdba7713500ab6f735"
+    - "tycho.page.edc267f2fa954e66891e006ddfbfb15f"
+    - "tycho.page.f077c7f124b54e2a8137cec267d9170a"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -52,16 +56,14 @@ A cache outage or simultaneous expiry can concentrate traffic on the protected o
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Cache invalidation, stampedes and hot-key failure modes](cache-invalidation-stampede-and-hot-keys.md) | When does adding a cache worsen recovery or contention? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. The stale-fill-after-invalidation race](cache-invalidation-stampede-and-hot-keys.md#1-the-stale-fill-after-invalidation-race).
-- [2. Stampede at a synchronized expiry](cache-invalidation-stampede-and-hot-keys.md#2-stampede-at-a-synchronized-expiry).
-- [6. A discriminating failure experiment](cache-invalidation-stampede-and-hot-keys.md#6-a-discriminating-failure-experiment).
-- [7. Public references and limitations](cache-invalidation-stampede-and-hot-keys.md#7-public-references-and-limitations).
+| [Integrated decision and original walkthrough](cache-invalidation-stampede-and-hot-keys.md) | When does adding a cache worsen recovery or contention? |
+| [Stale fills and regeneration ownership](stale-fill.md) | Which version or fencing rule prevents a refresh from publishing obsolete state? |
+| [Stampedes and source protection](stampede-protection.md) | How do expiry and cache loss concentrate demand on the origin? |
+| [Negative caching and discriminating experiments](negative-cache.md) | Which revoked permission or absent value makes cached absence unsafe? |
 
 ## Boundaries and further reading
 
@@ -80,3 +82,22 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.e0f0d5b68f834acbae94cc6714895dd3:7 -->
+## 7. Public references and limitations
+
+| Independently inspected material | Supports | Not established |
+|---|---|---|
+| [Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/) | Cache-aside, TTL, invalidation and stampede concerns | Strong consistency for concurrent cache writes |
+| [Redis EXPIRE](https://redis.io/docs/latest/commands/expire/) | Key expiry policies and clock/lifetime behavior | Automatic transactional coordination with source DB |
+| [Caffeine Refresh](https://github.com/ben-manes/caffeine/wiki/Refresh) | Refresh eligibility, async reload and old-value serving | Cross-node refresh serialization |
+| [Earlier Tycho combined cache study](../../../scaling/local-distributed-caching-and-invalidation.md) | Original version-scoped source research | Executed race/lock proof |
+
+All race participants, diagrams, metrics and design results are synthetic. No cache service, load generator, source DB or reviewer was involved.
+
+**Navigation:** proposed **V06/C02** in [the 69-question outline](../../../PROPOSED-STRUCTURE.md), [scaling entry](../../../scaling/README.md), [cache placement/freshness](../c01/local-and-distributed-cache-design.md), [pool budget](../../v03/c05/connection-pools-hikaricp-pgbouncer.md), [overload](../../v07/c05/overload-admission-control-and-graceful-degradation.md).
+<!-- /tycho-question-source -->

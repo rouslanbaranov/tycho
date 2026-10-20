@@ -1,4 +1,9 @@
-# Post-merge status reconciliation — 2026-10-20
+# Current precedence — owner reopened #214
+
+The owner rejected uniform one-page chapters as final editorial completion. #214 is OPEN. PR #220 and version 2026.10.0 remain reproducible structural history. The current [decomposition review](CHAPTER_DECOMPOSITION_REVIEW_2026-10-20.md) and [STATE](STATE.md) control the new question-page gate; no larger inventory or passing test suite supersedes substantive acceptance. #213 remains completed for its accepted manuscript scope.
+
+## Historical post-merge reconciliation
+
 
 ## Current disposition
 

@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "What inputs are required before comparing candidate patterns?"
+summary: "What inputs are required before comparing candidate patterns? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "What inputs are required before comparing candidate patterns?"
@@ -21,7 +21,10 @@ route_hints:
     - "tycho.chapter.ee2cd95003ab4018a9d49e2ff0b6b2f4"
     - "tycho.chapter.abcbb298887b49e79525ca00fead8926"
     - "tycho.chapter.bbfd14751d274868b152ba431dc904c9"
-  related_ids: []
+  related_ids:
+    - "tycho.page.868027aee4884210bea1d8a6542fbfb0"
+    - "tycho.page.84fa4a7505904bb2a492be1593690ed2"
+    - "tycho.page.4e96abb6d4504ef1b09cbc355485108a"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -57,16 +60,13 @@ A complete-looking questionnaire with unknown hot-key behavior or recovery owner
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [From requirements and workloads to a testable architecture profile](requirements-and-workload-architecture-profiles.md) | What inputs are required before comparing candidate patterns? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Begin with a user outcome and a system boundary](requirements-and-workload-architecture-profiles.md#1-begin-with-a-user-outcome-and-a-system-boundary).
-- [2. Four kinds of requirement must stay distinct](requirements-and-workload-architecture-profiles.md#2-four-kinds-of-requirement-must-stay-distinct).
-- [8. Source-to-claim ledger, limitations and next research](requirements-and-workload-architecture-profiles.md#8-source-to-claim-ledger-limitations-and-next-research).
-- [Engineering walkthrough — Complete intake without choosing a style first](requirements-and-workload-architecture-profiles.md#engineering-walkthrough-complete-intake-without-choosing-a-style-first).
+| [Integrated decision and original walkthrough](requirements-and-workload-architecture-profiles.md) | What inputs are required before comparing candidate patterns? |
+| [Outcomes, constraints and workload intake](intake-invariants.md) | Which inputs must be explicit before candidate architectures are compared? |
+| [Adversarial requirements and candidate screening](evidence-screening.md) | Which missing evidence or hard gate must block a premature recommendation? |
 
 ## Boundaries and further reading
 
@@ -90,3 +90,30 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.868027aee4884210bea1d8a6542fbfb0:8 -->
+## 8. Source-to-claim ledger, limitations and next research
+
+| Inspected independent public evidence | Narrow use | Not established |
+|---|---|---|
+| [arc42 §1 — Introduction and Goals](https://docs.arc42.org/section-1/) | Stakeholder expectations, fundamental requirements and architectural goals | Any specific system's actual workload |
+| [arc42 §3 — Context and Scope](https://docs.arc42.org/section-3/) | Business and technical interface boundaries | Runtime isolation or measured behavior |
+| [arc42 §10 — Quality Requirements](https://docs.arc42.org/section-10/) | Measurable usage/change scenarios | Universal numerical SLOs |
+| [SEI, Kazman et al., ATAM, CMU/SEI-98-TR-008 (1998)](https://www.sei.cmu.edu/library/the-architecture-tradeoff-analysis-method/) | Evaluation of competing architectural quality attributes | ATAM assessment of this illustrative booking design |
+| [Tycho queueing study](../../v07/c01/queueing-littles-law.md) | Distinction between offered/completed load and stable-average modeling | Validation of synthetic 100/s demand |
+
+All booking numbers, diagrams, decision tables, tests, hypotheses and outcomes are **original invented teaching material**. They were not exercised on a running service. No independent review, real cost study, workload collection or whole-volume coverage is claimed. For an actual project, obtain consented stakeholder requirements and telemetry before moving a provisional decision to accepted. The method's machine-readable integration remains independent future work.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.868027aee4884210bea1d8a6542fbfb0:10 -->
+## Navigation
+
+- Planned owner: **V10/C01** in [book outline](../../../PROPOSED-STRUCTURE.md); current section [System Design decision support](../../../decisions/README.md).
+- Prerequisite: [Quality drivers](../../v01/c03/quality-drivers-and-architecture-views.md); [Queueing](../../v07/c01/queueing-littles-law.md).
+- Next concepts: [Legacy evolution](../../../application/architecture-evolution-and-extraction.md); [Cross-domain ADR decisions](../c07/cross-domain-modernization-and-adr-examples.md); [Safe rollout](../../../delivery/safe-rollout-and-recovery.md).
+- Supporting non-book tooling: [Requirements/workload template](../../../../authoring/models/requirements-workload-profile.md), [Candidate ADR format](../../../../authoring/models/candidate-comparison-adr.md).
+<!-- /tycho-question-source -->

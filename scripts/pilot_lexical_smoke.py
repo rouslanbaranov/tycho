@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tiny in-sample lexical navigation smoke test for three Tycho pilot pages.
+"""Tiny in-sample lexical smoke test for three historical pilot reading routes.
 
 No external services, model or search index. This is NOT a retrieval benchmark or
 an evaluation of technical answer quality. It only verifies a query-to-chapter
@@ -26,7 +26,21 @@ def evaluate():
     data = json.loads((ROOT / "evaluation/pilot-questions.json").read_text())
     cases = data["items"]
     paths = sorted({x["canonical_page"] for x in cases})
-    docs = {path: Counter(terms((ROOT / path).read_text())) for path in paths}
+    # Keep this historical three-route fixture across the explicit split.
+    # This is not a new section-search or answer-quality benchmark.
+    manifest_path = ROOT / 'edition/decomposition-manifest.json'
+    manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else None
+    def route_text(path):
+        record = next((r for r in manifest['source_bodies'] if r['source_path'] == path), None) if manifest else None
+        if record is None:
+            return (ROOT / path).read_text()
+        from decompose_chapters import extract_blocks
+        blocks = {}
+        for target in {s['target'] for s in record['sections']}:
+            blocks.update(extract_blocks((ROOT / target).read_text()))
+        return ''.join(blocks[(record['source_id'], s['index'])]
+                       for s in sorted(record['sections'], key=lambda s: s['index']))
+    docs = {path: Counter(terms(route_text(path))) for path in paths}
     lengths = {path: sum(counts.values()) for path, counts in docs.items()}
     df = Counter()
     for counts in docs.values():
@@ -56,6 +70,6 @@ def evaluate():
 if __name__ == "__main__":
     rows = evaluate()
     correct = sum(r["correct"] for r in rows)
-    print(json.dumps({"scope": "pilot-only, in-sample, 3 documents; no LLM/answer evaluation",
+    print(json.dumps({"scope": "pilot-only, in-sample, 3 historical reading routes; no LLM/answer evaluation",
                       "top1_correct": correct, "total": len(rows),
                       "observations": rows}, indent=2))

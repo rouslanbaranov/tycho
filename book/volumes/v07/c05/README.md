@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How should admissions, queues, retries and shedding be bounded?"
+summary: "How should admissions, queues, retries and shedding be bounded? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How should admissions, queues, retries and shedding be bounded?"
   prerequisites:
     - "tycho.chapter.2ad010c2b29c4390b83bbdadeb346289"
-  related_ids: []
+  related_ids:
+    - "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060"
+    - "tycho.page.d9abd43bb7394c04a6bf77d4014f870d"
+    - "tycho.page.80ab784dafed47a7baf31722fce5eabc"
+    - "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -54,16 +58,14 @@ Accepting every request can postpone rejection until after resource exhaustion; 
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Overload protection, admission control and graceful degradation](overload-admission-control-and-graceful-degradation.md) | How should admissions, queues, retries and shedding be bounded? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Define the scarce resource and the acceptance outcome](overload-admission-control-and-graceful-degradation.md#1-define-the-scarce-resource-and-the-acceptance-outcome).
-- [2. Admission must precede the expensive operation](overload-admission-control-and-graceful-degradation.md#2-admission-must-precede-the-expensive-operation).
-- [Engineering walkthrough — Optional dependency failure creates core-work starvation](overload-admission-control-and-graceful-degradation.md#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation).
-- [Applied M9 evidence: what transfers and what does not](overload-admission-control-and-graceful-degradation.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](overload-admission-control-and-graceful-degradation.md) | How should admissions, queues, retries and shedding be bounded? |
+| [Scarce resources, admission and queues](admission-resource.md) | Where must rejection occur to protect the expensive operation? |
+| [Bulkheads, retries and optional dependencies](dependency-isolation.md) | How can failure in optional work starve core work? |
+| [Recovery hysteresis and overload experiments](overload-recovery.md) | What prevents a recovering dependency from being overwhelmed immediately? |
 
 ## Boundaries and further reading
 
@@ -82,3 +84,29 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:8 -->
+## 8. Source-to-claim ledger and review limitations
+
+| Public material inspected (2026-10-19) | Supported topic | Unverified |
+|---|---|---|
+| [Google SRE, Handling Overload](https://sre.google/sre-book/handling-overload/) | Resource-dependent overload costs, priorities, client throttle and retry concerns | Any universally correct rate or priority policy |
+| [AWS Builders' Library, Using load shedding to avoid overload](https://aws.amazon.com/builders-library/using-load-shedding-to-avoid-overload/) | Shedding strategies and failure containment rationale | Measured benefit in the synthetic trail-guide scenario |
+| [AWS Builders' Library, Timeouts, retries and backoff with jitter](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/) | Retry multiplication and bounded backoff motivation | Real retry traffic or safe unconditional retry behavior |
+| [Tycho capacity experiment chapter](../../../performance/workload-profiles-and-capacity-experiments.md) | Defined workload/queue and synthetic failure methodology | Completed independent experiment |
+
+All example data, percentages, capacity statements and system behavior are hypothetical. No fault injection, cloud service, policy configuration, correctness exercise or independent review has been performed. Do not present this as an operational playbook without verifying actual target workload, authorizations, deadlines and state semantics.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:9 -->
+## Navigation
+
+- Proposed **V07/C05** in [planned TOC](../../../PROPOSED-STRUCTURE.md), current [Performance landing](../../../performance/README.md).
+- Prerequisite: [Workload demand](../../v01/c02/workload-demand-and-arrival-models.md), [Queueing](../c01/queueing-littles-law.md).
+- Related: [Autoscaling delay](../c06/autoscaling-lag-and-capacity-limits.md), [Tail latency](../c04/tail-latency-fanout-and-deadline-budgets.md), [Benchmark validity](../c03/load-testing-and-benchmark-validity.md), [Outbox/idempotency](../../../distributed/transactional-outbox-and-idempotency.md).
+
+<!-- /tycho-question-source -->

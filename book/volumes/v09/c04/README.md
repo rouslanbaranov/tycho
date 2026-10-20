@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How do security audit, event lineage and operational logs differ?"
+summary: "How do security audit, event lineage and operational logs differ? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How do security audit, event lineage and operational logs differ?"
@@ -18,6 +18,9 @@ route_hints:
     - "tycho.chapter.03ec5acf85e043a5a6d552a036bf4659"
   related_ids:
     - "tycho.chapter.03ec5acf85e043a5a6d552a036bf4659"
+    - "tycho.page.436c2b22dc9e47acaaca7d18fadb511c"
+    - "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1"
+    - "tycho.page.e50b14deb6de4204b9f405942ab0cee8"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +56,13 @@ Three records about one operation can legitimately disagree in completeness; a l
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Structured logging, authoritative audit and data lineage](logs-audit-and-data-lineage.md) | How do security audit, event lineage and operational logs differ? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Separate semantics before selecting storage](logs-audit-and-data-lineage.md#1-separate-semantics-before-selecting-storage).
-- [2. An original fictional reservation audit](logs-audit-and-data-lineage.md#2-an-original-fictional-reservation-audit).
-- [Engineering walkthrough — One approved business change, three incompatible records](logs-audit-and-data-lineage.md#engineering-walkthrough-one-approved-business-change-three-incompatible-records).
-- [7. Public source ledger and nonclaims](logs-audit-and-data-lineage.md#7-public-source-ledger-and-nonclaims).
+| [Integrated decision and original walkthrough](logs-audit-and-data-lineage.md) | How do security audit, event lineage and operational logs differ? |
+| [Logs, authoritative audit and lineage](record-semantics.md) | Which question is answered by each kind of record? |
+| [Retention, integrity and contradictory records](record-integrity.md) | Which record must survive a failure before an authorized effect can be asserted? |
 
 ## Boundaries and further reading
 
@@ -81,3 +81,22 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.436c2b22dc9e47acaaca7d18fadb511c:8 -->
+## 7. Public source ledger and nonclaims
+
+| Public evidence inspected | Narrow support | Unverified |
+|---|---|---|
+| [OpenTelemetry Logs Data Model](https://opentelemetry.io/docs/specs/otel/logs/data-model/) | Log event fields, timestamps, trace correlation and attributes | Complete durable business audit |
+| [OpenLineage core specification](https://github.com/OpenLineage/OpenLineage/blob/main/spec/OpenLineage.md) | Job/Run/Dataset/Facet distinctions | Correct lineage for invented transforms |
+| [OpenLineage job lineage facet](https://openlineage.io/docs/spec/facets/job-facets/lineage/) | Explicit source-target flow edges under declared job | Full traceability for any actual dataset |
+| [Tycho tracing manuscript](../c03/distributed-tracing-context-and-sampling.md) | Causal/sampling limitations of traces | Audit-complete business history |
+
+All identities, system behavior, logging examples, risk tables, diagram nodes and trial descriptions are independent invented teaching materials. No real logs or customer data used, no records persisted, no security/privacy auditor or technical reviewer accepted this chapter. The former combined [traces/logs/lineage/audit research](../../../observability/trace-context-lineage-and-audit.md) remains available for editorial claim reconciliation.
+
+**Navigation:** proposed owner **V09/C04** in [book outline](../../../PROPOSED-STRUCTURE.md), current [observability landing](../../../observability/README.md); related [Distributed tracing](../c03/distributed-tracing-context-and-sampling.md), [Agent-safe knowledge](../c07/safe-agent-access-and-knowledge-isolation.md), [Outbox/idempotency](../../../distributed/transactional-outbox-and-idempotency.md).
+<!-- /tycho-question-source -->

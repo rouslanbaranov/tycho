@@ -2,7 +2,7 @@
 from pathlib import Path
 import re
 import unittest
-from edition_paths import canonical_path, relative_link
+from edition_paths import canonical_path, relative_link, read_original_manuscript
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "book/scaling"
@@ -23,7 +23,7 @@ class ScalingEvidenceTests(unittest.TestCase):
     def test_substantive_mermaid_sources(self):
         for name, sources in PAGES.items():
             with self.subTest(name=name):
-                text = canonical_path(BASE / name).read_text(encoding="utf-8")
+                text = read_original_manuscript(canonical_path(BASE / name))
                 self.assertGreater(len(text), 9000)
                 self.assertGreaterEqual(text.count("```mermaid"), 3)
                 self.assertGreaterEqual(text.count("Text alternative:"), 3)

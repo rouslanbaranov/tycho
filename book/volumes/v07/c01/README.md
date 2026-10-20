@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "What do arrival, throughput, mean response and in-flight counts imply?"
+summary: "What do arrival, throughput, mean response and in-flight counts imply? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "What do arrival, throughput, mean response and in-flight counts imply?"
@@ -22,6 +22,10 @@ route_hints:
     - "tycho.chapter.a92541ba2fb44cf1a3afef1f9c021fe0"
   related_ids:
     - "tycho.chapter.316b50ac3db440ae82c0986b896ff468"
+    - "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b"
+    - "tycho.page.335682a8957c46d294535b5912762e91"
+    - "tycho.page.252426e0630c495d9cad7cb2c518fc69"
+    - "tycho.page.a648fc495dab474489d17d01e2c5dd92"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -59,16 +63,14 @@ A finite window with unfinished work or rejection outside the boundary can inval
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Queueing, Little's Law and workload measurement boundaries](queueing-littles-law.md) | What do arrival, throughput, mean response and in-flight counts imply? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [Orientation: four numbers that are not interchangeable](queueing-littles-law.md#orientation-four-numbers-that-are-not-interchangeable).
-- [Architecture: Little's Law is an average identity](queueing-littles-law.md#architecture-littles-law-is-an-average-identity).
-- [Independent public sources and exact claim support](queueing-littles-law.md#independent-public-sources-and-exact-claim-support).
-- [Verification checklist and next bounded research](queueing-littles-law.md#verification-checklist-and-next-bounded-research).
+| [Integrated decision and original walkthrough](queueing-littles-law.md) | What do arrival, throughput, mean response and in-flight counts imply? |
+| [Population boundaries and Little's Law](measurement-boundary.md) | When are occupancy, throughput and mean residence time comparable? |
+| [Finite windows and load-generator feedback](finite-window.md) | Why can unfinished work and closed-loop arrivals invalidate a naive estimate? |
+| [Overload, recovery and alternative measurements](queue-recovery.md) | Which admission and exit policy makes the queue's recovery observable? |
 
 ## Boundaries and further reading
 
@@ -91,3 +93,42 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b:8 -->
+## Independent public sources and exact claim support
+
+These references were read to the **named portions** on 2026-10-18. No complete external book, paid text, source repository or benchmark dataset was copied into this chapter.
+
+| Evidence ID | Public work / fixed or observed version | Exact section read | What it supports / does not support |
+|---|---|---|---|
+| **E01** | Kim & Whitt, *Statistical Analysis with Little's Law*, *Operations Research* **61(4)**, 2013, pp. 1030–1045, DOI **10.1287/opre.2013.1193**; [author PDF](https://www.columbia.edu/~ww2040/LL_OR.pdf) | **Abstract; §§1, 1.1–1.2** | Long-run/stationary versus finite observation estimates, need for statistical reasoning, boundary effects. Not a tested application capacity model. |
+| **E02** | Same fixed 2013 primary paper | **§2.1 definitions; §2.2 finite-time relation / Theorem 1 and interval edge effects** | Finite-window equality requires appropriate boundaries (special case begins and ends empty). Does not make arbitrary sampled averages exact or justify percentile substitution. |
+| **E03** | Grafana k6 official documentation, *Open and closed models*, observed **v2.2.x** online page on 2026-10-18; [source](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/) | **Closed Model; Drawbacks of using the closed model; Open model** | Feedback-coupled vs independent iteration scheduling and potential coordinated omission. Not a performance measurement of this synthetic service. |
+| **E04** | *Site Reliability Engineering* (Google SRE authors), **Handling Overload**, public 2017 book edition; [source](https://sre.google/sre-book/handling-overload/) | **Client-Side Throttling** and closing per-task overload discussion | Cost of rejection and motivation for upstream throttling; behavior of the source's described context, not universal numbers or Tycho's measured results. |
+
+**External source status:** these are exact chapter-reading observations; the source inventory's broad discovery status is retained because its current schema lacks claim/section-level reading fields. The per-page ledger here records the narrower inspected scope. Do not silently overwrite broader source-level status to "entire book verified".
+
+**Evidence claims vs original inference:** E01–E04 support the named concepts only. All numerical scenarios, request-flow diagrams, finite-window toy request and arithmetic here are **original synthetic constructions**. Discussion of pool sizing and architecture choice is reasoned guidance contingent on actual workload evidence, not a direct assertion that any named deployment failed.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b:9 -->
+## Verification checklist and next bounded research
+
+- [x] One canonical reader question and named measurement boundary.
+- [x] Long-run mean formula, units and exact finite-window counterexample.
+- [x] Open-versus-closed distinction tied to identified official documentation.
+- [x] Normal, burst/overload, dependency saturation and recovery cases.
+- [x] Synthetic numbers and outcomes clearly separated from empirical measurements.
+- [x] At least one valid **insufficient-evidence** answer.
+- [ ] User-independent human/subject expert review (not claimed).
+- [ ] Benchmark / service instrumentation / real capacity test (not claimed).
+- [ ] Full book metadata schema / graph / indexed retrieval (planned in other issues).
+
+**Decision example — deliberately insufficient evidence:** "An application has 100,000 users, receives 120 RPS and has p99 of 2 seconds. How many nodes and DB connections should it have?" **Answer:** Cannot determine from those figures. Request actual arrival/mix, completed throughput, mean time per named boundary, resource/service demand, queue/connection limits, timing distribution, peak/failure assumptions, SLOs and a representative load experiment.
+
+**Next technical scope:** [Pilot #39](https://github.com/rouslanbaranov/tycho/issues/39) studies whether state commit and event publication remain correct across retries and partial failure. This page does not attempt to prove its transaction/event behavior.
+<!-- /tycho-question-source -->

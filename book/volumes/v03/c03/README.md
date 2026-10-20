@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How do backpressure, scheduling and blocking boundaries affect execution?"
+summary: "How do backpressure, scheduling and blocking boundaries affect execution? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How do backpressure, scheduling and blocking boundaries affect execution?"
   prerequisites:
     - "tycho.chapter.d5b789c9cd7e4cb693c22943423531c2"
-  related_ids: []
+  related_ids:
+    - "tycho.page.114da51171c2474ebd56ee3bebad3bcb"
+    - "tycho.page.83e414ec3d1b4b07a443de2c96ce2c4e"
+    - "tycho.page.0c7b8f00661648f3b50e448471f5cc7e"
+    - "tycho.page.577d52b851c3478eb73e301ace1bcfea"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +57,14 @@ Subscriber backpressure cannot bound an unrelated blocking queue; an event-loop-
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Reactive execution, WebFlux, R2DBC and backpressure](reactor-webflux-r2dbc-and-backpressure.md) | How do backpressure, scheduling and blocking boundaries affect execution? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Nonblocking I/O is an end-to-end contract](reactor-webflux-r2dbc-and-backpressure.md#1-nonblocking-io-is-an-end-to-end-contract).
-- [2. Reactive Streams is demand coordination, not a magic queue](reactor-webflux-r2dbc-and-backpressure.md#2-reactive-streams-is-demand-coordination-not-a-magic-queue).
-- [Engineering walkthrough — Subscriber demand does not protect an unseen blocking queue](reactor-webflux-r2dbc-and-backpressure.md#engineering-walkthrough-subscriber-demand-does-not-protect-an-unseen-blocking-queue).
-- [Applied M9 evidence: what transfers and what does not](reactor-webflux-r2dbc-and-backpressure.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](reactor-webflux-r2dbc-and-backpressure.md) | How do backpressure, scheduling and blocking boundaries affect execution? |
+| [Nonblocking execution and demand](demand-blocking.md) | Which demand boundary actually controls a producer and where can blocking escape it? |
+| [Schedulers, context and reactive database access](scheduler-context.md) | Which scheduling and context assumptions must hold at a reactive-to-database boundary? |
+| [Reactive failure and decision limits](reactive-recovery.md) | What failure or overload observation would reject the proposed reactive design? |
 
 ## Boundaries and further reading
 
@@ -81,3 +83,19 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.114da51171c2474ebd56ee3bebad3bcb:6 -->
+## Evidence ledger
+
+- **[E01] Spring Framework 6.2 official reference:** [WebFlux — Overview](https://docs.spring.io/spring-framework/reference/6.2/web/webflux/new-framework.html), *Define “Reactive”*, *Performance*, *Concurrency Model*, *Invoking a Blocking API*. Supports nonblocking assumptions, backpressure limits and MVC comparison.
+- **[E02] Reactor Core 3.7.0 official reference:** [Threading and Schedulers](https://projectreactor.io/docs/core/3.7.0/reference/coreFeatures/schedulers.html), *publishOn*, *subscribeOn*, *boundedElastic*. Supports scheduler behavior, blocking isolation and virtual-thread option.
+- **[E03] Reactor Core 3.7.0 official reference:** [Adding a Context to a Reactive Sequence](https://projectreactor.io/docs/core/3.7.0/reference/advancedFeatures/context.html), *Context API*, *Tying a Context to a Flux*, *Reading a Context*. Supports per-subscriber context semantics.
+- **[E04] R2DBC SPI 1.0.0.RELEASE specification:** [R2DBC specification](https://r2dbc.io/spec/1.0.0.RELEASE/spec/html/), *Introduction — The R2DBC SPI*, *Compliance — R2DBC SPI Compliance*, *Connections*, *Transactions*. Supports SPI requirements, not a concrete driver's cancellation performance.
+
+**Research status:** inspected the cited published sections and identified untested driver-specific behavior. **Not performed:** compilation, Spring/driver integration, latency measurement, source-code audit, formal backpressure proof or independent human review.
+
+<!-- /tycho-question-source -->

@@ -1,5 +1,7 @@
 # Edition assembly review — 2026-10-20
 
+> **Historical structural checkpoint, superseded for final editorial acceptance:** the owner reopened #214 after rejecting the uniform one-page-per-chapter structure. Original counts and test results below are pinned history. See [the substantive decomposition review](CHAPTER_DECOMPOSITION_REVIEW_2026-10-20.md).
+
 ## Scope and verdict
 
 **Tycho 2026.10 — First Markdown Edition (2026.10.0)** is assembled as a readable finite book: ten substantial volume landings, 69 chapter landings and 69 bounded primary technical pages, plus 51 retained supporting/case/decision pages and 15 earlier navigation entries. Including the book root, the canonical corpus has **215 documents**.

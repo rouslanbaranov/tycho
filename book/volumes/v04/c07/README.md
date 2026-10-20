@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "What do producer/consumer guarantees cover and what stays at application level?"
+summary: "What do producer/consumer guarantees cover and what stays at application level? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "What do producer/consumer guarantees cover and what stays at application level?"
   prerequisites:
     - "tycho.chapter.23e79f6cb03b4206a5c82494bc5c2928"
-  related_ids: []
+  related_ids:
+    - "tycho.page.0b493340594c4c4392c5d93940a7f319"
+    - "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25"
+    - "tycho.page.1f2f7c346c2d492290d39f45f0ad2283"
+    - "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -54,16 +58,14 @@ A transactional log operation does not automatically include a remote database o
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Integration contracts, Kafka partitions and delivery boundaries](kafka-partitions-replication-and-contracts.md) | What do producer/consumer guarantees cover and what stays at application level? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Command, query, notification and durable event are distinct contracts](kafka-partitions-replication-and-contracts.md#1-command-query-notification-and-durable-event-are-distinct-contracts).
-- [2. Kafka's partition is an ordering and load unit](kafka-partitions-replication-and-contracts.md#2-kafkas-partition-is-an-ordering-and-load-unit).
-- [Versioned public source-to-claim ledger](kafka-partitions-replication-and-contracts.md#versioned-public-source-to-claim-ledger).
-- [Applied M9 evidence: what transfers and what does not](kafka-partitions-replication-and-contracts.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](kafka-partitions-replication-and-contracts.md) | What do producer/consumer guarantees cover and what stays at application level? |
+| [Kafka interaction contracts and partitioning](partitions-producers.md) | What is ordered within a partition and how does its key constrain load? |
+| [Replication, ISR and acknowledgment](replication-acks.md) | Which replica and acknowledgment conditions bound durability and availability? |
+| [Offsets, effects and recovery](offsets-effects.md) | Which crash point separates a committed application effect from a consumer offset? |
 
 ## Boundaries and further reading
 
@@ -82,3 +84,21 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.0b493340594c4c4392c5d93940a7f319:7 -->
+## Versioned public source-to-claim ledger
+
+| ID | Official public source and actually inspected scope | Supported / excluded claims |
+|---|---|---|
+| E01 | [gRPC core concepts](https://grpc.io/docs/what-is-grpc/core-concepts/), RPC types, metadata, deadline concepts; web documentation observed 2026-10-18 | RPC interaction semantics, **not** guaranteed durable event history |
+| E02 | [Apache Kafka 4.1 Design](https://kafka.apache.org/41/design/design/), sections **The Producer / Load balancing; The Consumer / Consumer Position; Message Delivery Semantics; Using Transactions; Replication** | Kafka 4.1 topic partitions, ordering/offset/producer and replication features; **not** current-latest behavior or tested production service |
+| E03 | [Kafka 4.1 Eligible Leader Replicas](https://kafka.apache.org/41/operations/eligible-leader-replicas/), **Overview** | Version-aware leader failover eligibility and min-ISR relationship; avoids implying all old assumptions hold unchanged |
+| E04 | [Kafka 4.1 Kafka Streams configuration](https://kafka.apache.org/41/configuration/kafka-streams-configs/), **processing.guarantee** | Names documented processing options `at_least_once` and `exactly_once_v2`, not arbitrary external system guarantees |
+
+Research state: original manuscript, no executed Kafka cluster, request traces, broker tuning comparison, fault-injection or independently reviewed exactly-once proof. All examples and Mermaid diagrams here are explicitly synthetic.
+
+<!-- /tycho-question-source -->

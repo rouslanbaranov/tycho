@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "When does coordination dominate additional capacity?"
+summary: "When does coordination dominate additional capacity? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "When does coordination dominate additional capacity?"
@@ -18,6 +18,9 @@ route_hints:
     - "tycho.chapter.e365b78505784c20a4f3d72fe7904d9b"
   related_ids:
     - "tycho.chapter.e436af815dc442f694deb55966077d9e"
+    - "tycho.page.7ad835c06d5a4e3aabf6b14632f92c86"
+    - "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12"
+    - "tycho.page.61c621bfa9a04a738e937416cec15e78"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +56,13 @@ A scaling curve fitted outside the tested range can hide coordination cost; more
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Contention, saturation and scalability laws: distinguishing capacity limits](contention-saturation-and-scaling-laws.md) | When does coordination dominate additional capacity? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Concurrency, parallel execution and completed throughput differ](contention-saturation-and-scaling-laws.md#1-concurrency-parallel-execution-and-completed-throughput-differ).
-- [2. Amdahl's conditional bound](contention-saturation-and-scaling-laws.md#2-amdahls-conditional-bound).
-- [8. Evidence and limits](contention-saturation-and-scaling-laws.md#8-evidence-and-limits).
-- [Applied M9 evidence: what transfers and what does not](contention-saturation-and-scaling-laws.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](contention-saturation-and-scaling-laws.md) | When does coordination dominate additional capacity? |
+| [Parallelism, serial work and scaling models](scaling-models.md) | Which model assumptions bound useful throughput as concurrency grows? |
+| [Contended authority and discriminating scaling experiments](contention-response.md) | Which observation distinguishes resource saturation from coordination overhead? |
 
 ## Boundaries and further reading
 
@@ -81,3 +81,26 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.7ad835c06d5a4e3aabf6b14632f92c86:8 -->
+## 8. Evidence and limits
+
+| Independently public source | Narrow statement supported | Unknown |
+|---|---|---|
+| [Gunther, *A General Theory of Computational Scalability Based on Rational Functions* (2008)](https://arxiv.org/abs/0808.1431) | Rational scale functions, queueing-bound relation and fit concept | Actual coefficient values or mechanism in a real service |
+| [Little, *A Proof for the Queuing Formula*, 1961](https://doi.org/10.1287/opre.9.3.383) | Conditional mean occupancy/throughput/residence relation | Capacity or tail prediction |
+| [Tycho capacity experiment page](../../../performance/workload-profiles-and-capacity-experiments.md) | Original experiment design, failure and measurement boundaries | Executed tests or reproducible measured curve |
+
+All numerical values, diagrams, equations applied to imagined inputs and architecture conditions are educational interpretations. No actual data was fitted, no benchmark performed, and no technical review accepted any architecture for production. Full source-to-claim precision and edition metadata are pending.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.7ad835c06d5a4e3aabf6b14632f92c86:9 -->
+## Navigation
+
+Proposed **V07/C02** in [book outline](../../../PROPOSED-STRUCTURE.md), [performance entry](../../../performance/README.md). Read before: [workload demand](../../v01/c02/workload-demand-and-arrival-models.md), [queueing](../c01/queueing-littles-law.md). Next: [load-test validity](../c03/load-testing-and-benchmark-validity.md), [connection pools](../../v03/c05/connection-pools-hikaricp-pgbouncer.md), [autoscaling lag](../c06/autoscaling-lag-and-capacity-limits.md).
+
+<!-- /tycho-question-source -->

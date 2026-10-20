@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How do replay, watermarks, state stores and recovery shape correctness?"
+summary: "How do replay, watermarks, state stores and recovery shape correctness? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How do replay, watermarks, state stores and recovery shape correctness?"
   prerequisites:
     - "tycho.chapter.24729e8d9b7247b298956ab144c15225"
-  related_ids: []
+  related_ids:
+    - "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71"
+    - "tycho.page.54c4335d1dd142e8b794daf4768fc3d2"
+    - "tycho.page.205058a4a2da4523842395cc7864c8f0"
+    - "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +57,14 @@ A consistent processor checkpoint cannot recover an expired input or reverse an 
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Stateful stream processing, Kafka Streams, Flink and CDC](stateful-stream-processing-and-cdc.md) | How do replay, watermarks, state stores and recovery shape correctness? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. From a database change to a replayable input](stateful-stream-processing-and-cdc.md#1-from-a-database-change-to-a-replayable-input).
-- [2. Kafka Streams: tasks, state stores and changelogs](stateful-stream-processing-and-cdc.md#2-kafka-streams-tasks-state-stores-and-changelogs).
-- [Engineering walkthrough — Late correction after checkpoint and restore](stateful-stream-processing-and-cdc.md#engineering-walkthrough-late-correction-after-checkpoint-and-restore).
-- [Source-to-claim ledger](stateful-stream-processing-and-cdc.md#source-to-claim-ledger).
+| [Integrated decision and original walkthrough](stateful-stream-processing-and-cdc.md) | How do replay, watermarks, state stores and recovery shape correctness? |
+| [CDC, task state and changelog replay](cdc-state.md) | Which records make an input and local processor state recoverable? |
+| [Checkpoints, watermarks and late data](checkpoints-time.md) | Which state boundary and late-data policy define a corrected result? |
+| [Processor selection and recovery experiments](processor-recovery.md) | Which topology and external effect must a recovery test actually cover? |
 
 ## Boundaries and further reading
 
@@ -81,3 +83,23 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.a2c47a0850154eaa95e1eb97e23f9c71:8 -->
+## Source-to-claim ledger
+
+| ID | Versioned source and examined section | Bounded support |
+|---|---|---|
+| E01 | [PostgreSQL 17 Logical Replication](https://www.postgresql.org/docs/17/logical-replication.html), overview/publication and subscriber introduction | A public PostgreSQL mechanism for propagating committed changes, not a specific connector's operational guarantee |
+| E02 | [Debezium 3.6 Outbox Event Router](https://debezium.io/documentation/reference/3.6/transformations/outbox-event-router.html), **Basic outbox table; Basic configuration; selective transformation** | Outbox-to-Kafka routed messages, event ID/key fields and transform limitations |
+| E03 | [Kafka 4.1 Streams Architecture](https://kafka.apache.org/41/streams/architecture/), tasks, parallelism, stateful processing | Task/partition relation and local state |
+| E04 | [Kafka 4.1 Streams Processor API](https://kafka.apache.org/41/streams/developer-guide/processor-api/), **State Stores, Fault-tolerant State Stores** | Changelog state restoration and store mechanisms, not independent external effect exactly-once |
+| E05 | [Kafka 4.1 Streams Configuration](https://kafka.apache.org/41/configuration/kafka-streams-configs/), **processing.guarantee** | Documented `at_least_once` / `exactly_once_v2` options for selected release |
+| E06 | [Flink archived 2.1 Checkpoints](https://nightlies.apache.org/flink/flink-docs-release-2.1/docs/ops/state/checkpoints/), **Overview, checkpoint storage and retained checkpoints** | Managed source/operator state recovery; version is explicitly outdated |
+| E07 | [Flink archived 2.1 Checkpoints vs Savepoints](https://nightlies.apache.org/flink/flink-docs-release-2.1/docs/ops/state/checkpoints_vs_savepoints/), **Overview** | Lifecycle differences; not automatically applicable to the latest Flink |
+
+**Review state:** original technical explanation, sources restricted to the named public pages. No running stream processor, source/sink integration test, checkpoint restoration measurement, Flink 2.1 production use, independent expert review or real SLO verification.
+<!-- /tycho-question-source -->

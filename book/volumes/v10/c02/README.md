@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Which observed limitations justify changing the architecture?"
+summary: "Which observed limitations justify changing the architecture? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "Which observed limitations justify changing the architecture?"
   prerequisites:
     - "tycho.chapter.289750444f8040d292a474e3876046a1"
-  related_ids: []
+  related_ids:
+    - "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1"
+    - "tycho.page.210134080fac4c09bebb593befd0cb25"
+    - "tycho.page.19145078d87143b28387ab187d345c32"
+    - "tycho.page.fbf4c3d642d14ce2a69f009efd17b1a8"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -52,16 +56,14 @@ Old technology is not itself evidence of a defect; retaining and improving the b
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Legacy system baseline and modernization evidence: deciding what to keep](legacy-baseline-and-modernization-evidence.md) | Which observed limitations justify changing the architecture? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Old software is not itself an architecture defect](legacy-baseline-and-modernization-evidence.md#1-old-software-is-not-itself-an-architecture-defect).
-- [2. Collect a baseline as an evidence-bearing architecture model](legacy-baseline-and-modernization-evidence.md#2-collect-a-baseline-as-an-evidence-bearing-architecture-model).
-- [Engineering walkthrough — Observed legacy baseline versus hypothetical future benefit](legacy-baseline-and-modernization-evidence.md#engineering-walkthrough-observed-legacy-baseline-versus-hypothetical-future-benefit).
-- [Applied M9 evidence: what transfers and what does not](legacy-baseline-and-modernization-evidence.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](legacy-baseline-and-modernization-evidence.md) | Which observed limitations justify changing the architecture? |
+| [Observed legacy behavior and baseline ownership](legacy-observation.md) | Which existing behavior must be measured and preserved before change is justified? |
+| [Modernization alternatives and transition obligations](modernization-options.md) | How do retained, replaced and incrementally migrated options differ in required proof? |
+| [Migration failure tests and decision reversal](migration-falsification.md) | Which recovery observation would reject the attractive target? |
 
 ## Boundaries and further reading
 
@@ -80,3 +82,32 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1:8 -->
+## 8. Public source ledger and review limits
+
+| Independently accessible reference reviewed | Supports | Does not establish |
+|---|---|---|
+| [Fowler, Strangler Fig (2024)](https://martinfowler.com/bliki/StranglerFigApplication.html) | Incremental legacy replacement rationale | That all older applications should be extracted |
+| [Cartwright, Horn & Lewis, Patterns of Legacy Displacement (2024)](https://martinfowler.com/articles/patterns-legacy-displacement/) | Outcome-led, staged modernization and displacement patterns | Measurements for the synthetic catalog |
+| [Microsoft Architecture Center, Strangler Fig](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig) | Coexistence/routing trade-offs and phased substitution | A validated single-writer migration in this page |
+| [AWS Prescriptive Guidance, modernization considerations](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-aspnet-web-services/considerations.html) | Interim versus target-state considerations | Platform-independent universal implementation details |
+| [Tycho safe rollout and recovery](../../../delivery/safe-rollout-and-recovery.md) | Page-local test and recovery explanation | An actual exercised rollback |
+
+**Provenance boundaries:** every component, observation, workflow, diagram, decision and failure in the fictional catalog is original synthetic teaching material. No private or restricted architecture source was consulted. No live application, actual schema, production measurement, independent compliance/domain review or recovery exercise exists for it. Public pattern descriptions are documented design options, not verified implementation outcomes. Actual source/version/access limitations require a fresh review for real use.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1:9 -->
+## Navigation
+
+- Planned home: **V10/C02** in [Tycho's proposed chapters](../../../PROPOSED-STRUCTURE.md), currently linked from [decision-support landing](../../../decisions/README.md).
+- Before: [Requirements/workload profile](../c01/requirements-and-workload-architecture-profiles.md).
+- Mechanisms: [Application architecture evolution](../../../application/architecture-evolution-and-extraction.md); [Transactional outbox](../../../distributed/transactional-outbox-and-idempotency.md); [HTTP/RPC compatibility](../../v02/c05/http-rpc-contracts-and-compatibility.md).
+- Transition owners: [Safe rollout and recovery](../../../delivery/safe-rollout-and-recovery.md); [Schema evolution](../../../delivery/progressive-delivery-and-schema-evolution.md).
+- Supporting method (not book chapter): [Legacy baseline authoring model](../../../../authoring/models/legacy-modernization-profile.md).
+
+<!-- /tycho-question-source -->

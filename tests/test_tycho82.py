@@ -6,7 +6,7 @@ performance, external URL availability or independent technical review.
 from pathlib import Path
 import re
 import unittest
-from edition_paths import canonical_path, relative_link
+from edition_paths import canonical_path, relative_link, read_original_manuscript
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "book/execution"
@@ -35,7 +35,7 @@ class ExecutionCorpusTests(unittest.TestCase):
     def test_pages_have_substantial_original_explanation_and_evidence(self):
         for name, urls in SOURCES.items():
             with self.subTest(page=name):
-                page = canonical_path(BASE / name).read_text(encoding="utf-8")
+                page = read_original_manuscript(canonical_path(BASE / name))
                 self.assertGreater(len(page), 9000)
                 self.assertGreaterEqual(page.count("```mermaid"), 2)
                 self.assertGreaterEqual(page.count("Text alternative:"), 2)

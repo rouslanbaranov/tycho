@@ -10,13 +10,16 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "When is independent deployment justified by measured coordination cost?"
+summary: "When is independent deployment justified by measured coordination cost? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "When is independent deployment justified by measured coordination cost?"
   prerequisites:
     - "tycho.chapter.5de52a840c14448c946a65c924f28487"
-  related_ids: []
+  related_ids:
+    - "tycho.page.acb452608a8b42898aae7482c27f5f04"
+    - "tycho.page.4e0e4db7547b45469f36915886473750"
+    - "tycho.page.cdb86c0b91a6489f979689ab08efad35"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +56,13 @@ Separate containers can still require synchronized releases and share one fragil
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Service orientation, microservices and distributed boundaries](service-orientation-microservices-and-distribution.md) | When is independent deployment justified by measured coordination cost? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Separate concept, deployment and ownership](service-orientation-microservices-and-distribution.md#1-separate-concept-deployment-and-ownership).
-- [2. Independence is not proved by a separate container](service-orientation-microservices-and-distribution.md#2-independence-is-not-proved-by-a-separate-container).
-- [7. Test a distributed boundary before deciding](service-orientation-microservices-and-distribution.md#7-test-a-distributed-boundary-before-deciding).
-- [8. Public source-to-claim ledger and limitations](service-orientation-microservices-and-distribution.md#8-public-source-to-claim-ledger-and-limitations).
+| [Integrated decision and original walkthrough](service-orientation-microservices-and-distribution.md) | When is independent deployment justified by measured coordination cost? |
+| [Independent deployment and its costs](service-independence.md) | Which coordination costs justify introducing a remote boundary? |
+| [Service contracts and failure evaluation](service-contracts.md) | What must be tested when a capability moves into another process? |
 
 ## Boundaries and further reading
 
@@ -81,3 +81,25 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.acb452608a8b42898aae7482c27f5f04:8 -->
+## 8. Public source-to-claim ledger and limitations
+
+| Independent public reference | Narrow support | Not verified |
+|---|---|---|
+| [OASIS SOA Reference Model v1.0, §3.2](https://docs.oasis-open.org/soa-rm/v1.0/soa-rm.html) | Visibility, interaction, service descriptions, capabilities and real-world effects | A mandatory SOA transport, deployment shape or runtime implementation |
+| [Lewis/Fowler, *Microservices*, 25 Mar 2014](https://www.martinfowler.com/articles/microservices.html) | Independently deployable capability-aligned service style and operational characteristics | Any particular team's readiness or performance advantage |
+| [Original Tycho style comparison](../../../application/architecture-styles-and-module-boundaries.md) | Earlier researched style dimensions and trade-offs | Approved target design or independently tested system |
+
+The examples, candidate rankings, diagram, failures and experiments are independent synthetic educational material. They do not describe any real organization's stack. Source-level admission and final manuscript editorial acceptance remain pending.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.acb452608a8b42898aae7482c27f5f04:9 -->
+## Navigation
+
+This is proposed **V02/C04** in [Tycho's draft outline](../../../PROPOSED-STRUCTURE.md). Start at [application architecture](../../../application/README.md), then read [domain ownership](../c02/domain-boundaries-data-ownership-and-contracts.md), [ports and adapters](../c01/layered-hexagonal-ports-and-adapters.md), [service extraction](../../../application/architecture-evolution-and-extraction.md), [target/transition states](../../v10/c05/target-and-transition-architecture-states.md).
+<!-- /tycho-question-source -->

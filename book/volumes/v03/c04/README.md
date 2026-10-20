@@ -10,13 +10,16 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Which flow and cancellation semantics are required across protocols?"
+summary: "Which flow and cancellation semantics are required across protocols? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "Which flow and cancellation semantics are required across protocols?"
   prerequisites:
     - "tycho.chapter.b9bf60e22dc04878a05aeca98610b5d1"
-  related_ids: []
+  related_ids:
+    - "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5"
+    - "tycho.page.fbb4bc905d02495dbe3d7675d8670235"
+    - "tycho.page.e067b74eabc24cabb209ca8835c0f7cd"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -52,16 +55,13 @@ Transport flow control does not promise durable replay; a disconnected client ma
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Asynchronous APIs and streaming: demand, deadlines and cancellation](asynchronous-apis-streaming-and-cancellation.md) | Which flow and cancellation semantics are required across protocols? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Four interaction contracts](asynchronous-apis-streaming-and-cancellation.md#1-four-interaction-contracts).
-- [2. Backpressure is a contract between producers and consumers](asynchronous-apis-streaming-and-cancellation.md#2-backpressure-is-a-contract-between-producers-and-consumers).
-- [Engineering walkthrough — Reconnect cannot recover unpersisted stream items](asynchronous-apis-streaming-and-cancellation.md#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items).
-- [7. Public source ledger and limits](asynchronous-apis-streaming-and-cancellation.md#7-public-source-ledger-and-limits).
+| [Integrated decision and original walkthrough](asynchronous-apis-streaming-and-cancellation.md) | Which flow and cancellation semantics are required across protocols? |
+| [Stream interaction and buffer ownership](stream-contracts.md) | Who controls demand and owns buffered items in an asynchronous exchange? |
+| [Cancellation, reconnect and durable resume](resume-cancellation.md) | Which persisted state permits replay after a disconnect and when must a client resnapshot? |
 
 ## Boundaries and further reading
 
@@ -80,3 +80,22 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5:8 -->
+## 7. Public source ledger and limits
+
+| Published source | Narrow support | Unknown |
+|---|---|---|
+| [Reactive Streams JVM 1.0.4](https://github.com/reactive-streams/reactive-streams-jvm) | Nonblocking demand/backpressure semantics and specification/TCK | Correctness of a fictional streaming API |
+| [gRPC Flow Control](https://grpc.io/docs/guides/flow-control/) | Transport streaming buffers/read capacity and non-unary scope | Application-level durable replay |
+| [gRPC Cancellation](https://grpc.io/docs/guides/cancellation/) | Caller/worker cancellation propagation | Reversal of committed external effects |
+| [Tycho reactive execution](../c03/reactor-webflux-r2dbc-and-backpressure.md) | Version-scoped framework scheduling and demand mechanics | Executed end-to-end client/server validation |
+
+The streaming protocol, failure cases and diagrams are original synthetic educational material. No real integration tests, resource measurements, vendor conformance audit or editorial acceptance occurred.
+
+**Navigation:** proposed **V03/C04** in [book outline](../../../PROPOSED-STRUCTURE.md), current [execution landing](../../../execution/README.md). Before: [Threads/tasks](../c01/threads-tasks-structured-coordination.md), [Reactive execution](../c03/reactor-webflux-r2dbc-and-backpressure.md). After: [API/RPC compatibility](../../v02/c05/http-rpc-contracts-and-compatibility.md), [Tail latency](../../v07/c04/tail-latency-fanout-and-deadline-budgets.md).
+<!-- /tycho-question-source -->

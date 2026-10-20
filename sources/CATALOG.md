@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-20. Entries: 212.
+Inventory date: 2026-10-20. Entries: 216.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -123,6 +123,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.cassandra / supporting | [Apache Cassandra Architecture](https://cassandra.apache.org/doc/latest/cassandra/architecture/overview.html) — Apache Software Foundation | Partitioning, replication and tunable consistency. | admitted-for-research / public-web-or-author-download |
 | src.mongodb / supporting | [MongoDB Data Modeling](https://www.mongodb.com/docs/manual/data-modeling/) — MongoDB | Document boundaries, embedding and referencing trade-offs. | admitted-for-research / public-web-or-author-download |
 | src.clickhouse / supporting | [ClickHouse Architecture](https://clickhouse.com/docs/development/architecture) — ClickHouse | Analytical storage and execution architecture. | admitted-for-research / public-web-or-author-download |
+| src.postgres17-mvcc-pages / core | [PostgreSQL 17 MVCC, isolation and routine vacuuming](https://www.postgresql.org/docs/17/mvcc-intro.html) — PostgreSQL Global Development Group | Explain snapshot visibility, version lifetime and the distinction from WAL durability. | admitted-for-research / public-web-or-author-download |
+| src.postgres17-wal-introduction / core | [PostgreSQL 17 Write-Ahead Logging introduction](https://www.postgresql.org/docs/17/wal-intro.html) — PostgreSQL Global Development Group | Bound the WAL-before-data claim separately from original backlog arithmetic and deployment sizing. | admitted-for-research / public-web-or-author-download |
 
 ## Caching
 
@@ -307,3 +309,15 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.m9-sh03 / supporting | [Cloud, Load, and Modular Code (2022)](https://shopify.engineering/cloud-load-modular-code-shopify-2022) — Shopify | Identify the exact linked M9 source; retain claim-specific evidence and historical limits in the case ledgers. | pending-content-access / public-web-or-author-download |
 | src.m9-st02 / supporting | [Migrating Millions of Lines to TypeScript (2022)](https://stripe.com/blog/migrating-to-typescript) — Stripe | Identify the exact linked M9 source; retain claim-specific evidence and historical limits in the case ledgers. | pending-content-access / public-web-or-author-download |
 | src.m9-me02 / supporting | [Scaling memcache at Facebook (2013)](https://engineering.fb.com/2013/04/15/core-infra/scaling-memcache-at-facebook/) — Meta | Identify the exact linked M9 source; retain claim-specific evidence and historical limits in the case ledgers. | pending-content-access / public-web-or-author-download |
+
+## Distributed Systems
+
+| ID / priority | Source | Planned use | Admission / access |
+|---|---|---|---|
+| src.idempotent-consumer-pattern / core | [Idempotent Consumer pattern](https://microservices.io/patterns/communication-style/idempotent-consumer.html) — Chris Richardson | Explain the local atomic boundary of recording message identity and its consumer effect. | admitted-for-research / public-web-or-author-download |
+
+## Reliability
+
+| ID / priority | Source | Planned use | Admission / access |
+|---|---|---|---|
+| src.sre-workbook-incident-response / core | [SRE Workbook: Incident Response](https://sre.google/workbook/incident-response/) — Google SRE book authors | Support response roles, shared chronology and practice; distinguish the original tabletop proposal from executed recovery. | admitted-for-research / public-web-or-author-download |

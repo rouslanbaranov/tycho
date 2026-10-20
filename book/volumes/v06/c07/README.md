@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How are index freshness, reproducibility, latency and result quality measured?"
+summary: "How are index freshness, reproducibility, latency and result quality measured? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How are index freshness, reproducibility, latency and result quality measured?"
@@ -19,6 +19,10 @@ route_hints:
   related_ids:
     - "tycho.chapter.5dc7b18369054daa852565a5dab2502b"
     - "tycho.chapter.6d25a036c078402a85ec464227a48a31"
+    - "tycho.page.d79b0a48b30f4995a9bc110dbe691e52"
+    - "tycho.page.4dbb361891e04ed4b48e421be85b3a26"
+    - "tycho.page.990dac261357498fa433cf98e87817d3"
+    - "tycho.page.5f1fe7b87ce443889dd4662fe845794a"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -54,16 +58,14 @@ A green latency result can conceal stale documents or degraded recall; evaluate 
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Retrieval evaluation and index lifecycle: relevance, freshness and evidence budgets](retrieval-evaluation-and-index-lifecycle.md) | How are index freshness, reproducibility, latency and result quality measured? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Build an evaluation set before choosing a vector model](retrieval-evaluation-and-index-lifecycle.md#1-build-an-evaluation-set-before-choosing-a-vector-model).
-- [2. What ranking metrics actually measure](retrieval-evaluation-and-index-lifecycle.md#2-what-ranking-metrics-actually-measure).
-- [8. Source ledger and explicit Tycho scope](retrieval-evaluation-and-index-lifecycle.md#8-source-ledger-and-explicit-tycho-scope).
-- [Applied M9 evidence: what transfers and what does not](retrieval-evaluation-and-index-lifecycle.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](retrieval-evaluation-and-index-lifecycle.md) | How are index freshness, reproducibility, latency and result quality measured? |
+| [Judgments, metrics and matched retrieval baselines](retrieval-judgments.md) | Which relevance labels and query populations make variants comparable? |
+| [Index identity, access and provenance](snapshot-access.md) | Which identity and permission contract prevents stale or unauthorized results? |
+| [End-to-end evaluation and index recovery](task-recovery.md) | What distinguishes ranking quality from a correct information task? |
 
 ## Boundaries and further reading
 
@@ -83,3 +85,22 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.d79b0a48b30f4995a9bc110dbe691e52:8 -->
+## 8. Source ledger and explicit Tycho scope
+
+| Public source inspected | Narrow claim supported | Unproven |
+|---|---|---|
+| [NIST TREC relevance judgments](https://trec.nist.gov/data/reljudge_eng.html) | qrels, test collections and judged relevance limitations | Complete truth set for hypothetical documents |
+| [BEIR evaluation framework](https://github.com/beir-cellar/beir) | Standard lexical/dense retrieval comparison using nDCG, MAP, Recall, Precision | Benchmark scores for the Tycho corpus |
+| [Tycho hybrid retrieval theory](../c05/hybrid-ranking-graph-and-evaluation.md) | Existing educational retrieval mechanisms | Built hybrid index or deployed MCP API |
+
+All queries, scores, data, diagrams, source snapshots and tests here are original hypothetical examples. No index, embeddings, graph, training, test fixture, evaluation run or independent expert review was executed. The chapter adds **System Design education only**, and does not change Tycho's separate retrieval infrastructure roadmap or resurrect a curated knowledge graph.
+
+**Navigation:** proposed **V06/C07** in [book outline](../../../PROPOSED-STRUCTURE.md), current [search architecture landing](../../../search/README.md). Read [Lexical full-text](../c03/lexical-indexing-bm25-and-sql-fts.md), [Vector/ANN](../c04/vector-hnsw-faiss-pgvector.md), [Hybrid retrieval](../c05/hybrid-ranking-graph-and-evaluation.md), [Graph traversal as educational topic](../c06/graph-data-models-and-traversal.md).
+
+<!-- /tycho-question-source -->

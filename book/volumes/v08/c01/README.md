@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Which boundaries separate build, test, publication and production deployment?"
+summary: "Which boundaries separate build, test, publication and production deployment? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "Which boundaries separate build, test, publication and production deployment?"
@@ -22,6 +22,9 @@ route_hints:
     - "tycho.chapter.388c48be24414421a63481b37d05fdce"
   related_ids:
     - "tycho.chapter.5e4761e1a3e34c2f8023ec8ac4fa81d5"
+    - "tycho.page.7921e82a71b9446790f185c818326911"
+    - "tycho.page.faf8361106c2458b97e046319d7fa979"
+    - "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -58,16 +61,13 @@ A successful pipeline run does not prove that the intended artifact was deployed
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [CI/CD architecture, artifact provenance and GitOps reconciliation](ci-cd-provenance-and-gitops.md) | Which boundaries separate build, test, publication and production deployment? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Five separately controlled boundaries](ci-cd-provenance-and-gitops.md#1-five-separately-controlled-boundaries).
-- [2. Workflow and runner topology](ci-cd-provenance-and-gitops.md#2-workflow-and-runner-topology).
-- [Engineering walkthrough — Compromised build worker and a tempting image rollback](ci-cd-provenance-and-gitops.md#engineering-walkthrough-compromised-build-worker-and-a-tempting-image-rollback).
-- [Applied M9 evidence: what transfers and what does not](ci-cd-provenance-and-gitops.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](ci-cd-provenance-and-gitops.md) | Which boundaries separate build, test, publication and production deployment? |
+| [Build boundaries and artifact identity](build-identity.md) | Which source, runner and artifact evidence supports a reproducible release? |
+| [Promotion, reconciliation and user-health gates](promotion-rollout.md) | Which failure and authority boundaries separate deployment from accepted release? |
 
 ## Boundaries and further reading
 
@@ -90,3 +90,9 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+This source manuscript cites its public evidence inline in the detailed mechanism pages; it has no separate legacy reference table to transfer. Follow each inline source for its actual supported claim and version. The integrated walkthrough retains historical case transfers and their nonclaim boundaries.

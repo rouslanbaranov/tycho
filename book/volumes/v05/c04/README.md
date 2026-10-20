@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "When are document, wide-column, KV, distributed SQL or analytical stores useful?"
+summary: "When are document, wide-column, KV, distributed SQL or analytical stores useful? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "When are document, wide-column, KV, distributed SQL or analytical stores useful?"
   prerequisites:
     - "tycho.chapter.e451bfe1e0cb4c588f0576e0b2b7d3d0"
-  related_ids: []
+  related_ids:
+    - "tycho.page.c75a11f9786442a5b5456f11c2412df4"
+    - "tycho.page.7b980e671a324f769064bc5233761c62"
+    - "tycho.page.ee2dd008d4f445eaa9b20998f855a786"
+    - "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +57,14 @@ Replacing an engine does not remove a hot logical key or a cross-owner transacti
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Storage model alternatives: embedded SQL, distributed SQL, document, wide-column, OLAP, graph and time series](storage-model-alternatives-and-workload-fit.md) | When are document, wide-column, KV, distributed SQL or analytical stores useful? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Start from the workload and invariant, not a database brand](storage-model-alternatives-and-workload-fit.md#1-start-from-the-workload-and-invariant-not-a-database-brand).
-- [2. Transactional relational and embedded storage](storage-model-alternatives-and-workload-fit.md#2-transactional-relational-and-embedded-storage).
-- [Engineering walkthrough — Four storage choices with disqualifying gates](storage-model-alternatives-and-workload-fit.md#engineering-walkthrough-four-storage-choices-with-disqualifying-gates).
-- [Applied M9 evidence: what transfers and what does not](storage-model-alternatives-and-workload-fit.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](storage-model-alternatives-and-workload-fit.md) | When are document, wide-column, KV, distributed SQL or analytical stores useful? |
+| [Relational, embedded and transactional key-value models](transactional-models.md) | Which transaction and locality requirements distinguish these storage choices? |
+| [Document, wide-column and analytical access](specialized-models.md) | Which access pattern justifies specialized modeling and what is lost? |
+| [Cross-model comparison and synchronization](multi-store-selection.md) | Which extra authority and recovery obligations appear when stores are combined? |
 
 ## Boundaries and further reading
 
@@ -81,3 +83,24 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.c75a11f9786442a5b5456f11c2412df4:9 -->
+## Public evidence, version scope and limitations
+
+| ID | Exact public source actually inspected | Supports, not a benchmark |
+|---|---|---|
+| E01 | [SQLite Architecture](https://www.sqlite.org/arch.html), *Overview; Bytecode Engine; B-Tree; Page Cache*, last-updated 2025-05-31 | Embedded compiled-to-VM SQL/B-tree/pager mechanisms |
+| E02 | [CockroachDB v24.3 Architecture Overview](https://www.cockroachlabs.com/docs/v24.3/architecture/overview), *SQL, Transaction, Distribution, Replication and Storage Layers* | Architectural role decomposition, not measured universal SQL compatibility |
+| E03 | [FoundationDB 8.0 Architecture](https://apple.github.io/foundationdb/architecture.html), *Detailed FoundationDB Architecture, Coordinator/Storage roles* | Distributed transactional ordered KV API and role separation |
+| E04 | [MongoDB data modeling best practices](https://www.mongodb.com/docs/manual/data-modeling/best-practices/), *Link Related Data*, and [Embedding](https://www.mongodb.com/docs/manual/data-modeling/embedding/); current rolling docs observed 2026-10-19 | Embed/reference workload trade-offs; release-specific claims must be independently pinned |
+| E05 | [Apache Cassandra 5.0 architecture overview](https://cassandra.apache.org/doc/stable/cassandra/architecture/overview.html), *Overview* | Partitioned wide-column/replication principles; not all consistency modes verified |
+| E06 | [ClickHouse MergeTree engine](https://clickhouse.com/docs/reference/engines/table-engines/mergetree-family/mergetree), *Data parts, primary key and ordering*, rolling official docs observed 2026-10-19 | Sorted data parts/merges and pruning, no measured comparative throughput |
+| E07 | [Neo4j property graph concepts](https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/), *Introduction; Node; Relationship; Schema*, rolling official docs observed 2026-10-19 | Property graph model, not universal graph query speed advantage |
+
+**Review state:** explanatory comparison, fictional workload diagrams only; no engine installed or benchmark run, no independent domain review, no comprehensive time-series vendor comparison and no measured migration. This page does **not** give a database product recommendation for a real user system.
+
+<!-- /tycho-question-source -->

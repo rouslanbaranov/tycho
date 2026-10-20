@@ -4,7 +4,7 @@ Not a software benchmark or independent source-claim accuracy review.
 """
 from pathlib import Path
 import unittest
-from edition_paths import canonical_path, relative_link
+from edition_paths import canonical_path, relative_link, read_original_manuscript
 
 ROOT = Path(__file__).resolve().parents[1]
 DIRECTORY = ROOT / "book/application"
@@ -19,7 +19,7 @@ class ApplicationArchitectureResearchTests(unittest.TestCase):
     def test_pages_are_substantive_and_explanatory(self):
         for name in PAGES:
             with self.subTest(page=name):
-                text = canonical_path(DIRECTORY / name).read_text(encoding="utf-8")
+                text = read_original_manuscript(canonical_path(DIRECTORY / name))
                 self.assertGreater(len(text), 7000)
                 self.assertGreaterEqual(text.count("```mermaid"), 3)
                 self.assertGreaterEqual(text.count("Text alternative:"), 3)
@@ -27,7 +27,7 @@ class ApplicationArchitectureResearchTests(unittest.TestCase):
                 self.assertIn("Insufficient", text)
 
     def test_primary_public_origins_are_cited(self):
-        style = canonical_path(DIRECTORY / PAGES[1]).read_text()
+        style = read_original_manuscript(canonical_path(DIRECTORY / PAGES[1]))
         for origin in (
             "martinfowler.com/articles/microservices.html",
             "martinfowler.com/bliki/BoundedContext.html",
@@ -36,7 +36,7 @@ class ApplicationArchitectureResearchTests(unittest.TestCase):
             "docs.spring.io/spring-modulith/reference/1.3/verification.html",
         ):
             self.assertIn(origin, style)
-        quality = canonical_path(DIRECTORY / PAGES[0]).read_text()
+        quality = read_original_manuscript(canonical_path(DIRECTORY / PAGES[0]))
         for origin in (
             "docs.arc42.org/section-1/",
             "c4model.com/introduction",

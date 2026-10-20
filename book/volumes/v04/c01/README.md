@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Which ordering can a distributed system observe or guarantee?"
+summary: "Which ordering can a distributed system observe or guarantee? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "Which ordering can a distributed system observe or guarantee?"
@@ -21,6 +21,9 @@ route_hints:
     - "tycho.chapter.e436af815dc442f694deb55966077d9e"
   related_ids:
     - "tycho.chapter.6eba0cf391184a709f2e23e5ecc1c3d2"
+    - "tycho.page.d4822cc1e71c4f73896b7f6509f6daae"
+    - "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85"
+    - "tycho.page.d664f65295644726ae1234a982f81fa8"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -56,16 +59,13 @@ Clock order cannot prove that one event observed another, and an ordered log alo
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Causality, ordering and consensus in distributed systems](causality-ordering-and-consensus.md) | Which ordering can a distributed system observe or guarantee? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. The happens-before relation describes causal knowledge](causality-ordering-and-consensus.md#1-the-happens-before-relation-describes-causal-knowledge).
-- [2. Agreement, linearizability and availability solve different problems](causality-ordering-and-consensus.md#2-agreement-linearizability-and-availability-solve-different-problems).
-- [Engineering walkthrough — Wall-clock order cannot prove causality or commit order](causality-ordering-and-consensus.md#engineering-walkthrough-wall-clock-order-cannot-prove-causality-or-commit-order).
-- [Exact public evidence](causality-ordering-and-consensus.md#exact-public-evidence).
+| [Integrated decision and original walkthrough](causality-ordering-and-consensus.md) | Which ordering can a distributed system observe or guarantee? |
+| [Causal knowledge and ordering scope](causal-order.md) | What can happens-before, timestamps and per-key order each establish? |
+| [Agreement, availability and uncertain observations](agreement-failure.md) | Which fault assumption separates an ordering claim from an agreement guarantee? |
 
 ## Boundaries and further reading
 
@@ -87,3 +87,18 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.d4822cc1e71c4f73896b7f6509f6daae:7 -->
+## Exact public evidence
+
+| ID | Source and bounded read scope | Supports and limitations |
+|---|---|---|
+| E01 | [Leslie Lamport, *Time, Clocks, and the Ordering of Events in a Distributed System*](https://www.microsoft.com/en-us/research/publication/time-clocks-ordering-events-distributed-system/), CACM 21(7), 1978, **official abstract and bibliographic record**, accessed 2026-10-18 | Establishes partial-order logical-time problem and total-order extension; **full PDF not inspected for this issue**, so detailed formal lemmas are explanations to be independently verified before formal-methods use |
+| E02 | [Ongaro/Ousterhout, *In Search of an Understandable Consensus Algorithm*, extended version](https://ying-zhang.cn/dist/2014-raft.html), May 20 2014, **§2, §5.1–5.4**, cross-linked from [Raft's official publication portal](https://raft.github.io/) | Replicated state machines, leader/term election, majority log replication, commit and election restrictions; no Tycho production Raft implementation or proof of external read consistency |
+
+**Review state:** original research draft, mechanical/readability checks only. No full Lamport PDF review, formal implementation verification, adversarial Raft simulation, consensus benchmark or independent domain reviewer has been claimed. Never treat an illustrative Mermaid diagram as a machine-checked proof.
+<!-- /tycho-question-source -->

@@ -10,13 +10,16 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How do scrape/push, temporality, labels, retention and scale interact?"
+summary: "How do scrape/push, temporality, labels, retention and scale interact? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How do scrape/push, temporality, labels, retention and scale interact?"
   prerequisites:
     - "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7"
-  related_ids: []
+  related_ids:
+    - "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53"
+    - "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56"
+    - "tycho.page.03bdffc1632345f390c2e845b52a3eb0"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +56,13 @@ An unbounded label can multiply storage and disclose identifiers; aggregation ca
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Metrics ingestion, cardinality and time-series retention architecture](metric-pipelines-cardinality-and-retention.md) | How do scrape/push, temporality, labels, retention and scale interact? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Separate measurement generation from retrieval](metric-pipelines-cardinality-and-retention.md#1-separate-measurement-generation-from-retrieval).
-- [2. Measurement types and aggregation limitations](metric-pipelines-cardinality-and-retention.md#2-measurement-types-and-aggregation-limitations).
-- [Engineering walkthrough — How one unbounded metric label multiplies storage](metric-pipelines-cardinality-and-retention.md#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage).
-- [8. Public evidence, caveats and navigation](metric-pipelines-cardinality-and-retention.md#8-public-evidence-caveats-and-navigation).
+| [Integrated decision and original walkthrough](metric-pipelines-cardinality-and-retention.md) | How do scrape/push, temporality, labels, retention and scale interact? |
+| [Metric transport, types and temporality](metric-semantics.md) | Which reset and aggregation semantics survive collection and storage? |
+| [Cardinality, retention and lost information](cardinality-retention.md) | Which labels and aggregation choices change cost, privacy and diagnostic meaning? |
 
 ## Boundaries and further reading
 
@@ -81,3 +81,21 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53:9 -->
+## 8. Public evidence, caveats and navigation
+
+| Independently inspected public source | Narrow support | What remains unproven |
+|---|---|---|
+| [OpenTelemetry Metrics Data Model](https://opentelemetry.io/docs/specs/otel/metrics/data-model/) | Sums/gauges/histograms, delta/cumulative temporality, timestamps and translation constraints | Conformance of invented collector deployment |
+| [Prometheus Metric Types](https://prometheus.io/docs/concepts/metric_types/) | Counters, gauges, classic/native histograms, summaries and version-related aggregation cautions | Observed TSDB cost or configured instance behavior |
+| [Tycho original metrics/SLO research](../../../observability/metrics-slo-timeseries-architecture.md) | Earlier combined researched mechanisms and hypothetical alert controls | Independently accepted canonical split |
+
+Everything here is original general System Design prose and wholly fictional examples. No data, measured cost, series count, alerts, collector or metric backend was actually generated. The old combined research article is **preserved** as supporting source while the V09/C01 and V09/C02 chapter ownership is separated. Further claim-level source and editorial review is required before release.
+
+**Navigation:** proposed **V09/C02** in [planned contents](../../../PROPOSED-STRUCTURE.md), [observability landing](../../../observability/README.md); related [SLIs and error budgets](../c01/service-level-indicators-objectives-and-alerts.md), [tracing and audit](../../../observability/trace-context-lineage-and-audit.md), [capacity planning](../../v07/c07/capacity-planning-and-cost-performance.md).
+<!-- /tycho-question-source -->

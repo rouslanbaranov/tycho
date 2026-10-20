@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How do consistency, lag, RPO/RTO and restore evidence connect?"
+summary: "How do consistency, lag, RPO/RTO and restore evidence connect? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How do consistency, lag, RPO/RTO and restore evidence connect?"
@@ -19,6 +19,9 @@ route_hints:
   related_ids:
     - "tycho.chapter.b4272c1342514a40afce9d3872a9664c"
     - "tycho.chapter.30e63461f024419ab87cd012b140c600"
+    - "tycho.page.81efb7e6d72349768b6f202845cbe35e"
+    - "tycho.page.8ff8bad016ba4b92ba968c18a9210020"
+    - "tycho.page.60ffc845d47c44cba4af2760474d68c7"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -54,16 +57,13 @@ A current replica is not protection from replicated deletion, and backup complet
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Backup, restore and recovery drills: proving data recoverability](backup-restore-pitr-and-recovery-drills.md) | How do consistency, lag, RPO/RTO and restore evidence connect? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Recovery objectives have a named failure and clock](backup-restore-pitr-and-recovery-drills.md#1-recovery-objectives-have-a-named-failure-and-clock).
-- [2. Logical backup, physical backup and WAL replay differ](backup-restore-pitr-and-recovery-drills.md#2-logical-backup-physical-backup-and-wal-replay-differ).
-- [7. Decision and evidence limits](backup-restore-pitr-and-recovery-drills.md#7-decision-and-evidence-limits).
-- [8. Public evidence ledger and unverified scope](backup-restore-pitr-and-recovery-drills.md#8-public-evidence-ledger-and-unverified-scope).
+| [Integrated decision and original walkthrough](backup-restore-pitr-and-recovery-drills.md) | How do consistency, lag, RPO/RTO and restore evidence connect? |
+| [Recovery objectives, backup types and WAL continuity](recovery-objects.md) | Which backup membership and replay chain can recover the declared failure? |
+| [User-level restore drills and alternatives](restore-drills.md) | What distinguishes a successful backup command from a demonstrated recovery? |
 
 ## Boundaries and further reading
 
@@ -83,3 +83,28 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.81efb7e6d72349768b6f202845cbe35e:8 -->
+## 8. Public evidence ledger and unverified scope
+
+| Inspected public source (PostgreSQL 17) | Supports | Does not prove |
+|---|---|---|
+| [Backup and Restore, Chapter 25](https://www.postgresql.org/docs/17/backup.html) | Logical, physical and archiving families | Any backup actually exists or is restorable |
+| [Continuous Archiving and PITR, §25.3](https://www.postgresql.org/docs/17/continuous-archiving.html) | Base backup + WAL recovery, timelines, caveats and backup chain constraints | Achieved RPO/RTO in a production setup |
+| [Log Shipping Standby, §26.2](https://www.postgresql.org/docs/17/warm-standby.html) | Replication, standby and archive behavior | Protection against all logical corruption and region failures |
+| [Tycho WAL/replication chapter](../c02/postgresql-wal-replication-and-recovery.md) | Canonical technical mechanism explanations | A verified restore exercise |
+
+All names, failure chronologies, target examples and outcomes are original teaching proposals. No runtime, WAL archive, system configuration, benchmark, restore drill or expert review was exercised in this task. Edition metadata/volume assembly and full source-to-claim validation remain pending.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.81efb7e6d72349768b6f202845cbe35e:9 -->
+## Navigation
+
+- Planned **V05/C07** from [proposed outline](../../../PROPOSED-STRUCTURE.md), current [Data architecture landing](../../../data/README.md).
+- Read before: [PostgreSQL WAL and replication](../c02/postgresql-wal-replication-and-recovery.md).
+- Expand: [Multi-region disaster recovery](../../../deployment/multi-region-disaster-recovery-contracts.md), [Safe rollout](../../../delivery/safe-rollout-and-recovery.md), [Transactional outbox](../../../distributed/transactional-outbox-and-idempotency.md).
+<!-- /tycho-question-source -->

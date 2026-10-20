@@ -10,13 +10,16 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Which headroom, statefulness and failure assumptions shape capacity?"
+summary: "Which headroom, statefulness and failure assumptions shape capacity? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "Which headroom, statefulness and failure assumptions shape capacity?"
   prerequisites:
     - "tycho.chapter.0718556e0eb14d499adbbe67073327df"
-  related_ids: []
+  related_ids:
+    - "tycho.page.49d9df04c0b4488e936b02e580a62271"
+    - "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac"
+    - "tycho.page.d2a71d85f3144ba395303b8432b38d37"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +56,13 @@ Capacity that arrives after a short burst cannot prevent its initial overload; r
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](autoscaling-lag-and-capacity-limits.md) | Which headroom, statefulness and failure assumptions shape capacity? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Decompose the actual scale-out response time](autoscaling-lag-and-capacity-limits.md#1-decompose-the-actual-scale-out-response-time).
-- [2. Feedback signals and the hot-key trap](autoscaling-lag-and-capacity-limits.md#2-feedback-signals-and-the-hot-key-trap).
-- [7. Public evidence and review limits](autoscaling-lag-and-capacity-limits.md#7-public-evidence-and-review-limits).
-- [Engineering walkthrough — A burst ends before new replicas become useful](autoscaling-lag-and-capacity-limits.md#engineering-walkthrough-a-burst-ends-before-new-replicas-become-useful).
+| [Integrated decision and original walkthrough](autoscaling-lag-and-capacity-limits.md) | Which headroom, statefulness and failure assumptions shape capacity? |
+| [Demand signals and scale-out delay](scaling-delay.md) | When does new capacity become useful relative to the demand timescale? |
+| [Scale-in safety and controller evaluation](controller-stability.md) | Which state and feedback assumptions make horizontal or vertical scaling safe? |
 
 ## Boundaries and further reading
 
@@ -81,3 +81,28 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.49d9df04c0b4488e936b02e580a62271:7 -->
+## 7. Public evidence and review limits
+
+| Source reviewed | Narrow support | Limit |
+|---|---|---|
+| [Kubernetes Horizontal Pod Autoscaling docs](https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/) | Horizontal controller concepts, target metrics, scaling behavior and limitations | Actual policy/version settings must be checked in deployed platform |
+| [AWS default instance warm-up](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-default-instance-warmup.html) | Time-to-metric readiness and why warm-up affects control | Not a startup measurement for a fictional workload |
+| [AWS scaling cooldowns](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-scaling-cooldowns.html) | Policy-family distinctions and anti-flapping considerations | Not a claim that fixed cooldowns should be universally applied |
+| [Tycho queueing study](../c01/queueing-littles-law.md) and [capacity experiments](../../../performance/workload-profiles-and-capacity-experiments.md) | Mean workload boundary and proposed testing discipline | No empirical scaling result |
+
+**Unverified:** everything numeric in the burst example, all diagrams, practical thresholds, cost and failure outcomes are synthetic. The chapter was not executed as a cloud/autoscaler experiment, does not prove provider interoperability, and has not been independently reviewed. It must be placed under the final V07/C06 chapter structure after content-completeness acceptance.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.49d9df04c0b4488e936b02e580a62271:9 -->
+## Navigation
+
+- Current landing: [Performance](../../../performance/README.md), future owner V07/C06 in [proposed TOC](../../../PROPOSED-STRUCTURE.md).
+- Core limits: [Queueing](../c01/queueing-littles-law.md), [Tail latency](../c04/tail-latency-fanout-and-deadline-budgets.md), [Workload experiments](../../../performance/workload-profiles-and-capacity-experiments.md).
+- Dependency and deployment: [Connection pools](../../v03/c05/connection-pools-hikaricp-pgbouncer.md), [Deployment topology](../../v08/c03/runtime-placement-and-control-plane.md), [Multi-region recovery](../../../deployment/multi-region-disaster-recovery-contracts.md).
+<!-- /tycho-question-source -->

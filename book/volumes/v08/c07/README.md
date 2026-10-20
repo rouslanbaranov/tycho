@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How are RPO/RTO, split brain, recovery routes and failback validated?"
+summary: "How are RPO/RTO, split brain, recovery routes and failback validated? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How are RPO/RTO, split brain, recovery routes and failback validated?"
@@ -19,6 +19,9 @@ route_hints:
   related_ids:
     - "tycho.chapter.b4272c1342514a40afce9d3872a9664c"
     - "tycho.chapter.388c48be24414421a63481b37d05fdce"
+    - "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765"
+    - "tycho.page.4b654b81026f4d8b8909563bcffc01e4"
+    - "tycho.page.aeedcc93ea554edc9059b8f9ddefa292"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -54,16 +57,13 @@ Promoting a second region without exclusive authority can create divergent accep
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Disaster recovery: measured RTO, RPO, fencing and state reconciliation](disaster-recovery-and-recovery-objectives.md) | How are RPO/RTO, split brain, recovery routes and failback validated? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Define objectives by meaningful clocks and outcomes](disaster-recovery-and-recovery-objectives.md#1-define-objectives-by-meaningful-clocks-and-outcomes).
-- [2. Replication is not historical recovery](disaster-recovery-and-recovery-objectives.md#2-replication-is-not-historical-recovery).
-- [7. Public evidence ledger and limits](disaster-recovery-and-recovery-objectives.md#7-public-evidence-ledger-and-limits).
-- [Applied M9 evidence: what transfers and what does not](disaster-recovery-and-recovery-objectives.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](disaster-recovery-and-recovery-objectives.md) | How are RPO/RTO, split brain, recovery routes and failback validated? |
+| [Recovery clocks, historical state and alternatives](objectives-strategies.md) | Which failure and data-loss contract distinguishes recovery strategies? |
+| [Recovery state machines, fencing and failback](authority-failback.md) | Which steps prevent two writers and demonstrate recovered user journeys? |
 
 ## Boundaries and further reading
 
@@ -83,3 +83,23 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765:7 -->
+## 7. Public evidence ledger and limits
+
+| Source | Narrow support | Not established |
+|---|---|---|
+| [AWS Well-Architected DR strategies](https://docs.aws.amazon.com/wellarchitected/latest/framework/rel_planning_for_recovery_disaster_recovery.html) | Strategy families, recovery goals, operational costs and failure handling | Measured RTO/RPO for the synthetic service |
+| [AWS automated recovery guidance](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/rel_planning_for_recovery_auto_recovery.html) | Automation constraints and stop mechanism | Executed and safe DR automation |
+| [PostgreSQL 17 PITR](https://www.postgresql.org/docs/17/continuous-archiving.html) | Base/WAL recovery and limitations | One actually restorable archived dataset |
+| [Tycho earlier combined DR research](../../../deployment/multi-region-disaster-recovery-contracts.md) | Historical topical scenarios | Fully accepted independent source claims |
+
+All services, failures, roles and diagrams are original inventions. No real incident or recovery operation occurred.
+
+**Navigation:** proposed **V08/C07** via [deployment landing](../../../deployment/README.md) and [book outline](../../../PROPOSED-STRUCTURE.md). Read [placement](../c06/availability-zones-placement-and-failure-domains.md), [backup and recovery drills](../../v05/c07/backup-restore-pitr-and-recovery-drills.md), [safe release recovery](../../../delivery/safe-rollout-and-recovery.md).
+
+<!-- /tycho-question-source -->

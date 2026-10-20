@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Which failure assumptions sustain agreement or availability?"
+summary: "Which failure assumptions sustain agreement or availability? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "Which failure assumptions sustain agreement or availability?"
@@ -18,6 +18,9 @@ route_hints:
     - "tycho.chapter.510c0c78de2b450c8be93d708222a488"
   related_ids:
     - "tycho.chapter.510c0c78de2b450c8be93d708222a488"
+    - "tycho.page.1b2657011d454460856103419095031b"
+    - "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80"
+    - "tycho.page.4961bb03a6534242a0977db265b68d95"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -53,16 +56,13 @@ An isolated former leader must not continue accepting authoritative effects mere
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Replication, consensus and leader change: safety and progress under failures](replication-consensus-and-leader-change.md) | Which failure assumptions sustain agreement or availability? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Separate replica types and required properties](replication-consensus-and-leader-change.md#1-separate-replica-types-and-required-properties).
-- [2. Majority quorum arithmetic and the failure envelope](replication-consensus-and-leader-change.md#2-majority-quorum-arithmetic-and-the-failure-envelope).
-- [Engineering walkthrough — New leader, old client and a lost acknowledgment](replication-consensus-and-leader-change.md#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment).
-- [7. Source ledger and limitations](replication-consensus-and-leader-change.md#7-source-ledger-and-limitations).
+| [Integrated decision and original walkthrough](replication-consensus-and-leader-change.md) | Which failure assumptions sustain agreement or availability? |
+| [Replica properties and quorum failure envelopes](quorum-envelope.md) | Which partitions can make progress without allowing divergent authority? |
+| [Leader changes, reconfiguration and restoration](leader-recovery.md) | How should clients classify outcomes while leadership or membership changes? |
 
 ## Boundaries and further reading
 
@@ -81,3 +81,21 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.1b2657011d454460856103419095031b:8 -->
+## 7. Source ledger and limitations
+
+| Public source reviewed | Narrow support | Not established |
+|---|---|---|
+| [Raft project — Ongaro/Ousterhout extended consensus paper](https://raft.github.io/) | Leader-based log replication, terms, elections and safety principles | Correctness of an invented or third-party service implementation |
+| [etcd 3.6 FAQ, membership and quorum](https://etcd.io/docs/v3.6/faq/) | Majority calculations and reconfiguration hazards | Resilience of an untested specific cluster |
+| [Tycho causality/consensus page](../c01/causality-ordering-and-consensus.md) | Existing source-grounded related consensus concepts | A checked formal proof or live fault test |
+
+Every failure, cluster layout, client result and diagram above is an original illustrative proposal. No environment, network, snapshot or node was touched. Actual versioned replication behavior and chapter-level technical review remain outstanding.
+
+**Navigation:** proposed **V04/C02** in [outline](../../../PROPOSED-STRUCTURE.md), current [Distributed coordination landing](../../../distributed/README.md). Background: [Causal ordering and consensus](../c01/causality-ordering-and-consensus.md), [Isolation and sagas](../c03/transaction-isolation-and-sagas.md), [Safe recovery](../../../deployment/multi-region-disaster-recovery-contracts.md).
+<!-- /tycho-question-source -->

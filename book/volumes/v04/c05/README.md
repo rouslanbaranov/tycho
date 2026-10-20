@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How are state changes coordinated without claiming global atomicity?"
+summary: "How are state changes coordinated without claiming global atomicity? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How are state changes coordinated without claiming global atomicity?"
@@ -19,6 +19,10 @@ route_hints:
   related_ids:
     - "tycho.chapter.5de52a840c14448c946a65c924f28487"
     - "tycho.chapter.a92541ba2fb44cf1a3afef1f9c021fe0"
+    - "tycho.page.aa810dd152884b35a84f0f4cbe4369e9"
+    - "tycho.page.9daa9ce90a5047fa849c637f24b063f7"
+    - "tycho.page.eba0d0f0151c4044a71589c4d216b4b9"
+    - "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -54,16 +58,14 @@ Writing an outbox does not make a remote notification atomic with the original t
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Outbox, inbox, sagas and durable workflow coordination](outbox-inbox-sagas-and-durable-workflows.md) | How are state changes coordinated without claiming global atomicity? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Two unsafe dual-write orders](outbox-inbox-sagas-and-durable-workflows.md#1-two-unsafe-dual-write-orders).
-- [2. Publication schema and ordering boundaries](outbox-inbox-sagas-and-durable-workflows.md#2-publication-schema-and-ordering-boundaries).
-- [6. Test failures rather than just the happy path](outbox-inbox-sagas-and-durable-workflows.md#6-test-failures-rather-than-just-the-happy-path).
-- [7. Source-to-claim ledger](outbox-inbox-sagas-and-durable-workflows.md#7-source-to-claim-ledger).
+| [Integrated decision and original walkthrough](outbox-inbox-sagas-and-durable-workflows.md) | How are state changes coordinated without claiming global atomicity? |
+| [Outbox publication and ordering](outbox-publication.md) | Which local atomic record closes a dual-write loss window? |
+| [Inbox processing and atomic consumer effects](inbox-atomicity.md) | When can a receiver commit an effect and its deduplication record together? |
+| [Sagas, workflow recovery and compensation](saga-workflows.md) | What business recovery contract replaces a nonexistent global rollback? |
 
 ## Boundaries and further reading
 
@@ -83,3 +85,26 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:7 -->
+## 7. Source-to-claim ledger
+
+| Independently reviewed source | Narrow documented fact | Not proven |
+|---|---|---|
+| [Transactional Outbox pattern](https://microservices.io/patterns/data/transactional-outbox) | Local commit of state+publication intent and duplicate-relay risk | Cross-resource atomicity |
+| [Debezium 3.6 Outbox Event Router](https://debezium.io/documentation/reference/3.6/transformations/outbox-event-router.html) | Version-scoped outbox event identity/key/payload mapping | Correctness of any deployed CDC pipeline |
+| [Idempotent Consumer pattern](https://microservices.io/patterns/communication-style/idempotent-consumer.html) | Receiver-local processed-message and state effects | Exactly-once arbitrary external side effects |
+| [Saga pattern](https://microservices.io/patterns/data/saga.html) | Coordinated local transactions and compensating actions | Automatic reversibility or distributed ACID |
+
+All examples and state descriptions here are original independent educational material. No service, database, broker, workflow, failure injection, compliance finding or independent review is claimed.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:8 -->
+## Navigation
+
+Proposed **V04/C05** in the [10-volume outline](../../../PROPOSED-STRUCTURE.md). Via [distributed landing](../../../distributed/README.md), read [V04/C04 retries](../c04/retries-idempotency-and-ambiguous-effects.md), [transaction isolation](../c03/transaction-isolation-and-sagas.md), [Kafka partition behavior](../c07/kafka-partitions-replication-and-contracts.md), and [safe rollout](../../../delivery/safe-rollout-and-recovery.md).
+<!-- /tycho-question-source -->

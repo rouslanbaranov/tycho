@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How are dependencies directed and replaceable?"
+summary: "How are dependencies directed and replaceable? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How are dependencies directed and replaceable?"
@@ -18,7 +18,10 @@ route_hints:
     - "tycho.chapter.9d4f989ec9304e418f60f1ad7248094a"
     - "tycho.chapter.3d34f0b431814c9fa879a355029af2a9"
     - "tycho.chapter.bbfd14751d274868b152ba431dc904c9"
-  related_ids: []
+  related_ids:
+    - "tycho.page.77b512c4e2e946bd92d70b4a714600c8"
+    - "tycho.page.f375bfcea48045d2a5d1f46014ca7758"
+    - "tycho.page.65f9616c034643f9bf5f297037f027e4"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -55,16 +58,13 @@ Replacing a local adapter with a remote call changes deadlines and ambiguous out
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Layered, hexagonal and ports-and-adapters architecture](layered-hexagonal-ports-and-adapters.md) | How are dependencies directed and replaceable? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Layered design states a dependency policy](layered-hexagonal-ports-and-adapters.md#1-layered-design-states-a-dependency-policy).
-- [2. A port is an application contract, not automatically a network port](layered-hexagonal-ports-and-adapters.md#2-a-port-is-an-application-contract-not-automatically-a-network-port).
-- [Engineering walkthrough — The same adapter error in local and remote architectures](layered-hexagonal-ports-and-adapters.md#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures).
-- [Applied M9 evidence: what transfers and what does not](layered-hexagonal-ports-and-adapters.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](layered-hexagonal-ports-and-adapters.md) | How are dependencies directed and replaceable? |
+| [Dependency direction and application ports](dependencies-ports.md) | What does a port isolate and which runtime failure boundary remains? |
+| [Adapter substitution and falsification](adapter-scenarios.md) | How do local and remote adapter replacements change the tests and operational obligations? |
 
 ## Boundaries and further reading
 
@@ -85,3 +85,26 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.77b512c4e2e946bd92d70b4a714600c8:8 -->
+## 8. Source-to-claim ledger and limits
+
+| Public independently inspected source | Narrow support | Not established |
+|---|---|---|
+| [Cockburn, *Hexagonal Architecture* (2005)](https://alistair.cockburn.us/hexagonal-architecture) | Driving/driven use cases, ports/adapters and isolation from external devices | Correctness of a fictional application's port layout |
+| [Fowler/Lewis, *Microservices* (2014)](https://www.martinfowler.com/articles/microservices.html) | Distinction between one deployable and independently deployed collaborators | That a port should become its own service |
+| [Existing Tycho application-style research](../../../application/architecture-styles-and-module-boundaries.md) | Earlier bounded treatment of module/deployment axes | An independently reviewed or compiler-enforced boundary |
+
+The synthetic project, figure, tables and acceptance protocols are original. No executable module architecture, real workload, interface fixture or claim-by-claim human audit was performed. Final volume/chapter/page IDs and frontmatter remain pending.
+
+<!-- /tycho-question-source -->
+<!-- tycho-question-source:tycho.page.77b512c4e2e946bd92d70b4a714600c8:9 -->
+## Navigation
+
+Proposed **V02/C01** in the [10-volume outline](../../../PROPOSED-STRUCTURE.md). See [application landing](../../../application/README.md), then [domain/data ownership](../c02/domain-boundaries-data-ownership-and-contracts.md), [modular monoliths](../c03/modular-monolith-and-internal-events.md), [SOA/microservice boundaries](../c04/service-orientation-microservices-and-distribution.md), [safe extraction](../../../application/architecture-evolution-and-extraction.md).
+
+<!-- /tycho-question-source -->

@@ -9,7 +9,7 @@ topic_ids:
   - "system-design"
 perspectives:
   - "architecture"
-summary: "Ten-volume, 69-chapter System Design reading edition with canonical mechanisms, failure boundaries, evidence and modernization reasoning."
+summary: "Ten-volume System Design manuscript with 69 chapter reading routes, independent question pages, exact provenance and explicit editorial-candidate status."
 route_hints:
   questions:
     - "What are the scope, mechanisms and limits of Tycho — System Design?"
@@ -39,7 +39,7 @@ evidence_scope:
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial assembly"
+  reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-18"
 updated_at: "2026-10-20"
@@ -53,9 +53,9 @@ content_verified_at: null
 
 Reason about requirements, mechanisms, partial failure and safe modernization using independently published evidence and original synthetic examples. The book develops conditional engineering judgment: retain a simple design, measure first or state insufficient evidence whenever the facts require it.
 
-## Tycho 2026.10 — First Markdown Edition
+## Editorial decomposition candidate — 2026.10.1-rc.1
 
-The reading edition comprises ten volumes and exactly 69 primary chapters. Each chapter links to one substantive bounded technical page; supporting essays and the historical casebook preserve earlier researched material without creating extra primary chapters. Source versions, access limits and nonclaims remain with their owning pages.
+The current manuscript has ten volumes and 69 chapters. Each chapter links an integrated decision walkthrough to separately owned mechanism and failure questions. Page counts follow those questions: the current routes contain three to five pages per chapter, including the integrated walkthrough. Supporting essays and the historical casebook remain available. Source versions, access limits and nonclaims stay with their owners.
 
 ## Contents
 
@@ -86,6 +86,6 @@ These retained topical entries provide secondary routes into the same canonical 
 
 ## Evidence, acceptance and limitations
 
-The 69 original manuscripts were substantively accepted by the owner under #213 at the recorded baseline. New volume/chapter syntheses are editorially self-checked. Page-local records distinguish published evidence, original inference, proposed tests and unknowns. No independent signatures, new benchmark or source-access date are manufactured.
+The 69 original manuscripts retain owner acceptance under #213. The owner reopened #214 because the first uniform one-page-per-chapter assembly was insufficient editorial decomposition. The current pages and syntheses are editorially self-checked candidates; final per-page explanatory adequacy remains a content gate. Page-local records distinguish published evidence, original inference, proposed tests and unknowns. No independent signatures, new benchmark or source-access date are manufactured.
 
-[Edition record and reproducible checks](../edition/README.md) describe the inventory, reversible migration, validation scope and publication state. The edition does not deploy a search service, MCP endpoint or specialist runtime. Visual rendering and live MCP remain owner-cancelled; later retrieval and deployment work follows the book release.
+[Edition record and reproducible checks](../edition/README.md) describe the inventory, reversible migration, validation scope and publication state. The edition does not deploy a search service, MCP endpoint or specialist runtime. Visual rendering and live MCP remain owner-cancelled; later retrieval and deployment work remains behind the final book gate.

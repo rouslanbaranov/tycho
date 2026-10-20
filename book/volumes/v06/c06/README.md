@@ -10,13 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "When is explicit typed connectivity preferable to lexical or vector similarity?"
+summary: "When is explicit typed connectivity preferable to lexical or vector similarity? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "When is explicit typed connectivity preferable to lexical or vector similarity?"
   prerequisites:
     - "tycho.chapter.6d25a036c078402a85ec464227a48a31"
-  related_ids: []
+  related_ids:
+    - "tycho.page.d34afc7f27b54431b779f7f75f11e2c3"
+    - "tycho.page.ae4febbe43f941f78d825613e126419b"
+    - "tycho.page.6d8377d616c548ef9c3b213d8a2df934"
+    - "tycho.page.64f398c0535345258b1fdf5eebbf4438"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -52,16 +56,14 @@ A path through a graph does not imply causal influence or permission; cycles and
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Graph data models and traversal: when relationships are the query](graph-data-models-and-traversal.md) | When is explicit typed connectivity preferable to lexical or vector similarity? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Clarify the meaning of an edge](graph-data-models-and-traversal.md#1-clarify-the-meaning-of-an-edge).
-- [2. Original fictional example: a workshop equipment dependency map](graph-data-models-and-traversal.md#2-original-fictional-example-a-workshop-equipment-dependency-map).
-- [Engineering walkthrough — A bounded dependency path is not proof of causation](graph-data-models-and-traversal.md#engineering-walkthrough-a-bounded-dependency-path-is-not-proof-of-causation).
-- [Applied M9 evidence: what transfers and what does not](graph-data-models-and-traversal.md#applied-m9-evidence-what-transfers-and-what-does-not).
+| [Integrated decision and original walkthrough](graph-data-models-and-traversal.md) | When is explicit typed connectivity preferable to lexical or vector similarity? |
+| [Edge meaning and relationship questions](edge-semantics.md) | Which explicit relation is being traversed and what can a path not prove? |
+| [Bounded graph traversal and relational alternatives](bounded-traversal.md) | What direction, cycle and result limits make the traversal question precise? |
+| [Derived relationships and falsification](graph-provenance.md) | Which source and update contract makes a derived edge usable? |
 
 ## Boundaries and further reading
 
@@ -80,3 +82,22 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.d34afc7f27b54431b779f7f75f11e2c3:7 -->
+## 7. Public evidence and explicit product-scope boundary
+
+| Independently inspected public source | Supports | Not established |
+|---|---|---|
+| [Neo4j Cypher — Patterns](https://neo4j.com/docs/cypher-manual/current/patterns/) | Property-graph query patterns and path semantics | Implementation for fictional equipment model |
+| [Neo4j Cypher — Variable-length paths](https://neo4j.com/docs/cypher-manual/current/patterns/variable-length-paths/) | Bounded variable-length traversal and explosion/pruning concerns | Performance of any real graph DB under a target workload |
+| [Tycho hybrid retrieval](../c05/hybrid-ranking-graph-and-evaluation.md) | Prior theoretical distinctions of retrieval mechanisms | Actual hybrid search or graph infrastructure |
+
+All graph nodes, edges, diagrams, inferred rules and experiments are original invented educational examples. No graph was created, indexed, traversed or independently reviewed. **This chapter does not reintroduce a curated Tycho knowledge graph.** It covers graph *architectures as a subject of System Design*, not a product feature.
+
+**Navigation:** proposed **V06/C06** in [planned book contents](../../../PROPOSED-STRUCTURE.md), current [search/data information architecture](../../../search/README.md). Related [Hybrid lexical/vector ranking](../c05/hybrid-ranking-graph-and-evaluation.md), [Storage alternatives](../../v05/c04/storage-model-alternatives-and-workload-fit.md), [Authorization boundaries](../../v09/c05/identity-authorization-and-isolation.md).
+
+<!-- /tycho-question-source -->

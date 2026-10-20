@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "How do authority, freshness, eviction and invalidation differ?"
+summary: "How do authority, freshness, eviction and invalidation differ? The reading route separates 3 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "How do authority, freshness, eviction and invalidation differ?"
@@ -19,7 +19,11 @@ route_hints:
     - "tycho.chapter.e451bfe1e0cb4c588f0576e0b2b7d3d0"
     - "tycho.chapter.3e2e1da8f99c4a7ba05121baf1ef4d91"
     - "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f"
-  related_ids: []
+  related_ids:
+    - "tycho.page.33742c54f667446cbf57cb9f3696a533"
+    - "tycho.page.765a54f5d9944577908b40b3fc6cb7ef"
+    - "tycho.page.76f6d792c80a448fa1a76001ca6699e1"
+    - "tycho.page.f39fa61013ca41abbfba82ef48250f8f"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -55,16 +59,14 @@ A successful cache hit can return an inadmissibly stale value; cache availabilit
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Local and distributed caching: authority, freshness and placement](local-and-distributed-cache-design.md) | How do authority, freshness, eviction and invalidation differ? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Begin with the authority and the data contract](local-and-distributed-cache-design.md#1-begin-with-the-authority-and-the-data-contract).
-- [2. Three basic placements](local-and-distributed-cache-design.md#2-three-basic-placements).
-- [Engineering walkthrough — Local cache update versus cross-instance freshness](local-and-distributed-cache-design.md#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness).
-- [8. Public source ledger and nonclaims](local-and-distributed-cache-design.md#8-public-source-ledger-and-nonclaims).
+| [Integrated decision and original walkthrough](local-and-distributed-cache-design.md) | How do authority, freshness, eviction and invalidation differ? |
+| [Authority, freshness and cache placement](cache-authority.md) | Which state remains authoritative when a local or distributed cache is used? |
+| [Eviction, refresh and cache-aside races](refresh-semantics.md) | Which read/write interleaving invalidates a naive freshness promise? |
+| [Cache cost, failure and acceptance](cache-acceptance.md) | When should stale service, origin protection or no cache be preferred? |
 
 ## Boundaries and further reading
 
@@ -86,3 +88,22 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.33742c54f667446cbf57cb9f3696a533:9 -->
+## 8. Public source ledger and nonclaims
+
+| Public source | Narrow support | Does not establish |
+|---|---|---|
+| [Caffeine Eviction](https://github.com/ben-manes/caffeine/wiki/Eviction) | Size, weight and expiration choices | Strong coherence across replicas |
+| [Caffeine Refresh](https://github.com/ben-manes/caffeine/wiki/Refresh) | Refresh eligibility and previous-value serving model | Actual app cache freshness bound |
+| [Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/) | Read-through-on-miss / TTL / invalidate-on-write pattern | Atomic cross-resource consistency or measured performance |
+| [Combined earlier cache research](../../../scaling/local-distributed-caching-and-invalidation.md) | Previously bounded original explanations | Independently accepted final source claim mapping |
+
+All application names, diagrams, decisions, numerical examples and tests are original fictional teaching material. No cache implementation or benchmark was exercised.
+
+**Navigation:** proposed owner **V06/C01** in [outline](../../../PROPOSED-STRUCTURE.md), via [scaling landing](../../../scaling/README.md). Read [cache invalidation/stampedes](../c02/cache-invalidation-stampede-and-hot-keys.md), [source connection pools](../../v03/c05/connection-pools-hikaricp-pgbouncer.md), [overload controls](../../v07/c05/overload-admission-control-and-graceful-degradation.md).
+<!-- /tycho-question-source -->

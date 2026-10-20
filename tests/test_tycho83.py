@@ -2,7 +2,7 @@
 from pathlib import Path
 import re
 import unittest
-from edition_paths import canonical_path, relative_link
+from edition_paths import canonical_path, relative_link, read_original_manuscript
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "book/data"
@@ -26,7 +26,7 @@ class DataArchitectureTests(unittest.TestCase):
     def test_substantial_research_sources_and_mermaid(self):
         for name, sources in PAGES.items():
             with self.subTest(page=name):
-                content = canonical_path(DATA / name).read_text(encoding="utf-8")
+                content = read_original_manuscript(canonical_path(DATA / name))
                 self.assertGreater(len(content), 11000)
                 self.assertGreaterEqual(content.count("```mermaid"), 3)
                 self.assertGreaterEqual(content.count("Text alternative:"), 3)

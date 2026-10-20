@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Which queries need tokenization, inverted indexes, BM25 or filtering?"
+summary: "Which queries need tokenization, inverted indexes, BM25 or filtering? The reading route separates 2 detailed questions from the integrated decision."
 route_hints:
   questions:
     - "Which queries need tokenization, inverted indexes, BM25 or filtering?"
@@ -19,6 +19,9 @@ route_hints:
   related_ids:
     - "tycho.chapter.6d25a036c078402a85ec464227a48a31"
     - "tycho.chapter.e3cf27f8212a455bb53e135ee18bbaa9"
+    - "tycho.page.39a694d604d646a996bf90c3357c3b27"
+    - "tycho.page.fa9fbde428884786b68dbfdf142cb1ad"
+    - "tycho.page.0ea71c3228744d0c99a3e4826b9167ad"
   excludes:
     - "No new benchmark, source inspection or independent edition review is asserted."
   keywords:
@@ -54,16 +57,13 @@ Lexical relevance is not source validity, and filtering too late can expose forb
 
 ## Pages and reasoning route
 
-| Page | Owning question |
+Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion.
+
+| Page | Independent question and role |
 |---|---|
-| [Lexical retrieval: inverted indexes, BM25, PostgreSQL FTS and Lucene](lexical-indexing-bm25-and-sql-fts.md) | Which queries need tokenization, inverted indexes, BM25 or filtering? |
-
-The page is one bounded explanation. Its mechanism, failure analysis and evidence are kept together rather than split to meet a numerical page quota. Use these section entry points:
-
-- [1. Why inverted indexes work](lexical-indexing-bm25-and-sql-fts.md#1-why-inverted-indexes-work).
-- [2. PostgreSQL 17 full-text search is a real candidate](lexical-indexing-bm25-and-sql-fts.md#2-postgresql-17-full-text-search-is-a-real-candidate).
-- [Engineering walkthrough — Analyzer compatibility and a stale index generation](lexical-indexing-bm25-and-sql-fts.md#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation).
-- [Evidence and status](lexical-indexing-bm25-and-sql-fts.md#evidence-and-status).
+| [Integrated decision and original walkthrough](lexical-indexing-bm25-and-sql-fts.md) | Which queries need tokenization, inverted indexes, BM25 or filtering? |
+| [Inverted indexes and SQL full-text search](lexical-model.md) | How do analyzer and query semantics define a lexical match? |
+| [Search clusters, update visibility and stale citations](index-lifecycle.md) | Which generation and refresh contract keeps retrieved evidence attributable? |
 
 ## Boundaries and further reading
 
@@ -83,3 +83,19 @@ The page is one bounded explanation. Its mechanism, failure analysis and evidenc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+## Chapter source ledger
+
+The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.
+
+<!-- tycho-question-source:tycho.page.39a694d604d646a996bf90c3357c3b27:7 -->
+## Evidence and status
+
+| ID | Public source and bounded examined scope | Supports and limitations |
+|---|---|---|
+| E01 | [PostgreSQL 17 §12.3 Controlling Text Search](https://www.postgresql.org/docs/17/textsearch-controls.html), **Parsing Queries, Ranking Search Results**; [Chapter 12 indexes](https://www.postgresql.org/docs/17/textsearch-indexes.html) | tsvector/tsquery, scoring and index support; no Tycho benchmark |
+| E02 | [Apache Lucene BM25Similarity API](https://lucene.apache.org/core/10_3_0/core/org/apache/lucene/search/similarities/BM25Similarity.html), selected **10.3.0** API | BM25 scorer as one versioned library implementation; full Lucene indexing docs not independently read end-to-end |
+| E03 | [Lucene Overview](https://lucene.apache.org/core/10_3_0/core/overview-summary.html), selected 10.3.0 | In-process full-text indexing/search APIs, not a managed distributed product deployment |
+
+**Review state:** original model with bounded official docs, no Lucene index built, PostgreSQL search executed, relevance judged by external annotators or human technical review. Full benchmark and choice remain future issues.
+<!-- /tycho-question-source -->

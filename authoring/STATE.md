@@ -16,18 +16,20 @@ The corpus includes 29 public historical case studies and six synthetic decision
 | PR #217 | Closed, unmerged; replaced by #218 |
 | PR #218 | Merged; accepted manuscript baseline |
 | #213 and E14 #15 | Completed; original children #79–#90 checked closed |
-| #214 | Edition implemented; publication PR and frozen-tree delivery control closure |
+| #214 | Reopened; substantive page decomposition and editorial acceptance |
 | M9 #121 | Closed under its documented scoped acceptance |
 
-## First Markdown Edition — 2026.10.0
+## Reopened editorial decomposition — #214
 
-The physical **10-volume / 69-chapter / 69-primary-page** edition is assembled under #214, with **215 canonical documents** including retained supporting essays and casebook material. The [book contents](../book/README.md) govern the reading order. Each new volume contributes synthesis and each chapter provides a conclusion, counterexample and bounded route.
+The owner rejected the uniform one-manuscript-page-per-chapter assembly as sufficient final book structure and reopened #214. PR #220/version 2026.10.0 remain a **structural checkpoint**, not final editorial acceptance. #213's accepted content baseline remains valid.
 
-[Edition scope and limitations](../edition/README.md), [reversible migration](../edition/migration.json), [frozen inventory](../edition/inventory.json) and [assembly review](EDITION_ASSEMBLY_REVIEW_2026-10-20.md) document the exact publication boundary. All 136 earlier identities remain; 79 new landing identities are recorded. No original primary payload or external citation was discarded. The original 69 manuscript IDs and evidence metadata are preserved.
+The current 2026.10.1-rc.1 candidate makes individual question-owner decisions for all 69 chapters: **174 new question pages**, 69 integrated walkthroughs and ten volume syntheses, with 389 canonical documents including retained supporting material. A page count is an inventory, not a completion criterion.
 
-The release is a Markdown repository edition with immutable content hashes and a Git commit pin recorded in #214/release tracking. It does not claim a GitHub Release object, PDF/EPUB export or hosted service. #214 closes only after its publication PR is merged and the frozen tree is verified. The live GitHub issue state controls that transition.
+[The chapter review](CHAPTER_DECOMPOSITION_REVIEW_2026-10-20.md) records actual owner questions, source sections and editorial limits. [The split manifest](../edition/decomposition-manifest.json) conserves 739 source blocks and maps 839 original fragments. Original IDs and protected evidence metadata remain; new question IDs are recorded separately. Source text, ledger ownership, original examples and new additions have explicit provenance.
 
-**Next:** lexical/hybrid retrieval evaluation, MCP/onboarding, shared Rocinante runtime and deployment/operations are separate roadmap work. Curated knowledge-graph infrastructure remains excluded. Existing metadata, schema, provenance and local routing facilities must be reused rather than redesigned.
+Seven short question treatments gained worked decision/failure explanations. A separately sourced PostgreSQL 17 page fills the missing MVCC snapshot/version-lifetime explanation. Newly authored material is self-checked; no new independent acceptance or technology execution is claimed.
+
+**Next gate:** read and accept the independent pages for explanatory sufficiency, context, examples, exact source support and cross-question boundaries; resolve concrete findings. #214 remains open until that substantive gate is completed. Tests and larger file counts alone must not close it. Retrieval/MCP/deployment remains postponed; curated graph infrastructure remains excluded.
 
 ## Acceptance and verification provenance
 
