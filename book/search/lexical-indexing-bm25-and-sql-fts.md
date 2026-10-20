@@ -144,7 +144,7 @@ Text alternative: a page enters the index at a known revision. Source changes ma
 
 ### What to measure before choosing a product
 
-Index disk size by field/segment and N documents, indexing/refresh time, query p95/p99, ranking quality, corpus change rate, tombstone and recovery overhead, and agent payload tokens to get **sufficient evidence**. A 900-page book does not automatically need a distributed search cluster.
+Index disk size by field/segment and N documents, indexing/refresh time, query p95/p99, ranking quality, corpus change rate, tombstone and recovery overhead, and agent payload tokens to get **sufficient evidence**. A small or mid-sized standalone reference corpus does not automatically need a distributed search cluster; scale requirements depend on its measured indexing and retrieval workload.
 
 An exact query like `jdk.VirtualThreadPinned` should retrieve the versioned Java pinning page ahead of a generic scheduling document. A query like "why does a rollback fail after new-schema writes?" may benefit from semantic/hybrid navigation. The [hybrid retrieval chapter](hybrid-ranking-graph-and-evaluation.md) defines how to evaluate this distinction.
 
