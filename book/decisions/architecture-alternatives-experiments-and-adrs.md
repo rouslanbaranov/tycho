@@ -193,6 +193,21 @@ All sample identities, outcomes, weights and experiments here are **independent 
 
 Proposed home: **V10/C04** in [proposed contents](../PROPOSED-STRUCTURE.md). Current landing: [Decision support](README.md). Read [Requirements/workload](requirements-and-workload-architecture-profiles.md), [Pattern applicability](pattern-applicability-and-contraindications.md), [Legacy baseline](legacy-baseline-and-modernization-evidence.md), then [target and transition planning](../../authoring/models/target-transition-architecture.md) for implementation readiness.
 
+## Engineering walkthrough — A hard requirement reverses a previously preferred ADR
+
+**Original synthetic ADR-X17:** reporting currently shares one database and deployable application with the live booking API. A (retain modular deployment and add a bounded reporting worker) competes with B (separate reporting service and eventually a derived read model). The initial driver is slow analytical queries, not independently required tenant isolation.
+
+| Test of choice | A: bounded worker | B: service extraction |
+|---|---|---|
+| Protect live write connections | Could pass by distinct admission/pools | Could pass with separate pools, but datastore may still be shared |
+| Preserve existing authority | Same database transaction | Read projection consistency/replay and extra remote failures |
+| Team operational readiness | Within initial staffing assumptions | Another critical service lacks agreed on-call owner |
+| Independent security boundary | Shared process may have residual privileges | Potentially stronger if enforced and demonstrated |
+
+**Provisional decision:** A, *conditional* on a controlled test showing isolated report concurrency cannot starve critical bookings. That is not a completed ADR approval. **Sensitivity reversal:** a subsequently confirmed legal rule demands separate execution principals and storage authorization that a shared process demonstrably cannot provide. A now fails a **hard constraint**, so B (or another truly isolated candidate) must be evaluated; no weighted preference for A's lower complexity can override the gate.
+
+**Evidence plan, not executed:** same offered report and booking workload, authorized objects, old client versions, staff/on-call budget, recovery requirements and incident scenarios across feasible candidates. Record tested observations and uncertainty, explicit rejected alternatives and revision trigger in a versioned ADR. A plausible score or modern topology label cannot replace missing authority and rollback evidence. The arc42 ADR guidance motivates decision/history records, not this fictional organization's acceptance.
+
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
