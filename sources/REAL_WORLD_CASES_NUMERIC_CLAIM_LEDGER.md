@@ -14,23 +14,23 @@
 
 | Claim | First-party section | Value that may be cited, with period and denominator | Limitation |
 |---|---|---|---|
-| A01.001 | 'How did we migrate?', introductory summary | **4.5 years** migration reported to completion | Duration spans coexistence, automated build graph, CI and deployments; not time for Bazel installation |
-| A01.002 | 'Migration in numbers' / 'Conclusion' | Local builds/tests **3–5× faster**; IntelliJ sync and dev deploy **2–3× faster** | Publisher's measured program, not a general change to compile algorithms |
-| A01.003 | 'Migration in numbers' | Build satisfaction **38% → 68%** | Self-reported internal CSAT, no external controlled cohort |
-| A01.004 | 'How did we migrate? — Proof of concept' | Viaduct offered optional **Gradle/Bazel coexistence**; initial **2–4×** pilot build speed did **not** convince engineers until IDE/integration bugs were fixed | Evidence **against** assuming speed is sufficient adoption criterion |
-| A01.005 | 'Migrating the deploys — Services' | Approximately **700** services tested and **100** startup/integration failures encountered in Bazel deployment parity checks | Tests uncovered reflection/classpath gaps, so successful compilation alone was inadequate |
-| A01.006 | 'Migrating the deploys — Data pipelines' | ~450 data pipelines plus 50 other projects; about **3%** runtime issues for ~400 paved-path pipelines after CI tests | Specific paved path; do not apply 3% to all services/pipelines |
-| DI01.001 | 'Our Cassandra Troubles' / 'Several Months Later' | **177 Cassandra nodes** (early 2022) → **72 ScyllaDB nodes** for message database | Different disk capacities/configuration: nodes are not directly interchangeable units |
-| DI01.002 | 'Several Months Later' | Historical-read **p99 40–125ms → ~15ms**; message insert p99 **5–70ms → ~5ms** | Publisher-reported operational comparison, workload/snapshot-specific |
-| DI01.003 | 'A Very Big Migration' | Rust migrator hit **up to 3.2 million messages/s**; final **99.9999%** blocked by Cassandra tombstones | Peak copy speed ≠ end-to-end completion speed; last ranges required manual compaction |
-| DI01.004 | 'A Very Big Migration' | Automated validation sent **small percentage of reads to both DBs** and compared results | A **sample** is not proof of equality for all historical messages |
-| DI02.001 | 'So... how are things going?' | Search median **500ms → below 100ms**; search p99 **~1s → below 500ms**; **2× indexing throughput** | Applies to Discord's 2025 *search indexing* redesign, not Cassandra/ScyllaDB message reads |
-| DI02.002 | 'So... how are things going?' | **40 Elasticsearch clusters** with thousands of indices | 2025 reported architecture, not universal shard-count recommendation |
-| CF01.001 | 'Results: Super Slurper now transfers data to R2 up to 5x faster' | **75,000 S3→R2 objects**, baseline **15m30s**, revised **3m25s** | One benchmark workload; size distribution/network not universal |
-| CF01.002 | 'Challenges' | Cloudflare Queues delivers at least once, making **duplicates a first-class problem** | A successful bulk copy still requires idempotency and source/object verification |
-| LI01.001 | 'How Big is Big?' | **Over 800B messages/day**, >175TB produced and >650TB consumed per day; peak **13M messages/sec** | **March 2015** LinkedIn fleet, not Kafka defaults or 2026 production inventory |
-| LI01.002 | 'How Big is Big?' | **Over 1,100 brokers in more than 60 clusters** | LinkedIn's multi-tier setup, not a software sizing rule |
-| LI01.003 | 'Auditing Completeness' | Per-stage producer/broker/consumer auditing described | The source's **count-based** evidence is vulnerable to a drop+duplicate cancellation; source does NOT claim perfect semantic event identity |
+| evidence.m9-a01.001 | 'How did we migrate?', introductory summary | **4.5 years** migration reported to completion | Duration spans coexistence, automated build graph, CI and deployments; not time for Bazel installation |
+| evidence.m9-a01.002 | 'Migration in numbers' / 'Conclusion' | Local builds/tests **3–5× faster**; IntelliJ sync and dev deploy **2–3× faster** | Publisher's measured program, not a general change to compile algorithms |
+| evidence.m9-a01.003 | 'Migration in numbers' | Build satisfaction **38% → 68%** | Self-reported internal CSAT, no external controlled cohort |
+| evidence.m9-a01.004 | 'How did we migrate? — Proof of concept' | Viaduct offered optional **Gradle/Bazel coexistence**; initial **2–4×** pilot build speed did **not** convince engineers until IDE/integration bugs were fixed | Evidence **against** assuming speed is sufficient adoption criterion |
+| evidence.m9-a01.005 | 'Migrating the deploys — Services' | Approximately **700** services tested and **100** startup/integration failures encountered in Bazel deployment parity checks | Tests uncovered reflection/classpath gaps, so successful compilation alone was inadequate |
+| evidence.m9-a01.006 | 'Migrating the deploys — Data pipelines' | ~450 data pipelines plus 50 other projects; about **3%** runtime issues for ~400 paved-path pipelines after CI tests | Specific paved path; do not apply 3% to all services/pipelines |
+| evidence.m9-di01.001 | 'Our Cassandra Troubles' / 'Several Months Later' | **177 Cassandra nodes** (early 2022) → **72 ScyllaDB nodes** for message database | Different disk capacities/configuration: nodes are not directly interchangeable units |
+| evidence.m9-di01.002 | 'Several Months Later' | Historical-read **p99 40–125ms → ~15ms**; message insert p99 **5–70ms → ~5ms** | Publisher-reported operational comparison, workload/snapshot-specific |
+| evidence.m9-di01.003 | 'A Very Big Migration' | Rust migrator hit **up to 3.2 million messages/s**; final **99.9999%** blocked by Cassandra tombstones | Peak copy speed ≠ end-to-end completion speed; last ranges required manual compaction |
+| evidence.m9-di01.004 | 'A Very Big Migration' | Automated validation sent **small percentage of reads to both DBs** and compared results | A **sample** is not proof of equality for all historical messages |
+| evidence.m9-di02.001 | 'So... how are things going?' | Search median **500ms → below 100ms**; search p99 **~1s → below 500ms**; **2× indexing throughput** | Applies to Discord's 2025 *search indexing* redesign, not Cassandra/ScyllaDB message reads |
+| evidence.m9-di02.002 | 'So... how are things going?' | **40 Elasticsearch clusters** with thousands of indices | 2025 reported architecture, not universal shard-count recommendation |
+| evidence.m9-cf01.001 | 'Results: Super Slurper now transfers data to R2 up to 5x faster' | **75,000 S3→R2 objects**, baseline **15m30s**, revised **3m25s** | One benchmark workload; size distribution/network not universal |
+| evidence.m9-cf01.002 | 'Challenges' | Cloudflare Queues delivers at least once, making **duplicates a first-class problem** | A successful bulk copy still requires idempotency and source/object verification |
+| evidence.m9-li01.001 | 'How Big is Big?' | **Over 800B messages/day**, >175TB produced and >650TB consumed per day; peak **13M messages/sec** | **March 2015** LinkedIn fleet, not Kafka defaults or 2026 production inventory |
+| evidence.m9-li01.002 | 'How Big is Big?' | **Over 1,100 brokers in more than 60 clusters** | LinkedIn's multi-tier setup, not a software sizing rule |
+| evidence.m9-li01.003 | 'Auditing Completeness' | Per-stage producer/broker/consumer auditing described | The source's **count-based** evidence is vulnerable to a drop+duplicate cancellation; source does NOT claim perfect semantic event identity |
 
 ## Corrections / architecture applicability
 

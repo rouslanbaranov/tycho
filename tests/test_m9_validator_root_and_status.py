@@ -44,8 +44,8 @@ class PinnedRootAndFormatTest(unittest.TestCase):
         schema = json_read(ROOT / 'authoring/cases/case-record.schema.json')
         item = copy.deepcopy(json_read(ROOT / 'authoring/cases/examples/case-records.json')[0])
         refs = parse_source_registry((ROOT / 'sources/REAL_WORLD_ARCHITECTURE_CASES.md').read_text())
-        item['source_refs'] = ['N11']
-        item['claims'][0]['source_ref_id'] = 'N11'
+        item['source_refs'] = ['OLD01']
+        item['claims'][0]['source_ref_id'] = 'OLD01'
         with self.assertRaisesRegex(ValueError, 'source ref not a valid string ID'):
             validate_record(item, schema, refs)
         try:

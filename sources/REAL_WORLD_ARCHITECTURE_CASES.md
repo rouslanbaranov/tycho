@@ -2,7 +2,7 @@
 
 Status: **curated research inputs, not yet accepted case-study chapters**. Initial discovery: 2026-10-19. Public company-owned technical blogs, named engineer talks/transcripts, public project documentation, and first-party engineering reports are preferred. URLs are external references, not permission to redistribute full text, figures, code, or recordings. Dates/figures below belong to the source's stated observation window, never universal architecture benchmarks.
 
-This register lists **43 linked primary or practitioner-presented resources from 10 organizations**, using canonical IDs from `register.json`. Identity registration is not source admission: every row still requires the applicable dated, scoped source/claim review before content acceptance. Historical aliases are lookup-only in `m9-source-aliases.json`. In particular, a conference abstract is *talk scope*, not proof that every proposed feature was deployed. Article content is evidence of what authors report, not independent validation of performance.
+This register lists **43 linked primary or practitioner-presented resources from 10 organizations**, using canonical IDs from `register.json`. Identity registration is not source admission: every row still requires the applicable dated, scoped source/claim review before content acceptance. In particular, a conference abstract is *talk scope*, not proof that every proposed feature was deployed. Article content is evidence of what authors report, not independent validation of performance.
 
 | ID | Company | Primary public source | Architecture problem → modernization / trade-off | Tycho route | Evidence / limitation |
 |---|---|---|---|---|---|

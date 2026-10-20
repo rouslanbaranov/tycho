@@ -309,6 +309,8 @@ def check(root: Path = ROOT) -> dict:
     global_sources = {s['id']: s['url'] for s in json_read(root / 'sources/register.json')['sources']}
     require(all(global_sources.get(sid) == url for sid, url in registered.items()),
             "M9 source ID/URL disagrees with global source register")
+    from m9_evidence_identity import validate as validate_evidence_identity
+    evidence_identity = validate_evidence_identity(root)
     ids, links = read_case_catalog(root, registered)
     examples = json_read(root / "authoring/cases/examples/case-records.json")
     require(isinstance(examples, list) and len(examples) >= 2, "missing portable examples")
@@ -333,6 +335,7 @@ def check(root: Path = ROOT) -> dict:
             require(not errors, "JSON Schema example " + str(i) + ": " + "; ".join(str(err) for err in errors))
         validation_engine = "jsonschema Draft2020-12+FormatChecker"
     return {"case_pages": len(ids), "indexed_md_paths": len(links), "source_candidates": len(registered),
+            "evidence_identity": evidence_identity,
             "sample_records": len(examples), "question_classes": counts,
             "proposed_facet_pilot": facet_pilot, "schema_check": validation_engine,
             "retrieval_execution": "NOT RUN", "independent_review": "NOT RUN"}

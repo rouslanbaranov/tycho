@@ -77,7 +77,7 @@ class CorpusMetadataTests(unittest.TestCase):
             validator.validate(self.root)
 
     def test_local_m9_alias_is_not_a_global_source_id(self):
-        self.meta['evidence_scope']['source_ids'] = ['A01']
+        self.meta['evidence_scope']['source_ids'] = ['OLD01']
         self.write_page()
         with self.assertRaisesRegex(ValueError, 'invalid strict metadata'):
             validator.validate(self.root)
