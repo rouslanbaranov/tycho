@@ -64,6 +64,15 @@ Begin with the integrated decision, then open the independent question that matc
 | [Replica properties and quorum failure envelopes](quorum-envelope.md) | Which partitions can make progress without allowing divergent authority? |
 | [Leader changes, reconfiguration and restoration](leader-recovery.md) | How should clients classify outcomes while leadership or membership changes? |
 
+
+## Additional mechanism and project routes
+
+These independently scoped pages extend the chapter without replacing its original walkthrough or source ledger.
+
+| Page | Owning question |
+| --- | --- |
+| [Session-visible consistency](session-consistency.md) | Which observations must a user session retain when requests move between replicas? |
+
 ## Boundaries and further reading
 
 - [V04/C01 — Time, causality and ordering](../c01/README.md) owns the adjacent question; compare assumptions before transferring the conclusion.
@@ -81,6 +90,11 @@ Begin with the integrated decision, then open the independent question that matc
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+
+## Further mechanism and recovery questions
+
+- [Leases, stale owners and fencing at the destination](leader-recovery.md#leases-stale-owners-and-fencing-at-the-destination) — source-scoped enrichment; examples and proposed tests are not executed results.
 
 ## Chapter source ledger
 

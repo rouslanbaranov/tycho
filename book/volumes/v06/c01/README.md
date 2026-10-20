@@ -77,7 +77,7 @@ The preceding and following chapters supply context; this landing does not repla
 | Route | Destination |
 |---|---|
 | Parent | [V06 — Caching, indexing and information retrieval](../README.md) |
-| Previous | [V05/C07 — Replication, backups and restore drills](../../v05/c07/README.md) |
+| Previous | [V05/C08 — Object storage, large transfers and publication](../../v05/c08/README.md) |
 | Next | [V06/C02 — Hot keys, cache stampedes and read amplification](../c02/README.md) |
 | Prerequisite | [V02/C02 — Domain boundaries, data ownership and contracts](../../v02/c02/README.md) |
 | Prerequisite | [V05/C03 — Query planning, indexes and access paths](../../v05/c03/README.md) |

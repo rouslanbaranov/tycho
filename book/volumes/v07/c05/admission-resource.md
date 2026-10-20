@@ -100,6 +100,42 @@ Choose concurrency/queue limits from observed service-time and downstream satura
 
 <!-- /tycho-question-source -->
 
+## Local limits, global quotas and fair admission
+
+**Enrichment contract:** turn a named limit into an enforceable budget with units, scope and failure behavior. A rate cap, concurrency cap and queue bound constrain different populations.
+
+### Original token-budget calculation
+
+Assume a fictional tenant receives 20 work units/s with a bucket capacity of 40 work units. An operation costs five units. At most eight such operations can spend a full bucket immediately; in steady state the refill supports four operations/s. Across an interval of t seconds, admitted cost is bounded by 40 + 20t only if the single logical bucket and its refill/update rules are correctly enforced. These invented values are arithmetic examples, not measurements or recommended defaults.
+
+With four replicas each independently granting the same bucket, the aggregate allowance can approach four times the intended scope. A global quota needs atomic shared accounting, coordinated budget leases or a deliberately documented approximation. A shared limiter adds a dependency; its timeout must not become permission to spend an unlimited budget.
+
+| Limiter design | Benefit | Required failure contract |
+|---|---|---|
+| Per-instance bucket | Simple local protection | Aggregate allowance changes with replicas and routing |
+| Central atomic bucket | Explicit shared scope | Quota-store latency/outage and hot-key behavior |
+| Leased local budgets | Fewer shared operations | Never grant overlapping spend; account for unused/lost allocations |
+| Approximate distributed counts | Scalable signals | Bound permitted overshoot and identify protected invariant |
+| Concurrency cap | Limits resident work | Release permits after termination; distinguish stuck from completed work |
+
+### Fairness before one shared FIFO
+
+A single tenant can fill a shared queue even when average capacity is sufficient. Define per-tenant outstanding work, maximum age and how spare capacity may be borrowed. Weighted fair scheduling can reserve progress for other tenants, but weights alone do not cap the cost of one operation or prevent starvation unless the scheduling and admission rules do so.
+
+An original scenario has tenant A submit 1,000 cheap reads while B submits two costly exports. Request-count fairness and resource-cost fairness produce different outcomes. Choose the protected objective explicitly; include a bounded estimate or separate class budget for expensive work. Reconcile estimated and actual cost without allowing untrusted clients to choose an artificially cheap class.
+
+### Failure and recovery
+
+For a quota protecting a hard external limit, unavailable shared accounting may require rejecting new work or using only a known unused local allocation. For a best-effort UI feature, an intentionally bounded fallback may be acceptable. State the permitted overshoot and recovery reconciliation; the labels fail-open/fail-closed do not answer this design question.
+
+Advertise retry guidance consistent with remaining budget and deadline. Randomized backoff must not cause all replicas to refill and retry in the same wave. Track offered, rejected, admitted and correctly completed work per class/tenant, plus queue age and shared-store failures.
+
+### Evidence and proposed acceptance
+
+[Handling Overload](https://sre.google/sre-book/handling-overload/) supports resource-aware overload handling and criticality, not a benchmark for the invented bucket or a proof of a global quota implementation. All numeric budgets and distribution comparisons above are original synthetic reasoning, inspected/self-reviewed 2026-10-20.
+
+Proposed tests: route one tenant across all replicas, change replica count, partition the quota store, duplicate a budget lease, cancel admitted work and restart a permit owner. Verify actual aggregate admitted cost, bounded overshoot and progress for a quiet tenant. No load test or distributed-limiter execution was performed.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

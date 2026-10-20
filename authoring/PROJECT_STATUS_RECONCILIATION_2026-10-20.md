@@ -1,5 +1,12 @@
 # Current precedence — owner reopened #214
 
+> **Current execution update, 2026-10-20:** The environment recovered. Actual Python checks passed 16/16 groups and 233/233 tests with zero skips; Mermaid syntax passed 221/221 diagrams. Python index reproduction was byte-identical. [Pinned execution evidence](PYTHON_MERMAID_VALIDATION_2026-10-20.md) supersedes the earlier blocked-execution statements below. PR #222 remains draft and #214 open for substantive acceptance. The following candidate updates are historical authoring-time records.
+
+> **Current second-pass candidate, 2026-10-20:** rc.3 adds the five further mechanisms and three complete projects authorized by the owner. Membership is 71 chapters/406 documents; all 398 rc.2 identities and the 739 historical source blocks remain. [Current scope](SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) and [validation](SECOND_ENRICHMENT_VALIDATION_2026-10-20.md) supersede earlier candidate totals. PR #222 stays draft and #214 stays open. Python and Mermaid execution remain unavailable; no integration pass or independent content acceptance is claimed. The next paragraph records the historical rc.2 stage.
+
+> **Enrichment candidate update, 2026-10-20:** The owner authorized the scoped additions in [the enrichment contract](ENRICHMENT_SCOPE_2026-10-20.md). Candidate rc.2 adds two chapters and seven technical pages, deepens twelve existing pages, and retains all earlier identities/source blocks. Expected membership is 71 chapters/398 documents. The change remains a draft: Python/Mermaid integration and substantive acceptance are pending because the execution environment is unavailable. #214 remains OPEN; #213 acceptance and the historical release snapshot remain unchanged. Earlier rc.1 checks below belong only to that earlier tree.
+
+
 The owner rejected uniform one-page chapters as final editorial completion. #214 is OPEN. PR #220 and version 2026.10.0 remain reproducible structural history. The current [decomposition review](CHAPTER_DECOMPOSITION_REVIEW_2026-10-20.md) and [STATE](STATE.md) control the new question-page gate; no larger inventory or passing test suite supersedes substantive acceptance. #213 remains completed for its accepted manuscript scope.
 
 ## Historical post-merge reconciliation

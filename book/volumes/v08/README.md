@@ -22,6 +22,7 @@ route_hints:
     - "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f"
     - "tycho.chapter.388c48be24414421a63481b37d05fdce"
   related_ids:
+    - "tycho.chapter.8a86707018773def410689efbc79cf94"
     - "tycho.chapter.8a2d2a79846d4567bb3d33957e19977f"
     - "tycho.chapter.92bd770bf87d4d6c9ab6e71cfa291132"
     - "tycho.chapter.94b4b6d9e2e1490abd0055a5265141ff"
@@ -79,6 +80,7 @@ Follow the cutover chain from source/build identity through digest verification 
 | [V08/C05 — Backward-compatible database change](c05/README.md) | What permits old and new binaries/data schemas to coexist? |
 | [V08/C06 — High availability and failure-domain placement](c06/README.md) | What survives machine, zone, dependency or region loss? |
 | [V08/C07 — Multi-region recovery and data reconciliation](c07/README.md) | How are RPO/RTO, split brain, recovery routes and failback validated? |
+| [V08/C08 — Network request paths, routing and edge delivery](c08/README.md) | Which network boundary owns routing, transport, trust and the fate of an interrupted request? |
 
 ## Choosing a reading route
 

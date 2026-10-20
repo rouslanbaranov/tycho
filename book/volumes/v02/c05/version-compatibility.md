@@ -95,6 +95,45 @@ A passing OpenAPI checker, protobuf compilation or isolated happy-path unit test
 
 <!-- /tycho-question-source -->
 
+## Conditional updates, pagination and callback contracts
+
+**Enrichment contract:** show how an API remains behaviorally coherent while state changes concurrently. Wire compatibility alone does not preserve what a caller thought it was modifying or enumerating.
+
+### Original lost-update example
+
+Clients A and B read fictional workshop revision 12. A changes the title; B changes the capacity using an old full-object representation. An unconditional replacement by B can erase A's title change. Require a precondition tied to the state B actually read and make the check atomic with mutation at the authoritative owner.
+
+RFC 9110 sections 8.8 and 13 define validators and conditional requests. If-Match uses strong comparison. A failed condition normally produces 412; its evaluation must not be an application-side read followed by an unguarded write. An ETag is a representation validator, not automatically a database row revision or content checksum.
+
+An original protocol is: return representation and validator; submit the update with that validator; atomically compare and mutate; return the new representation/validator. On a mismatch, reread and decide whether to merge or abandon. Do not blindly retry a stale replacement with the latest validator. For a lost response after a successful mutation, use operation identity or a safe state-resolution protocol; a precondition failure on retry alone does not prove which attempt succeeded.
+
+### Pagination defines a changing-set promise
+
+A fictional list is ordered by created_at and stable ID. An offset can shift as earlier items are inserted or removed. A keyset cursor avoids that specific position shift when the ordering key is stable, but does not by itself create a snapshot. Rows changing the sort key or visibility can still move across boundaries.
+
+| Contract | What the caller can rely on | Required price |
+|---|---|---|
+| Best-effort live list | A useful current page, explicit possible omissions/repetition | Simpler state, limited completeness claims |
+| Stable-key traversal | Defined ordering and cursor progression | Stable total order; explain concurrent insert/update policy |
+| Snapshot export | Membership under a named snapshot/watermark | Snapshot retention, expiry and consistent authorization |
+| Change feed | Ordered changes within a declared scope | Durable position, retention and replay semantics |
+
+Bind an opaque cursor to query/filter/order/snapshot and relevant access scope; validate it on every request. Expiry should be explicit, with restart semantics. A cursor is a continuation hint, not authorization. Recheck permission even if a snapshot retains previously visible rows.
+
+### Webhook delivery is another asynchronous API
+
+**Original proposed contract:** publish event identity, schema/version, creation context and signature metadata; protect against replay; durably accept before acknowledging; process under idempotent effect identity. A sender retry does not establish ordering across different events. A receiver restart after effect but before response can cause redelivery.
+
+Do not let arbitrary callback URLs turn a delivery service into unrestricted outbound access. Resolve permitted targets under an explicit destination policy and examine redirects, identity, secret rotation and retry budgets. A permanently failing callback needs quarantine/repair and a user-visible status, not silent infinite retries. Product-specific signature algorithms and retry timing require exact documentation before adoption.
+
+### Evidence, recovery and acceptance
+
+Selected evidence inspected 2026-10-20: [HTTP validators/preconditions](https://www.rfc-editor.org/rfc/rfc9110.html#section-13.1.1) for conditional requests. Pagination and callback contracts above are original synthetic architecture analysis, not a universal HTTP pagination or webhook standard.
+
+Proposed cases: two stale writers; response lost after commit; concurrent insertion/deletion during traversal; expired or cross-tenant cursor; revoked access within a snapshot; repeated callback; changed payload under the same event ID. Require an explicit outcome for each. No API implementation or callback delivery was executed.
+
+See [network request paths](../../v08/c08/README.md) for transport boundaries and [workflow recovery](../../v04/c06/workflow-failure.md#scheduled-runs-durable-timers-and-poison-work-recovery) for durable asynchronous state.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

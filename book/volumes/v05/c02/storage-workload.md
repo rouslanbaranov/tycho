@@ -66,6 +66,50 @@ The architecture question is what happens before that budget is exhausted. Ident
 
 The [PostgreSQL 17 WAL introduction](https://www.postgresql.org/docs/17/wal-intro.html) explains log-before-data ordering and recovery from logged changes. It does not establish this fictional generation rate, archive service rate or retention capacity. The arithmetic above is an illustrative queue model; real sizing additionally needs measured log generation, failure duration, recovery membership and the target deployment's actual retention rules.
 
+## Long transactions, deadlocks and online index work
+
+**Enrichment contract:** connect a database symptom to the transaction or maintenance boundary that can explain it. PostgreSQL 17 is the reference; no live server was exercised.
+
+### Original deadlock interleaving
+
+A fictional reservation update changes two workshop rows. Transaction A locks row X and then requests Y. Transaction B locks Y and then requests X. Neither can progress while both retain their first lock. PostgreSQL's explicit-locking chapter explains deadlock detection and abortion of a participating transaction; the application must not assume which contender is chosen.
+
+Use one deterministic lock order where possible. A retry restarts the entire logical transaction after failure, using the declared external-effect contract. Repeating only the last SQL statement on an aborted transaction is not a recovery strategy. Sending an external notification before the transaction commits can make a rolled-back attempt visible; use the [outbox owner](../../v04/c05/README.md).
+
+~~~mermaid
+sequenceDiagram
+    participant A as Transaction A
+    participant D as Database
+    participant B as Transaction B
+    A->>D: Lock X
+    B->>D: Lock Y
+    A->>D: Request Y and wait
+    B->>D: Request X and wait
+    Note over A,B: Cycle requires resolution
+    D-->>B: Abort one participant
+    D-->>A: Other participant may proceed
+~~~
+
+Text alternative: opposite acquisition order can create a lock cycle. The aborted participant shown is illustrative, not a promised victim-selection rule.
+
+### Long snapshots and maintenance
+
+A long-lived transaction may retain an old visibility horizon while the application appears idle. Inspect transaction age and blockers, not just active query duration. MVCC cleanup depends on which row versions can still be observed; the [snapshot/vacuum page](mvcc-snapshots-and-vacuum.md) owns that mechanism.
+
+In a fictional update-heavy table, the application slows while old versions accumulate. Increasing connection capacity can create more concurrent snapshots and contention. It does not release the oldest transaction. Distinguish dead tuples, outdated estimates, I/O pressure and a blocking lock before selecting a remedy. Vacuum itself consumes resources; VACUUM FULL adds a different lock/rewrite contract and is not a generic emergency first step.
+
+### Concurrent does not mean free or wait-free
+
+PostgreSQL 17's CREATE INDEX documentation states that a concurrent build performs additional phases/scans and waits for relevant transactions or snapshots. A failed build can leave an invalid index with update overhead. A unique concurrent build has additional enforcement timing caveats; inspect actual validity and constraint behavior rather than treating command failure as complete rollback of every consequence.
+
+For an original rollout plan, establish a measured maintenance budget; identify old transactions; limit concurrent background work; monitor progress and user latency; and stop under declared conditions. Check index validity and query behavior before relying on the new access path. Select version-specific repair steps with an operator; this prose is not an executable maintenance runbook.
+
+### Evidence and acceptance
+
+Inspected 2026-10-20: [PostgreSQL 17 locking](https://www.postgresql.org/docs/17/explicit-locking.html#LOCKING-DEADLOCKS) (deadlock model); [concurrent index builds](https://www.postgresql.org/docs/17/sql-createindex.html#SQL-CREATEINDEX-CONCURRENTLY) (waits/failure caveats); [Routine vacuuming](https://www.postgresql.org/docs/17/routine-vacuuming.html) (maintenance scope). The fictional interleaving and rollout plan are original reasoning.
+
+Proposed tests: reproduce the two-row lock cycle; retain an old snapshot through a concurrent build; fail a unique build; observe validity and write overhead; compare user latency under a controlled maintenance budget. No SQL, maintenance command or throughput experiment was executed.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

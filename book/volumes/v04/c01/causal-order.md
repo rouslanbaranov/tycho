@@ -97,6 +97,39 @@ Ordering must be defined by **where it is enforced**: a transaction log's commit
 
 <!-- /tycho-question-source -->
 
+## Clock domains, deadlines and expiry
+
+**Enrichment contract:** distinguish a human timestamp, local duration, distributed ordering and durable schedule. These are different inputs to a correctness argument.
+
+A wall clock helps label an event and interpret a civil schedule. A local elapsed-time clock can measure a timeout without relying on agreement with another machine. Neither clock turns an arrival timestamp into proof of causal order. The selected AWS leader-election discussion explains why duration-based reasoning avoids some synchronized-wall-clock assumptions while still requiring careful handling of pauses.
+
+### Original deadline example
+
+A fictional request has an 800 ms total budget measured at ingress. It spends 120 ms validating and 180 ms waiting for admission. Its remaining local budget is 500 ms, not a fresh 800 ms for each of two downstream calls. Reserve response/cleanup time as part of the same budget.
+
+Do not send a raw monotonic-clock reading to another host: its origin is local to that clock domain. A remaining-duration protocol needs defined transmission/queue deductions; an absolute wall-clock deadline needs an explicit skew tolerance. If either protocol cannot establish a positive safe remaining budget, reject or reconcile rather than granting a full new timeout.
+
+| Quantity | Suitable use | Incorrect substitution |
+|---|---|---|
+| Wall-clock instant | Human chronology, expiry with defined skew rules | Exact elapsed duration across an adjustment |
+| Local elapsed duration | Budget and service-time measurement | Globally comparable event order |
+| Logical version/sequence | State progression inside its declared scope | UTC time or duration |
+| Civil time plus zone | Recurring local appointment/schedule | Fixed-duration repetition through every timezone transition |
+
+### Expiry is an authorization/state transition
+
+In an original cache example, one process writes a 30-second TTL after spending 20 seconds computing an old result. The entry can remain present for 30 seconds after insertion while its underlying information is already older. Define freshness from the authoritative observation/version and processing delay, not merely cache residency.
+
+A token's expiry also needs a threat contract. Clock tolerance increases the acceptance interval; it is not free correctness. Long-lived offline validation and immediate revocation are competing requirements. Read [key and access lifecycle](../../v09/c05/object-credentials.md#key-rotation-revocation-and-unavailable-authorities).
+
+### Recovery and proposed tests
+
+Record event time and ingestion/observation time separately. After a pause or restart, re-establish local budgets and durable timer state rather than subtracting incompatible readings. For a process deadline that survives restart, persist an appropriate durable time contract and reconstruct the local timer under stated clock assumptions.
+
+Proposed tests: backward/forward wall-clock adjustment, a process pause beyond its lease, delayed delivery of a remote deadline, replay of an expired command and a restarted durable timer. Observe accepted effects and cutoff semantics, not only timer callbacks. No clock perturbation experiment was performed.
+
+Selected evidence inspected 2026-10-20: [Leader election in distributed systems](https://aws.amazon.com/builders-library/leader-election-in-distributed-systems/) for elapsed-time lease pitfalls; [Distributed Periodic Scheduling with Cron](https://sre.google/sre-book/distributed-periodic-scheduling/) for distributed scheduling failure questions. Numeric examples and the clock-domain comparison are original design reasoning. Calendar/timezone representation is owned by [data semantics](../../v05/c01/relational-invariants.md#time-numbers-and-text-are-data-contracts).
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

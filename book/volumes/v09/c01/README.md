@@ -74,7 +74,7 @@ The preceding and following chapters supply context; this landing does not repla
 | Route | Destination |
 |---|---|
 | Parent | [V09 — Observability, security and operational architecture](../README.md) |
-| Previous | [V08/C07 — Multi-region recovery and data reconciliation](../../v08/c07/README.md) |
+| Previous | [V08/C08 — Network request paths, routing and edge delivery](../../v08/c08/README.md) |
 | Next | [V09/C02 — Metrics ingestion, cardinality and time-series storage](../c02/README.md) |
 | Prerequisite | [V02/C07 — Authorization boundaries and multitenancy](../../v02/c07/README.md) |
 | Prerequisite | [V04/C04 — Retries, idempotency and duplicate effects](../../v04/c04/README.md) |

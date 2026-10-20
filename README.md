@@ -25,15 +25,13 @@ Read [the independence policy](governance/INDEPENDENCE.md) before contributing. 
 
 All repository content is written in English. Reading the book must not require access to private repositories, accounts, internal networks, another book, or an external agent service. External citations support verification; essential explanations belong in the book itself. Public source dependencies must be recorded explicitly.
 
-## Current editorial candidate — 2026.10.1-rc.1
+## Current enrichment candidate — 2026.10.1-rc.3
 
-**[Read the ten-volume manuscript](book/README.md).** All 69 chapters now have individual question-based page routes, rather than uniform one-article wrappers. There are 174 new mechanism/question owners alongside the 69 integrated walkthroughs; retained supporting and case material brings the canonical corpus to 389 documents.
+**[Read the ten-volume manuscript](book/README.md).** The candidate contains 71 chapters and 406 canonical documents. This pass adds configuration rollout, session consistency, offline conflicts, cells/shuffle sharding and protocol verification, plus complete catalogue, collaboration and multitenant-service projects. It retains the earlier object-storage/network additions, twelve deepened pages and all existing identities/source blocks.
 
-The owner reopened #214 after rejecting the first structural checkpoint as final editorial completion. Version 2026.10.0 and its named snapshot remain historical evidence. The current candidate preserves that content, its identities and source history through [explicit section/fragment mappings](edition/decomposition-manifest.json). It includes seven additional worked explanations and a newly sourced MVCC/snapshot/vacuum page.
+[The second-pass contract](authoring/SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) records the scope. [Executed validation](authoring/PYTHON_MERMAID_VALIDATION_2026-10-20.md) records 16/16 Python check groups, 233/233 tests with zero skips, and 221/221 Mermaid syntax parses. Python reproduced the candidate index byte for byte. The earlier environment block is resolved.
 
-[Decomposition decisions and acceptance limits](authoring/CHAPTER_DECOMPOSITION_REVIEW_2026-10-20.md), [current state](authoring/STATE.md) and [edition checks](edition/README.md) distinguish implemented page structure, mechanical validation and remaining substantive acceptance. #214 stays open; page counts and passing tests do not close it. Hosted retrieval/MCP/deployment work remains postponed.
-
-Run `python3 scripts/check_boundary.py` from the repository root. A successful scan detects none of the configured patterns; it does not certify independent origin or semantic correctness.
+[PR #222](https://github.com/rouslanbaranov/tycho/pull/222) remains draft; #214 remains open for integration verification and substantive page acceptance. The historical 2026.10.0 snapshot is unchanged.
 
 ## Industry-neutral delivery
 

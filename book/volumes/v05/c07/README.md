@@ -76,7 +76,7 @@ Begin with the integrated decision, then open the independent question that matc
 |---|---|
 | Parent | [V05 — Data models, engines and lifecycle](../README.md) |
 | Previous | [V05/C06 — Schema evolution, data migration and retention](../c06/README.md) |
-| Next | [V06/C01 — Local and distributed caching](../../v06/c01/README.md) |
+| Next | [V05/C08 — Object storage, large transfers and publication](../c08/README.md) |
 | Prerequisite | [V05/C06 — Schema evolution, data migration and retention](../c06/README.md) |
 | Source reading | [Page-local evidence and versions](backup-restore-pitr-and-recovery-drills.md) |
 

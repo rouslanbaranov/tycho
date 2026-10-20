@@ -19,11 +19,21 @@ The corpus includes 29 public historical case studies and six synthetic decision
 | #214 | Reopened; substantive page decomposition and editorial acceptance |
 | M9 #121 | Closed under its documented scoped acceptance |
 
-## Reopened editorial decomposition — #214
+## Current enrichment candidate — #214
+
+Candidate **2026.10.1-rc.3** implements the owner's additional authorization: five mechanism pages (configuration rollout, session consistency, offline conflicts, cells/shuffle sharding, protocol verification) and three complete original worked projects (catalogue, offline collaboration, multitenant overload). Expected membership: **10 volumes, 71 chapters, 406 canonical documents**. The previous rc.2 additions and all 398 previous identities remain.
+
+See [the second-pass contract](SECOND_ENRICHMENT_CONTRACT_2026-10-20.md), [current validation](SECOND_ENRICHMENT_VALIDATION_2026-10-20.md) and [conservation manifest](../edition/enrichment-manifest.json). Nine primary sources are newly admitted and one existing ID reused for ten scoped readings; total source membership is 247. All workload numbers are synthetic, and all new material is author self-checked.
+
+**PR #222 remains draft; #214 remains OPEN for substantive acceptance.** The execution environment recovered. [Actual Python and Mermaid validation](PYTHON_MERMAID_VALIDATION_2026-10-20.md) passed 16/16 groups, 233/233 tests with zero skips, and 221/221 diagram parses on the pinned rc.3 snapshot; Python index reproduction was byte-identical. The earlier execution block is resolved. No independent acceptance, final release or deployment is asserted.
+
+The [first-pass scope](ENRICHMENT_SCOPE_2026-10-20.md) and [first-pass validation](ENRICHMENT_VALIDATION_2026-10-20.md) retain their historical rc.2 meaning. They are not a verification report for rc.3.
+
+## Historical editorial decomposition candidate — #214
 
 The owner rejected the uniform one-manuscript-page-per-chapter assembly as sufficient final book structure and reopened #214. PR #220/version 2026.10.0 remain a **structural checkpoint**, not final editorial acceptance. #213's accepted content baseline remains valid.
 
-The current 2026.10.1-rc.1 candidate makes individual question-owner decisions for all 69 chapters: **174 new question pages**, 69 integrated walkthroughs and ten volume syntheses, with 389 canonical documents including retained supporting material. A page count is an inventory, not a completion criterion.
+The preceding 2026.10.1-rc.1 candidate makes individual question-owner decisions for all 69 chapters: **174 new question pages**, 69 integrated walkthroughs and ten volume syntheses, with 389 canonical documents including retained supporting material. A page count is an inventory, not a completion criterion.
 
 [The chapter review](CHAPTER_DECOMPOSITION_REVIEW_2026-10-20.md) records actual owner questions, source sections and editorial limits. [The split manifest](../edition/decomposition-manifest.json) conserves 739 source blocks and maps 839 original fragments. Original IDs and protected evidence metadata remain; new question IDs are recorded separately. Source text, ledger ownership, original examples and new additions have explicit provenance.
 
@@ -41,4 +51,4 @@ Seven short question treatments gained worked decision/failure explanations. A s
 
 ## Record precedence
 
-Older audit, execution and editorial reports retain their original observations as dated history. Their pending statuses do not reopen the owner-accepted manuscript gate. Individual frontmatter review/proof fields remain as recorded; the aggregate owner disposition does not fabricate missing page-specific review identities. The edition assembly review records the new validation and its limits; GitHub records the publication merge and issue closure.
+Older audit, execution and editorial reports retain their original observations as dated history. Their pending statuses do not reopen the owner-accepted manuscript gate. Individual frontmatter review/proof fields remain as recorded; the aggregate owner disposition does not fabricate missing page-specific review identities. The edition assembly review records the new validation and its limits; GitHub records candidate merges and the still-open #214 acceptance gate.

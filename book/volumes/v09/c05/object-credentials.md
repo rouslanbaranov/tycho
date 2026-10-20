@@ -101,6 +101,45 @@ For every external actor, establish the intended deny behavior under uncertain p
 
 <!-- /tycho-question-source -->
 
+## Key rotation, revocation and unavailable authorities
+
+**Enrichment contract:** distinguish data encryption keys, token-signing keys, transport certificates and resource permissions. Their replacement and revocation have different correctness and availability consequences.
+
+OWASP key-management guidance treats generation, storage, rotation, compromise, backup and destruction as a lifecycle. Its REST guidance requires configured token validation, applicable claims and access control; a cryptographically valid token can still outlive a revoked session or object permission.
+
+### Original routine rotation plan
+
+A fictional service verifies tokens signed by K1 and will introduce K2. Before issuing K2-only tokens, distribute the trusted K2 verification material to verifiers. Keep K1 acceptance only for the explicitly permitted overlap of existing tokens and policy. Distinguish signing authority from public verification material: retaining a public key does not require allowing new signatures under its private counterpart.
+
+Record issuer, allowed algorithms, audience, token lifetime, clock tolerance, verification-key source and cached-key horizon. Do not allow untrusted token fields to select an arbitrary key URL or algorithm. A key identifier selects inside a configured trust relationship; it is not that relationship itself.
+
+| Event | Required policy |
+|---|---|
+| Planned signing-key rollover | Verify overlap against old token lifetime and verifier distribution |
+| Private signing key compromised | Decide emergency rejection and session re-establishment; normal overlap may be unsafe |
+| Unknown key while authority unavailable | Do not accept unverifiable credentials |
+| Known unexpired credential while authority unavailable | Continue only within its configured offline-validation and current-permission contract |
+| Object permission revoked | Recheck at the resource; token signature alone does not restore permission |
+| Encryption key lost | Invoke the tested recovery policy or acknowledge permanent unreadability |
+
+A fictional five-minute token and a two-minute clock allowance can expose a longer acceptance window than the nominal five minutes. The exact bound depends on issuer/verifier clocks and configured checks; do not add allowances casually or reuse these invented durations as defaults.
+
+### Encryption rotation is not signing rotation
+
+Replacing a key used to wrap data keys is different from re-encrypting every object. Record which key versions protect which data, which identities can unwrap them, how old backups regain access, and when deletion is allowed. Retiring a live key before the oldest retained backup no longer needs it can invalidate recovery without deleting any bytes.
+
+Conversely, restoring a compromised key merely to make a backup readable may violate the incident threat model. Recovery must re-establish trustworthy access, not just availability. Separate key custody, application access, audit and emergency operations; avoid keeping the only recovery material in the system it must recover.
+
+### Revocation and cached authorization
+
+If a service caches an allow decision, define maximum stale permission, invalidation delivery and policy-service outage behavior. A stream authorized at connection establishment needs a policy for later access changes. Revocation of a user, a session, a key and one object are separate scopes; their blast radii differ.
+
+Proposed negative cases: old valid token after logout, wrong issuer with a matching key ID, rotated trust material missing on one verifier, revoked tenant access during an open stream, unavailable key service on restart, and a restored backup requiring an intentionally retired key. Require explicit deny/unavailable outcomes and no secret-bearing logs.
+
+### Evidence and limits
+
+Selected passages inspected 2026-10-20: [Key Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Key_Management_Cheat_Sheet.html) (lifecycle/rotation/compromise), [REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html) (JWT and endpoint access control). The rollover plan, hypothetical durations and outage decisions are original design reasoning. No cryptographic implementation, issuer, key service or penetration test was executed; select supported algorithms and exact product procedures through separate versioned evidence.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

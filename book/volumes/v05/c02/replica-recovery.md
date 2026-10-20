@@ -117,6 +117,36 @@ Backups protect different failure modes from replicas; a logical destructive com
 
 <!-- /tycho-question-source -->
 
+## Replica lag, retained WAL and standby feedback
+
+**Enrichment contract:** avoid treating lag as one scalar or a healthy replica as evidence that it contains a named effect. PostgreSQL 17 remains the reference version.
+
+Distinguish generated, sent, received, flushed and replayed WAL positions and the application state visible to a read. An offset/position difference measures a byte interval; it is not automatically a time-to-catch-up prediction. An idle stream also makes some time-based lag interpretations misleading. Use named commit/observation boundaries before claiming read-your-writes.
+
+### Original backlog arithmetic
+
+Assume a fictional primary generates 12 MiB/s while a replica can sustainably replay 8 MiB/s under a particular workload. Backlog grows by 4 MiB/s, or 2,400 MiB over ten minutes. After incoming generation falls to 4 MiB/s, net catch-up is 4 MiB/s under the same sustained replay assumption, so that backlog takes another ten minutes. These are invented steady-rate calculations; bursts, transactions, I/O and replay dependencies can invalidate linear extrapolation.
+
+Reducing network transfer delay will not fix a replay bottleneck that is already CPU/I/O constrained. Adding a replica may add replication load rather than improve the slow reader's state.
+
+### Retention is a resource commitment
+
+Replication slots can retain WAL needed by a consumer. PostgreSQL's max_slot_wal_keep_size setting bounds retained WAL at checkpoint-related enforcement points; limiting retention can instead leave a stalled consumer unable to continue from its old position. An unlimited retention commitment can exhaust storage. Neither setting eliminates the need to monitor slot progress and define reinitialization.
+
+Standby queries may conflict with recovery. hot_standby_feedback can reduce cleanup conflicts by reporting snapshot needs, with possible primary bloat. Delaying replay intentionally also changes recovery storage and freshness. These choices trade read behavior, cleanup and recovery capacity; they are not free switches for making every long query succeed.
+
+### Original read-after-write decision
+
+A caller commits operation K on the primary and immediately requests its result. If reads can go to an asynchronous replica, the route must either meet an explicit replication/application visibility condition, keep that read on the authoritative path, or return a declared pending/stale outcome. A successful SELECT on a reachable replica is not sufficient evidence.
+
+During promotion, solve writer fencing and historical acknowledged state separately. A newer route can still point at a replica missing K. [Region recovery](../../v08/c07/authority-failback.md) owns the system-level cutover.
+
+### Evidence and proposed tests
+
+Selected PostgreSQL 17 replication-configuration passages inspected 2026-10-20: [Replication configuration](https://www.postgresql.org/docs/17/runtime-config-replication.html) (slot WAL retention, standby feedback and replay-delay trade-offs). This section does not claim full inspection of every replication subsystem or a measured replica catch-up rate.
+
+Proposed cases: stall one slot consumer, retain a standby snapshot, lose a response after primary commit, route the retry to a lagging replica, then exceed the available replay horizon. Observe named effects, retained bytes, read freshness and reinitialization requirements. No replication or failover test was run.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

@@ -88,7 +88,7 @@ def inventory_members(root):
                 require(not p.is_symlink(),'inventory-symlink')
                 members.add(p.relative_to(root).as_posix())
     members.update(('generated/route-index.v1.json','edition/outline.json','edition/migration.json'))
-    for path in ('edition/decomposition-plan.json','edition/decomposition-manifest.json'):
+    for path in ('edition/decomposition-plan.json','edition/decomposition-manifest.json','edition/enrichment-manifest.json'):
         if (root/path).is_file(): members.add(path)
     for path in sorted(members):
         result[path]=hashlib.sha256((root/path).read_bytes()).hexdigest()
@@ -108,11 +108,17 @@ def validate(root=ROOT,write_inventory=False):
     else:
         result=check_migration(root,outline,migration)
         added=0
+    enrichment={'new_documents':0,'new_chapters':0}
+    if (root/'edition/enrichment-manifest.json').exists():
+        from validate_enrichment import validate as validate_enrichment
+        enrichment=validate_enrichment(root)
+    expected_documents=215+added+enrichment['new_documents']
+    expected_chapters=69+enrichment['new_chapters']
     index=canonical_scan(root)
     kinds=Counter(d['kind'] for d in index['documents'])
-    require(kinds['volume']==10 and kinds['chapter']==69,'canonical-kind-counts')
-    require(len(index['documents'])==215+added,'canonical-corpus-count')
-    require(len({d['id'] for d in index['documents']})==215+added,'canonical-id-uniqueness')
+    require(kinds['volume']==10 and kinds['chapter']==expected_chapters,'canonical-kind-counts')
+    require(len(index['documents'])==expected_documents,'canonical-corpus-count')
+    require(len({d['id'] for d in index['documents']})==expected_documents,'canonical-id-uniqueness')
     require(index==read_json(root,'generated/route-index.v1.json'),'edition-index-stale')
     identities=read_json(root,'sources/document-identities.json')['documents']
     require({(x['id'],x['canonical_path']) for x in identities}=={(x['id'],x['path']) for x in index['documents']},'edition-identity-registry')
@@ -125,7 +131,7 @@ def validate(root=ROOT,write_inventory=False):
     else:
         require(invpath.is_file(),'edition-inventory-missing')
         require(read_json(root,'edition/inventory.json')==inventory,'edition-inventory-drift')
-    return {**result,'volumes':10,'chapters':69,'canonical_documents':len(index['documents']),
+    return {**result,'enrichment':enrichment,'volumes':10,'chapters':expected_chapters,'canonical_documents':len(index['documents']),
             'kinds':dict(kinds),'inventory_files':len(members),
             'content_snapshot_sha256':snapshot,'route_snapshot_sha256':index['snapshot_sha256'],
             'scope':'structure, preserved payload and frozen membership; not independent claim review or external URL availability'}

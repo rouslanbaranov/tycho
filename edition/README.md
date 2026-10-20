@@ -1,34 +1,47 @@
-# Tycho — editorial decomposition candidate
+# Tycho — content enrichment candidate
 
-Version: **2026.10.1-rc.1**. **#214 is OPEN.** The owner rejected the earlier uniform one-article-per-chapter assembly as sufficient final book structure. Version 2026.10.0 and its named snapshot remain a historical structural checkpoint.
+Version: **2026.10.1-rc.3**. **#214 is OPEN.** This candidate extends the individually decomposed rc.1 corpus with two new critical-topic chapters and controlled enrichment. It is not a final release. The historical 2026.10.0 snapshot remains unchanged.
 
-## Read and inspect
+## Read the candidate
 
-Start at the [book contents](../book/README.md). All 69 chapters now separate an integrated decision/walkthrough from independently named mechanism and failure questions. The current chapter routes contain three to five pages, determined by their actual questions. There is no fixed page-count or word-count completion rule.
+Start at [book contents](../book/README.md). The candidate contains ten volumes, **71 chapters and 406 canonical documents**: all 389 rc.1 documents plus two chapter landings and fifteen technical pages across both enrichment passes. Twelve existing mechanism owners are deepened, with routes added to eleven existing chapter introductions.
 
-The candidate adds 174 question pages and retains the 69 integrated walkthrough identities, ten volume syntheses, earlier supporting material, 29 historical cases and six synthetic playbooks. The canonical corpus has 389 documents. Counts describe membership, not explanatory sufficiency.
+New chapters:
+- [V05/C08 — Object storage](../book/volumes/v05/c08/README.md): resumable transfer/integrity, cross-store publication, access/version/lifecycle.
+- [V08/C08 — Network request paths](../book/volumes/v08/c08/README.md): DNS/discovery and balancing, HTTP/2 and connection draining, hop trust/gateways, edge cache/origin protection.
 
-[The individual chapter review](../authoring/CHAPTER_DECOMPOSITION_REVIEW_2026-10-20.md) and [explicit plan](decomposition-plan.json) record every question, its original source sections and the reason for a separate owner. Seven short treatments gained worked explanations. A new source-scoped MVCC/snapshot/vacuum page repairs an identified gap in the original PostgreSQL chapter.
+[The scope contracts](../authoring/ENRICHMENT_SCOPE_2026-10-20.md) map every approved gap to its owner and acceptance question. No fixed word or page count establishes completion.
 
-## Identity and evidence migration
+## Second-pass additions
 
-The [original path migration](migration.json) remains valid history. The [new decomposition manifest](decomposition-manifest.json) records 739 conserved source blocks, old and new owners, normalized payload digests and 839 fragment routes. All 215 identities from the structural checkpoint remain; 174 new question entities have separately minted IDs.
+The [second-pass contract](../authoring/SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) adds five independently scoped pages inside existing chapters and three worked architecture projects inside V10/C07. Read the [new routes from book contents](../book/README.md#content-enrichment-candidate--2026101-rc3). Existing chapter count remains 71; all 398 rc.2 document identities remain.
 
-The original 69 page IDs still resolve to their integrated question, original scenario and transfer limits. They are not silently reassigned to a different mechanism. Chapter READMEs introduce and synthesize the question route and own the original shared evidence rows. Detail pages retain inline citations and explicit source-ledger links. A shared source list is not proof that every listed source supports every page.
+Each project explicitly chooses authority and state paths, rejects alternatives, works through interruptions and recovery, calculates capacity/cost from invented inputs, and states when the recommendation should change. The verification page includes a hand-derived counterexample and proposed oracles; no model checker or implementation harness was executed.
 
-New question pages do not inherit independent approval or fabricated inspection dates. Four specifically inspected public source entries support the newly written WAL, inbox, incident-practice and MVCC treatments; their exact text-inspection scope and non-execution limits are recorded in the source register and chapter review. The attempted JEP 444 direct fetch was blocked; no fresh read is asserted for that attempt.
+## Preservation, source evidence and identities
 
-## Reproduce and verify
+The [original path migration](migration.json) and [69-manuscript decomposition](decomposition-manifest.json) remain unchanged history. The original 739 source blocks and all earlier IDs remain. The [enrichment manifest](enrichment-manifest.json) registers seventeen new IDs and exact insertion hashes for twelve existing pages. Removing only each new insertion recovers that page byte for byte at the recorded baseline.
 
-The one-time `scripts/decompose_chapters.py` tool defaults to dry-run and requires deliberate `--apply`. Start from the structural checkpoint commit recorded in the plan, supply the reviewed plan and script, and apply the explicit source admissions. Reapplying to an already decomposed tree is refused. No source acquisition or automatic acceptance occurs during an index build.
+[Selected inspection records](../sources/enrichment-inspections-2026-10-20.json) identify 35 scoped public primary-source readings, versions, actual read scope and execution limitations. The first pass newly admitted twenty-two sources and reused three existing IDs; the second newly admits nine and reuses one. Source membership is 247. Each technical addition has its own source/synthetic/unknown boundary. Original frontmatter and review history of deepened pages are preserved; fresh section-level reading is recorded separately.
 
-From the repository root:
+All new pages are author self-reviewed. No independent acceptance, benchmark, deployed behavior or full documentation-tree inspection is claimed.
+
+## Reproduction and validation
+
+The earlier assembly and decomposition scripts remain one-time historical migrations. They do not automatically produce or authorize the new authored content. The new manifest and `scripts/validate_enrichment.py` explicitly validate this extension without replacing the earlier conservation checks. Indexes remain derived from frontmatter, and source catalogue membership from the canonical register.
+
+The initial candidate index and inventory were reconciled in JavaScript. The execution environment has now recovered: [actual pinned Python/Mermaid validation](../authoring/PYTHON_MERMAID_VALIDATION_2026-10-20.md) passed 16/16 groups, 233/233 tests with zero skips, and 221/221 syntax parses. Python index generation reproduced the candidate byte for byte. Archived commands, versions and logs distinguish this executed pass from the earlier authoring-time record.
+
+**The following required Python commands now passed on the pinned rc.3 snapshot; use them to reproduce the checks:**
 
 ```bash
+python3 scripts/check_boundary.py
+python3 scripts/validate_sources.py
 python3 scripts/source_catalog.py --check
 python3 scripts/route_index.py build
 python3 scripts/route_index.py check
 python3 scripts/validate_decomposition.py
+python3 scripts/validate_enrichment.py
 python3 scripts/validate_edition.py
 python3 scripts/premerge_check.py --branch feature/TYCHO-214-assemble-and-release-the-complete-ten-volume-tycho-book --issue-title '[E14-14] Assemble and release the complete ten-volume Tycho book'
 python3 scripts/validate_knowledge.py --mode strict --json
@@ -37,12 +50,18 @@ python3 scripts/validate_m9_cases.py --self-test
 python3 -m unittest discover -s tests -p 'test_m9*.py' -v
 ```
 
-`validate_edition.py --write-inventory` deliberately updates the candidate inventory after real changes; ordinary checks never refresh it silently. The inventory freezes book/source/schema/index/mapping membership for a specific candidate. It does not assert final editorial acceptance.
+The existing Mermaid syntax checker also passed for the full candidate. Reproduce it with:
 
-Use the existing locked Mermaid package with `tools/mermaid/check.mjs` for syntax parsing. Browser rendering and live MCP remain owner-cancelled, not passed. The milestone-only CI policy is unchanged. Prior technology-execution and broad M9 review waivers remain in force.
+```bash
+npm ci --prefix tools/mermaid
+node tools/mermaid/check.mjs --root .
+```
+ Browser rendering and live MCP remain owner-cancelled. Technology-example execution and broader M9 waivers remain as documented. No push/PR Actions or milestone closure is introduced.
 
-## Remaining substantive gate
+A deliberate `validate_edition.py --write-inventory` may refresh the inventory only after reviewing actual drift; do not overwrite failures to manufacture a passing check. Python regeneration must match the candidate's derived index and inventory. Differences require investigation.
 
-The source manuscript retains #213 acceptance. The newly independent pages still need final reading acceptance for local definitions, adequate examples, failure reasoning, exact evidence support and boundaries between owners. Follow concrete findings into bounded writing/source work; do not promote pages based on their existence or length. New syntheses are self-checked candidates, not invented independent certification.
+## Remaining acceptance
 
-Final publication, retrieval/MCP and deployment must not be inferred from this larger inventory or a passing validator. The old release snapshot is not rewritten; corrective work uses a new candidate and an explicit Git history.
+Python premerge, strict metadata/edition/conservation validation, the new adversarial tests and Mermaid parsing passed on the exact snapshot in the executed report. The PR stays **draft** for substantive acceptance. Prior rc.1 results retain their historical scope.
+
+After integration checks, substantive page-level reading must assess explanatory sufficiency, scope, exact support, failure recovery and cross-owner coherence. Keep #214 open until that gate is met. Final publication, retrieval/MCP and deployment do not follow from new files or mechanically passing checks.

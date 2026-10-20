@@ -63,6 +63,15 @@ Begin with the integrated decision, then open the independent question that matc
 | [Shared dependencies and replica placement](failure-domains.md) | Which dependency sets remain common despite nominal zone diversity? |
 | [Authority, control loss and availability tests](authority-availability.md) | Which traffic and state ownership transfer must be validated after a domain fails? |
 
+
+## Additional mechanism and project routes
+
+These independently scoped pages extend the chapter without replacing its original walkthrough or source ledger.
+
+| Page | Owning question |
+| --- | --- |
+| [Cells and shuffle sharding](cells-shuffle-sharding.md) | Which state, routing and rollout boundaries actually contain a tenant-triggered failure? |
+
 ## Boundaries and further reading
 
 The preceding and following chapters supply context; this landing does not replace their canonical mechanisms. Follow the exact source ledger on the child page when a claim depends on a product version or historical period.

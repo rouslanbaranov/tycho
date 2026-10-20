@@ -76,7 +76,7 @@ Begin with the integrated decision, then open the independent question that matc
 |---|---|
 | Parent | [V08 — Delivery, deployment and disaster recovery](../README.md) |
 | Previous | [V08/C06 — High availability and failure-domain placement](../c06/README.md) |
-| Next | [V09/C01 — SLIs, SLOs and error budgets](../../v09/c01/README.md) |
+| Next | [V08/C08 — Network request paths, routing and edge delivery](../c08/README.md) |
 | Prerequisite | [V08/C06 — High availability and failure-domain placement](../c06/README.md) |
 | Source reading | [Page-local evidence and versions](disaster-recovery-and-recovery-objectives.md) |
 
