@@ -171,6 +171,21 @@ Choosing synchronous replicas affects request tail and failure availability. Cho
 
 **Insufficient evidence:** "We have three copies of PostgreSQL data, so RPO=0, RTO under 30 seconds and no data divergence." No. Need placement, physical/logical mode, sync config, guaranteed/fenced promotion, WAL positions, restore test, integrity and client-level measurements.
 
+## Engineering walkthrough — Primary acknowledgment is not standby completeness
+
+**Original fictional write:** a PostgreSQL 17 primary accepts booking R7, records WAL and acknowledges according to its actual configured durability policy. The asynchronous standby is behind by one WAL interval when the primary becomes unavailable. A failover to that standby can omit R7 even though the original caller saw a success; the precise outcome depends on the acknowledgment, WAL flush/replay and failover configuration.
+
+| Observed evidence | Meaning | Incorrect claim |
+|---|---|---|
+| Primary commit acknowledged | Local commit durability under chosen setting | Every replica has replayed it |
+| Standby received WAL | Data reached standby transport/storage boundary | Business row is queryable or replayed already |
+| Standby replay position known | A measurable recovery frontier | All externally committed effects are reconciled |
+| New primary promoted | New writable authority if old primary fenced | No historical acknowledged write can be missing |
+
+Physical replication carries low-level state; logical replication has publication/subscription and object/DDL semantics that cannot be equated to one universal backup. If a primary returns with divergent transactions, it cannot safely rejoin as an independent writer. **Recovery:** select a verified timeline, fence the old authority, reconcile accepted operation IDs and delayed consumers, then expose booking reads/writes only after user-level constraints hold.
+
+The existing PostgreSQL 17 WAL, streaming and logical replication sources describe specific mechanisms, not this imagined disaster's RPO. **Proposed, not run:** inject primary loss immediately after acknowledgment and at differing standby replay positions; test data and user outcomes, including PITR to a chosen timeline. If no acknowledged-write loss is permitted, compare suitable synchronous acknowledgment policies and their availability/latency trade-offs instead of advertising async replicas as lossless.
+
 ## Exact public evidence ledger
 
 | ID | PostgreSQL 17 documentation; actual inspected scope | Supports and boundaries |

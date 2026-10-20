@@ -198,6 +198,21 @@ User-facing requirements should specify a freshness bound in time/version and a 
 
 **Insufficient evidence:** "Hybrid search improves accuracy by 30% and reduces token use 60%." These are unverified until a controlled dataset, comparable latency/tokens and actual answer/citation judgments exist. No such experiment is executed here.
 
+## Engineering walkthrough — Hand-computed rank fusion and a false evidence match
+
+**Original synthetic example:** lexical search ranks documents A, B, C; semantic search ranks C, D, A. Using Reciprocal Rank Fusion with illustrative `k=60`, the score for A is `1/61 + 1/63 ≈ 0.03227`; for C it is `1/63 + 1/61 ≈ 0.03227`; B and D each contribute one list hit. A and C tie under these assumptions, **without any claim that either is factually correct**. Different handling of missing ranks, duplicate IDs or list truncation changes the result.
+
+A restricted document can be top-ranked in one retriever: fusion must not reveal its title or score through results, explanations or related links. Reranking may improve relevance for permitted candidate texts but cannot repair a source-revision mismatch or transform a speculative claim into published evidence. The [Elasticsearch RRF reference](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion) defines the general rank-only fusion mechanism; actual feature/version requirements must be pinned for production.
+
+| Stage | Necessary gate | Failure consequence |
+|---|---|---|
+| Retrieve lexical/vector candidates | Source snapshot and permission scope | Authorized evidence omitted or forbidden text leaked |
+| Fuse ranks | Stable identity and declared missing-rank behavior | Duplicate content treated as independent corroboration |
+| Rerank | Preserve source boundaries and disclose heuristic nature | Plausible but stale claim promoted over current authority |
+| Answer | Verify material claims against original source/version | Confident answer when evidence is insufficient |
+
+**Proposed experiment, not run:** hand-verify small fusion scores, then evaluate real held-out questions with authorized judgment sets and deliberately contradictory/stale snippets. If relevant sources remain absent, **refuse a substantive architectural conclusion and request evidence** instead of increasing model confidence or traversal depth.
+
 ## Evidence ledger and implementation boundaries
 
 | ID | Public primary source / examined scope | Supports / exclusions |

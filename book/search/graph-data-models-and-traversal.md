@@ -151,6 +151,21 @@ All graph nodes, edges, diagrams, inferred rules and experiments are original in
 
 **Navigation:** proposed **V06/C06** in [planned book contents](../PROPOSED-STRUCTURE.md), current [search/data information architecture](README.md). Related [Hybrid lexical/vector ranking](hybrid-ranking-graph-and-evaluation.md), [Storage alternatives](../data/storage-model-alternatives-and-workload-fit.md), [Authorization boundaries](../security/identity-authorization-and-isolation.md).
 
+## Engineering walkthrough — A bounded dependency path is not proof of causation
+
+**Original fictional equipment graph:** nodes are physical `Unit`, `Module` and `Supplier`; edges `DEPENDS_ON` have direction, effective date and source identity. Query: "Which currently operational units depend on a part supplied by vendor X within at most three transitions?" A graph path of unlimited depth risks cycles, irrelevant historical dependencies and unbounded query cost.
+
+Graph design must define whether dependencies are direct or inferred, what "current" means, and which edge source/version supports it. A Cypher-style bounded expansion such as `(unit)-[:DEPENDS_ON*1..3]->(part)` is meaningful only under a declared schema and direction policy; it is *not* a test of a deployed query or an authorization contract. A relational schema with `dependency(source_id,target_id,valid_from,valid_to)` plus a recursive CTE can answer a similar bounded reachability question; the appropriate storage choice depends on actual traversal frequency and update costs, not the visual elegance of graph arrows.
+
+| Contradiction | Required handling |
+|---|---|
+| A→B and B→A cycle | Enforce visited/depth budget; repeated traversal is not extra evidence |
+| Historical edge expired | Time-filter before interpreting path as current |
+| Supplier changed identity | Reconcile stable owner and evidence revision |
+| Tenant A path crosses forbidden tenant B | Authorization must apply to intermediate vertices/edges, not just final result |
+
+**Proposed, not run:** compare bounded Cypher and recursive relational queries on the same versioned synthetic topology with skew/cycles, measuring completeness, latency, updates and access control. A graph could be unnecessary for shallow stable joins, and useful for variable-depth relationship-rich questions. **This chapter teaches graph data architecture only; it does not introduce a manually curated Tycho knowledge graph or platform implementation.**
+
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.

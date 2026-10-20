@@ -164,6 +164,21 @@ This is a comparison of **documented architectural mechanisms**, not measured pr
 
 Without a concrete source/sink topology and the above evidence, the correct decision is **measure first**, not to promise exact once, zero loss or fixed checkpoint recovery time.
 
+## Engineering walkthrough — Late correction after checkpoint and restore
+
+**Original synthetic event-time scenario:** an aggregate computes total reservations per business day from a CDC log. Event E5 reports a booking at event time 10:01 but arrives after the operator has advanced its watermark beyond that window. Another event cancels the booking later. A checkpoint captures operator state and source positions, but a checkpoint alone does not decide whether a late business correction should be discarded, sent as an update or routed to a reconciliation stream.
+
+| Boundary | Owner and question | Failure to detect |
+|---|---|---|
+| Source CDC | Database transaction position and stable change identity | Snapshot followed by replay duplicates a change without dedup |
+| Event time/watermark | Operator's chosen lateness policy | Window silently closes before valid late correction arrives |
+| Checkpoint | Consistent recoverable operator state/offset as specified by runtime | External sink side effect committed outside checkpoint protocol |
+| Savepoint/deployment | Versioned state schema and migration compatibility | Restored state has incompatible serializer or changed key semantics |
+
+**Recovery trace:** after checkpoint C, a sink writes the count but crashes before all downstream acknowledgment; replay may produce a duplicate correction. Correctness depends on the sink's idempotent/upsert or transaction contract, plus a declared policy for reopening finalized windows. A business that prohibits changing settled invoices may need a separate adjustment event rather than silently revising totals.
+
+The chapter's Flink and Kafka Streams documentation supports named state/checkpoint mechanisms at specified versions, not one universal exactly-once guarantee for arbitrary stores. **Proposed, not executed:** crash after a sink commit, restore state from C, inject a correction older than the watermark, compare full business totals and downstream duplicates. Reject the chosen stream architecture if its lateness/retraction policy cannot satisfy the real reconciliation requirement; a scheduled batch backfill may be safer.
+
 ## Source-to-claim ledger
 
 | ID | Versioned source and examined section | Bounded support |
