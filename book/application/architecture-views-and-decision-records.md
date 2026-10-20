@@ -193,6 +193,8 @@ A misleading diagram might show the API and database in different containers and
 
 **Review gate:** assign stable identifiers to the same components/operations in every view and walk the timeout through them, including caller-visible UNKNOWN and recovery lookup. A context diagram is not an executable access policy, a deployment view is not measured failover behavior, and an ADR is not a running system. The example has no real deployed equivalents.
 
+
+**Verification status:** The preceding original example and its predicted outcomes are synthetic. No implementation experiment, benchmark or independent technical review was executed for this example.
 ## Navigation
 
 Proposed owner **V01/C05** in [the 69-chapter outline](../PROPOSED-STRUCTURE.md); current [application/foundations landing](README.md). Read first [system boundaries](problem-framing-and-system-boundaries.md), then [quality drivers](quality-drivers-and-architecture-views.md), [modular boundaries](architecture-styles-and-module-boundaries.md), [architectural alternatives and ADRs](../decisions/architecture-alternatives-experiments-and-adrs.md).

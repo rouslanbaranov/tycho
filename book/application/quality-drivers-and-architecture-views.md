@@ -184,6 +184,8 @@ Availability, latency, correctness and operating cost cannot be compressed into 
 
 **Decision-reversal evidence:** measure genuine offered load, confirmed outcomes under hot-key contention, and behavior after an acknowledgment is lost. If the confirmation requirement changes to accepted-into-workflow, the queue becomes a legitimate candidate; if strict final confirmation is retained, it is not equivalent. No technology deployment or production measurement was performed.
 
+
+**Verification status:** The preceding original example and its predicted outcomes are synthetic. No implementation experiment, benchmark or independent technical review was executed for this example.
 ## Sources, scope and known limitations
 
 | Evidence | Public source and precise read scope | Supports / limits |

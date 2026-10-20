@@ -241,6 +241,8 @@ Separate "a useful additional read model" from "a second authoritative writer". 
 
 **Failure sequence:** a migration writes a booking to old SQL and attempts the same update in a new store; the second write times out. Neither a success count nor matching row totals can establish atomic cross-store identity. Use one fenced writer plus a versioned projection/reconciliation path, or reject the change. If the relational authority demonstrably cannot meet a hard availability/isolation requirement and sufficient operational support exists, reconsider distributed SQL under measured constraints. The existing official storage references define mechanisms; this shortlist and all capacity assumptions are **synthetic**; no database comparison was executed.
 
+
+**Verification status:** The preceding original example and its predicted outcomes are synthetic. No implementation experiment, benchmark or independent technical review was executed for this example.
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.

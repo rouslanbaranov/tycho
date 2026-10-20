@@ -190,6 +190,8 @@ Every query scenario, diagram and table was independently authored for education
 
 A read-model/materialized projection may be justified for analytically different queries, but introduces freshness and rebuild cost. A simple index/statistics repair is preferable if measured against the actual distribution. The PostgreSQL 17 planning/EXPLAIN references define versioned behavior; **no SQL workload was executed**, and the two data distributions are invented.
 
+
+**Verification status:** The preceding original example and its predicted outcomes are synthetic. No implementation experiment, benchmark or independent technical review was executed for this example.
 ## Navigation
 
 Proposed **V05/C03** in [draft outline](../PROPOSED-STRUCTURE.md), [data landing](README.md). Prerequisite [relational modeling and isolation](relational-modeling-and-transaction-isolation.md). Related [PostgreSQL WAL/recovery](postgresql-wal-replication-and-recovery.md), [query distribution/performance](../performance/workload-demand-and-arrival-models.md), [lexical full-text ranking](../search/lexical-indexing-bm25-and-sql-fts.md).

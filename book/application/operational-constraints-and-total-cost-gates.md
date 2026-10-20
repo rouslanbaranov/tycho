@@ -183,6 +183,8 @@ A three-year model should separately carry implementation person-days, recurring
 
 **Decision:** exclude B on the stated operational constraint *before* weighted scoring; better potential deployment autonomy cannot erase that gate. If staffing expands or one service replaces a retired critical dependency, re-evaluate with real cost/incident data. Under another requirement set the decision may reverse. No financial estimate, observed labor or vendor offer is claimed.
 
+
+**Verification status:** The preceding original example and its predicted outcomes are synthetic. No implementation experiment, benchmark or independent technical review was executed for this example.
 ## Navigation
 
 Proposed owner **V01/C06** in [outline](../PROPOSED-STRUCTURE.md), [application landing](README.md). Prerequisites [system context](problem-framing-and-system-boundaries.md), [quality drivers](quality-drivers-and-architecture-views.md), [workload demand](../performance/workload-demand-and-arrival-models.md). Next [technical capacity cost](../performance/capacity-planning-and-cost-performance.md) and [alternative decision gates](../decisions/architecture-alternatives-experiments-and-adrs.md).
