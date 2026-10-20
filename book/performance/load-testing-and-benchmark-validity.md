@@ -149,6 +149,25 @@ Consider two invented runs under 200 scheduled operations/s for 60 s: 12,000 ope
 
 A valid repair is to increase generator capacity, capture actual arrivals, repeat under equal demand and compare logical outcomes and resource cost. If generator capacity cannot be improved, report the limitation rather than silently using an unsupported ranking.
 
+
+### Worked invalid benchmark: the load generator is the limiting system
+
+**Original hypothetical experiment:** Team A claims a service sustains 1,000 requests/s because it scheduled 1,000 new iterations per second in an open-model generator. The generator actually starts 720/s while reporting 280/s `dropped_iterations`, and the service completes 600/s with another 120/s timing out. This is invented arithmetic, not an observed performance claim.
+
+| Denominator | Synthetic rate | Valid meaning |
+|---|---:|---|
+| Scheduled iterations | 1,000/s | Intended offered generator load |
+| Started attempts | 720/s | Potential actual arrivals; verify at server ingress |
+| Generator-dropped | 280/s | Not presented to application; do not label HTTP rejection |
+| Correct completed | 600/s | Observed correct attempt completions under these assumptions |
+| Timed-out attempts | 120/s | Outcome ambiguous until durable effect identity is reconciled |
+
+A healthy generator must show it can **deliver** the load; even then an application might intentionally reject excess work. [k6 dropped iterations](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/dropped-iterations/) documents that VU scarcity and slowing responses can cause scheduler drops. [Open and closed models](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/) explains why client feedback can suppress offered arrivals as a service slows. Neither document proves where this fictional bottleneck occurred.
+
+**Proposed discriminating test, not run:** run a generator-only calibration against a controlled endpoint, independently count ingress arrivals and correlate logical-operation IDs with durable results. Then apply equal arrival distribution, payload/key skew, warm-up, endpoint configuration, pool limits, retries and cancellation to candidate systems. Record test duration, environment, failures and distribution confidence, not only p99 and a headline RPS.
+
+The correct result for this invented trace is **INSUFFICIENT_EVIDENCE to claim 1,000 RPS capacity**. The same test may still demonstrate that the observed setup performed 600 correct completions/s in its stated window, but cannot generalize without a saturation and recovery envelope. Workload definitions live in [V01/C02](workload-demand-and-arrival-models.md); this chapter owns the validity of the experiment.
+
 ## 5. Fault injection must preserve the claim being tested
 
 Different failure classes require distinct tests:
