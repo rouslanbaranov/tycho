@@ -254,6 +254,21 @@ Little's Law is an **accounting/estimation relationship**, not a scheduler, cont
 
 **Disqualifying misuse:** given only registered users, RPS and p99, do not estimate instance count; given an overloaded transient queue, do not apply the stable-state identity to each second; given a synthetic calculation, do not claim demonstrated production capacity.
 
+## Engineering walkthrough — Short-window queue growth is not steady-state Little's Law
+
+**Original synthetic arrival trace:** for 20 seconds, 120 new requests per second reach a bounded service capable of 80 correct completions per second. Suppose it rejects none during the first 20 seconds. With no initial backlog, the queued/in-flight surplus grows at roughly `(120−80)×20 = 800` requests, before considering cancellations or finite buffers. It is **invalid** to infer that `L = λW` gives a stable average W by substituting 120 offered requests/s and a transient L of 800: arrival and departure boundaries differ and the finite window is not stationary.
+
+If no new requests arrive at second 20 and the system can sustain 80 correct completions/s, clearing 800 queued requests takes *at least* ten additional seconds under idealized service assumptions, while earlier in-flight work and timeout/retries alter actual results. If 300 already timed out and 100 actually committed without acknowledgment, neither queue depth nor request count directly expresses 800 remaining distinct *business effects*.
+
+| Rate/quantity | Correct accounting |
+|---|---|
+| Offered | Distinct intents and retry attempts separately at ingress |
+| Admitted | Work accepted within bounded deadline/queue policy |
+| Completed | Correct business outcomes and transport responses, separated |
+| Outstanding | Pending in system + ambiguous committed effects, with snapshots at consistent times |
+
+The published Little's Law proof supports mean conservation under its assumptions, not transient percentile predictions. **Proposed test, not executed:** send a calibrated open arrival burst, stop new arrivals, measure backlog and time-to-drain, then repeat with bounded rejections and lost replies. A design that avoids an infinite queue through explicit admission may meet a stronger usability requirement despite lower accepted-RPS metrics.
+
 ## Independent public sources and exact claim support
 
 These references were read to the **named portions** on 2026-10-18. No complete external book, paid text, source repository or benchmark dataset was copied into this chapter.

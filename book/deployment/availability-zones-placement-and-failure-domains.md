@@ -130,6 +130,21 @@ For each failure, measure client-level correct outcomes, explicit rejections, ti
 
 The [AWS Well-Architected DR strategy guidance](https://docs.aws.amazon.com/wellarchitected/latest/framework/rel_planning_for_recovery_disaster_recovery.html) distinguishes zonal mitigation from regional recovery; its vendor strategy examples do not prove the invented topology works.
 
+## Engineering walkthrough — Two zones, one shared dependency and no real isolation
+
+**Original synthetic deployment:** three API replicas are spread across zones A and B. All replicas use one identity endpoint and one database writer reachable only through a zone-A dependency chain. When zone A fails, replicas in B may remain healthy at process level but cannot authorize or commit reservations; a zone-spread label did not eliminate the shared failure domain.
+
+| Dependency | Claimed independence | Hidden coupling to falsify |
+|---|---|---|
+| App replicas | Different compute zones | Both require one failed regional load-balancing/control endpoint |
+| Booking data | One authoritative database | No safely promoted writer or routing outside zone A |
+| Identity/credentials | Cross-zone request admission | Token validation or signing-key service solely in zone A |
+| External payment | Provider/network connection | Route depends on a failed shared NAT/egress path |
+
+The correct user-level capability after a zone loss might be read-only public catalogue access, while new reservations must be refused until one writer can be recovered safely. Such degraded operation is valid if explicitly promised; counting 200 OK responses from an obsolete cache as healthy booking service is not.
+
+**Proposed isolated experiment:** remove zone A's compute and selected network services, then independently inject database loss and identity loss, recording correct completed journeys, unauthorized/stale responses, detection-to-routing time, RPO/RTO and required operator interventions. Recovery must avoid promoting two booking writers. Kubernetes topology-spread guidance supports placement controls and AWS recovery guidance supports failure-scoped objectives; neither certifies this hypothetical multi-zone architecture. A simpler active/passive topology with demonstrated failover may be safer than nominal active/active without state fencing.
+
 ## 7. Evidence ledger and limits
 
 | Public source inspected | Supports | Not established |

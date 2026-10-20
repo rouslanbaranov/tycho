@@ -175,6 +175,21 @@ Text alternative: establish requirements and hard constraints before comparing c
 
 All amounts, charts, load assumptions and architectural examples are original teaching models. They are not measured prices or actual workloads. The proposed decisions have no independent financial/operational reviewer, validated capacity curve, tool run, or final edition metadata.
 
+## Engineering walkthrough — Provision, shed, optimize or simplify under uncertain prices
+
+**Original synthetic envelope:** a hypothetical catalogue expects 100–400 requests/s depending on a publication event, with 10% writes and one hot resource. Direct unit prices and exact staffing rates are **unknown**. The architect must compare not a single monthly VM bill but correct peak outcomes, shared database budget, retention, multi-zone idle capacity and time to recover from overload.
+
+| Candidate | Potential strength | Variable that may reverse choice |
+|---|---|---|
+| Provision extra replicas | Faster response to burst if app CPU is bottleneck | Shared DB lock/pool remains the limit; unused warm capacity costs money |
+| Shed/defer optional work | Protect invariant and critical journeys | Product cannot accept deferred confirmation or unfair priority |
+| Optimize query/key access | Less demand per correct operation | No meaningful backend query cost in measured bottleneck |
+| Simplify/remove unnecessary distributed hop | Lower operational and retry overhead | True isolation/deployment requirement outweighs coordination cost |
+
+A defensible cost model exposes quantities: instance-hours, data bytes×retention, egress GB, high-cardinality time-series, human on-call hours, migration person-days, repeated backup/DR exercises and expected rework risk. It must vary each cost input over a documented plausible range rather than pretend an invented provider price is a source-backed rate.
+
+**Synthetic sensitivity rule:** if one candidate only wins when app instance prices fall 90% or when a known critical correctness constraint is waived, mark it fragile or inadmissible. Report correct throughput per total operating cost *conditional on* tested workload, not raw RPS per VM. **Proposed experiment, not run:** test steady/peak/degraded load, keep shared-state integrity, record actual unit use and capacity drain after overload; select an option only after gating security and recoverability separately. The existing Well-Architected cost guidance supports modeling categories, not numerical market forecasts.
+
 ## Navigation
 
 Proposed owner **V07/C07** in [outline](../PROPOSED-STRUCTURE.md), currently [performance landing](README.md). Read first [workload arrivals](workload-demand-and-arrival-models.md), [contended resources](contention-saturation-and-scaling-laws.md); continue with [autoscaling](autoscaling-lag-and-capacity-limits.md), [overload protection](overload-admission-control-and-graceful-degradation.md), [full book decision criteria](../decisions/architecture-alternatives-experiments-and-adrs.md).

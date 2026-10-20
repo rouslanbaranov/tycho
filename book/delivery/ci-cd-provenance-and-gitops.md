@@ -147,6 +147,21 @@ Prefer the simplest delivery chain that can independently demonstrate source ide
 
 All diagrams, recommendations and failure cases in this chapter are conceptual. No pipeline, signer, reconciler, live environment or recovery drill has been executed, and no independent domain review is claimed.
 
+## Engineering walkthrough — Compromised build worker and a tempting image rollback
+
+**Original hypothetical attack/failure:** a pipeline resolves the correct source revision but runs on a compromised shared worker. The worker produces an artifact with unexpected bytes and a generated signature from a key available to that same compromised job. A signed artifact can still be unauthorized if builder identity, key policy or provenance verification is wrong. An image-only rollback may additionally be incompatible with durable schema writes.
+
+| Gate | Required independent trust decision | Negative case |
+|---|---|---|
+| Source admission | Authorized repository/ref, protected change approvals | Build uses an unreviewed transient ref |
+| Build provenance | Builder identity, materials, invocation and output digest within declared trust model | Artifact digest is unrelated to verified source/approved workflow |
+| Deployment admission | Verify exact digest, environment, approved provenance and signer constraints | Any valid signature is allowed regardless of key policy |
+| Runtime rollback | Check old-reader compatibility and previously committed new effects | Controller restores an old image that cannot decode stored data |
+
+Direct push gives the build system deployment credentials; a GitOps pull/reconcile controller can separate rights but still needs strong trust in desired configuration and artifact references. Neither removes the need for live operational authorization, business outcome checks and restore drills. The current GitHub Actions security, SLSA and OpenGitOps references describe bounded controls, not this invented attack's observed outcome.
+
+**Proposed verification, not executed:** replace one artifact digest, simulate a compromised ephemeral worker, submit an otherwise valid signature from an untrusted key, then attempt rollback after a new-only schema write. Confirm deterministic rejection or forward repair rather than relying on a green pipeline. The final decision must account for who can approve a deployment, how credentials are scoped, and whether maintaining a separate pull controller is proportionate to the team's threat model.
+
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.

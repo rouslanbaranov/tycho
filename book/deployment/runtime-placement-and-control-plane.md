@@ -130,6 +130,21 @@ An IaC change that removes a database or rewrites a routing rule is operationall
 | State owner unavailable | All stateless frontends can become ineffective | Verify database/broker quorum, RPO, leader fencing and correct user outcomes |
 | IaC state lost/compromised | Restoration may not reconstruct original ownership safely | Test actual state recovery, drift handling and protected credentials |
 
+## Engineering walkthrough — Control-plane outage and continued data-plane work
+
+**Original fictional service:** request-serving pods are already running in a zone when the orchestration control plane becomes unreachable. Some existing client requests can continue through existing routes and working data-plane components. New deployment, rescheduling or configuration changes may not proceed, and losing nodes can degrade capacity over time. The observable service contract must distinguish *existing steady-state survival* from *ability to create/recover resources*.
+
+| Hosting choice | Control and state owner | Failure condition to model |
+|---|---|---|
+| VM processes | OS/process/operator provision, external state service | Host dies; replacement and placement may depend on unavailable management API |
+| Container orchestrator | Scheduler/controllers for placement; applications own domain state | Control plane down, running instances alive; node loss cannot be promptly repaired |
+| Managed runtime/serverless | Provider-owned lifecycle/scale admission | Cold starts, service limits, provider-region/control dependencies |
+| Self-managed on premises | Organization owns hardware, recovery and capacity | Network/power/operator failure may be more correlated than expected |
+
+A container is not by itself an availability zone, a managed service is not a business-state correctness proof, and serverless autoscaling cannot create authoritative consistency. Changing hosting model may introduce new irreversible state/network contracts while leaving the original domain bottleneck untouched.
+
+**Proposed test (not run):** isolate orchestrator/API access while keeping running workers and database reachable; issue existing reads/writes, then kill one node and measure degradation/recovery. Repeat under a real downstream outage. Reject a topology if its data-plane ability to serve a correct user journey depends on immediate control-plane participation that cannot meet the declared outage duration. The existing static-stability and orchestration references support the failure-model method, not results from this fictional deployment.
+
 ## Source-to-claim ledger — inspected primary scope
 
 | Ref | Exact publicly inspected material (2026-10-19) | Supports and exclusions |
