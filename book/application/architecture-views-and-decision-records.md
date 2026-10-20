@@ -177,6 +177,22 @@ For a changed interface, update the behavior and the rationale, not only a singl
 
 Every component, failure path, ID and table in the fictional case is original teaching material. No real system, diagram export, experiment, source code, stakeholder acceptance or independent editorial approval was examined. This chapter needs integration into final volume/page structure.
 
+## Engineering walkthrough — Reconciling one failure across architectural views
+
+**Original synthetic trace:** an equipment reservation commits in the database, but the HTTP response disappears. In the **context view**, Client, Booking System and External Payment are separate actors; in the **building-block view**, Booking API invokes Booking Domain and Persistence Adapter; in the **runtime view**, operation K42 is committed before transport acknowledgment; in the **deployment view**, two replicas share one authoritative booking store.
+
+A misleading diagram might show the API and database in different containers and infer that a replay on the second replica is a fresh booking. Another might label the payment provider "inside" the application simply because the integration library is included in the build. Both inconsistencies turn diagram layout into an unsupported authority claim.
+
+| Linked artifact | Must say | Contradiction the editor rejects |
+|---|---|---|
+| Context | Payment is external; business result belongs to Booking | Provider internals are part of Booking authority |
+| Component | Persistence Adapter commits under Booking's invariant | Controller-local memory uniquely deduplicates across replicas |
+| Sequence | Commit precedes lost response; retry resolves K42 | Timeout proves transaction rollback |
+| Deployment | Two API replicas share a durable writer | Replica count implies independent writers or cross-region guarantee |
+| ADR | Retain one authoritative writer pending evidence of extraction benefit | Diagram quietly replaces the approved state owner |
+
+**Review gate:** assign stable identifiers to the same components/operations in every view and walk the timeout through them, including caller-visible UNKNOWN and recovery lookup. A context diagram is not an executable access policy, a deployment view is not measured failover behavior, and an ADR is not a running system. The example has no real deployed equivalents.
+
 ## Navigation
 
 Proposed owner **V01/C05** in [the 69-chapter outline](../PROPOSED-STRUCTURE.md); current [application/foundations landing](README.md). Read first [system boundaries](problem-framing-and-system-boundaries.md), then [quality drivers](quality-drivers-and-architecture-views.md), [modular boundaries](architecture-styles-and-module-boundaries.md), [architectural alternatives and ADRs](../decisions/architecture-alternatives-experiments-and-adrs.md).

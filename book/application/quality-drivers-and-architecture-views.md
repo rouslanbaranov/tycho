@@ -170,6 +170,20 @@ Before marking an architecture comparison ready for decision support, establish:
 
 This creates a reusable method for evaluating architecture patterns, but the complete pattern applicability cards and legacy-specific modernization model are further work. **A method alone is not a populated knowledge base.**
 
+## Engineering walkthrough — An apparently faster architecture that fails a hard invariant
+
+**Original synthetic decision:** product leadership asks for a booking confirmation within 300 ms for 99% of accepted requests; operations can tolerate a clearly signaled temporary refusal during a dependency incident; the resource owner requires **no double-confirmed exclusive booking**. These are assumed requirements, not observed SLO achievement. Evaluate a read-cache-first design against direct authoritative transactions and a queued confirmation flow.
+
+| Candidate | Hypothetical latency strength | Business and failure constraint | Verdict |
+|---|---|---|---|
+| Cache says seat free; asynchronously writes allocation | Very fast speculative response | Two concurrent clients may both receive success before serialization | **Reject** despite best headline latency |
+| Authoritative transaction, bounded ingress | Confirmation after durable invariant check | Fail/reject when unavailable; exposes limited acceptance throughput | Conditionally feasible if measured latency passes |
+| Durable queue returns pending immediately | Quick acknowledgement of receipt | Does not meet a requirement for *final* confirmation within 300 ms | Feasible only after renegotiating user semantics |
+
+Availability, latency, correctness and operating cost cannot be compressed into one scalar without first defining whose outcome each measures. The stakeholder may prefer a quick *pending* receipt, but a pending receipt cannot be counted as a confirmed booking for the SLI. The decision record must identify the release cohort, sample exclusions, rejected requests and measurable restoration objective.
+
+**Decision-reversal evidence:** measure genuine offered load, confirmed outcomes under hot-key contention, and behavior after an acknowledgment is lost. If the confirmation requirement changes to accepted-into-workflow, the queue becomes a legitimate candidate; if strict final confirmation is retained, it is not equivalent. No technology deployment or production measurement was performed.
+
 ## Sources, scope and known limitations
 
 | Evidence | Public source and precise read scope | Supports / limits |

@@ -191,6 +191,21 @@ That bounded problem definition is a usable input to the later [architecture dec
 
 The booking application, all data flows, errors, tables, decision alternatives and illustrations are original synthetic educational material. No external proprietary material was copied. Independent editorial/source verification, stakeholder interviews, runtime tests, user-journey metrics and complete edition assembly remain unperformed.
 
+## Engineering walkthrough — Third-party outage exposes a missing system boundary
+
+**Original fictional walkthrough.** A booking UI accepts a reservation; an external identity provider established a session earlier, a separate payment provider authorizes a deposit, and the authoritative booking database commits the resource allocation. A context diagram that shows only the UI and database incorrectly hides the two external dependencies and their differing trust domains.
+
+| Boundary | Normal contract | Partial failure and who owns the next action |
+|---|---|---|
+| Browser → booking API | User identity, scoped operation ID and deadline | Client may retry only against the *same* logical intent; server owns durable outcome lookup |
+| API → identity provider | Verify identity/token under documented trust policy | If verification cannot be established, reject rather than infer a valid identity from a cached UI label |
+| API → payment provider | External authorization result with a separate key | Timeout may mean authorized-but-unacknowledged; payment reconciliation is owned by the payment integration, not the booking database |
+| API → booking state authority | Atomically enforce exclusive allocation | A committed booking remains committed even if the response path fails |
+
+The context **excludes** the provider's internal ledger, other tenants' identity stores and unrelated notification systems from the booking application's direct control. It does **not** exclude their failure modes from the user journey. During a payment outage the system can refuse new bookings, or move into an explicitly designed pending-reservation flow—but cannot silently claim all effects committed. A requirement that deposits must precede allocation changes the order; that is a stakeholder decision, not an automatic consequence of drawing more boxes.
+
+**Reversal test (proposed, not run):** sever payment acknowledgments after authorization, then inspect who can query payment and booking results; compare this with identity-provider unavailability. C4/arc42 context descriptions support the *kind* of boundary modeled, not the fictional external services' actual contracts.
+
 ## Navigation
 
 - Intended canonical owner: **V01/C01** in [Tycho's planned contents](../PROPOSED-STRUCTURE.md); current [application/foundations landing](README.md).

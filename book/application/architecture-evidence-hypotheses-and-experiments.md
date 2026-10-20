@@ -171,6 +171,20 @@ A source supporting "service X can enforce a retry limit" does not establish "ou
 
 The trial, metric hypotheses, workload, figure and failure consequences are original teaching material. There are no run results, third-party architecture approvals or measured improvements. Full source-by-claim audit, book metadata and final volume organization remain outstanding.
 
+## Engineering walkthrough — A falsifiable cache-versus-query experiment
+
+**Original preregistered hypothetical study.** The symptom is a p99 increase on item-detail reads. Hypothesis H1 says repeated reads dominate and a bounded-freshness cache helps; rival H2 says PostgreSQL plan regression raises latency even for misses; H3 says connection acquisition—not SQL execution—is the bottleneck. The experiment must test *all three*, rather than select a cache before measuring.
+
+Before any run, freeze the offered arrival trace, key skew, dataset snapshot, query/index definitions, pool size, application build, cache warm/cold state, permitted staleness and error deadline. Predeclare **correct completions**, p99 distribution with sample size, cache hit/miss split, DB plan and lock/pool wait, and changed/incorrect reads as acceptance observables.
+
+| Controlled comparison | Expected discriminating result | Invalid inference |
+|---|---|---|
+| Baseline versus query/index repair | Lower DB execution time if H2 is true | A changed EXPLAIN cost alone proves user latency improved |
+| Baseline versus cache-aside with write injection | Lower read load when H1 is true, bounded stale fraction | Cache hit rate proves authorization or freshness correctness |
+| Baseline versus bounded pool admission | Lower queue delay if H3 is true | Higher accepted RPS proves more *correct* outcomes |
+
+**Negative result example, invented:** a warm-cache run improves mean latency but violates the permitted stale-read window during concurrent updates. This **rejects that candidate** even if p99 looks attractive; it does not prove caches are inherently wrong. If plan repair achieves the requirement with lower operational complexity, prefer it until evidence reverses the decision. Mark official manuals as *specification*, any eventual run as *observed experiment*, this scenario as *synthetic*, and every unmeasured causal claim as *hypothesis*. No experiment was run.
+
 ## Navigation
 
 Proposed **V01/C04** in [planned outline](../PROPOSED-STRUCTURE.md); current [application landing](README.md). Prerequisite [system context](problem-framing-and-system-boundaries.md), [quality drivers](quality-drivers-and-architecture-views.md). Continue to [architecture alternatives/ADRs](../decisions/architecture-alternatives-experiments-and-adrs.md), [benchmark methods](../performance/load-testing-and-benchmark-validity.md), and [capacity experiments](../performance/workload-profiles-and-capacity-experiments.md).
