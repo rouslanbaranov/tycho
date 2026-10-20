@@ -146,3 +146,7 @@ The owner authorized all five newly proposed mechanisms and three complete worke
 FoundationDB's documentation site did not return usable content in the available retrieval path. Its public testing documentation was instead read from the exact GitHub revision recorded in the source entry. The replicated-data-types paper was read only in the declared introductory sections; later proofs were not checked. No implementation or experiment was run.
 
 Eight original pages include explicit assumptions, counterexamples, failure/recovery, alternatives and proposed oracles. The projects contain synthetic workloads and arithmetic, with no measured production results or price claims. See [validation and unresolved gates](SECOND_ENRICHMENT_VALIDATION_2026-10-20.md). #214 remains open and PR #222 draft.
+
+## 2026-10-20 — Recovered Python and Mermaid execution
+
+The environment recovered and the exact PR #222 snapshot was checked locally: 16/16 Python groups, 233/233 tests with zero skips, and 221/221 Mermaid syntax parses passed. Python reproduced the 406-document candidate index byte for byte. [The executed report](PYTHON_MERMAID_VALIDATION_2026-10-20.md) pins the commit/tree and archives actual logs. No technical defect needed repair. Documentation status is reconciled; substantive acceptance remains pending and #214 stays open.

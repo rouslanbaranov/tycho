@@ -1,5 +1,7 @@
 # Second enrichment validation — 2026-10-20
 
+> Historical authoring-time record: the execution environment later recovered. [Actual pinned Python and Mermaid results](PYTHON_MERMAID_VALIDATION_2026-10-20.md) supersede the blocked-execution status below.
+
 Candidate: **2026.10.1-rc.3**, Refs #214, draft [PR #222](https://github.com/rouslanbaranov/tycho/pull/222).
 
 The bounded [contract](SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) is implemented as five mechanism pages and three complete worked projects. The starting feature head was `6486ca215fb95510f4331620fc43e6ebbc4cf143`, tree `6a20bcf16dfe1ee00d253948b8e126c43358f30e`. This report's checks apply to the candidate payload committed with this report, not to main or a final accepted release.

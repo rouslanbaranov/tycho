@@ -1,5 +1,7 @@
 # Second owner-authorized enrichment contract
 
+> Historical authoring-time record: the execution environment later recovered. [Actual pinned Python and Mermaid results](PYTHON_MERMAID_VALIDATION_2026-10-20.md) supersede the blocked-execution status below.
+
 Refs #214. Baseline: `6486ca215fb95510f4331620fc43e6ebbc4cf143`, draft PR #222. Date: 2026-10-20.
 
 The owner authorized all five additional mechanism areas and three complete worked architecture projects. This is an explicit bounded content pass; it does not reopen earlier manuscript acceptance or change the final integration gate.

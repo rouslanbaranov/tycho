@@ -29,7 +29,7 @@ All repository content is written in English. Reading the book must not require 
 
 **[Read the ten-volume manuscript](book/README.md).** The candidate contains 71 chapters and 406 canonical documents. This pass adds configuration rollout, session consistency, offline conflicts, cells/shuffle sharding and protocol verification, plus complete catalogue, collaboration and multitenant-service projects. It retains the earlier object-storage/network additions, twelve deepened pages and all existing identities/source blocks.
 
-[The second-pass contract](authoring/SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) records the scope. [The validation record](authoring/SECOND_ENRICHMENT_VALIDATION_2026-10-20.md) separates available in-process checks from the required Python and Mermaid runs, which remain unexecuted because the execution environment is unavailable.
+[The second-pass contract](authoring/SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) records the scope. [Executed validation](authoring/PYTHON_MERMAID_VALIDATION_2026-10-20.md) records 16/16 Python check groups, 233/233 tests with zero skips, and 221/221 Mermaid syntax parses. Python reproduced the candidate index byte for byte. The earlier environment block is resolved.
 
 [PR #222](https://github.com/rouslanbaranov/tycho/pull/222) remains draft; #214 remains open for integration verification and substantive page acceptance. The historical 2026.10.0 snapshot is unchanged.
 

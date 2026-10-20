@@ -65,7 +65,7 @@ The candidate contains ten volumes, 71 chapters and 406 canonical documents. The
 
 Every project states its synthetic workload, authority, normal/failure/recovery paths, alternatives, cost arithmetic and conditions that reverse the choice. Source versions, actual read scopes and unknowns remain explicit. See the [second-pass contract](../authoring/SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) and [validation record](../authoring/SECOND_ENRICHMENT_VALIDATION_2026-10-20.md).
 
-Python integration and Mermaid syntax checks remain unexecuted because the execution environment is unavailable. Available in-process checks are reported separately. #214 remains open for integration and substantive acceptance.
+The execution environment is available again: 16/16 Python groups, 233/233 tests with zero skips, and 221/221 Mermaid syntax parses passed. Python reproduced the candidate index byte for byte. See [executed validation](../authoring/PYTHON_MERMAID_VALIDATION_2026-10-20.md). #214 remains open for substantive acceptance.
 
 ## Contents
 

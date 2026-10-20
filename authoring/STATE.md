@@ -25,7 +25,7 @@ Candidate **2026.10.1-rc.3** implements the owner's additional authorization: fi
 
 See [the second-pass contract](SECOND_ENRICHMENT_CONTRACT_2026-10-20.md), [current validation](SECOND_ENRICHMENT_VALIDATION_2026-10-20.md) and [conservation manifest](../edition/enrichment-manifest.json). Nine primary sources are newly admitted and one existing ID reused for ten scoped readings; total source membership is 247. All workload numbers are synthetic, and all new material is author self-checked.
 
-**PR #222 remains draft; #214 remains OPEN.** Python premerge, full integration/adversarial checks and Mermaid syntax parsing have not run on this candidate because the execution environment remains unavailable. Available JavaScript checks are scoped separately and do not substitute for those gates. No independent acceptance, final release or deployment is asserted.
+**PR #222 remains draft; #214 remains OPEN for substantive acceptance.** The execution environment recovered. [Actual Python and Mermaid validation](PYTHON_MERMAID_VALIDATION_2026-10-20.md) passed 16/16 groups, 233/233 tests with zero skips, and 221/221 diagram parses on the pinned rc.3 snapshot; Python index reproduction was byte-identical. The earlier execution block is resolved. No independent acceptance, final release or deployment is asserted.
 
 The [first-pass scope](ENRICHMENT_SCOPE_2026-10-20.md) and [first-pass validation](ENRICHMENT_VALIDATION_2026-10-20.md) retain their historical rc.2 meaning. They are not a verification report for rc.3.
 

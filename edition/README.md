@@ -30,9 +30,9 @@ All new pages are author self-reviewed. No independent acceptance, benchmark, de
 
 The earlier assembly and decomposition scripts remain one-time historical migrations. They do not automatically produce or authorize the new authored content. The new manifest and `scripts/validate_enrichment.py` explicitly validate this extension without replacing the earlier conservation checks. Indexes remain derived from frontmatter, and source catalogue membership from the canonical register.
 
-The candidate index and inventory were reconciled in the available in-process JavaScript runtime. Baseline digest/serialization checks and the exact available results are recorded in [the validation report](../authoring/SECOND_ENRICHMENT_VALIDATION_2026-10-20.md). This is not a Python validation run.
+The initial candidate index and inventory were reconciled in JavaScript. The execution environment has now recovered: [actual pinned Python/Mermaid validation](../authoring/PYTHON_MERMAID_VALIDATION_2026-10-20.md) passed 16/16 groups, 233/233 tests with zero skips, and 221/221 syntax parses. Python index generation reproduced the candidate byte for byte. Archived commands, versions and logs distinguish this executed pass from the earlier authoring-time record.
 
-**The execution environment is unavailable. The following required commands have NOT run on rc.3:**
+**The following required Python commands now passed on the pinned rc.3 snapshot; use them to reproduce the checks:**
 
 ```bash
 python3 scripts/check_boundary.py
@@ -50,7 +50,7 @@ python3 scripts/validate_m9_cases.py --self-test
 python3 -m unittest discover -s tests -p 'test_m9*.py' -v
 ```
 
-Before merging, run the existing Mermaid syntax checker for the full candidate as well:
+The existing Mermaid syntax checker also passed for the full candidate. Reproduce it with:
 
 ```bash
 npm ci --prefix tools/mermaid
@@ -62,6 +62,6 @@ A deliberate `validate_edition.py --write-inventory` may refresh the inventory o
 
 ## Remaining acceptance
 
-The PR stays **draft** while Python premerge, strict metadata/edition/conservation validation, the new adversarial tests and Mermaid parsing remain unexecuted. Prior rc.1 results belong to its exact tree.
+Python premerge, strict metadata/edition/conservation validation, the new adversarial tests and Mermaid parsing passed on the exact snapshot in the executed report. The PR stays **draft** for substantive acceptance. Prior rc.1 results retain their historical scope.
 
 After integration checks, substantive page-level reading must assess explanatory sufficiency, scope, exact support, failure recovery and cross-owner coherence. Keep #214 open until that gate is met. Final publication, retrieval/MCP and deployment do not follow from new files or mechanically passing checks.
