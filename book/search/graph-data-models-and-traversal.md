@@ -166,6 +166,48 @@ Graph design must define whether dependencies are direct or inferred, what "curr
 
 **Proposed, not run:** compare bounded Cypher and recursive relational queries on the same versioned synthetic topology with skew/cycles, measuring completeness, latency, updates and access control. A graph could be unnecessary for shallow stable joins, and useful for variable-depth relationship-rich questions. **This chapter teaches graph data architecture only; it does not introduce a manually curated Tycho knowledge graph or platform implementation.**
 
+### Paired graph and relational traversal with the same answer (unexecuted synthetic fixture)
+
+**Question:** which *Tenant t1* physical units depend, within **one to three current directed `DEPENDS_ON` edges**, on `Part C`? Fix evaluation date `2026-10-20`. Fixture nodes are `U1` (Unit, t1), `U2` (Unit, t1), `U3` (Unit, t2), `A` (Part, t1), `B` (Part, t1), `C` (Part, t1); all node IDs are globally unique here. Active edges: `U1→A`, `A→C`, `U2→B`, `B→C`, plus an *unauthorized cross-tenant* `U3→C`; each edge carries `tenant`, `valid_from`, `valid_until`. A separate `C→A` cycle is included to test path safety. Expected authorized distinct unit IDs: **`U1, U2`**, never U3. Tenant authorization is an explicit *assumed query scope*, not proven by these queries.
+
+**Illustrative Neo4j Cypher variable-length relationship syntax** (Neo4j Cypher 5/25 manuals; label and property schema defined above):
+
+```cypher
+MATCH p = (u:Unit {tenant: 't1'})-[:DEPENDS_ON*1..3]->
+          (target:Part {id: 'C', tenant: 't1'})
+WHERE ALL(n IN nodes(p) WHERE n.tenant = 't1')
+  AND ALL(r IN relationships(p)
+          WHERE r.tenant = 't1'
+            AND r.valid_from <= date('2026-10-20')
+            AND (r.valid_until IS NULL OR r.valid_until > date('2026-10-20')))
+RETURN DISTINCT u.id AS unit_id ORDER BY unit_id;
+```
+
+The `*1..3` syntax is the older still-supported variable-length form; the [Neo4j reference](https://neo4j.com/docs/cypher-manual/current/patterns/reference/variable-length-paths/) distinguishes it from modern quantified relationship syntax. The bounded path and per-node/per-edge checks are important: matching only the end node's tenant is **not** sufficient to prevent forbidden intermediate disclosure.
+
+**Equivalent illustrative PostgreSQL 17 recursive CTE** assumes `nodes(id text PRIMARY KEY, kind text, tenant text)` and `edges(src text, dst text, tenant text, valid_from date, valid_until date)`, populated with the same fixture:
+
+```sql
+WITH RECURSIVE walk(tenant, origin, node_id, depth, visited) AS (
+    SELECT n.tenant, n.id, n.id, 0, ARRAY[n.id]::text[]
+      FROM nodes n WHERE n.kind = 'Unit' AND n.tenant = 't1'
+    UNION ALL
+    SELECT w.tenant, w.origin, e.dst, w.depth + 1, w.visited || e.dst
+      FROM walk w
+      JOIN edges e ON e.src = w.node_id AND e.tenant = w.tenant
+      JOIN nodes n ON n.id = e.dst AND n.tenant = w.tenant
+     WHERE w.depth < 3
+       AND e.valid_from <= DATE '2026-10-20'
+       AND (e.valid_until IS NULL OR e.valid_until > DATE '2026-10-20')
+       AND NOT (e.dst = ANY(w.visited))
+)
+SELECT DISTINCT origin AS unit_id FROM walk
+ WHERE node_id = 'C' AND depth BETWEEN 1 AND 3
+ ORDER BY unit_id;
+```
+
+The [PostgreSQL 17 recursive CTE and cycle-detection documentation, §7.8.2](https://www.postgresql.org/docs/17/queries-with.html) explains recursive evaluation and cycle handling; here `visited` stops revisiting nodes. The Cypher path-match engine and recursive SQL have different physical execution strategies and may have different path-multiplicity semantics, but **the distinct authorized endpoint set** should match for this fixture. The toy queries are **not executed**, not a claim about performance and not a substitute for access control enforced in storage/query authorization. Real tenancy demands graph-wide object/edge permission enforcement, not just a caller-supplied `tenant` literal. No Tycho infrastructure knowledge graph is created or implied.
+
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.

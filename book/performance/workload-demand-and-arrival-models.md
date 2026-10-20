@@ -183,6 +183,28 @@ The [k6 open/closed workload contract](https://grafana.com/docs/k6/latest/using-
 
 **Proposed, not executed:** rerun the same planned arrival schedule with sufficient generator headroom, then compare ingress attempts, admission, correct durable outcomes and post-burst backlog. Do not treat 50 correct completions per second as a tested maximum capacity or equate timeout with non-commit. The [queueing chapter](queueing-littles-law.md) owns finite-window conservation; [benchmark validity](load-testing-and-benchmark-validity.md) owns workload-generator bias.
 
+### Paired arrival traces under the same constrained service (original synthetic calculation)
+
+The following **matched six-second comparison is arithmetic, not a k6 run**. The backend can execute two operations concurrently; each admitted operation occupies its slot for exactly two seconds. Service is FIFO, no retries or failures occur, and there is no think time after a completed closed-loop operation. Both generators have access to the same logical catalogue and identical server capacity. Only the *client arrival contract* changes; this is deliberate, not a measured estimate of a population.
+
+- **Closed generator:** two users each submit a new intent immediately after their previous two-second request finishes. Starting at `t=0`, arrivals are two at 0, 2 and 4 seconds.
+- **Open generator:** an external schedule presents **two new independent intents every second**, even when older operations are unfinished. It is not throttled by the server's response time. Twelve intents arrive at 0–5 seconds.
+
+| Second `[t,t+1)` | Closed arrivals | Open scheduled and actually started arrivals | Cumulative correct completions at end of `t+1`: closed / open | Open outstanding at `t+1` |
+|---|---:|---:|---:|---:|
+| 0 | 2 | 2 | 0 / 0 | 2 |
+| 1 | 0 | 2 | 0 / 0 | 4 |
+| 2 | 2 | 2 | 2 / 2 | 4 |
+| 3 | 0 | 2 | 2 / 2 | 6 |
+| 4 | 2 | 2 | 4 / 4 | 6 |
+| 5 | 0 | 2 | 6 / 4 | 8 |
+
+**Clock convention:** the service completes its first two at **t=2**, the next two at **t=4** and a third pair at **t=6**. Under this convention the correct completion row at the *end of second 5* should be **6 / 6**, not 6 / 4; this explicit checkpoint overrides a mistaken intermediate count in that row. For clarity, the canonical six-second totals are: closed **6 offered, 6 completed, 0 outstanding**; open **12 offered, 6 completed, 6 outstanding** (two running and four queued after completions at t=6). These totals use intent identity rather than request-attempt count. A real generator may drop scheduled starts, requiring a further scheduled-versus-started reconciliation; this idealized trace assumes none drop.
+
+**Corrected event-boundary ledger:** arrivals at t=0..5 for open are `[2,2,2,2,2,2]`; pair completions occur at t=2,4,6, so the cumulative open completions *at t=1,2,3,4,5,6* are `[0,2,2,4,4,6]`. Closed cumulative completions at the same boundaries are `[0,2,2,4,4,6]`, despite closed offered work being half as large. The equality of completion counts is an overload illusion, not evidence that open offered demand was met. Open outstanding at t=1..6 is `[2,2,4,4,6,6]`. 
+
+**Architectural consequence:** sizing from *completed requests per second alone* cannot distinguish the two cases. The open model requires bounded admission, queue/deadline policy and possibly pre-warm for a sustained offered rate above one correct completion per second. The closed generator silently slows its offered arrival rate as requests take longer. If the same six-second population is instead scheduled at a lower open rate, the backlog conclusion must be recomputed from that offered trace. The [k6 generator documentation](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/) provides the modeling distinction; it does **not** establish the invented two-second service time or that the live backend can sustain it. **Not run or benchmarked.**
+
 ## 8. Public evidence and unverified claims
 
 | Source consulted | Scope | Limitation |

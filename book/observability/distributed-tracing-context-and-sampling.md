@@ -146,6 +146,21 @@ The [W3C Trace Context Recommendation, sampled flag](https://www.w3.org/TR/trace
 
 **Proposed negative test, not run:** send malformed, oversized, reused and forcibly sampled incoming headers; verify safe rejection/restart, no unauthorized correlation of tenant records, bounded exporter cost and continuity for permitted internal requests. Compare sampled spans against independently counted attempts without extrapolating sample p99 to the full population without an appropriate sampling design. The [audit owner](logs-audit-and-data-lineage.md) covers durable accountable effects; the [security owner](../security/identity-authorization-and-isolation.md) covers the actual authorization boundary.
 
+### Forged W3C Baggage is not authenticated tracing context
+
+[W3C Baggage](https://www.w3.org/TR/baggage/) is a **separate specification** from W3C Trace Context. Its `baggage` header propagates arbitrary application-defined key/value data across service calls; it gives no authorization or confidentiality guarantee for a propagated value. It may contain user-identifiable or proprietary values; §4–§5 of the standard discuss malicious header parsing, information exposure, boundary filtering and privacy risks. A `traceparent` sampled bit, a `tracestate` vendor member and a `baggage` key are three different trust inputs; none proves the caller owns an arbitrary tenant.
+
+**Original fictional attack:** an internet client sends `traceparent` with a forced sampled bit and `baggage: tenant_id=internal-admin,customer_email=private%40example.test,experiment=priority`. An API gateway has authenticated the caller as **tenant t1**; a downstream worker handles t2-only objects. If the gateway forwards the arbitrary baggage unchanged and a collector turns it into indexed span attributes, a private address and fabricated admin tenant identifier can leak. If authorization middleware mistakenly reads `tenant_id` from baggage, the request may cross object permissions even though the actual authentication context remains t1.
+
+| Boundary | Safe requirement | Insecure inference |
+|---|---|---|
+| Untrusted client → gateway | Parse size/grammar, drop or allow-list incoming baggage and remove user identifiers | Header-supplied `tenant_id` is a verified principal |
+| Gateway → trusted worker | Derive tenant/access scope from authenticated session/authorization; propagate only approved operational context | Copying baggage grants authority to t2 |
+| Worker → external provider | Explicitly strip private/internal baggage across the outgoing trust boundary | All tracing metadata is harmless diagnostic text |
+| Instrumentation → telemetry backend | Limit baggage-to-attribute conversion, restrict read rights, test redaction in collector/exporter | Backend indexing is automatically privacy-safe |
+
+**Proposed negative test, not executed:** send forged tenant fields, oversized/malformed headers and a valid `traceparent` paired with confidential baggage; observe whether the gateway removes unauthorized keys, whether every outbound header and downstream span omits private values, and whether t1 ever reads t2-only business state. Independently drop sampled traces and verify the business audit remains complete. The failure oracle is *zero unauthorized business access and zero sensitive baggage egress*, not merely HTTP success or a trace visualization. W3C Baggage gives propagation syntax and warnings, not a universal filtering implementation.
+
 ## 6. Original diagnostic decision
 
 A hypothetical API's p99 worsens after a release. One proposal is to migrate to a different transport. First inspect sampled parent critical paths, dependency queues/pool wait, timeouts and retries; compare with unsampled user-level error/latency metrics. If only ten percent of requests were sampled, a p99 measurement from those traces cannot automatically be treated as the population p99.
