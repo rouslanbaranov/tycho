@@ -25,15 +25,13 @@ Read [the independence policy](governance/INDEPENDENCE.md) before contributing. 
 
 All repository content is written in English. Reading the book must not require access to private repositories, accounts, internal networks, another book, or an external agent service. External citations support verification; essential explanations belong in the book itself. Public source dependencies must be recorded explicitly.
 
-## Current implementation — 2026-10-20
+## First Markdown Edition — 2026.10.0
 
-**Canonical current checkpoint:** [status](authoring/STATE.md), [roadmap](authoring/ROADMAP.md), [post-merge reconciliation](authoring/PROJECT_STATUS_RECONCILIATION_2026-10-20.md). The owner confirmed independent substantive/content acceptance of all **69 manuscripts** at `986b1ddbe985079b7c647182fcf1c2fc8911d96c`. PR #218 is merged into main (`f9834ef903fc5808f3a1edede208d82aac08f4e6`); #213 and E14 #15 are completed.
+**[Read the ten-volume book](book/README.md).** The edition has **69 primary chapters**, their 69 bounded technical pages, and a linked applied layer of 29 historical cases and six synthetic playbooks. Original supporting essays remain available. The complete canonical corpus contains **215 documents**.
 
-The accepted manuscript includes 29 historical cases and six synthetic playbooks. **[Issue #214](https://github.com/rouslanbaranov/tycho/issues/214) is open and ready** to assemble the real ten-volume/69-chapter/bounded-page edition, coherent navigation and a named release. The [selected outline](authoring/FINAL_TOC_AND_OWNER_BOUNDARIES_2026-10-20.md) remains the edition target.
+[Edition scope, migration and reproducible checks](edition/README.md) and the [frozen inventory](edition/inventory.json) record the publication boundary. All 136 original document identities are retained; 79 new volume/chapter entities have separately recorded IDs. The technical manuscripts retain their owner-confirmed #213 acceptance; new landing syntheses are editorially self-checked.
 
-Strict metadata/schema foundations, stable IDs, source controls, local validators and a complete 136-document offline routing index exist. Hosted ranked/semantic retrieval, MCP, the shared specialist runtime and deployment remain subsequent roadmap work. A curated concept graph is excluded.
-
-The [accepted-head verification report](https://github.com/rouslanbaranov/tycho/pull/218#issuecomment-6294804915) records the owner's 13/13 groups and 215/215 tests PASS; it is pinned to the accepted SHA, not a fresh result for later status changes. No published physical edition or deployed service is claimed.
+[Current state](authoring/STATE.md) and [roadmap](authoring/ROADMAP.md) distinguish this readable Markdown edition from later retrieval/MCP/deployment work. No hosted service or new technology benchmark is claimed. Curated concept-graph infrastructure remains excluded.
 
 Run `python3 scripts/check_boundary.py` from the repository root. A successful scan detects none of the configured patterns; it does not certify independent origin or semantic correctness.
 

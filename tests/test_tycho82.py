@@ -6,6 +6,7 @@ performance, external URL availability or independent technical review.
 from pathlib import Path
 import re
 import unittest
+from edition_paths import canonical_path, relative_link
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "book/execution"
@@ -34,7 +35,7 @@ class ExecutionCorpusTests(unittest.TestCase):
     def test_pages_have_substantial_original_explanation_and_evidence(self):
         for name, urls in SOURCES.items():
             with self.subTest(page=name):
-                page = (BASE / name).read_text(encoding="utf-8")
+                page = canonical_path(BASE / name).read_text(encoding="utf-8")
                 self.assertGreater(len(page), 9000)
                 self.assertGreaterEqual(page.count("```mermaid"), 2)
                 self.assertGreaterEqual(page.count("Text alternative:"), 2)
@@ -50,11 +51,11 @@ class ExecutionCorpusTests(unittest.TestCase):
         self.assertIn("execution/README.md", index)
         self.assertIn("```mermaid", landing)
         for name in SOURCES:
-            self.assertIn("(" + name + ")", landing)
-            self.assertTrue((BASE / name).is_file())
+            self.assertIn("(" + relative_link(BASE / "README.md", BASE / name) + ")", landing)
+            self.assertTrue(canonical_path(BASE / name).is_file())
 
     def test_relative_links_in_new_pages_resolve(self):
-        for path in [BASE / "README.md", *(BASE / n for n in SOURCES)]:
+        for path in [BASE / "README.md", *(canonical_path(BASE / n) for n in SOURCES)]:
             with self.subTest(path=path.name):
                 text = path.read_text(encoding="utf-8")
                 for target in re.findall(r"\]\(([^)]+)\)", text):

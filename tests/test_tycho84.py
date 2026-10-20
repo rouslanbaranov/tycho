@@ -2,6 +2,7 @@
 from pathlib import Path
 import re
 import unittest
+from edition_paths import canonical_path, relative_link
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "book/scaling"
@@ -22,7 +23,7 @@ class ScalingEvidenceTests(unittest.TestCase):
     def test_substantive_mermaid_sources(self):
         for name, sources in PAGES.items():
             with self.subTest(name=name):
-                text = (BASE / name).read_text(encoding="utf-8")
+                text = canonical_path(BASE / name).read_text(encoding="utf-8")
                 self.assertGreater(len(text), 9000)
                 self.assertGreaterEqual(text.count("```mermaid"), 3)
                 self.assertGreaterEqual(text.count("Text alternative:"), 3)
@@ -36,8 +37,8 @@ class ScalingEvidenceTests(unittest.TestCase):
         root = (ROOT / "book/README.md").read_text(encoding="utf-8")
         self.assertIn("(scaling/README.md)", root)
         for name in PAGES:
-            self.assertIn("(" + name + ")", landing.read_text(encoding="utf-8"))
-        for doc in [landing, *(BASE / name for name in PAGES)]:
+            self.assertIn("(" + relative_link(BASE / "README.md", BASE / name) + ")", landing.read_text(encoding="utf-8"))
+        for doc in [landing, *(canonical_path(BASE / name) for name in PAGES)]:
             for raw in re.findall(r"\]\(([^)]+)\)", doc.read_text(encoding="utf-8")):
                 if raw.startswith(("http://", "https://", "#", "mailto:")):
                     continue

@@ -74,17 +74,17 @@ Text alternative: establish the consumer/replay requirement first, then examine 
 
 | Question | Page | Public source scope |
 |---|---|---|
-| How are Kafka partition records, consumer offsets, ISR/replica failures and producer/Kafka transactions bounded? | [Kafka partitions and delivery contracts](kafka-partitions-replication-and-contracts.md) | Selected Apache Kafka 4.1 docs, gRPC core concepts |
-| When do task queues, durable subjects/streams or long-running workflows make sense? | [Messaging families and durable workflows](messaging-families-and-durable-workflows.md) | RabbitMQ 4.3, NATS JetStream rolling docs, Pulsar 4.1 |
-| How does checkpoint/replay work in stream processors, and what does CDC move across boundaries? | [Stateful processing and CDC](stateful-stream-processing-and-cdc.md) | Kafka Streams 4.1, archived Flink 2.1, PostgreSQL 17, Debezium 3.6 |
+| How are Kafka partition records, consumer offsets, ISR/replica failures and producer/Kafka transactions bounded? | [Kafka partitions and delivery contracts](../volumes/v04/c07/kafka-partitions-replication-and-contracts.md) | Selected Apache Kafka 4.1 docs, gRPC core concepts |
+| When do task queues, durable subjects/streams or long-running workflows make sense? | [Messaging families and durable workflows](../volumes/v04/c06/messaging-families-and-durable-workflows.md) | RabbitMQ 4.3, NATS JetStream rolling docs, Pulsar 4.1 |
+| How does checkpoint/replay work in stream processors, and what does CDC move across boundaries? | [Stateful processing and CDC](../volumes/v04/c08/stateful-stream-processing-and-cdc.md) | Kafka Streams 4.1, archived Flink 2.1, PostgreSQL 17, Debezium 3.6 |
 
 ## Prerequisite and adjacent canonical research
 
-- [Ordering and consensus](../distributed/causality-ordering-and-consensus.md) — what ordering and majority replication mean.
-- [Saga and local isolation](../distributed/transaction-isolation-and-sagas.md) — state invariants and compensation.
+- [Ordering and consensus](../volumes/v04/c01/causality-ordering-and-consensus.md) — what ordering and majority replication mean.
+- [Saga and local isolation](../volumes/v04/c03/transaction-isolation-and-sagas.md) — state invariants and compensation.
 - [Transactional outbox and duplicate effects](../distributed/transactional-outbox-and-idempotency.md) — source transaction/relay and consumer dedup boundary.
 - [CQRS and read projections](../distributed/cqrs-event-sourcing-and-projections.md) — durable event authority versus derived state.
-- [Queueing and offered load](../performance/queueing-littles-law.md) — capacity measurements and nonstationary bursts.
+- [Queueing and offered load](../volumes/v07/c01/queueing-littles-law.md) — capacity measurements and nonstationary bursts.
 
 ## Gaps and honest readiness
 

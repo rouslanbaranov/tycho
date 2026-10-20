@@ -99,9 +99,9 @@ sequenceDiagram
     Note over B,D: Completion order need not equal arrival order
 ```
 
-Text alternative: two incoming events may run concurrently when the handler uses virtual-thread dispatch, so B can produce an external effect before A. If per-key order is a correctness invariant, configure an ordered path or enforce ordering in application state; a concurrent dispatch annotation is not an ordering guarantee. See [Kafka partition contracts](../integration/kafka-partitions-replication-and-contracts.md).
+Text alternative: two incoming events may run concurrently when the handler uses virtual-thread dispatch, so B can produce an external effect before A. If per-key order is a correctness invariant, configure an ordered path or enforce ordering in application state; a concurrent dispatch annotation is not an ordering guarantee. See [Kafka partition contracts](../volumes/v04/c07/kafka-partitions-replication-and-contracts.md).
 
-A virtual thread waiting on a permit still represents pending work. Define an explicit cap for each downstream connection pool, and do not use the Quarkus messaging default as a database capacity setting. For Java 21 vs 24+ pinning differences, consult [the virtual-thread chapter](platform-threads-executors-and-virtual-threads.md).
+A virtual thread waiting on a permit still represents pending work. Define an explicit cap for each downstream connection pool, and do not use the Quarkus messaging default as a database capacity setting. For Java 21 vs 24+ pinning differences, consult [the virtual-thread chapter](../volumes/v03/c02/platform-threads-executors-and-virtual-threads.md).
 
 ## 4. Mutiny 2.9.0: Uni, Multi and execution shifts
 

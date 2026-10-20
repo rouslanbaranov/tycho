@@ -70,7 +70,7 @@ The source-of-truth for a verified claim stays in [claim references](../../sourc
 
 ## Original illustrative metadata, not yet deployed frontmatter
 
-A representative page [queueing and Little's Law](../../book/performance/queueing-littles-law.md) can have ID `tycho.page.queueing-littles-law` even if moved between `book/performance` directories later. The [example fixtures](../../examples/metadata-identity-fixtures.json) capture intended field meanings and a separate book landing without pretending a missing chapter parent exists. Formal validators, actual frontmatter insertion and generation are **not** delivered by this issue.
+A representative page [queueing and Little's Law](../../book/volumes/v07/c01/queueing-littles-law.md) can have ID `tycho.page.queueing-littles-law` even if moved between `book/performance` directories later. The [example fixtures](../../fixtures/metadata-valid-page.v1.json) capture intended field meanings and a separate book landing without pretending a missing chapter parent exists. Formal validators, actual frontmatter insertion and generation are **not** delivered by this issue.
 
 ## Validation and review gates for #33+
 
