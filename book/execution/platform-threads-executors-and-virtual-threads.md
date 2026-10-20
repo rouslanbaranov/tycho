@@ -143,6 +143,22 @@ Text alternative: a virtual task temporarily uses a carrier. Supported blocking 
 
 A **proposed, unexecuted comparison** would pin JVM/driver versions and flags, offered demand, downstream quotas and workload skew while comparing platform workers, virtual threads with bounded admission, and nonblocking execution. Report correct completions, p99, connection waits, heap and ambiguous effects. For bounded CPU work a conventional pool may remain preferable; for many independent I/O waits virtual threads can improve programming simplicity; for existing end-to-end reactive protocols nonblocking flow control may suit the contract. See [task lifecycle](threads-tasks-structured-coordination.md) and [connection budgets](../scaling/connection-pools-hikaricp-pgbouncer.md) for separate ownership.
 
+
+### Version-bound failure contrast: less pinning is not higher downstream capacity
+
+[JEP 444](https://openjdk.org/jeps/444) documents JDK 21 virtual threads as inexpensive waiting tasks, not faster CPU workers. JDK 24's [JEP 491](https://openjdk.org/jeps/491) changed the monitor-pinning behavior discussed for JDK 21, but cannot eliminate an application lock's mutual exclusion, native/foreign-call constraints, or database connection scarcity. The [Netflix JDK 21 incident](../cases/netflix-java21-virtual-thread-pinning.md) is historical and cannot establish what happens on a later JVM.
+
+**Original hypothetical:** 1,000 virtual tasks wait for twelve database leases. A driver holds a lease across an unrelated remote call, while a monitor guards one process-local counter. Changing monitor behavior might remove one carrier stall, but cannot increase the twelve-lease downstream budget, enforce that counter across replicas or undo a committed request whose response was lost.
+
+| Symptom | Owner to inspect | Unsafe inference |
+|---|---|---|
+| Carrier pinning drops; connection wait stays high | Database lease lifecycle | Virtual threads fixed throughput |
+| More live tasks, rising heap and p99 | Admission/queue budget | Cheap thread means cheap request |
+| High CPU, few parked tasks | Computation and contention | More virtual threads add cores |
+| Cancellation after external commit | Durable operation identity | Interruption reverses the commit |
+
+**Proposed, not run:** compare platform workers, virtual tasks plus admission, and a truly nonblocking implementation under the *same delivered arrival trace*, pinned JDK and driver revisions, pool size, downstream quota and error injection. Measure correct completions, heap, tail latency, blocked carriers, leased connections and unknown effects. Retain a bounded platform pool for CPU-heavy tasks when appropriate; choose virtual threads for suitable blocking I/O, or reactive execution if flow-controlled asynchronous APIs already fit the system. Detailed parent-child cancellation belongs to [task coordination](threads-tasks-structured-coordination.md), while [pool budgets](../scaling/connection-pools-hikaricp-pgbouncer.md) owns connection capacity.
+
 ## Cancellation, context, failures
 
 Interruption is a cancellation request, not a transaction rollback. A client can time out after the server committed an external effect. Retrying requires an idempotency identity and reconciliation, as explained in [outbox/idempotency](../distributed/transactional-outbox-and-idempotency.md). Propagate deadline and cancellation through executor queue, permit acquisition, driver operations and remote calls. Record what happens if each layer ignores cancellation.
