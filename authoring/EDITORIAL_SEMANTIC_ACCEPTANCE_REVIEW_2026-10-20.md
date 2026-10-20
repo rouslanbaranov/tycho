@@ -166,6 +166,23 @@ These checks compare deliberately narrow statements with official references. Th
 | V10/C06 | [Search and question routes for architecture agents](../book/decisions/question-routes-for-architecture-analysis.md) | Claim-level review pending | High | Demonstrate wrong-route and stale-source rejection, stable ID links and token-efficient expansion criteria |
 | V10/C07 | [Cross-domain worked comparisons and unresolved cases](../book/decisions/cross-domain-modernization-and-adr-examples.md) | Claim-level review pending | Normal | Provide a complete contrasting legacy modernization ADR with at least one undecidable choice and evidence that would settle it |
 
+## Remediation checkpoint — 2026-10-20 (after baseline `8a1bb1f`)
+
+**Actual book corrections landed:** `250cb6eff558f3971b1af68b6a9f47a367435263`; the controlled six-second trace arithmetic was then corrected in `c3470fe903ab1f99caee4717b345f2cf038d94e1`. The six edited page paths are the exact F-01–F-06 manuscripts above. **They are FIXED IN MANUSCRIPT / SOURCE-REVIEW OPEN, not ACCEPTED**. Earlier finding descriptions remain immutable *baseline observations*, rather than being rewritten as if the gaps never existed.
+
+| Finding | Implemented change and bounded source check | Required remaining signoff |
+|---|---|---|
+| F-01 V01/C02 | Equal service capacity and deterministic closed-vs-open schedule, six-second offered/completed/backlog table with consistent completion boundaries; explicit k6 source and synthetic label | Independent trace arithmetic/readability review; no k6 execution claimed |
+| F-02 V01/C06 | Synthetic 36-month staffing, 90/365-day retention (logical GiB), 45-day double-running and recovery-effort range; sensitivity/reversal under operational gates | Review which dimensions are hard gates vs invented rates; no pricing or real TCO inferred |
+| F-03 V02/C03 | Official Spring `@TransactionalEventListener` JavaDoc caveat for already-completed resources, distinct `REQUIRES_NEW` boundary, `fallbackExecution` / no active transaction and non-durability | Run or independently inspect a version-pinned listener/transaction fixture; do not infer recovery guaranteed |
+| F-04 V03/C02 | Primary Oracle JDK 24 release evidence confirming JEP 491 delivered, dated OpenJDK implementation-review `LM_LEGACY` caveat, honest note that canonical JEP full text was not fetched | Independent canonical JEP/build-specific confirmation; no JVM execution claimed |
+| F-05 V06/C06 | Paired illustrative bounded Cypher and PostgreSQL 17 recursive CTE using same six-node topology, date/tenant guards, expected `U1,U2`, visited-set cycle prevention | Query-engine execution and data/ACL fixture needed before claiming database-specific behavior confirmed |
+| F-06 V09/C03 | Separate W3C Baggage normative source, forged tenant/sensitive-key propagation across gateway, provider and telemetry, explicit negative test | Gateway/OTel version configuration and negative security test still proposed, not run |
+
+**Index update:** `55d0abc48ebc38770873c87d249ad908fa5949bc` updates precisely the six changed indexed document SHA-256 checksums and rebuilds the deterministic index snapshot over the unchanged 136-document set; previous snapshot was `e4b4be35…` and newly computed snapshot is `20b86bfb7cb8a2be820d570c66a463ff1f00ae0a7c5d37624239212612c980b6`. The regeneration reproduced the previous pinned digest from the original serialized canonical data before modifying any hashes, and preserved the existing IDs and routing metadata. This is a **deterministic programmatic checksum rebuild**, **not** execution of `scripts/route_index.py` in Python.
+
+**Technical retest status: PENDING.** Previous 13/13 and 195/195 PASS remain valid **only at `8a1bb1f`**. The six new chapters have been read for Markdown H1/fence sanity and source links but the complete repository Python validators, Markdown anchors, SQL/Cypher runtime and independent full-source review have **not** been rerun. A local checkout remains blocked by GitHub DNS resolution in this session. Do not upgrade acceptance status until that follow-up has genuinely run.
+
 ## Formal acceptance gate and next edit policy
 
 For each of the 69 chapters, record (a) reviewed manuscript revision and editor identity/role, (b) checked claim(s) and precise official source section/version or clearly labeled mathematical derivation, (c) explicit counterexample/recovery behavior and canonical owner, (d) fiction versus observed/public case classification, (e) unresolved contradictions / requested fix, and (f) the exact review disposition **REJECT / REVISE / SELF-REVIEW PASS / INDEPENDENTLY ACCEPTED**. Do **not** set independent acceptance from word counts, index success, reference presence or an AI-written scenario alone.
