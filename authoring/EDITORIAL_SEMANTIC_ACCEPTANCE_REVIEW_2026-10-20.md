@@ -82,6 +82,14 @@
 | V09/C03 | W3C Trace Context / W3C Baggage references above | Untrusted propagation of baggage can disclose private fields; sampled bit is not permission | No gateway/collector test performed |
 | V08/C02 | [SLSA specification 1.2](https://slsa.dev/spec/v1.2/) | Current chapter selects a real versioned supply-chain specification | Other SBOM/signer claims still need assertion-by-assertion acceptance |
 
+## Additional independent public-source spot-checks
+
+- **V04/C07 Kafka transactions:** [Apache Kafka 4.1 Design — Message Delivery Semantics / Using Transactions](https://kafka.apache.org/41/design/design/) describes transactionally coordinated Kafka producer output and consumer offsets, explicitly discussing separate external-output coordination. The manuscript appropriately rejects an automatic atomic commit with unrelated PostgreSQL/email effects. **Result:** selected central scope claim appears supported at the chosen *older* Kafka release; actual application configuration and every other chapter claim remain unreviewed.
+- **V06/C04 pgvector filtered ANN:** the [pgvector Filtering, Multitenancy and Iterative Index Scans sections](https://github.com/pgvector/pgvector#filtering) describe approximate-index filtering after candidate scanning, potential recall loss under selective predicates, and iterative scans since 0.8.0. The chapter's candidate-filtering counterexample is consistent with that described mechanism. **Result:** selected architectural mechanism supported, not a measured Tycho recall result; production-specific guidance still needs a pinned pgvector tag/build and ACL review. Note that a shared ANN index influencing recall is a *retrieval-quality* issue separate from the strict no-unauthorized-result security requirement.
+- **V01/C02 open/closed claim:** [k6 Open and Closed Models](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/) confirms that closed-model arrivals depend on iteration completion whereas arrival-rate executors attempt to schedule independently. The explanation is sound, but the **paired, equal-input demonstration** demanded by the acceptance probe is still absent (F-01).
+
+These checks compare deliberately narrow statements with official references. They are **not** a global source audit and do not grant formal chapter acceptance.
+
 ## Per-chapter acceptance queue (all 69; no silent approvals)
 
 **Disposition legend:** `FINDING` means a specific review defect or evidence gap was recorded above; `CLAIM REVIEW PENDING` means the initial evidence-footprint screening found source references but has **not** yet individually validated each substantive assertion or given approval. **Priority is risk of unreviewed conclusions, not proven error severity.** The original executable acceptance probe remains authoritative and is restated so follow-up work can record an actual independent decision.
