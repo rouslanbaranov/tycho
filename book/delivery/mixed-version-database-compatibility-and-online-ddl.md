@@ -136,6 +136,25 @@ Code image rollback is safe only when old N can correctly read and mutate every 
 
 A revert command is not recovery of acknowledged reservations or external effects.
 
+
+### Original compatibility matrix: new writer, old reader, delayed event
+
+A fictional booking application adds a new durable state code `CONFIRMED_V2`. Release N accepts only legacy `CONFIRMED`; N+1 reads both and wants to write the new code. During rolling deployment, old API instances and delayed event consumers can outlive the candidate rollout. An additive SQL column does **not** by itself establish semantic compatibility.
+
+| Reader / writer combination | Proposed permitted behavior | Deployment gate |
+|---|---|---|
+| N reads N writes | Existing contract | Baseline still checked |
+| N+1 reads N writes | New reader must preserve old meaning | Test legacy records and historical replay |
+| N reads N+1 writes | **Unsafe** if `CONFIRMED_V2` is not understood | Keep N+1 on old write format until N readers are retired |
+| N+1 reads N+1 writes | Target functionality | Verify authorization, meaning and downgrade/repair strategy |
+| Delayed N event consumer reads N+1 writes | Separate history version boundary | No old codec may silently discard or misinterpret the event |
+
+A schema rollout requires an actual **capability inventory**, not a belief that all deployed pods have a new image. Mobile/partner clients, queues, batch jobs, database views and backups can retain older semantics. The [Parallel Change description](https://martinfowler.com/bliki/ParallelChange.html) supports coexistence as a change pattern, while [PostgreSQL 17 ALTER TABLE](https://www.postgresql.org/docs/17/sql-altertable.html) documents DDL operations and lock considerations. Neither proves N/N+1 application meaning or migration reversibility.
+
+**Failure:** N+1 canary commits a new-only value, fails its latency checks, then a deployment controller rolls the image back to N. N can no longer read the record; **image rollback is not business rollback**. A safe intermediate stage keeps writes compatible, or otherwise requires a proven forward repair and a separately authorized no-return gate.
+
+**Proposed, unexecuted test:** run the compatibility matrix for each reader/writer/event cohort, inject an interrupted backfill, ensure the old decoder fails explicitly rather than corrupting state, and time DDL under representative table load. Semantic field migration belongs to [V05/C06](../data/schema-lifecycle-and-semantic-migration.md); progressive exposure to [V08/C04](gitops-canary-and-progressive-rollout.md).
+
 ## 6. Acceptance tests must include failures
 
 Proposed test fixture (not executed):
