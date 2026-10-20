@@ -128,6 +128,24 @@ When an RPC call times out, the client can retry under the same logical operatio
 
 An asynchronous workflow may have multiple producers and consumers; a single parent chain can be misleading. Span links or stable message/job IDs support correlation but do not enforce message order or a distributed transaction. [Outbox/idempotency](../distributed/transactional-outbox-and-idempotency.md) owns acknowledgment and duplicate-effect boundaries; [streaming](../integration/stateful-stream-processing-and-cdc.md) owns versioned event/replay state.
 
+
+### Worked trust-boundary example: an upstream sampling flag is not an authorization grant
+
+**Original hypothetical:** an unauthenticated client sends a crafted `traceparent` with the sampled bit set and a reused trace ID. A trusted API gateway forwards the incoming header to three services. If each service blindly performs expensive full recording whenever the external sampled bit is set, an attacker could inflate telemetry work or contaminate correlations. Even without malicious intent, a missing downstream exporter may create a misleading partial trace.
+
+The [W3C Trace Context Recommendation, sampled flag](https://www.w3.org/TR/trace-context/#sampled-flag) describes propagation and a *hint about recording behavior*, not authenticated proof that every ancestor span was stored. Its [security guidance](https://www.w3.org/TR/trace-context/#security-considerations) warns about untrusted sampling and information/denial-of-service risks.
+
+| Crossing | Safe design policy | What a trace cannot establish |
+|---|---|---|
+| Internet client → gateway | Parse and bound headers; follow a deliberate restart/normalization and sampling policy on the trust boundary | Incoming trace identity is authentic |
+| Gateway → internal RPC | Propagate correlation according to specification, enforce independently bounded telemetry costs | Every hop exported a span |
+| Queue/event consumer | Link execution to stable message/business identifiers across retries, if appropriate | One correlation ID proves single delivery or ordering |
+| API mutation → user effect | Record domain-authoritative effect identity and audit separately | A trace span proves a database transaction committed |
+
+**Recovery/failure reasoning:** when trace data is incomplete, use request counts and unsampled user-level SLIs to detect population impact. Missing spans cannot be treated as missing work. Forensics that needs a complete durable business history should use a controlled audit mechanism, not sampling-dependent traces.
+
+**Proposed negative test, not run:** send malformed, oversized, reused and forcibly sampled incoming headers; verify safe rejection/restart, no unauthorized correlation of tenant records, bounded exporter cost and continuity for permitted internal requests. Compare sampled spans against independently counted attempts without extrapolating sample p99 to the full population without an appropriate sampling design. The [audit owner](logs-audit-and-data-lineage.md) covers durable accountable effects; the [security owner](../security/identity-authorization-and-isolation.md) covers the actual authorization boundary.
+
 ## 6. Original diagnostic decision
 
 A hypothetical API's p99 worsens after a release. One proposal is to migrate to a different transport. First inspect sampled parent critical paths, dependency queues/pool wait, timeouts and retries; compare with unsampled user-level error/latency metrics. If only ten percent of requests were sampled, a p99 measurement from those traces cannot automatically be treated as the population p99.
