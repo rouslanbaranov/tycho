@@ -119,6 +119,14 @@ Text alternative: a leader appends and replicates a record. The broker's acknowl
 
 **Do not equate "replication factor 3" with "every record always survives any one failure."** The actual durability guarantee depends on producer acks, ISR/min ISR, leader election configuration, storage health, producer retry and how a commit is acknowledged. Loss/corruption and unclean elections have explicit trade-offs. Kafka 4.1's [Eligible Leader Replicas operations guide](https://kafka.apache.org/41/operations/eligible-leader-replicas/) is version-specific and must be consulted before relying on post-4.0 failover behavior. [E03]
 
+### Eligible Leader Replicas are version- and upgrade-configuration scoped
+
+Kafka's official [4.1 Eligible Leader Replicas operations reference](https://kafka.apache.org/41/operations/eligible-leader-replicas/) specifies that ELR was introduced in Kafka **4.0** and is **enabled by default for new clusters starting with 4.1**. That is not equivalent to saying it is active in every existing cluster merely because its brokers were upgraded to 4.1. Explicitly inspect the cluster's ELR protocol/configuration and partition state before using its leader-election behavior as a durability assumption.
+
+The documented ELR logic relies on **strict minimum ISR/high-watermark constraints**, and under eligible conditions can elect a non-ISR replica that is safe according to that protocol. It does not mean an arbitrary stale replica may safely take leadership, nor does it let a client infer whether its lost producer acknowledgment represents an appended record. The actual failover contract still depends on broker release, feature/upgrade status, replication, ISR, producer `acks`, client retries, storage integrity and whether unclean election is permitted.
+
+**Proposed negative test (not run):** compare a freshly created 4.1 cluster with an upgraded cluster for ELR enablement, reduce in-sync replicas below configured limits, lose the producer reply immediately before leader replacement, then inspect eligible leader metadata, acknowledged offsets and consumer-visible records. Reject an unconditional `RF=3 ⇒ no loss` claim. This source check is **about broker-record durability**, not application DB/payment exactly-once effects.
+
 ## 4. Consumer offset, effect and crash points
 
 The consumer must decide when to mark its position consumed, often relative to applying an external business effect.

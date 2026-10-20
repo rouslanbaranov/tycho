@@ -149,6 +149,23 @@ Text alternative: in transaction mode, one client uses a server connection for i
 
 PgBouncer `max_client_conn` limits accepted client sessions; `default_pool_size` is a default maximum **server connections per user/database pool**. The actual total server connections can exceed one pool size when multiple database/user pairs exist, and file descriptors/memory limits must be considered. [E02]
 
+### Version-scoped prepared statement compatibility: PgBouncer is not a binary yes/no
+
+A blanket statement that transaction pooling **never supports prepared statements** is outdated. The [PgBouncer FAQ — prepared statements in transaction pooling](https://www.pgbouncer.org/faq.html) states that since **PgBouncer 1.21.0**, protocol-level prepared statements can be tracked and prepared on the selected backend when `max_prepared_statements` is nonzero. The [configuration reference — max_prepared_statements](https://www.pgbouncer.org/config#max_prepared_statements) explains this tracked *protocol-level named-statement* behavior; it does **not** turn a client session into a permanently attached backend.
+
+The relevant compatibility matrix is more specific:
+
+| Client dependency | Transaction pooling disposition | Verification gate |
+|---|---|---|
+| Plain SQL with no session state | Plausible fit | Measure backend reuse, transaction scope and pool wait |
+| Extended-protocol **named prepared** statement | Conditional support in PgBouncer 1.21.0+ with the feature enabled | Pin PgBouncer/libpq/JDBC driver versions and `max_prepared_statements`; execute prepare/execute across different backend leases |
+| SQL-level `PREPARE` / `EXECUTE` or other session-affine state | **Do not assume** protocol rewrite makes it safe | Identify server-side statement/session semantics and test; otherwise use session pooling or remove the dependence |
+| Session-only `SET`, temporary object, advisory/session lock, `LISTEN` | Not made transaction-independent by prepared-statement support | Identify lifecycle and use an appropriate session/transaction model |
+
+**Synthetic negative test (not run):** client A prepares one named statement, finishes a transaction, then executes in another transaction assigned to a different backend. Repeat with `max_prepared_statements=0` and with nonzero tracking. Then issue SQL `PREPARE` and a session setting in separate transactions to demonstrate why those are **different** contracts. A passing prepared-statement test does not certify every PostgreSQL driver feature or prove pool capacity.
+
+This nuance updates the general compatibility warning above, rather than claiming a configured PgBouncer service or recommending transaction pooling universally.
+
 ## 4. Connection pooling is not queuing-capacity magic
 
 Suppose a stable hypothetical service has a single pool of 20 connections and every operation holds a connection **0.10 seconds on average**. Even under unrealistic perfect utilization and no additional bottleneck, the simple upper-bound arithmetic would be **20 / 0.10 = 200 connection-holding operations/s**. This is *not* a measured throughput SLO and not a queueing-theoretic tail latency prediction; locks, CPU, I/O, variance and overhead can lower achieved throughput dramatically.
