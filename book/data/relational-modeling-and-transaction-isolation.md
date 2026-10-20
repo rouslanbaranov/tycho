@@ -148,6 +148,25 @@ This **single-database guard** protects overlapping rows satisfying \`accepted\`
 
 A general \`CHECK\` constraint is **not** an appropriate substitute for a cross-row overlap invariant: PostgreSQL §5.5 warns that CHECK conditions referring to other rows cannot guarantee ongoing consistency. Neither an application-level SELECT nor a standalone non-unique GiST index automatically enforces the full restriction; the exclusion constraint expresses the rule at the database authority.
 
+
+### Worked invariant: non-overlapping bookings are not guaranteed by a pre-insert read
+
+**Synthetic transaction pair:** T1 and T2 each read a snapshot with no existing confirmed reservation for the same physical tool and overlapping time interval. They each insert a different reservation row. An application-level check that found no overlap before either insert does not enforce the cross-row invariant across concurrent writers.
+
+Two mechanisms must be reviewed independently:
+
+- **Exclusion at the data authority:** PostgreSQL 17 [constraints](https://www.postgresql.org/docs/17/ddl-constraints.html) and [range types](https://www.postgresql.org/docs/17/rangetypes.html) allow an appropriately specified exclusion constraint over tool identity and overlapping time ranges. The exact design still needs half-open boundary semantics, tenant scope, cancelled-record policy and an executable database test; simply mentioning GiST does not prove the required extension, operator classes or DDL exists.
+- **Serializable transaction and retry:** the [PostgreSQL 17 isolation reference](https://www.postgresql.org/docs/17/transaction-iso.html) describes serialization conflicts and failures. A failed transaction must be retried from its complete read/decision state, not merely its final INSERT with stale assumptions. [PostgreSQL's application-level consistency guidance](https://www.postgresql.org/docs/17/applevel-consistency.html) also states that this protection does not automatically extend to hot-standby/logical-replica decisions.
+
+| Boundary | Required behavior | Counterexample to reject |
+|---|---|---|
+| Overlapping concurrent writes | One valid authoritative outcome or a retryable conflict | Two accepted exclusive bookings from separate rows |
+| Serialization abort | Restart decision from fresh state and a bounded retry policy | Reuse the original stale read and resend external effects |
+| Committed booking, lost HTTP reply | Look up durable logical operation ID | Treat timeout as proof of no booking |
+| Read replica lags | Authoritative writer enforces booking invariant | Replica snapshot alone authorizes conflicting new booking |
+
+**Alternative:** a single-resource actor/serialized queue may simplify arbitration if its durability and recovery are proven, while an exclusion constraint may give a smaller change than distributed workflow extraction. Neither changes the need to reconcile a lost acknowledgment. All timestamps, actors and outcomes here are invented; no SQL transaction, extension installation or concurrency test was executed. The [idempotency owner](../distributed/retries-idempotency-and-ambiguous-effects.md) owns retry intent, not this relational constraint.
+
 ## 4. Serializable still needs a retry protocol
 
 PostgreSQL Serializable isolation can abort a transaction with a serialization failure to prevent a non-serializable committed outcome. A correct application should recognize that outcome and, where permitted, **retry the complete transaction from the beginning** with its stable logical operation identity. Blindly replaying external notifications or non-idempotent side effects during transaction retries can multiply effects.
