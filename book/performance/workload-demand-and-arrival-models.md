@@ -174,6 +174,15 @@ The values and constraints must be revisited when client behavior or schema chan
 
 This table does **not** choose an architecture. It identifies what to measure and when a mechanism could become applicable. [Pattern applicability](../decisions/pattern-applicability-and-contraindications.md) is the later choice layer.
 
+
+### Worked example: lost offered load versus server rejection
+
+In an **original hypothetical** ten-second burst, a test schedules 1,200 iterations, starts 800, observes 500 correct completions, 100 explicit rejections and 200 timeouts, while dropping 400 iterations before starting them. These invented counts distinguish scheduled load from actual attempts and correct business effects. The server cannot be blamed for 400 attempts that never reached it. The 200 timeouts might conceal durable commits and require operation-ID reconciliation.
+
+The [k6 open/closed workload contract](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/) explains why clients that wait for prior responses may hide overload by reducing their own arrival rate. Its [dropped-iterations reference](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/dropped-iterations/) identifies both generator sizing and system slowdown as possible reasons for drops; a drop counter alone cannot distinguish them. Actual ingress observations and generator resource measurements are necessary.
+
+**Proposed, not executed:** rerun the same planned arrival schedule with sufficient generator headroom, then compare ingress attempts, admission, correct durable outcomes and post-burst backlog. Do not treat 50 correct completions per second as a tested maximum capacity or equate timeout with non-commit. The [queueing chapter](queueing-littles-law.md) owns finite-window conservation; [benchmark validity](load-testing-and-benchmark-validity.md) owns workload-generator bias.
+
 ## 8. Public evidence and unverified claims
 
 | Source consulted | Scope | Limitation |
