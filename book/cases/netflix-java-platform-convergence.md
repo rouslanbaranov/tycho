@@ -32,7 +32,10 @@ route_hints:
     - "OSS"
     - "stack"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "N02"
+    - "N03"
+    - "N04"
   claim_ids: []
   status: "unknown"
   notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
