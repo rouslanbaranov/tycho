@@ -134,6 +134,24 @@ Suppose a fictional query spends most elapsed time waiting for DB connections. I
 
 Measure under normal, peak and degraded conditions; a single average can hide transient saturation or starvation.
 
+
+### Worked saturation counterexample: the bottleneck moves, not disappears
+
+**Original synthetic service:** four application replicas process independent reads and reservations. Suppose a fraction `p = 0.8` of the isolated CPU work can parallelize while the remainder stays serial. Amdahl's illustrative bound at four workers is `1 / ((1 - 0.8) + 0.8/4) = 2.5` times a one-worker baseline, **only under the model's assumptions**. It is not a measured fleet speedup and does not account for network, contention, memory, skew or the database's maximum transaction rate.
+
+Now suppose the hypothetical database can sustain only 200 correctly completed reservations per second at the declared isolation level. App replicas can collectively issue 350 attempted reservations/s. The extra concurrency may grow database pool wait, drive retries after timeouts and *reduce correct business completions*, even when app CPU appears healthy. A synthetic test that shows p99 growth while CPU falls does not demonstrate that the application needs more replicas.
+
+| Observed shape | Candidate mechanism | Discriminator | Unsafe "fix" |
+|---|---|---|---|
+| CPU near limit, DB/pool quiet | Actual CPU-bound work | Per-request CPU profiling at fixed arrival mix | Unbounded threads |
+| Pool wait rises as replicas grow | Shared database admission constraint | Active leases, pool acquisition, transaction service time | More pools per replica without fleet budget |
+| One item's latency dominates | Hot-key serialization | Per-key contention and offered/finished operations | More app replicas |
+| Queue drains long after arrivals stop | Backlog and retry amplification | Queued age, new vs retry operations, correct completions | Interpret accepted RPS as throughput |
+
+The [Universal Scalability Law source](https://arxiv.org/abs/0808.1431) provides a model for coherence/contending costs, not parameters for this made-up service. Model fitting requires actual independent measured points and error bars; do not set coefficients by guessing a technology brand.
+
+**Proposed failure-and-recovery experiment, not executed:** at equal open-model offered arrivals, step from one to four to eight replicas, then remove the injected burst while recording correct outcomes, queue length and time-to-drain. Re-run under a deliberately hot key and under a distributed key mix. A valid remedy may be query optimization, bounded admission, domain-local serialization or fewer active workers, rather than horizontal scale. The [pool owner](../scaling/connection-pools-hikaricp-pgbouncer.md) specifies resource budgets; [autoscaling](autoscaling-lag-and-capacity-limits.md) owns the response delay and hysteresis.
+
 ## 6. A discriminating scalability experiment
 
 A meaningful test holds input data, authorized outcomes and total resource envelope controlled while varying concurrency/replica count:
