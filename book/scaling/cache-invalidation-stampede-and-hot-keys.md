@@ -145,6 +145,24 @@ flowchart TD
 
 The correct fallback depends on data importance. For public noncritical descriptions, serving a labeled stale value may be acceptable. For an authoritative reservation or access grant, a stale cache value may be forbidden; reject and explain lack of current state instead.
 
+
+### Original race: an old asynchronous fill resurrects invalid data
+
+Suppose a catalogue cache contains version 17 of a resource. Reader A misses and begins a slow database read of version 17. Writer B commits version 18, invalidates the cache and returns success. A finishes later and populates the cache with its older version 17. The final cache state is stale **despite a correct invalidation message**: deletion alone does not fence an in-flight fill.
+
+| Step | Database authority | Cache state |
+|---|---|---|
+| T0 A begins read | v17 | Miss / refill pending |
+| T1 B commits | v18 | Invalidation arrives |
+| T2 A finishes slow old read | v18 | **Unsafe** if v17 is installed without a version/generation check |
+| T3 C requests item | v18 | Must not assume invalidation proved freshness |
+
+One design is to attach an authority-issued version or generation to each value and admit a replacement only if it is not older than the cached high-water generation. This needs a coherent version source and atomic comparison under concurrency; local counters cannot provide cross-replica ordering. Another design can forgo strong freshness, explicitly allowing a bounded stale interval where business and authorization requirements permit it.
+
+A refresh mutex limits stampede work but **does not necessarily prevent stale installation after a writer's invalidation**. Similarly, TTL limits lifetime under assumptions but is not transactional consistency. The [Redis cache-aside description](https://redis.io/docs/latest/develop/use-cases/cache-aside/) and [Caffeine refresh documentation](https://github.com/ben-manes/caffeine/wiki/Refresh) describe general mechanisms; neither certifies the fictional generation protocol.
+
+**Negative recovery test, not run:** pause A before cache installation, commit B, resume A, then assert that a newer authoritative generation cannot be overwritten. Separately expire a popular key at burst load and check source/database admission, coalescing, timeout and correctness. If a cache cannot satisfy required freshness or tenant isolation, bypass/restrict that cache rather than label it eventually consistent without an approved bound.
+
 ## 6. A discriminating failure experiment
 
 Reproducible candidate tests (not performed):
