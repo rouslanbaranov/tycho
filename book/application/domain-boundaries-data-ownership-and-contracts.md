@@ -174,6 +174,21 @@ The makerspace, rules, mappings, diagrams, decision alternatives and failures ar
 - Prerequisite: [System boundaries](problem-framing-and-system-boundaries.md), [architecture styles](architecture-styles-and-module-boundaries.md).
 - Further reading: [API/RPC compatibility](http-rpc-contracts-and-compatibility.md), [transaction and idempotency limits](../distributed/transactional-outbox-and-idempotency.md), [legacy transition](../decisions/legacy-baseline-and-modernization-evidence.md).
 
+## Engineering walkthrough — Two teams change the same concept during a schema transition
+
+**Original hypothetical conflict:** a Catalogue team owns a `unit` identity; a Booking team owns reservation decisions but maintains a read projection of unit labels. Catalogue changes `asset_code` from a physical-unit identifier to a model identifier while Booking still interprets it as one reservable unit. Field types remain strings; JSON schema compatibility alone would conceal a semantic break.
+
+| Ownership element | Declared rule | Counterexample |
+|---|---|---|
+| Unit meaning | Catalogue controls immutable unit identity and publishes semantic version | Booking invents a new unit by copying the new model code |
+| Reservation authority | Booking alone commits exclusive reservation effects | Both Catalogue and Booking accept bookings against different views |
+| Read projection | Booking stores versioned Catalogue facts, can be stale for display | Projection freshness is treated as authorization to mutate authority |
+| Coexistence | Old/new field readers use explicit translation or rejection | Unknown mapping silently defaults to one arbitrary unit |
+
+The safe transition first introduces distinct model and physical-unit identities. The old `asset_code` contract stays available while consumers migrate, with unmappable records quarantined; only then may its meaning be retired. Two independent authoritative writers are not permitted merely because teams have distinct services. **Failure:** a delayed old event arrives after the new projection has advanced; it must not overwrite the new identity under the event-order/version policy.
+
+**Proposed, not executed:** issue concurrent booking and identity-update commands from both teams, replay a late legacy event and verify a single state owner, nonambiguous mapping and explicit unknown-state handling. A bounded-context map explains language/ownership; it is not an infrastructure knowledge graph or proof of source-version compatibility. Contradiction with observed consumer behavior blocks cutover.
+
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.

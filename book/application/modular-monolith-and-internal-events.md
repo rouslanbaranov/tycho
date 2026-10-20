@@ -164,6 +164,20 @@ All modules, diagrams, events and failure cases are original invented teaching m
 
 Proposed owner **V02/C03** in [planned table of contents](../PROPOSED-STRUCTURE.md), [application landing](README.md). Start with [bounded contexts and ownership](domain-boundaries-data-ownership-and-contracts.md), then [module/service styles](architecture-styles-and-module-boundaries.md), [internal vs external outbox](../distributed/transactional-outbox-and-idempotency.md) and [safe extraction](architecture-evolution-and-extraction.md).
 
+## Engineering walkthrough — An internal event that survives neither process death nor commit
+
+**Original fictional workflow:** `BookingModule` reserves a resource and emits `BookingCreated`. `NotificationModule` subscribes. Three superficially similar deliveries have different durability: calling subscribers inside the transaction, invoking after-commit listeners, and storing a durable publication intention for later dispatch.
+
+| Crash window | Synchronous in-process listener | After-commit listener | Durable outbox-like publication |
+|---|---|---|---|
+| Before booking commit | Subscriber might have run before rollback if misconfigured | Should not run as a committed-event observer | Neither booking nor outbox entry becomes durable if transaction rolls back |
+| Immediately after commit, process dies | Prior callback result varies with order | May never run | Pending committed event can be found and retried |
+| Callback fails | May poison or alter initiating transaction, according to design | Booking cannot be undone by callback exception alone | Relay retries; consumer must deduplicate |
+
+The [Spring transaction event documentation](https://docs.spring.io/spring-framework/reference/7.1/data-access/transaction/event.html) describes phase-bound listeners; it does **not** make arbitrary callbacks durable. A module split into separate processes increases latency, authorization and retry costs without solving the lost-after-commit callback by itself. Keep notification optional when business semantics permit; if a legally required notice must eventually occur, persist the obligation and its effect identity.
+
+**Proposed negative experiment:** terminate the process exactly after booking commit but before notification, then restart, reconcile booking and ensure a durable publication method eventually resolves the obligation without duplication. This is a plan, not a run. The distinct distributed outbox owner V04/C05 supplies detailed delivery semantics; modular architecture owns the local dependency boundary.
+
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.

@@ -160,6 +160,21 @@ The software, names, diagrams, resources and attack cases are original invented 
 
 **Navigation:** proposed **V02/C07** in [outline](../PROPOSED-STRUCTURE.md), [application landing](README.md). Related [Domain ownership](domain-boundaries-data-ownership-and-contracts.md), [Identity and service isolation](../security/identity-authorization-and-isolation.md), [Safe agent-accessible knowledge](../security/safe-agent-access-and-knowledge-isolation.md), [Connection pool scaling](../scaling/connection-pools-hikaricp-pgbouncer.md).
 
+## Engineering walkthrough — Tenant isolation across four non-equivalent layers
+
+**Original synthetic negative test:** Tenant A authenticates and calls an authorized `GET /catalogue`. A joined search result points to Tenant B's maintenance ticket; a shared Redis key stores an unscoped catalogue summary; an internal event consumer uses a service credential with broader scope than the original user. All infrastructure can be healthy while a cross-tenant disclosure occurs.
+
+| Layer | Required independent boundary | Failure that a separate database alone cannot prevent |
+|---|---|---|
+| Authentication | Verify subject/issuer/audience | Identity of A mistaken for authority over B |
+| Object authorization | Check subject, action, object and tenant at every sensitive authority | Guessable B booking ID returned by a shared API |
+| Data placement | Tenant-scoped query, partition or store and backup/restore contract | Shared read-projection joins keys without the tenant predicate |
+| Infrastructure/resources | Explicit CPU/connection/bandwidth isolation objectives | A's burst exhausts a common pool despite correct data ACLs |
+
+On a revocation, caches and asynchronous consumers must not continue to serve previously authorized B data to A. A tenant ID in a URL is untrusted input; deriving it from a signed session may help but still does not establish access to an arbitrary object. A migration from shared rows to separate databases needs authoritative tenant inventory, dual-read/write compatibility, audit, backup and a no-return boundary.
+
+**Proposed, not executed:** send cross-tenant IDs to API, cache, message and bulk-export endpoints; force ACL revocation between search and source expansion; saturate shared downstream resources to measure noisy-neighbor effect separately from confidentiality. The OWASP Authorization references support deny-by-default patterns; they do not certify security or an achieved isolation tier here.
+
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.

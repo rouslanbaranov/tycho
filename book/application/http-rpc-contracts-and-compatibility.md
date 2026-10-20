@@ -207,6 +207,21 @@ Inspected independently public reference sections on 2026-10-19, with the follow
 - Related: [Transactional outbox and idempotency](../distributed/transactional-outbox-and-idempotency.md), [Safe schema evolution](../delivery/progressive-delivery-and-schema-evolution.md), [Authorization isolation](../security/identity-authorization-and-isolation.md), [Java reactive execution](../execution/reactor-webflux-r2dbc-and-backpressure.md).
 - Next: mixed-version runnable consumer/provider tests and detailed streaming reconnect semantics (unimplemented, future authoring work).
 
+## Engineering walkthrough — Mixed clients and an unacknowledged committed POST
+
+**Original compatibility matrix:** legacy client N sends a booking `POST` with no stable key; new N+1 sends `operationId` and accepts a `PENDING` response. Server S1 only understands immediate success/failure; S2 persists operation identities and can report UNKNOWN while reconciliation runs. A rollout that updates S2 first must not fabricate keys on N's behalf as if independent retries were uniquely identifiable.
+
+| Interaction | Valid contract | Unsafe shortcut |
+|---|---|---|
+| N → S2 | Preserve legacy semantics or explicitly gate incompatible features | Return `PENDING` when old client interprets any 2xx as final confirmation |
+| N+1 → S1 | Keep supported old wire format or reject unsupported version | Assume a new field is understood merely because payload parses |
+| N+1 → S2 | Stable intent ID, bounded deadline and queryable result | Treat cancellation as authoritative transaction abort |
+| Response lost after S2 commit | Resolve from durable operation identity | Blindly retry as a fresh write |
+
+HTTP [RFC 9110 idempotent-method semantics](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) apply at the method-intent level, not automatically to a custom booking POST. gRPC deadline/cancellation guidance distinguishes no-longer-waiting from undoing a side effect. Record independent transport timeout, domain status and ledger lookup outcomes.
+
+**Proposed test:** introduce N/N+1 clients, two server versions, wrong-version events, lost acknowledgments and one concurrent duplicate intent. The same logical reservation must never be confirmed twice; errors must remain machine distinguishable and within the client's retry budget. If old clients cannot represent pending outcomes, retaining an immediate final result or an explicit incompatible-version refusal may be safer than a subtle protocol upgrade. No client/server interoperation was executed.
+
 ## Applied M9 evidence: what transfers and what does not
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.

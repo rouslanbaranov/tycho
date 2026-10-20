@@ -172,6 +172,21 @@ Extra translation can incur measurable CPU, serialization and network latency; a
 
 All system names, mappings, state-machine decisions, examples and figures are invented for teaching. No proprietary DDD book was reproduced. No integration, failure injection, independent reviewer or real-system validation has been performed. The exact final edition chapter/page hierarchy remains pending.
 
+## Engineering walkthrough — Lossy translation behind a seemingly compatible API
+
+**Original synthetic migration:** a legacy tool catalogue stores `status=ACTIVE` for a model that can be rented; a new unit-level system stores `status=AVAILABLE` for each physical unit. Mapping ACTIVE directly to AVAILABLE implies stock and allocation guarantees the old system never made. The anti-corruption adapter must preserve or explicitly reject that uncertainty.
+
+| Adapter input | Safe semantic disposition | Forbidden transformation |
+|---|---|---|
+| Legacy model ACTIVE without physical-unit ID | Return model listing, or unknown unit availability | Assert one available physical unit |
+| New unit booked while old client retries | Query the sole authoritative booking writer by operation identity | Retry the old model action as a second reservation |
+| Missing legacy tenant relation | Reject or quarantine and request mapping proof | Default to a public tenant |
+| Old consumer receives new state | Encode compatible projection or versioned explicit error | Silently drop the state and claim synchronized results |
+
+**Partial failure:** the new authority commits R7 but its response to the adapter is lost. The adapter cannot unilaterally roll back R7, nor should it hide the ambiguous outcome behind repeated writes. It must retain the cross-system correlation and resolve the result from authority before answering with success or a classified pending/unknown status.
+
+Retirement sequence (synthetic): inventory both client populations; add measurement for use of legacy operations; introduce versioned translation and a trusted mapping; reconcile unknown outcomes; wait through replay/retention horizon; only then disable legacy writes and finally the adapter. The [anti-corruption-layer pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer) motivates semantic separation, **not** correctness of this mapping. **Proposed test:** deliberately send unmappable model IDs and a lost acknowledgment, prove no false availability and one booking authority. None was run.
+
 ## Navigation
 
 - Proposed **V02/C06**, current [application landing](README.md).
