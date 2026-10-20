@@ -2,6 +2,7 @@
 from pathlib import Path
 import re
 import unittest
+from edition_paths import canonical_path, relative_link
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "book/data"
@@ -25,7 +26,7 @@ class DataArchitectureTests(unittest.TestCase):
     def test_substantial_research_sources_and_mermaid(self):
         for name, sources in PAGES.items():
             with self.subTest(page=name):
-                content = (DATA / name).read_text(encoding="utf-8")
+                content = canonical_path(DATA / name).read_text(encoding="utf-8")
                 self.assertGreater(len(content), 11000)
                 self.assertGreaterEqual(content.count("```mermaid"), 3)
                 self.assertGreaterEqual(content.count("Text alternative:"), 3)
@@ -35,11 +36,11 @@ class DataArchitectureTests(unittest.TestCase):
                     self.assertIn(source, content)
 
     def test_navigation_and_local_links(self):
-        texts = [DATA / "README.md", *(DATA / x for x in PAGES)]
+        texts = [DATA / "README.md", *(canonical_path(DATA / x) for x in PAGES)]
         index = (ROOT / "book/README.md").read_text(encoding="utf-8")
         self.assertIn("(data/README.md)", index)
         for name in PAGES:
-            self.assertIn("(" + name + ")", texts[0].read_text(encoding="utf-8"))
+            self.assertIn("(" + relative_link(DATA / "README.md", DATA / name) + ")", texts[0].read_text(encoding="utf-8"))
         for path in texts:
             for target in re.findall(r"\]\(([^)]+)\)", path.read_text(encoding="utf-8")):
                 if target.startswith(("http://", "https://", "mailto:", "#")):

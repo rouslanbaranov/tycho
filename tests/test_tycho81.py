@@ -4,6 +4,7 @@ Purely structural: does not validate software releases or broker recovery.
 """
 from pathlib import Path
 import unittest
+from edition_paths import canonical_path, relative_link
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "book/integration"
@@ -18,7 +19,7 @@ class IntegrationCorpusTests(unittest.TestCase):
     def test_bounded_research_pages(self):
         for name, sources in PAGES.items():
             with self.subTest(name=name):
-                text = (BASE / name).read_text(encoding="utf-8")
+                text = canonical_path(BASE / name).read_text(encoding="utf-8")
                 self.assertGreater(len(text), 8000)
                 self.assertGreaterEqual(text.count("```mermaid"), 3)
                 self.assertGreaterEqual(text.count("Text alternative:"), 3)
@@ -31,7 +32,7 @@ class IntegrationCorpusTests(unittest.TestCase):
         landing = (BASE / "README.md").read_text()
         self.assertIn("```mermaid", landing)
         for name in PAGES:
-            self.assertIn("(" + name + ")", landing)
+            self.assertIn("(" + relative_link(BASE / "README.md", BASE / name) + ")", landing)
         self.assertTrue((ROOT / "book/distributed/README.md").is_file())
 
     def test_original_example_arithmetic_does_not_claim_measurement(self):

@@ -1,0 +1,1014 @@
+{
+  "schema_version": 1,
+  "edition": "Tycho 2026.10 — First Markdown Edition",
+  "version": "2026.10.0",
+  "baseline_commit": "08ac0da83c30d2f2e6aea3446142ad183987f01c",
+  "manuscript_acceptance_commit": "986b1ddbe985079b7c647182fcf1c2fc8911d96c",
+  "volumes": [
+    {
+      "code": "V01",
+      "title": "Requirements, quality attributes and architecture fundamentals",
+      "id": "tycho.volume.4d10f5c93f3b4356a553c8732e513a38",
+      "path": "book/volumes/v01/README.md",
+      "mission": "translate a problem into observable behavior, constraints and competing qualities without naming a solution prematurely.",
+      "prerequisite_description": "None; a concrete user outcome or proposed system boundary is enough.",
+      "synthesis_question": "A reasoned requirements contract that distinguishes offered demand, qualities, hard constraints, observed data and speculative improvements.",
+      "scenario": "A fictional reservation service is called slow. The first decision is whether the missing outcome is a rejected request, a committed reservation with a lost response, or an acceptable operation delayed by a queue. Each observation implies a different measurement boundary. Count users, arrival attempts and committed outcomes separately before proposing capacity.",
+      "synthesis": "Write a requirements contract containing an outcome, an invariant, a workload distribution, hard operating constraints and at least two competing explanations. Turn each explanation into a discriminating observation. A component diagram is useful only insofar as it locates the owner and dependency responsible for those observations.",
+      "counterexample": "Do not carry a synthetic latency or cost estimate into a commitment as if it were measured. A candidate that improves one quality while violating a hard integrity constraint is rejected before preference scoring. Carry the explicitly unknown recovery, load and staffing inputs into the next volume rather than inventing precise values.",
+      "diagnostic_route": [
+        "V01/C01",
+        "V01/C02",
+        "V01/C03",
+        "V01/C04",
+        "V01/C06"
+      ],
+      "prerequisite_codes": []
+    },
+    {
+      "code": "V02",
+      "title": "Application boundaries and interaction contracts",
+      "id": "tycho.volume.7e8f5fd0c9d94504b6dc74b9ae6c30f3",
+      "path": "book/volumes/v02/README.md",
+      "mission": "decide responsibilities and system boundaries before distributing them.",
+      "prerequisite_description": "V01/C01, C03, C06.",
+      "synthesis_question": "Map ownership and interface semantics before splitting deployment: modular monolith, services and adapters are conditional alternatives; tenancy crosses every boundary.",
+      "scenario": "A fictional workshop keeps booking and catalogue behavior in one deployable. Different owners need different release cadences, but bookings still require an authoritative availability check. Splitting processes changes the failure and compatibility contracts; it does not, by itself, decide who owns availability.",
+      "synthesis": "Draw module dependencies and domain state ownership first. Compare an enforced modular design with remote services using the same outcome and operating constraints. Specify the port or API's deadline, authorization, version and unknown-result behavior. An adapter must preserve meaning, including explicit rejection of values that cannot be translated.",
+      "counterexample": "An internal event may be convenient coordination without being durable delivery. A tenant identifier may help routing without authorizing an object. Carry those distinctions into execution and distributed semantics: moving code across a network creates recovery obligations that source-level dependency inversion alone cannot discharge.",
+      "diagnostic_route": [
+        "V02/C02",
+        "V02/C03",
+        "V02/C04",
+        "V02/C05",
+        "V02/C07"
+      ],
+      "prerequisite_codes": [
+        "V01/C01",
+        "V01/C03",
+        "V01/C06"
+      ]
+    },
+    {
+      "code": "V03",
+      "title": "Execution models, concurrency and flow control",
+      "id": "tycho.volume.c4854b444d7c480e9616c5bf06f4db08",
+      "path": "book/volumes/v03/README.md",
+      "mission": "explain the execution and resource budgets behind a request.",
+      "prerequisite_description": "V01/C02 and V02/C05.",
+      "synthesis_question": "A resource-budget view tracing request admission, execution/task/connection pools and cancellation to the external effect boundary.",
+      "scenario": "A fictional endpoint fans out to two dependencies and then writes through a bounded database pool. Replacing worker threads changes waiting overhead, while the database permits and the caller's time budget remain finite. Diagnose which resource is limiting before attributing the outcome to the programming model.",
+      "synthesis": "Trace admission, task lifetime, scheduling, buffered work, connection acquisition and the external effect. Assign an owner and a limit at each boundary. Compare blocking, virtual-thread and reactive approaches against the same cancellation and downstream-capacity contract rather than assuming one runtime model dominates every workload.",
+      "counterexample": "Cancellation may stop local waiting after the remote effect has committed. Backpressure on one publisher does not bound a hidden queue elsewhere. Handoff to distributed semantics must therefore include logical effect identity and recovery lookup, alongside the execution budget. Product-specific tuning still needs a compatible version and a real workload.",
+      "diagnostic_route": [
+        "V03/C01",
+        "V03/C02",
+        "V03/C03",
+        "V03/C05",
+        "V03/C06"
+      ],
+      "prerequisite_codes": [
+        "V01/C02",
+        "V02/C05"
+      ]
+    },
+    {
+      "code": "V04",
+      "title": "Distributed coordination and event integration",
+      "id": "tycho.volume.c0927de8450647c49e2d33774eeb60be",
+      "path": "book/volumes/v04/README.md",
+      "mission": "describe what can and cannot be guaranteed across failure-prone boundaries.",
+      "prerequisite_description": "V02/C02, C05; V03/C03–C05.",
+      "synthesis_question": "A failure trace from request to durable state to event consumer: causal order, retry identity and transaction scope are different promises.",
+      "scenario": "A fictional booking commits locally, publishes an event and triggers an independent notification. Kill the publisher after local commit, then lose an acknowledgment after consumer processing. These two failures expose separate uncertainty windows even when the normal-path diagram contains one arrow.",
+      "synthesis": "Choose the invariant and authoritative commit boundary before discussing a delivery guarantee. Follow causality, replicated authority, retry identity, publication intent, receiver state and stream recovery separately. An outbox can retain publication intent; the receiver still needs a durable effect and deduplication contract within its own transaction boundary.",
+      "counterexample": "Neither a total order nor a processor checkpoint automatically covers an external side effect. A delayed compensation may itself need retries and reconciliation. Carry explicit transaction, replay, retention and authority assumptions into storage design, and distinguish useful asynchronous projections from state that must never temporarily disagree.",
+      "diagnostic_route": [
+        "V04/C02",
+        "V04/C03",
+        "V04/C04",
+        "V04/C05",
+        "V04/C08"
+      ],
+      "prerequisite_codes": [
+        "V02/C02",
+        "V02/C05",
+        "V03/C03",
+        "V03/C05"
+      ]
+    },
+    {
+      "code": "V05",
+      "title": "Data models, engines and lifecycle",
+      "id": "tycho.volume.01d303aaa7984edaac4127884592dd75",
+      "path": "book/volumes/v05/README.md",
+      "mission": "connect data integrity, workload, engine internals and deployment costs.",
+      "prerequisite_description": "V04/C03–C05.",
+      "synthesis_question": "A data-authority and lifecycle model from constraint/index/WAL through partitioning, migration and verified restore; storage engine is not an architecture shortcut.",
+      "scenario": "A fictional catalogue changes schema while readers of two versions remain active. An engine accepts the new columns and an asynchronous replica is reachable, yet an older reader may misinterpret a new value and a recent acknowledged write may not be on the recovery copy.",
+      "synthesis": "Connect domain invariants to relational constraints and isolation, then inspect WAL, access paths, alternative stores and partition ownership. A storage decision must account for both current operations and the lifecycle of their state: migration, retention, backup membership, replay and application reconciliation.",
+      "counterexample": "A replica is not a historical backup, a balanced row count is not a balanced workload, and successful DDL is not behavioral compatibility. Carry authority and freshness requirements into caching/search; those mechanisms should accelerate or project known state without silently becoming a second writer.",
+      "diagnostic_route": [
+        "V05/C01",
+        "V05/C03",
+        "V05/C05",
+        "V05/C06",
+        "V05/C07"
+      ],
+      "prerequisite_codes": [
+        "V04/C03",
+        "V04/C04",
+        "V04/C05"
+      ]
+    },
+    {
+      "code": "V06",
+      "title": "Caching, indexing and information retrieval",
+      "id": "tycho.volume.69e6229b222f4535bc0b3941cee1b1cc",
+      "path": "book/volumes/v06/README.md",
+      "mission": "show why different acceleration and search mechanisms solve different problems.",
+      "prerequisite_description": "V02/C02; V05/C03–C06.",
+      "synthesis_question": "Clarify authority/cache/projection/search separation; show lexical, vector, hybrid and graph fits with quantitative evaluation and failure boundaries.",
+      "scenario": "A fictional catalogue serves a cached item view and two search indexes. The item changes, one index refresh is delayed, and an access grant is revoked. Fast responses can now be stale, incomplete or forbidden; none of those failures is detected by a relevance score alone.",
+      "synthesis": "Separate authoritative data, cache freshness, index membership and query authorization. Compare lexical matching, vector similarity, fusion and explicit relationship traversal according to the questions they answer. Keep corpus version, configuration, judgments and negative queries together when evaluating the candidate.",
+      "counterexample": "Graph traversal is a subject of the book, not a requirement to create a curated Tycho graph. Approximate-neighbor recall and BM25 relevance do not establish source truth. Carry candidate-generation cost, invalidation storms and refresh lag into performance analysis, with an exact account of what each result can and cannot support.",
+      "diagnostic_route": [
+        "V06/C01",
+        "V06/C02",
+        "V06/C03",
+        "V06/C05",
+        "V06/C07"
+      ],
+      "prerequisite_codes": [
+        "V02/C02",
+        "V05/C03",
+        "V05/C05",
+        "V05/C06"
+      ]
+    },
+    {
+      "code": "V07",
+      "title": "Performance, scale and resilience under load",
+      "id": "tycho.volume.f7679623ca274bff8a00389d409d68c6",
+      "path": "book/volumes/v07/README.md",
+      "mission": "connect load and failure conditions to observed limits, avoiding universal thresholds.",
+      "prerequisite_description": "V01/C02–C04; V03/C05; V04/C04.",
+      "synthesis_question": "A capacity envelope joining Little's Law, offered load, contention, tails, overload controls, autoscaling lag and cost with falsification.",
+      "scenario": "A fictional service stays within its mean response target until a short burst coincides with a slow dependency. Queues grow, retries multiply demand, and extra replicas become ready after the burst. A stable average computed over the entire run conceals the failed user journeys.",
+      "synthesis": "Build a capacity envelope from a declared arrival process and measured boundary. Relate occupancy and rates carefully, then inspect contention, arrival-model bias, critical paths, overload and scaling delay. Compare alternatives using correct outcomes over total cost, including peak and degraded operation.",
+      "counterexample": "Little's Law does not choose a pool size or predict p99. A closed-loop generator can hide external demand, and autoscaling cannot erase elapsed startup delay. Pass the admitted workload, failure headroom and recovery criteria into deployment design rather than carrying a single optimistic throughput number.",
+      "diagnostic_route": [
+        "V07/C01",
+        "V07/C03",
+        "V07/C04",
+        "V07/C05",
+        "V07/C06"
+      ],
+      "prerequisite_codes": [
+        "V01/C02",
+        "V01/C03",
+        "V01/C04",
+        "V03/C05",
+        "V04/C04"
+      ]
+    },
+    {
+      "code": "V08",
+      "title": "Delivery, deployment and disaster recovery",
+      "id": "tycho.volume.cb10070ba233477fae8aa5d18e74fee8",
+      "path": "book/volumes/v08/README.md",
+      "mission": "distinguish producing deployable software from safely releasing and operating it.",
+      "prerequisite_description": "V02/C05; V04/C03–C05; V05/C06–C07.",
+      "synthesis_question": "A cutover chain linking artifact trust, mixed versions, deployments, failure domains, data authority and recovery after the no-return point.",
+      "scenario": "A fictional release uses a signed artifact and a small canary. The canary writes a value old binaries cannot interpret. Later a zone fails while the former writer remains reachable. Artifact authenticity, safe exposure, data compatibility and exclusive recovery authority are four separate questions.",
+      "synthesis": "Follow the cutover chain from source/build identity through digest verification and authorized promotion to mixed-version execution. Place replicas with shared dependencies visible. Define stop conditions, no-return points, writer fencing, reconciliation and user-level recovery clocks before declaring a rollout or region switch successful.",
+      "counterexample": "Reverting a binary does not restore discarded data or reverse an external effect. Placement across zones does not remove a shared control or storage dependency. Hand operations a tested recovery procedure and a clear evidence boundary; documentation and proposed drills are not evidence that a live recovery occurred.",
+      "diagnostic_route": [
+        "V08/C01",
+        "V08/C02",
+        "V08/C04",
+        "V08/C05",
+        "V08/C07"
+      ],
+      "prerequisite_codes": [
+        "V02/C05",
+        "V04/C03",
+        "V04/C05",
+        "V05/C06",
+        "V05/C07"
+      ]
+    },
+    {
+      "code": "V09",
+      "title": "Observability, security and operational architecture",
+      "id": "tycho.volume.4a94b1e6f8234841afaa51af14330627",
+      "path": "book/volumes/v09/README.md",
+      "mission": "make system behavior measurable, operable and bounded by explicit security constraints.",
+      "prerequisite_description": "V02/C07, V04/C04; V07/C03.",
+      "synthesis_question": "A user-visible truth/accountability loop: metrics, traces, audit, security and incident recovery have different completeness and trust guarantees.",
+      "scenario": "A fictional incident shows healthy process metrics while some users receive stale search results. A trace is missing, diagnostic logs suggest a completed operation, and the authoritative audit record is absent. Those observations may have different populations, sampling rules and durability guarantees.",
+      "synthesis": "Start from the promised user outcome and eligible population. Preserve metric meaning through aggregation, interpret sampled traces with trust and propagation limits, and distinguish diagnostic logs from audit and lineage. Enforce identity and resource authorization independently of a caller's explanation or retrieved text.",
+      "counterexample": "A missing span is not proof that no effect occurred. An incident mitigation is not necessarily restored state correctness, and relevant knowledge is not permission to act. Carry the unresolved facts and their confidence into architecture decisions; neither a dashboard nor an agent should replace the authority of the actual state owner.",
+      "diagnostic_route": [
+        "V09/C01",
+        "V09/C02",
+        "V09/C03",
+        "V09/C04",
+        "V09/C06"
+      ],
+      "prerequisite_codes": [
+        "V02/C07",
+        "V04/C04",
+        "V07/C03"
+      ]
+    },
+    {
+      "code": "V10",
+      "title": "Decision support and modernization playbooks",
+      "id": "tycho.volume.e826731e3543471f94d5eb9af68cbfa7",
+      "path": "book/volumes/v10/README.md",
+      "mission": "apply validated knowledge to constrained choices while allowing “measure first”, “retain design” and “insufficient evidence” outcomes.",
+      "prerequisite_description": "All earlier volumes; V01/C01–C06 first.",
+      "synthesis_question": "A full legacy-to-target-to-transition ADR with alternatives, reversible and irreversible stages, costs, authorization, evidence and an explicit unknown/refusal outcome.",
+      "scenario": "A fictional catalogue modernization begins with complaints about slow reads and difficult releases. Keep query repair, better module boundaries, caching and service extraction as competing candidates. Observe the existing state owner and failure behavior before attributing a benefit to a preferred target topology.",
+      "synthesis": "Construct an ADR from the requirement/workload profile and observed baseline. Eliminate candidates that fail hard constraints, select experiments that can reverse a preference, and plan coexistence as a sequence of real states. Record the authority, cost, rollback limit and forward-repair path at every irreversible step.",
+      "counterexample": "A historical case supplies a conditional lesson, not a portable performance promise. A synthetic example illustrates reasoning, not empirical capacity. Returning retain-the-baseline, measure-first or insufficient-evidence is valid when uncertainty dominates. This closes the book's reading loop: new observations revise the original requirement and evidence contract.",
+      "diagnostic_route": [
+        "V10/C01",
+        "V10/C02",
+        "V10/C03",
+        "V10/C04",
+        "V10/C05"
+      ],
+      "prerequisite_codes": [
+        "V01/C01",
+        "V01/C02",
+        "V01/C03",
+        "V01/C04",
+        "V01/C05",
+        "V01/C06"
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "code": "V01/C01",
+      "title": "Problem framing and system boundaries",
+      "question": "Which actors, outcomes, interfaces and external failure dependencies define the system?",
+      "id": "tycho.chapter.9d4f989ec9304e418f60f1ad7248094a",
+      "path": "book/volumes/v01/c01/README.md",
+      "old_page_path": "book/application/problem-framing-and-system-boundaries.md",
+      "page_path": "book/volumes/v01/c01/problem-framing-and-system-boundaries.md",
+      "result": "Draw the outcome boundary before selecting a component boundary: name the caller, authoritative effect, external decision owner and recovery lookup.",
+      "counterexample": "A third-party timeout can leave an external effect committed while the local request is unresolved; moving the dependency outside a diagram does not remove that obligation."
+    },
+    {
+      "code": "V01/C02",
+      "title": "Workload and demand models",
+      "question": "How do active users, offered arrivals, concurrency, operation mix and skew differ?",
+      "id": "tycho.chapter.316b50ac3db440ae82c0986b896ff468",
+      "path": "book/volumes/v01/c02/README.md",
+      "old_page_path": "book/performance/workload-demand-and-arrival-models.md",
+      "page_path": "book/volumes/v01/c02/workload-demand-and-arrival-models.md",
+      "result": "Separate offered attempts, admitted work, successful outcomes, concurrency and per-operation demand before estimating capacity.",
+      "counterexample": "Two equally sized user populations can impose different bursts and hot-key pressure; average requests per second conceals that difference."
+    },
+    {
+      "code": "V01/C03",
+      "title": "Quality attributes and trade-offs",
+      "question": "How are performance, availability, consistency, cost, security and changeability made measurable?",
+      "id": "tycho.chapter.3d34f0b431814c9fa879a355029af2a9",
+      "path": "book/volumes/v01/c03/README.md",
+      "old_page_path": "book/application/quality-drivers-and-architecture-views.md",
+      "page_path": "book/volumes/v01/c03/quality-drivers-and-architecture-views.md",
+      "result": "Convert a quality preference into a stimulus, environment, observable response and rejection condition, then compare only feasible candidates.",
+      "counterexample": "A faster candidate remains inadmissible when it loses an integrity or isolation guarantee; a weighted score cannot repair a failed hard gate."
+    },
+    {
+      "code": "V01/C04",
+      "title": "Evidence, hypotheses and architecture experiments",
+      "question": "What do sources, estimates, simulations and measurements actually prove?",
+      "id": "tycho.chapter.ee2cd95003ab4018a9d49e2ff0b6b2f4",
+      "path": "book/volumes/v01/c04/README.md",
+      "old_page_path": "book/application/architecture-evidence-hypotheses-and-experiments.md",
+      "page_path": "book/volumes/v01/c04/architecture-evidence-hypotheses-and-experiments.md",
+      "result": "Keep published semantics, synthetic arithmetic, hypotheses and observed experiments as distinct evidence classes with different permissible conclusions.",
+      "counterexample": "A cache experiment can improve latency while failing freshness; the result rejects that configuration rather than proving a universal claim about caching."
+    },
+    {
+      "code": "V01/C05",
+      "title": "Architecture descriptions and decision records",
+      "question": "What belongs in diagrams, views, assumptions, ADRs and source-linked evidence?",
+      "id": "tycho.chapter.abcbb298887b49e79525ca00fead8926",
+      "path": "book/volumes/v01/c05/README.md",
+      "old_page_path": "book/application/architecture-views-and-decision-records.md",
+      "page_path": "book/volumes/v01/c05/architecture-views-and-decision-records.md",
+      "result": "Use consistent identities across context, runtime, deployment and decision views so a failure can be followed without changing its meaning.",
+      "counterexample": "A tidy component view does not establish a working timeout, permission or recovery contract; follow the same ambiguous operation through every relevant view."
+    },
+    {
+      "code": "V01/C06",
+      "title": "Capacity, operational constraints and total cost",
+      "question": "Which hard gates and team/budget limits invalidate otherwise appealing options?",
+      "id": "tycho.chapter.bbfd14751d274868b152ba431dc904c9",
+      "path": "book/volumes/v01/c06/README.md",
+      "old_page_path": "book/application/operational-constraints-and-total-cost-gates.md",
+      "page_path": "book/volumes/v01/c06/operational-constraints-and-total-cost-gates.md",
+      "result": "Reject candidates that exceed an explicit operating, recovery, staffing or total-cost constraint before ranking attractive features.",
+      "counterexample": "A low instance price can conceal migration, dual-running and rollback costs; uncertain inputs must remain uncertain instead of becoming precise forecasts."
+    },
+    {
+      "code": "V02/C01",
+      "title": "Layered, modular and ports-and-adapters design",
+      "question": "How are dependencies directed and replaceable?",
+      "id": "tycho.chapter.c5f8456752f34dd6a5b6b5c7e3e14715",
+      "path": "book/volumes/v02/c01/README.md",
+      "old_page_path": "book/application/layered-hexagonal-ports-and-adapters.md",
+      "page_path": "book/volumes/v02/c01/layered-hexagonal-ports-and-adapters.md",
+      "result": "Direct source dependencies through application contracts while keeping runtime failure boundaries explicit.",
+      "counterexample": "Replacing a local adapter with a remote call changes deadlines and ambiguous outcomes even if the port signature is unchanged."
+    },
+    {
+      "code": "V02/C02",
+      "title": "Domain boundaries, data ownership and contracts",
+      "question": "When should business capabilities form module or service boundaries?",
+      "id": "tycho.chapter.7031445877fb4f8d831d962d170521c8",
+      "path": "book/volumes/v02/c02/README.md",
+      "old_page_path": "book/application/domain-boundaries-data-ownership-and-contracts.md",
+      "page_path": "book/volumes/v02/c02/domain-boundaries-data-ownership-and-contracts.md",
+      "result": "Assign each invariant and authoritative state transition to an owner before dividing storage or deployment.",
+      "counterexample": "Two teams using the same entity name can disagree on its legal transitions; schema agreement alone does not resolve ownership."
+    },
+    {
+      "code": "V02/C03",
+      "title": "Modular monolith and internal events",
+      "question": "Which coupling and deployment constraints fit an in-process architecture?",
+      "id": "tycho.chapter.5de52a840c14448c946a65c924f28487",
+      "path": "book/volumes/v02/c03/README.md",
+      "old_page_path": "book/application/modular-monolith-and-internal-events.md",
+      "page_path": "book/volumes/v02/c03/modular-monolith-and-internal-events.md",
+      "result": "Use enforced module contracts to retain useful local transactions and make internal event durability explicit.",
+      "counterexample": "An after-commit callback is not a durable external delivery mechanism; process death can separate a committed change from its notification."
+    },
+    {
+      "code": "V02/C04",
+      "title": "SOA, microservices and distributed boundaries",
+      "question": "When is independent deployment justified by measured coordination cost?",
+      "id": "tycho.chapter.a7cb3581936b46ab9fd3a49c17e9cc6c",
+      "path": "book/volumes/v02/c04/README.md",
+      "old_page_path": "book/application/service-orientation-microservices-and-distribution.md",
+      "page_path": "book/volumes/v02/c04/service-orientation-microservices-and-distribution.md",
+      "result": "Justify a remote boundary through independent ownership or deployment needs while accounting for communication and recovery costs.",
+      "counterexample": "Separate containers can still require synchronized releases and share one fragile datastore; deployment count does not demonstrate independence."
+    },
+    {
+      "code": "V02/C05",
+      "title": "Public APIs, HTTP/RPC and compatibility",
+      "question": "How do deadlines, versioning, retries and API contracts evolve?",
+      "id": "tycho.chapter.53b6bb88a00549e491949aeb426b83f2",
+      "path": "book/volumes/v02/c05/README.md",
+      "old_page_path": "book/application/http-rpc-contracts-and-compatibility.md",
+      "page_path": "book/volumes/v02/c05/http-rpc-contracts-and-compatibility.md",
+      "result": "Define behavioral compatibility, operation identity, end-to-end budgets and caller-visible unknown outcomes alongside the wire format.",
+      "counterexample": "A lost response after commit is compatible with transport failure; blindly replaying a state-changing request may create another effect."
+    },
+    {
+      "code": "V02/C06",
+      "title": "Integration adapters and anti-corruption boundaries",
+      "question": "How can incompatible domains and legacy contracts coexist?",
+      "id": "tycho.chapter.4f7542e57fb74052a4a31cd4c4dce46a",
+      "path": "book/volumes/v02/c06/README.md",
+      "old_page_path": "book/application/anti-corruption-adapters-and-coexistence.md",
+      "page_path": "book/volumes/v02/c06/anti-corruption-adapters-and-coexistence.md",
+      "result": "Specify what an adapter preserves, rejects and cannot translate, including its eventual retirement conditions.",
+      "counterexample": "A syntactically valid mapping can discard domain meaning; coexistence needs a reconciliation authority for unknown or unmappable results."
+    },
+    {
+      "code": "V02/C07",
+      "title": "Authorization boundaries and multitenancy",
+      "question": "What must be isolated between clients, organizations and data owners?",
+      "id": "tycho.chapter.5426707ddf264b758016aafe71f342b7",
+      "path": "book/volumes/v02/c07/README.md",
+      "old_page_path": "book/application/authorization-boundaries-and-multitenancy.md",
+      "page_path": "book/volumes/v02/c07/authorization-boundaries-and-multitenancy.md",
+      "result": "Design tenant identity, authorization, resource sharing and data placement as separate but composing boundaries.",
+      "counterexample": "A tenant-aware query does not protect a wrongly scoped cache or background task; isolation must hold across the complete effect path."
+    },
+    {
+      "code": "V03/C01",
+      "title": "Threads, tasks and coordination",
+      "question": "What creates concurrency and which shared state creates contention?",
+      "id": "tycho.chapter.13ad4371e75b49dcb5e082ea62083ee3",
+      "path": "book/volumes/v03/c01/README.md",
+      "old_page_path": "book/execution/threads-tasks-structured-coordination.md",
+      "page_path": "book/volumes/v03/c01/threads-tasks-structured-coordination.md",
+      "result": "Give concurrent work a lifetime, result owner and cancellation policy rather than treating each thread as an independent business operation.",
+      "counterexample": "Cancelling a task requests termination; it cannot undo a downstream commit that already occurred."
+    },
+    {
+      "code": "V03/C02",
+      "title": "Java execution and virtual threads",
+      "question": "What improves concurrency without creating downstream capacity?",
+      "id": "tycho.chapter.d5b789c9cd7e4cb693c22943423531c2",
+      "path": "book/volumes/v03/c02/README.md",
+      "old_page_path": "book/execution/platform-threads-executors-and-virtual-threads.md",
+      "page_path": "book/volumes/v03/c02/platform-threads-executors-and-virtual-threads.md",
+      "result": "Choose execution resources with explicit downstream permits and release-specific blocking assumptions.",
+      "counterexample": "Cheaper waiting can increase demand on a saturated connection pool; replacing platform threads with virtual threads does not create database capacity."
+    },
+    {
+      "code": "V03/C03",
+      "title": "Reactive streams, demand and cancellation",
+      "question": "How do backpressure, scheduling and blocking boundaries affect execution?",
+      "id": "tycho.chapter.b9bf60e22dc04878a05aeca98610b5d1",
+      "path": "book/volumes/v03/c03/README.md",
+      "old_page_path": "book/execution/reactor-webflux-r2dbc-and-backpressure.md",
+      "page_path": "book/volumes/v03/c03/reactor-webflux-r2dbc-and-backpressure.md",
+      "result": "Trace demand, queues and blocking work across the complete reactive pipeline, including scheduler boundaries.",
+      "counterexample": "Subscriber backpressure cannot bound an unrelated blocking queue; an event-loop-friendly API may still hide a bottleneck downstream."
+    },
+    {
+      "code": "V03/C04",
+      "title": "Asynchronous APIs and streaming",
+      "question": "Which flow and cancellation semantics are required across protocols?",
+      "id": "tycho.chapter.7a07973ba5314c3983a4c93acc1d1b89",
+      "path": "book/volumes/v03/c04/README.md",
+      "old_page_path": "book/execution/asynchronous-apis-streaming-and-cancellation.md",
+      "page_path": "book/volumes/v03/c04/asynchronous-apis-streaming-and-cancellation.md",
+      "result": "Specify stream ordering, buffer ownership, cancellation, checkpoints and resume expiry as distinct contracts.",
+      "counterexample": "Transport flow control does not promise durable replay; a disconnected client may need a new snapshot rather than an invented continuation."
+    },
+    {
+      "code": "V03/C05",
+      "title": "Thread, connection and buffer pools",
+      "question": "How do pool sizes, queues and timeouts compose across layers?",
+      "id": "tycho.chapter.e436af815dc442f694deb55966077d9e",
+      "path": "book/volumes/v03/c05/README.md",
+      "old_page_path": "book/scaling/connection-pools-hikaricp-pgbouncer.md",
+      "page_path": "book/volumes/v03/c05/connection-pools-hikaricp-pgbouncer.md",
+      "result": "Budget connections, workers and buffers across every replica and intermediary, with bounded waits and timeouts.",
+      "counterexample": "Increasing replicas can multiply backend connections beyond the database budget, turning local pool tuning into a shared failure."
+    },
+    {
+      "code": "V03/C06",
+      "title": "Memory, GC, CPU and blocking diagnostics",
+      "question": "How should bottleneck observations constrain execution-model choice?",
+      "id": "tycho.chapter.22e3f1a320e54179a176871646debd00",
+      "path": "book/volumes/v03/c06/README.md",
+      "old_page_path": "book/execution/cpu-memory-gc-and-blocking-diagnostics.md",
+      "page_path": "book/volumes/v03/c06/cpu-memory-gc-and-blocking-diagnostics.md",
+      "result": "Use workload-correlated CPU, allocation, GC, blocking and dependency observations to distinguish competing bottleneck explanations.",
+      "counterexample": "Low CPU and many waiting threads do not identify a collector problem; change one hypothesis only after establishing the limiting resource."
+    },
+    {
+      "code": "V04/C01",
+      "title": "Time, causality and ordering",
+      "question": "Which ordering can a distributed system observe or guarantee?",
+      "id": "tycho.chapter.510c0c78de2b450c8be93d708222a488",
+      "path": "book/volumes/v04/c01/README.md",
+      "old_page_path": "book/distributed/causality-ordering-and-consensus.md",
+      "page_path": "book/volumes/v04/c01/causality-ordering-and-consensus.md",
+      "result": "Distinguish causal precedence, concurrent events and a chosen total order before relying on timestamps.",
+      "counterexample": "Clock order cannot prove that one event observed another, and an ordered log alone does not establish a business invariant."
+    },
+    {
+      "code": "V04/C02",
+      "title": "Replication, consensus and leader changes",
+      "question": "Which failure assumptions sustain agreement or availability?",
+      "id": "tycho.chapter.6eba0cf391184a709f2e23e5ecc1c3d2",
+      "path": "book/volumes/v04/c02/README.md",
+      "old_page_path": "book/distributed/replication-consensus-and-leader-change.md",
+      "page_path": "book/volumes/v04/c02/replication-consensus-and-leader-change.md",
+      "result": "State fault assumptions, quorum rules, leader terms and client-visible outcomes when explaining replicated authority.",
+      "counterexample": "An isolated former leader must not continue accepting authoritative effects merely because its process is healthy."
+    },
+    {
+      "code": "V04/C03",
+      "title": "Consistency and distributed transactions",
+      "question": "Which invariants need coordination, isolation or reconciliation?",
+      "id": "tycho.chapter.4a3cbf0617e44be5b1e8d72568109dad",
+      "path": "book/volumes/v04/c03/README.md",
+      "old_page_path": "book/distributed/transaction-isolation-and-sagas.md",
+      "page_path": "book/volumes/v04/c03/transaction-isolation-and-sagas.md",
+      "result": "Place invariants at their enforcing transaction boundary and state how cross-boundary uncertainty is reconciled.",
+      "counterexample": "A compensating action can fail or arrive late; a saga is not an atomic transaction across independent owners."
+    },
+    {
+      "code": "V04/C04",
+      "title": "Retries, idempotency and duplicate effects",
+      "question": "Which side effects survive retries and ambiguous acknowledgements?",
+      "id": "tycho.chapter.a92541ba2fb44cf1a3afef1f9c021fe0",
+      "path": "book/volumes/v04/c04/README.md",
+      "old_page_path": "book/distributed/retries-idempotency-and-ambiguous-effects.md",
+      "page_path": "book/volumes/v04/c04/retries-idempotency-and-ambiguous-effects.md",
+      "result": "Bind retries to a stable logical intent, payload and retention policy with an authoritative recorded outcome.",
+      "counterexample": "After an acknowledgment is lost, a new identity can duplicate a committed effect; an expired key cannot guarantee historical deduplication."
+    },
+    {
+      "code": "V04/C05",
+      "title": "Outbox, inbox, sagas and durable workflows",
+      "question": "How are state changes coordinated without claiming global atomicity?",
+      "id": "tycho.chapter.18aa94285a164b6f94530cebcfd87b8b",
+      "path": "book/volumes/v04/c05/README.md",
+      "old_page_path": "book/distributed/outbox-inbox-sagas-and-durable-workflows.md",
+      "page_path": "book/volumes/v04/c05/outbox-inbox-sagas-and-durable-workflows.md",
+      "result": "Separate local atomic publication intent, relay retries, consumer deduplication and compensation state.",
+      "counterexample": "Writing an outbox does not make a remote notification atomic with the original transaction; relay and receiver failures still need recovery."
+    },
+    {
+      "code": "V04/C06",
+      "title": "Messaging families and delivery contracts",
+      "question": "What are the consequences of acknowledgement, retention and consumer state?",
+      "id": "tycho.chapter.23e79f6cb03b4206a5c82494bc5c2928",
+      "path": "book/volumes/v04/c06/README.md",
+      "old_page_path": "book/integration/messaging-families-and-durable-workflows.md",
+      "page_path": "book/volumes/v04/c06/messaging-families-and-durable-workflows.md",
+      "result": "Compare messaging mechanisms by acknowledgment, retention, ordering scope, consumer state and recovery behavior.",
+      "counterexample": "Acknowledging receipt can precede a durable application effect; delivery terminology cannot substitute for the consumer's commit contract."
+    },
+    {
+      "code": "V04/C07",
+      "title": "Kafka logs, partitions and transactions",
+      "question": "What do producer/consumer guarantees cover and what stays at application level?",
+      "id": "tycho.chapter.24729e8d9b7247b298956ab144c15225",
+      "path": "book/volumes/v04/c07/README.md",
+      "old_page_path": "book/integration/kafka-partitions-replication-and-contracts.md",
+      "page_path": "book/volumes/v04/c07/kafka-partitions-replication-and-contracts.md",
+      "result": "Locate Kafka ordering and transaction guarantees within their actual partition, producer and consumer boundaries.",
+      "counterexample": "A transactional log operation does not automatically include a remote database or external API effect."
+    },
+    {
+      "code": "V04/C08",
+      "title": "Stateful/event-time stream processing",
+      "question": "How do replay, watermarks, state stores and recovery shape correctness?",
+      "id": "tycho.chapter.566e576a945b44628386d520214d6c4a",
+      "path": "book/volumes/v04/c08/README.md",
+      "old_page_path": "book/integration/stateful-stream-processing-and-cdc.md",
+      "page_path": "book/volumes/v04/c08/stateful-stream-processing-and-cdc.md",
+      "result": "Treat event time, watermarks, retained state, checkpointing and replay as one declared processing contract.",
+      "counterexample": "A consistent processor checkpoint cannot recover an expired input or reverse an independently committed external effect."
+    },
+    {
+      "code": "V05/C01",
+      "title": "Relational modeling and transaction isolation",
+      "question": "Which invariants and anomalies are relevant to the data contract?",
+      "id": "tycho.chapter.f5df10e26e27467887ee2b22b6ce50e7",
+      "path": "book/volumes/v05/c01/README.md",
+      "old_page_path": "book/data/relational-modeling-and-transaction-isolation.md",
+      "page_path": "book/volumes/v05/c01/relational-modeling-and-transaction-isolation.md",
+      "result": "Derive relational constraints and isolation requirements from the anomalies the application must forbid.",
+      "counterexample": "Selecting an isolation label without considering transaction retries and constraint placement leaves the invariant unproven."
+    },
+    {
+      "code": "V05/C02",
+      "title": "PostgreSQL MVCC, WAL and recovery",
+      "question": "What are the consequences of durability, vacuum and replication mechanisms?",
+      "id": "tycho.chapter.b4272c1342514a40afce9d3872a9664c",
+      "path": "book/volumes/v05/c02/README.md",
+      "old_page_path": "book/data/postgresql-wal-replication-and-recovery.md",
+      "page_path": "book/volumes/v05/c02/postgresql-wal-replication-and-recovery.md",
+      "result": "Trace acknowledged writes through transaction state, WAL, replication and recovery before assigning a durability promise.",
+      "counterexample": "A reachable replica may lag, and a replication setting alone does not establish a successful restore or the application's recovery objective."
+    },
+    {
+      "code": "V05/C03",
+      "title": "Query planning, indexes and access paths",
+      "question": "Which read/write trade-offs explain an observed query plan?",
+      "id": "tycho.chapter.e451bfe1e0cb4c588f0576e0b2b7d3d0",
+      "path": "book/volumes/v05/c03/README.md",
+      "old_page_path": "book/data/postgresql-indexes-statistics-and-query-plans.md",
+      "page_path": "book/volumes/v05/c03/postgresql-indexes-statistics-and-query-plans.md",
+      "result": "Interpret a query plan against row estimates, selectivity, write cost and workload rather than assuming an index is always beneficial.",
+      "counterexample": "A faster isolated read can increase update cost or fail under skew; compare plans and resource use on the relevant distribution."
+    },
+    {
+      "code": "V05/C04",
+      "title": "Alternative data models and stores",
+      "question": "When are document, wide-column, KV, distributed SQL or analytical stores useful?",
+      "id": "tycho.chapter.4a127ad6ab514ede9ff74394e5174f9c",
+      "path": "book/volumes/v05/c04/README.md",
+      "old_page_path": "book/data/storage-model-alternatives-and-workload-fit.md",
+      "page_path": "book/volumes/v05/c04/storage-model-alternatives-and-workload-fit.md",
+      "result": "Choose a storage model from access patterns, invariant scope and operating constraints, keeping migration costs visible.",
+      "counterexample": "Replacing an engine does not remove a hot logical key or a cross-owner transaction requirement."
+    },
+    {
+      "code": "V05/C05",
+      "title": "Partitioning, sharding and rebalancing",
+      "question": "How do hot keys, routing, joins and ownership affect scale?",
+      "id": "tycho.chapter.3e2e1da8f99c4a7ba05121baf1ef4d91",
+      "path": "book/volumes/v05/c05/README.md",
+      "old_page_path": "book/scaling/shard-keys-hotspots-and-resharding.md",
+      "page_path": "book/volumes/v05/c05/shard-keys-hotspots-and-resharding.md",
+      "result": "Choose shard keys and routing with workload skew, cross-shard operations and ownership transfer in view.",
+      "counterexample": "Evenly distributing rows can leave one tenant or key overloaded; resharding must preserve correct reads and writes during movement."
+    },
+    {
+      "code": "V05/C06",
+      "title": "Schema evolution, data migration and retention",
+      "question": "What compatibility windows and irreversibility constraints exist?",
+      "id": "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f",
+      "path": "book/volumes/v05/c06/README.md",
+      "old_page_path": "book/data/schema-lifecycle-and-semantic-migration.md",
+      "page_path": "book/volumes/v05/c06/schema-lifecycle-and-semantic-migration.md",
+      "result": "Treat data evolution as a semantic compatibility and authority transition, not just a successful DDL command.",
+      "counterexample": "A new value interpreted differently by old readers can break a mixed-version system even when every row passes schema validation."
+    },
+    {
+      "code": "V05/C07",
+      "title": "Replication, backups and restore drills",
+      "question": "How do consistency, lag, RPO/RTO and restore evidence connect?",
+      "id": "tycho.chapter.388c48be24414421a63481b37d05fdce",
+      "path": "book/volumes/v05/c07/README.md",
+      "old_page_path": "book/data/backup-restore-pitr-and-recovery-drills.md",
+      "page_path": "book/volumes/v05/c07/backup-restore-pitr-and-recovery-drills.md",
+      "result": "Connect backup membership, restore procedure, replay and application reconciliation to a specified recovery objective.",
+      "counterexample": "A current replica is not protection from replicated deletion, and backup completion is not evidence that restoration works."
+    },
+    {
+      "code": "V06/C01",
+      "title": "Local and distributed caching",
+      "question": "How do authority, freshness, eviction and invalidation differ?",
+      "id": "tycho.chapter.4166e932cbd64ce2a63fe0c6d6eb049a",
+      "path": "book/volumes/v06/c01/README.md",
+      "old_page_path": "book/scaling/local-and-distributed-cache-design.md",
+      "page_path": "book/volumes/v06/c01/local-and-distributed-cache-design.md",
+      "result": "Distinguish authoritative state from cached copies and define freshness, eviction and invalidation behavior.",
+      "counterexample": "A successful cache hit can return an inadmissibly stale value; cache availability is not authoritative correctness."
+    },
+    {
+      "code": "V06/C02",
+      "title": "Hot keys, cache stampedes and read amplification",
+      "question": "When does adding a cache worsen recovery or contention?",
+      "id": "tycho.chapter.1035327a459242b78329b41b8fddfee6",
+      "path": "book/volumes/v06/c02/README.md",
+      "old_page_path": "book/scaling/cache-invalidation-stampede-and-hot-keys.md",
+      "page_path": "book/volumes/v06/c02/cache-invalidation-stampede-and-hot-keys.md",
+      "result": "Bound regeneration, hot-key fan-out and cold-start demand as part of cache recovery.",
+      "counterexample": "A cache outage or simultaneous expiry can concentrate traffic on the protected origin and amplify the original failure."
+    },
+    {
+      "code": "V06/C03",
+      "title": "Lexical full-text indexing and ranking",
+      "question": "Which queries need tokenization, inverted indexes, BM25 or filtering?",
+      "id": "tycho.chapter.5dc7b18369054daa852565a5dab2502b",
+      "path": "book/volumes/v06/c03/README.md",
+      "old_page_path": "book/search/lexical-indexing-bm25-and-sql-fts.md",
+      "page_path": "book/volumes/v06/c03/lexical-indexing-bm25-and-sql-fts.md",
+      "result": "Match tokenization, inverted-index ranking and authorization filters to the actual query contract.",
+      "counterexample": "Lexical relevance is not source validity, and filtering too late can expose forbidden records or distort the candidate set."
+    },
+    {
+      "code": "V06/C04",
+      "title": "Vector embeddings and nearest-neighbor retrieval",
+      "question": "What are exact versus approximate search and recall trade-offs?",
+      "id": "tycho.chapter.1c08d660af40408188c2d556f8d77358",
+      "path": "book/volumes/v06/c04/README.md",
+      "old_page_path": "book/search/vector-hnsw-faiss-pgvector.md",
+      "page_path": "book/volumes/v06/c04/vector-hnsw-faiss-pgvector.md",
+      "result": "Evaluate embedding/version choices and approximate-neighbor recall against an exact reference and a relevant query set.",
+      "counterexample": "A nearby vector can be semantically plausible but wrong, stale or unauthorized; similarity is not proof of an answer."
+    },
+    {
+      "code": "V06/C05",
+      "title": "Hybrid retrieval and reranking",
+      "question": "When do fusion and metadata filters improve measured relevance?",
+      "id": "tycho.chapter.6d25a036c078402a85ec464227a48a31",
+      "path": "book/volumes/v06/c05/README.md",
+      "old_page_path": "book/search/hybrid-ranking-graph-and-evaluation.md",
+      "page_path": "book/volumes/v06/c05/hybrid-ranking-graph-and-evaluation.md",
+      "result": "Compare fusion and reranking with constituent retrieval baselines under the same filters, judgments and budgets.",
+      "counterexample": "Combining rankings cannot repair a missing authorized document or an invalid relevance assessment."
+    },
+    {
+      "code": "V06/C06",
+      "title": "Graph relationships and traversal",
+      "question": "When is explicit typed connectivity preferable to lexical or vector similarity?",
+      "id": "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4",
+      "path": "book/volumes/v06/c06/README.md",
+      "old_page_path": "book/search/graph-data-models-and-traversal.md",
+      "page_path": "book/volumes/v06/c06/graph-data-models-and-traversal.md",
+      "result": "Use explicit edge semantics, direction and bounded traversal when the question depends on relationships.",
+      "counterexample": "A path through a graph does not imply causal influence or permission; cycles and fan-out require explicit traversal limits."
+    },
+    {
+      "code": "V06/C07",
+      "title": "Retrieval evaluation and index lifecycle",
+      "question": "How are index freshness, reproducibility, latency and result quality measured?",
+      "id": "tycho.chapter.e3cf27f8212a455bb53e135ee18bbaa9",
+      "path": "book/volumes/v06/c07/README.md",
+      "old_page_path": "book/search/retrieval-evaluation-and-index-lifecycle.md",
+      "page_path": "book/volumes/v06/c07/retrieval-evaluation-and-index-lifecycle.md",
+      "result": "Version corpus, indexing configuration, queries and judgments together so quality changes can be explained and reproduced.",
+      "counterexample": "A green latency result can conceal stale documents or degraded recall; evaluate missing and unanswerable cases as well as successes."
+    },
+    {
+      "code": "V07/C01",
+      "title": "Queueing, Little's Law and measurement boundaries",
+      "question": "What do arrival, throughput, mean response and in-flight counts imply?",
+      "id": "tycho.chapter.e365b78505784c20a4f3d72fe7904d9b",
+      "path": "book/volumes/v07/c01/README.md",
+      "old_page_path": "book/performance/queueing-littles-law.md",
+      "page_path": "book/volumes/v07/c01/queueing-littles-law.md",
+      "result": "Apply occupancy and rate identities only to the same measured boundary, population and time semantics.",
+      "counterexample": "A finite window with unfinished work or rejection outside the boundary can invalidate naive arithmetic, and means cannot predict p99."
+    },
+    {
+      "code": "V07/C02",
+      "title": "Contention, saturation and scaling laws",
+      "question": "When does coordination dominate additional capacity?",
+      "id": "tycho.chapter.4cbc9e1582404965b696a63b79a66e93",
+      "path": "book/volumes/v07/c02/README.md",
+      "old_page_path": "book/performance/contention-saturation-and-scaling-laws.md",
+      "page_path": "book/volumes/v07/c02/contention-saturation-and-scaling-laws.md",
+      "result": "Identify serial work, shared-state contention and resource saturation before extrapolating additional workers.",
+      "counterexample": "A scaling curve fitted outside the tested range can hide coordination cost; more workers may worsen useful throughput."
+    },
+    {
+      "code": "V07/C03",
+      "title": "Load-test methods and benchmark validity",
+      "question": "How do open/closed arrivals, warmup and coordinated omission bias conclusions?",
+      "id": "tycho.chapter.a55ddaaa45a647e29b51d6b5c0adbe05",
+      "path": "book/volumes/v07/c03/README.md",
+      "old_page_path": "book/performance/load-testing-and-benchmark-validity.md",
+      "page_path": "book/volumes/v07/c03/load-testing-and-benchmark-validity.md",
+      "result": "Choose an arrival model, warm-up policy and outcome accounting that preserve the workload being tested.",
+      "counterexample": "A closed-loop generator can reduce offered demand when the system slows, masking the backlog an external arrival stream would create."
+    },
+    {
+      "code": "V07/C04",
+      "title": "Tail latency, fan-out and time budgets",
+      "question": "Why can p99 degrade despite adequate mean capacity?",
+      "id": "tycho.chapter.2ad010c2b29c4390b83bbdadeb346289",
+      "path": "book/volumes/v07/c04/README.md",
+      "old_page_path": "book/performance/tail-latency-fanout-and-deadline-budgets.md",
+      "page_path": "book/volumes/v07/c04/tail-latency-fanout-and-deadline-budgets.md",
+      "result": "Allocate end-to-end time across critical paths, queues, fan-out and retries using distributions and explicit cancellation.",
+      "counterexample": "Adequate mean capacity does not guarantee a tail objective; parallel dependencies and correlated delays can dominate the slowest path."
+    },
+    {
+      "code": "V07/C05",
+      "title": "Overload protection and graceful degradation",
+      "question": "How should admissions, queues, retries and shedding be bounded?",
+      "id": "tycho.chapter.0718556e0eb14d499adbbe67073327df",
+      "path": "book/volumes/v07/c05/README.md",
+      "old_page_path": "book/performance/overload-admission-control-and-graceful-degradation.md",
+      "page_path": "book/volumes/v07/c05/overload-admission-control-and-graceful-degradation.md",
+      "result": "Bound admitted work, queue residence, retry amplification and degraded behavior around protected outcomes.",
+      "counterexample": "Accepting every request can postpone rejection until after resource exhaustion; useful service may require earlier explicit refusal."
+    },
+    {
+      "code": "V07/C06",
+      "title": "Horizontal/vertical scaling and autoscaling delay",
+      "question": "Which headroom, statefulness and failure assumptions shape capacity?",
+      "id": "tycho.chapter.1d8d87e683bc428e8dbed087106f37fd",
+      "path": "book/volumes/v07/c06/README.md",
+      "old_page_path": "book/performance/autoscaling-lag-and-capacity-limits.md",
+      "page_path": "book/volumes/v07/c06/autoscaling-lag-and-capacity-limits.md",
+      "result": "Compare demand timescale with detection, provisioning, readiness and warm-up delay before relying on autoscaling.",
+      "counterexample": "Capacity that arrives after a short burst cannot prevent its initial overload; reserved headroom or admission control may still be needed."
+    },
+    {
+      "code": "V07/C07",
+      "title": "Capacity planning and cost/performance trade-offs",
+      "question": "What experiments can confirm or falsify a scaling hypothesis?",
+      "id": "tycho.chapter.b7924b3db65949df952fbb5ca706236c",
+      "path": "book/volumes/v07/c07/README.md",
+      "old_page_path": "book/performance/capacity-planning-and-cost-performance.md",
+      "page_path": "book/volumes/v07/c07/capacity-planning-and-cost-performance.md",
+      "result": "Compare correct work per total operating cost over steady, peak and degraded conditions with sensitivity to uncertain inputs.",
+      "counterexample": "Raw requests per second per instance ignores rejected work, recovery and shared-state costs; an apparent optimum can violate a hard requirement."
+    },
+    {
+      "code": "V08/C01",
+      "title": "CI/CD architecture and artifact provenance",
+      "question": "Which boundaries separate build, test, publication and production deployment?",
+      "id": "tycho.chapter.8a2d2a79846d4567bb3d33957e19977f",
+      "path": "book/volumes/v08/c01/README.md",
+      "old_page_path": "book/delivery/ci-cd-provenance-and-gitops.md",
+      "page_path": "book/volumes/v08/c01/ci-cd-provenance-and-gitops.md",
+      "result": "Keep source revision, build identity, artifact digest, promotion and user-health acceptance as separate release boundaries.",
+      "counterexample": "A successful pipeline run does not prove that the intended artifact was deployed or that its persisted effects remain correct."
+    },
+    {
+      "code": "V08/C02",
+      "title": "Supply chain and release verification",
+      "question": "How are reproducibility, signatures and promotion controls established?",
+      "id": "tycho.chapter.92bd770bf87d4d6c9ab6e71cfa291132",
+      "path": "book/volumes/v08/c02/README.md",
+      "old_page_path": "book/delivery/sbom-attestation-and-release-verification.md",
+      "page_path": "book/volumes/v08/c02/sbom-attestation-and-release-verification.md",
+      "result": "Verify artifact identity and provenance against an authorization policy; distinguish signatures, attestations and component inventories.",
+      "counterexample": "A valid signature from an unapproved identity, or an SBOM for another digest, must not authorize promotion."
+    },
+    {
+      "code": "V08/C03",
+      "title": "VMs, containers, orchestration and serverless",
+      "question": "Which topology suits operational and workload requirements?",
+      "id": "tycho.chapter.94b4b6d9e2e1490abd0055a5265141ff",
+      "path": "book/volumes/v08/c03/README.md",
+      "old_page_path": "book/deployment/runtime-placement-and-control-plane.md",
+      "page_path": "book/volumes/v08/c03/runtime-placement-and-control-plane.md",
+      "result": "Compare runtime topologies against the same outcome, failure model, resource needs and operating capability.",
+      "counterexample": "A container or orchestration label does not establish fault isolation, useful spare capacity or recoverable state."
+    },
+    {
+      "code": "V08/C04",
+      "title": "GitOps, rollout and progressive delivery",
+      "question": "How do rolling, blue/green, canary, rollback and analysis gates differ?",
+      "id": "tycho.chapter.5e4761e1a3e34c2f8023ec8ac4fa81d5",
+      "path": "book/volumes/v08/c04/README.md",
+      "old_page_path": "book/delivery/gitops-canary-and-progressive-rollout.md",
+      "page_path": "book/volumes/v08/c04/gitops-canary-and-progressive-rollout.md",
+      "result": "Define exposure, analysis, stop and recovery conditions across both application versions and shared data.",
+      "counterexample": "A small canary can write incompatible state visible to all old instances; limiting traffic alone does not bound that effect."
+    },
+    {
+      "code": "V08/C05",
+      "title": "Backward-compatible database change",
+      "question": "What permits old and new binaries/data schemas to coexist?",
+      "id": "tycho.chapter.7d434d1a41e142d38bb729ee124ac548",
+      "path": "book/volumes/v08/c05/README.md",
+      "old_page_path": "book/delivery/mixed-version-database-compatibility-and-online-ddl.md",
+      "page_path": "book/volumes/v08/c05/mixed-version-database-compatibility-and-online-ddl.md",
+      "result": "Describe reader/writer compatibility across expansion, coexistence, backfill and contraction stages.",
+      "counterexample": "Reverting binaries cannot restore a removed column or reinterpret a new-only persisted value; the no-return point needs forward repair."
+    },
+    {
+      "code": "V08/C06",
+      "title": "High availability and failure-domain placement",
+      "question": "What survives machine, zone, dependency or region loss?",
+      "id": "tycho.chapter.9e35eb7b056f428093e36a2faf644a23",
+      "path": "book/volumes/v08/c06/README.md",
+      "old_page_path": "book/deployment/availability-zones-placement-and-failure-domains.md",
+      "page_path": "book/volumes/v08/c06/availability-zones-placement-and-failure-domains.md",
+      "result": "Model shared dependencies and traffic authority when placing replicas across failure domains.",
+      "counterexample": "Two zones can still depend on one datastore or control path; nominal placement diversity does not demonstrate surviving user journeys."
+    },
+    {
+      "code": "V08/C07",
+      "title": "Multi-region recovery and data reconciliation",
+      "question": "How are RPO/RTO, split brain, recovery routes and failback validated?",
+      "id": "tycho.chapter.30e63461f024419ab87cd012b140c600",
+      "path": "book/volumes/v08/c07/README.md",
+      "old_page_path": "book/deployment/disaster-recovery-and-recovery-objectives.md",
+      "page_path": "book/volumes/v08/c07/disaster-recovery-and-recovery-objectives.md",
+      "result": "Fence the former writer, define acceptable loss and reconcile state before directing recovered traffic to a new authority.",
+      "counterexample": "Promoting a second region without exclusive authority can create divergent accepted effects; failback is another transition to validate."
+    },
+    {
+      "code": "V09/C01",
+      "title": "SLIs, SLOs and error budgets",
+      "question": "Which user outcomes are measured and how do budgets guide changes?",
+      "id": "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7",
+      "path": "book/volumes/v09/c01/README.md",
+      "old_page_path": "book/observability/service-level-indicators-objectives-and-alerts.md",
+      "page_path": "book/volumes/v09/c01/service-level-indicators-objectives-and-alerts.md",
+      "result": "Define eligible events, good outcomes, observation window and an action policy before using an error budget.",
+      "counterexample": "A success-only denominator can hide rejected user operations, so a green dashboard may not describe the promised experience."
+    },
+    {
+      "code": "V09/C02",
+      "title": "Metrics ingestion, cardinality and time-series storage",
+      "question": "How do scrape/push, temporality, labels, retention and scale interact?",
+      "id": "tycho.chapter.ef166b5f7d76454ca4c8a685c6ce033e",
+      "path": "book/volumes/v09/c02/README.md",
+      "old_page_path": "book/observability/metric-pipelines-cardinality-and-retention.md",
+      "page_path": "book/volumes/v09/c02/metric-pipelines-cardinality-and-retention.md",
+      "result": "Make telemetry temporality, aggregation, cardinality, retention and loss visible in the metric contract.",
+      "counterexample": "An unbounded label can multiply storage and disclose identifiers; aggregation cannot reconstruct distinctions already discarded."
+    },
+    {
+      "code": "V09/C03",
+      "title": "Distributed tracing and propagation",
+      "question": "Which context, sampling and async boundaries determine trace usefulness?",
+      "id": "tycho.chapter.03ec5acf85e043a5a6d552a036bf4659",
+      "path": "book/volumes/v09/c03/README.md",
+      "old_page_path": "book/observability/distributed-tracing-context-and-sampling.md",
+      "page_path": "book/volumes/v09/c03/distributed-tracing-context-and-sampling.md",
+      "result": "Interpret traces as sampled, propagated observations with explicit trust and asynchronous boundaries.",
+      "counterexample": "A missing span does not prove no effect occurred, and untrusted baggage must not become an authorization decision."
+    },
+    {
+      "code": "V09/C04",
+      "title": "Logging, audit and lineage",
+      "question": "How do security audit, event lineage and operational logs differ?",
+      "id": "tycho.chapter.49cb8db3af4e406ea6988c8e5e852acf",
+      "path": "book/volumes/v09/c04/README.md",
+      "old_page_path": "book/observability/logs-audit-and-data-lineage.md",
+      "page_path": "book/volumes/v09/c04/logs-audit-and-data-lineage.md",
+      "result": "Separate diagnostic logs, authoritative audit and dataset lineage by identity, durability and retention obligations.",
+      "counterexample": "Three records about one operation can legitimately disagree in completeness; a log line alone does not prove an authorized commit."
+    },
+    {
+      "code": "V09/C05",
+      "title": "Identity, authorization and threat modeling",
+      "question": "Where do trust boundaries and permission checks have to sit?",
+      "id": "tycho.chapter.3563624d13ca4430aa77abea4f8f0bc2",
+      "path": "book/volumes/v09/c05/README.md",
+      "old_page_path": "book/security/identity-authorization-and-isolation.md",
+      "page_path": "book/volumes/v09/c05/identity-authorization-and-isolation.md",
+      "result": "Place identity and resource authorization at the actual effect boundary, including object, tenant and credential scope.",
+      "counterexample": "Network reachability or a valid token does not grant permission to every object; test denied operations through indirect paths."
+    },
+    {
+      "code": "V09/C06",
+      "title": "Incident response and operational change",
+      "question": "What evidence distinguishes recovery, mitigation and restored guarantees?",
+      "id": "tycho.chapter.691463ecbf6f44af84274ab3ff798b3d",
+      "path": "book/volumes/v09/c06/README.md",
+      "old_page_path": "book/observability/incident-response-and-operational-change.md",
+      "page_path": "book/volumes/v09/c06/incident-response-and-operational-change.md",
+      "result": "Restore correct user outcomes through explicit roles, evidence, bounded mitigations and data-recovery decisions.",
+      "counterexample": "A redeployed healthy process can leave divergent state untouched; distinguish containment, mitigation and recovery in the incident record."
+    },
+    {
+      "code": "V09/C07",
+      "title": "Safety, isolation and privacy in agent-accessible services",
+      "question": "What can remote readers infer or retrieve under bounded permissions?",
+      "id": "tycho.chapter.5b8edae85f83413997cac0c873919b57",
+      "path": "book/volumes/v09/c07/README.md",
+      "old_page_path": "book/security/safe-agent-access-and-knowledge-isolation.md",
+      "page_path": "book/volumes/v09/c07/safe-agent-access-and-knowledge-isolation.md",
+      "result": "Enforce caller permissions, collection boundaries and bounded tool effects independently of retrieved text.",
+      "counterexample": "Relevant source text may contain instructions; retrieval must not grant it authority to execute actions or cross data boundaries."
+    },
+    {
+      "code": "V10/C01",
+      "title": "Architecture requirement and workload profiles",
+      "question": "What inputs are required before comparing candidate patterns?",
+      "id": "tycho.chapter.289750444f8040d292a474e3876046a1",
+      "path": "book/volumes/v10/c01/README.md",
+      "old_page_path": "book/decisions/requirements-and-workload-architecture-profiles.md",
+      "page_path": "book/volumes/v10/c01/requirements-and-workload-architecture-profiles.md",
+      "result": "Capture outcome, workload, invariant, constraint and evidence inputs before comparing architecture candidates.",
+      "counterexample": "A complete-looking questionnaire with unknown hot-key behavior or recovery ownership still cannot support a definite recommendation."
+    },
+    {
+      "code": "V10/C02",
+      "title": "Baseline analysis for existing software",
+      "question": "Which observed limitations justify changing the architecture?",
+      "id": "tycho.chapter.8605018cb9224f99bea9dd49be2b79e3",
+      "path": "book/volumes/v10/c02/README.md",
+      "old_page_path": "book/decisions/legacy-baseline-and-modernization-evidence.md",
+      "page_path": "book/volumes/v10/c02/legacy-baseline-and-modernization-evidence.md",
+      "result": "Describe observed legacy behavior and limitations before assigning expected benefits to a target architecture.",
+      "counterexample": "Old technology is not itself evidence of a defect; retaining and improving the baseline must remain a real alternative."
+    },
+    {
+      "code": "V10/C03",
+      "title": "Pattern applicability and contraindications",
+      "question": "Which evidence, preconditions and failures bound a pattern's usefulness?",
+      "id": "tycho.chapter.b20625a099bc4c82b7d547c32c7da28a",
+      "path": "book/volumes/v10/c03/README.md",
+      "old_page_path": "book/decisions/pattern-applicability-and-contraindications.md",
+      "page_path": "book/volumes/v10/c03/pattern-applicability-and-contraindications.md",
+      "result": "Treat a pattern as a conditional intervention with explicit prerequisites, contraindications and reversal evidence.",
+      "counterexample": "A cache and a service split can both fail the same serialized hot-key workload; naming a pattern does not establish causal fit."
+    },
+    {
+      "code": "V10/C04",
+      "title": "Alternatives, experiments and ADRs",
+      "question": "Which hypotheses distinguish feasible options under hard constraints?",
+      "id": "tycho.chapter.809c2f1d12e544b38af2460b80d6d24e",
+      "path": "book/volumes/v10/c04/README.md",
+      "old_page_path": "book/decisions/architecture-alternatives-experiments-and-adrs.md",
+      "page_path": "book/volumes/v10/c04/architecture-alternatives-experiments-and-adrs.md",
+      "result": "Compare feasible alternatives through experiments that can reverse the decision and record consequences in an ADR.",
+      "counterexample": "A changed hard requirement can invalidate a preferred score; a decision record should preserve why reconsideration is necessary."
+    },
+    {
+      "code": "V10/C05",
+      "title": "Target architecture versus transition states",
+      "question": "What is safe during coexistence, migration, rollback and recovery?",
+      "id": "tycho.chapter.0a5e430b39094337aa6a211d9b5b4bd0",
+      "path": "book/volumes/v10/c05/README.md",
+      "old_page_path": "book/decisions/target-and-transition-architecture-states.md",
+      "page_path": "book/volumes/v10/c05/target-and-transition-architecture-states.md",
+      "result": "Plan coexistence, authority transfer, no-return conditions and recovery as real intermediate operating states.",
+      "counterexample": "Rolling back an image cannot undo new-only durable effects; transition safety requires a separate forward-repair path."
+    },
+    {
+      "code": "V10/C06",
+      "title": "Search and question routes for architecture agents",
+      "question": "How can requirements, symptoms and evidence guide selective reading?",
+      "id": "tycho.chapter.abc85388b50f470493bef4e204d6f2dc",
+      "path": "book/volumes/v10/c06/README.md",
+      "old_page_path": "book/decisions/question-routes-for-architecture-analysis.md",
+      "page_path": "book/volumes/v10/c06/question-routes-for-architecture-analysis.md",
+      "result": "Route a question to a small set of canonical explanations, inspect exact evidence and refuse unsupported synthesis.",
+      "counterexample": "A relevant but stale passage cannot justify an answer about another version; retrieve missing conditions rather than guessing."
+    },
+    {
+      "code": "V10/C07",
+      "title": "Cross-domain worked comparisons and unresolved cases",
+      "question": "How does a decision stay falsifiable and attributable to its sources?",
+      "id": "tycho.chapter.5fb14670d0b24967a5e6c24df7221d74",
+      "path": "book/volumes/v10/c07/README.md",
+      "old_page_path": "book/decisions/cross-domain-modernization-and-adr-examples.md",
+      "page_path": "book/volumes/v10/c07/cross-domain-modernization-and-adr-examples.md",
+      "result": "Carry source scope, requirements, alternatives and falsification through a complete worked modernization decision.",
+      "counterexample": "A historical company's result or a synthetic comparison cannot promise the same benefit elsewhere without matching its conditions."
+    }
+  ]
+}

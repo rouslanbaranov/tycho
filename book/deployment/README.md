@@ -56,20 +56,20 @@ This part of Tycho answers two questions before naming a deployment product: **w
 
 ## Canonical chapters
 
-1. [Deployment topology and control-plane independence](runtime-placement-and-control-plane.md) — bare metal, VMs, containers, managed functions, cluster placement, service mesh, data/control planes, IaC state and failure isolation. Use this first when a runtime or placement recommendation is requested.
-2. [Availability zones, placement and failure domains](availability-zones-placement-and-failure-domains.md) — **V08/C06** replicas, gateway/state dependencies, quorum placement and zonal failure acceptance.
-3. [Disaster recovery, RTO/RPO and state reconciliation](disaster-recovery-and-recovery-objectives.md) — **V08/C07** disaster-class recovery, fencing, acknowledged-state reconciliation and synthetic restore drills.
+1. [Deployment topology and control-plane independence](../volumes/v08/c03/runtime-placement-and-control-plane.md) — bare metal, VMs, containers, managed functions, cluster placement, service mesh, data/control planes, IaC state and failure isolation. Use this first when a runtime or placement recommendation is requested.
+2. [Availability zones, placement and failure domains](../volumes/v08/c06/availability-zones-placement-and-failure-domains.md) — **V08/C06** replicas, gateway/state dependencies, quorum placement and zonal failure acceptance.
+3. [Disaster recovery, RTO/RPO and state reconciliation](../volumes/v08/c07/disaster-recovery-and-recovery-objectives.md) — **V08/C07** disaster-class recovery, fencing, acknowledged-state reconciliation and synthetic restore drills.
 4. [Earlier multi-zone/multi-region research](multi-region-disaster-recovery-contracts.md) — preserved combined source for provenance mapping; no longer shared primary owner.
 
 ## Boundaries and reading routes
 
 | Question | Start | Expand when needed |
 |---|---|---|
-| Containers, VMs or serverless for this workload? | [Runtime/placement](runtime-placement-and-control-plane.md) | [Workload shape and capacity experiments](../performance/workload-profiles-and-capacity-experiments.md) |
-| How can traffic survive one zone failure? | [Failure-domain placement](availability-zones-placement-and-failure-domains.md) | [Recovery](disaster-recovery-and-recovery-objectives.md) and [safe rollout](../delivery/safe-rollout-and-recovery.md) |
-| Does multi-region deployment mean RPO=0? | [Recovery](multi-region-disaster-recovery-contracts.md) | [PostgreSQL WAL and recovery](../data/postgresql-wal-replication-and-recovery.md) |
+| Containers, VMs or serverless for this workload? | [Runtime/placement](../volumes/v08/c03/runtime-placement-and-control-plane.md) | [Workload shape and capacity experiments](../performance/workload-profiles-and-capacity-experiments.md) |
+| How can traffic survive one zone failure? | [Failure-domain placement](../volumes/v08/c06/availability-zones-placement-and-failure-domains.md) | [Recovery](../volumes/v08/c07/disaster-recovery-and-recovery-objectives.md) and [safe rollout](../delivery/safe-rollout-and-recovery.md) |
+| Does multi-region deployment mean RPO=0? | [Recovery](multi-region-disaster-recovery-contracts.md) | [PostgreSQL WAL and recovery](../volumes/v05/c02/postgresql-wal-replication-and-recovery.md) |
 | Is an application image rollback also a data rollback? | [Safe rollout](../delivery/safe-rollout-and-recovery.md) | [Recovery](multi-region-disaster-recovery-contracts.md) |
-| Can the system safely operate while orchestration services are impaired? | [Runtime/placement](runtime-placement-and-control-plane.md) | [Recovery](multi-region-disaster-recovery-contracts.md) |
+| Can the system safely operate while orchestration services are impaired? | [Runtime/placement](../volumes/v08/c03/runtime-placement-and-control-plane.md) | [Recovery](multi-region-disaster-recovery-contracts.md) |
 
 A topological diagram is not evidence of RPO/RTO compliance, even where it shows multiple regions. Each decision needs the relevant business operation, data owner, client-visible SLI, exact failure injection, successful restore and a named reviewer.
 

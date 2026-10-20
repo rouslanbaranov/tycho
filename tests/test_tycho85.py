@@ -5,6 +5,7 @@ Not a search deployment, measured recall or a full answer-quality benchmark.
 from pathlib import Path
 import re
 import unittest
+from edition_paths import canonical_path, relative_link
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "book/search"
@@ -25,7 +26,7 @@ class SearchResearchChecks(unittest.TestCase):
     def test_technical_pages_and_visuals(self):
         for name, links in PAGES.items():
             with self.subTest(name=name):
-                s = (BASE / name).read_text(encoding="utf-8")
+                s = canonical_path(BASE / name).read_text(encoding="utf-8")
                 self.assertGreater(len(s), 9000)
                 self.assertGreaterEqual(s.count("```mermaid"), 3)
                 self.assertGreaterEqual(s.count("Text alternative:"), 3)
@@ -39,8 +40,8 @@ class SearchResearchChecks(unittest.TestCase):
         root = (ROOT / "book/README.md").read_text(encoding="utf-8")
         self.assertIn("(search/README.md)", root)
         for name in PAGES:
-            self.assertIn("(" + name + ")", landing.read_text(encoding="utf-8"))
-        for path in [landing, *(BASE / n for n in PAGES)]:
+            self.assertIn("(" + relative_link(BASE / "README.md", BASE / name) + ")", landing.read_text(encoding="utf-8"))
+        for path in [landing, *(canonical_path(BASE / n) for n in PAGES)]:
             for ref in re.findall(r"\]\(([^)]+)\)", path.read_text(encoding="utf-8")):
                 if ref.startswith(("http://", "https://", "mailto:", "#")):
                     continue

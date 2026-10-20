@@ -6,9 +6,10 @@ mathematical proof of real performance, or review of external publications.
 from pathlib import Path
 import statistics
 import unittest
+from edition_paths import canonical_path, relative_link
 
 ROOT = Path(__file__).resolve().parents[1]
-CHAPTER = ROOT / "book/performance/queueing-littles-law.md"
+CHAPTER = canonical_path(ROOT / "book/performance/queueing-littles-law.md")
 LANDING = ROOT / "book/performance/README.md"
 
 
@@ -68,7 +69,7 @@ class QueueingArithmeticTests(unittest.TestCase):
         for source in ("columbia.edu/~ww2040/LL_OR.pdf", "grafana.com/docs/k6/",
                        "sre.google/sre-book/handling-overload/"):
             self.assertIn(source, text)
-        self.assertIn("(queueing-littles-law.md)", landing)
+        self.assertIn("(" + relative_link(LANDING, CHAPTER) + ")", landing)
 
 
 if __name__ == "__main__":

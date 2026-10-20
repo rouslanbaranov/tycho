@@ -8,7 +8,7 @@ The same fictional workshop-registration journey is used to make route results c
 
 **Input:** “Can the registration journey handle a surge of 200 offered commands per second?” No operation mix, peak duration, request amplification, current service capacity, business deadlines or data size are supplied.
 
-**Canonical navigation:** requirements workload dimensions → [queueing and arrival boundaries](../book/performance/queueing-littles-law.md) → [conditional admission applicability](synthetic-admission-control-card.md) → ADR comparison.
+**Canonical navigation:** requirements workload dimensions → [queueing and arrival boundaries](../book/volumes/v07/c01/queueing-littles-law.md) → [conditional admission applicability](synthetic-admission-control-card.md) → ADR comparison.
 
 **Missing evidence:** offered/admitted/completed logical operations by tenant and command, p95/p99 and errors, queue/resource bottleneck, cost and duration of burst, preserved no-double-seat allocation invariant. The value 200 is **an invented query input, not a measured threshold**.
 
@@ -20,7 +20,7 @@ The same fictional workshop-registration journey is used to make route results c
 
 **Competing hypotheses:** (H1) bounded DB pool wait, (H2) slow external dependency, (H3) serial lock hotspot on a workshop key, (H4) suppressed client arrivals causing a misleading load-test sample.
 
-**Canonical navigation:** [legacy observation/hypothesis register](../authoring/models/legacy-modernization-profile.md) → queueing chapter and existing [pool/sharding chapter](../book/scaling/connection-pools-hikaricp-pgbouncer.md) → conditionally viable patterns → ADR only after distinguishing causes.
+**Canonical navigation:** [legacy observation/hypothesis register](../authoring/models/legacy-modernization-profile.md) → queueing chapter and existing [pool/sharding chapter](../book/volumes/v03/c05/connection-pools-hikaricp-pgbouncer.md) → conditionally viable patterns → ADR only after distinguishing causes.
 
 **Output:** `INSUFFICIENT_EVIDENCE`. Instrument pool acquisition, transaction/lock waits, dependency spans, offered vs actual generation and per-route p99, with comparable high/low load windows. An untested hypothesis is not a diagnosis and does not authorize decomposition.
 

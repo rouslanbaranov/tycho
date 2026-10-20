@@ -2,7 +2,7 @@
 
 ## Current disposition
 
-The owner confirmed successful independent substantive/content acceptance for all 69 primary manuscripts at `986b1ddbe985079b7c647182fcf1c2fc8911d96c`. PR #218 merged into main at `f9834ef903fc5808f3a1edede208d82aac08f4e6`. #213 is completed by explicit owner instruction; E14 #15 is completed after verifying #79–#90 closed. #214 remains open and ready for final edition assembly. PR #217 is closed/unmerged; M9 #121 remains closed.
+The owner confirmed successful independent substantive/content acceptance for all 69 primary manuscripts at `986b1ddbe985079b7c647182fcf1c2fc8911d96c`. PR #218 merged into main at `f9834ef903fc5808f3a1edede208d82aac08f4e6`. #213 is completed by explicit owner instruction; E14 #15 is completed after verifying #79–#90 closed. #214 now contains the assembled edition; publication PR, immutable content pins and verified merge control final closure. PR #217 is closed/unmerged; M9 #121 remains closed.
 
 ## Record precedence
 
@@ -22,8 +22,8 @@ Historical 0/69, HOLD, DRAFT and unmerged statements remain only within dated re
 
 The documentation correction updates the book entry and derived index without changing document identities or technical chapter prose. New local checks are recorded in its PR against the exact changed tree. The accepted-head result is not relabelled as a run on later documentation.
 
-## Remaining gate
+## Edition assembly and publication transition
 
-#214 must deliver the real ten-volume/69-chapter/bounded-page edition, reversible migration, meaningful synthesis and navigation, source/metadata validation, fresh generated index, final frozen-tree Python pass and named release. No released book, hosted search, deployed MCP or production service is claimed.
+#214 now contains the assembled ten-volume/69-chapter reading edition, reversible migration, volume synthesis and chapter navigation, strict metadata, fresh 215-document index and frozen inventory. The [assembly review](EDITION_ASSEMBLY_REVIEW_2026-10-20.md) records fresh checks and remaining evidence limits. Delivery occurs through the publication PR and immutable Git/content pins; issue closure follows verified merge. No hosted search, deployed MCP or production service is claimed.
 
 Visual rendering/live MCP remain owner-cancelled; wider M9 review and further technology-example execution retain the documented owner waivers/cancellations. No milestone closure or Actions run is claimed.

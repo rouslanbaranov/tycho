@@ -4,6 +4,7 @@ No actual Raft deployment, database test or independently validated claim.
 """
 from pathlib import Path
 import unittest
+from edition_paths import canonical_path, relative_link
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "book/distributed"
@@ -26,7 +27,7 @@ class DistributedResearchChecks(unittest.TestCase):
     def test_pages_include_visuals_and_precise_sources(self):
         for page, references in PAGES.items():
             with self.subTest(page=page):
-                content = (BASE / page).read_text(encoding="utf-8")
+                content = canonical_path(BASE / page).read_text(encoding="utf-8")
                 self.assertGreater(len(content), 8000)
                 self.assertGreaterEqual(content.count("```mermaid"), 3)
                 self.assertGreaterEqual(content.count("Text alternative:"), 3)
@@ -38,8 +39,8 @@ class DistributedResearchChecks(unittest.TestCase):
     def test_navigation_points_to_existing_content(self):
         landing = (BASE / "README.md").read_text()
         for name in list(PAGES) + ["transactional-outbox-and-idempotency.md"]:
-            self.assertIn("(" + name + ")", landing)
-            self.assertTrue((BASE / name).is_file())
+            self.assertIn("(" + relative_link(BASE / "README.md", BASE / name) + ")", landing)
+            self.assertTrue(canonical_path(BASE / name).is_file())
         self.assertIn("```mermaid", landing)
 
     def test_synthetic_arithmetic_only(self):

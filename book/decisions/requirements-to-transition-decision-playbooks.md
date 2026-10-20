@@ -109,7 +109,7 @@ The evidence ledger of the canonical technical page remains authoritative. An AD
 | Separate HTTP admission tier, retain single authority | Cap ingress and queue/retry amplification without distributing write truth | Admission queues can hide timeouts or shed valuable users | Offered/admitted/completed rate, user outcomes, fairness and retry budget |
 | Split registration into independent services | Ownership may aid independent deployment if teams/components evolve separately | Cross-service capacity invariant becomes ambiguous if jointly owned | Proven domain boundary, transactional ownership, saga/reconciliation failure plan |
 
-**Decision:** neither the phrase high load nor a retry spike justifies decomposition. Start from an explicit transactional owner and measured admission limits. Refer to [quality drivers](../application/quality-drivers-and-architecture-views.md), [outbox/idempotency](../distributed/transactional-outbox-and-idempotency.md), [queueing](../performance/queueing-littles-law.md) and [workload experiments](../performance/workload-profiles-and-capacity-experiments.md).
+**Decision:** neither the phrase high load nor a retry spike justifies decomposition. Start from an explicit transactional owner and measured admission limits. Refer to [quality drivers](../volumes/v01/c03/quality-drivers-and-architecture-views.md), [outbox/idempotency](../distributed/transactional-outbox-and-idempotency.md), [queueing](../volumes/v07/c01/queueing-littles-law.md) and [workload experiments](../performance/workload-profiles-and-capacity-experiments.md).
 
 **Experiment:** apply an open-arrival load schedule with recorded dropped iterations, skewed workshop key and concurrent confirmations; verify capacity never exceeds the business limit, inspect lock waits and p99/error outcomes. A closed-load generator alone can hide offered overload. The test cannot be called passed until executed.
 
@@ -127,7 +127,7 @@ Competing hypotheses require different evidence:
 | Retry amplification | Attempt rate exceeds logical user-work rate after dependency errors | Capture attempt IDs, retry counts, deadlines and downstream admission |
 | Shared hot-key serialization | One workshop ID dominates blocked writes while aggregate utilization looks moderate | Key-level latency distribution and lock ownership/skew traces |
 
-The first action is **not** to raise every pool size. More connections can worsen DB contention; virtual threads increase in-flight capacity but do not increase finite external resource budgets. Read [pooling](../scaling/connection-pools-hikaricp-pgbouncer.md), [Java execution](../execution/platform-threads-executors-and-virtual-threads.md), [PostgreSQL plans](../data/postgresql-mvcc-indexes-and-query-plans.md) and [observability metrics](../observability/metrics-slo-timeseries-architecture.md).
+The first action is **not** to raise every pool size. More connections can worsen DB contention; virtual threads increase in-flight capacity but do not increase finite external resource budgets. Read [pooling](../volumes/v03/c05/connection-pools-hikaricp-pgbouncer.md), [Java execution](../volumes/v03/c02/platform-threads-executors-and-virtual-threads.md), [PostgreSQL plans](../data/postgresql-mvcc-indexes-and-query-plans.md) and [observability metrics](../observability/metrics-slo-timeseries-architecture.md).
 
 **Outcome:** measure first. A hypothesis that predicts a different signal is falsifiable. The simplest safe change may be shortening transactions, bounding admission or fixing a query, not creating a service boundary.
 
@@ -174,7 +174,7 @@ Compare:
 | Warm standby second region | Faster service restoration for some named failures | Replica age/consistency, configuration drift, warm-up and credential readiness |
 | Active/active multi-region | Regional serving redundancy where correctness protocol supports it | Split-brain/conflict/ordering, divergent acknowledgments and cost |
 
-The actual decision requires user-defined RPO/RTO for **each failure class** and tested restore/failover. Read [deployment topology](../deployment/runtime-placement-and-control-plane.md), [multi-region recovery](../deployment/multi-region-disaster-recovery-contracts.md), [PostgreSQL replication](../data/postgresql-wal-replication-and-recovery.md) and [observability](../observability/trace-context-lineage-and-audit.md).
+The actual decision requires user-defined RPO/RTO for **each failure class** and tested restore/failover. Read [deployment topology](../volumes/v08/c03/runtime-placement-and-control-plane.md), [multi-region recovery](../deployment/multi-region-disaster-recovery-contracts.md), [PostgreSQL replication](../volumes/v05/c02/postgresql-wal-replication-and-recovery.md) and [observability](../observability/trace-context-lineage-and-audit.md).
 
 **Outcome:** insufficient evidence. Establish restore baselines before buying multi-region complexity; select the least complex topology demonstrated to meet a stated objective, not the one with the most regions.
 
@@ -188,7 +188,7 @@ Every route above must re-evaluate identities and authorization when changing se
 - Replaying durable messages may execute actions after the original delegated permission expired.
 - A more permissive deployment pipeline may expose credentials across untrusted runner boundaries.
 
-Read [identity, authorization and threat models](../security/identity-authorization-threat-models-and-isolation.md) and [CI/CD provenance](../delivery/ci-cd-provenance-and-gitops.md) before accepting irreversible transitions.
+Read [identity, authorization and threat models](../security/identity-authorization-threat-models-and-isolation.md) and [CI/CD provenance](../volumes/v08/c01/ci-cd-provenance-and-gitops.md) before accepting irreversible transitions.
 
 ## 7. Example ADR — retain the simplest justified option
 

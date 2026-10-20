@@ -8,7 +8,7 @@ Three actual technical pilot pages form the current corpus:
 
 | Owner | Page | Inspected primary-source anchors |
 |---|---|---|
-| Mechanism / #38 | [Queueing, Little's Law](../book/performance/queueing-littles-law.md) | Kim & Whitt (2013) §§1–2.2; Grafana k6 open/closed scheduling; public SRE Handling Overload |
+| Mechanism / #38 | [Queueing, Little's Law](../book/volumes/v07/c01/queueing-littles-law.md) | Kim & Whitt (2013) §§1–2.2; Grafana k6 open/closed scheduling; public SRE Handling Overload |
 | End-to-end / #39 | [Outbox and idempotency](../book/distributed/transactional-outbox-and-idempotency.md) | Debezium 3.6 Outbox Event Router; PostgreSQL 17; RFC 9110 §9.2.2; AWS idempotent-API research essay |
 | Recovery / #40 | [Safe rollout and recovery](../book/delivery/safe-rollout-and-recovery.md) | Kubernetes Deployments docs, Argo Rollouts Canary/BlueGreen, AWS DR reference, Google SRE Cascading Failures |
 
