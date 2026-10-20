@@ -11,7 +11,7 @@ The [strict document schema](../schemas/document-metadata.v1.schema.json) and [f
 
 **Source of truth:** annotated canonical Markdown. The generated index is disposable; it does not claim to be an authoritative knowledge graph, provenance database or content review. A page body change, metadata change, added/removed page or index-field alteration invalidates the stored snapshot. Search/read/verify refuses stale index state until explicitly rebuilt.
 
-The current book contains numerous unannotated pages. Do NOT generate a falsely complete index or count prototype fixtures as full coverage. Default `build` fails if even one scanned Markdown file lacks valid frontmatter; `--allow-partial` records all uncovered file paths and marks `coverage=partial`. An entirely unannotated corpus cannot produce a useful routing snapshot. **No full-book index is checked in by this issue**; source conversion and resulting coverage must be reviewed before an agent treats the book as fully indexed.
+**Updated corpus state (2026-10-20):** All **136/136** current `book/**/*.md` documents are annotated and recorded in the checked-in `generated/route-index.v1.json` with `coverage=complete`. The original issue #35 checkpoint was written before corpus conversion; its warning about *numerous unannotated pages/no checked-in complete index* is now historical. The tool retains fail-closed behavior for **future** unannotated pages: default `build` rejects partial coverage and `--allow-partial` must disclose it. An indexed page change always requires deterministic index rebuilding and a fresh Python `check` against the final branch commit. Indexed coverage is not proof of claim truth or completion of the ten-volume book.
 
 ## How to operate locally
 

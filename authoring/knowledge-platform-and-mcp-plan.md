@@ -19,23 +19,23 @@ Status describes Tycho now. A written plan is not an implementation. Each planne
 
 | ID | Required capability | Current state | Required completion evidence |
 |---|---|---|---|
-| K01 | Book hierarchy: book, volume, chapter, optional section and bounded page | Partial: root entry only | Coherent navigation, stable owners, local reading routes and applicable page-size checks. |
-| K02 | Purpose and Mission on landing pages | Partial: book root only | Every relevant landing page explains purpose, scope, children, outcomes and open work. |
-| K03 | Canonical explanations and progressive depth | Method documented; corpus pending | Orientation → Architecture → Evidence; local context without duplicate canonical narratives. |
-| K04 | Research contracts, source register, research log and checkpoint | Partial: discovery-stage artifacts exist | Per-slice questions, source-reading scope, contradictions, next action and honest completion states. |
-| K05 | Controlled authoring and deepening workflows | Planned | Repeatable bounded research/deepening/review/checkpoint process; no implicit whole-book regeneration. |
-| K06 | Risk-based depth, invariants and normal/failure/recovery scenarios | Method documented; corpus pending | Material mechanisms explain guarantees, failure, exceptions and evidence limits. |
-| K07 | Claim-to-evidence provenance | Partial: source-level discovery register | Exact document sections or revision/path/symbol references and reasoning for critical claims. |
+| K01 | Book hierarchy: book, volume, chapter, optional section and bounded page | Partial: root and topical landings; selected 10-volume/69-chapter edition **not assembled** | Coherent navigation, stable owners, local reading routes and applicable page-size checks. |
+| K02 | Purpose and Mission on landing pages | Partial: book and topic landings exist; final 10 volume/69 chapter landings absent | Every relevant landing page explains purpose, scope, children, outcomes and open work. |
+| K03 | Canonical explanations and progressive depth | 69 primary manuscripts deepened; final-book chapter acceptance 0/69 | Orientation → Architecture → Evidence; local context without duplicate canonical narratives. |
+| K04 | Research contracts, source register, research log and checkpoint | Implemented registers, research events and bounded checkpoints; final reviewed source-claim coverage incomplete | Per-slice questions, source-reading scope, contradictions, next action and honest completion states. |
+| K05 | Controlled authoring and deepening workflows | Documented and used for bounded research/deepening; independent chapter acceptance still open | Repeatable bounded research/deepening/review/checkpoint process; no implicit whole-book regeneration. |
+| K06 | Risk-based depth, invariants and normal/failure/recovery scenarios | 69 primary manuscripts deepened with synthetic failure/recovery cases; technical acceptance open | Material mechanisms explain guarantees, failure, exceptions and evidence limits. |
+| K07 | Claim-to-evidence provenance | Partial: source register and typed claim references exist; comprehensive per-claim acceptance open | Exact document sections or revision/path/symbol references and reasoning for critical claims. |
 | K08 | Reproducible public source-code snapshots | Planned | Lock manifest, revision-pinned detached read-only clones, submodule policy, mismatch detection and generated repository catalogue. |
 | K09 | Source content/version/access/licensing controls | Partial: discovery metadata | Admitted scope, hashes/revisions where permitted, missing/paid source behavior and bounded reproducible retrieval. |
-| K10 | Automatically generated YAML frontmatter | Planned | Stable IDs, kinds, hierarchy, topics, perspectives, summary, routing hints, evidence scope, verification dates and typed relationships. |
-| K11 | Strict JSON Schema | Planned | Versioned schemas for metadata, source records, search/snapshot manifests and API payloads; positive/negative validation. No curated-graph schema is required. |
-| K12 | Deterministic routing index | Planned | Generated from canonical metadata; stable order, ID/path uniqueness, hierarchy/related links and saved-index freshness. |
-| K13 | Unified deterministic validation | Partial: source checks and CI exist | Metadata, hierarchy cycles, references, paths/anchors, fences, navigation completeness, size/snippet limits and **search-index/source consistency**. Missing graph tooling is not a validation failure. |
+| K10 | Automatically generated YAML frontmatter | Implemented opt-in deterministic frontmatter generator; 136 book documents annotated; not automatic truth inference | Stable IDs, kinds, hierarchy, topics, perspectives, summary, routing hints, evidence scope, verification dates and typed relationships. |
+| K11 | Strict JSON Schema | Implemented strict document metadata and normalized source-reference JSON Schemas; wider API/snapshot schemas pending | Versioned schemas for metadata, source records, search/snapshot manifests and API payloads; positive/negative validation. No curated-graph schema is required. |
+| K12 | Deterministic routing index | Implemented: complete offline deterministic route index for 136/136 book Markdown documents | Generated from canonical metadata; stable order, ID/path uniqueness, hierarchy/related links and saved-index freshness. |
+| K13 | Unified deterministic validation | Implemented mechanical validation orchestration and source/index/navigation checks; semantic completeness not certified | Metadata, hierarchy cycles, references, paths/anchors, fences, navigation completeness, size/snippet limits and **search-index/source consistency**. Missing graph tooling is not a validation failure. |
 | K14 | Optional public-code static extraction experiment | Experimental / **not a delivery gate** | If pursued, pin selected public code revisions, report parser/tool scope and provenance; do not couple this experiment to required Tycho search/MCP/release paths. |
 | K15 | Curated concept/decision graph | **Removed from Tycho scope** | No manual concept/pattern/decision edges, shard curation, graph lookup or graph maintenance are required; use existing metadata, applicability cards, ADRs and source-to-claim provenance instead. |
 | K16 | Graph shards and graph assembly | **Removed from Tycho scope** | No curated-graph schema, shards, aggregate generation or traversal release gate; existing experimental graph contract artifacts are historical and not authoritative product dependencies. |
-| K17 | Route → Read → Verify workflow | Method documented; service pending | Bounded relevant reads, explicit expansion, exact evidence resolution and visible unknowns. |
+| K17 | Route → Read → Verify workflow | Local Route → Read → Verify implemented; hosted/agent service pending | Bounded relevant reads, explicit expansion, exact evidence resolution and visible unknowns. |
 | K18 | Ranked lexical retrieval | Planned; required | Full-text section index, metadata filters, stable snippets/citations, ranking and tested handling of aliases and terminology. |
 | K19 | Semantic/vector and hybrid retrieval | Planned evaluation and prototype | Versioned chunk/embedding/index contracts, reproducible comparison and documented deployment decision; never silently omitted from the plan. |
 | K20 | Reusable retrieval service | Planned; required | Search/read/evidence and architecture-decision guidance independent of MCP transport, with bounded outputs and snapshot consistency. |
@@ -48,7 +48,7 @@ Status describes Tycho now. A written plan is not an implementation. Each planne
 | K27 | Service observability and capacity | Planned; required | Latency/error/resource metrics, privacy-conscious audit events, limits, alerting and representative multi-client load tests. |
 | K28 | Corpus/retrieval/agent evaluation | Planned; required | Evidence-grounded questions, quality/uncertainty/citation/coverage checks and total task cost comparison. |
 | K29 | Maintenance, freshness and change impact | Partial: method only | Source → claim/page/section-index impact, potentially-stale states, review responsibility and verified closure without date inflation. |
-| K30 | Architecture selection and modernization | Planned | Requirements/legacy profiles, applicability cards, alternatives, ADRs, target/transition states and evidence-insufficient outcomes. |
+| K30 | Architecture selection and modernization | Requirements/decision models and draft playbooks exist; independently evaluated selection outcomes not established | Requirements/legacy profiles, applicability cards, alternatives, ADRs, target/transition states and evidence-insufficient outcomes. |
 
 ## Authoritative artifacts and source controls
 
