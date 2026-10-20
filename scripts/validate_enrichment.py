@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""Read-only ownership and conservation checks for explicitly authorized enrichment.
+
+This supplements the historical 69-manuscript split checks; it never replaces
+their payload/provenance protection or invents technical/independent acceptance.
+"""
+import json
+from pathlib import Path
+
+from assemble_edition import split, sha
+from route_index import canonical_scan
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def require(ok, message):
+    if not ok:
+        raise ValueError(message)
+
+
+def validate(root=ROOT):
+    root = Path(root)
+    manifest = json.loads((root/'edition/enrichment-manifest.json').read_text())
+    require(manifest['schema_version'] == 1, 'enrichment-version')
+    index = canonical_scan(root)
+    documents = {d['path']: d for d in index['documents']}
+    current_ids = {d['id'] for d in index['documents']}
+    retained = manifest['retained_document_ids']
+    require(len(set(retained)) == len(retained) == manifest['baseline_canonical_documents'],
+            'enrichment-baseline-membership')
+    require(set(retained) <= current_ids, 'enrichment-lost-original-identity')
+    additions = manifest['new_documents']
+    require(len({r['path'] for r in additions}) == len(additions), 'enrichment-duplicate-path')
+    require(len({r['id'] for r in additions}) == len(additions), 'enrichment-duplicate-id')
+    require(not (set(retained) & {r['id'] for r in additions}), 'enrichment-reused-identity')
+    require(current_ids == set(retained) | {r['id'] for r in additions},
+            'enrichment-unregistered-document')
+    sources = {s['id'] for s in json.loads((root/'sources/register.json').read_text())['sources']}
+    inspections = json.loads((root/manifest['inspection_record']).read_text())['inspections']
+    inspected = {x['source_id'] for x in inspections}
+    for record in additions:
+        path = record['path']
+        require(path in documents, 'enrichment-missing-document')
+        text = (root/path).read_text()
+        meta, body = split(text)
+        require(sha(text) == record['sha256'], 'enrichment-new-document-drift')
+        require(all(meta[k] == record[k] for k in ('id', 'kind', 'parent_id', 'title')),
+                'enrichment-document-identity')
+        require(meta['route_hints']['questions'] == [record['question']],
+                'enrichment-question-drift')
+        require(meta['evidence_scope']['source_ids'] == record['source_ids'],
+                'enrichment-source-drift')
+        require(set(record['source_ids']) <= sources & inspected, 'enrichment-uninspected-source')
+        require(meta['content_review']['status'] == 'self-checked'
+                and meta['content_verified_at'] is None, 'enrichment-fabricated-acceptance')
+        require(meta['source_inspection_date'] == '2026-10-20', 'enrichment-inspection-date')
+        require(body.count('\n# ') == 1, 'enrichment-heading-count')
+    edits = manifest['modified_documents']
+    require(len({r['path'] for r in edits}) == len(edits), 'enrichment-duplicate-edit')
+    for record in edits:
+        require(record['path'] in documents, 'enrichment-missing-owner')
+        text = (root/record['path']).read_text()
+        require(documents[record['path']]['id'] == record['id'], 'enrichment-owner-identity')
+        heading = record['addition_heading'] + '\n'
+        marker = record['insertion_marker']
+        require(text.count(heading) == 1, 'enrichment-missing-or-duplicate-section')
+        start = text.index(heading)
+        end = text.find(marker, start)
+        require(end > start, 'enrichment-insertion-boundary')
+        require(sha(text[start:end]) == record['addition_sha256'], 'enrichment-addition-drift')
+        require(sha(text[:start] + text[end:]) == record['baseline_sha256'],
+                'enrichment-baseline-altered')
+    outline = json.loads((root/'edition/outline.json').read_text())
+    require(outline['version'] == manifest['version'], 'enrichment-edition-version')
+    chapter_records = [r for r in additions if r['kind'] == 'chapter']
+    chapters = [d for d in index['documents'] if d['kind'] == 'chapter']
+    require(len(chapters) == manifest['baseline_chapters'] + len(chapter_records),
+            'enrichment-chapter-membership')
+    require({c['id'] for c in outline['chapters']} == {d['id'] for d in chapters},
+            'enrichment-outline-membership')
+    for c in chapter_records:
+        landing = (root/c['path']).read_text()
+        children = [r for r in additions if r['parent_id'] == c['id']]
+        require(children and all(r['kind'] == 'page' for r in children),
+                'enrichment-empty-chapter')
+        require('## Purpose and mission' in landing and '## Chapter source ledger' in landing,
+                'enrichment-chapter-contract')
+        require(all(Path(r['path']).name in landing for r in children),
+                'enrichment-chapter-route')
+    return {'new_documents': len(additions), 'new_chapters': len(chapter_records),
+            'deepened_existing_pages': len(edits),
+            'retained_document_ids': len(retained),
+            'scope': 'explicit membership and byte conservation; not semantic acceptance'}
+
+
+if __name__ == '__main__':
+    import sys
+    try:
+        print(json.dumps(validate(), indent=2))
+    except (ValueError, OSError, KeyError) as error:
+        print('FAIL:', error, file=sys.stderr)
+        sys.exit(1)

@@ -131,3 +131,10 @@ Authored three original evidence-scoped technical pages in `book/scaling/` and a
 Authored three original research chapters and Mermaid navigation in `book/search/`. Inspected PostgreSQL **17** full-text search §12.3 and text indexes, selected Apache Lucene **10.3.0** BM25Similarity API and core overview, official pgvector README (exact search, HNSW/IVFFlat, selective filtering, iterative scans), Faiss official index-family and index-factory wikis, Elasticsearch official reciprocal-rank-fusion score/reference, and Neo4j public graph concepts. Exact URL/section scopes and rolling-reference limitations are recorded in chapter evidence ledgers. Original RRF arithmetic and raw-FP32 vector size examples are not measured application performance.
 
 **No** Tycho lexical index, embeddings, ANN service, knowledge graph traversal runtime, MCP server, independent human judgments, answer correctness benchmark or token cost benchmark was built by this issue. These are future implementation/evaluation phases, and the content explicitly distinguishes them. GitHub Actions remains milestone-only; no per-PR CI pass asserted.
+
+
+## 2026-10-20 — Authorized content enrichment and critical topic additions
+
+Following explicit owner authorization, wrote two new chapters (network request paths; object storage), seven new technical pages and twelve source-scoped additions to existing owners. All earlier page identities and baseline text are preserved. Recorded 25 selected public-document inspections, 22 new source admissions and three reused IDs; no full documentation-tree read or runtime execution is asserted.
+
+[Scope](ENRICHMENT_SCOPE_2026-10-20.md) records every bounded question and acceptance case. The new conservation manifest keeps the original 69-manuscript split baseline separate from two new chapters. Index and inventory are reconciled as a reviewable candidate. The execution environment is unavailable: Python, adversarial test execution and Mermaid parsing remain pending. The change must remain draft and #214 open until required checks and substantive acceptance.

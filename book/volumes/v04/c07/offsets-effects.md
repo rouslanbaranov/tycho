@@ -124,6 +124,58 @@ No architecture can be chosen solely by a claimed RPS threshold, feature list or
 
 <!-- /tycho-question-source -->
 
+## Rebalance, external effects and expired replay positions
+
+**Enrichment contract:** trace one effect across consumer ownership changes without extending a Kafka transaction to an unrelated database. Kafka 4.1 is the specific documentation version.
+
+### Original external-effect trace
+
+A fictional consumer reads partition P offset 70, applies operation K to SQL, then crashes before committing its next consumer position 71. Its successor reads 70 again. A unique durable receipt for K, committed atomically with the SQL effect, can let the successor recognize the existing result and move forward.
+
+| Order | Crash consequence |
+|---|---|
+| Commit Kafka position before SQL effect | A successor may skip an effect that never committed |
+| Commit SQL effect before position, no deduplication | A successor can repeat the effect |
+| Commit SQL receipt and effect together, then position | Redelivery can resolve K if receipt scope/retention and SQL isolation are correct |
+| Kafka transaction for Kafka input/output and position | Protects that declared Kafka boundary; external SQL still requires cooperation |
+
+The Kafka design documentation explicitly distinguishes transactions on Kafka topics/positions from external output systems. read_committed also has a precise visibility contract; it is not an isolation mode for the application database.
+
+~~~mermaid
+sequenceDiagram
+    participant A as Consumer A
+    participant K as Kafka
+    participant D as SQL effect owner
+    participant B as Successor B
+    K-->>A: Partition P offset 70, effect K
+    A->>D: Atomically record K and apply effect
+    Note over A: Crash before position commit
+    K-->>B: Redeliver offset 70
+    B->>D: Resolve duplicate K
+    D-->>B: Existing durable result
+    B->>K: Commit position 71 after resolution
+~~~
+
+Text alternative: source position and external effect can diverge. The synthetic receipt protocol repairs this crash window only under its stated local atomicity and retention assumptions.
+
+### Ownership change does not cancel an in-flight external request
+
+A revoked consumer may still have an outstanding SQL or HTTP operation. Stopping polling or receiving a rebalance callback does not retract that remote request. Guard the external effect with its own identity/ownership contract, drain or classify in-flight work, and commit only positions for resolved effects owned under the selected consumer protocol.
+
+Kafka 4.1's max.poll.interval.ms behavior depends on group management and has static-membership/protocol caveats. Avoid one universal claim that a missed poll immediately moves every partition. Bound processing/poll behavior using the actual client and configuration.
+
+### Retention expiry requires a data decision
+
+If the requested offset no longer exists, auto.offset.reset chooses a configured behavior; it cannot recreate deleted records. latest may skip missing history, while earliest means the earliest retained history, not the beginning of all business events. A silent reset can turn a recovery failure into apparently healthy but incomplete output.
+
+An original rebuild protocol creates a source snapshot with an explicit change boundary, reconstructs a new projection, applies retained subsequent changes with stable identities, compares completeness and then switches the read alias. It requires a source/CDC contract that actually closes the snapshot/change gap. If that boundary is unavailable, record insufficient evidence instead of promising lossless rebuild.
+
+### Evidence and proposed acceptance
+
+Inspected selected passages 2026-10-20: [Kafka delivery semantics](https://kafka.apache.org/41/design/design/#message-delivery-semantics) and [consumer offset reset, isolation and poll settings](https://kafka.apache.org/41/configuration/consumer-configs/). The SQL receipt and rebuild protocols are original unexecuted designs.
+
+Proposed cases: crash after SQL commit, delayed external response across revocation, partial batch completion, aborted Kafka transaction under both isolation settings, offset older than retention and source rebuild while updates continue. Require user-level effect completeness and duplicates resolved, not merely zero consumer lag.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

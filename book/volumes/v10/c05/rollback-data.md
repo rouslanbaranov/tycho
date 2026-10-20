@@ -79,6 +79,56 @@ A million indexed rows and a million source rows can still disagree on critical 
 
 <!-- /tycho-question-source -->
 
+## Reconciliation, repair and evidence for a migration cutover
+
+**Enrichment contract:** decide whether the target contains the intended effects and relationships, rather than whether a copy job finished. This section owns transition acceptance; engine-specific replication belongs to its canonical owner.
+
+### Original count-equality counterexample
+
+A fictional source snapshot has records A, B and C. A target with A, B and B also has three rows; equal counts conceal missing C and duplicate B. Equal aggregate sums can conceal compensating errors. Define canonical identities and invariants before choosing a comparison.
+
+A proposed comparison plan partitions by a stable key range, fixes the source/target observation boundary and checks membership, per-key normalized values, relationship constraints and selected business outcomes. A digest can efficiently flag differences only if canonical encoding, schema interpretation and comparison windows agree. It is a detector, not proof that a faulty canonicalizer preserved meaning.
+
+| Comparison | Detects | Important blind spot |
+|---|---|---|
+| Row/event count | Some missing/excess records | Equal loss and duplication |
+| Key-set comparison | Missing/excess identity | Wrong values under an existing identity |
+| Canonical per-key digest | Value differences under one encoding | Shared conversion bug or omitted fields |
+| Cross-record invariant | Broken relationships and forbidden states | Unspecified business rules |
+| Representative user journey | Some externally visible defects | Unexercised populations and rare states |
+
+### Match the observation boundary
+
+Comparing a live source at revision 120 with a lagging target at 110 produces expected differences. Do not repair those by overwriting newer target data from an older snapshot. Record watermark/snapshot identity and ownership of each writable field. If a source snapshot and its subsequent change stream cannot be joined without a gap, the cutover lacks a completeness argument.
+
+For original synthetic convergence, assume incoming changes produce 200 work units/s and repair applies 300 units/s. A 60,000-unit backlog takes at least 600 seconds at a net 100 units/s under steady rates. If application changes consume the same constrained capacity or create more repair work, that estimate is invalid. Arithmetic is illustrative, not a measured throughput.
+
+### Repair is an authorized mutation
+
+Classify discrepancies before changing state: missing target record, stale projection, transformed value, duplicate external effect, deleted source entity or unresolved ownership. Prefer idempotent repair keyed by the original logical effect and guarded by current version/epoch. Recheck authorization and retirement records. Do not let a generic replayer reissue irreversible effects merely because target state is incomplete.
+
+~~~mermaid
+flowchart TD
+    O["Pinned comparison boundary"] --> D["Classified discrepancy"]
+    D --> A{"Authoritative owner and repair known?"}
+    A -->|No| H["Hold cutover and investigate"]
+    A -->|Yes| R["Apply guarded idempotent repair"]
+    R --> V["Recompare values and invariants"]
+    V --> G{"Acceptance envelope satisfied?"}
+    G -->|No| H
+    G -->|Yes| C["Authorized cutover with recorded residual limits"]
+~~~
+
+Text alternative: a discrepancy becomes a scoped repair only after identifying authority. Recomparison precedes cutover. This original reasoning flow is not an executed migration.
+
+### Acceptance, recovery and sources
+
+Record unresolved differences, affected populations, repair backlog/age, dual-write divergence, rollback compatibility and the point where old state is no longer sufficient for reversal. A binary rollback cannot restore discarded meanings, later retired data or already emitted external effects.
+
+Use [Kafka recovery boundaries](../../v04/c07/offsets-effects.md#rebalance-external-effects-and-expired-replay-positions), [PostgreSQL replica state](../../v05/c02/replica-recovery.md#replica-lag-retained-wal-and-standby-feedback) and [deletion after restore](../../v05/c06/migration-retirement.md#deletion-across-derived-state-and-restored-backups) for exact mechanisms. Selected [Kafka external-output coordination](https://kafka.apache.org/41/design/design/) supports the need to coordinate position and output; the comparison/repair plan and numbers are original synthesis.
+
+Proposed acceptance: inject one loss and one duplicate with unchanged count, update while comparing, fail a repair halfway, and restore before a retirement. Require complete classified outcomes under a named boundary. No migration or repair execution was performed.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

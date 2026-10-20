@@ -19,11 +19,17 @@ The corpus includes 29 public historical case studies and six synthetic decision
 | #214 | Reopened; substantive page decomposition and editorial acceptance |
 | M9 #121 | Closed under its documented scoped acceptance |
 
-## Reopened editorial decomposition — #214
+## Current enrichment candidate — #214
+
+The owner authorized all proposed enrichment and critical-topic additions. Candidate **2026.10.1-rc.2** adds network and object-storage chapters (V08/C08 and V05/C08), seven technical pages and nine document identities; twelve existing mechanism pages are deepened. Expected corpus: **10 volumes, 71 chapters, 398 canonical documents**.
+
+See [the gap-to-owner contracts](ENRICHMENT_SCOPE_2026-10-20.md), [validation state](ENRICHMENT_VALIDATION_2026-10-20.md) and [conservation manifest](../edition/enrichment-manifest.json). Writing is self-reviewed and selected public source passages are recorded. Python, new adversarial tests, full integration checks and Mermaid parsing are **not run on this candidate** because the execution environment is unavailable. Keep the change as a draft PR; #214 remains open. Prior passing results must not be transferred to this tree.
+
+## Historical editorial decomposition candidate — #214
 
 The owner rejected the uniform one-manuscript-page-per-chapter assembly as sufficient final book structure and reopened #214. PR #220/version 2026.10.0 remain a **structural checkpoint**, not final editorial acceptance. #213's accepted content baseline remains valid.
 
-The current 2026.10.1-rc.1 candidate makes individual question-owner decisions for all 69 chapters: **174 new question pages**, 69 integrated walkthroughs and ten volume syntheses, with 389 canonical documents including retained supporting material. A page count is an inventory, not a completion criterion.
+The preceding 2026.10.1-rc.1 candidate makes individual question-owner decisions for all 69 chapters: **174 new question pages**, 69 integrated walkthroughs and ten volume syntheses, with 389 canonical documents including retained supporting material. A page count is an inventory, not a completion criterion.
 
 [The chapter review](CHAPTER_DECOMPOSITION_REVIEW_2026-10-20.md) records actual owner questions, source sections and editorial limits. [The split manifest](../edition/decomposition-manifest.json) conserves 739 source blocks and maps 839 original fragments. Original IDs and protected evidence metadata remain; new question IDs are recorded separately. Source text, ledger ownership, original examples and new additions have explicit provenance.
 
@@ -41,4 +47,4 @@ Seven short question treatments gained worked decision/failure explanations. A s
 
 ## Record precedence
 
-Older audit, execution and editorial reports retain their original observations as dated history. Their pending statuses do not reopen the owner-accepted manuscript gate. Individual frontmatter review/proof fields remain as recorded; the aggregate owner disposition does not fabricate missing page-specific review identities. The edition assembly review records the new validation and its limits; GitHub records the publication merge and issue closure.
+Older audit, execution and editorial reports retain their original observations as dated history. Their pending statuses do not reopen the owner-accepted manuscript gate. Individual frontmatter review/proof fields remain as recorded; the aggregate owner disposition does not fabricate missing page-specific review identities. The edition assembly review records the new validation and its limits; GitHub records candidate merges and the still-open #214 acceptance gate.

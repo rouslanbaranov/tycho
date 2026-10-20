@@ -25,15 +25,13 @@ Read [the independence policy](governance/INDEPENDENCE.md) before contributing. 
 
 All repository content is written in English. Reading the book must not require access to private repositories, accounts, internal networks, another book, or an external agent service. External citations support verification; essential explanations belong in the book itself. Public source dependencies must be recorded explicitly.
 
-## Current editorial candidate — 2026.10.1-rc.1
+## Current enrichment candidate — 2026.10.1-rc.2
 
-**[Read the ten-volume manuscript](book/README.md).** All 69 chapters now have individual question-based page routes, rather than uniform one-article wrappers. There are 174 new mechanism/question owners alongside the 69 integrated walkthroughs; retained supporting and case material brings the canonical corpus to 389 documents.
+**[Read the ten-volume manuscript](book/README.md).** This candidate contains 71 chapters and 398 canonical documents. Two new chapters explain network request paths and object storage; twelve existing mechanism pages gain worked failure/recovery reasoning. All prior identities and original source blocks remain.
 
-The owner reopened #214 after rejecting the first structural checkpoint as final editorial completion. Version 2026.10.0 and its named snapshot remain historical evidence. The current candidate preserves that content, its identities and source history through [explicit section/fragment mappings](edition/decomposition-manifest.json). It includes seven additional worked explanations and a newly sourced MVCC/snapshot/vacuum page.
+[Scope and acceptance questions](authoring/ENRICHMENT_SCOPE_2026-10-20.md) describe the additions and source boundaries. **Integration checks are pending:** this candidate has not had a Python or Mermaid run because the execution environment is unavailable. The previous candidate's passing results belong to that earlier tree.
 
-[Decomposition decisions and acceptance limits](authoring/CHAPTER_DECOMPOSITION_REVIEW_2026-10-20.md), [current state](authoring/STATE.md) and [edition checks](edition/README.md) distinguish implemented page structure, mechanical validation and remaining substantive acceptance. #214 stays open; page counts and passing tests do not close it. Hosted retrieval/MCP/deployment work remains postponed.
-
-Run `python3 scripts/check_boundary.py` from the repository root. A successful scan detects none of the configured patterns; it does not certify independent origin or semantic correctness.
+#214 remains open for integration verification and substantive page acceptance. The historical 2026.10.0 snapshot is unchanged; no final release or deployment is claimed.
 
 ## Industry-neutral delivery
 

@@ -1,5 +1,8 @@
 # Current precedence — owner reopened #214
 
+> **Enrichment candidate update, 2026-10-20:** The owner authorized the scoped additions in [the enrichment contract](ENRICHMENT_SCOPE_2026-10-20.md). Candidate rc.2 adds two chapters and seven technical pages, deepens twelve existing pages, and retains all earlier identities/source blocks. Expected membership is 71 chapters/398 documents. The change remains a draft: Python/Mermaid integration and substantive acceptance are pending because the execution environment is unavailable. #214 remains OPEN; #213 acceptance and the historical release snapshot remain unchanged. Earlier rc.1 checks below belong only to that earlier tree.
+
+
 The owner rejected uniform one-page chapters as final editorial completion. #214 is OPEN. PR #220 and version 2026.10.0 remain reproducible structural history. The current [decomposition review](CHAPTER_DECOMPOSITION_REVIEW_2026-10-20.md) and [STATE](STATE.md) control the new question-page gate; no larger inventory or passing test suite supersedes substantive acceptance. #213 remains completed for its accepted manuscript scope.
 
 ## Historical post-merge reconciliation

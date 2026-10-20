@@ -20,6 +20,7 @@ route_hints:
     - "tycho.chapter.a92541ba2fb44cf1a3afef1f9c021fe0"
     - "tycho.chapter.18aa94285a164b6f94530cebcfd87b8b"
   related_ids:
+    - "tycho.chapter.0bf6cdc27afdb2f2494b82013d92eb73"
     - "tycho.chapter.f5df10e26e27467887ee2b22b6ce50e7"
     - "tycho.chapter.b4272c1342514a40afce9d3872a9664c"
     - "tycho.chapter.e451bfe1e0cb4c588f0576e0b2b7d3d0"
@@ -74,6 +75,7 @@ Connect domain invariants to relational constraints and isolation, then inspect 
 | [V05/C05 — Partitioning, sharding and rebalancing](c05/README.md) | How do hot keys, routing, joins and ownership affect scale? |
 | [V05/C06 — Schema evolution, data migration and retention](c06/README.md) | What compatibility windows and irreversibility constraints exist? |
 | [V05/C07 — Replication, backups and restore drills](c07/README.md) | How do consistency, lag, RPO/RTO and restore evidence connect? |
+| [V05/C08 — Object storage, large transfers and publication](c08/README.md) | How can large immutable payloads be transferred, published and retired without confusing bytes with business state? |
 
 ## Choosing a reading route
 

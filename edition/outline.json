@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "edition": "Tycho — substantive decomposition candidate",
-  "version": "2026.10.1-rc.1",
+  "edition": "Tycho — content enrichment candidate",
+  "version": "2026.10.1-rc.2",
   "baseline_commit": "08ac0da83c30d2f2e6aea3446142ad183987f01c",
   "manuscript_acceptance_commit": "986b1ddbe985079b7c647182fcf1c2fc8911d96c",
   "volumes": [
@@ -1129,6 +1129,33 @@
       ]
     },
     {
+      "code": "V05/C08",
+      "title": "Object storage, large transfers and publication",
+      "question": "How can large immutable payloads be transferred, published and retired without confusing bytes with business state?",
+      "id": "tycho.chapter.0bf6cdc27afdb2f2494b82013d92eb73",
+      "path": "book/volumes/v05/c08/README.md",
+      "origin": "owner-authorized enrichment 2026-10-20",
+      "result": "Explain transfer progress, object identity, publication authority and garbage collection",
+      "counterexample": "A visible object is not proof of a published catalogue entry.",
+      "question_pages": [
+        {
+          "id": "tycho.page.60ae29b6b2a422214c18be04cf012b6e",
+          "path": "book/volumes/v05/c08/upload-integrity.md",
+          "question": "Which transfer identities allow interruption recovery without confusing uploaded parts with a verified object?"
+        },
+        {
+          "id": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f",
+          "path": "book/volumes/v05/c08/publication-consistency.md",
+          "question": "When may an application expose uploaded bytes if object storage and metadata do not share a transaction?"
+        },
+        {
+          "id": "tycho.page.df45fc7c08edd5544234864073ea5cc0",
+          "path": "book/volumes/v05/c08/access-lifecycle.md",
+          "question": "How are object access, retained versions and cleanup governed after publication?"
+        }
+      ]
+    },
+    {
       "code": "V06/C01",
       "title": "Local and distributed caching",
       "question": "How do authority, freshness, eviction and invalidation differ?",
@@ -1658,6 +1685,38 @@
           "id": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292",
           "path": "book/volumes/v08/c07/authority-failback.md",
           "question": "Which steps prevent two writers and demonstrate recovered user journeys?"
+        }
+      ]
+    },
+    {
+      "code": "V08/C08",
+      "title": "Network request paths, routing and edge delivery",
+      "question": "Which network boundary owns routing, transport, trust and the fate of an interrupted request?",
+      "id": "tycho.chapter.8a86707018773def410689efbc79cf94",
+      "path": "book/volumes/v08/c08/README.md",
+      "origin": "owner-authorized enrichment 2026-10-20",
+      "result": "Separate route choice, connection lifetime, identity and application outcome",
+      "counterexample": "A route update does not fence a former database writer",
+      "question_pages": [
+        {
+          "id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
+          "path": "book/volumes/v08/c08/discovery-balancing.md",
+          "question": "How does an endpoint change become a correctly balanced request rather than merely a new address?"
+        },
+        {
+          "id": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633",
+          "path": "book/volumes/v08/c08/connections-draining.md",
+          "question": "What does a transport shutdown establish about an in-flight application operation?"
+        },
+        {
+          "id": "tycho.page.37a28a568f7e987941749e198c03439a",
+          "path": "book/volumes/v08/c08/tls-gateway-boundaries.md",
+          "question": "Which identity and confidentiality boundary does each proxy hop establish?"
+        },
+        {
+          "id": "tycho.page.3349b84b088ebcca496bb52fbdbbc565",
+          "path": "book/volumes/v08/c08/edge-cache-origin.md",
+          "question": "Which representation may an edge reuse, and how is correctness preserved during origin failure?"
         }
       ]
     },

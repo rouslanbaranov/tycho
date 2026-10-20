@@ -131,6 +131,52 @@ No tests were executed. A future fixture should insert ambiguous identifiers, ba
 
 <!-- /tycho-question-source -->
 
+## Deletion across derived state and restored backups
+
+**Enrichment contract:** explain what an application deletion completes, which copies remain, and how recovery avoids republishing retired data. This is an engineering lifecycle model, not a legal retention determination.
+
+Begin with a copy inventory: authoritative rows and blobs; read replicas; change logs and outbox entries; search/vector projections; caches; exports; operational logs; and historical backups. Define the allowed retained content and access for each owner. Removing one database row cannot itself prove removal of all copies.
+
+### Original retirement protocol
+
+A fictional catalogue retires document D at source revision 108. A durable retirement record names D, its scope and revision. Consumers remove or hide older representations and preserve enough retirement knowledge to reject older replay. A consumer processing revision 103 after 108 must not recreate the visible document.
+
+~~~mermaid
+flowchart TD
+    R["Authoritative retirement at revision 108"] --> L["Durable retirement knowledge"]
+    L --> I["Indexes and caches suppress older content"]
+    L --> O["Objects and exports follow deletion policy"]
+    B["Restore of revision 90 backup"] --> Q["Isolated restore boundary"]
+    L --> Q
+    Q --> V["Reapply retirement and validate access before exposure"]
+~~~
+
+Text alternative: restoring an older snapshot goes through an isolated reconciliation gate informed by retirement knowledge that survived independently. The sketch is an original proposed protocol, not evidence of physical erasure.
+
+The retirement ledger itself must have an appropriate retention, access and minimization policy. Keeping sensitive content forever inside a deletion record defeats the purpose. Keep the minimal durable identity/version evidence needed to prevent resurrection. If that knowledge is lost with the same backup, the architecture cannot claim restored data respects later retirements.
+
+### Completion is multidimensional
+
+| State | What can be asserted |
+|---|---|
+| New reads denied | Current application exposure is blocked under the tested access paths |
+| Derived owners acknowledge removal | Named projections processed a particular retirement revision |
+| Historical copies retained but isolated | Recovery/access policy still permits physical retention; not an erasure claim |
+| Provider removal completed | Only what the selected provider's documented scope and evidence establish |
+| Restored service reconciled | Restored content and authorization were checked against later retirements before reopening |
+
+Google Cloud's deletion description distinguishes active and backup storage stages and scopes its description to a particular published design. Use it as an example of why deletion has stages, not as a guarantee for arbitrary services or a current universal completion deadline.
+
+### Failure and recovery
+
+A lagging consumer needs a catch-up or rebuild procedure that includes retirement knowledge. A tombstone discarded before every possible replay horizon can allow old data to return. Coordinate tombstone retention with backup age, offline-consumer windows, log retention and source rebuild policy. If all those horizons cannot be bounded, retain another authoritative exclusion mechanism or accept an explicit unresolved requirement.
+
+Cryptographic erasure needs proof that all usable key copies and relevant plaintext copies are covered. Destroying one shared encryption key may also destroy unrelated retained data. See [key lifecycle](../../v09/c05/object-credentials.md#key-rotation-revocation-and-unavailable-authorities) and [object lifecycle](../c08/access-lifecycle.md).
+
+Proposed acceptance: retire D, hold one consumer offline, restore a pre-retirement backup in isolation, replay older events, and require no forbidden read through UI, direct object access, cache, search or export. No deletion or restore exercise was executed.
+
+Selected evidence inspected 2026-10-20: [Data deletion](https://docs.cloud.google.com/docs/security/deletion) for staged active/backup deletion; all revision numbers and the retirement protocol are original synthetic reasoning. Exact physical-removal guarantees remain provider-specific and require separately reviewed evidence.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

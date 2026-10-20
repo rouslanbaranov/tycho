@@ -88,6 +88,11 @@ Begin with the integrated decision, then open the independent question that matc
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
 
+
+## Further mechanism and recovery questions
+
+- [Clock domains, deadlines and expiry](causal-order.md#clock-domains-deadlines-and-expiry) — source-scoped enrichment; examples and proposed tests are not executed results.
+
 ## Chapter source ledger
 
 The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and version, not inferred from source-list length.

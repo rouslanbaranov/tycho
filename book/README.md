@@ -9,7 +9,7 @@ topic_ids:
   - "system-design"
 perspectives:
   - "architecture"
-summary: "Ten-volume System Design manuscript with 69 chapter reading routes, independent question pages, exact provenance and explicit editorial-candidate status."
+summary: "Ten-volume System Design candidate with 71 chapter routes, source-scoped mechanism enrichment and explicit pending integration and substantive acceptance."
 route_hints:
   questions:
     - "What are the scope, mechanisms and limits of Tycho — System Design?"
@@ -53,9 +53,11 @@ content_verified_at: null
 
 Reason about requirements, mechanisms, partial failure and safe modernization using independently published evidence and original synthetic examples. The book develops conditional engineering judgment: retain a simple design, measure first or state insufficient evidence whenever the facts require it.
 
-## Editorial decomposition candidate — 2026.10.1-rc.1
+## Content enrichment candidate — 2026.10.1-rc.2
 
-The current manuscript has ten volumes and 69 chapters. Each chapter links an integrated decision walkthrough to separately owned mechanism and failure questions. Page counts follow those questions: the current routes contain three to five pages per chapter, including the integrated walkthrough. Supporting essays and the historical casebook remain available. Source versions, access limits and nonclaims stay with their owners.
+The candidate has ten volumes and 71 chapters: the original 69 chapter routes plus new chapters on network request paths and object storage. Seven new technical pages and twelve deepened mechanism pages close identified coverage gaps. The canonical corpus contains 398 documents. Counts describe membership, not completion. Source versions, access limits and nonclaims stay with their owners.
+
+Integration checks for this enrichment candidate are pending because the execution environment is unavailable. The earlier candidate's test results do not establish this tree's validity. See [scope and remaining gates](../authoring/ENRICHMENT_SCOPE_2026-10-20.md).
 
 ## Contents
 
@@ -65,10 +67,10 @@ The current manuscript has ten volumes and 69 chapters. Each chapter links an in
 | [V02 — Application boundaries and interaction contracts](volumes/v02/README.md) | 7 | Map ownership and interface semantics before splitting deployment: modular monolith, services and adapters are conditional alternatives; tenancy crosses every boundary. |
 | [V03 — Execution models, concurrency and flow control](volumes/v03/README.md) | 6 | A resource-budget view tracing request admission, execution/task/connection pools and cancellation to the external effect boundary. |
 | [V04 — Distributed coordination and event integration](volumes/v04/README.md) | 8 | A failure trace from request to durable state to event consumer: causal order, retry identity and transaction scope are different promises. |
-| [V05 — Data models, engines and lifecycle](volumes/v05/README.md) | 7 | A data-authority and lifecycle model from constraint/index/WAL through partitioning, migration and verified restore; storage engine is not an architecture shortcut. |
+| [V05 — Data models, engines and lifecycle](volumes/v05/README.md) | 8 | A data-authority and lifecycle model from constraint/index/WAL through partitioning, migration and verified restore; storage engine is not an architecture shortcut. |
 | [V06 — Caching, indexing and information retrieval](volumes/v06/README.md) | 7 | Clarify authority/cache/projection/search separation; show lexical, vector, hybrid and graph fits with quantitative evaluation and failure boundaries. |
 | [V07 — Performance, scale and resilience under load](volumes/v07/README.md) | 7 | A capacity envelope joining Little's Law, offered load, contention, tails, overload controls, autoscaling lag and cost with falsification. |
-| [V08 — Delivery, deployment and disaster recovery](volumes/v08/README.md) | 7 | A cutover chain linking artifact trust, mixed versions, deployments, failure domains, data authority and recovery after the no-return point. |
+| [V08 — Delivery, deployment and disaster recovery](volumes/v08/README.md) | 8 | A cutover chain linking artifact trust, mixed versions, deployments, failure domains, data authority and recovery after the no-return point. |
 | [V09 — Observability, security and operational architecture](volumes/v09/README.md) | 7 | A user-visible truth/accountability loop: metrics, traces, audit, security and incident recovery have different completeness and trust guarantees. |
 | [V10 — Decision support and modernization playbooks](volumes/v10/README.md) | 7 | A full legacy-to-target-to-transition ADR with alternatives, reversible and irreversible stages, costs, authorization, evidence and an explicit unknown/refusal outcome. |
 

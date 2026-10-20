@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-20. Entries: 216.
+Inventory date: 2026-10-20. Entries: 238.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -321,3 +321,30 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | ID / priority | Source | Planned use | Admission / access |
 |---|---|---|---|
 | src.sre-workbook-incident-response / core | [SRE Workbook: Incident Response](https://sre.google/workbook/incident-response/) — Google SRE book authors | Support response roles, shared chronology and practice; distinguish the original tabletop proposal from executed recovery. | admitted-for-research / public-web-or-author-download |
+
+## Enrichment Primary Sources
+
+| ID / priority | Source | Planned use | Admission / access |
+|---|---|---|---|
+| src.rfc9113-enrichment / core | [HTTP/2](https://www.rfc-editor.org/rfc/rfc9113.html) — IETF | Streams, flow control and GOAWAY boundaries; not application transaction outcome. | admitted-for-research / public-web-or-author-download |
+| src.sre-frontend-enrichment / core | [Load Balancing at the Frontend](https://sre.google/sre-book/load-balancing-frontend/) — Google SRE authors | DNS routing and frontend balancing. | admitted-for-research / public-web-or-author-download |
+| src.sre-balancing-enrichment / core | [Load Balancing in the Datacenter](https://sre.google/sre-book/load-balancing-datacenter/) — Google SRE authors | Backend selection, connections and load imbalance. | admitted-for-research / public-web-or-author-download |
+| src.aws-leases-enrichment / core | [Leader election in distributed systems](https://aws.amazon.com/builders-library/leader-election-in-distributed-systems/) — Amazon Builders Library | Lease timing, leader responsibility and stale-owner risks. | admitted-for-research / public-web-or-author-download |
+| src.etcd-api-enrichment / core | [etcd API guarantees](https://etcd.io/docs/v3.6/learning/api_guarantees/) — etcd maintainers | KV atomicity, revisions, leases and watches within their stated guarantees. | admitted-for-research / public-web-or-author-download |
+| src.s3-conditional-enrichment / core | [Conditional writes](https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes.html) — Amazon S3 documentation | If-Match, If-None-Match and conditional multipart completion. | admitted-for-research / public-web-or-author-download |
+| src.s3-multipart-enrichment / core | [Multipart upload overview](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html) — Amazon S3 documentation | Upload lifecycle, parts, completion and integrity. | admitted-for-research / public-web-or-author-download |
+| src.gcp-deletion-enrichment / core | [Data deletion](https://docs.cloud.google.com/docs/security/deletion) — Google Cloud documentation | Active and backup deletion stages; provider-specific limits. | admitted-for-research / public-web-or-author-download |
+| src.sre-cron-enrichment / core | [Distributed Periodic Scheduling with Cron](https://sre.google/sre-book/distributed-periodic-scheduling/) — Google SRE authors | Scheduling identity and duplicate or missed jobs. | admitted-for-research / public-web-or-author-download |
+| src.temporal-version-enrichment / core | [Temporal Workflow Execution overview](https://docs.temporal.io/workflow-execution) — Temporal documentation | Workflow history and durable execution overview only; no uninspected SDK guarantees. | admitted-for-research / public-web-or-author-download |
+| src.owasp-key-enrichment / core | [Key Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Key_Management_Cheat_Sheet.html) — OWASP | Key lifecycle, separation, compromise and recovery. | admitted-for-research / public-web-or-author-download |
+| src.pg17-locks-enrichment / core | [Explicit Locking](https://www.postgresql.org/docs/17/explicit-locking.html) — PostgreSQL contributors | Table-lock conflicts, deadlock detection and transaction retry scope. | admitted-for-research / public-web-or-author-download |
+| src.pg17-concurrent-index-enrichment / core | [CREATE INDEX](https://www.postgresql.org/docs/17/sql-createindex.html) — PostgreSQL contributors | Concurrent build waits, invalid indexes and failure handling. | admitted-for-research / public-web-or-author-download |
+| src.pg17-time-enrichment / core | [Date and time types](https://www.postgresql.org/docs/17/datatype-datetime.html) — PostgreSQL contributors | Instants, timezone conversion and civil time. | admitted-for-research / public-web-or-author-download |
+| src.pg17-collation-enrichment / core | [Collation support](https://www.postgresql.org/docs/17/collation.html) — PostgreSQL contributors | Provider-specific collation behavior and comparison contracts. | admitted-for-research / public-web-or-author-download |
+| src.rfc9111-enrichment / core | [HTTP caching](https://www.rfc-editor.org/rfc/rfc9111.html) — IETF | Shared-cache restrictions, freshness and validation. | admitted-for-research / public-web-or-author-download |
+| src.pg17-vacuum-enrichment / core | [Routine vacuuming](https://www.postgresql.org/docs/17/routine-vacuuming.html) — PostgreSQL contributors | Dead tuples, visibility and transaction-age maintenance. | admitted-for-research / public-web-or-author-download |
+| src.pg17-replication-enrichment / core | [Replication configuration](https://www.postgresql.org/docs/17/runtime-config-replication.html) — PostgreSQL contributors | Standby feedback trade-offs and replication-slot retention. | admitted-for-research / public-web-or-author-download |
+| src.pg17-numeric-enrichment / core | [Numeric types](https://www.postgresql.org/docs/17/datatype-numeric.html) — PostgreSQL contributors | Exact numeric and inexact floating-point contracts. | admitted-for-research / public-web-or-author-download |
+| src.temporal-patching-enrichment / core | [Patching](https://docs.temporal.io/patching) — Temporal documentation | Patching/versioning for deterministic replay; specific SDK excluded. | admitted-for-research / public-web-or-author-download |
+| src.kafka41-consumer-enrichment / core | [Consumer configuration](https://kafka.apache.org/41/configuration/consumer-configs/) — Apache Kafka contributors | Offset reset, isolation and poll interval boundaries. | admitted-for-research / public-web-or-author-download |
+| src.owasp-rest-enrichment / core | [REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html) — OWASP | Token validation and early revocation requirements. | admitted-for-research / public-web-or-author-download |
