@@ -66,6 +66,15 @@ Begin with the integrated decision, then open the independent question that matc
 | [Distributed transactions and business protocols](distributed-protocols.md) | Which obligations remain when local transactions cannot atomically coordinate owners? |
 | [Concurrency, compensation and negative experiments](coordination-failure.md) | What schedule would expose an unsafe cross-owner invariant or failed compensation? |
 
+
+## Additional mechanism and project routes
+
+These independently scoped pages extend the chapter without replacing its original walkthrough or source ledger.
+
+| Page | Owning question |
+| --- | --- |
+| [Multiple writers and offline conflicts](multiwriter-conflicts.md) | Which concurrent updates can be merged without violating the application's invariant? |
+
 ## Boundaries and further reading
 
 - [V05/C01 — Relational modeling and transaction isolation](../../v05/c01/README.md) owns the adjacent question; compare assumptions before transferring the conclusion.

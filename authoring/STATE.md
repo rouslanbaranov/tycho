@@ -21,9 +21,13 @@ The corpus includes 29 public historical case studies and six synthetic decision
 
 ## Current enrichment candidate — #214
 
-The owner authorized all proposed enrichment and critical-topic additions. Candidate **2026.10.1-rc.2** adds network and object-storage chapters (V08/C08 and V05/C08), seven technical pages and nine document identities; twelve existing mechanism pages are deepened. Expected corpus: **10 volumes, 71 chapters, 398 canonical documents**.
+Candidate **2026.10.1-rc.3** implements the owner's additional authorization: five mechanism pages (configuration rollout, session consistency, offline conflicts, cells/shuffle sharding, protocol verification) and three complete original worked projects (catalogue, offline collaboration, multitenant overload). Expected membership: **10 volumes, 71 chapters, 406 canonical documents**. The previous rc.2 additions and all 398 previous identities remain.
 
-See [the gap-to-owner contracts](ENRICHMENT_SCOPE_2026-10-20.md), [validation state](ENRICHMENT_VALIDATION_2026-10-20.md) and [conservation manifest](../edition/enrichment-manifest.json). Writing is self-reviewed and selected public source passages are recorded. Python, new adversarial tests, full integration checks and Mermaid parsing are **not run on this candidate** because the execution environment is unavailable. Keep the change as a draft PR; #214 remains open. Prior passing results must not be transferred to this tree.
+See [the second-pass contract](SECOND_ENRICHMENT_CONTRACT_2026-10-20.md), [current validation](SECOND_ENRICHMENT_VALIDATION_2026-10-20.md) and [conservation manifest](../edition/enrichment-manifest.json). Nine primary sources are newly admitted and one existing ID reused for ten scoped readings; total source membership is 247. All workload numbers are synthetic, and all new material is author self-checked.
+
+**PR #222 remains draft; #214 remains OPEN.** Python premerge, full integration/adversarial checks and Mermaid syntax parsing have not run on this candidate because the execution environment remains unavailable. Available JavaScript checks are scoped separately and do not substitute for those gates. No independent acceptance, final release or deployment is asserted.
+
+The [first-pass scope](ENRICHMENT_SCOPE_2026-10-20.md) and [first-pass validation](ENRICHMENT_VALIDATION_2026-10-20.md) retain their historical rc.2 meaning. They are not a verification report for rc.3.
 
 ## Historical editorial decomposition candidate — #214
 

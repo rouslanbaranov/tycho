@@ -25,13 +25,13 @@ Read [the independence policy](governance/INDEPENDENCE.md) before contributing. 
 
 All repository content is written in English. Reading the book must not require access to private repositories, accounts, internal networks, another book, or an external agent service. External citations support verification; essential explanations belong in the book itself. Public source dependencies must be recorded explicitly.
 
-## Current enrichment candidate — 2026.10.1-rc.2
+## Current enrichment candidate — 2026.10.1-rc.3
 
-**[Read the ten-volume manuscript](book/README.md).** This candidate contains 71 chapters and 398 canonical documents. Two new chapters explain network request paths and object storage; twelve existing mechanism pages gain worked failure/recovery reasoning. All prior identities and original source blocks remain.
+**[Read the ten-volume manuscript](book/README.md).** The candidate contains 71 chapters and 406 canonical documents. This pass adds configuration rollout, session consistency, offline conflicts, cells/shuffle sharding and protocol verification, plus complete catalogue, collaboration and multitenant-service projects. It retains the earlier object-storage/network additions, twelve deepened pages and all existing identities/source blocks.
 
-[Scope and acceptance questions](authoring/ENRICHMENT_SCOPE_2026-10-20.md) describe the additions and source boundaries. **Integration checks are pending:** this candidate has not had a Python or Mermaid run because the execution environment is unavailable. The previous candidate's passing results belong to that earlier tree.
+[The second-pass contract](authoring/SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) records the scope. [The validation record](authoring/SECOND_ENRICHMENT_VALIDATION_2026-10-20.md) separates available in-process checks from the required Python and Mermaid runs, which remain unexecuted because the execution environment is unavailable.
 
-#214 remains open for integration verification and substantive page acceptance. The historical 2026.10.0 snapshot is unchanged; no final release or deployment is claimed.
+[PR #222](https://github.com/rouslanbaranov/tycho/pull/222) remains draft; #214 remains open for integration verification and substantive page acceptance. The historical 2026.10.0 snapshot is unchanged.
 
 ## Industry-neutral delivery
 

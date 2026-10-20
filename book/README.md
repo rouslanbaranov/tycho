@@ -53,11 +53,19 @@ content_verified_at: null
 
 Reason about requirements, mechanisms, partial failure and safe modernization using independently published evidence and original synthetic examples. The book develops conditional engineering judgment: retain a simple design, measure first or state insufficient evidence whenever the facts require it.
 
-## Content enrichment candidate — 2026.10.1-rc.2
+## Content enrichment candidate — 2026.10.1-rc.3
 
-The candidate has ten volumes and 71 chapters: the original 69 chapter routes plus new chapters on network request paths and object storage. Seven new technical pages and twelve deepened mechanism pages close identified coverage gaps. The canonical corpus contains 398 documents. Counts describe membership, not completion. Source versions, access limits and nonclaims stay with their owners.
+The candidate contains ten volumes, 71 chapters and 406 canonical documents. The first enrichment introduced object-storage and network chapters plus twelve deeper mechanism treatments. This second pass adds five distinct mechanism pages and three complete original worked designs within existing chapters. Counts describe membership, not acceptance.
 
-Integration checks for this enrichment candidate are pending because the execution environment is unavailable. The earlier candidate's test results do not establish this tree's validity. See [scope and remaining gates](../authoring/ENRICHMENT_SCOPE_2026-10-20.md).
+| New mechanism | Worked integration |
+| --- | --- |
+| [Configuration rollout](volumes/v08/c04/configuration-rollout.md) and [cells/shuffle sharding](volumes/v08/c06/cells-shuffle-sharding.md) | [A multitenant service under overload](volumes/v10/c07/multitenant-project.md) |
+| [Session observations](volumes/v04/c02/session-consistency.md) and [offline conflicts](volumes/v04/c03/multiwriter-conflicts.md) | [Offline collaboration](volumes/v10/c07/collaboration-project.md) |
+| [Protocol correctness verification](volumes/v01/c04/protocol-correctness.md) | [A large-file catalogue](volumes/v10/c07/catalogue-project.md) |
+
+Every project states its synthetic workload, authority, normal/failure/recovery paths, alternatives, cost arithmetic and conditions that reverse the choice. Source versions, actual read scopes and unknowns remain explicit. See the [second-pass contract](../authoring/SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) and [validation record](../authoring/SECOND_ENRICHMENT_VALIDATION_2026-10-20.md).
+
+Python integration and Mermaid syntax checks remain unexecuted because the execution environment is unavailable. Available in-process checks are reported separately. #214 remains open for integration and substantive acceptance.
 
 ## Contents
 

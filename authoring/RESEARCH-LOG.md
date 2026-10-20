@@ -138,3 +138,11 @@ Authored three original research chapters and Mermaid navigation in `book/search
 Following explicit owner authorization, wrote two new chapters (network request paths; object storage), seven new technical pages and twelve source-scoped additions to existing owners. All earlier page identities and baseline text are preserved. Recorded 25 selected public-document inspections, 22 new source admissions and three reused IDs; no full documentation-tree read or runtime execution is asserted.
 
 [Scope](ENRICHMENT_SCOPE_2026-10-20.md) records every bounded question and acceptance case. The new conservation manifest keeps the original 69-manuscript split baseline separate from two new chapters. Index and inventory are reconciled as a reviewable candidate. The execution environment is unavailable: Python, adversarial test execution and Mermaid parsing remain pending. The change must remain draft and #214 open until required checks and substantive acceptance.
+
+## 2026-10-20 — Second enrichment pass for #214
+
+The owner authorized all five newly proposed mechanisms and three complete worked projects. The [bounded contract](SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) maps each to an existing chapter. Ten selected primary-source scopes were read; nine sources are new to the register and the TLA+ overview reuses its existing ID. The [inspection register](../sources/enrichment-inspections-2026-10-20.json) retains the first 25 readings and appends these ten.
+
+FoundationDB's documentation site did not return usable content in the available retrieval path. Its public testing documentation was instead read from the exact GitHub revision recorded in the source entry. The replicated-data-types paper was read only in the declared introductory sections; later proofs were not checked. No implementation or experiment was run.
+
+Eight original pages include explicit assumptions, counterexamples, failure/recovery, alternatives and proposed oracles. The projects contain synthetic workloads and arithmetic, with no measured production results or price claims. See [validation and unresolved gates](SECOND_ENRICHMENT_VALIDATION_2026-10-20.md). #214 remains open and PR #222 draft.

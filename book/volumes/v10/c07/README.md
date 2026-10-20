@@ -65,6 +65,17 @@ Begin with the integrated decision, then open the independent question that matc
 | [Data, availability and hard feasibility gates](data-availability.md) | Which authoritative-state and recovery assumptions reject an appealing design? |
 | [Worked ADR and unresolved conclusions](worked-adr.md) | How is a complete recommendation kept falsifiable and source-scoped? |
 
+
+## Additional mechanism and project routes
+
+The following original projects work through a complete contract, chosen architecture, rejected alternatives, failure recovery, arithmetic and decision reversal. They use invented workloads, not observed deployments.
+
+| Page | Owning question |
+| --- | --- |
+| [Large-file catalogue project](catalogue-project.md) | How do upload, publication, search, retirement and restoration preserve one catalogue contract? |
+| [Offline collaboration project](collaboration-project.md) | Which offline edits can remain available while approvals and permissions retain an authoritative boundary? |
+| [Overloaded multitenant service project](multitenant-project.md) | How do tenant placement, budgets and bounded cells preserve useful service through overload and rollout failure? |
+
 ## Boundaries and further reading
 
 The preceding and following chapters supply context; this landing does not replace their canonical mechanisms. Follow the exact source ledger on the child page when a claim depends on a product version or historical period.

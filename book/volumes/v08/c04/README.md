@@ -65,6 +65,15 @@ Begin with the integrated decision, then open the independent question that matc
 | [Desired state, release identity and exposure](desired-state-exposure.md) | Which state does a reconciler control and which outcome remains outside it? |
 | [Canary acceptance and shared-state damage](canary-compatibility.md) | How can a small rollout create effects that a binary rollback cannot undo? |
 
+
+## Additional mechanism and project routes
+
+These independently scoped pages extend the chapter without replacing its original walkthrough or source ledger.
+
+| Page | Owning question |
+| --- | --- |
+| [Dynamic configuration and feature flags](configuration-rollout.md) | How can configuration change safely while different processes observe different versions? |
+
 ## Boundaries and further reading
 
 - [V08/C01 — CI/CD architecture and artifact provenance](../c01/README.md) owns the adjacent question; compare assumptions before transferring the conclusion.

@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-20. Entries: 238.
+Inventory date: 2026-10-20. Entries: 247.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -348,3 +348,12 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.temporal-patching-enrichment / core | [Patching](https://docs.temporal.io/patching) — Temporal documentation | Patching/versioning for deterministic replay; specific SDK excluded. | admitted-for-research / public-web-or-author-download |
 | src.kafka41-consumer-enrichment / core | [Consumer configuration](https://kafka.apache.org/41/configuration/consumer-configs/) — Apache Kafka contributors | Offset reset, isolation and poll interval boundaries. | admitted-for-research / public-web-or-author-download |
 | src.owasp-rest-enrichment / core | [REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html) — OWASP | Token validation and early revocation requirements. | admitted-for-research / public-web-or-author-download |
+| src.appconfig-rollout / core | [Deploying configuration](https://docs.aws.amazon.com/appconfig/latest/userguide/appconfig-deploying.html) — AWS AppConfig documentation | Versioned deployments, staged strategies and rollback; not a guarantee for arbitrary configuration consumers. | admitted-for-research / public-web-or-author-download |
+| src.appconfig-validation / core | [Configuration validators](https://docs.aws.amazon.com/appconfig/latest/userguide/appconfig-creating-configuration-and-profile-validators.html) — AWS AppConfig documentation | Syntactic and semantic configuration validation; not a proof of runtime safety. | admitted-for-research / public-web-or-author-download |
+| src.jepsen-session-models / core | [Consistency models](https://jepsen.io/consistency/models) — Jepsen authors | History-based definitions and distinctions among session and global guarantees. | admitted-for-research / public-web-or-author-download |
+| src.jepsen-monotonic-reads / core | [Monotonic reads](https://jepsen.io/consistency/models/monotonic-reads) — Jepsen authors | Per-process monotonic-read condition and its scope. | admitted-for-research / public-web-or-author-download |
+| src.jepsen-read-your-writes / core | [Read your writes](https://jepsen.io/consistency/models/read-your-writes) — Jepsen authors | Session read-after-write visibility and process scope. | admitted-for-research / public-web-or-author-download |
+| src.replicated-types-semantics / core | [Replicated Data Types: Specification, Verification, Optimality](https://www.microsoft.com/en-us/research/publication/replicated-data-types-specification-verification-optimality/) — Burckhardt, Gotsman, Yang and Zawirski | Paper sections 1–2, pp.1–3: conflicting updates, counters, LWW and state-based versus operation-based assumptions; later proofs not independently checked. | admitted-for-research / public-web-or-author-download |
+| src.cell-boundaries / core | [Cell-based architecture fault isolation](https://docs.aws.amazon.com/wellarchitected/latest/reducing-scope-of-impact-with-cell-based-architecture/what-is-a-cell-based-architecture.html) — AWS Well-Architected documentation | Independent bounded cells, routing and fault-containment scope. | admitted-for-research / public-web-or-author-download |
+| src.fdb-simulation / core | [Simulation and Testing](https://github.com/apple/foundationdb/blob/f314e81f8ee1d2eeff4a35d4d658c47287f08e89/documentation/sphinx/source/testing.rst) — FoundationDB maintainers | Documentation Correctness and Performance and Simulation sections; no simulator implementation read or executed. | admitted-for-research / public-web-or-author-download |
+| src.shuffle-shard-isolation / core | [Shuffle sharding fault isolation](https://aws.amazon.com/blogs/architecture/shuffle-sharding-massive-and-magical-fault-isolation/) — AWS Architecture Blog | Tenant subsets and failure overlap; published explanation, not local isolation measurement. | admitted-for-research / public-web-or-author-download |

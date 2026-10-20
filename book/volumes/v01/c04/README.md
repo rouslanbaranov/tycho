@@ -65,6 +65,15 @@ Begin with the integrated decision, then open the independent question that matc
 | [Discriminating architecture experiments](experiment-contract.md) | What observation would distinguish cache benefit from query repair? |
 | [Negative evidence and stopping rules](negative-results.md) | When should an attractive candidate be rejected or research stop? |
 
+
+## Additional mechanism and project routes
+
+These independently scoped pages extend the chapter without replacing its original walkthrough or source ledger.
+
+| Page | Owning question |
+| --- | --- |
+| [Distributed protocol verification](protocol-correctness.md) | How can histories, invariants and executable models expose a distributed correctness defect? |
+
 ## Boundaries and further reading
 
 The preceding and following chapters supply context; this landing does not replace their canonical mechanisms. Follow the exact source ledger on the child page when a claim depends on a product version or historical period.
