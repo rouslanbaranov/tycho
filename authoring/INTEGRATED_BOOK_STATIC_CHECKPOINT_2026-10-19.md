@@ -1,5 +1,8 @@
 # Integrated M1–M9 book — pinned Git-tree static QA checkpoint
 
+> **Archived pinned static QA:** The old restrictions to keep #216 draft and #121 open applied only at the original 2026-10-19 SHA; they are now superseded by owner disposition and actual GitHub merge/closure. This file's original measured counts and limitations are preserved. **Live state (2026-10-20, before merging PR #218):** M1–M9 integrated draft merged via PR #216; PR #217 closed/unmerged and replaced by open/non-draft **unmerged PR #218**. M9 #121 closed under scoped owner acceptance; #213/E14 and final edition #214 remain open. **69/69 primary chapter manuscripts deepened, 0/69 independently accepted for final-book completeness.** The 10-volume edition, hosted MCP and deployment do not exist. Reported 13/13 groups and 215/215 tests passed on prior manuscript SHA `d8d04e0e3c97e9f364607f640faa9f5aee4866f3`, **not** on the subsequently edited status documents. Visual rendering and live MCP were owner-cancelled, not PASSED. See [canonical current state](STATE.md) and [reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 **Run date:** 2026-10-19  
 **Pinned source revision:** \`ff88fe334050c6e429941cb514bdd02150fa6be2\` on integration branch \`integration/tycho-m1-m9-unified-manuscript-20261019\`.  
 **Method:** GitHub connector fetched the recursive Git tree and **each** book Markdown file (in nine bounded batches) and evaluated the scoped lexical invariants below in a small JavaScript inspection script. This is **not** execution of the repository's Python validators and is not a release/copyright/technical acceptance certificate.

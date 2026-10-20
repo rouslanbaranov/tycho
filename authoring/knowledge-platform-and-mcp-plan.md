@@ -1,5 +1,8 @@
 # Knowledge platform and MCP delivery plan
 
+> **Capability-state correction:** K01–K30 remain requirements, but the 2026-10-19 status rows are a historical planning matrix, **not a current audited implementation ledger**. Strict JSON Schema, frontmatter metadata, stable identity registry, source controls, validators and an offline complete 136-doc routing index already exist; the finished physical 10-volume edition, hosted lexical/hybrid retrieval, MCP and deployment do not. Book completion #213 then release #214 take priority. Curated graph infrastructure remains excluded. **Live state (2026-10-20, before merging PR #218):** M1–M9 integrated draft merged via PR #216; PR #217 closed/unmerged and replaced by open/non-draft **unmerged PR #218**. M9 #121 closed under scoped owner acceptance; #213/E14 and final edition #214 remain open. **69/69 primary chapter manuscripts deepened, 0/69 independently accepted for final-book completeness.** The 10-volume edition, hosted MCP and deployment do not exist. Reported 13/13 groups and 215/215 tests passed on prior manuscript SHA `d8d04e0e3c97e9f364607f640faa9f5aee4866f3`, **not** on the subsequently edited status documents. Visual rendering and live MCP were owner-cancelled, not PASSED. See [canonical current state](STATE.md) and [reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 Status: scope revised 2026-10-19. Prior plan dated 2026-10-18.
 
 ## Product commitment and independence

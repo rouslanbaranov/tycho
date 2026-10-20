@@ -1,5 +1,8 @@
 # Tycho — executable 69-chapter completion register
 
+> **Active 69-row work register:** each 69 primary owner remains **DEEPENED — REVIEW OPEN**, not independently signed off. Its opening `main` SHA describes the historical baseline on which the work began, not the active #218 commit. The full earlier Python PASS is pinned and needs rerunning on latest HEAD after status edits. **Live state (2026-10-20, before merging PR #218):** M1–M9 integrated draft merged via PR #216; PR #217 closed/unmerged and replaced by open/non-draft **unmerged PR #218**. M9 #121 closed under scoped owner acceptance; #213/E14 and final edition #214 remain open. **69/69 primary chapter manuscripts deepened, 0/69 independently accepted for final-book completeness.** The 10-volume edition, hosted MCP and deployment do not exist. Reported 13/13 groups and 215/215 tests passed on prior manuscript SHA `d8d04e0e3c97e9f364607f640faa9f5aee4866f3`, **not** on the subsequently edited status documents. Visual rendering and live MCP were owner-cancelled, not PASSED. See [canonical current state](STATE.md) and [reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
+
+
 **Audit date:** 2026-10-20. **Primary branch snapshot:** `main` at `e2267a87882bb9935b2451368aa75a6fd05f87c1`. **Owner:** [#213](https://github.com/rouslanbaranov/tycho/issues/213); [#214](https://github.com/rouslanbaranov/tycho/issues/214) assembles the edition **after** substantive acceptance.
 
 ## Direct inspection and honest baseline
