@@ -30,7 +30,8 @@ route_hints:
     - "Shadow"
     - "Validation"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "ME03"
   claim_ids: []
   status: "unknown"
   notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."

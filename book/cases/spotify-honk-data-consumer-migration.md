@@ -32,7 +32,9 @@ route_hints:
     - "migration"
     - "scope"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "SP02"
+    - "SP03"
   claim_ids: []
   status: "unknown"
   notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
