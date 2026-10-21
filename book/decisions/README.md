@@ -44,7 +44,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -64,6 +64,11 @@ Architectures are conditional responses to requirements and observed limits. Thi
 - [Target versus transition architecture states](../volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md) — V10/C05 versioned coexistence, reversible and no-return states, data reconciliation and cutover gates.
 - [Architecture question and evidence-bounded reading routes](../volumes/v10-decision-support-and-modernization/c06-search-and-question-routes-for-architecture-agents/question-routes-for-architecture-analysis.md) — V10/C06 four entry routes, progressive reading, verifiable claims, contradiction handling and safe agent outputs; book method, not an implementation.
 - [Cross-domain architecture decisions and modernization under constraints](../volumes/v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/cross-domain-modernization-and-adr-examples.md) — four worked entry routes, retained/simple versus distributed alternatives, hard security/data gates, target-versus-transition states, and original synthetic ADR.
+- [Requirements-to-transition decision playbooks][decision-playbooks] — a shared
+  decision envelope and four routes from requirements, symptoms or legacy constraints
+  to a safe transition; reusable method, not a historical case.
+
+[decision-playbooks]: requirements-to-transition-decision-playbooks.md
 
 ## Case-backed decision transfer — integrated M9
 

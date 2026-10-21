@@ -56,7 +56,7 @@
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-20",
+  "updated_at": "2026-10-21",
   "source_inspection_date": "2026-10-20",
   "content_verified_at": null
 }
@@ -126,3 +126,12 @@ Reconsider automatic merging when conflict resolution needs information absent f
 Enumerate small update histories with duplicates, reordered delivery, concurrent removal/addition, replica reset and membership expiry. Require convergence for equivalent delivered change sets and check application invariants separately. For the seat counterexample, the expected result is a rejected or pending second approval, unless a conserved-rights model explicitly permits it. These are proposed checks; no merge implementation or model checker was run.
 
 [Replicated Data Types: Specification, Verification, Optimality](https://www.microsoft.com/en-us/research/publication/replicated-data-types-specification-verification-optimality/) supplies public definitions and examples of replicated update semantics. Inspection covered the publication abstract and the paper's introductory sections on specifications, counters and registers; later proofs were not checked. The diagnostic, label and approval scenarios, their boundaries and their recovery policies are original synthetic reasoning.
+
+## Navigation and prerequisites
+
+- Parent: [V04/C03 — consistency and distributed transactions](README.md).
+- Integrated page: [transaction isolation and sagas](transaction-isolation-and-sagas.md).
+- Adjacent pages: [invariants-isolation.md](invariants-isolation.md),
+  [distributed-protocols.md](distributed-protocols.md) and
+  [coordination-failure.md](coordination-failure.md).
+- Volume: [V04 — distributed coordination and events](../../README.md).

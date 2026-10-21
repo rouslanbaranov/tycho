@@ -56,7 +56,7 @@
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-20",
+  "updated_at": "2026-10-21",
   "source_inspection_date": "2026-10-20",
   "content_verified_at": null
 }
@@ -143,3 +143,14 @@ Use a hand-reviewed transition table for a small protocol when building a formal
 ## Evidence ledger
 
 [Consistency models](https://jepsen.io/consistency/models) supports naming a history-level consistency contract rather than treating successful requests as sufficient evidence. [Simulation and Testing](https://github.com/apple/foundationdb/blob/f314e81f8ee1d2eeff4a35d4d658c47287f08e89/documentation/sphinx/source/testing.rst) was read at the pinned public revision, in its correctness and simulation sections; it describes deterministic simulation alongside other testing. No implementation code or simulator was inspected or executed. [The TLA+ Home Page](https://lamport.azurewebsites.net/tla/tla.html) introduces TLA+, model checking and proof tools; it does not certify this sketch. The model, traces and acceptance plan are original.
+
+## Navigation and prerequisites
+
+- Parent: [V01/C04 — evidence, hypotheses and experiments](README.md).
+- Integrated walkthrough: [integrated evidence page][integrated-evidence].
+- Adjacent pages: [evidence-hypotheses.md](evidence-hypotheses.md),
+  [experiment-contract.md](experiment-contract.md) and
+  [negative-results.md](negative-results.md).
+- Volume: [V01 — requirements and architecture](../../README.md).
+
+[integrated-evidence]: architecture-evidence-hypotheses-and-experiments.md

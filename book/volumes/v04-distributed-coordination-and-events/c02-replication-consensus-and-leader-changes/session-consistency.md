@@ -59,7 +59,7 @@
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-20",
+  "updated_at": "2026-10-21",
   "source_inspection_date": "2026-10-20",
   "content_verified_at": null
 }
@@ -131,3 +131,13 @@ Revisit the token design when partition fan-out makes the token large, clients r
 Record invocation and completion, session identifier, operation identifier, object incarnation, result and observed position. Check that every completed session read satisfies all preceding session requirements. Retain pending and uncertain operations in the history rather than rewriting them as failures. Test replica lag, rerouting, leadership change, lost tokens, concurrent tabs and an external index independently. No such history check was executed for this chapter.
 
 [Consistency models](https://jepsen.io/consistency/models) distinguishes consistency models and their history scope. [Monotonic reads](https://jepsen.io/consistency/models/monotonic-reads) and [Read your writes](https://jepsen.io/consistency/models/read-your-writes) define the two session properties used here. The proposed log-position token is an original implementation sketch under stated assumptions, not a universal implementation of those models.
+
+## Navigation and prerequisites
+
+- Parent: [V04/C02 — replication, consensus and leader changes](README.md).
+- Integrated page: [replication, consensus and leader change][integrated].
+- Adjacent pages: [quorum-envelope.md](quorum-envelope.md) and
+  [leader-recovery.md](leader-recovery.md).
+- Volume: [V04 — distributed coordination and events](../../README.md).
+
+[integrated]: replication-consensus-and-leader-change.md
