@@ -42,7 +42,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-18"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -56,6 +56,11 @@ Reason about requirements, mechanisms, partial failure and safe modernization us
 ## Content enrichment candidate — 2026.10.1-rc.3
 
 The candidate contains ten volumes, 71 chapters and 406 canonical documents. The first enrichment introduced object-storage and network chapters plus twelve deeper mechanism treatments. This second pass adds five distinct mechanism pages and three complete original worked designs within existing chapters. Counts describe membership, not acceptance.
+
+The rc.3 baseline contains 406 canonical documents. The #227 P2 delivery adds
+one canonical page, the V04/C05 periodic-work page, after that baseline, for a
+current canonical corpus of 407. The historical 406 count remains the rc.3
+membership.
 
 | New mechanism | Worked integration |
 | --- | --- |
