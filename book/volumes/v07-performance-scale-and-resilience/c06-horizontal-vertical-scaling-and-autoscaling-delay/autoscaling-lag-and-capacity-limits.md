@@ -61,6 +61,12 @@ content_verified_at: null
 > **Original System Design chapter draft**, intended V07/C06. Public specifications reviewed 2026-10-19; synthetic examples only. No autoscaler, Kubernetes cluster, cloud instance, load generator, production telemetry or independent review was used to validate the proposed designs.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Horizontal Scaling](../../v11-pattern-atlas/c09-scalability/README.md#horizontal-scaling) — decision conditions and contraindications.
+> [Vertical Scaling](../../v11-pattern-atlas/c09-scalability/README.md#vertical-scaling) — decision conditions and contraindications.
+> [Autoscaling](../../v11-pattern-atlas/c09-scalability/README.md#autoscaling) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.49d9df04c0b4488e936b02e580a62271:0 -->
 ## Purpose and mission
 

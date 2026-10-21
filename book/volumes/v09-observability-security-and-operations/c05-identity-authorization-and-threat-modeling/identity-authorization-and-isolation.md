@@ -52,6 +52,10 @@ content_verified_at: null
 > Original Tycho E14-12 [#90](https://github.com/rouslanbaranov/tycho/issues/90), public-specification reading 2026-10-19. This is a decision-method chapter, **not** a penetration test, vulnerability assessment, product certification, configured policy or observed security guarantee.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Tenant-Based Resource Isolation](../../v11-pattern-atlas/c09-scalability/README.md#tenant-based-resource-isolation) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.dde63373c50f4f4a80e727b6e160def5:0 -->
 ## Purpose and mission
 

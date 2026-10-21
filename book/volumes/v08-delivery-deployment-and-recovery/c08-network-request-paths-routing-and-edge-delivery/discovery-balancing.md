@@ -77,6 +77,10 @@
 > **Pattern atlas:**
 > [Health Endpoint Monitoring](../../v11-pattern-atlas/c07-resilience/README.md#health-endpoint-monitoring) — decision conditions and contraindications.
 
+
+> **Pattern atlas:**
+> [Load Balancing](../../v11-pattern-atlas/c09-scalability/README.md#load-balancing) — decision conditions and contraindications.
+
 ## The routing contract
 
 A caller needs a route to an eligible instance, not a timeless list of machines. Describe separately the externally resolved name, the service membership view, the connection destination and the backend selected for each request. A global route may choose a location; an internal selector chooses a process. A stale membership view can outlive a rollout.
