@@ -129,9 +129,9 @@ client-supplied identifiers; when a route change cannot be rolled back.
 Reverse the choice when routing logic becomes domain logic or the gateway cannot observe
 backend health.
 
-**Failure and recovery.** Stale routes, wrong-version selection and retry loops are
-common. Recovery requires route versioning and observability; verify the routing
-contract in the owner section.
+**Failure and recovery.** Stale routes, ambiguous matches, wrong-version selection, no-match
+behavior and bypass around the gateway are common. Recovery requires route versioning,
+precedence tests and observability.
 
 **Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#the-routing-contract) — routing and backend selection; not a dedicated gateway routing product guide.
 
@@ -206,9 +206,9 @@ blocks all work; when the team cannot own gateway configuration.
 Reverse the choice when gateway configuration drift or blast radius exceeds the reuse
 benefit.
 
-**Failure and recovery.** Misconfigured TLS, stale policy and false trust in gateway
-headers are common. Recovery requires configuration tests and explicit trust
-boundaries; verify the edge contract in the owner section.
+**Failure and recovery.** Misconfigured TLS, stale policy, header spoofing and a gateway that
+becomes the only authorization point are common. Recovery requires configuration tests and
+an explicit trust boundary with downstream authorization.
 
 **Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#the-trust-question) — edge functions and trusted identity; not a complete offloading catalogue.
 
@@ -316,9 +316,9 @@ when connection draining or timeout behavior cannot be tested.
 choice when proxy configuration and outage cost exceed the connection-management
 benefit.
 
-**Failure and recovery.** Stale connections, header trust and draining failures are
-common. Recovery requires connection lifecycle tests; verify the edge boundary in the
-owner section.
+**Failure and recovery.** Stale connections, proxy bypass, header trust and draining failures
+are common. Recovery requires connection lifecycle tests and explicit forwarded-header and
+draining policy.
 
 **Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#the-trust-question) — proxy and gateway boundary; not a full Envoy operations guide.
 

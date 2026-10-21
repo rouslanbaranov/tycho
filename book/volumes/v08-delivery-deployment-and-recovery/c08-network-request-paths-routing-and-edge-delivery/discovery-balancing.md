@@ -85,6 +85,13 @@
 
 A caller needs a route to an eligible instance, not a timeless list of machines. Describe separately the externally resolved name, the service membership view, the connection destination and the backend selected for each request. A global route may choose a location; an internal selector chooses a process. A stale membership view can outlive a rollout.
 
+**Gateway-routing mechanism.** A gateway matches request attributes to a declared route and
+backend, then applies its policy. Routes need stable identity, precedence, versioning and an
+explicit no-match behavior; the selected backend still needs its own authorization and
+failure budget. Stale routes, ambiguous matches and bypass around the gateway are common.
+A reverse proxy, client-side discovery or a BFF may be preferable when routing policy is
+simple or the gateway would become a hidden shared dependency.
+
 The two SRE load-balancing chapters distinguish global routing from backend selection. Their examples support the need to examine locality, workload and selection policy; they do not prescribe one algorithm for every service.
 
 ## DNS and discovery have different update boundaries

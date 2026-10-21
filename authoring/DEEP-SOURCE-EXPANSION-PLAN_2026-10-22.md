@@ -112,3 +112,9 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
   dimensions supported.
 - **Data-consistency family complete:** all 14 entries are `partial-bounded` with no evidence
   gaps. Next: api-and-service-communication.
+## API communication progress — 2026-10-22
+
+- Gateway Routing, Gateway Offloading and Reverse Proxy: owner sections and cards
+  expanded; each is `partial-bounded` with all four evidence dimensions supported.
+- Remaining: Client-Side Discovery, Server-Side Discovery, plus alternative/failure
+  evidence for API Gateway and Service Discovery.

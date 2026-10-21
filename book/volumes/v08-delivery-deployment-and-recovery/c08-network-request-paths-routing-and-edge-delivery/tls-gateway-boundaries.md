@@ -76,6 +76,20 @@ Draw each hop and name its authenticated peer. In a client → edge → gateway 
 
 RFC 9110 section 4.3.4 describes certificate verification for HTTPS. OWASP's REST guidance calls for HTTPS, endpoint access control and validated token claims. Neither source certifies an arbitrary proxy configuration.
 
+**Offloading mechanism.** An edge can terminate TLS, validate tokens, compress, cache or
+enforce quotas before forwarding. Offloading changes the trust boundary: downstream must
+receive an authenticated identity from a trusted intermediary and still enforce resource
+authorization. Header spoofing, confused-deputy paths and a proxy that becomes the only
+authorization point are common failures. A service-mesh sidecar, application-level
+authorization or direct pass-through may be preferable when the edge cannot attest identity.
+
+**Reverse-proxy mechanism.** A reverse proxy accepts client connections and forwards them to
+a selected backend, hiding topology and optionally terminating TLS. It must define route
+identity, peer authentication, forwarded-header policy and backend failure behavior.
+Proxy bypass, stale routes and trusting a client-supplied identity header are common.
+Direct service discovery, a gateway/BFF or a mesh sidecar may be preferable when the proxy
+adds a shared bottleneck without a required policy function.
+
 ## Original fictional boundary contract
 
 A private image catalogue uses a public edge and an internal service. Its contract requires: only permitted callers see an image; client-facing names match validated certificates; forwarded identity comes only from an authenticated trusted intermediary; and internal policy cannot be bypassed by calling a backend directly.
