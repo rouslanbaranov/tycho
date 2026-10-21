@@ -77,6 +77,10 @@ An implementation-aware deadline design records:
 **Failure example:** a parent invokes a slow service, times out, retries at two independent layers, then the retrying work saturates a shared pool. Even if each individual retry was below its local maximum, aggregate offered load can rise sharply while completed useful work falls. [Amazon Builders' Library: Timeouts, Retries, and Backoff with Jitter](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/) discusses timeout selection, retry multiplication and load spreading. A retry must be a business-safe, bounded, capacity-aware action, not a reflex triggered by every high latency.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Hedged Requests](../../v11-pattern-atlas/c07-resilience/README.md#hedged-requests) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.eb130a7f820544a2ba0e0883c0ce587b:4 -->
 ## 4. Hedging, replication and selective degradation
 

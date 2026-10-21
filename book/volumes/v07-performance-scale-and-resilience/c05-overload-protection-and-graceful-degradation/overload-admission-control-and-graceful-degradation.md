@@ -63,6 +63,14 @@ content_verified_at: null
 > **Tycho book chapter draft V07/C05 (2026-10-19).** Original examples and diagrams, with scope-bound published SRE and Builders' Library guidance. No deployed protection, incident, load generator, performance comparison or independent expert review has been executed.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Fallback](../../v11-pattern-atlas/c07-resilience/README.md#fallback) — decision conditions and contraindications.
+> [Graceful Degradation](../../v11-pattern-atlas/c07-resilience/README.md#graceful-degradation) — decision conditions and contraindications.
+> [Load Shedding](../../v11-pattern-atlas/c07-resilience/README.md#load-shedding) — decision conditions and contraindications.
+> [Throttling](../../v11-pattern-atlas/c07-resilience/README.md#throttling) — decision conditions and contraindications.
+> [Rate Limiting](../../v11-pattern-atlas/c07-resilience/README.md#rate-limiting) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:0 -->
 ## Purpose and mission
 

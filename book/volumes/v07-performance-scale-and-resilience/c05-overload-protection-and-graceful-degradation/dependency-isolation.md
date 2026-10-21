@@ -70,6 +70,11 @@ the isolation boundary; `V04/C04` (`tycho.page.33399db8d1574330951d9954801d6e71`
 effect identity and retention.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Circuit Breaker](../../v11-pattern-atlas/c07-resilience/README.md#circuit-breaker) — decision conditions and contraindications.
+> [Bulkhead](../../v11-pattern-atlas/c07-resilience/README.md#bulkhead) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:5 -->
 ## 5. Original synthetic failure: one optional dependency poisons core work
 

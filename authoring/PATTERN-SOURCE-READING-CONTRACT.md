@@ -194,10 +194,16 @@ replicas, quorum, index tables, CQRS projections, schema migration and backup/PI
 Polyglot Persistence remains blocked and has no card. Registry coverage is `partial`
 for the twelve; no `sufficient` state is claimed.
 
+All 16 V11/C07 entries also have self-checked cards with bounded owner sections.
+They cover circuit breaking, bulkheads, retries/timeouts/deadlines, fallback and
+degradation, shedding/throttling/rate limits, queue leveling, priority, hedging,
+health checks and failover/failback. Registry coverage is `partial` for all 16; no
+`sufficient` state is claimed.
+
 The card batches are recorded in `edition/patterns/card-batches.v1.json` and checked
 by `scripts/validate_pattern_cards.py`, including adversarial tests. The validator
 now resolves each technical-owner link to the declared path and anchor. The other
-61 entries remain without Phase 3 cards; 60 are read and one is blocked.
+45 entries remain without Phase 3 cards; 44 are read and one is blocked.
 
 ## Family batches
 

@@ -88,6 +88,10 @@ Text alternative: without pre-admission rejections, offered work exceeds complet
 A response timeout does not prove the underlying work was cancelled. That distinction can change queue accounting and duplicate side effects; it must be established for the concrete protocol. This is especially important for later event/retry work in the [second pilot contract](../../../../authoring/contracts/PILOT-02-transactional-outbox.md).
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Queue-Based Load Leveling](../../v11-pattern-atlas/c07-resilience/README.md#queue-based-load-leveling) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b:6 -->
 ## Alternatives and applicability boundaries
 

@@ -110,6 +110,13 @@ thresholds are examples, not defaults.
 
 <!-- /tycho-question-source -->
 
+> **Pattern atlas:**
+> [Retry with Exponential Backoff](../../v11-pattern-atlas/c07-resilience/README.md#retry-with-exponential-backoff) — decision conditions and contraindications.
+> [Retry with Jitter](../../v11-pattern-atlas/c07-resilience/README.md#retry-with-jitter) — decision conditions and contraindications.
+> [Timeout](../../v11-pattern-atlas/c07-resilience/README.md#timeout) — decision conditions and contraindications.
+> [Deadline Propagation](../../v11-pattern-atlas/c07-resilience/README.md#deadline-propagation) — decision conditions and contraindications.
+
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |
