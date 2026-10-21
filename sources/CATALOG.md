@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-21. Entries: 257.
+Inventory date: 2026-10-21. Entries: 258.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -262,6 +262,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.performance-modeling / supporting | [Performance Modeling and Design of Computer Systems](https://www.cs.cmu.edu/~harchol/PerformanceModeling/book.html) — Mor Harchol-Balter | Queueing foundations and scheduling; full book access assessed separately. | bibliography-only / bibliographic-page-and-preview |
 | src.aws-caching-strategies / core | [Caching patterns](https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html) — Amazon Web Services | Planned primary page for cache-aside, write-through and related caching patterns. | admitted-for-research / public-web-or-author-download |
 | src.redis-cache-aside / supporting | [Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/) — Redis | Planned implementation page for cache-aside mechanics and invalidation. | admitted-for-research / public-web-or-author-download |
+| src.microsoft-caching-guidance / core | [Caching guidance](https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching) — Microsoft Learn | Primary public guidance for cache consistency, expiration, concurrency and caching patterns. | admitted-for-research / public-web-or-author-download |
 
 ## Implementations
 

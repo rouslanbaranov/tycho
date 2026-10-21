@@ -92,8 +92,19 @@ units were complete as returned. The Message Broker and Process Manager pages
 do not separately read the bridge or routing-slip variants, and the Debezium
 outbox page is not a general CDC contract.
 
-Current plan totals: **62 read, 82 planned and 1 blocked** across 145 entries;
-the ledger has **60 records**, including three foundation catalog records.
+## Phase 2B batch 3 — caching and database storage
+
+21 of 27 caching/database entries have a read unit after batch 3. The five
+remaining planned entries are Negative Caching, Stale-While-Revalidate,
+Multi-Leader Replication, Quorum-Based Reads/Writes and Online Data Migration;
+Polyglot Persistence remains the one blocked bibliography-only entry.
+
+The caching guidance, Hazelcast, Citus and RFC pages returned truncated after
+their main sections; those records state the inspected scope. Flyway migration
+documentation is not a full expand-and-contract contract.
+
+Current plan totals: **83 read, 61 planned and 1 blocked** across 145 entries;
+the ledger has **73 records**, including three foundation catalog records.
 These numbers are progress, not completion.
 
 ## Family batches
