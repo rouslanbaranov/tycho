@@ -108,5 +108,7 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
   cards expanded; each is `partial-bounded` with all four evidence dimensions supported.
 - Saga Orchestration, Transactional Outbox, Idempotency Key and Materialized View are
   also `partial-bounded`.
-- Remaining data-consistency gaps: alternative/failure evidence for CQRS, Event Sourcing,
-  Saga, Transactional Inbox and CDC.
+- CQRS, Event Sourcing, Saga, Transactional Inbox and CDC now have all four evidence
+  dimensions supported.
+- **Data-consistency family complete:** all 14 entries are `partial-bounded` with no evidence
+  gaps. Next: api-and-service-communication.

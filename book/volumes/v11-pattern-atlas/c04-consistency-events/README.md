@@ -90,8 +90,9 @@ is mandatory for every client, or when projection maintenance has no owner.
 **Competing alternative.** Single model with indexes/views. Reverse the choice when
 projection lag and dual-model complexity exceed read-scale benefit.
 
-**Failure and recovery.** Stale projections and duplicate updates are common; verify
-freshness contract in the owner section.
+**Failure and recovery.** Projection lag, duplicate apply, cursor gaps and schema drift are
+common; make the apply idempotent, commit view and cursor atomically, and rebuild with side
+effects disabled.
 
 **Technical owner.** [CQRS and asynchronous projection freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — projection freshness is the bounded owner, not a full CQRS implementation guide.
 
@@ -119,8 +120,9 @@ required; schema evolution and snapshots are owned; external effects are separat
 **Hard contraindications.** Reject when current-state queries dominate, when event schema
 cannot evolve, or when replay side effects cannot be controlled.
 
-**Competing alternative.** Current-state store plus audit log/outbox. Reverse the choice
-when replay cost and event-version complexity exceed audit/rebuild value.
+**Competing alternative.** Current-state store plus audit log/outbox or event notification.
+Reverse when full replay is unnecessary, schema ownership is absent or external side effects
+cannot be isolated.
 
 **Failure and recovery.** Replay duplication and schema drift are common; verify event
 authority in the owner section.
@@ -186,8 +188,9 @@ acceptable; compensation is a business decision; progress is durable.
 **Hard contraindications.** Reject when one local transaction can preserve the invariant,
 when no compensation is possible, or when intermediate visibility is unacceptable.
 
-**Competing alternative.** Single local transaction or a different transaction boundary.
-Reverse the choice when compensation complexity exceeds distribution benefit.
+**Competing alternative.** Single local transaction, two-phase commit or an orchestrated
+workflow. Reverse when steps do not genuinely cross independent owners or compensation is
+unsafe.
 
 **Failure and recovery.** Partial completion and compensation failure are common; verify
 saga protocol in the owner section.
@@ -351,8 +354,9 @@ retention covers redelivery; concurrent duplicates are handled.
 **Hard contraindications.** Reject when the consumer is naturally idempotent, when
 identity cannot be retained, or when the effect spans multiple authorities.
 
-**Competing alternative.** Natural idempotency or deduplication at the producer. Reverse
-the choice when inbox storage and contention exceed duplicate risk.
+**Competing alternative.** A unique constraint/conditional insert on effect identity, a
+producer outbox or an idempotent downstream API. Reverse when the inbox table and retention
+cost exceed the duplicate-impact risk.
 
 **Failure and recovery.** Expired identities and concurrent duplicates are common; verify
 inbox atomicity in the owner section.
@@ -420,11 +424,13 @@ schema evolution is handled; consumers can tolerate duplicates.
 **Hard contraindications.** Reject when the log is unavailable or unsupported, when
 cross-table ordering is required, or when schema changes cannot be governed.
 
-**Competing alternative.** Application outbox or explicit polling. Reverse the choice when
-connector/log operations and schema coupling exceed dual-write risk.
+**Competing alternative.** Transactional outbox plus relay, dual-write with reconciliation or
+scheduled batch extraction. Reverse when log access is unavailable, the source cannot retain a
+slot, or connector operations exceed the replay benefit.
 
-**Failure and recovery.** Duplicate and schema-drift events are common; verify replay
-scope in the owner section.
+**Failure and recovery.** Connector lag, WAL/slot retention, schema changes and
+snapshot-to-stream gaps are common; monitor lag/slot health, resnapshot deliberately and make
+downstream apply idempotent.
 
 **Technical owner.** [From a database change to a replayable input](../../v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md#1-from-a-database-change-to-a-replayable-input) — CDC replay is bounded, not a full Debezium operations guide.
 

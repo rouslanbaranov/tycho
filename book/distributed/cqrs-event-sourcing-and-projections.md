@@ -110,6 +110,11 @@ The projection `confirmed_count` is calculated as `+1, +1, -1`, yielding **1**. 
 
 A snapshot can accelerate replay by recording a state at a known stream offset/version, followed by applying later events. However, a snapshot is a **derivative cache** unless declared and validated as the authority. Rebuilds must check offset continuity and event schema compatibility. "Append-only" alone is not a security-compliant audit log: deletion policies, integrity protection, identity, corruption, retention and privileged access still matter.
 
+**Alternative.** State-stored CRUD with an audit log, CDC/outbox or event notification may
+be preferable when full replay is unnecessary, event-schema ownership is absent or external
+side effects cannot be isolated. Reverse the event-sourcing choice when audit/replay value
+exceeds schema-evolution and rebuild cost.
+
 ## 3. CQRS and asynchronous projection freshness
 
 The CQRS design separates update and read representations so each can optimize for different needs. The service may use separate objects, tables or storage engines; physical isolation is a choice, not an inherent definition. Fowler's CQRS description and Chris Richardson's public CQRS pattern both show a separate query view that can follow events from the owning service. [E02, E04]
@@ -154,6 +159,12 @@ represent an unknown or lagging view explicitly rather than serving it as curren
 **Alternative.** Direct authority reads, cache-aside or a synchronous read may be preferable
 when the required freshness exceeds the projection benefit. Reverse the view choice when
 rebuild and freshness coordination cost more than the read-latency gain.
+
+**CQRS failure and alternative.** Projection lag, duplicate apply, cursor gaps and schema
+drift are common; make the apply idempotent, commit view and cursor atomically, and rebuild
+with side effects disabled. A single model/CRUD service, a synchronous authority read or an
+event-sourced reconstruction may be preferable when read/write separation complexity exceeds
+the measured benefit.
 
 ## 4. Replay, duplication, ordering and external side effects
 

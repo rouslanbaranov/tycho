@@ -66,6 +66,16 @@ Text alternative: authoritative business state and outbox intent are committed l
 
 **Important distinctions:** database WAL position, Kafka partition offset, application state-store checkpoint and external sink commit are **not the same cursor**. An implementation must document where their alignment is guaranteed and where duplicates or gaps may be replayed.
 
+**Failure and recovery.** Connector lag, WAL/slot retention, schema changes and
+snapshot-to-stream gaps are common. Monitor lag and slot health, take a consistent snapshot,
+handle schema evolution, and make downstream apply idempotent. A missing or expired slot can
+require resnapshotting the source; that recovery point must be explicit.
+
+**Alternative.** A transactional outbox plus relay, dual-write with reconciliation, or
+scheduled batch extraction may be preferable when database log access is unavailable, when
+the source cannot retain a slot, or when the team cannot operate a connector. Reverse the CDC
+choice when connector and schema-coupling cost exceed the replay benefit.
+
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**

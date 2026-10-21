@@ -55,6 +55,11 @@ The identity must include the correct subscriber and event/effect scope; two dif
 
 **Fictional failure:** a notification consumer writes a processed marker then crashes before making an external non-idempotent send. On redelivery it may falsely skip the missing send. Reversing the order may send twice. Correctness may require a *second* durable send-intent record and cooperation or reconciliation with the downstream delivery provider. A transactional inbox does **not** guarantee exactly-once side effects outside its local authority.
 
+**Alternative.** A unique constraint or conditional insert on effect identity, a producer
+outbox, or an idempotent downstream API may be preferable when the inbox table and retention
+cost exceed the duplicate-impact risk. Reverse the inbox choice when the downstream effect
+cannot be kept inside the local transaction.
+
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**

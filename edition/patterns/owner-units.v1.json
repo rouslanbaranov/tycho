@@ -2565,7 +2565,7 @@
         "heading": "Process Manager / Routing Slip",
         "anchor": "process-manager-routing-slip",
         "level": 3,
-        "line": 170,
+        "line": 175,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Process Manager / Routing Slip"
@@ -2622,7 +2622,7 @@
         "heading": "3. CQRS and asynchronous projection freshness",
         "anchor": "3-cqrs-and-asynchronous-projection-freshness",
         "level": 2,
-        "line": 113,
+        "line": 118,
         "unit_kind": "dedicated",
         "unit_terms": [
           "CQRS and asynchronous projection freshness",
@@ -2643,14 +2643,14 @@
           "reason": "States the read-after-write limit: accepted writes can remain invisible until the projector catches up."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "wait for a projection to reach a specified version within a bounded timeout (with explicit failure)",
-          "reason": "Only bounded waiting for a stale projection; crash, duplicate and rebuild recovery is section 4, outside the unit."
+          "state": "supported",
+          "quote": "Projection lag, duplicate apply, cursor gaps and schema drift are common; make the apply idempotent",
+          "reason": "Names the projection failure modes."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The unit names logical versus physical separation but gives no competing mechanism with a condition that reverses the choice."
+          "state": "supported",
+          "quote": "A single model/CRUD service, a synchronous authority read or an event-sourced reconstruction may be preferable when read/write separation complexity exceeds the measured benefit.",
+          "reason": "Names the competing designs and reversal."
         }
       },
       "decision_evidence": {
@@ -2708,15 +2708,15 @@
           "reason": "Identifies replay divergence and prescribes versioned handlers and invariant rules to contain it."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "Snapshots accelerate replay but are not a competing mechanism with a reversal condition; contraindications are outside the unit."
+          "state": "supported",
+          "quote": "State-stored CRUD with an audit log, CDC/outbox or event notification may be preferable when full replay is unnecessary, event-schema ownership is absent or external side effects cannot be isolated.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
         "atlas_section": "event-sourcing",
         "question": "Should authoritative state be derived from an ordered event history rather than stored as current rows?",
-        "competing_alternative": "Current-state store plus audit log/outbox. Reverse the choice when replay cost and event-version complexity exceed audit/rebuild value.",
+        "competing_alternative": "Current-state store plus audit log/outbox or event notification. Reverse when full replay is unnecessary, schema ownership is absent or external side effects cannot be isolated.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2742,7 +2742,7 @@
         "heading": "Distinguish source log from integration event",
         "anchor": "distinguish-source-log-from-integration-event",
         "level": 3,
-        "line": 175,
+        "line": 186,
         "unit_kind": "embedded",
         "unit_terms": [
           "domain event log",
@@ -2828,15 +2828,15 @@
           "reason": ""
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "Rejects automatic rollback and names two internal coordination styles, but offers no competing mechanism with a reversal condition."
+          "state": "supported",
+          "quote": "Use one local transaction, a two-phase commit or an orchestrated workflow when the steps do not genuinely cross independent owners, or when compensation is unsafe.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
         "atlas_section": "saga",
         "question": "Should a multi-service business process be coordinated through local transactions and compensations?",
-        "competing_alternative": "Single local transaction or a different transaction boundary. Reverse the choice when compensation complexity exceeds distribution benefit.",
+        "competing_alternative": "Single local transaction, two-phase commit or an orchestrated workflow. Reverse when steps do not genuinely cross independent owners or compensation is unsafe.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2920,7 +2920,7 @@
         "heading": "5. Durable workflow selection is conditional",
         "anchor": "5-durable-workflow-selection-is-conditional",
         "level": 2,
-        "line": 104,
+        "line": 109,
         "unit_kind": "embedded",
         "unit_terms": [
           "Move to orchestration only when",
@@ -3124,15 +3124,15 @@
           "reason": ""
         },
         "alternative": {
-          "state": "partial",
-          "quote": "An in-memory set is not sufficient when the contract requires restart-safe deduplication.",
-          "reason": "Names in-memory deduplication as insufficient for restart-safe contracts but states no explicit condition that reverses the choice."
+          "state": "supported",
+          "quote": "A unique constraint or conditional insert on effect identity, a producer outbox, or an idempotent downstream API may be preferable when the inbox table and retention cost exceed the duplicate-impact risk.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
         "atlas_section": "transactional-inbox",
         "question": "Should message identity and consumer effect be recorded atomically to suppress duplicates?",
-        "competing_alternative": "Natural idempotency or deduplication at the producer. Reverse the choice when inbox storage and contention exceed duplicate risk.",
+        "competing_alternative": "A unique constraint/conditional insert on effect identity, a producer outbox or an idempotent downstream API. Reverse when the inbox table and retention cost exceed the duplicate-impact risk.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -3237,20 +3237,20 @@
           "reason": ""
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "An implementation must document where their alignment is guaranteed and where duplicates or gaps may be replayed.",
-          "reason": "Acknowledges duplicate and gap replay across different cursors but prescribes documentation, not detection or recovery."
+          "state": "supported",
+          "quote": "Connector lag, WAL/slot retention, schema changes and snapshot-to-stream gaps are common.",
+          "reason": "Names the CDC failure modes."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing mechanism or reversal condition is given in the unit."
+          "state": "supported",
+          "quote": "A transactional outbox plus relay, dual-write with reconciliation, or scheduled batch extraction may be preferable when database log access is unavailable, when the source cannot retain a slot, or when the team cannot operate a connector.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
         "atlas_section": "change-data-capture-cdc",
         "question": "Should database changes be captured as a replayable stream instead of dual-written by the application?",
-        "competing_alternative": "Application outbox or explicit polling. Reverse the choice when connector/log operations and schema coupling exceed dual-write risk.",
+        "competing_alternative": "Transactional outbox plus relay, dual-write with reconciliation or scheduled batch extraction. Reverse when log access is unavailable, the source cannot retain a slot, or connector operations exceed the replay benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -3276,7 +3276,7 @@
         "heading": "3. CQRS and asynchronous projection freshness",
         "anchor": "3-cqrs-and-asynchronous-projection-freshness",
         "level": 2,
-        "line": 113,
+        "line": 118,
         "unit_kind": "embedded",
         "unit_terms": [
           "asynchronous projection freshness",
@@ -3336,7 +3336,7 @@
         "heading": "Command-Side Replica",
         "anchor": "command-side-replica",
         "level": 3,
-        "line": 233,
+        "line": 244,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Command-Side Replica"
@@ -4733,7 +4733,7 @@
         "heading": "3. CQRS and asynchronous projection freshness",
         "anchor": "3-cqrs-and-asynchronous-projection-freshness",
         "level": 2,
-        "line": 113,
+        "line": 118,
         "unit_kind": "embedded",
         "unit_terms": [
           "asynchronous projection freshness",
@@ -9039,8 +9039,8 @@
     "embedded_units": 55,
     "mechanism_supported": 119,
     "invariant_supported": 132,
-    "failure_recovery_supported": 104,
-    "alternative_supported": 95,
+    "failure_recovery_supported": 106,
+    "alternative_supported": 100,
     "technical_partial_bounded": 117,
     "technical_partial": 28,
     "technical_name_only": 0,
