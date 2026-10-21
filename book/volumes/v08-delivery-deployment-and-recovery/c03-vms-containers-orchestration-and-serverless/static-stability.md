@@ -136,3 +136,22 @@ An IaC change that removes a database or rewrites a routing rule is operationall
 | Integrated question | [Original scenario and limits](runtime-placement-and-control-plane.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is
+not the main subject of this page. They are synthetic design guidance, not
+measured evidence, and they do not create a new source claim.
+
+### Ambassador
+
+An ambassador is a proxy or sidecar that brokers a service outbound calls. It can own
+discovery, TLS identity, retries, timeouts and telemetry away from the application. It
+needs a clear data-plane owner, a configuration path and a failure policy for the proxy
+itself. Use it when many clients need the same remote-access contract. Do not use it when
+a client library is simpler or when the proxy would become an unobserved single point of
+failure.
+
+The failure path is a stale proxy configuration or a proxy that outlives its control
+plane; test configuration rollback and keep a direct-path recovery. A shared gateway is
+the alternative when the concern is ingress rather than per-client egress.

@@ -35,7 +35,7 @@ evidence_scope:
     - "src.envoy"
   claim_ids: []
   status: "source-linked"
-  notes: "All 12 cards cite read units; owner links are bounded sections, not dedicated pattern manuscripts."
+  notes: "12 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-21"
@@ -97,7 +97,8 @@ checks; verify the trust boundary in the owner section.
 
 **Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#tls-termination-gateways-and-trusted-identity) — edge identity and gateway boundary; not a full API management specification.
 
-**Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-api-gateway.2026-10-21: API Gateway, sections
 "Context", "Problem", "Forces", "Solution", "Variation: Backends for frontends",
 "Examples", "Resulting context", "Related patterns". Pattern page, not a benchmark.
@@ -133,7 +134,8 @@ contract in the owner section.
 
 **Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#the-routing-contract) — routing and backend selection; not a dedicated gateway routing product guide.
 
-**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microsoft-gateway-routing.2026-10-21: Gateway Routing pattern,
 sections "Context and problem", "Solution", "Multiple disparate services", "Multiple
 instances of the same service", "Multiple versions of the same service", "Issues and
@@ -172,7 +174,8 @@ verify the gateway boundary in the owner section, which does not own aggregation
 
 **Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#tls-termination-gateways-and-trusted-identity) — bounded edge boundary; aggregation mechanics are not owned here.
 
-**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microsoft-gateway-aggregation.2026-10-21: Gateway Aggregation pattern,
 sections "Context and problem", "Solution", "Problems and considerations", "When to use
 this pattern", "Workload design", "Example". Vendor pattern page, not a benchmark.
@@ -208,7 +211,8 @@ boundaries; verify the edge contract in the owner section.
 
 **Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#tls-termination-gateways-and-trusted-identity) — edge functions and trusted identity; not a complete offloading catalogue.
 
-**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microsoft-gateway-offloading.2026-10-21: Gateway Offloading pattern,
 sections "Context and problem", "Solution", "Problems and considerations", "When to use
 this pattern", "Workload design", "Example", "Application Gateway with TLS offloading",
@@ -242,9 +246,10 @@ fit benefit.
 Recovery requires shared domain contracts and per-BFF observability; verify the API
 contract boundary in the owner section.
 
-**Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#http-and-rpc-contracts-compatibility-deadlines-and-retry-safety) — API contract ownership; BFF tailoring is not a dedicated section.
+**Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#backend-for-frontend-bff) — API contract ownership; BFF tailoring is not a dedicated section.
 
-**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microsoft-bff.2026-10-21: Backends for Frontends pattern, sections
 "Context and problem", "Solution", "Problems and considerations", "When to use this
 pattern", "Workload design", "Example", "Design". Vendor pattern page, not a benchmark.
@@ -279,7 +284,8 @@ boundary in the owner section.
 
 **Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#http-and-rpc-contracts-compatibility-deadlines-and-retry-safety) — contract boundary; composition is not a dedicated section.
 
-**Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-api-composition.2026-10-21: API Composition, sections
 "Context", "Problem", "Solution", "Example", "Resulting context", "Related patterns".
 Pattern page, not a benchmark.
@@ -387,7 +393,8 @@ the owner section.
 
 **Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#discovery-load-balancing-and-backend-selection) — discovery and selection; client-specific policy is not a dedicated section.
 
-**Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-client-discovery.2026-10-21: Client-side service
 discovery, sections "Context", "Problem", "Forces", "Solution", "Examples", "Resulting
 context", "Related patterns". Pattern page, not a benchmark.
@@ -423,7 +430,8 @@ contract in the owner section.
 
 **Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#discovery-load-balancing-and-backend-selection) — discovery and selection; server-side specifics are not a dedicated section.
 
-**Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-server-discovery.2026-10-21: Server-side service
 discovery, sections "Context", "Problem", "Forces", "Solution", "Examples", "Resulting
 context", "Related patterns". Pattern page, not a benchmark.
@@ -459,7 +467,8 @@ contract in the owner section.
 
 **Technical owner.** [Asynchronous APIs and streaming: demand, deadlines and cancellation](../../v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md#asynchronous-apis-and-streaming-demand-deadlines-and-cancellation) — async demand and cancellation; not a full request-reply implementation.
 
-**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microsoft-async-request-reply.2026-10-21: Asynchronous Request-Reply
 pattern, sections "Context and problem", "Solution", "Problems and considerations",
 "When to use this pattern", "Workload design", "Example". Vendor pattern page, not a
@@ -496,7 +505,8 @@ verify the authorization boundary in the owner section.
 
 **Technical owner.** [Authorization boundaries and multitenancy: domain ownership and isolation](../../v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md#authorization-boundaries-and-multitenancy-domain-ownership-and-isolation) — authorization boundary; gatekeeper mechanics are not a dedicated section.
 
-**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microsoft-gatekeeper.2026-10-21: Gatekeeper pattern, sections "Context
 and problem", "Solution", "Problems and considerations", "When to use this pattern",
 "Workload design", "Example". Vendor pattern page, not a benchmark.

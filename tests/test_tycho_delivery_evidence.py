@@ -51,6 +51,11 @@ class DeliveryEvidenceTests(unittest.TestCase):
         data["summary"]["routes"] += 1
         self.check_error(data, "delivery-route-count")
 
+    def test_source_commit_must_be_an_ancestor(self):
+        data = copy.deepcopy(self.data)
+        data["source_commit"] = "0" * 40
+        self.check_error(data, "delivery-source-commit-not-ancestor")
+
 
 if __name__ == "__main__":
     unittest.main()

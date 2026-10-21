@@ -137,3 +137,21 @@ Reverse the cell decision if partitioning state creates more risk than the speci
 Inject a poison input, saturated shared dependency, unavailable control plane, stale router, interrupted migration and failed recovery destination. The oracle checks that write ownership has one valid epoch, queue and connection budgets remain bounded, and unrelated cells retain their declared service envelope. Count shared failures explicitly rather than attributing every slowdown to the affected cell. No such fault test was executed here.
 
 [Cell-based architecture fault isolation](https://docs.aws.amazon.com/wellarchitected/latest/reducing-scope-of-impact-with-cell-based-architecture/what-is-a-cell-based-architecture.html) describes bounded cells and routing/control responsibilities. [Shuffle sharding fault isolation](https://aws.amazon.com/blogs/architecture/shuffle-sharding-massive-and-magical-fault-isolation/) describes overlapping worker subsets and retry-dependent isolation. The worker sets, migration protocol and failure oracles above are original design examples; they do not inherit a numerical impact guarantee from either source.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is
+not the main subject of this page. They are synthetic design guidance, not
+measured evidence, and they do not create a new source claim.
+
+### Deployment Stamps
+
+A deployment stamp is an independently operated deployment unit used for scale, isolation
+or locality. It needs a routing key, a state authority, a deployment and upgrade process
+and a rule for shared global dependencies. Use it when stamps can fail or change
+independently and the duplication cost is justified. Do not use it when a single
+deployment meets the objective or when stamps still share an unowned global dependency.
+
+The failure path is configuration drift or split state across stamps; version the stamp
+definition, route by an explicit key and reconcile state at the authority. A cell-based
+deployment is the alternative when isolation is the main goal and scale is secondary.

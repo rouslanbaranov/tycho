@@ -101,7 +101,8 @@ dominate or the dependency rule cannot be enforced.
 
 **Failure and recovery.** Layer leakage, transaction boundaries that span layers and
 anemic domain models are common. Recovery starts with dependency checks, explicit
-contracts and a review of the change boundary; the linked owner section states the remaining limits.
+contracts and a review of the change boundary; the linked owner section states the
+remaining limits.
 
 **Technical owner.** [Layered, hexagonal and ports-and-adapters architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#layered-hexagonal-and-ports-and-adapters-architecture) — The section owns layering and dependency direction; it is not a dedicated layering manuscript.
 
@@ -332,7 +333,8 @@ and translation cost in the technical owner.
 
 **Technical owner.** [Domain semantics and authoritative ownership](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md#domain-semantics-and-authoritative-ownership).
 
-**Sources.** [src.fowler-bounded-context](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.fowler-bounded-context](../../../../edition/patterns/reading-ledger.v1.json)
 read record `read.fowler-bounded-context.2026-10-21`: Bounded Context, sections
 "Bounded Context", "Further Reading", "Notes". The article is a definition and
 boundary argument, not a full DDD reference.
@@ -368,7 +370,8 @@ owner section states the remaining limits.
 
 **Technical owner.** [Ownership, isolation and boundary validation](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/ownership-isolation.md#7-selecting-boundaries-and-proving-they-work) — The section owns state authority and shared-database selection, not a dedicated schema-per-service recipe.
 
-**Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-database-per-service.2026-10-21: Database per
 Service, sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting
 context", "Related patterns". This is a pattern page, not a comparative study.
@@ -405,7 +408,8 @@ missing.
 
 **Technical owner.** [Independent deployment and its costs](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md#2-independence-is-not-proved-by-a-separate-container) — The section owns remote-boundary costs and local-transaction alternatives.
 
-**Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-self-contained.2026-10-21: Self-contained service,
 sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting Context",
 "Related patterns". This is a pattern page, not a comparative study.
@@ -441,7 +445,8 @@ owner section states the remaining limits.
 
 **Technical owner.** [Service mesh and traffic intermediaries](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#service-mesh-and-traffic-intermediaries) — The section owns proxies and sidecar data planes, not a dedicated sidecar lifecycle page.
 
-**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microsoft-sidecar.2026-10-21: Sidecar pattern, sections "Context
 and problem", "Solution", "Problems and considerations", "When to use this pattern",
 "Workload design", "Example". This is a vendor pattern page, not a comparative study.
@@ -473,9 +478,10 @@ the choice when the proxy adds a hop without providing a needed capability.
 common. Recovery requires health checks and bounded retries; the technical owner is
 missing.
 
-**Technical owner.** [Service mesh and traffic intermediaries](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#service-mesh-and-traffic-intermediaries) — The section owns traffic intermediaries, not a dedicated ambassador lifecycle page.
+**Technical owner.** [Service mesh and traffic intermediaries](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — The section owns traffic intermediaries, not a dedicated ambassador lifecycle page.
 
-**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microsoft-ambassador.2026-10-21: Ambassador pattern, sections
 "Context and problem", "Solution", "Problems and considerations", "When to use this
 pattern", "Workload design", "Example". This is a vendor pattern page, not a comparative
@@ -512,7 +518,8 @@ explicit cutover path; verify those mechanics in the technical owner.
 
 **Technical owner.** [Anti-corruption adapters: semantic translation and safe coexistence](../../v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md#anti-corruption-adapters-semantic-translation-and-safe-coexistence).
 
-**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.**
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record `read.microsoft-acl.2026-10-21`: Anti-Corruption Layer pattern, sections
 "Anti-Corruption Layer pattern", "Context and problem", "Solution", "Problems and
 considerations", "When to use this pattern", "Workload design", "Example". This is a

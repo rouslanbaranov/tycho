@@ -38,7 +38,7 @@ evidence_scope:
     - "src.microsoft-cloud-patterns"
   claim_ids: []
   status: "source-linked"
-  notes: "All 14 cards cite read units; owner links are bounded sections, not dedicated pattern pages."
+  notes: "14 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-21"
@@ -75,70 +75,96 @@ none claims sufficient technical or decision coverage.
 
 ### Distributed Cache
 
-**Identity.** Distributed Cache; family Caching and retrieval; kind infrastructure-pattern; priority core.
+**Identity.** Distributed Cache; family Caching and retrieval; kind
+infrastructure-pattern; priority core.
 
-**Decision question.** Should cached data live in a shared distributed tier rather than only inside each process?
+**Decision question.** Should cached data live in a shared distributed tier rather than
+only inside each process?
 
-**Good-fit conditions.** Multiple instances need shared freshness; the network hop is acceptable; partitioning/replication and failure are owned.
+**Good-fit conditions.** Multiple instances need shared freshness; the network hop is
+acceptable; partitioning/replication and failure are owned.
 
-**Hard contraindications.** Reject when local cache suffices, when the shared tier becomes an unowned single point, or when network latency dominates the hit benefit.
+**Hard contraindications.** Reject when local cache suffices, when the shared tier becomes
+an unowned single point, or when network latency dominates the hit benefit.
 
-**Competing alternative.** Local in-process cache or no cache. Reverse the choice when distributed coordination cost exceeds cross-instance reuse.
+**Competing alternative.** Local in-process cache or no cache. Reverse the choice when
+distributed coordination cost exceeds cross-instance reuse.
 
-**Failure and recovery.** Network partitions and stale replicas are common; verify placement/freshness in the owner section.
+**Failure and recovery.** Network partitions and stale replicas are common; verify
+placement/freshness in the owner section.
 
 **Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#local-and-distributed-caching-authority-freshness-and-placement) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-hazelcast-cache.2026-10-21: sections "Caching Data". The source is a public pattern/documentation
+read record read.batch3-hazelcast-cache.2026-10-21: sections "Caching Data". The source is
+a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Multi-Level Caching; Cache-Aside; Cache Invalidation; CDN / Edge Caching.
+**Related entries.** Multi-Level Caching; Cache-Aside; Cache Invalidation; CDN / Edge
+Caching.
 
 ### Cache-Aside / Lazy Loading
 
-**Identity.** Cache-Aside / Lazy Loading; family Caching and retrieval; kind caching-pattern; priority core.
+**Identity.** Cache-Aside / Lazy Loading; family Caching and retrieval; kind
+caching-pattern; priority core.
 
-**Decision question.** Should the application populate the cache after a miss instead of routing every read through the cache layer?
+**Decision question.** Should the application populate the cache after a miss instead of
+routing every read through the cache layer?
 
-**Good-fit conditions.** The application can own fill and invalidation; misses are acceptable; duplicate fills are controlled; the source remains authoritative.
+**Good-fit conditions.** The application can own fill and invalidation; misses are
+acceptable; duplicate fills are controlled; the source remains authoritative.
 
-**Hard contraindications.** Reject when every read must be served from cache, when fill races cannot be controlled, or when invalidation has no owner.
+**Hard contraindications.** Reject when every read must be served from cache, when fill
+races cannot be controlled, or when invalidation has no owner.
 
-**Competing alternative.** Read-through cache or no cache. Reverse the choice when application fill logic becomes duplicated and inconsistent.
+**Competing alternative.** Read-through cache or no cache. Reverse the choice when
+application fill logic becomes duplicated and inconsistent.
 
-**Failure and recovery.** Stale fills and concurrent miss stampedes are common; verify the sequence in the owner section.
+**Failure and recovery.** Stale fills and concurrent miss stampedes are common; verify the
+sequence in the owner section.
 
 **Technical owner.** [Cache-aside is a sequence, not a consistency theorem](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#4-cache-aside-is-a-sequence-not-a-consistency-theorem) — the sequence is bounded, not a complete cache-aside library guide.
 
-**Sources.** [src.aws-caching-strategies](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-aws-caching.2026-10-21: sections "Caching patterns", "Cache-Aside (Lazy Loading)", "Write-Through". The source is a public pattern/documentation
+**Sources.**
+[src.aws-caching-strategies](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-aws-caching.2026-10-21: sections "Caching patterns", "Cache-Aside
+(Lazy Loading)", "Write-Through". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Read-Through Cache; Cache Invalidation; Cache Stampede Protection; Distributed Cache.
+**Related entries.** Read-Through Cache; Cache Invalidation; Cache Stampede Protection;
+Distributed Cache.
 
 ### Read-Through Cache
 
-**Identity.** Read-Through Cache; family Caching and retrieval; kind caching-pattern; priority advanced.
+**Identity.** Read-Through Cache; family Caching and retrieval; kind caching-pattern;
+priority advanced.
 
-**Decision question.** Should the cache layer load missing data on behalf of the application?
+**Decision question.** Should the cache layer load missing data on behalf of the
+application?
 
-**Good-fit conditions.** The cache can own loading and error mapping; the source contract is stable; fill stampedes and stale data are handled.
+**Good-fit conditions.** The cache can own loading and error mapping; the source contract
+is stable; fill stampedes and stale data are handled.
 
-**Hard contraindications.** Reject when the cache cannot safely call the source, when application-specific authorization is needed for each read, or when fill failures are hidden.
+**Hard contraindications.** Reject when the cache cannot safely call the source, when
+application-specific authorization is needed for each read, or when fill failures are
+hidden.
 
-**Competing alternative.** Cache-aside with application-owned fill. Reverse the choice when cache-layer coupling or opaque failures outweigh simpler fill logic.
+**Competing alternative.** Cache-aside with application-owned fill. Reverse the choice
+when cache-layer coupling or opaque failures outweigh simpler fill logic.
 
-**Failure and recovery.** Fill latency and error masking are common; verify loading semantics in the owner section.
+**Failure and recovery.** Fill latency and error masking are common; verify loading
+semantics in the owner section.
 
 **Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#local-and-distributed-caching-authority-freshness-and-placement) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
-**Sources.** [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Caching in distributed applications", "Implement caching patterns". The source is a public pattern/documentation
+**Sources.**
+[src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-ms-caching.2026-10-21: sections "Caching in distributed
+applications", "Implement caching patterns". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -147,22 +173,30 @@ unit, not a benchmark.
 
 ### Write-Through Cache
 
-**Identity.** Write-Through Cache; family Caching and retrieval; kind caching-pattern; priority core.
+**Identity.** Write-Through Cache; family Caching and retrieval; kind caching-pattern;
+priority core.
 
-**Decision question.** Should every write update the cache and the authoritative store together?
+**Decision question.** Should every write update the cache and the authoritative store
+together?
 
-**Good-fit conditions.** Writes are not dominated by high volume; consistency between cache and store matters; failure of either side is handled.
+**Good-fit conditions.** Writes are not dominated by high volume; consistency between
+cache and store matters; failure of either side is handled.
 
-**Hard contraindications.** Reject when write latency is critical, when the store cannot participate in a reliable sequence, or when partial failure has no reconciliation.
+**Hard contraindications.** Reject when write latency is critical, when the store cannot
+participate in a reliable sequence, or when partial failure has no reconciliation.
 
-**Competing alternative.** Write-behind or cache-aside with invalidation. Reverse the choice when write amplification or dual-write failure dominates.
+**Competing alternative.** Write-behind or cache-aside with invalidation. Reverse the
+choice when write amplification or dual-write failure dominates.
 
-**Failure and recovery.** Partial writes and stale cache entries are common; verify ordering in the owner section.
+**Failure and recovery.** Partial writes and stale cache entries are common; verify
+ordering in the owner section.
 
 **Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#local-and-distributed-caching-authority-freshness-and-placement) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
-**Sources.** [src.aws-caching-strategies](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-aws-caching.2026-10-21: sections "Caching patterns", "Write-Through". The source is a public pattern/documentation
+**Sources.**
+[src.aws-caching-strategies](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-aws-caching.2026-10-21: sections "Caching patterns",
+"Write-Through". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -171,22 +205,31 @@ unit, not a benchmark.
 
 ### Write-Behind / Write-Back
 
-**Identity.** Write-Behind / Write-Back; family Caching and retrieval; kind caching-pattern; priority advanced.
+**Identity.** Write-Behind / Write-Back; family Caching and retrieval; kind
+caching-pattern; priority advanced.
 
-**Decision question.** Should writes land in the cache first and reach the store asynchronously?
+**Decision question.** Should writes land in the cache first and reach the store
+asynchronously?
 
-**Good-fit conditions.** The cache can durably buffer writes; loss tolerance is explicit; ordering and retry are owned; the store can catch up.
+**Good-fit conditions.** The cache can durably buffer writes; loss tolerance is explicit;
+ordering and retry are owned; the store can catch up.
 
-**Hard contraindications.** Reject when a cache loss would lose accepted writes, when ordering is mandatory, or when no reconciliation path exists.
+**Hard contraindications.** Reject when a cache loss would lose accepted writes, when
+ordering is mandatory, or when no reconciliation path exists.
 
-**Competing alternative.** Write-through or direct store writes. Reverse the choice when durability and replay complexity exceed latency benefit.
+**Competing alternative.** Write-through or direct store writes. Reverse the choice when
+durability and replay complexity exceed latency benefit.
 
-**Failure and recovery.** Cache loss and reordering are common; verify durability in the owner section.
+**Failure and recovery.** Cache loss and reordering are common; verify durability in the
+owner section.
 
 **Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#local-and-distributed-caching-authority-freshness-and-placement) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
-**Sources.** [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Caching in distributed applications", "Manage concurrency in a cache". The source is a public pattern/documentation
+**Sources.**
+[src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-ms-caching.2026-10-21: sections "Caching in distributed
+applications", "Manage concurrency in a cache". The source is a public
+pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -195,22 +238,29 @@ unit, not a benchmark.
 
 ### Write-Around
 
-**Identity.** Write-Around; family Caching and retrieval; kind caching-pattern; priority advanced.
+**Identity.** Write-Around; family Caching and retrieval; kind caching-pattern; priority
+advanced.
 
 **Decision question.** Should writes bypass the cache and invalidate or refresh it later?
 
-**Good-fit conditions.** Writes are large or infrequent; cached reads can tolerate a miss after write; invalidation is reliable.
+**Good-fit conditions.** Writes are large or infrequent; cached reads can tolerate a miss
+after write; invalidation is reliable.
 
-**Hard contraindications.** Reject when read-after-write freshness is required, when invalidation is unreliable, or when the miss penalty is unacceptable.
+**Hard contraindications.** Reject when read-after-write freshness is required, when
+invalidation is unreliable, or when the miss penalty is unacceptable.
 
-**Competing alternative.** Write-through or write-behind. Reverse the choice when post-write misses dominate the read path.
+**Competing alternative.** Write-through or write-behind. Reverse the choice when
+post-write misses dominate the read path.
 
-**Failure and recovery.** Stale entries after invalidation failure are common; verify invalidation in the owner section.
+**Failure and recovery.** Stale entries after invalidation failure are common; verify
+invalidation in the owner section.
 
 **Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#local-and-distributed-caching-authority-freshness-and-placement) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
-**Sources.** [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Keep the cache consistent on writes", "Manage data expiration in a cache". The source is a public pattern/documentation
+**Sources.**
+[src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-ms-caching.2026-10-21: sections "Keep the cache consistent on
+writes", "Manage data expiration in a cache". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -219,118 +269,165 @@ unit, not a benchmark.
 
 ### Cache Invalidation
 
-**Identity.** Cache Invalidation; family Caching and retrieval; kind caching-pattern; priority core.
+**Identity.** Cache Invalidation; family Caching and retrieval; kind caching-pattern;
+priority core.
 
-**Decision question.** Should cached entries be removed or refreshed when the authoritative value changes?
+**Decision question.** Should cached entries be removed or refreshed when the
+authoritative value changes?
 
-**Good-fit conditions.** The authoritative change can emit an invalidation signal; consumers can tolerate a bounded stale window; failure is observable.
+**Good-fit conditions.** The authoritative change can emit an invalidation signal;
+consumers can tolerate a bounded stale window; failure is observable.
 
-**Hard contraindications.** Reject when no reliable invalidation path exists, when stale reads violate a hard contract, or when every writer must know every cache.
+**Hard contraindications.** Reject when no reliable invalidation path exists, when stale
+reads violate a hard contract, or when every writer must know every cache.
 
-**Competing alternative.** TTL-only expiry or versioned cache keys. Reverse the choice when invalidation fan-out and coupling exceed staleness cost.
+**Competing alternative.** TTL-only expiry or versioned cache keys. Reverse the choice
+when invalidation fan-out and coupling exceed staleness cost.
 
-**Failure and recovery.** Lost invalidations and races with fills are common; verify invalidation semantics in the owner section.
+**Failure and recovery.** Lost invalidations and races with fills are common; verify
+invalidation semantics in the owner section.
 
 **Technical owner.** [Cache invalidation, stampedes and hot-key failure modes](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md#cache-invalidation-stampedes-and-hot-key-failure-modes) — invalidation is bounded, not a complete invalidation matrix.
 
-**Sources.** [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Keep the cache consistent on writes", "Invalidate data in a client-side cache". The source is a public pattern/documentation
+**Sources.**
+[src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-ms-caching.2026-10-21: sections "Keep the cache consistent on
+writes", "Invalidate data in a client-side cache". The source is a public
+pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** TTL-Based Expiration; Cache-Aside; Stale-While-Revalidate; Write-Around.
+**Related entries.** TTL-Based Expiration; Cache-Aside; Stale-While-Revalidate;
+Write-Around.
 
 ### TTL-Based Expiration
 
-**Identity.** TTL-Based Expiration; family Caching and retrieval; kind caching-pattern; priority core.
+**Identity.** TTL-Based Expiration; family Caching and retrieval; kind caching-pattern;
+priority core.
 
-**Decision question.** Should entries expire after a bounded time even without an explicit invalidation?
+**Decision question.** Should entries expire after a bounded time even without an explicit
+invalidation?
 
-**Good-fit conditions.** Staleness is bounded by time; refresh cost is acceptable; the TTL is shorter than the business freshness requirement.
+**Good-fit conditions.** Staleness is bounded by time; refresh cost is acceptable; the TTL
+is shorter than the business freshness requirement.
 
-**Hard contraindications.** Reject when a hard read-after-write contract exists, when synchronized expiry would stampede the source, or when TTL is longer than the acceptable stale window.
+**Hard contraindications.** Reject when a hard read-after-write contract exists, when
+synchronized expiry would stampede the source, or when TTL is longer than the acceptable
+stale window.
 
-**Competing alternative.** Explicit invalidation or versioned keys. Reverse the choice when TTL expiry causes unacceptable misses or stale decisions.
+**Competing alternative.** Explicit invalidation or versioned keys. Reverse the choice
+when TTL expiry causes unacceptable misses or stale decisions.
 
-**Failure and recovery.** Synchronized expiry and stale reads are common; verify eviction/refresh in the owner section.
+**Failure and recovery.** Synchronized expiry and stale reads are common; verify
+eviction/refresh in the owner section.
 
 **Technical owner.** [Local cache eviction and refresh are different actions](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#3-local-cache-eviction-and-refresh-are-different-actions) — eviction/refresh is bounded, not a universal TTL policy.
 
-**Sources.** [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Manage data expiration in a cache", "Manage concurrency in a cache". The source is a public pattern/documentation
+**Sources.**
+[src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-ms-caching.2026-10-21: sections "Manage data expiration in a
+cache", "Manage concurrency in a cache". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Cache Invalidation; Cache Stampede Protection; Negative Caching; Stale-While-Revalidate.
+**Related entries.** Cache Invalidation; Cache Stampede Protection; Negative Caching;
+Stale-While-Revalidate.
 
 ### Negative Caching
 
-**Identity.** Negative Caching; family Caching and retrieval; kind caching-pattern; priority advanced.
+**Identity.** Negative Caching; family Caching and retrieval; kind caching-pattern;
+priority advanced.
 
-**Decision question.** Should failures or empty results be cached like successful responses?
+**Decision question.** Should failures or empty results be cached like successful
+responses?
 
-**Good-fit conditions.** The failure is stable enough to cache; TTL is short; negative entries cannot hide a later valid result; status-specific policy exists.
+**Good-fit conditions.** The failure is stable enough to cache; TTL is short; negative
+entries cannot hide a later valid result; status-specific policy exists.
 
-**Hard contraindications.** Reject when failures are transient, when caching an error would hide recovery, or when negative entries leak existence or authorization.
+**Hard contraindications.** Reject when failures are transient, when caching an error
+would hide recovery, or when negative entries leak existence or authorization.
 
-**Competing alternative.** No negative cache or short retry with backoff. Reverse the choice when repeated misses amplify origin load.
+**Competing alternative.** No negative cache or short retry with backoff. Reverse the
+choice when repeated misses amplify origin load.
 
-**Failure and recovery.** Stale failures and information leakage are common; verify status/TTL policy in the owner section.
+**Failure and recovery.** Stale failures and information leakage are common; verify
+status/TTL policy in the owner section.
 
 **Technical owner.** [Negative caching and discriminating experiments](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md#negative-caching-and-discriminating-experiments) — negative-cache policy is bounded, not a universal error-cache rule.
 
-**Sources.** [src.google-cdn-negative-caching](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-google-negative.2026-10-21: sections "Use negative caching", "Status codes and default TTLs". The source is a public pattern/documentation
+**Sources.**
+[src.google-cdn-negative-caching](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-google-negative.2026-10-21: sections "Use negative caching",
+"Status codes and default TTLs". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** TTL-Based Expiration; CDN / Edge Caching; Cache Invalidation; Cache Stampede Protection.
+**Related entries.** TTL-Based Expiration; CDN / Edge Caching; Cache Invalidation; Cache
+Stampede Protection.
 
 ### Cache Stampede Protection
 
-**Identity.** Cache Stampede Protection; family Caching and retrieval; kind caching-pattern; priority core.
+**Identity.** Cache Stampede Protection; family Caching and retrieval; kind
+caching-pattern; priority core.
 
-**Decision question.** Should concurrent misses be coordinated so they do not all hit the source at once?
+**Decision question.** Should concurrent misses be coordinated so they do not all hit the
+source at once?
 
-**Good-fit conditions.** A hot key can expire under load; source capacity is limited; coordination failure has a fallback; duplicate fills are acceptable.
+**Good-fit conditions.** A hot key can expire under load; source capacity is limited;
+coordination failure has a fallback; duplicate fills are acceptable.
 
-**Hard contraindications.** Reject when the source can absorb the miss burst, when coordination would block all callers, or when single-flight state has no owner.
+**Hard contraindications.** Reject when the source can absorb the miss burst, when
+coordination would block all callers, or when single-flight state has no owner.
 
-**Competing alternative.** TTL jitter or prewarming. Reverse the choice when coordination latency and failure outweigh source protection.
+**Competing alternative.** TTL jitter or prewarming. Reverse the choice when coordination
+latency and failure outweigh source protection.
 
-**Failure and recovery.** Lock loss and retry storms are common; verify source protection in the owner section.
+**Failure and recovery.** Lock loss and retry storms are common; verify source protection
+in the owner section.
 
 **Technical owner.** [Stampedes and source protection](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#stampedes-and-source-protection) — stampede protection is bounded, not a single-flight implementation.
 
-**Sources.** [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Manage concurrency in a cache", "Implement caching patterns". The source is a public pattern/documentation
+**Sources.**
+[src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-ms-caching.2026-10-21: sections "Manage concurrency in a cache",
+"Implement caching patterns". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Single Flight; TTL-Based Expiration; Cache Invalidation; Stale-While-Revalidate.
+**Related entries.** Single Flight; TTL-Based Expiration; Cache Invalidation;
+Stale-While-Revalidate.
 
 ### Single Flight / Request Coalescing
 
-**Identity.** Single Flight / Request Coalescing; family Caching and retrieval; kind caching-pattern; priority advanced.
+**Identity.** Single Flight / Request Coalescing; family Caching and retrieval; kind
+caching-pattern; priority advanced.
 
-**Decision question.** Should duplicate in-flight requests for the same key share one source call?
+**Decision question.** Should duplicate in-flight requests for the same key share one
+source call?
 
-**Good-fit conditions.** Requests are read-mostly; the key is stable; waiters can tolerate shared failure; the coalescing scope is bounded.
+**Good-fit conditions.** Requests are read-mostly; the key is stable; waiters can tolerate
+shared failure; the coalescing scope is bounded.
 
-**Hard contraindications.** Reject when requests carry different authorization or parameters, when one slow call would block unrelated callers, or when cancellation must be independent.
+**Hard contraindications.** Reject when requests carry different authorization or
+parameters, when one slow call would block unrelated callers, or when cancellation must be
+independent.
 
-**Competing alternative.** Independent calls with stampede protection at the source. Reverse the choice when shared latency/failure outweighs duplicate-call reduction.
+**Competing alternative.** Independent calls with stampede protection at the source.
+Reverse the choice when shared latency/failure outweighs duplicate-call reduction.
 
-**Failure and recovery.** One failure fans out to all waiters; verify scope and cancellation in the owner section.
+**Failure and recovery.** One failure fans out to all waiters; verify scope and
+cancellation in the owner section.
 
 **Technical owner.** [Cache loss and source protection policy](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#5-cache-loss-and-source-protection-policy) — source protection is bounded, not a request-coalescing library.
 
-**Sources.** [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Manage concurrency in a cache". The source is a public pattern/documentation
+**Sources.**
+[src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-ms-caching.2026-10-21: sections "Manage concurrency in a cache".
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -339,75 +436,101 @@ unit, not a benchmark.
 
 ### Stale-While-Revalidate
 
-**Identity.** Stale-While-Revalidate; family Caching and retrieval; kind caching-pattern; priority advanced.
+**Identity.** Stale-While-Revalidate; family Caching and retrieval; kind caching-pattern;
+priority advanced.
 
-**Decision question.** Should a stale response be served while a refresh runs in the background?
+**Decision question.** Should a stale response be served while a refresh runs in the
+background?
 
-**Good-fit conditions.** The contract tolerates bounded staleness; refresh has an owner; the stale window is explicit; failure can fall back.
+**Good-fit conditions.** The contract tolerates bounded staleness; refresh has an owner;
+the stale window is explicit; failure can fall back.
 
-**Hard contraindications.** Reject when read-after-write is mandatory, when stale data would mislead a decision, or when refresh cannot be bounded.
+**Hard contraindications.** Reject when read-after-write is mandatory, when stale data
+would mislead a decision, or when refresh cannot be bounded.
 
-**Competing alternative.** Blocking refresh or TTL-only expiry. Reverse the choice when stale responses violate a business contract.
+**Competing alternative.** Blocking refresh or TTL-only expiry. Reverse the choice when
+stale responses violate a business contract.
 
-**Failure and recovery.** Background refresh failure can extend staleness; verify boundaries in the owner section.
+**Failure and recovery.** Background refresh failure can extend staleness; verify
+boundaries in the owner section.
 
 **Technical owner.** [Stale fills and regeneration ownership](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md#stale-fills-and-regeneration-ownership) — stale-fill ownership is bounded, not a full HTTP cache specification.
 
 **Sources.** [src.rfc5861](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-rfc5861.2026-10-21: sections "Introduction", "The stale-while-revalidate Cache-Control Extension". The source is a public pattern/documentation
+read record read.batch3-rfc5861.2026-10-21: sections "Introduction", "The
+stale-while-revalidate Cache-Control Extension". The source is a public
+pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Cache Invalidation; TTL-Based Expiration; Cache Stampede Protection; CDN / Edge Caching.
+**Related entries.** Cache Invalidation; TTL-Based Expiration; Cache Stampede Protection;
+CDN / Edge Caching.
 
 ### Multi-Level Caching
 
-**Identity.** Multi-Level Caching; family Caching and retrieval; kind caching-pattern; priority advanced.
+**Identity.** Multi-Level Caching; family Caching and retrieval; kind caching-pattern;
+priority advanced.
 
-**Decision question.** Should data be cached in more than one tier with different latency and freshness?
+**Decision question.** Should data be cached in more than one tier with different latency
+and freshness?
 
-**Good-fit conditions.** Each tier has a distinct role; promotion/invalidation across tiers is owned; local staleness is bounded.
+**Good-fit conditions.** Each tier has a distinct role; promotion/invalidation across
+tiers is owned; local staleness is bounded.
 
-**Hard contraindications.** Reject when one tier suffices, when cross-tier invalidation cannot be tested, or when duplicate caching only adds inconsistency.
+**Hard contraindications.** Reject when one tier suffices, when cross-tier invalidation
+cannot be tested, or when duplicate caching only adds inconsistency.
 
-**Competing alternative.** Single distributed cache or local-only cache. Reverse the choice when tier coordination cost exceeds latency benefit.
+**Competing alternative.** Single distributed cache or local-only cache. Reverse the
+choice when tier coordination cost exceeds latency benefit.
 
-**Failure and recovery.** Cross-tier stale data and invalidation fan-out are common; verify placement in the owner section.
+**Failure and recovery.** Cross-tier stale data and invalidation fan-out are common;
+verify placement in the owner section.
 
 **Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#local-and-distributed-caching-authority-freshness-and-placement) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-hazelcast-near.2026-10-21: sections "Near Cache". The source is a public pattern/documentation
+read record read.batch3-hazelcast-near.2026-10-21: sections "Near Cache". The source is a
+public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Distributed Cache; Cache Invalidation; CDN / Edge Caching; Cache-Aside.
+**Related entries.** Distributed Cache; Cache Invalidation; CDN / Edge Caching;
+Cache-Aside.
 
 ### CDN / Edge Caching
 
-**Identity.** CDN / Edge Caching; family Caching and retrieval; kind caching-pattern; priority core.
+**Identity.** CDN / Edge Caching; family Caching and retrieval; kind caching-pattern;
+priority core.
 
-**Decision question.** Should content be cached at the edge close to clients rather than only at the origin?
+**Decision question.** Should content be cached at the edge close to clients rather than
+only at the origin?
 
-**Good-fit conditions.** Content is cacheable and versioned; private data is excluded; origin protection and purge are owned; edge failure is handled.
+**Good-fit conditions.** Content is cacheable and versioned; private data is excluded;
+origin protection and purge are owned; edge failure is handled.
 
-**Hard contraindications.** Reject when content is highly personalized or uncacheable, when purge cannot meet the freshness contract, or when edge configuration is unowned.
+**Hard contraindications.** Reject when content is highly personalized or uncacheable,
+when purge cannot meet the freshness contract, or when edge configuration is unowned.
 
-**Competing alternative.** Origin cache or direct origin. Reverse the choice when cacheability and purge cost outweigh latency benefit.
+**Competing alternative.** Origin cache or direct origin. Reverse the choice when
+cacheability and purge cost outweigh latency benefit.
 
-**Failure and recovery.** Stale private content and purge failures are common; verify cacheability in the owner section.
+**Failure and recovery.** Stale private content and purge failures are common; verify
+cacheability in the owner section.
 
 **Technical owner.** [Edge caching, private content and origin recovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#edge-caching-private-content-and-origin-recovery) — edge caching is bounded, not a CDN product manual.
 
-**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-static.2026-10-21: sections "Static Content Hosting pattern", "Context and problem", "Solution". The source is a public pattern/documentation
+**Sources.**
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-ms-static.2026-10-21: sections "Static Content Hosting pattern",
+"Context and problem", "Solution". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Cache Invalidation; TTL-Based Expiration; Negative Caching; Multi-Level Caching.
+**Related entries.** Cache Invalidation; TTL-Based Expiration; Negative Caching;
+Multi-Level Caching.
 
 ## Chapter result and counterexample
 

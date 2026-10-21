@@ -160,3 +160,34 @@ Proposed tests: kill scheduler after persisting intent but before dispatch; kill
 | Integrated question | [Original scenario and limits](messaging-families-and-durable-workflows.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is
+not the main subject of this page. They are synthetic design guidance, not
+measured evidence, and they do not create a new source claim.
+
+### Claim Check
+
+A claim check stores a large or sensitive payload outside the message and sends a claim
+token instead. It needs payload lifecycle, authorization, expiry, integrity and a cleanup
+rule for abandoned claims. Use it when message size, retention or access boundaries make
+an inline payload unsafe. Do not use it when the payload is small enough to inline or when
+an external store would create an unacceptable consistency dependency.
+
+The failure path is an orphaned payload or a token that outlives its authorization; expire
+and garbage-collect claims, and make the consumer fail closed when the claim cannot be
+resolved. An inline payload with encryption and size limits is the alternative when the
+transport can carry it safely.
+
+### Correlation Identifier
+
+A correlation identifier ties together messages that belong to one request, workflow or
+conversation. It needs a generation rule, propagation across asynchronous boundaries, a
+retention window and a collision check. Use it when independent messages must be joined
+for diagnosis, deduplication or reply routing. Do not use it as an authorization token or
+when the transport already provides an equivalent identity.
+
+The failure path is a lost or duplicated identifier; carry it in the message contract and
+record it at every boundary. A transport-native message identity is the alternative when
+the broker guarantees the needed scope and lifetime.

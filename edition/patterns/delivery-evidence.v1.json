@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "status": "delivery-evidence-recorded",
-  "source_commit": "d0dce3b40ff914b8728df8a5dff04324b666dd4f",
+  "source_commit": "452ccd04f27e340b1a95da328e975386bdb547ae",
   "generated_at": "2026-10-21",
   "scope": "structural delivery evidence and explicit review gaps; not independent acceptance",
   "summary": {
@@ -12,8 +12,8 @@
     "cards": 144,
     "owner_linked": 144,
     "blocked_entries": 1,
-    "routes": 530,
-    "unresolved_related": 44,
+    "routes": 534,
+    "unresolved_related": 40,
     "retrieval_questions": 144,
     "ledger_records": 115,
     "sources": 268,
@@ -27,12 +27,12 @@
     {
       "name": "premerge",
       "status": "pass",
-      "evidence": "282 tests at C11; 289 tests after Phase 4; branch premerge checks passed"
+      "evidence": "300 tests after remediation; branch premerge checks passed"
     },
     {
       "name": "full-tests",
       "status": "pass",
-      "evidence": "310 tests, OK"
+      "evidence": "321 tests, OK"
     },
     {
       "name": "pattern-atlas",
@@ -47,12 +47,12 @@
     {
       "name": "pattern-cards",
       "status": "pass",
-      "evidence": "11 batches, 144 entries, exact owner-link resolution"
+      "evidence": "11 batches, 144 entries, exact owner-link resolution and bounded semantic owner sections"
     },
     {
       "name": "phase4-audit",
       "status": "pass",
-      "evidence": "419 page dispositions, 145 entries x 14 dimensions, 530 routes"
+      "evidence": "419 page dispositions, 145 entries x 14 dimensions, 534 routes"
     },
     {
       "name": "strict-knowledge",
@@ -68,8 +68,8 @@
   "dod": [
     {
       "id": "atlas-section-and-owner",
-      "status": "partial",
-      "evidence": "144 entries owner-linked; Polyglot Persistence is blocked and uncarded"
+      "status": "met",
+      "evidence": "144 exact owner links; Polyglot Persistence is blocked, uncarded and explicitly technical-owner-missing"
     },
     {
       "id": "card-components",
@@ -83,8 +83,8 @@
     },
     {
       "id": "page-census-and-audit",
-      "status": "met",
-      "evidence": "Phase 4 dispositions all 419 pages structurally"
+      "status": "partial",
+      "evidence": "Phase 4 structurally dispositions all 419 pages; semantic page review is not performed"
     },
     {
       "id": "source-reading",
@@ -94,7 +94,7 @@
     {
       "id": "blocked-source-disposition",
       "status": "met",
-      "evidence": "Polyglot Persistence is explicitly blocked, not silently missing"
+      "evidence": "Polyglot Persistence records technical-owner-missing and links remediation issue #284"
     },
     {
       "id": "technical-sufficiency",
@@ -119,7 +119,7 @@
     {
       "id": "delivery-checks",
       "status": "met",
-      "evidence": "Local premerge, full tests, atlas/source/card/Phase 4 checks passed"
+      "evidence": "Local premerge, 321 tests, atlas/source/card/Phase 4, delivery evidence and V11 prose line checks passed"
     },
     {
       "id": "release-or-deployment",
@@ -130,7 +130,7 @@
   "open_gaps": [
     {
       "id": "unresolved-related-labels",
-      "count": 44,
+      "count": 40,
       "action": "resolve aliases or record deliberate non-routes in Phase 5 review"
     },
     {
@@ -157,13 +157,36 @@
       "id": "owner-acceptance",
       "count": 1,
       "action": "record owner acceptance only after review"
+    },
+    {
+      "id": "uncited-read-records",
+      "count": 3,
+      "action": "record the catalog-index reads as intentionally unused or cite them explicitly"
+    },
+    {
+      "id": "markdown-owner-link-exceptions",
+      "count": 144,
+      "action": "keep exact owner links while all prose stays at <=100 characters"
+    },
+    {
+      "id": "shared-owner-pages",
+      "count": 30,
+      "action": "split broad owner pages or continue to record bounded partial ownership explicitly"
+    },
+    {
+      "id": "page-semantic-review",
+      "count": 419,
+      "action": "perform document-level editorial review beyond structural disposition"
     }
   ],
   "limits": [
     "This artifact is self-checked structural evidence, not independent review.",
     "Partial coverage is not sufficient coverage.",
-    "The 44 unresolved related labels are a real navigation gap.",
-    "Polyglot Persistence remains blocked and uncarded.",
+    "The 40 unresolved related labels are a navigation gap; four avoidable aliases were resolved in remediation.",
+    "Polyglot Persistence remains blocked and uncarded, with technical-owner-missing recorded.",
+    "Thirty owner pages are shared by more than one pattern; technical coverage remains partial.",
+    "Page dispositions are structural categories, not a semantic audit of every page.",
+    "144 exact owner-link lines exceed 100 characters because canonical paths cannot be split; all prose is <=100.",
     "No CI, release, deployment or benchmark result is claimed."
   ]
 }

@@ -233,7 +233,7 @@ uncarded. Card coverage is not technical sufficiency.
 
 The Phase 4 artifact `edition/patterns/phase4.v1.json` dispositions all 419
 canonical pages, audits 145 entries across 14 dimensions, records the gap matrix,
-derives 530 cross-pattern routes from card related entries, retains 44 unresolved
+derives 534 cross-pattern routes from card related entries, retains 40 unresolved
 related labels and extracts 144 retrieval questions. Polyglot Persistence is the one
 blocked entry and has no question.
 
@@ -245,13 +245,21 @@ adversarial tests are structural evidence only; independent review remains Phase
 ## Phase 5 delivery evidence
 
 The Phase 5 artifact `edition/patterns/delivery-evidence.v1.json` records the
-locally executed checks, a twelve-item DoD matrix, six open gaps and explicit
-limits. It covers 419 pages, 145 entries, 144 cards, 530 routes, 44 unresolved
+locally executed checks, a twelve-item DoD matrix, ten open gaps and explicit
+limits. It covers 419 pages, 145 entries, 144 cards, 534 routes, 40 unresolved
 related labels, 144 partial technical and decision entries, and one blocked source.
 
-Delivery checks, card structure, backlinks and structural page audit are met at
-the recorded scope. Technical sufficiency, decision sufficiency, independent
-editorial review, owner acceptance and release evidence are explicitly **not met**.
+Remediation issue #284 added bounded owner sections for the 17 cards whose owner
+pages previously mentioned the pattern only in a backlink. It also recorded the
+Polyglot `technical-owner-missing` disposition, resolved four avoidable aliases and
+wrapped card prose. The 144 exact owner links remain longer than 100 characters
+because canonical paths cannot be split; all other V11 prose is checked at <=100 by
+`scripts/check_markdown_line_length.py`.
+
+Delivery checks, exact owner/backlink structure and the owner/blocked-source DoD
+are met. Page audit is structural only, 30 owner pages are shared and technical
+sufficiency, decision sufficiency, independent editorial review, owner acceptance
+and release evidence remain explicitly **not met**.
 The artifact status remains `delivery-evidence-recorded`; it cannot be marked
 `reviewed` without a named independent review record. Phase 5 is therefore not a
 final acceptance and does not close #233 or M10.

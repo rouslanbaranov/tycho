@@ -154,3 +154,21 @@ Selected passages inspected 2026-10-20: [Key Management Cheat Sheet](https://che
 | Integrated question | [Original scenario and limits](identity-authorization-and-isolation.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is
+not the main subject of this page. They are synthetic design guidance, not
+measured evidence, and they do not create a new source claim.
+
+### Valet Key
+
+A valet key is a scoped, time-limited credential that lets a client reach one resource
+directly. It needs a least-privilege scope, an audience, an expiry, a revocation path and
+an audit trail. Use it when direct access offloads a mediator and the resource can enforce
+the scope. Do not use it when every access must be mediated or when a leaked token could
+exceed the intended resource boundary.
+
+The failure path is a leaked or over-scoped token; shorten lifetime, bind audience and
+scope, and revoke at the authority. A mediated gateway is the alternative when the
+resource cannot enforce scope or when the client cannot protect a credential.

@@ -129,6 +129,9 @@ def build(root=ROOT):
         "request reply": "tycho.pattern.request-reply-messaging",
         "sli slo": "tycho.pattern.sli-slo-and-error-budgets",
         "backend for frontend": "tycho.pattern.backend-for-frontend-bff",
+        "service oriented architecture": "tycho.pattern.service-oriented-architecture-soa",
+        "health checks": "tycho.pattern.health-readiness-and-liveness-checks",
+        "readiness probes": "tycho.pattern.health-readiness-and-liveness-checks",
     }
     aliases.update(manual)
     card_entries = []

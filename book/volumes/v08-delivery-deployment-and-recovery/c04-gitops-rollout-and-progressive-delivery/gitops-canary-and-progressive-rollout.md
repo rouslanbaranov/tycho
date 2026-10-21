@@ -86,3 +86,22 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Canary acceptance and shared-state damage](canary-compatibility.md) — How can a small rollout create effects that a binary rollback cannot undo?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is
+not the main subject of this page. They are synthetic design guidance, not
+measured evidence, and they do not create a new source claim.
+
+### Dark Launching / Shadow Traffic
+
+Dark launching sends mirrored or synthetic traffic to new code while the old path remains
+authoritative. It needs side-effect suppression, a comparison method, a bounded load
+budget and a rule for sensitive data. Use it when behavior can be observed without
+changing user-visible state. Do not use it when shadow requests would write, charge,
+notify or leak data.
+
+The failure path is a mirrored request that causes a real effect or doubles load; isolate
+the shadow path and stop it when the comparison or capacity contract fails. A canary that
+receives a small real share is the alternative when shadow traffic cannot be made side-
+effect free.
