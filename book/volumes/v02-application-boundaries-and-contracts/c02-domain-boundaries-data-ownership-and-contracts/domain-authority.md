@@ -45,6 +45,8 @@ content_verified_at: null
 
 This page belongs to [V02/C02 — Domain boundaries, data ownership and contracts](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits.
 
+> **Pattern atlas:** [Domain-Driven Design / Bounded Context](../../v11-pattern-atlas/c01-application-boundaries/README.md#domain-driven-design-bounded-context) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.4681b3ba9e234c46bdb4b5993634b0e3:1 -->
 ## 1. Model behaviors and invariants before drawing ownership boxes
 

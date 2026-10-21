@@ -68,7 +68,8 @@ def validate_data(data, root=ROOT):
     require(data["task_issue"] == 234, "atlas-task-issue")
     require(data["registry_sha256"] == hashlib.sha256(
         (root / REGISTRY).read_bytes()).hexdigest(), "atlas-registry-hash")
-    require(data["status"] == "scaffolded", "atlas-status")
+    require(data["status"] in ("scaffolded", "authoring", "reviewed"),
+            "atlas-status")
 
     documents = data["documents"]
     require(len(documents) == 12, "atlas-document-count")

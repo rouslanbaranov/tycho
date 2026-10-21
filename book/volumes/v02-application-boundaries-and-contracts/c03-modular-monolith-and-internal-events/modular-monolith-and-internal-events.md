@@ -55,6 +55,8 @@ content_verified_at: null
 > **Original Tycho manuscript V02/C03**, prepared 2026-10-19. Public Spring Framework/Modulith references are technology illustrations, not a requirement to use those frameworks. The fictional application and event flow were invented independently. No build, module verification, event replay or independent review has been performed.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:** [Modular Monolith](../../v11-pattern-atlas/c01-application-boundaries/README.md#modular-monolith) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.a06fd146f96b4b17a754f4d3b608ebdf:0 -->
 ## Purpose and mission
 
