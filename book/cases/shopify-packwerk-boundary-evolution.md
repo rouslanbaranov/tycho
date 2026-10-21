@@ -40,7 +40,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -112,12 +112,6 @@ The 2020 retrospective names a social/technical failure: a centralized architect
 
 The same account distinguishes **two incomplete-state strategies**. Shopify's main monolith prioritized labeling a broad target set of subdomains and establishing file **stewardship**, even when their boundaries were still porous. Other applications experimented with extracting small fully isolated components, leaving a larger unstructured core behind. Each intermediate shape optimizes something different: discoverable ownership versus stronger isolation of selected code. Neither can be declared universally superior without knowing the primary failure mode.
 
-## Reported progress and unresolved correctness boundaries
-
-At the **September 2020** reporting point, the main monolith contained **37 components** and **about one third** used Packwerk to restrict dependencies. The writer explicitly described cycles, database model access and further isolation as still-in-progress work. Adoption percentage refers to components using Packwerk, **not** to verified zero-coupling or every Ruby constant covered. Architectural evolution cannot be marked 100% finished from this number alone.
-
-The article also discusses partial **Rails Engine** packaging and selective service extraction (storefront rendering for separate read-heavy scaling and payment-vault separation for sensitive data). These are practical boundary cases: a modular-monolith strategy can be the *default* without forbidding independently operated components when workload or security justifies them. See the distinct [2019 modular-monolith decision](shopify-modular-monolith.md).
-
 ## A source-grounded adoption/reversal rubric (Tycho synthesis)
 
 For a hypothetical Rails legacy system, baseline the number of implicit cross-component access paths, cycles, ownership gaps, runtime call failures and prior migration regressions. Choose an **ownership-first** organizational regrouping if individual developers cannot find or safely edit their domain; choose **isolation-first** for a critical component whose unexpected dependencies already cause incidents. Avoid announcing that dependency enforcement has been completed when a large exception set is still active.
@@ -125,17 +119,6 @@ For a hypothetical Rails legacy system, baseline the number of implicit cross-co
 Stage with read-only diagnostics, per-component owner decisions, a tiny contract test surface and nonblocking reports; tighten CI only for net-new violations after the team can resolve old debt. Independently test cross-component data authority, schema drift, retries and permission checks that a Ruby constant linter cannot observe. A safe rollback can restore the previous file/package boundary rule while preserving code behavior; full data-owner changes require their own reversal plan.
 
 **Reject a tooling-first rollout** when static checks identify “violations” without a usable migration path, the service framework uses dynamic dispatch outside the analyzer's visibility, or a component's data ownership is unknown. Evidence insufficient to say whether a specific cycle can be removed? Escalate to the domain owner with a concrete scenario rather than invent a globally correct refactoring. The blog gives no reproducible 2026 production topology, independent productivity benchmark or completed-cycle count.
-
-## What failed before Packwerk
-
-The [September 16, 2020 follow-up](https://shopify.engineering/shopify-monolith) (src.m9-sh02, **Understand Developer Behaviour**, **Apply Tooling Deliberately**) is unusually candid that **boundary governance was also a social migration**. Imposing one prescribed interface pattern everywhere made work more difficult in some contexts; developers sometimes changed the problem to match the approved pattern. Merely producing violations and rules did not give domain owners the *ability* to repair legacy ActiveRecord coupling. The Architecture Patterns team shifted toward pairing, local coaching, owned changes and making the intended modular design understandable to many contributors. A static checker cannot replace that skill and ownership transfer.
-
-The preceding **Wedge** approach instrumented Ruby method calls during the test suite, then interpreted cross-component callers, associations and inheritance. Two practical defects emerged:
-
-- A dynamic call trace does not always identify the component that conceptually owns inherited dispatch. A method defined in one component, inherited in a second and calling into a third presents a real attribution ambiguity.
-- Trace collection depended on running the **full instrumented test suite**, taking **more than an hour**. For many contributors this was too slow and noisy to act on during normal pull-request work.
-
-Packwerk deliberately changed the evidence boundary. It examines **static constant references** (for example the reference to a model constant) rather than asserting that it has modeled every possible Ruby runtime call. These references are introduced explicitly in code, producing more actionable violation locations and reducing the analysis time for Shopify's large codebase to **a few minutes**. That made PR-time checks feasible. The result is an engineering trade-off: improved feedback speed and actionable static coverage at the cost of **not proving the absence of all dynamic runtime dependencies**. [src.m9-sh02, **Perform Static Dependency Analysis**].
 
 ## The 2020 rollout, precisely scoped
 
