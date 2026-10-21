@@ -195,3 +195,37 @@ The failure path is a failed middle stage with earlier effects already applied; 
 stage identity and compensate or replay from a declared checkpoint. A single in-process
 transformation is the alternative when the stages are small and cannot be operated
 independently.
+
+### Competing Consumers
+
+Several consumers read from one queue, and each message is delivered to one of them so the work is
+processed in parallel. Acknowledgment must follow the durable business effect, and redelivery after
+a missing acknowledgment must not duplicate that effect.
+
+A slow or poisoned message blocks progress through visibility timeouts and repeated redelivery;
+bound attempts and route permanently failing work to a declared terminal path. Partitioned consumers
+own a stable key range and preserve per-key order; prefer competing consumers when order is not
+required and pool parallelism is the goal.
+
+### Message Filter
+
+A message filter evaluates a predicate and forwards only matching messages to a consumer, discarding
+the rest by policy. Every discarded message must be an intentional drop under a versioned predicate,
+not an unobserved loss.
+
+Predicate drift or a missing default path silently removes traffic; monitor filter rates and keep a
+declared fallback for unmatched messages. A content-based router sends different subsets to
+different destinations; prefer filtering when the destination is the same and only selection
+changes.
+
+### Canonical Data Model
+
+A canonical data model gives producers and consumers one versioned shared representation, with
+translation at the edges instead of pairwise formats. The canonical schema must be versioned and
+lossless for the fields each consumer needs, and translation must fail explicitly when a required
+meaning is absent.
+
+A translation can preserve syntax while losing domain meaning; contract tests with representative
+payloads and an owner for schema changes are required. Point-to-point translation or an
+anti-corruption layer avoids a central schema when integrations are few or their models genuinely
+differ.

@@ -108,3 +108,21 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Tenant-scoped effects and migration](tenant-effects.md) — Which cache, task and data-movement paths can bypass otherwise correct tenant scoping?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Gatekeeper
+
+A gatekeeper is a dedicated request-validation boundary that authenticates the caller and evaluates
+coarse authorization before forwarding a request to the protected service. The protected service
+must reject calls that bypass the gatekeeper, or repeat the security-relevant checks, so the
+boundary cannot be sidestepped by an alternate route.
+
+A stale policy or an undeclared direct path defeats the check while dashboards remain green; combine
+network policy, denial logs and a bypass test in the acceptance evidence. Enforce authorization
+inside the service at each effect boundary; use a gatekeeper when it centralizes a policy that every
+route must apply and the bypass surface is closed.

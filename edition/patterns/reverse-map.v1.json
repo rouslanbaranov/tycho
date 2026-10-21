@@ -1,13 +1,22 @@
 {
   "schema_version": 1,
-  "route_index_snapshot": "58d4c162460a9b5afa3622333758a6f13cf6449f20043c850268c9cb275bcefa",
+  "route_index_snapshot": "7f3b33789e13cc14b9b6d6a404d4da124d4ff21c0092e8e9868660b4903b27f6",
   "documents": [
+    {
+      "document_id": "tycho.page.028aab692b414bcdba7713500ab6f735",
+      "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
+      "title": "Stale fills and regeneration ownership",
+      "pattern_ids": [
+        "tycho.pattern.stale-while-revalidate"
+      ]
+    },
     {
       "document_id": "tycho.page.0d34dd26886340b89fd4f1499d790a81",
       "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
       "title": "Sharding, partition keys, hotspots and safe resharding",
       "pattern_ids": [
-        "tycho.pattern.sharding"
+        "tycho.pattern.sharding",
+        "tycho.pattern.partitioning"
       ]
     },
     {
@@ -16,11 +25,14 @@
       "title": "Consumer requirements and messaging families",
       "pattern_ids": [
         "tycho.pattern.publish-subscribe",
+        "tycho.pattern.competing-consumers",
         "tycho.pattern.event-driven-consumer",
         "tycho.pattern.content-based-router",
+        "tycho.pattern.message-filter",
         "tycho.pattern.pipes-and-filters",
         "tycho.pattern.resequencer",
-        "tycho.pattern.message-broker-messaging-bridge"
+        "tycho.pattern.message-broker-messaging-bridge",
+        "tycho.pattern.canonical-data-model"
       ]
     },
     {
@@ -28,6 +40,7 @@
       "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
       "title": "Workflow state and messaging failure gates",
       "pattern_ids": [
+        "tycho.pattern.request-reply-messaging",
         "tycho.pattern.correlation-identifier",
         "tycho.pattern.claim-check"
       ]
@@ -56,6 +69,7 @@
       "pattern_ids": [
         "tycho.pattern.leader-follower-replication",
         "tycho.pattern.multi-leader-replication",
+        "tycho.pattern.read-replicas",
         "tycho.pattern.consensus"
       ]
     },
@@ -93,6 +107,14 @@
       ]
     },
     {
+      "document_id": "tycho.page.31cda61d174248eaa326559d256ce352",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md",
+      "title": "Authorization boundaries and multitenancy: domain ownership and isolation",
+      "pattern_ids": [
+        "tycho.pattern.gatekeeper"
+      ]
+    },
+    {
       "document_id": "tycho.page.3349b84b088ebcca496bb52fbdbbc565",
       "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
       "title": "Edge caching, private content and origin recovery",
@@ -106,7 +128,26 @@
       "title": "Local and distributed caching: authority, freshness and placement",
       "pattern_ids": [
         "tycho.pattern.read-through-cache",
-        "tycho.pattern.write-through-cache"
+        "tycho.pattern.write-through-cache",
+        "tycho.pattern.write-behind-write-back",
+        "tycho.pattern.write-around",
+        "tycho.pattern.multi-level-caching"
+      ]
+    },
+    {
+      "document_id": "tycho.page.37a28a568f7e987941749e198c03439a",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",
+      "title": "TLS termination, gateways and trusted identity",
+      "pattern_ids": [
+        "tycho.pattern.gateway-aggregation"
+      ]
+    },
+    {
+      "document_id": "tycho.page.43414664520b4866929f7f006f27f59b",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+      "title": "Deadlines, cancellation and retry budgets",
+      "pattern_ids": [
+        "tycho.pattern.retry-with-jitter"
       ]
     },
     {
@@ -123,6 +164,15 @@
       "title": "Object permission, credentials and isolation",
       "pattern_ids": [
         "tycho.pattern.valet-key"
+      ]
+    },
+    {
+      "document_id": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/ownership-isolation.md",
+      "title": "Ownership, isolation and boundary validation",
+      "pattern_ids": [
+        "tycho.pattern.domain-driven-design-bounded-context",
+        "tycho.pattern.database-per-service"
       ]
     },
     {
@@ -144,6 +194,14 @@
       ]
     },
     {
+      "document_id": "tycho.page.4e0e4db7547b45469f36915886473750",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md",
+      "title": "Independent deployment and its costs",
+      "pattern_ids": [
+        "tycho.pattern.self-contained-service"
+      ]
+    },
+    {
       "document_id": "tycho.page.54c4335d1dd142e8b794daf4768fc3d2",
       "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
       "title": "CDC, task state and changelog replay",
@@ -157,6 +215,14 @@
       "title": "Domain semantics and authoritative ownership",
       "pattern_ids": [
         "tycho.pattern.domain-driven-design-bounded-context"
+      ]
+    },
+    {
+      "document_id": "tycho.page.5da19d9b920940fb837bbb28e8fefe77",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md",
+      "title": "Invariants and local transaction isolation",
+      "pattern_ids": [
+        "tycho.pattern.two-phase-commit-2pc"
       ]
     },
     {
@@ -182,6 +248,7 @@
       "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
       "title": "Sagas, workflow recovery and compensation",
       "pattern_ids": [
+        "tycho.pattern.process-manager-routing-slip",
         "tycho.pattern.saga"
       ]
     },
@@ -198,7 +265,8 @@
       "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
       "title": "Layered, hexagonal and ports-and-adapters architecture",
       "pattern_ids": [
-        "tycho.pattern.hexagonal-architecture-ports-and-adapters"
+        "tycho.pattern.hexagonal-architecture-ports-and-adapters",
+        "tycho.pattern.clean-onion-architecture"
       ]
     },
     {
@@ -222,7 +290,9 @@
       "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
       "title": "CQRS, event sourcing and reliable read projections",
       "pattern_ids": [
-        "tycho.pattern.event-sourcing"
+        "tycho.pattern.command-query-responsibility-segregation-cqrs",
+        "tycho.pattern.event-sourcing",
+        "tycho.pattern.command-side-replica"
       ]
     },
     {
@@ -296,7 +366,8 @@
       "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
       "title": "Resharding and alternatives",
       "pattern_ids": [
-        "tycho.pattern.sharding"
+        "tycho.pattern.sharding",
+        "tycho.pattern.consistent-hashing"
       ]
     },
     {
@@ -378,7 +449,9 @@
       "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
       "title": "Control planes, placement and reversibility",
       "pattern_ids": [
-        "tycho.pattern.ambassador"
+        "tycho.pattern.sidecar",
+        "tycho.pattern.ambassador",
+        "tycho.pattern.immutable-infrastructure"
       ]
     },
     {
@@ -387,6 +460,7 @@
       "title": "GitOps, rolling, blue/green and canary release architecture",
       "pattern_ids": [
         "tycho.pattern.lease-based-ownership",
+        "tycho.pattern.rolling-deployment",
         "tycho.pattern.blue-green-deployment",
         "tycho.pattern.canary-release",
         "tycho.pattern.gitops",
@@ -414,7 +488,8 @@
       "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
       "title": "HTTP and RPC contracts: compatibility, deadlines and retry safety",
       "pattern_ids": [
-        "tycho.pattern.backend-for-frontend-bff"
+        "tycho.pattern.backend-for-frontend-bff",
+        "tycho.pattern.api-composition"
       ]
     },
     {
@@ -440,6 +515,19 @@
       "title": "Asynchronous APIs and streaming: demand, deadlines and cancellation",
       "pattern_ids": [
         "tycho.pattern.asynchronous-request-reply"
+      ]
+    },
+    {
+      "document_id": "tycho.page.dde63373c50f4f4a80e727b6e160def5",
+      "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+      "title": "Threat boundaries, identity, authorization and service isolation",
+      "pattern_ids": [
+        "tycho.pattern.tenant-based-resource-isolation",
+        "tycho.pattern.federated-identity",
+        "tycho.pattern.least-privilege",
+        "tycho.pattern.rbac-abac",
+        "tycho.pattern.workload-identity-mtls",
+        "tycho.pattern.multitenant-isolation"
       ]
     },
     {

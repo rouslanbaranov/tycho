@@ -103,5 +103,26 @@ notify or leak data.
 
 The failure path is a mirrored request that causes a real effect or doubles load; isolate
 the shadow path and stop it when the comparison or capacity contract fails. A canary that
-receives a small real share is the alternative when shadow traffic cannot be made side-
-effect free.
+receives a small real share is the alternative when shadow traffic cannot be made
+side-effect free.
+
+### Rolling Deployment
+
+A rolling deployment replaces instances in batches, so old and new versions serve traffic together
+during the rollout. Both versions must be compatible with the shared data and contracts for the
+whole overlap, or the rollout must stop before an incompatible state is written.
+
+Mixed versions expose an incompatibility that a single-version test missed; gate each batch on
+readiness and error signals and keep a tested stop condition. Blue/green switches a complete
+environment at once; choose rolling when the extra capacity for a second environment is unavailable.
+
+### Blue/Green Deployment
+
+Blue/green runs two complete environments and switches traffic at a routing boundary, leaving the
+previous environment available for a short reversal. The switch must remain reversible until the new
+version's persisted effects are proven compatible with the old version.
+
+A half-switched route or a new-only write makes reversal unsafe; verify routing completeness and
+data compatibility before declaring the cutover. A rolling or canary rollout uses less spare
+capacity; choose blue/green when a fast, complete reversal and a clean environment comparison
+justify the double capacity.

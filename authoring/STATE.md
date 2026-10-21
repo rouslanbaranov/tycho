@@ -5,6 +5,13 @@
 > scaffold (#234). The #214/rc.3 status below remains historical until a full
 > status reconciliation.
 
+**Owner-unit audit — 2026-10-21 (#286):** 144 carded entries now map to 118
+section-level owner units on the same 65 registered pages: 96 partial-bounded,
+48 partial, 0 name-only and 0 sufficient. Thirty shared pages are classified
+14 keep, 13 deepen and 3 split; no page split was performed. This is
+self-checked evidence, not independent review or owner acceptance. See
+[the audit](PATTERN-OWNER-UNIT-AUDIT_2026-10-21.md).
+
 **Updated:** 2026-10-20, after manuscript acceptance and merge. See [status reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md) and [roadmap](ROADMAP.md).
 
 ## Accepted manuscript baseline

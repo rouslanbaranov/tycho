@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "status": "delivery-evidence-recorded",
-  "source_commit": "452ccd04f27e340b1a95da328e975386bdb547ae",
+  "source_commit": "99f072eddabdbf28c71996b94b8bd4fcdba70f84",
   "generated_at": "2026-10-21",
-  "scope": "structural delivery evidence and explicit review gaps; not independent acceptance",
+  "scope": "structural delivery evidence, section-level owner units and explicit review gaps; not independent acceptance",
   "summary": {
     "volumes": 11,
     "chapters": 82,
@@ -17,8 +17,15 @@
     "retrieval_questions": 144,
     "ledger_records": 115,
     "sources": 268,
-    "partial_technical": 144,
-    "partial_decision": 144,
+    "partial_technical": 48,
+    "partial_decision": 0,
+    "partial_bounded_technical": 96,
+    "partial_bounded_decision": 144,
+    "partial_reviewed_technical": 0,
+    "partial_reviewed_decision": 0,
+    "name_only_technical": 0,
+    "owner_units": 118,
+    "shared_pages": 30,
     "sufficient_technical": 0,
     "sufficient_decision": 0,
     "independent_reviews": 0
@@ -27,12 +34,12 @@
     {
       "name": "premerge",
       "status": "pass",
-      "evidence": "300 tests after remediation; branch premerge checks passed"
+      "evidence": "Local premerge passed on the owner-unit audit branch"
     },
     {
       "name": "full-tests",
       "status": "pass",
-      "evidence": "321 tests, OK"
+      "evidence": "317 tests, OK"
     },
     {
       "name": "pattern-atlas",
@@ -47,7 +54,12 @@
     {
       "name": "pattern-cards",
       "status": "pass",
-      "evidence": "11 batches, 144 entries, exact owner-link resolution and bounded semantic owner sections"
+      "evidence": "11 batches, 144 entries, exact section-level owner anchors"
+    },
+    {
+      "name": "owner-units",
+      "status": "pass",
+      "evidence": "144 entries, 118 owner units, 30 shared pages, 0 name-only"
     },
     {
       "name": "phase4-audit",
@@ -82,6 +94,11 @@
       "evidence": "144 owner pages contain exact reciprocal atlas links"
     },
     {
+      "id": "owner-unit-evidence",
+      "status": "met",
+      "evidence": "144 entries map to 118 section-level units on 65 pages; 0 name-only; 30 shared pages keep=14, deepen=13, split=3"
+    },
+    {
       "id": "page-census-and-audit",
       "status": "partial",
       "evidence": "Phase 4 structurally dispositions all 419 pages; semantic page review is not performed"
@@ -94,17 +111,17 @@
     {
       "id": "blocked-source-disposition",
       "status": "met",
-      "evidence": "Polyglot Persistence records technical-owner-missing and links remediation issue #284"
+      "evidence": "Polyglot Persistence records technical-owner-missing and its blocked disposition"
     },
     {
       "id": "technical-sufficiency",
       "status": "not-met",
-      "evidence": "144 entries remain partial technical coverage; none sufficient"
+      "evidence": "96 entries are partial-bounded and 48 partial; 0 sufficient and no independent technical review"
     },
     {
       "id": "decision-sufficiency",
       "status": "not-met",
-      "evidence": "144 entries remain partial decision coverage; none sufficient"
+      "evidence": "144 cards are partial-bounded; 0 sufficient and no independent editorial review"
     },
     {
       "id": "independent-editorial-review",
@@ -119,7 +136,7 @@
     {
       "id": "delivery-checks",
       "status": "met",
-      "evidence": "Local premerge, 321 tests, atlas/source/card/Phase 4, delivery evidence and V11 prose line checks passed"
+      "evidence": "Local premerge, 317 tests, owner-unit, atlas/source/card/Phase 4 and V11 line checks passed"
     },
     {
       "id": "release-or-deployment",
@@ -131,17 +148,22 @@
     {
       "id": "unresolved-related-labels",
       "count": 40,
-      "action": "resolve aliases or record deliberate non-routes in Phase 5 review"
+      "action": "resolve aliases or record deliberate non-routes in the semantic review"
     },
     {
-      "id": "partial-technical-coverage",
+      "id": "technical-sufficiency",
       "count": 144,
-      "action": "owner audit and independent technical review"
+      "action": "independent technical review remains required; 48 entries still lack a stated invariant"
     },
     {
-      "id": "partial-decision-coverage",
+      "id": "decision-sufficiency",
       "count": 144,
-      "action": "decision-card review and independent editorial review"
+      "action": "independent editorial review remains required; no card is sufficient"
+    },
+    {
+      "id": "partial-owner-units",
+      "count": 48,
+      "action": "deepen the bounded units that only partially explain the mechanism"
     },
     {
       "id": "blocked-polyglot-source",
@@ -171,7 +193,7 @@
     {
       "id": "shared-owner-pages",
       "count": 30,
-      "action": "split broad owner pages or continue to record bounded partial ownership explicitly"
+      "action": "keep/deepen/split recorded; no page split performed in this task"
     },
     {
       "id": "page-semantic-review",
@@ -181,10 +203,11 @@
   ],
   "limits": [
     "This artifact is self-checked structural evidence, not independent review.",
-    "Partial coverage is not sufficient coverage.",
-    "The 40 unresolved related labels are a navigation gap; four avoidable aliases were resolved in remediation.",
+    "Partial coverage is not sufficient coverage; 48 entries carry only partial mechanism evidence.",
+    "The 40 unresolved related labels are a navigation gap; four avoidable aliases were resolved in earlier remediation.",
     "Polyglot Persistence remains blocked and uncarded, with technical-owner-missing recorded.",
-    "Thirty owner pages are shared by more than one pattern; technical coverage remains partial.",
+    "Thirty owner pages are shared; 14 keep, 13 deepen and 3 split were recorded without performing a split.",
+    "Owner units are section-level references validated against page text; they do not add independent technical review.",
     "Page dispositions are structural categories, not a semantic audit of every page.",
     "144 exact owner-link lines exceed 100 characters because canonical paths cannot be split; all prose is <=100.",
     "No CI, release, deployment or benchmark result is claimed."

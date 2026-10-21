@@ -100,3 +100,20 @@ A safe design needs to specify whether refresh ownership is merely a **performan
 | Integrated question | [Original scenario and limits](cache-invalidation-stampede-and-hot-keys.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Stale-While-Revalidate
+
+Stale-while-revalidate serves the current stale value while one owner refreshes it in the
+background, within a bounded stale window. The stale window and the refresh owner must be bounded
+and observable, and a failed refresh must not extend the window indefinitely.
+
+A failing refresh keeps serving the same stale value; cap the stale age, surface refresh failures
+and fall back to a blocking read when the bound is reached. A blocking refresh guarantees freshness
+at the cost of latency; choose stale-while-revalidate only when the declared stale window is
+acceptable to the reader.

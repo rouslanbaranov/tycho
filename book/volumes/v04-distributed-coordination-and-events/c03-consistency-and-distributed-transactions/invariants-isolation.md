@@ -116,3 +116,21 @@ The outbox does not prevent an invalid business allocation if **the source trans
 | Integrated question | [Original scenario and limits](transaction-isolation-and-sagas.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Two-Phase Commit (2PC)
+
+A coordinator asks every participant to prepare, collects the votes, then records one commit or
+abort decision that the participants apply while holding prepared state. No participant may commit
+before the coordinator's durable decision, and the decision must survive coordinator failure for
+prepared participants to recover.
+
+A coordinator crash after prepare leaves participants holding locks with an unknown outcome;
+recovery depends on a durable decision log and an explicit resolution procedure. A saga with
+compensating actions avoids prepared locks at the cost of visible intermediate states and non-atomic
+business outcomes; prefer 2PC when participants can hold locks and atomic durability is required.

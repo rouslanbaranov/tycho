@@ -114,8 +114,44 @@ Each pattern records two independent coverage layers:
 Overall coverage is the weaker layer. An atlas entry cannot make a missing
 technical explanation sufficient. The severity order for overall coverage is:
 
-`sufficient` < `partial` < `name-only` < `contradictory` < `missing` <
-`not-yet-assessed`.
+`sufficient` < `partial-reviewed` < `partial-bounded` < `partial` <
+`name-only` < `contradictory` < `missing` < `not-yet-assessed`.
+
+## Section-level owner units
+
+Page-level ownership is not evidence that a page explains a pattern. Every carded
+entry must therefore name exactly one **owner unit**: one heading section of its
+technical owner page whose text owns that pattern's mechanism.
+
+- `dedicated`: the section heading names the pattern or an alias, including a
+  bounded note under `## Bounded pattern ownership notes`.
+- `embedded`: another section substantively explains the pattern under a
+  different title.
+- No unit means `name-only`. A carded entry may not remain `name-only`; the
+  remedy is a bounded owner note on the owner page, not a new page or ID.
+
+Each unit records verbatim page evidence for mechanism, invariant, failure and
+recovery, and alternative. Quotes are validated as exact substrings of the unit
+body; a missing dimension is recorded as `partial` or `absent` with a reason,
+never invented. The decision layer records the card's decision question,
+competing alternative, decision state, ten components and exact source record.
+
+Derived coverage states:
+
+- `partial-bounded`: one unit explains the mechanism and states an invariant;
+- `partial`: one unit explains the mechanism but states no invariant;
+- `partial-reviewed`: bounded plus a named independent technical review (none
+  exists in this corpus);
+- `sufficient`: a dedicated deep explanation with independent review; not
+  claimed by section-level evidence alone.
+
+Shared owner pages (more than one carded pattern) additionally record a
+`keep`, `deepen` or `split` decision. `deepen` means the page needs deeper
+per-pattern sections; `split` records a future page-split candidate without
+performing the split. The audit artifact, schema and validator are
+`edition/patterns/owner-units.v1.json`,
+`schemas/pattern-owner-units.v1.schema.json` and
+`scripts/validate_pattern_owner_units.py`.
 
 `not-applicable` is used only when both layers are genuinely out of scope for the
 catalog entry and the reason is recorded. An unknown is not a contraindication.

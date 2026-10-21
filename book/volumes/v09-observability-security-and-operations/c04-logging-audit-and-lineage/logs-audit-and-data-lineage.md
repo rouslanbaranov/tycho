@@ -100,3 +100,20 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Retention, integrity and contradictory records](record-integrity.md) — Which record must survive a failure before an authorized effect can be asserted?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Structured Logging
+
+Structured logging emits events with stable field names and types so records can be queried and
+compared without parsing free text. Field names, meaning and redaction rules must be versioned, and
+sensitive values must be excluded before emission.
+
+Schema drift or an unredacted field breaks queries or leaks data; validate the schema at the emitter
+and review field allowlists when adding events. Unstructured text parsed at query time is cheaper to
+start; adopt structured events when consistent querying, correlation or retention obligations
+justify the schema.

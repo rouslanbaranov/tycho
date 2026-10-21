@@ -130,3 +130,14 @@ API contract serves all clients or when the BFF would own core business rules.
 The failure path is drift between the BFF and the domain API; version the composition and
 test the client contract. A shared API with client-side selection is the alternative when
 the differences are small and can be expressed without a new authority.
+
+### API Composition
+
+An API composition layer calls several owner APIs for one request and assembles their responses into
+a single caller-visible result. The composed response must declare per-source freshness and what
+partial failure means, rather than presenting one aggregate result as uniformly current.
+
+One slow or failed participant must not silently disappear from the result; apply per-call
+deadlines, mark missing parts or fail the composition explicitly. Build a maintained read model or a
+client-specific backend for frontend; prefer composition when the sources are authoritative and the
+caller needs a live view.

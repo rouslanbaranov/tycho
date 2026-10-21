@@ -109,3 +109,22 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Adapter substitution and falsification](adapter-scenarios.md) — How do local and remote adapter replacements change the tests and operational obligations?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Clean / Onion Architecture
+
+Clean and onion styles place domain rules at the centre and let source dependencies point inward
+only, with application services coordinating use cases and outer layers supplying technology
+adapters. The dependency rule, not the number of drawn rings, is the mechanism. No domain module may
+import a framework, transport or storage dependency, and an automated build check must enforce the
+direction rather than a diagram.
+
+Convenience imports erode the boundary until the domain must change for a technology reason; the
+remedy is an enforceable dependency test and a deliberate adapter, not another layer name. Hexagonal
+ports and adapters expresses the same inward rule with explicit application ports; prefer the
+simpler layering when the port indirection adds no tested change benefit.

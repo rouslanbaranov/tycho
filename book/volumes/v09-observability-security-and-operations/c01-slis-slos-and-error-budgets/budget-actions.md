@@ -130,6 +130,6 @@ observe an external dependency, DNS, TLS or end-to-end contract. Do not use shal
 endpoint pings as evidence for a complete journey.
 
 The failure path is a probe that cannot authenticate or that tests only a trivial path;
-rotate credentials, cover the critical journey and triage probe noise separately. Real-
-user monitoring is the alternative when actual traffic provides enough coverage without
-synthetic load.
+rotate credentials, cover the critical journey and triage probe noise separately.
+Real-user monitoring is the alternative when actual traffic provides enough coverage
+without synthetic load.

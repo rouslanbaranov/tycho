@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate Phase 5 delivery evidence against current counts and nonclaims."""
 import argparse
+from collections import Counter
 import json
 from pathlib import Path
 import subprocess
@@ -38,6 +39,7 @@ def validate_data(data, root=ROOT):
         path = "/".join(map(str, first.path)) or "(root)"
         raise ValueError("delivery-schema: " + str(len(errors)) + " error(s), first at " + path + ": " + first.message)
     registry = load(root / "edition/patterns/registry.v1.json")
+    owner_units = load(root / "edition/patterns/owner-units.v1.json")
     phase4 = load(root / "edition/patterns/phase4.v1.json")
     ledger = load(root / "edition/patterns/reading-ledger.v1.json")
     sources = load(root / "sources/register.json")
@@ -51,6 +53,28 @@ def validate_data(data, root=ROOT):
     require(data["summary"]["retrieval_questions"] == phase4["summary"]["retrieval_questions"], "delivery-question-count")
     require(data["summary"]["ledger_records"] == len(ledger["records"]), "delivery-ledger-count")
     require(data["summary"]["sources"] == len(sources["sources"]), "delivery-source-count")
+    technical = Counter(item["coverage"]["technical"]
+                        for item in registry["patterns"])
+    decision = Counter(item["coverage"]["decision"]
+                       for item in registry["patterns"])
+    require(data["summary"]["partial_technical"] == technical["partial"],
+            "delivery-technical-partial-count")
+    require(data["summary"]["partial_bounded_technical"]
+            == technical["partial-bounded"], "delivery-technical-bounded-count")
+    require(data["summary"]["partial_reviewed_technical"]
+            == technical["partial-reviewed"], "delivery-technical-reviewed-count")
+    require(data["summary"]["name_only_technical"] == technical["name-only"],
+            "delivery-technical-name-only-count")
+    require(data["summary"]["partial_decision"] == decision["partial"],
+            "delivery-decision-partial-count")
+    require(data["summary"]["partial_bounded_decision"]
+            == decision["partial-bounded"], "delivery-decision-bounded-count")
+    require(data["summary"]["partial_reviewed_decision"]
+            == decision["partial-reviewed"], "delivery-decision-reviewed-count")
+    require(data["summary"]["owner_units"]
+            == owner_units["summary"]["owner_units"], "delivery-owner-unit-count")
+    require(data["summary"]["shared_pages"]
+            == len(owner_units["shared_pages"]), "delivery-shared-page-count")
     require(data["summary"]["sufficient_technical"] == 0, "delivery-sufficient-technical")
     require(data["summary"]["sufficient_decision"] == 0, "delivery-sufficient-decision")
     require(data["summary"]["independent_reviews"] == 0, "delivery-independent-review-count")

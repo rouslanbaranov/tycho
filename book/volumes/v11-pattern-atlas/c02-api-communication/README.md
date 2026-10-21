@@ -95,7 +95,7 @@ and outage blast radius exceed the shared edge benefit.
 common. Recovery requires a bypass or degraded edge path, bounded retries and health
 checks; verify the trust boundary in the owner section.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#tls-termination-gateways-and-trusted-identity) — edge identity and gateway boundary; not a full API management specification.
+**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#original-fictional-boundary-contract) — edge identity and gateway boundary; not a full API management specification.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -172,7 +172,7 @@ client simplification benefit.
 common. Recovery requires per-dependency deadlines and explicit partial results;
 verify the gateway boundary in the owner section, which does not own aggregation.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#tls-termination-gateways-and-trusted-identity) — bounded edge boundary; aggregation mechanics are not owned here.
+**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#gateway-aggregation) — bounded edge boundary; aggregation mechanics are not owned here.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -209,7 +209,7 @@ benefit.
 headers are common. Recovery requires configuration tests and explicit trust
 boundaries; verify the edge contract in the owner section.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#tls-termination-gateways-and-trusted-identity) — edge functions and trusted identity; not a complete offloading catalogue.
+**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#the-trust-question) — edge functions and trusted identity; not a complete offloading catalogue.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -282,7 +282,7 @@ complexity exceed the duplication alternative.
 common. Recovery requires deadlines and explicit degradation; verify the API contract
 boundary in the owner section.
 
-**Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#http-and-rpc-contracts-compatibility-deadlines-and-retry-safety) — contract boundary; composition is not a dedicated section.
+**Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#api-composition) — contract boundary; composition is not a dedicated section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -319,7 +319,7 @@ benefit.
 common. Recovery requires connection lifecycle tests; verify the edge boundary in the
 owner section.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#tls-termination-gateways-and-trusted-identity) — proxy and gateway boundary; not a full Envoy operations guide.
+**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#the-trust-question) — proxy and gateway boundary; not a full Envoy operations guide.
 
 **Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.envoy-http-connection.2026-10-21: HTTP connection management, sections
@@ -354,7 +354,7 @@ when discovery control-plane cost and stale-state risk exceed the change rate.
 are common. Recovery requires last-known-good policy and health checks; verify the
 routing contract in the owner section.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#discovery-load-balancing-and-backend-selection) — discovery and selection; not a full control-plane implementation.
+**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#dns-and-discovery-have-different-update-boundaries) — discovery and selection; not a full control-plane implementation.
 
 **Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.envoy-service-discovery.2026-10-21: Service discovery, sections
@@ -391,7 +391,7 @@ resolution benefit.
 Recovery requires a shared contract and bounded backoff; verify the routing contract in
 the owner section.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#discovery-load-balancing-and-backend-selection) — discovery and selection; client-specific policy is not a dedicated section.
+**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#dns-and-discovery-have-different-update-boundaries) — discovery and selection; client-specific policy is not a dedicated section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -428,7 +428,7 @@ benefit.
 common. Recovery requires health checks and a degraded path; verify the routing
 contract in the owner section.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#discovery-load-balancing-and-backend-selection) — discovery and selection; server-side specifics are not a dedicated section.
+**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#dns-and-discovery-have-different-update-boundaries) — discovery and selection; server-side specifics are not a dedicated section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -465,7 +465,7 @@ benefit.
 common. Recovery requires stable operation IDs and status cleanup; verify the async
 contract in the owner section.
 
-**Technical owner.** [Asynchronous APIs and streaming: demand, deadlines and cancellation](../../v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md#asynchronous-apis-and-streaming-demand-deadlines-and-cancellation) — async demand and cancellation; not a full request-reply implementation.
+**Technical owner.** [Asynchronous APIs and streaming: demand, deadlines and cancellation](../../v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md#asynchronous-request-reply) — async demand and cancellation; not a full request-reply implementation.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -503,7 +503,7 @@ exceed the reduced attack surface.
 outage are common. Recovery requires explicit trust boundaries and backend checks;
 verify the authorization boundary in the owner section.
 
-**Technical owner.** [Authorization boundaries and multitenancy: domain ownership and isolation](../../v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md#authorization-boundaries-and-multitenancy-domain-ownership-and-isolation) — authorization boundary; gatekeeper mechanics are not a dedicated section.
+**Technical owner.** [Authorization boundaries and multitenancy: domain ownership and isolation](../../v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md#gatekeeper) — authorization boundary; gatekeeper mechanics are not a dedicated section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)

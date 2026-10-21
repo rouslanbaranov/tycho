@@ -123,7 +123,7 @@ choice when consensus latency/availability cost exceeds agreement benefit.
 **Failure and recovery.** Quorum loss and leader churn are common; verify safety/progress
 in the owner section.
 
-**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#replication-consensus-and-leader-change-safety-and-progress-under-failures) — consensus is bounded to safety/progress discussion.
+**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment) — consensus is bounded to safety/progress discussion.
 
 **Sources.** [src.raft](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-raft.2026-10-21: sections "Raft Consensus Algorithm", "Safety".
@@ -314,7 +314,7 @@ experience benefit.
 **Failure and recovery.** Token loss and replica routing are common; verify observations
 in the owner section.
 
-**Technical owner.** [Session-visible consistency](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md#session-visible-consistency) — session consistency is bounded, not a complete client-session protocol.
+**Technical owner.** [Session-visible consistency](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md#an-explicit-session-token) — session consistency is bounded, not a complete client-session protocol.
 
 **Sources.** [src.jepsen-consistency](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-jepsen.2026-10-21: sections "Consistency Models", "Session
@@ -346,7 +346,7 @@ choice when central workflow state and engine operations exceed coordination ben
 **Failure and recovery.** Stuck workflows and nondeterministic replay are common; verify
 recovery in the owner section.
 
-**Technical owner.** [Outbox, inbox, sagas and durable workflow coordination](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#outbox-inbox-sagas-and-durable-workflow-coordination) — durable workflow coordination is bounded, not a Temporal product guide.
+**Technical owner.** [Outbox, inbox, sagas and durable workflow coordination](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#purpose-and-decision-question) — durable workflow coordination is bounded, not a Temporal product guide.
 
 **Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-temporal-workflows.2026-10-21: sections "Workflows", "Workflow

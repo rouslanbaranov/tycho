@@ -82,3 +82,20 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Negative caching and discriminating experiments](negative-cache.md) — Which revoked permission or absent value makes cached absence unsafe?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Cache Invalidation
+
+Cache invalidation removes or versions a cached entry when the authoritative value changes, so a
+later read cannot reuse the superseded copy. The invalidation must be ordered with the write or
+guarded by a version, and a failed invalidation must remain visible rather than silently skipped.
+
+A lost invalidation or an in-flight fill resurrects stale data; bound the TTL, compare versions on
+fill and record invalidations that failed. A short TTL accepts bounded staleness without a purge
+path; use explicit invalidation when the allowed staleness is shorter than the TTL that is
+affordable.

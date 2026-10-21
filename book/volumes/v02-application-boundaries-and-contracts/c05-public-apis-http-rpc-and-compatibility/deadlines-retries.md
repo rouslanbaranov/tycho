@@ -127,3 +127,21 @@ thresholds are examples, not defaults.
 | Integrated question | [Original scenario and limits](http-rpc-contracts-and-compatibility.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Retry with Jitter
+
+Jitter randomizes each retry delay so independent clients do not retry in lockstep, spreading
+attempts across a window or adding a random offset to an exponential base. Every attempt must
+consume the same end-to-end deadline and attempt budget, so added delay cannot extend the caller's
+useful completion window.
+
+Synchronized retries convert a brief failure into a sustained overload; compare actual attempt
+counts and retry arrivals with the planned budget and stop the retry policy when pushback persists.
+Retry without jitter at a single layer, or do not retry at all when the failure is non-retryable;
+add jitter when many clients share the same dependency and retry signal.

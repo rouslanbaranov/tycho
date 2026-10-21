@@ -94,7 +94,7 @@ when circuit state and fallback complexity exceed failure containment benefit.
 **Failure and recovery.** Shared opens and false recovery are common; verify
 state/fallback in the owner section.
 
-**Technical owner.** [Bulkheads, retries and optional dependencies](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#bulkheads-retries-and-optional-dependencies) — dependency isolation is bounded, not a full circuit-breaker library guide.
+**Technical owner.** [Bulkheads, retries and optional dependencies](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities) — dependency isolation is bounded, not a full circuit-breaker library guide.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-circuit.2026-10-21: sections "CircuitBreaker",
@@ -125,7 +125,7 @@ isolation overhead and stranded capacity exceed containment benefit.
 **Failure and recovery.** Pool exhaustion and starvation are common; verify isolation in
 the owner section.
 
-**Technical owner.** [Bulkheads, retries and optional dependencies](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#bulkheads-retries-and-optional-dependencies) — dependency isolation is bounded, not a full circuit-breaker library guide.
+**Technical owner.** [Bulkheads, retries and optional dependencies](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities) — dependency isolation is bounded, not a full circuit-breaker library guide.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-bulkhead.2026-10-21: sections "Bulkhead", "Semaphore",
@@ -155,7 +155,7 @@ retry latency and load exceed transient-failure benefit.
 **Failure and recovery.** Retry storms and duplicate effects are common; verify
 budget/idempotency in the owner section.
 
-**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#3-end-to-end-deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-retry.2026-10-21: sections "Retry", "Backoff", "Jitter". The
@@ -186,7 +186,7 @@ delays complicate tracing more than they reduce synchronization.
 **Failure and recovery.** Jitter spreads load but does not fix a persistent dependency
 failure; verify budget in the owner section.
 
-**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-jitter) — deadlines/retries are bounded, not a complete timeout policy.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-retry.2026-10-21: sections "Retry", "Backoff", "Jitter". The
@@ -219,7 +219,7 @@ synchronous waiting blocks capacity that could serve other work.
 **Failure and recovery.** Timeouts do not prove the remote effect stopped; verify
 cancellation in the owner section.
 
-**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#3-end-to-end-deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-timelimiter.2026-10-21: sections "TimeLimiter", "Cancel
@@ -252,7 +252,7 @@ choice when propagation complexity exceeds the benefit of end-to-end bounds.
 **Failure and recovery.** Clock skew and lost deadlines are common; verify budget
 semantics in the owner section.
 
-**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#3-end-to-end-deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: sections "Timeouts and deadlines",
@@ -283,7 +283,7 @@ bounded degraded result is more useful than no result.
 **Failure and recovery.** Fallback can mask failures and drift; verify honesty in the
 owner section.
 
-**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#overload-protection-admission-control-and-graceful-degradation) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#purpose-and-mission) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: sections "Fallback", "Graceful
@@ -314,7 +314,7 @@ service creates more confusion than value.
 **Failure and recovery.** Sticky degradation and unclear recovery are common; verify
 priority in the owner section.
 
-**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#overload-protection-admission-control-and-graceful-degradation) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#purpose-and-mission) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: sections "Graceful degradation",
@@ -345,7 +345,7 @@ acceptable and capacity can expand.
 **Failure and recovery.** Shedding the wrong work is common; verify priority in the owner
 section.
 
-**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#overload-protection-admission-control-and-graceful-degradation) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#purpose-and-mission) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: sections "Handling Overload", "Load shedding".
@@ -375,7 +375,7 @@ choice when per-client fairness matters more than aggregate rate.
 **Failure and recovery.** Throttle oscillation and unfairness are common; verify limit
 source in the owner section.
 
-**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#overload-protection-admission-control-and-graceful-degradation) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: sections "Handling Overload", "Throttling". The
@@ -405,7 +405,7 @@ per-client fairness is not required.
 **Failure and recovery.** Bypass and unfair quotas are common; verify identity/limit in
 the owner section.
 
-**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#overload-protection-admission-control-and-graceful-degradation) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: sections "Handling Overload", "Rate limiting".
@@ -468,7 +468,7 @@ inversion or starvation exceeds latency benefit.
 **Failure and recovery.** Starvation and priority abuse are common; verify policy in the
 owner section.
 
-**Technical owner.** [Scarce resources, admission and queues](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md#scarce-resources-admission-and-queues) — admission/queue policy is bounded, not a universal priority scheme.
+**Technical owner.** [Scarce resources, admission and queues](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md#3-queues-limits-and-priority-create-new-contracts) — admission/queue policy is bounded, not a universal priority scheme.
 
 **Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-rabbit-priority.2026-10-21: sections "Priority Support in Queues",
@@ -531,7 +531,7 @@ the choice when probe complexity causes false restarts.
 **Failure and recovery.** False positives and shared-dependency coupling are common;
 verify semantics in the owner section.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#discovery-load-balancing-and-backend-selection) — readiness/health is bounded, not a full monitoring product.
+**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#failure-and-recovery) — readiness/health is bounded, not a full monitoring product.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-probes.2026-10-21: sections "Liveness", "Readiness",
@@ -563,7 +563,7 @@ the choice when failback risk exceeds locality benefit.
 **Failure and recovery.** Split brain and lost writes are common; verify recovery state
 machine in the owner section.
 
-**Technical owner.** [Recovery state machines, fencing and failback](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md#recovery-state-machines-fencing-and-failback) — failover/failback is bounded to recovery state machines.
+**Technical owner.** [Recovery state machines, fencing and failback](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md#3-original-synthetic-recovery-scenario) — failover/failback is bounded to recovery state machines.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",

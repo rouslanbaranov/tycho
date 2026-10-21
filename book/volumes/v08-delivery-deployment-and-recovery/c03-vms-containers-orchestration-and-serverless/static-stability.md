@@ -84,7 +84,6 @@ Assume three zones, each can demonstrably serve 60 *identical invented* units/s 
 > **Pattern atlas:**
 > [Immutable Infrastructure](../../v11-pattern-atlas/c10-deployment-modernization/README.md#immutable-infrastructure) — decision conditions and contraindications.
 
-
 > **Pattern atlas:** [Sidecar](../../v11-pattern-atlas/c01-application-boundaries/README.md#sidecar) — decision conditions and contraindications.
 > [Ambassador](../../v11-pattern-atlas/c01-application-boundaries/README.md#ambassador) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.ea94649bfd8c4be183f9114618d7ccaa:3 -->
@@ -155,3 +154,27 @@ failure.
 The failure path is a stale proxy configuration or a proxy that outlives its control
 plane; test configuration rollback and keep a direct-path recovery. A shared gateway is
 the alternative when the concern is ingress rather than per-client egress.
+
+### Sidecar
+
+A sidecar runs as a helper process or container beside each service instance and supplies
+networking, policy or telemetry behaviour without changing the application image. The sidecar's
+failure policy must be explicit, and its lifecycle and configuration must be coupled to the instance
+it serves.
+
+A missing or misconfigured sidecar silently removes a control or opens a bypass; readiness must
+include it, and the fail-open or fail-closed choice must be tested. A shared proxy or an in-process
+library provides the same control without per-instance overhead; choose a sidecar when per-instance
+isolation or independent upgrade matters.
+
+### Immutable Infrastructure
+
+Immutable infrastructure replaces instances from a versioned image or definition instead of mutating
+running hosts, so each instance is reproducible from a recorded artifact. Every running instance
+must be reproducible from a recorded artifact digest, and drift must be detected rather than
+tolerated.
+
+A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled
+change; record digests and test the rebuild path. Configuration management on long-lived hosts is
+cheaper when state locality dominates; choose immutable replacement when reproducibility and
+rollback speed matter.
