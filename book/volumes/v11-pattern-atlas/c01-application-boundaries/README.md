@@ -11,7 +11,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "All 12 C01 cards; four owner-linked and eight missing-owner remediations."
+summary: "All 12 C01 cards with bounded technical-owner links; decision coverage partial."
 route_hints:
   questions:
     - "Which application patterns fit a bounded ownership model?"
@@ -22,7 +22,7 @@ route_hints:
     - "tycho.chapter.b20625a099bc4c82b7d547c32c7da28a"
     - "tycho.chapter.9825cb82eb2142754c638aea1ba8d845"
   excludes:
-    - "Eight cards use missing-owner remediation; no sufficiency or independent review."
+    - "Owner links are bounded; no sufficiency, complete family audit or independent review."
   keywords:
     - "pattern atlas"
     - "application architecture and boundaries"
@@ -39,7 +39,7 @@ evidence_scope:
     - "src.microservices-patterns"
   claim_ids: []
   status: "source-linked"
-  notes: "All 12 cards cite read ledger units; eight state missing owner and link #254."
+  notes: "All 12 cards cite read units; eight use bounded owner sections and remain partial."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-21"
@@ -60,9 +60,9 @@ This chapter is the atlas entry point for **Application architecture and boundar
 It owns the conditional decision route for 12 catalog entries, not the deep mechanism
 explanations. Read the candidate technical owner before applying a mechanism claim.
 
-All 12 entries have a Phase 3 decision card below. Four name an exact technical
-owner; eight state `technical-owner-missing` and route to remediation #254. A card is
-decision guidance, not a technical manuscript and not proof of fit.
+All 12 entries have a Phase 3 decision card below. Four have a dedicated owner section;
+eight use bounded sections that own part of the mechanism. A card is decision guidance,
+not a technical manuscript and not proof of fit.
 
 ## Pages and reasoning route
 
@@ -75,8 +75,8 @@ before choosing a mechanism.
 
 Each level-three heading is a stable atlas anchor. Candidate areas and pages are
 provisional unless a card names an exact technical owner. All cards are self-checked;
-four are owner-linked and eight state `technical-owner-missing`. None claims
-sufficient coverage.
+twelve are owner-linked and eight use bounded sections. None claims sufficient
+coverage.
 
 ### Layered Architecture
 
@@ -101,18 +101,16 @@ dominate or the dependency rule cannot be enforced.
 
 **Failure and recovery.** Layer leakage, transaction boundaries that span layers and
 anemic domain models are common. Recovery starts with dependency checks, explicit
-contracts and a review of the change boundary; the technical owner is missing.
+contracts and a review of the change boundary; the linked owner section states the remaining limits.
 
-**Technical owner.** `technical-owner-missing`: no audited canonical owner.
-Remediation: [#254](https://github.com/rouslanbaranov/tycho/issues/254). The weak
-candidate page is a routing hypothesis, not an owner.
+**Technical owner.** [Layered, hexagonal and ports-and-adapters architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#layered-hexagonal-and-ports-and-adapters-architecture) — The section owns layering and dependency direction; it is not a dedicated layering manuscript.
 
 **Sources.** [src.fowler-layering](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.fowler-layering.2026-10-21`: Presentation Domain Data Layering,
+read record read.fowler-layering.2026-10-21: Presentation Domain Data Layering,
 sections "Presentation Domain Data Layering", "Further Reading", "Notes". This is a
 definitional article, not a comparative study.
 
-**Decision state.** `insufficient-evidence` until an owner is audited.
+**Decision state.** `applicable-under-conditions`.
 
 **Related entries.** Hexagonal Architecture; Clean / Onion Architecture; Modular
 Monolith; Microservices Architecture.
@@ -180,19 +178,17 @@ owned independently.
 
 **Failure and recovery.** Partial failure, retry amplification, latency and data
 consistency are normal; recovery requires timeouts, idempotency and observability.
-The technical owner is missing.
+The linked owner section states the remaining limits.
 
-**Technical owner.** `technical-owner-missing`: no audited canonical owner.
-Remediation: [#254](https://github.com/rouslanbaranov/tycho/issues/254). The weak
-candidate page is a routing hypothesis, not an owner.
+**Technical owner.** [Service orientation, microservices and distributed boundaries](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#service-orientation-microservices-and-distributed-boundaries) — The section explicitly owns SOA and microservice boundary choices.
 
 **Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.microservices-article.2026-10-21`: Microservices, sections
+read record read.microservices-article.2026-10-21: Microservices, sections
 "Characteristics of a Microservice Architecture", "Microservices and SOA",
 "Decentralized Data Management", "Design for failure", "Microservice Trade-Offs".
 This is an architectural article, not a benchmark.
 
-**Decision state.** `insufficient-evidence` until an owner is audited.
+**Decision state.** `applicable-under-conditions`.
 
 **Related entries.** Service-Oriented Architecture; Modular Monolith; Database per
 Service; Self-Contained Service.
@@ -220,18 +216,16 @@ mediation overhead exceeds the integration benefit.
 
 **Failure and recovery.** Contract drift, a centralized bus bottleneck and semantic
 mismatch are common. Recovery requires contract ownership and mediation observability;
-the technical owner is missing.
+the linked owner section states the remaining limits.
 
-**Technical owner.** `technical-owner-missing`: no audited canonical owner.
-Remediation: [#254](https://github.com/rouslanbaranov/tycho/issues/254). The
-Microservices article comparison is not a dedicated SOA owner.
+**Technical owner.** [Service orientation, microservices and distributed boundaries](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#service-orientation-microservices-and-distributed-boundaries) — The section explicitly owns SOA and microservice boundary choices.
 
 **Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.microservices-article.2026-10-21`: Microservices, section
+read record read.microservices-article.2026-10-21: Microservices, section
 "Microservices and SOA" plus the surrounding trade-off discussion. This is a bounded
 comparison, not an OASIS SOA reference.
 
-**Decision state.** `insufficient-evidence` until an owner is audited.
+**Decision state.** `applicable-under-conditions`.
 
 **Related entries.** Microservices Architecture; Modular Monolith; Anti-Corruption
 Layer; Canonical Data Model.
@@ -296,18 +290,16 @@ the choice when the dependency rule stops protecting changes or mapping layers d
 
 **Failure and recovery.** Boundary erosion and DTO/mapping complexity are common.
 Recovery requires dependency checks and explicit use-case boundaries; the technical
-owner is missing.
+owner section states the remaining limits.
 
-**Technical owner.** `technical-owner-missing`: no audited canonical owner.
-Remediation: [#254](https://github.com/rouslanbaranov/tycho/issues/254). No candidate
-page is asserted as an owner.
+**Technical owner.** [Layered, hexagonal and ports-and-adapters architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#layered-hexagonal-and-ports-and-adapters-architecture) — The section owns dependency direction and ports; Clean/Onion vocabulary is bounded to that mechanism.
 
 **Sources.** [src.clean-architecture](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.clean-architecture.2026-10-21`: The Clean Architecture, sections
+read record read.clean-architecture.2026-10-21: The Clean Architecture, sections
 "The Dependency Rule", "Entities", "Use Cases", "Interface Adapters", "Frameworks and
 Drivers", "Crossing boundaries". This is an author article, not a comparative study.
 
-**Decision state.** `insufficient-evidence` until an owner is audited.
+**Decision state.** `applicable-under-conditions`.
 
 **Related entries.** Hexagonal Architecture; Layered Architecture; Modular Monolith;
 Domain-Driven Design / Bounded Context.
@@ -372,18 +364,16 @@ reporting cost exceed the autonomy benefit.
 
 **Failure and recovery.** Dual writes, stale replicas and cross-service queries are
 common. Recovery requires outbox/idempotency and explicit data contracts; the technical
-owner is missing.
+owner section states the remaining limits.
 
-**Technical owner.** `technical-owner-missing`: no audited canonical owner.
-Remediation: [#254](https://github.com/rouslanbaranov/tycho/issues/254). No candidate
-page is asserted as an owner.
+**Technical owner.** [Ownership, isolation and boundary validation](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/ownership-isolation.md#7-selecting-boundaries-and-proving-they-work) — The section owns state authority and shared-database selection, not a dedicated schema-per-service recipe.
 
 **Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.microservices-database-per-service.2026-10-21`: Database per
+read record read.microservices-database-per-service.2026-10-21: Database per
 Service, sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting
 context", "Related patterns". This is a pattern page, not a comparative study.
 
-**Decision state.** `insufficient-evidence` until an owner is audited.
+**Decision state.** `applicable-under-conditions`.
 
 **Related entries.** Microservices Architecture; Domain-Driven Design / Bounded Context;
 Transactional Outbox; CQRS.
@@ -413,16 +403,14 @@ benefit.
 common. Recovery requires reconciliation and clear ownership; the technical owner is
 missing.
 
-**Technical owner.** `technical-owner-missing`: no audited canonical owner.
-Remediation: [#254](https://github.com/rouslanbaranov/tycho/issues/254). No candidate
-page is asserted as an owner.
+**Technical owner.** [Independent deployment and its costs](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md#2-independence-is-not-proved-by-a-separate-container) — The section owns remote-boundary costs and local-transaction alternatives.
 
 **Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.microservices-self-contained.2026-10-21`: Self-contained service,
+read record read.microservices-self-contained.2026-10-21: Self-contained service,
 sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting Context",
 "Related patterns". This is a pattern page, not a comparative study.
 
-**Decision state.** `insufficient-evidence` until an owner is audited.
+**Decision state.** `applicable-under-conditions`.
 
 **Related entries.** Microservices Architecture; API Composition; Database per Service;
 CQRS.
@@ -449,18 +437,16 @@ Reverse the choice when sidecar overhead and operational complexity exceed reuse
 
 **Failure and recovery.** Resource contention, startup ordering and version skew are
 common. Recovery requires health checks and explicit lifecycle ownership; the technical
-owner is missing.
+owner section states the remaining limits.
 
-**Technical owner.** `technical-owner-missing`: no audited canonical owner.
-Remediation: [#254](https://github.com/rouslanbaranov/tycho/issues/254). No candidate
-page is asserted as an owner.
+**Technical owner.** [Service mesh and traffic intermediaries](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#service-mesh-and-traffic-intermediaries) — The section owns proxies and sidecar data planes, not a dedicated sidecar lifecycle page.
 
 **Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.microsoft-sidecar.2026-10-21`: Sidecar pattern, sections "Context
+read record read.microsoft-sidecar.2026-10-21: Sidecar pattern, sections "Context
 and problem", "Solution", "Problems and considerations", "When to use this pattern",
 "Workload design", "Example". This is a vendor pattern page, not a comparative study.
 
-**Decision state.** `insufficient-evidence` until an owner is audited.
+**Decision state.** `applicable-under-conditions`.
 
 **Related entries.** Ambassador; Service Mesh; Modular Monolith; Deployment Stamps.
 
@@ -487,17 +473,15 @@ the choice when the proxy adds a hop without providing a needed capability.
 common. Recovery requires health checks and bounded retries; the technical owner is
 missing.
 
-**Technical owner.** `technical-owner-missing`: no audited canonical owner.
-Remediation: [#254](https://github.com/rouslanbaranov/tycho/issues/254). No candidate
-page is asserted as an owner.
+**Technical owner.** [Service mesh and traffic intermediaries](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#service-mesh-and-traffic-intermediaries) — The section owns traffic intermediaries, not a dedicated ambassador lifecycle page.
 
 **Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.microsoft-ambassador.2026-10-21`: Ambassador pattern, sections
+read record read.microsoft-ambassador.2026-10-21: Ambassador pattern, sections
 "Context and problem", "Solution", "Problems and considerations", "When to use this
 pattern", "Workload design", "Example". This is a vendor pattern page, not a comparative
 study.
 
-**Decision state.** `insufficient-evidence` until an owner is audited.
+**Decision state.** `applicable-under-conditions`.
 
 **Related entries.** Sidecar; Service Mesh; Gateway Routing; Anti-Corruption Layer.
 
@@ -541,10 +525,10 @@ Strangler Fig; Adapter.
 
 ## Chapter result and counterexample
 
-Twelve cards establish a conditional decision route; four are owner-linked and
-eight state `technical-owner-missing`. The cards do not establish technical
-sufficiency, and a matching name or a passing structural check is not evidence that a
-pattern fits a workload.
+Twelve cards establish a conditional decision route. Four have dedicated owners and
+eight use bounded sections. The cards do not establish technical sufficiency, and a
+matching name or a passing structural check is not evidence that a pattern fits a
+workload.
 
 Counterexample: a modular monolith with shared tables and no enforceable module contract
 is not evidence for the card's good-fit conditions, even if it deploys as one unit.
@@ -560,9 +544,9 @@ is not evidence for the card's good-fit conditions, even if it deploys as one un
 
 ## Evidence and known limits
 
-- All 12 cards cite read ledger units; four technical-owner links and backlinks are
+- All 12 cards cite read ledger units; twelve owner links and backlinks are
   self-checked.
-- Eight cards state `technical-owner-missing` and link remediation #254.
-- No entry claims `sufficient` technical or decision coverage.
+- Eight owner links are bounded sections, not dedicated pattern pages.
+- No entry claims sufficient technical or decision coverage.
 - No independent editorial review, benchmark, production observation or runtime test
   is asserted.

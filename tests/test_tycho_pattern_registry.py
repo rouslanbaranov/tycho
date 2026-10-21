@@ -26,7 +26,7 @@ class PatternRegistryTests(unittest.TestCase):
         self.assertEqual(result["patterns"], 145)
         self.assertEqual(result["families"], 11)
         self.assertEqual((result["core"], result["advanced"]), (123, 22))
-        self.assertEqual(result["technical_owners"], 4)
+        self.assertEqual(result["technical_owners"], 12)
         self.assertEqual(result["atlas_sections"], 145)
         self.assertEqual(result["source_units"], 145)
 
@@ -72,15 +72,20 @@ class PatternRegistryTests(unittest.TestCase):
 
     def test_sufficient_without_owner_is_rejected(self):
         data = self.copy()
-        data["patterns"][0]["technical_owner"]["state"] = "sufficient"
-        data["patterns"][0]["coverage"]["technical"] = "sufficient"
-        data["patterns"][0]["coverage"]["decision"] = "sufficient"
-        data["patterns"][0]["coverage"]["overall"] = "sufficient"
+        index = next(i for i, item in enumerate(data["patterns"])
+                     if item["technical_owner"]["state"] == "not-yet-assessed")
+        pattern = data["patterns"][index]
+        pattern["technical_owner"]["state"] = "sufficient"
+        pattern["coverage"]["technical"] = "sufficient"
+        pattern["coverage"]["decision"] = "sufficient"
+        pattern["coverage"]["overall"] = "sufficient"
         self.check_error(data, "registry-sufficient-without-owner")
 
     def test_sufficient_without_read_source_is_rejected(self):
         data = self.copy()
-        pattern = data["patterns"][0]
+        index = next(i for i, item in enumerate(data["patterns"])
+                     if item["technical_owner"]["state"] == "not-yet-assessed")
+        pattern = data["patterns"][index]
         pattern["technical_owner"] = {
             "document_id": "tycho.book.37c50125355948f1b52ec66229ef59bd",
             "path": "book/README.md",

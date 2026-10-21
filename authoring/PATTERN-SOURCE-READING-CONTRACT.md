@@ -155,15 +155,16 @@ unassessed and are not claimed.
 
 ## Phase 3 first card batch
 
-All 12 V11/C01 entries have self-checked decision cards. Four name an exact
-technical-owner anchor and have a reciprocal backlink: Modular Monolith, Hexagonal
-Architecture / Ports and Adapters, Domain-Driven Design / Bounded Context and
-Anti-Corruption Layer. The other eight state `technical-owner-missing` and link
-remediation issue #254; they are not presented as owner-linked.
+All 12 V11/C01 entries have self-checked decision cards with a technical-owner
+section and a reciprocal backlink. Four use dedicated mechanisms: Modular Monolith,
+Hexagonal Architecture / Ports and Adapters, Domain-Driven Design / Bounded Context
+and Anti-Corruption Layer. Eight use bounded sections for layering, service
+orientation, data ownership, independence or traffic intermediaries; those links are
+not presented as dedicated pattern manuscripts.
 
-The registry records `partial` decision coverage. Owner-linked cards have
-`partial` technical and overall coverage; missing-owner cards have `missing`
-technical and overall coverage. No `sufficient` state is claimed.
+The registry records `partial` technical, decision and overall coverage for all 12.
+No `sufficient` state is claimed. Remediation issue #254 is closed by explicit owner
+bindings; it did not create independent review or complete technical coverage.
 
 The card batch is recorded in `edition/patterns/card-batches.v1.json` and checked
 by `scripts/validate_pattern_cards.py`, including adversarial tests. The other
