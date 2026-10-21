@@ -53,6 +53,13 @@ content_verified_at: null
 > Tycho Issue [#81](https://github.com/rouslanbaranov/tycho/issues/81), proposed V04/C06. Public documentation inspected on 2026-10-18; versions indicated per vendor. Original conceptual comparisons and synthetic diagrams, **not** a benchmark or generic product ranking.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/README.md#request-reply-messaging) — decision conditions and contraindications.
+> [Splitter](../../v11-pattern-atlas/c03-messaging-integration/README.md#splitter) — decision conditions and contraindications.
+> [Aggregator](../../v11-pattern-atlas/c03-messaging-integration/README.md#aggregator) — decision conditions and contraindications.
+> [Scatter-Gather](../../v11-pattern-atlas/c03-messaging-integration/README.md#scatter-gather) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.98616bdc3c514ea997b2cfe30ad7c070:0 -->
 ## Purpose and mission
 

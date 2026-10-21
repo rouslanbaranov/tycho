@@ -172,9 +172,14 @@ composition, reverse proxy, service discovery variants, asynchronous request-rep
 and Gatekeeper. Registry coverage is `partial` for all 12; no `sufficient` state is
 claimed.
 
+All 20 V11/C03 entries also have self-checked cards with bounded owner sections.
+They cover channel, consumer, routing, pipeline, aggregation, dead-letter, durable
+subscription, idempotency, claim-check and process-manager decisions. Registry
+coverage is `partial` for all 20; no `sufficient` state is claimed.
+
 The card batches are recorded in `edition/patterns/card-batches.v1.json` and checked
 by `scripts/validate_pattern_cards.py`, including adversarial tests. The other
-121 entries remain without Phase 3 cards; 120 are read and one is blocked.
+101 entries remain without Phase 3 cards; 100 are read and one is blocked.
 
 ## Family batches
 
