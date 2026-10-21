@@ -65,8 +65,7 @@
       "required": [
         "pattern_id",
         "atlas_section",
-        "owner_path",
-        "owner_anchor",
+        "owner_state",
         "ledger_record"
       ],
       "properties": {
@@ -78,6 +77,12 @@
           "type": "string",
           "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
         },
+        "owner_state": {
+          "enum": [
+            "linked",
+            "missing"
+          ]
+        },
         "owner_path": {
           "type": "string",
           "pattern": "^book/.*\\.md$"
@@ -86,11 +91,64 @@
           "type": "string",
           "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
         },
+        "remediation_issue": {
+          "type": "integer",
+          "minimum": 1
+        },
         "ledger_record": {
           "type": "string",
           "pattern": "^read\\.[a-z0-9.-]+$"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "owner_state": {
+                "const": "linked"
+              }
+            },
+            "required": [
+              "owner_state"
+            ]
+          },
+          "then": {
+            "required": [
+              "owner_path",
+              "owner_anchor"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "owner_state": {
+                "const": "missing"
+              }
+            },
+            "required": [
+              "owner_state"
+            ]
+          },
+          "then": {
+            "required": [
+              "remediation_issue"
+            ],
+            "not": {
+              "required": [
+                "owner_path"
+              ]
+            }
+          },
+          "else": {
+            "not": {
+              "required": [
+                "remediation_issue"
+              ]
+            }
+          }
+        }
+      ]
     }
   }
 }

@@ -48,7 +48,7 @@ def engine():
 def check_card_text(text, slug):
     for marker in MARKERS:
         require(marker in text, "card-marker-missing: " + slug + ": " + marker)
-    require("sufficient" not in text, "card-sufficient-claim: " + slug)
+    require("`sufficient`" not in text, "card-sufficient-claim: " + slug)
     decision_line = next((line for line in text.splitlines()
                           if line.startswith("**Decision state.**")), "")
     require(any(state in decision_line for state in (
@@ -128,15 +128,26 @@ def validate_data(data, root=ROOT):
             require(record["status"] == "read", "card-ledger-not-read: " + entry["ledger_record"])
             require(entry["ledger_record"] in text, "card-ledger-not-cited: " + entry["atlas_section"])
             require(record["source_id"] in text, "card-source-not-cited: " + entry["atlas_section"])
-            owner = root / entry["owner_path"]
-            require(owner.is_file() and not owner.is_symlink(), "card-owner-file: " + entry["owner_path"])
-            require(entry["owner_anchor"] in heading_slugs(owner), "card-owner-anchor: " + entry["owner_anchor"])
-            owner_text = owner.read_text(encoding="utf-8")
-            check_backlink(owner_text, entry["atlas_section"])
-            require(pattern["technical_owner"]["path"] == entry["owner_path"], "card-registry-owner-path: " + pattern_id)
-            require(pattern["technical_owner"]["anchor"] == entry["owner_anchor"], "card-registry-owner-anchor: " + pattern_id)
-            require(pattern["technical_owner"]["state"] == "partial", "card-registry-owner-state: " + pattern_id)
-            require(pattern["coverage"]["overall"] == "partial", "card-registry-coverage: " + pattern_id)
+            if entry["owner_state"] == "linked":
+                owner = root / entry["owner_path"]
+                require(owner.is_file() and not owner.is_symlink(), "card-owner-file: " + entry["owner_path"])
+                require(entry["owner_anchor"] in heading_slugs(owner), "card-owner-anchor: " + entry["owner_anchor"])
+                owner_text = owner.read_text(encoding="utf-8")
+                check_backlink(owner_text, entry["atlas_section"])
+                require(pattern["technical_owner"]["path"] == entry["owner_path"], "card-registry-owner-path: " + pattern_id)
+                require(pattern["technical_owner"]["anchor"] == entry["owner_anchor"], "card-registry-owner-anchor: " + pattern_id)
+                require(pattern["technical_owner"]["state"] == "partial", "card-registry-owner-state: " + pattern_id)
+                require(pattern["coverage"]["technical"] == "partial", "card-registry-technical: " + pattern_id)
+                require(pattern["coverage"]["overall"] == "partial", "card-registry-coverage: " + pattern_id)
+            else:
+                issue = str(entry["remediation_issue"])
+                require("technical-owner-missing" in text, "card-missing-owner-marker: " + entry["atlas_section"])
+                require("#" + issue in text, "card-remediation-not-cited: " + entry["atlas_section"])
+                require(pattern["technical_owner"]["state"] == "missing", "card-registry-owner-state: " + pattern_id)
+                require(pattern["technical_owner"]["path"] is None, "card-registry-owner-path: " + pattern_id)
+                require(pattern["technical_owner"]["anchor"] is None, "card-registry-owner-anchor: " + pattern_id)
+                require(pattern["coverage"]["technical"] == "missing", "card-registry-technical: " + pattern_id)
+                require(pattern["coverage"]["overall"] == "missing", "card-registry-coverage: " + pattern_id)
             require(pattern["coverage"]["decision"] == "partial", "card-registry-decision: " + pattern_id)
             require(pattern["review_status"] == "self-checked", "card-registry-review: " + pattern_id)
             count += 1
