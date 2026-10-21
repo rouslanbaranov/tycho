@@ -242,6 +242,20 @@ navigation, legacy cross-volume pages and other canonical technical pages. They 
 not assert semantic acceptance. The artifact, schema, validator, freshness check and
 adversarial tests are structural evidence only; independent review remains Phase 5.
 
+## Phase 5 delivery evidence
+
+The Phase 5 artifact `edition/patterns/delivery-evidence.v1.json` records the
+locally executed checks, a twelve-item DoD matrix, six open gaps and explicit
+limits. It covers 419 pages, 145 entries, 144 cards, 530 routes, 44 unresolved
+related labels, 144 partial technical and decision entries, and one blocked source.
+
+Delivery checks, card structure, backlinks and structural page audit are met at
+the recorded scope. Technical sufficiency, decision sufficiency, independent
+editorial review, owner acceptance and release evidence are explicitly **not met**.
+The artifact status remains `delivery-evidence-recorded`; it cannot be marked
+`reviewed` without a named independent review record. Phase 5 is therefore not a
+final acceptance and does not close #233 or M10.
+
 ## Family batches
 
 Phase 2B proceeds in bounded batches, each with its own source units and
