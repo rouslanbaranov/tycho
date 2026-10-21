@@ -59,12 +59,29 @@ The current ledger records six public units:
 - Fowler Strangler Fig article;
 - Google SRE Handling Overload chapter.
 
+## Phase 2A foundation
+
 Five catalog entries have a read unit: CQRS, Strangler Fig, Load Shedding,
 Throttling and Rate Limiting. The three catalog indexes support catalog
 structure only, not individual pattern mechanisms.
 
-The current plan has 145 entries and 145 required units: 5 read, 139 planned
-and 1 blocked. These numbers are progress, not completion.
+## Phase 2B batch 1 — application and API
+
+Seventeen of the 24 application/API entries have a read unit after batch 1:
+Sidecar, Ambassador, Anti-Corruption Layer, Gateway Routing, Gateway
+Aggregation, Gateway Offloading, Backends for Frontends, Database per Service,
+Self-contained Service, API Composition, API Gateway, Client-side Discovery,
+Server-side Discovery, Microservices, Monolith First, Service Discovery and
+Reverse Proxy.
+
+Seven remain planned: Layered Architecture, SOA, Hexagonal Architecture,
+Clean/Onion Architecture, Domain-Driven Design, Asynchronous Request-Reply and
+Gatekeeper. Their sources are truncated, landing-only or too large to claim a
+complete reading in this batch.
+
+Current plan totals: **22 read, 122 planned and 1 blocked** across 145 entries;
+the ledger has **23 records**, including three foundation catalog records.
+These numbers are progress, not completion.
 
 ## Family batches
 
