@@ -63,6 +63,10 @@ An uncontrolled real failure is not an acceptable experiment merely to validate 
 
 <!-- /tycho-question-source -->
 
+> **Pattern atlas:**
+> [Health, Readiness and Liveness Checks](../../v11-pattern-atlas/c11-security-operations/README.md#health-readiness-and-liveness-checks) — decision conditions and contraindications.
+
+
 ## Original tabletop exercise — recovery must have an oracle
 
 Prepare a fictional incident in which catalogue search is stale while the authoritative item store remains correct. Give participants a visible symptom, a current permission boundary and several plausible explanations. Do not give them a secret instruction to select a predetermined remedy. The exercise should reveal how they distinguish observations, hypotheses and authorized changes.

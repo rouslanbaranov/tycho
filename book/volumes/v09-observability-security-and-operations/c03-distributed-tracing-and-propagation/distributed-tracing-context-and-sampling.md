@@ -60,6 +60,10 @@ content_verified_at: null
 > **Tycho independent book draft V09/C03, 2026-10-19.** Draws on W3C Trace Context (Recommendation of 2021) and published OpenTelemetry tracing semantics. All requests, diagrams and fault scenarios are original fiction. No trace collection, backend or distributed experiment was executed.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Distributed Tracing](../../v11-pattern-atlas/c11-security-operations/README.md#distributed-tracing) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.f921597aae854c6996459fc025a9bca3:0 -->
 ## Purpose and mission
 

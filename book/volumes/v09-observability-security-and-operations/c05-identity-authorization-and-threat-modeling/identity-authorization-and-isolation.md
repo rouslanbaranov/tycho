@@ -54,6 +54,15 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
+> [Federated Identity](../../v11-pattern-atlas/c11-security-operations/README.md#federated-identity) — decision conditions and contraindications.
+> [Zero Trust Architecture](../../v11-pattern-atlas/c11-security-operations/README.md#zero-trust-architecture) — decision conditions and contraindications.
+> [Least Privilege](../../v11-pattern-atlas/c11-security-operations/README.md#least-privilege) — decision conditions and contraindications.
+> [RBAC / ABAC](../../v11-pattern-atlas/c11-security-operations/README.md#rbac-abac) — decision conditions and contraindications.
+> [Workload Identity / mTLS](../../v11-pattern-atlas/c11-security-operations/README.md#workload-identity-mtls) — decision conditions and contraindications.
+> [Multitenant Isolation](../../v11-pattern-atlas/c11-security-operations/README.md#multitenant-isolation) — decision conditions and contraindications.
+
+
+> **Pattern atlas:**
 > [Tenant-Based Resource Isolation](../../v11-pattern-atlas/c09-scalability/README.md#tenant-based-resource-isolation) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.dde63373c50f4f4a80e727b6e160def5:0 -->

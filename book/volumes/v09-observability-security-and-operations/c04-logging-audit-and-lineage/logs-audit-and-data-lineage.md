@@ -56,6 +56,11 @@ content_verified_at: null
 > **Tycho original System Design manuscript V09/C04, 2026-10-19.** Public OpenTelemetry Logs Data Model and OpenLineage specifications support narrow data representation claims. All cases are invented, with no real logs, private identifiers, audit store, workflow run or compliance approval used.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Structured Logging](../../v11-pattern-atlas/c11-security-operations/README.md#structured-logging) — decision conditions and contraindications.
+> [Audit Trail](../../v11-pattern-atlas/c11-security-operations/README.md#audit-trail) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.436c2b22dc9e47acaaca7d18fadb511c:0 -->
 ## Purpose and mission
 
