@@ -78,6 +78,10 @@ An integer **Lamport logical clock** can be incremented for a local event, attac
 **Decision impact:** if the business only needs every item to preserve its own update order, requiring global total order can introduce unnecessary coordination. If conflicting updates of a shared invariant must be serialized, merely generating timestamps does not create atomic or correct resolution.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Causal Ordering](../../v11-pattern-atlas/c08-coordination/README.md#causal-ordering) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.d4822cc1e71c4f73896b7f6509f6daae:3 -->
 ## 3. Ordering scopes: per-key versus global
 

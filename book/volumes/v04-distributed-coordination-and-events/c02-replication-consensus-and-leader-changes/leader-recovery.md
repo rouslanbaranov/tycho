@@ -58,6 +58,13 @@ Under a Raft-style model:
 A leader process's health endpoint or elected status is not the same as the cluster having quorum and serving correct reads. [Tycho causality/consensus](../c01-time-causality-and-ordering/causality-ordering-and-consensus.md) explains order/time relationships; [transaction/idempotency](../../../distributed/transactional-outbox-and-idempotency.md) explains state effects across service boundaries.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Leader Election](../../v11-pattern-atlas/c08-coordination/README.md#leader-election) — decision conditions and contraindications.
+> [Distributed Lock](../../v11-pattern-atlas/c08-coordination/README.md#distributed-lock) — decision conditions and contraindications.
+> [Lease-Based Ownership](../../v11-pattern-atlas/c08-coordination/README.md#lease-based-ownership) — decision conditions and contraindications.
+> [Fencing Tokens](../../v11-pattern-atlas/c08-coordination/README.md#fencing-tokens) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.1b2657011d454460856103419095031b:5 -->
 ## 5. Reconfiguration and restoration are different actions
 
