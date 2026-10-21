@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -93,14 +93,18 @@ The following original citation rows, review limits and earlier topical routes a
 |---|---|---|
 | [Gunther, *A General Theory of Computational Scalability Based on Rational Functions* (2008)](https://arxiv.org/abs/0808.1431) | Rational scale functions, queueing-bound relation and fit concept | Actual coefficient values or mechanism in a real service |
 | [Little, *A Proof for the Queuing Formula*, 1961](https://doi.org/10.1287/opre.9.3.383) | Conditional mean occupancy/throughput/residence relation | Capacity or tail prediction |
-| [Tycho capacity experiment page](../../../performance/workload-profiles-and-capacity-experiments.md) | Original experiment design, failure and measurement boundaries | Executed tests or reproducible measured curve |
 
-All numerical values, diagrams, equations applied to imagined inputs and architecture conditions are educational interpretations. No actual data was fitted, no benchmark performed, and no technical review accepted any architecture for production. Full source-to-claim precision and edition metadata are pending.
+All numerical values, diagrams, equations applied to imagined inputs and architecture conditions are
+educational interpretations. No actual data was fitted, no benchmark performed, and no technical
+review accepted any architecture for production. Full source-to-claim precision remains pending;
+edition metadata is recorded.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.7ad835c06d5a4e3aabf6b14632f92c86:9 -->
+Internal cross-reference: the Tycho capacity-experiment page is an original Tycho explanation, not
+an independently inspected external source.
+
 ## Navigation
 
-Proposed **V07/C02** in [book outline](../../../PROPOSED-STRUCTURE.md), [performance entry](../../../performance/README.md). Read before: [workload demand](../../v01-requirements-and-architecture/c02-workload-and-demand-models/workload-demand-and-arrival-models.md), [queueing](../c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md). Next: [load-test validity](../c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md), [connection pools](../../v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md), [autoscaling lag](../c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md).
-
+Canonical chapter in the current edition; start at the [volume landing](../README.md).
 <!-- /tycho-question-source -->

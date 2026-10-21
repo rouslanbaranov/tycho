@@ -103,7 +103,6 @@ The following original citation rows, review limits and earlier topical routes a
 | [Google SRE, Handling Overload](https://sre.google/sre-book/handling-overload/) | Resource-dependent overload costs, priorities, client throttle and retry concerns | Any universally correct rate or priority policy |
 | [AWS Builders' Library, Using load shedding to avoid overload](https://aws.amazon.com/builders-library/using-load-shedding-to-avoid-overload/) | Shedding strategies and failure containment rationale | Measured benefit in the synthetic trail-guide scenario |
 | [AWS Builders' Library, Timeouts, retries and backoff with jitter](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/) | Retry multiplication and bounded backoff motivation | Real retry traffic or safe unconditional retry behavior |
-| [Tycho capacity experiment chapter](../../../performance/workload-profiles-and-capacity-experiments.md) | Defined workload/queue and synthetic failure methodology | Completed independent experiment |
 
 - [SRE, *Cascading Failures*](https://sre.google/sre-book/addressing-cascading-failures/),
   inspected 2026-10-21: rejection-path cost, retry amplification and cold-start effects.
@@ -113,10 +112,10 @@ All example data, percentages, capacity statements and system behavior are hypot
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:9 -->
+Internal cross-reference: the Tycho capacity-experiment page is an original Tycho explanation, not
+an independently inspected external source.
+
 ## Navigation
 
-- Proposed **V07/C05** in [planned TOC](../../../PROPOSED-STRUCTURE.md), current [Performance landing](../../../performance/README.md).
-- Prerequisite: [Workload demand](../../v01-requirements-and-architecture/c02-workload-and-demand-models/workload-demand-and-arrival-models.md), [Queueing](../c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md).
-- Related: [Autoscaling delay](../c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md), [Tail latency](../c04-tail-latency-fan-out-and-time-budgets/tail-latency-fanout-and-deadline-budgets.md), [Benchmark validity](../c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md), [Outbox/idempotency](../../../distributed/transactional-outbox-and-idempotency.md).
-
+Canonical chapter in the current edition; start at the [volume landing](../README.md).
 <!-- /tycho-question-source -->

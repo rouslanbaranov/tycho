@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -94,10 +94,13 @@ The following original citation rows, review limits and earlier topical routes a
 |---|---|---|
 | [Neo4j Cypher — Patterns](https://neo4j.com/docs/cypher-manual/current/patterns/) | Property-graph query patterns and path semantics | Implementation for fictional equipment model |
 | [Neo4j Cypher — Variable-length paths](https://neo4j.com/docs/cypher-manual/current/patterns/variable-length-paths/) | Bounded variable-length traversal and explosion/pruning concerns | Performance of any real graph DB under a target workload |
-| [Tycho hybrid retrieval](../c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md) | Prior theoretical distinctions of retrieval mechanisms | Actual hybrid search or graph infrastructure |
 
 All graph nodes, edges, diagrams, inferred rules and experiments are original invented educational examples. No graph was created, indexed, traversed or independently reviewed. **This chapter does not reintroduce a curated Tycho knowledge graph.** It covers graph *architectures as a subject of System Design*, not a product feature.
 
-**Navigation:** proposed **V06/C06** in [planned book contents](../../../PROPOSED-STRUCTURE.md), current [search/data information architecture](../../../search/README.md). Related [Hybrid lexical/vector ranking](../c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md), [Storage alternatives](../../v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md), [Authorization boundaries](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md).
+Internal cross-reference: the Tycho hybrid-retrieval page is an original Tycho explanation, not an
+independently inspected external source.
+
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 
 <!-- /tycho-question-source -->

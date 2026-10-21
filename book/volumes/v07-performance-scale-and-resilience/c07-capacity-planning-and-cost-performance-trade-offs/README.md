@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -93,13 +93,17 @@ The following original citation rows, review limits and earlier topical routes a
 | [AWS Well-Architected: Cost Optimization design principles](https://docs.aws.amazon.com/wellarchitected/latest/framework/cost-dp.html) | Cost attribution, consumption, outcome efficiency and operation | Current provider pricing or a real bill |
 | [AWS Well-Architected: Demand/supply resources](https://docs.aws.amazon.com/wellarchitected/2024-06-27/framework/cost-mandem.html) | Workload-aligned supply, buffers/throttling, scaling-lag consideration | Economic viability of the invented options |
 | [AWS Cost Based on Workload Metrics](https://docs.aws.amazon.com/wellarchitected/latest/framework/cost_monitor_usage_allocate_outcome.html) | Output-based unit economics and allocation principles | Real cost-per-journey data |
-| [Tycho scaling-law chapter](../c02-contention-saturation-and-scaling-laws/contention-saturation-and-scaling-laws.md) | Conditions for saturation and diminishing returns | Per-service measured fit |
 
-All amounts, charts, load assumptions and architectural examples are original teaching models. They are not measured prices or actual workloads. The proposed decisions have no independent financial/operational reviewer, validated capacity curve, tool run, or final edition metadata.
+All amounts, charts, load assumptions and architectural examples are original teaching models. They
+are not measured prices or actual workloads. The proposed decisions have no independent
+financial/operational reviewer, validated capacity curve or tool run; edition metadata is recorded.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8:9 -->
+Internal cross-reference: the Tycho scaling-law page is an original Tycho explanation, not an
+independently inspected external source.
+
 ## Navigation
 
-Proposed owner **V07/C07** in [outline](../../../PROPOSED-STRUCTURE.md), currently [performance landing](../../../performance/README.md). Read first [workload arrivals](../../v01-requirements-and-architecture/c02-workload-and-demand-models/workload-demand-and-arrival-models.md), [contended resources](../c02-contention-saturation-and-scaling-laws/contention-saturation-and-scaling-laws.md); continue with [autoscaling](../c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md), [overload protection](../c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md), [full book decision criteria](../../v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md).
+Canonical chapter in the current edition; start at the [volume landing](../README.md).
 <!-- /tycho-question-source -->
