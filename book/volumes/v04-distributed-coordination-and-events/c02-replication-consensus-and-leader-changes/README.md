@@ -27,7 +27,8 @@ route_hints:
     - "system-design"
     - "edition-navigation"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre"
   claim_ids: []
   status: "unknown"
   notes: "Editorial synthesis of the linked accepted manuscript; exact source versions and nonclaims remain in its page-local evidence ledger."
@@ -37,7 +38,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -108,6 +109,10 @@ The following original citation rows, review limits and earlier topical routes a
 | [Raft project — Ongaro/Ousterhout extended consensus paper](https://raft.github.io/) | Leader-based log replication, terms, elections and safety principles | Correctness of an invented or third-party service implementation |
 | [etcd 3.6 FAQ, membership and quorum](https://etcd.io/docs/v3.6/faq/) | Majority calculations and reconfiguration hazards | Resilience of an untested specific cluster |
 | [Tycho causality/consensus page](../c01-time-causality-and-ordering/causality-ordering-and-consensus.md) | Existing source-grounded related consensus concepts | A checked formal proof or live fault test |
+
+- [SRE, *Managing Critical State*](https://sre.google/sre-book/managing-critical-state/),
+  inspected 2026-10-21: replica count, replica location and quorum composition.
+  The chapter's placement examples are contextual, not universal layouts.
 
 Every failure, cluster layout, client result and diagram above is an original illustrative proposal. No environment, network, snapshot or node was touched. Actual versioned replication behavior and chapter-level technical review remain outstanding.
 

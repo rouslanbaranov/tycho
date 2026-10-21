@@ -25,7 +25,8 @@ route_hints:
     - "lifecycle"
     - "cost"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre"
   claim_ids: []
   status: "unknown"
   notes: "Bounded question from tycho.page.76244dbe2bd44035b7154f821191f6f2; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -35,7 +36,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -82,6 +83,29 @@ Include:
 - decommissioning and data retention after features are retired.
 
 The [AWS cost principles](https://docs.aws.amazon.com/wellarchitected/latest/framework/cost-dp.html) encourage relating expense to business output; a product can pay less for idle resources and still incur more cost from outages or manual maintenance. A credible comparison uses the **same horizon**, workload mix and mandatory service levels. “Managed service” shifts responsibilities but does not remove recovery/access/lifecycle obligations.
+
+### Recurring manual work is a capacity constraint
+
+A service can fit its compute and storage budget and still exceed the team's
+operating capacity. Recurring reconciliation, exception handling, credential
+rotation, ticket triage and manual failover consume time that does not
+disappear when the system is "running".
+
+- Measure the recurring work, not only its average: a small median with a
+  long tail of interrupts can still exhaust the team.
+- Treat automation as a maintained system. It needs ownership, tests,
+  monitoring, rollback and a recovery path; an unowned script can become a
+  new single point of failure.
+- Prefer removing the need for the work over speeding it up. A manual step
+  that exists only because two stores disagree is a design signal.
+- Include training, on-call familiarity and the cost of rare procedures in
+  the lifecycle estimate.
+
+The SRE book's *Managing Operational Load* and *Automating Away Repetitive
+Work and Operational Overhead* sections describe the operational view; their
+staffing and automation examples are contextual. The "automation is a
+maintained system" point is Tycho's inference about architecture acceptance,
+not a measured labor study.
 
 <!-- /tycho-question-source -->
 

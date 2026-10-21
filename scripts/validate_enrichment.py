@@ -60,7 +60,8 @@ def validate(root=ROOT):
         require(set(record['source_ids']) <= sources & inspected, 'enrichment-uninspected-source')
         require(meta['content_review']['status'] == 'self-checked'
                 and meta['content_verified_at'] is None, 'enrichment-fabricated-acceptance')
-        require(meta['source_inspection_date'] == '2026-10-20', 'enrichment-inspection-date')
+        require(meta['source_inspection_date'] == record.get('source_inspection_date', '2026-10-20'),
+                'enrichment-inspection-date')
         require(body.count('\n# ') == 1, 'enrichment-heading-count')
     edits = manifest['modified_documents']
     require(len({r['path'] for r in edits}) == len(edits), 'enrichment-duplicate-edit')

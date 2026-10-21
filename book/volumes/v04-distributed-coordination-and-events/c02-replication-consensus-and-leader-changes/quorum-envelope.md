@@ -25,7 +25,8 @@ route_hints:
     - "quorum"
     - "envelope"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre"
   claim_ids: []
   status: "unknown"
   notes: "Bounded question from tycho.page.1b2657011d454460856103419095031b; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -35,7 +36,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -86,6 +87,40 @@ flowchart LR
 **Text alternative:** a five-voter group splits 3/2; the connected three-voter majority can potentially elect a valid leader and commit, while the two-voter minority cannot independently make quorum. No actual network test or guarantee for a different replication protocol is implied.
 
 Safety can mean refusing an operation rather than answering from potentially stale state. The business-facing API must distinguish a successful authoritative write, a rejection/unavailable result, and an **unknown outcome** after client timeout. A timed-out write may have committed before the reply disappeared, so blind retry of an external effect is unsafe without stable idempotency and readback.
+
+### Quorum placement and failure domains
+
+Quorum arithmetic assumes the voters are reachable within the required
+latency and that their failure domains are not secretly shared. Placement
+changes both survival and progress.
+
+- **More replicas are not automatically safer.** A 3-voter group tolerates
+  one failure; a 4-voter group requires three votes and still tolerates one;
+  a 6-voter group requires four and tolerates two, but a single domain loss
+  can remove a larger share of voters. Adding a replica in an existing
+  domain can raise the quorum without adding a new failure domain.
+- **Distance buys failure-domain span and costs latency.** Spreading voters
+  across regions increases the faults the group can survive but adds
+  round-trip time to every quorum decision. A leaderless read may avoid the
+  worst of it; a strongly consistent write cannot.
+- **Overlapping quorums have a link.** A five-replica layout with two
+  central, one east-coast and two European voters can make an
+  intra-continental quorum fast, but losing the link voter can force a
+  transatlantic round trip. Hierarchical quorums trade more replicas for
+  more predictable latency.
+- **Leader placement concentrates traffic.** Leaders send proposal payloads
+  and receive acknowledgements; colocating leaders can bottleneck one
+  region's outbound network and shift a large traffic pattern when that
+  region fails. Balance leaders across failure domains, not only voters.
+- **Placement is not a substitute for backup.** Consensus protects a
+  replicated log under its assumptions; it does not protect against
+  software defects, operator error or a correlated loss of every voter.
+  Keep an independent historical recovery path.
+
+Verify the intended failure domain, quorum latency under normal and
+degraded placement, and the traffic shift when a leader or link voter is
+lost. The general placement model is owned by `V08/C06`
+(`tycho.page.6b3725950fad4c0db82417b3d0225d32`).
 
 <!-- /tycho-question-source -->
 

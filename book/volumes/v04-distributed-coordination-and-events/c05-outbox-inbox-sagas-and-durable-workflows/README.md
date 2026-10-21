@@ -39,7 +39,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -66,6 +66,12 @@ Begin with the integrated decision, then open the independent question that matc
 | [Outbox publication and ordering](outbox-publication.md) | Which local atomic record closes a dual-write loss window? |
 | [Inbox processing and atomic consumer effects](inbox-atomicity.md) | When can a receiver commit an effect and its deduplication record together? |
 | [Sagas, workflow recovery and compensation](saga-workflows.md) | What business recovery contract replaces a nonexistent global rollback? |
+
+Additional page:
+
+- [Periodic work and leases](periodic-work-leases-and-exactly-once.md) — How do
+  periodic jobs and pipelines recover when a launch is ambiguous or a lease is
+  stale?
 
 ## Boundaries and further reading
 
@@ -99,6 +105,11 @@ The following original citation rows, review limits and earlier topical routes a
 | [Debezium 3.6 Outbox Event Router](https://debezium.io/documentation/reference/3.6/transformations/outbox-event-router.html) | Version-scoped outbox event identity/key/payload mapping | Correctness of any deployed CDC pipeline |
 | [Idempotent Consumer pattern](https://microservices.io/patterns/communication-style/idempotent-consumer.html) | Receiver-local processed-message and state effects | Exactly-once arbitrary external side effects |
 | [Saga pattern](https://microservices.io/patterns/data/saga.html) | Coordinated local transactions and compensating actions | Automatic reversibility or distributed ACID |
+
+- [SRE, *Cron Scheduling*](https://sre.google/sre-book/distributed-periodic-scheduling/)
+  and [*Data Processing Pipelines*](https://sre.google/sre-book/data-processing-pipelines/),
+  inspected 2026-10-21: ambiguous launches, overlapping runs and workflow
+  correctness. The source's examples are contextual, not universal designs.
 
 All examples and state descriptions here are original independent educational material. No service, database, broker, workflow, failure injection, compliance finding or independent review is claimed.
 

@@ -30,6 +30,8 @@ evidence_scope:
   source_ids:
     - "src.sre-overload"
     - "src.sre-cascading"
+    - "src.sre-cron-enrichment"
+    - "src.sre"
   claim_ids: []
   status: "unknown"
   notes: "Editorial synthesis of the linked accepted manuscript; exact source versions and nonclaims remain in its page-local evidence ledger."
@@ -109,6 +111,11 @@ Source grounding: existing inspected-source ledgers in [queueing](../../v07-perf
   [*Addressing Cascading Failures*](https://sre.google/sre-book/addressing-cascading-failures/),
   inspected 2026-10-21: local-versus-broad overload, retry amplification and recovery
   testing. The source's examples are contextual, not measured results.
+
+- [SRE, *Cron Scheduling*](https://sre.google/sre-book/distributed-periodic-scheduling/) and
+  [*Data Processing Pipelines*](https://sre.google/sre-book/data-processing-pipelines/),
+  inspected 2026-10-21: ambiguous launches, overlapping runs and workflow
+  correctness. The source's examples are contextual, not universal designs.
 
 **Open research:** no organization-specific runtime/operational requirements, real data-set or distributed traces, independent architecture review, deployment experiment, SLO/cost budget or results are available for the scenarios. All numerical/comparative recommendations remain conditional and falsifiable. Completion of the manuscript chapter is not a completed architecture modernization project or 100% coverage of the ten-volume outline.
 

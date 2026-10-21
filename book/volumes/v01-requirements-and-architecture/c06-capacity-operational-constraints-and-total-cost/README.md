@@ -27,7 +27,8 @@ route_hints:
     - "system-design"
     - "edition-navigation"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre"
   claim_ids: []
   status: "unknown"
   notes: "Editorial synthesis of the linked accepted manuscript; exact source versions and nonclaims remain in its page-local evidence ledger."
@@ -37,7 +38,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -96,6 +97,11 @@ The following original citation rows, review limits and earlier topical routes a
 | [AWS Cost Optimization design principles](https://docs.aws.amazon.com/wellarchitected/latest/framework/cost-dp.html) | Attribution, resource consumption and outcome unit economics | Actual provider prices or this example's operating cost |
 | [Tycho requirements/workload decisions](../../v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/requirements-and-workload-architecture-profiles.md) | Existing independent hard-gate decision reasoning | Accepted constraints or measured resource ceilings |
 | [Tycho capacity/economic analysis](../../v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md) | Original sensitivity analysis methodology | Real cost and capacity measurements |
+
+- [SRE, *Dealing with Interrupts*](https://sre.google/sre-book/dealing-with-interrupts/) and
+  [*Lessons Learned*](https://sre.google/sre-book/lessons-learned/), inspected 2026-10-21:
+  operational load, recurring manual work and automation overhead. The source's
+  staffing and automation examples are contextual, not universal requirements.
 
 Every workload, system, candidate, diagram and conclusion is invented for education. No security test, actual budget, backup exercise, execution evidence or independent review occurred. Metadata, exact chapter boundaries and final edition assembly remain pending.
 

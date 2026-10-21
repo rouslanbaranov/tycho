@@ -29,6 +29,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.k8s-deployments"
+    - "src.sre"
   claim_ids: []
   status: "source-linked"
   notes: "Editorial synthesis of the linked accepted manuscript; exact source versions and nonclaims remain in its page-local evidence ledger."
@@ -38,7 +39,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -104,6 +105,10 @@ The following original citation rows, review limits and earlier topical routes a
 | [Kubernetes Deployments — rolling updates](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) | maxSurge/maxUnavailable, rollout progress and controller mechanics | Product/data compatibility |
 | [Argo Rollouts Canary](https://argo-rollouts.readthedocs.io/en/stable/features/canary/) | Weighted steps, pauses, analysis concepts | Representative business-outcome measurement |
 | [Prior combined rollout/schema study](../../../delivery/progressive-delivery-and-schema-evolution.md) | Existing source-led mixed-version and rollout research | Run release, restore or independently accepted decision |
+
+- [SRE, *Reliable Product Launches*](https://sre.google/sre-book/reliable-product-launches/),
+  inspected 2026-10-21: capacity planning, client behavior, launch traffic and
+  overload tests. The chapter's examples are contextual, not universal estimates.
 
 All examples, diagrams and acceptance steps are invented for teaching. No cluster, signed release, test, rollback or source-to-claim independent approval occurred.
 
