@@ -81,8 +81,19 @@ Guidance because the original Cockburn page was truncated by the fetch tool.
 The DDD entry is bounded-context scoped; the full DDD reference remains a
 later source. Batch 1 is complete for its planned units, not for the catalog.
 
-Current plan totals: **29 read, 115 planned and 1 blocked** across 145 entries;
-the ledger has **29 records**, including three foundation catalog records.
+## Phase 2B batch 2 — messaging and data
+
+All 34 messaging/data entries have a read unit after batch 2. Enterprise
+Integration Patterns pages, Camel splitter documentation, microservices.io
+data patterns, Debezium outbox documentation, the IETF Idempotency-Key draft,
+PostgreSQL materialized-view and two-phase pages, and Temporal workflow docs
+were read. The Camel splitter page was truncated after its options; the other
+units were complete as returned. The Message Broker and Process Manager pages
+do not separately read the bridge or routing-slip variants, and the Debezium
+outbox page is not a general CDC contract.
+
+Current plan totals: **62 read, 82 planned and 1 blocked** across 145 entries;
+the ledger has **60 records**, including three foundation catalog records.
 These numbers are progress, not completion.
 
 ## Family batches
