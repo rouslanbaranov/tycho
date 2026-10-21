@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "7412a1d2fae0ac2e9de4af2f4478f8ed20da1c263e403ee046cd997dfb2b9324",
-    "ledger_sha256": "527baa32ae9b13a8331c82e92ef874f6dea233e8b78295af9fc42ca72a92e18a",
-    "card_batches_sha256": "76698b7896a9f6ea0c75f7c3f558a223365cb40d201d3fc23a4adfe935881018",
-    "route_index_sha256": "973aabdf3e9ac708bb84c59c615a107b61886eb1951c678cceedd4e944969623",
-    "coverage_sha256": "b646361d860776610e3ac7e239020fa2d385b7d359108abdae32ef78ab733914"
+    "registry_sha256": "31d8abbedc1d08ad42fd603d6336e87c6a23cb4dd2a9262c2b50460989cb4b9a",
+    "ledger_sha256": "1a5b44a085da15c245377d6a65ac9859005589cca2209ee32ab904c6965a0882",
+    "card_batches_sha256": "9223c8ef8cb4c4bb7645e6a942c24ae7deca6a65826bd8cbe098dfa4d3df64c2",
+    "route_index_sha256": "0f644b5c76356bee506f07e48e36f1e8e4e492f3f4b2a825fe49006ae7b779e7",
+    "coverage_sha256": "c57517cf3f4ee9537174a663a1681fe45cb04c4e3bb95910e627ba688e628207"
   },
   "dimensions": [
     "identity",
@@ -26,13 +26,13 @@
   "summary": {
     "pages": 419,
     "entries": 145,
-    "cards": 144,
-    "routes": 536,
+    "cards": 145,
+    "routes": 540,
     "related_labels": 40,
     "non_routes": 40,
     "unresolved_related": 0,
-    "retrieval_questions": 144,
-    "blocked_entries": 1
+    "retrieval_questions": 145,
+    "blocked_entries": 0
   },
   "page_dispositions": [
     {
@@ -1544,8 +1544,8 @@
       "document_id": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4",
       "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
       "kind": "page",
-      "disposition": "canonical-technical-page",
-      "reason": "canonical page not linked as a pattern owner"
+      "disposition": "technical-owner",
+      "reason": "linked by a pattern card"
     },
     {
       "document_id": "tycho.page.ee2dd008d4f445eaa9b20998f855a786",
@@ -5419,26 +5419,27 @@
       "pattern_id": "tycho.pattern.polyglot-persistence",
       "atlas_section": "polyglot-persistence",
       "dimensions": {
-        "identity": "blocked",
-        "decision_question": "blocked",
-        "good_fit": "blocked",
-        "contraindications": "blocked",
-        "competing_alternative": "blocked",
-        "failure_recovery": "blocked",
-        "technical_owner": "blocked",
-        "owner_anchor": "blocked",
-        "backlink": "blocked",
-        "source_ledger": "blocked",
-        "read_source": "blocked",
-        "decision_state": "blocked",
-        "technical_coverage": "not-yet-assessed",
-        "decision_coverage": "not-yet-assessed"
+        "identity": "pass",
+        "decision_question": "pass",
+        "good_fit": "pass",
+        "contraindications": "pass",
+        "competing_alternative": "pass",
+        "failure_recovery": "pass",
+        "technical_owner": "partial",
+        "owner_anchor": "pass",
+        "backlink": "pass",
+        "source_ledger": "pass",
+        "read_source": "pass",
+        "decision_state": "pass",
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "blocked-source",
-        "no-card"
+        "technical-partial-bounded",
+        "decision-partial-bounded",
+        "independent-review-missing"
       ],
-      "question": ""
+      "question": "Should different data responsibilities use different stores while one authoritative boundary owns consistency?"
     },
     {
       "pattern_id": "tycho.pattern.priority-queue",
@@ -7969,14 +7970,15 @@
     },
     {
       "pattern_id": "tycho.pattern.polyglot-persistence",
-      "technical": "not-yet-assessed",
-      "decision": "not-yet-assessed",
-      "overall": "not-yet-assessed",
-      "card": false,
-      "owner_state": "not-yet-assessed",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
+      "card": true,
+      "owner_state": "partial-bounded",
       "gaps": [
-        "blocked-source",
-        "no-card"
+        "technical-partial-bounded",
+        "decision-partial-bounded",
+        "independent-review-missing"
       ]
     },
     {
@@ -10399,6 +10401,26 @@
       "basis": "card-related-entry"
     },
     {
+      "from": "tycho.pattern.polyglot-persistence",
+      "to": "tycho.pattern.change-data-capture-cdc",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.polyglot-persistence",
+      "to": "tycho.pattern.cqrs-read-projections",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.polyglot-persistence",
+      "to": "tycho.pattern.materialized-view",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.polyglot-persistence",
+      "to": "tycho.pattern.sharding",
+      "basis": "card-related-entry"
+    },
+    {
       "from": "tycho.pattern.priority-queue",
       "to": "tycho.pattern.bulkhead",
       "basis": "card-related-entry"
@@ -12066,6 +12088,11 @@
       "pattern_id": "tycho.pattern.point-to-point-queue",
       "atlas_section": "point-to-point-queue",
       "question": "Should each message be consumed by exactly one worker, rather than broadcast to all subscribers?"
+    },
+    {
+      "pattern_id": "tycho.pattern.polyglot-persistence",
+      "atlas_section": "polyglot-persistence",
+      "question": "Should different data responsibilities use different stores while one authoritative boundary owns consistency?"
     },
     {
       "pattern_id": "tycho.pattern.priority-queue",

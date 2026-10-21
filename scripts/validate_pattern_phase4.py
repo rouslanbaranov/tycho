@@ -68,16 +68,14 @@ def validate_data(data, root=ROOT):
             require(item["target"] is None, "phase4-related-non-route-target")
         require(len(item["reason"]) >= 10, "phase4-related-reason")
     questions = data["retrieval_questions"]
-    require(len(questions) == 144, "phase4-question-count")
-    require(len({item["pattern_id"] for item in questions}) == 144, "phase4-question-duplicate")
-    require("tycho.pattern.polyglot-persistence" not in {item["pattern_id"] for item in questions},
-            "phase4-blocked-question")
+    require(len(questions) == 145, "phase4-question-count")
+    require(len({item["pattern_id"] for item in questions}) == 145, "phase4-question-duplicate")
     summary = data["summary"]
     require(summary["pages"] == len(pages), "phase4-summary-pages")
     require(summary["entries"] == len(audit), "phase4-summary-entries")
     require(summary["routes"] == len(routes), "phase4-summary-routes")
     require(summary["retrieval_questions"] == len(questions), "phase4-summary-questions")
-    require(summary["blocked_entries"] == 1, "phase4-blocked-count")
+    require(summary["blocked_entries"] == 0, "phase4-blocked-count")
     require(summary["related_labels"] == len(related), "phase4-related-count")
     require(summary["non_routes"] == sum(
         1 for item in related if item["disposition"] == "non-route"),

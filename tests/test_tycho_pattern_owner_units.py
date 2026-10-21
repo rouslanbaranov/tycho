@@ -24,10 +24,10 @@ class PatternOwnerUnitTests(unittest.TestCase):
 
     def test_every_card_has_one_owner_unit(self):
         result = validate_data(self.data, ROOT)
-        self.assertEqual(result["entries"], 144)
-        self.assertEqual(result["owner_pages"], 65)
+        self.assertEqual(result["entries"], 145)
+        self.assertEqual(result["owner_pages"], 66)
         self.assertEqual(result["shared_pages"], 30)
-        self.assertEqual(result["bounded"] + result["partial"], 144)
+        self.assertEqual(result["bounded"] + result["partial"], 145)
         self.assertGreater(result["units"], 30)
 
     def test_missing_entry_is_rejected(self):

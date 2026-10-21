@@ -19,7 +19,7 @@ FIELDS = {
 }
 ADMISSION = {'admitted-for-research', 'bibliography-only', 'pending-content-access'}
 ACCESS = {'bibliographic-page-and-preview', 'free-personalized-download', 'public-web-or-author-download'}
-READING = {'fetch-incomplete', 'landing-or-abstract-inspected'}
+READING = {'fetch-incomplete', 'landing-or-abstract-inspected', 'full-public-page-inspected'}
 MANDATORY = {
     'src.kafka', 'src.kafka-design', 'src.postgresql', 'src.postgres-concurrency',
     'src.reactor', 'src.reactive-streams', 'src.jep444', 'src.jep491',

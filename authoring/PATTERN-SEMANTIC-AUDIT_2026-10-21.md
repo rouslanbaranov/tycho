@@ -62,24 +62,22 @@ Severity:
 | Decision pages | 6 |
 | Navigation pages | 97 |
 | Atlas pages | 12 |
-| Sound | 418 |
+| Sound | 419 |
 | Sound with bounded findings | 0 |
 | Needs remediation | 0 |
-| Blocked | 1 |
-| Pages with findings | 141 |
-| Findings | 1 (0 low, 1 medium, 0 high) |
+| Blocked | 0 |
+| Pages with findings | 0 |
+| Findings | 0 |
 
-The blocked page is V11/C06, where Polyglot Persistence remains uncarded because no
-technical owner exists. Five gates remain open: owner acceptance, the blocked Polyglot
-entry and three deferred page-split decisions. Human review is recorded by owner
-confirmation; no per-page reviewer record was supplied.
+No page is blocked. Four gates remain open: owner acceptance and three deferred
+page-split decisions. Human review is recorded by owner confirmation; no per-page
+reviewer record was supplied.
 
 ## Low-severity cleanup
 
 All 100 low-severity findings tracked by [#292](https://github.com/rouslanbaranov/tycho/issues/292)
-are fixed. The audit now has no `sound-with-findings` page; only the blocked Polyglot
-Persistence entry remains. No page is promoted to sufficient and no owner acceptance is
-implied.
+are fixed. The audit has no `sound-with-findings`, `needs-remediation` or blocked
+page. No page is promoted to sufficient and no owner acceptance is implied.
 
 ## Independent agent review
 
@@ -109,16 +107,16 @@ of the 69 primary manuscripts; they identify remediation work against the exact 
 
 ## Remediation and external gates
 
-No `needs-remediation` pages remain and the other findings remain work items. The audit
-records each remediation or gate; it does not claim that all findings were fixed.
+All recorded findings were fixed under #290 and #292. The audit records each local edit
+and does not claim sufficient coverage or owner acceptance.
 
 - Human review: passed per owner confirmation on 2026-10-21; no per-page reviewer
   record or line-level notes were supplied.
 - Owner acceptance: open; not recorded.
-- Polyglot Persistence: blocked; keep uncarded until an owner exists.
+- Polyglot Persistence: carded with a public article and the V05/C04 owner section.
 - Three split candidates: deferred with migration gates; no split performed.
 
-Five V11 pages were corrected where the audit confirmed a concrete defect:
+V11 pages were corrected where the audit confirmed a concrete defect:
 
 - the landing: Phase 5/open-audit wording replaced with Phase 6/recorded-audit wording;
 - C01 Self-Contained Service: the owner note now describes only the anchored section;

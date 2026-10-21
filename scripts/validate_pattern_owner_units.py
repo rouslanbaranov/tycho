@@ -204,7 +204,7 @@ def validate_data(data, root=ROOT):
             cards[entry["pattern_id"]] = (chapter, entry, chapter_text)
 
     entries = data["entries"]
-    require(len(entries) == 144, "owner-units-entry-count")
+    require(len(entries) == 145, "owner-units-entry-count")
     seen = set()
     page_cache = {}
     by_page = {}

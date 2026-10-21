@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "status": "owner-units-audited",
-  "audit_date": "2026-10-21",
+  "audit_date": "2026-10-22",
   "scope": "Section-level technical ownership and per-entry coverage evidence for the 144 carded catalog entries; not independent review or sufficient coverage.",
   "method": "Each carded entry was read against its registered technical owner page. Exactly one owner unit was selected, evidence was copied verbatim and validated as a page substring, decision-card fields and source records were checked, and every shared owner page received a keep, deepen or split decision.",
   "coverage_rules": {
@@ -8498,6 +8498,65 @@
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Dedicated bounded note under 'Bounded pattern ownership notes'; all four dimensions are stated."
+    },
+    {
+      "pattern_id": "tycho.pattern.polyglot-persistence",
+      "catalog_name": "Polyglot Persistence",
+      "family": "database-and-storage-architecture",
+      "owner": {
+        "document_id": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4",
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
+        "heading": "7. Multiple databases create a new synchronization problem",
+        "anchor": "7-multiple-databases-create-a-new-synchronization-problem",
+        "level": 2,
+        "line": 68,
+        "unit_kind": "embedded",
+        "unit_terms": [
+          "data representations",
+          "derived views",
+          "freshness contract"
+        ]
+      },
+      "technical_evidence": {
+        "mechanism": {
+          "state": "supported",
+          "quote": "A single authoritative registration database plus a graph/search/OLAP projection is a valid possible design—but then there are *two data representations*, not two automatically consistent sources of truth.",
+          "reason": "Describes the multi-store design and its duplicate representation."
+        },
+        "invariant": {
+          "state": "supported",
+          "quote": "Define freshness, rebuild, deduplication, schema migration and failure recovery explicitly.",
+          "reason": "States the required freshness, rebuild and recovery contract."
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "quote": "View may lag, response needs a freshness contract",
+          "reason": "Names projection lag but not a full failure-recovery procedure."
+        },
+        "alternative": {
+          "state": "absent",
+          "quote": "",
+          "reason": "The section does not name a competing single-store alternative."
+        }
+      },
+      "decision_evidence": {
+        "atlas_section": "polyglot-persistence",
+        "question": "Should different data responsibilities use different stores while one authoritative boundary owns consistency?",
+        "competing_alternative": "Single store with derived projections or query-time joins. Reverse the choice when coordination, migration and operational cost exceed the workload benefit.",
+        "decision_state": "applicable-under-conditions",
+        "card_components": 10
+      },
+      "source_support": {
+        "ledger_record": "read.batch3-fowler-polyglot.2026-10-22",
+        "source_id": "src.fowler-polyglot",
+        "unit_type": "article",
+        "status": "read",
+        "card_citation": true
+      },
+      "review_state": "self-checked",
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
+      "notes": "Bounded selection unit; the public article supports the decision framing while the DDIA book remains unread."
     }
   ],
   "shared_pages": [
@@ -8972,21 +9031,21 @@
     }
   ],
   "summary": {
-    "entries": 144,
-    "owner_pages": 65,
+    "entries": 145,
+    "owner_pages": 66,
     "shared_pages": 30,
-    "owner_units": 118,
+    "owner_units": 119,
     "dedicated_units": 64,
-    "embedded_units": 54,
-    "mechanism_supported": 100,
-    "invariant_supported": 116,
+    "embedded_units": 55,
+    "mechanism_supported": 101,
+    "invariant_supported": 117,
     "failure_recovery_supported": 88,
     "alternative_supported": 69,
-    "technical_partial_bounded": 96,
+    "technical_partial_bounded": 97,
     "technical_partial": 48,
     "technical_name_only": 0,
     "technical_sufficient": 0,
-    "decision_partial_bounded": 144,
+    "decision_partial_bounded": 145,
     "decision_partial": 0,
     "decision_name_only": 0,
     "decision_sufficient": 0,
