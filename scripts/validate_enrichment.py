@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from assemble_edition import split, sha
+from content_revisions import authorized
 from route_index import canonical_scan
 from directory_paths import HistoricalView
 
@@ -45,7 +46,11 @@ def validate(root=ROOT):
         require(path in documents, 'enrichment-missing-document')
         text = view.read_text(path)
         meta, body = split(text)
-        require(sha(text) == record['sha256'], 'enrichment-new-document-drift')
+        current_sha = sha(text)
+        require(current_sha == record['sha256']
+                or authorized(root, 'enrichment_documents', path,
+                              record['sha256'], current_sha),
+                'enrichment-new-document-drift')
         require(all(meta[k] == record[k] for k in ('id', 'kind', 'parent_id', 'title')),
                 'enrichment-document-identity')
         require(meta['route_hints']['questions'] == [record['question']],
@@ -69,8 +74,15 @@ def validate(root=ROOT):
         start = text.index(heading)
         end = text.find(marker, start)
         require(end > start, 'enrichment-insertion-boundary')
-        require(sha(text[start:end]) == record['addition_sha256'], 'enrichment-addition-drift')
-        require(sha(text[:start] + text[end:]) == record['baseline_sha256'],
+        addition_sha = sha(text[start:end])
+        require(addition_sha == record['addition_sha256']
+                or authorized(root, 'enrichment_additions', record['path'],
+                              record['addition_sha256'], addition_sha),
+                'enrichment-addition-drift')
+        baseline_sha = sha(text[:start] + text[end:])
+        require(baseline_sha == record['baseline_sha256']
+                or authorized(root, 'enrichment_baselines', record['path'],
+                              record['baseline_sha256'], baseline_sha),
                 'enrichment-baseline-altered')
     outline = json.loads((root/'edition/outline.json').read_text())
     require(outline['version'] == manifest['version'], 'enrichment-edition-version')

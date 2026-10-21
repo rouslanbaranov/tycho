@@ -28,6 +28,7 @@ evidence_scope:
   source_ids:
     - "src.aws-backoff"
     - "src.sre-overload"
+    - "src.sre-cascading"
   claim_ids: []
   status: "source-linked"
   notes: "Bounded question from tycho.page.c5d20ae7ef6445e5b23dd5fbac625060; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -37,7 +38,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -77,6 +78,18 @@ A valid test matrix compares baseline and treatment under **the same attempted a
 | Unauthorized or high-cost user input | Deterministic permission and quota enforcement | Overload bypass leaks data or monopolizes resources |
 
 Record the **cost of protective capacity**: extra reserved pools, higher rejection ratios, additional deferred-work storage, alerting/operations, idle headroom and possibly less total peak throughput. A graceful degradation mechanism is a justified architecture choice only when the user contract makes its reduced outcome acceptable.
+
+Additional observations for the same matrix:
+
+- **Impulse versus gradual load.** A gradual ramp can warm caches, connection pools and
+  runtime profiles; a step load of the same final rate may fail earlier. Test both, and do
+  not accept a gradual-only result as evidence for a launch spike.
+- **Exit from degraded mode.** After the fault is removed, can the service leave its
+  degraded mode without a manual restart? If not, record the required action, its
+  authorization and the risk of leaving protection active too long.
+- **Rejection storm.** If rejected clients retry immediately, does the rejection rate grow
+  even though the underlying resource is unchanged? This distinguishes a capacity problem
+  from a retry-policy problem.
 
 <!-- /tycho-question-source -->
 

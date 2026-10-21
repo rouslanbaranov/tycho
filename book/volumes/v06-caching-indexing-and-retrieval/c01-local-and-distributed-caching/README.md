@@ -30,7 +30,8 @@ route_hints:
     - "system-design"
     - "edition-navigation"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre-cascading"
   claim_ids: []
   status: "unknown"
   notes: "Editorial synthesis of the linked accepted manuscript; exact source versions and nonclaims remain in its page-local evidence ledger."
@@ -40,7 +41,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -102,6 +103,10 @@ The following original citation rows, review limits and earlier topical routes a
 | [Caffeine Refresh](https://github.com/ben-manes/caffeine/wiki/Refresh) | Refresh eligibility and previous-value serving model | Actual app cache freshness bound |
 | [Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/) | Read-through-on-miss / TTL / invalidate-on-write pattern | Atomic cross-resource consistency or measured performance |
 | [Combined earlier cache research](../../../scaling/local-distributed-caching-and-invalidation.md) | Previously bounded original explanations | Independently accepted final source claim mapping |
+
+- [SRE, *Cascading Failures*](https://sre.google/sre-book/addressing-cascading-failures/),
+  inspected 2026-10-21: latency-versus-capacity cache dependence, cold-start scenarios and
+  the recovery test. The source's examples are contextual, not universal thresholds.
 
 All application names, diagrams, decisions, numerical examples and tests are original fictional teaching material. No cache implementation or benchmark was exercised.
 

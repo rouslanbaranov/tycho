@@ -27,7 +27,9 @@ route_hints:
     - "system-design"
     - "edition-navigation"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre-overload"
+    - "src.sre-cascading"
   claim_ids: []
   status: "unknown"
   notes: "Editorial synthesis of the linked accepted manuscript; exact source versions and nonclaims remain in its page-local evidence ledger."
@@ -37,7 +39,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -102,6 +104,11 @@ The following original citation rows, review limits and earlier topical routes a
 ## 9. Research and review status
 
 Source grounding: existing inspected-source ledgers in [queueing](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md), [outbox](../../../distributed/transactional-outbox-and-idempotency.md), [Kafka](../../v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/kafka-partitions-replication-and-contracts.md), [safe rollout](../../../delivery/safe-rollout-and-recovery.md) and [security](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md); [arc42 §9](https://docs.arc42.org/section-9/) inspected 2026-10-19 for decision documentation principles.
+
+- [SRE, *Handling Overload*](https://sre.google/sre-book/handling-overload/) and
+  [*Addressing Cascading Failures*](https://sre.google/sre-book/addressing-cascading-failures/),
+  inspected 2026-10-21: local-versus-broad overload, retry amplification and recovery
+  testing. The source's examples are contextual, not measured results.
 
 **Open research:** no organization-specific runtime/operational requirements, real data-set or distributed traces, independent architecture review, deployment experiment, SLO/cost budget or results are available for the scenarios. All numerical/comparative recommendations remain conditional and falsifiable. Completion of the manuscript chapter is not a completed architecture modernization project or 100% coverage of the ten-volume outline.
 

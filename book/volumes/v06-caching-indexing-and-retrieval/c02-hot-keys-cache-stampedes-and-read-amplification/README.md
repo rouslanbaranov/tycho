@@ -27,7 +27,8 @@ route_hints:
     - "system-design"
     - "edition-navigation"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre-cascading"
   claim_ids: []
   status: "unknown"
   notes: "Editorial synthesis of the linked accepted manuscript; exact source versions and nonclaims remain in its page-local evidence ledger."
@@ -37,7 +38,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -96,6 +97,10 @@ The following original citation rows, review limits and earlier topical routes a
 | [Redis EXPIRE](https://redis.io/docs/latest/commands/expire/) | Key expiry policies and clock/lifetime behavior | Automatic transactional coordination with source DB |
 | [Caffeine Refresh](https://github.com/ben-manes/caffeine/wiki/Refresh) | Refresh eligibility, async reload and old-value serving | Cross-node refresh serialization |
 | [Earlier Tycho combined cache study](../../../scaling/local-distributed-caching-and-invalidation.md) | Original version-scoped source research | Executed race/lock proof |
+
+- [SRE, *Cascading Failures*](https://sre.google/sre-book/addressing-cascading-failures/),
+  inspected 2026-10-21: cold-cache and source-overload interaction, including a full
+  restart of replicas. The source's examples are contextual, not universal thresholds.
 
 All race participants, diagrams, metrics and design results are synthetic. No cache service, load generator, source DB or reviewer was involved.
 

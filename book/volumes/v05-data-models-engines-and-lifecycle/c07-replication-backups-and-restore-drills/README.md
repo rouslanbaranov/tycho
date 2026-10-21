@@ -28,7 +28,8 @@ route_hints:
     - "system-design"
     - "edition-navigation"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre"
   claim_ids: []
   status: "unknown"
   notes: "Editorial synthesis of the linked accepted manuscript; exact source versions and nonclaims remain in its page-local evidence ledger."
@@ -38,7 +39,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -97,6 +98,10 @@ The following original citation rows, review limits and earlier topical routes a
 | [Continuous Archiving and PITR, §25.3](https://www.postgresql.org/docs/17/continuous-archiving.html) | Base backup + WAL recovery, timelines, caveats and backup chain constraints | Achieved RPO/RTO in a production setup |
 | [Log Shipping Standby, §26.2](https://www.postgresql.org/docs/17/warm-standby.html) | Replication, standby and archive behavior | Protection against all logical corruption and region failures |
 | [Tycho WAL/replication chapter](../c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md) | Canonical technical mechanism explanations | A verified restore exercise |
+
+- [SRE, *Data Integrity*](https://sre.google/sre-book/data-integrity/),
+  inspected 2026-10-21: delayed detection, out-of-band validation, retention and selective
+  recovery. The chapter's case studies are contextual; they do not establish a local drill.
 
 All names, failure chronologies, target examples and outcomes are original teaching proposals. No runtime, WAL archive, system configuration, benchmark, restore drill or expert review was exercised in this task. Edition metadata/volume assembly and full source-to-claim validation remain pending.
 

@@ -27,6 +27,8 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.http-semantics"
+    - "src.sre-overload"
+    - "src.sre-cascading"
   claim_ids: []
   status: "source-linked"
   notes: "Bounded question from tycho.page.cccbd188936543a2aaf904f4002236d8; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -36,7 +38,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -64,6 +66,47 @@ The [gRPC retry guide](https://grpc.io/docs/guides/retry/) distinguishes transpa
 - Prefer explicit outcome lookup for an ambiguous durable command, rather than treating every timeout as “nothing happened”.
 - Avoid retry amplification across proxy, API and downstream clients; designate where retries are owned and instrument actual attempt counts.
 - Reject the assumption that a cancelled response retracts committed state or emitted events.
+
+### Local overload versus broad overload
+
+An error response does not by itself justify a retry. The decision also depends on how much
+of the fleet is failing and on which layer observed the failure.
+
+- **A small overloaded subset.** If one backend or a small fraction of instances is
+  overloaded while other eligible instances have capacity, an immediate retry on another
+  instance can redistribute work. The operation must still be safe to repeat, the remaining
+  deadline must allow it, and the retry must consume the same budget.
+- **Broad overload.** If a large fraction of instances is overloaded, another attempt is
+  likely to meet the same condition. Return an explicit overload result and let the caller
+  decide. A backend should propagate a specific "overloaded; do not retry" signal rather
+  than a generic error that every layer retries.
+- **Retry at one layer.** Retry only at the layer immediately above the layer that rejected
+  the request. Lower layers should return a classified result, not independently retry work
+  that the caller has already judged non-retryable. This avoids a combinatorial retry
+  explosion across proxy, API, service and client layers.
+
+### Three retry budgets
+
+A per-request attempt cap bounds one logical operation. It does not bound the aggregate work
+created by many clients. Use complementary budgets:
+
+- **Per-request attempt cap.** Bounds attempts for one logical operation and consumes the
+  remaining deadline. It does not bound aggregate retry load.
+- **Per-client retry ratio.** Bounds retries relative to a client's recent original
+  requests. Sparse clients may lack enough history for a stable ratio; do not treat the
+  ratio as a guarantee or as a substitute for a deadline.
+- **Process- or service-wide retry budget.** Caps total retry work across clients and
+  operations. This is the one budget that directly protects a shared dependency from a
+  retry storm.
+
+The source's example thresholds are contextual. Use measured failure rates, deadlines and
+dependency capacity; record the chosen budgets and the observations that would change them.
+Count original attempts and retries separately, and measure retry amplification by layer.
+
+[Handling Overload](https://sre.google/sre-book/handling-overload/) and
+[Addressing Cascading Failures](https://sre.google/sre-book/addressing-cascading-failures/)
+describe the local-versus-broad distinction and complementary retry budgets. Their numeric
+thresholds are examples, not defaults.
 
 <!-- /tycho-question-source -->
 

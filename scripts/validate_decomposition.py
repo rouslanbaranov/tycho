@@ -5,6 +5,7 @@ from pathlib import Path
 from collections import Counter
 
 from assemble_edition import split,sha
+from content_revisions import authorized
 from decompose_chapters import extract_blocks,normalized
 from directory_paths import HistoricalView
 
@@ -49,7 +50,11 @@ def validate(root=ROOT):
             require(key in all_blocks,'missing-source-payload')
             target,payload=all_blocks[key]
             require(target==section['target'],'source-owner-mismatch')
-            require(sha(normalized(payload,target,routes))==section['normalized_sha256'],'altered-source-payload')
+            current_sha=sha(normalized(payload,target,routes))
+            require(current_sha==section['normalized_sha256']
+                    or authorized(root,'source_blocks',f'{original_id}:{section["index"]}',
+                                  section['normalized_sha256'],current_sha),
+                    'altered-source-payload')
     require(set(all_blocks)==expected,'unregistered-source-payload')
     for chapter in plan['chapters']:
         require(chapter['chapter_path'] in metadata,'missing-chapter-introduction')

@@ -143,7 +143,11 @@ def acquire(entry, *, timeout=20, opener=None):
     try:
         response = opener.open(request, timeout=timeout)
     except HTTPError as exc:
-        error_url = exc.geturl()
+        # Python 3.9's HTTPError.geturl() can raise KeyError when the error has
+        # no response body. HTTPError.filename still carries the request URL.
+        error_url = getattr(exc, "filename", None)
+        if not isinstance(error_url, str) or not error_url:
+            error_url = start_url
         require(public_https(error_url) and urlsplit(error_url).hostname in hosts,
                 'HTTP error came from unexpected redirect origin')
         if exc.code not in (401, 403, 404, 410, 429):

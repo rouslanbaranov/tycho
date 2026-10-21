@@ -24,7 +24,8 @@ route_hints:
     - "cache"
     - "acceptance"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre-cascading"
   claim_ids: []
   status: "unknown"
   notes: "Bounded question from tycho.page.33742c54f667446cbf57cb9f3696a533; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -34,7 +35,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -59,6 +60,29 @@ The effective cost of caching includes more than hit latency:
 
 Original synthetic arithmetic: if 900 of 1,000 eligible reads hit cache, 100 misses remain **only if** each miss results in one origin read with no parallel revalidation or retries. If those 100 misses happen simultaneously for the same expensive key, peak origin load may be unacceptable despite a 90% overall hit rate. This is a model, not a measured service.
 
+### Latency cache versus capacity cache
+
+A cache can serve two different contracts:
+
+- **Latency cache.** The origin can sustain the expected load with an empty cache. The cache
+  reduces latency and cost; losing it is a performance event.
+- **Capacity cache.** The origin cannot sustain the expected load without the cache. The
+  cache is a hard dependency; losing it is an overload event.
+
+A cache added for latency can become a capacity dependency if the origin is sized assuming
+hits. Record which contract the design intends and test it by emptying the cache at peak.
+
+Cold-start and broad-restart recovery should:
+
+1. Protect the source with admission and coalescing before the first fill.
+2. Warm the cache with a controlled ramp, not a full traffic step.
+3. State which user-visible result is degraded while the cache is cold.
+4. Measure source load, hit rate, queue age and error rate during recovery.
+5. Reclassify the cache if the source cannot survive the empty state.
+
+The SRE book's *Slow Startup and Cold Caching* section describes the latency/capacity
+distinction and the restart scenarios; its examples are contextual.
+
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.33742c54f667446cbf57cb9f3696a533:6 -->
 ## 6. Choose based on the user-visible contract
@@ -78,6 +102,8 @@ Proposed, **not executed** experiments:
 4. Kill the shared cache or restart every application replica; observe source pressure and correctness.
 5. Revoke access during an in-flight read and confirm policy-compliant results.
 6. Verify cache freshness under concurrent modification and multiple versions.
+7. Empty the cache at peak, classify it as a latency or capacity cache, and record whether
+   the source survives the cold state without violating the user contract.
 
 A cache is justified only if it preserves hard state/security invariants and improves the selected latency or cost objective at representative load.
 

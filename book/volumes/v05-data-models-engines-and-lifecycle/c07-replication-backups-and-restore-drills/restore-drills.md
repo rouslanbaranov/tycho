@@ -24,7 +24,8 @@ route_hints:
     - "restore"
     - "drills"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre"
   claim_ids: []
   status: "unknown"
   notes: "Bounded question from tycho.page.81efb7e6d72349768b6f202845cbe35e; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -34,7 +35,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -122,6 +123,40 @@ For each drill retain raw start/end timestamps, selected point, actual restored 
 - **Schema-breaking migration:** old code image rollback may not read newer persisted data; forward recovery may be necessary.
 
 A single "backup nightly" policy is therefore not enough for architecture selection. Recovery objective, data volume/change rate, tolerated loss, independent storage and team operating capacity are hard constraints.
+
+### Detection latency and retention
+
+Corruption is not always a single event. A bug can delete or corrupt a small fraction of
+records over days or weeks; the damage propagates through derived data and later writes.
+The recovery design should therefore state three windows:
+
+- **Detection window:** how long corruption can remain unnoticed. Out-of-band validation of
+  a bounded invariant, checksums or reconciliation can shorten it.
+- **Retention window:** how far back a usable backup or log chain exists. It must cover the
+  detection window plus the time needed to investigate, restore and reconcile.
+- **Repair window:** how long the restore and reconciliation take before normal service
+  resumes.
+
+A validator that is too strict rejects legitimate changes; one that is too narrow misses the
+corruption. Validate invariants whose loss is catastrophic for users, and measure validator
+cost and false positives. [SRE, *Data Integrity*](https://sre.google/sre-book/data-integrity/)
+describes the detection/retention trade-off; its case studies are contextual.
+
+### Selective restore
+
+A partial restore is not a smaller full restore. If one tenant, object class or time range is
+affected, restoring the whole database can discard legitimate later writes from unaffected
+scopes. A selective recovery protocol should:
+
+1. Identify the affected scope and the evidence that bounds it.
+2. Restore the selected data into an isolated target, not over the live authority.
+3. Merge or replay it under an authorized repair protocol, with idempotent identities.
+4. Verify referential integrity, authorization ownership and external effects.
+5. Record what could not be restored and keep the affected workflow paused if necessary.
+
+A selective restore can also reintroduce data that was legitimately deleted later, or omit a
+dependent record outside the selected scope. The merge rule and its authorization are part of
+the recovery contract, not an operational afterthought.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.81efb7e6d72349768b6f202845cbe35e:7 -->
