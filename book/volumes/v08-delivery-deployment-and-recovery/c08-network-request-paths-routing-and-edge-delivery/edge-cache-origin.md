@@ -68,6 +68,10 @@
 > **Pattern atlas:**
 > [CDN / Edge Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cdn-edge-caching) — decision conditions and contraindications.
 
+
+> **Pattern atlas:**
+> [Static Content Hosting](../../v11-pattern-atlas/c09-scalability/README.md#static-content-hosting) — decision conditions and contraindications.
+
 ## Cacheability is a content and authority contract
 
 An edge can reduce distance and origin work, but only for responses it may reuse. Classify immutable public assets, mutable public representations and private caller-dependent content separately. The cache key, freshness policy and authorization boundary must agree.

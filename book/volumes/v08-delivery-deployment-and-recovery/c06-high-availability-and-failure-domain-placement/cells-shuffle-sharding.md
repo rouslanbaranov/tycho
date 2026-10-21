@@ -67,6 +67,12 @@
 
 **Owning question:** Which state, routing and rollout boundaries actually contain a tenant-triggered failure?
 
+
+> **Pattern atlas:**
+> [Cell-Based Architecture](../../v11-pattern-atlas/c09-scalability/README.md#cell-based-architecture) — decision conditions and contraindications.
+> [Shuffle Sharding](../../v11-pattern-atlas/c09-scalability/README.md#shuffle-sharding) — decision conditions and contraindications.
+> [Deployment Stamps](../../v11-pattern-atlas/c09-scalability/README.md#deployment-stamps) — decision conditions and contraindications.
+
 ## A cell is a boundary in the dependency graph
 
 A cell serves a bounded population with its own capacity and failure domain. Merely naming a group of stateless workers a cell does not isolate a shared database, queue, cache or configuration publisher. Trace every dependency that a tenant can exhaust, corrupt or stall, and state which failures cross the boundary.

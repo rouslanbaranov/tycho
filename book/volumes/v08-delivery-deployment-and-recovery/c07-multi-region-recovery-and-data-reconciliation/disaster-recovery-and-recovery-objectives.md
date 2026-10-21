@@ -58,6 +58,10 @@ content_verified_at: null
 > **Tycho V08/C07 book manuscript**, 2026-10-19. Versioned PostgreSQL 17 PITR and public Well-Architected recovery-strategy guidance were reviewed. The failure chronology, tables and proposed drills are original fictional material. No failover, region loss, backup restore, replication test or independent human review was executed. Earlier [regional/DR research](../../../deployment/multi-region-disaster-recovery-contracts.md) is preserved.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Geode](../../v11-pattern-atlas/c09-scalability/README.md#geode) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765:0 -->
 ## Purpose and mission
 

@@ -205,10 +205,16 @@ They cover leader election, consensus, locks, leases, fencing tokens, quorum,
 causal ordering, session consistency and durable workflow orchestration. Registry
 coverage is `partial` for all 9; no `sufficient` state is claimed.
 
+All 10 V11/C09 entries also have self-checked cards with bounded owner sections.
+They cover load balancing, horizontal/vertical scaling, autoscaling, cell-based
+architecture, shuffle sharding, deployment stamps, Geode, static content hosting
+and tenant resource isolation. Registry coverage is `partial` for all 10; no
+`sufficient` state is claimed.
+
 The card batches are recorded in `edition/patterns/card-batches.v1.json` and checked
 by `scripts/validate_pattern_cards.py`, including adversarial tests. The validator
 now resolves each technical-owner link to the declared path and anchor. The other
-36 entries remain without Phase 3 cards; 35 are read and one is blocked.
+26 entries remain without Phase 3 cards; 25 are read and one is blocked.
 
 ## Family batches
 

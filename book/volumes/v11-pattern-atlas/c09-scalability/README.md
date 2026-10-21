@@ -11,7 +11,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "operations"
-summary: "Phase 1 inventory of 10 catalog entries with candidate areas; no technical claim."
+summary: "All 10 C09 cards with bounded owner links; decision coverage partial."
 route_hints:
   questions:
     - "Which scaling patterns fit the bottleneck and failure domain?"
@@ -23,16 +23,23 @@ route_hints:
     - "tycho.chapter.bee261b76181706235dd8fa7ccde01a9"
     - "tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0"
   excludes:
-    - "No source reading, card authoring or technical sufficiency is asserted."
+    - "Bounded owner links; no sufficient coverage or independent review."
   keywords:
     - "pattern atlas"
     - "scalability and load distribution"
     - "decision layer"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre-frontend-enrichment"
+    - "src.k8s-hpa"
+    - "src.kubernetes"
+    - "src.keda"
+    - "src.microsoft-cloud-patterns"
+    - "src.cortex-shuffle-sharding"
+    - "src.microsoft-multitenant"
   claim_ids: []
-  status: "unknown"
-  notes: "Phase 1 entry inventory; no source or technical claim."
+  status: "source-linked"
+  notes: "All 10 cards cite read units; owner links are bounded sections, not dedicated pattern pages."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-21"
@@ -40,7 +47,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-21"
 updated_at: "2026-10-21"
-source_inspection_date: null
+source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
 # V11/C09 — Scalability and load distribution
@@ -49,139 +56,271 @@ content_verified_at: null
 
 ## Purpose and mission
 
-This chapter is the atlas entry point for **Scalability and load distribution**. It owns the
-conditional decision route for 10 catalog entries, not the deep mechanism explanations. Read the
-candidate technical owner before applying a mechanism claim.
+This chapter is the atlas entry point for **Scalability and load distribution**. It
+owns the conditional decision route for 10 catalog entries, not the deep mechanism
+explanations. Read the exact owner section before applying a mechanism claim.
+
+All 10 entries have a self-checked card. Owner sections are bounded: a scaling or
+placement page may own the bottleneck/failure contract without owning every pattern.
 
 ## Pages and reasoning route
 
-Page count is content-dependent. Phase 1 uses this landing as the entry inventory: all entries
-are visible, but full decision cards, source ledgers and any page split follow in later phases.
-A chapter may need one page or many; there is no fixed two- or three-page quota.
-
-Start with the entry inventory below, then follow the candidate area and the candidate page when
-one exists. A candidate is a reading hypothesis, not a confirmed canonical owner.
+Page count is content-dependent. This chapter currently uses one landing page for all
+entries; a later split is an editorial change, not a plan failure. Start with the card,
+check its conditions and contraindications, then read the exact owner section.
 
 ## Entry inventory
 
-Each level-three heading is a stable atlas anchor. Candidate areas and pages are not audited. No
-source was read for an entry in Phase 1.
+Each level-three heading is a stable atlas anchor. Owner links are bounded sections;
+none claims sufficient technical or decision coverage.
 
 ### Load Balancing
 
-**Catalog problem:** Select healthy backends according to load and locality contracts
+**Identity.** Load Balancing; family Scalability and load distribution; kind scalability-pattern; priority core.
 
-**Candidate area:** V08/C08 (provisional; not audited).
+**Decision question.** Should requests be distributed across equivalent backends by a resolver or proxy?
 
-**Candidate page:** Discovery, load balancing and backend selection
+**Good-fit conditions.** Multiple eligible backends exist; health/selection signals are available; the client or proxy can retry safely.
 
-**Candidate confidence:** strong; candidate only, not audited.
+**Hard contraindications.** Reject when one backend can serve the load, when backends are not equivalent, or when selection would amplify a hot spot.
 
-**State:** not-yet-assessed; no source inspected.
+**Competing alternative.** Client-side selection or a single backend. Reverse the choice when balancing complexity and stale membership exceed availability benefit.
+
+**Failure and recovery.** Stale membership and fast-error attraction are common; verify selection in the owner section.
+
+**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#discovery-load-balancing-and-backend-selection) — load balancing is bounded, not a product-specific algorithm survey.
+
+**Sources.** [src.sre-frontend-enrichment](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-sre-frontend.2026-10-21: sections "Load Balancing at the Frontend", "DNS", "VIP", "Anycast". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Horizontal Scaling; Autoscaling; Service Discovery; Read Replicas.
 
 ### Horizontal Scaling
 
-**Catalog problem:** Add replicas while accounting for shared bottlenecks
+**Identity.** Horizontal Scaling; family Scalability and load distribution; kind scalability-pattern; priority core.
 
-**Candidate area:** V07/C06 (provisional; not audited).
+**Decision question.** Should capacity be added by running more instances rather than a larger instance?
 
-**Candidate page:** Horizontal and vertical scaling: autoscaling lag, resource ceilings and
-stability
+**Good-fit conditions.** The workload can partition across instances; shared state is removable; startup and coordination costs are bounded.
 
-**Candidate confidence:** medium; candidate only, not audited.
+**Hard contraindications.** Reject when the bottleneck is a single shared resource, when instances cannot be stateless, or when coordination cost grows faster than capacity.
 
-**State:** not-yet-assessed; no source inspected.
+**Competing alternative.** Vertical scaling or a larger partition. Reverse the choice when shared-state contention dominates added instances.
+
+**Failure and recovery.** Coordination and cold-start lag are common; verify ceiling in the owner section.
+
+**Technical owner.** [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#horizontal-and-vertical-scaling-autoscaling-lag-resource-ceilings-and-stability) — scaling trade-offs are bounded, not a capacity-planning benchmark.
+
+**Sources.** [src.k8s-hpa](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-k8s-hpa.2026-10-21: sections "Horizontal Pod Autoscaling", "How does it work", "Metrics". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Vertical Scaling; Autoscaling; Load Balancing; Sharding.
 
 ### Vertical Scaling
 
-**Catalog problem:** Add resources to individual instances within practical limits
+**Identity.** Vertical Scaling; family Scalability and load distribution; kind scalability-pattern; priority core.
 
-**Candidate area:** V07/C06 (provisional; not audited).
+**Decision question.** Should capacity be added by increasing CPU/memory/IO on one instance?
 
-**Candidate page:** Horizontal and vertical scaling: autoscaling lag, resource ceilings and
-stability
+**Good-fit conditions.** The workload fits one node; the provider allows a larger size; restart/downtime is acceptable.
 
-**Candidate confidence:** strong; candidate only, not audited.
+**Hard contraindications.** Reject when a single-node ceiling is near, when failover requires multiple nodes, or when cost grows superlinearly.
 
-**State:** not-yet-assessed; no source inspected.
+**Competing alternative.** Horizontal scaling or partitioning. Reverse the choice when the larger node no longer meets availability/cost constraints.
+
+**Failure and recovery.** Ceiling and restart risk are common; verify limits in the owner section.
+
+**Technical owner.** [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#horizontal-and-vertical-scaling-autoscaling-lag-resource-ceilings-and-stability) — scaling trade-offs are bounded, not a capacity-planning benchmark.
+
+**Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-k8s-resources.2026-10-21: sections "Resource Management for Pods and Containers", "Requests and limits". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Horizontal Scaling; Autoscaling; Capacity Planning; Contention.
 
 ### Autoscaling
 
-**Catalog problem:** Adjust capacity using signals, lag, stability and cooldown controls
+**Identity.** Autoscaling; family Scalability and load distribution; kind scalability-pattern; priority core.
 
-**Candidate area:** V07/C06 (provisional; not audited).
+**Decision question.** Should capacity be adjusted automatically from observed or predicted demand?
 
-**Candidate page:** Horizontal and vertical scaling: autoscaling lag, resource ceilings and
-stability
+**Good-fit conditions.** Metrics reflect useful demand; scale-up/down delays are acceptable; stabilization prevents oscillation.
 
-**Candidate confidence:** strong; candidate only, not audited.
+**Hard contraindications.** Reject when demand is stable, when startup lag exceeds the burst, or when the metric can be gamed.
 
-**State:** not-yet-assessed; no source inspected.
+**Competing alternative.** Static capacity or scheduled scaling. Reverse the choice when autoscaling churn and cold starts dominate cost.
+
+**Failure and recovery.** Lag and oscillation are common; verify stability in the owner section.
+
+**Technical owner.** [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#horizontal-and-vertical-scaling-autoscaling-lag-resource-ceilings-and-stability) — scaling trade-offs are bounded, not a capacity-planning benchmark.
+
+**Sources.** [src.keda](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-keda.2026-10-21: sections "Getting Started", "Scalers", "ScaledObject". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Horizontal Scaling; Vertical Scaling; Load Balancing; Capacity Planning.
 
 ### Cell-Based Architecture
 
-**Catalog problem:** Partition service topology into fault-contained cells
+**Identity.** Cell-Based Architecture; family Scalability and load distribution; kind scalability-pattern; priority advanced.
 
-**Candidate area:** V08/C06 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should the system be partitioned into cells with bounded blast radius and independent operation?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Workloads can be routed to a cell; a cell is a dependency boundary; cell failover/migration is owned.
+
+**Hard contraindications.** Reject when a single global dependency defeats isolation, when cell routing is unowned, or when the cost of duplicate cells is prohibitive.
+
+**Competing alternative.** Single shared deployment or deployment stamps without isolation. Reverse the choice when cell duplication and routing complexity exceed blast-radius benefit.
+
+**Failure and recovery.** Cell routing and cross-cell dependencies are common; verify boundaries in the owner section.
+
+**Technical owner.** [Cells and shuffle sharding](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#cells-and-shuffle-sharding) — cell placement is bounded, not a universal stamp deployment recipe.
+
+**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-deployment-stamps.2026-10-21: sections "Deployment Stamps pattern", "Context and problem", "Solution". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Deployment Stamps; Shuffle Sharding; Tenant Isolation; Failover.
 
 ### Shuffle Sharding
 
-**Catalog problem:** Allocate overlapping subsets of infrastructure per tenant/customer
+**Identity.** Shuffle Sharding; family Scalability and load distribution; kind scalability-pattern; priority advanced.
 
-**Candidate area:** V08/C06 (provisional; not audited).
+**Decision question.** Should each tenant be assigned a random subset of shards to reduce overlapping blast radius?
 
-**Candidate page:** Cells and shuffle sharding
+**Good-fit conditions.** Many tenants exist; shard assignment can be consistent; enough shards exist to reduce overlap.
 
-**Candidate confidence:** strong; candidate only, not audited.
+**Hard contraindications.** Reject when there are too few shards, when assignment cannot be stable, or when the operational cost of many assignments is high.
 
-**State:** not-yet-assessed; no source inspected.
+**Competing alternative.** Cell-based partitioning or dedicated shards. Reverse the choice when overlap reduction does not justify assignment complexity.
+
+**Failure and recovery.** Hot tenants and uneven overlap are common; verify assignment in the owner section.
+
+**Technical owner.** [Cells and shuffle shards solve different placement questions](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#cells-and-shuffle-shards-solve-different-placement-questions) — shuffle sharding is bounded, not a hashing implementation guide.
+
+**Sources.** [src.cortex-shuffle-sharding](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-cortex-shuffle.2026-10-21: sections "Shuffle Sharding", "How it works", "Implementation". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Cell-Based Architecture; Sharding; Tenant Isolation; Load Balancing.
 
 ### Deployment Stamps
 
-**Catalog problem:** Reproduce an independently managed deployment unit
+**Identity.** Deployment Stamps; family Scalability and load distribution; kind scalability-pattern; priority advanced.
 
-**Candidate area:** V08/C07 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should independent deployment units be replicated as stamps for scale, isolation or locality?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Each stamp can be independently operated; routing/state ownership is explicit; duplication cost is acceptable.
+
+**Hard contraindications.** Reject when one deployment suffices, when stamps would share a hidden global dependency, or when routing/state duplication is unowned.
+
+**Competing alternative.** Cell-based architecture or one shared deployment. Reverse the choice when stamp operations and duplication exceed isolation benefit.
+
+**Failure and recovery.** Configuration drift and state duplication are common; verify boundaries in the owner section.
+
+**Technical owner.** [A cell is a boundary in the dependency graph](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#a-cell-is-a-boundary-in-the-dependency-graph) — deployment stamps are bounded to cell boundaries.
+
+**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-deployment-stamps.2026-10-21: sections "Deployment Stamps pattern", "Context and problem", "Solution". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Cell-Based Architecture; Geode; Tenant Isolation; Multi-Region.
 
 ### Geode
 
-**Catalog problem:** Serve global users from regionally situated cooperating deployments
+**Identity.** Geode; family Scalability and load distribution; kind scalability-pattern; priority advanced.
 
-**Candidate area:** V08/C07 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should identical nodes be deployed across regions behind a global routing layer?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Latency/locality matters; data replication and failover are owned; global routing can direct clients.
+
+**Hard contraindications.** Reject when one region meets latency/availability, when data replication cannot be reconciled, or when global routing adds a single point.
+
+**Competing alternative.** Cell-based single-region deployment or active-passive recovery. Reverse the choice when cross-region consistency and cost exceed locality benefit.
+
+**Failure and recovery.** Replication lag and regional failover are common; verify recovery in the owner section.
+
+**Technical owner.** [Disaster recovery: measured RTO/RPO, fencing and state reconciliation](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md#disaster-recovery-measured-rto-rpo-fencing-and-state-reconciliation) — geode is bounded to regional recovery; not a product template.
+
+**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-geode.2026-10-21: sections "Geode pattern", "Context and problem", "Solution". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Deployment Stamps; Cell-Based Architecture; Multi-Region Recovery; CDN.
 
 ### Static Content Hosting
 
-**Catalog problem:** Offload immutable/static content from application execution
+**Identity.** Static Content Hosting; family Scalability and load distribution; kind scalability-pattern; priority core.
 
-**Candidate area:** V08/C08 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should static content be served from a dedicated store or edge rather than the application origin?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Content is static/versioned; cacheability and purge are controlled; origin protection is owned.
+
+**Hard contraindications.** Reject when content is personalized/uncacheable, when versioning/purge cannot meet freshness, or when edge configuration is unowned.
+
+**Competing alternative.** Serve from origin or a cache with explicit TTL. Reverse the choice when edge complexity exceeds origin offload benefit.
+
+**Failure and recovery.** Stale content and purge failures are common; verify cacheability in the owner section.
+
+**Technical owner.** [Edge caching, private content and origin recovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#edge-caching-private-content-and-origin-recovery) — static hosting is bounded to edge/origin behavior.
+
+**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-ms-static.2026-10-21: sections "Static Content Hosting pattern", "Context and problem", "Solution". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** CDN / Edge Caching; Cache Invalidation; TTL-Based Expiration; Geode.
 
 ### Tenant-Based Resource Isolation
 
-**Catalog problem:** Enforce fair capacity and prevent noisy-neighbor failures
+**Identity.** Tenant-Based Resource Isolation; family Scalability and load distribution; kind scalability-pattern; priority core.
 
-**Candidate area:** V09/C05 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should tenants receive isolated compute/data/networking quotas rather than share one unbounded pool?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Tenant identity is known; noisy-neighbor risk is material; quotas/isolation can be enforced and observed.
+
+**Hard contraindications.** Reject when one tenant exists, when isolation would strand most capacity, or when quotas cannot be enforced at the resource.
+
+**Competing alternative.** Shared pool with per-tenant rate limits. Reverse the choice when isolation cost exceeds noisy-neighbor risk.
+
+**Failure and recovery.** Quota bypass and cross-tenant leakage are common; verify isolation in the owner section.
+
+**Technical owner.** [Threat boundaries, identity, authorization and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#threat-boundaries-identity-authorization-and-service-isolation) — tenant isolation is bounded, not a full control catalogue.
+
+**Sources.** [src.microsoft-multitenant](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-ms-multitenant.2026-10-21: sections "Architectural approaches", "Tenant isolation", "Deployment models". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Cell-Based Architecture; Rate Limiting; Bulkhead; Multitenant Isolation.
 
 ## Chapter result and counterexample
 
-This chapter inventories 10 catalog entries and routes each to a provisional candidate area; it
-does not establish technical sufficiency.
+Ten cards establish a conditional decision route. Owner sections are bounded; none
+establishes technical sufficiency.
 
-A pattern name, a candidate link or a passing structural check is not evidence that the pattern
-fits a workload.
+Counterexample: adding replicas to a workload with one shared writer is not evidence
+for the horizontal-scaling card's conditions.
 
 ## Navigation and prerequisites
 
@@ -190,12 +329,13 @@ fits a workload.
 - Next: [V11/C10](../c10-deployment-modernization/README.md).
 - Prerequisite: V10/C03 — pattern applicability and contraindications.
 - Registry: [pattern registry](../../../../edition/patterns/registry.v1.json).
+- Card batch: [card batches](../../../../edition/patterns/card-batches.v1.json).
 - Coverage map: [candidate coverage](../../../../edition/patterns/coverage-map.v1.json).
 
 ## Evidence and known limits
 
-- No external source was read for this chapter in Phase 1.
-- Candidate area and page entries are provisional; no page-level audit was performed.
-- All entries remain not-yet-assessed; no technical or decision coverage is claimed.
-- The chapter is an inventory and route, not a full pattern card or a replacement for the
-  technical owner.
+- All 10 cards cite read ledger units; owner links and backlinks are self-checked.
+- Owner links are bounded sections, not dedicated pattern pages.
+- No entry claims sufficient technical or decision coverage.
+- No independent editorial review, benchmark, production observation or runtime test
+  is asserted.
