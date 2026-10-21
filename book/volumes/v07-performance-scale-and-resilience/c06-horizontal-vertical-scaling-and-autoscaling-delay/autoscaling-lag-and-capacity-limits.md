@@ -50,7 +50,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -58,7 +58,12 @@ content_verified_at: null
 
 # Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability
 
-> **Original System Design chapter draft**, intended V07/C06. Public specifications reviewed 2026-10-19; synthetic examples only. No autoscaler, Kubernetes cluster, cloud instance, load generator, production telemetry or independent review was used to validate the proposed designs.
+> **Original System Design chapter, V07/C06.** Public specifications reviewed 2026-10-19; synthetic
+> examples only. No autoscaler, Kubernetes cluster, cloud instance, load generator, production
+> telemetry or independent review was used to validate the proposed designs.
+>
+> The content_review field retains the decomposition-era draft state; no independent
+> acceptance is asserted.
 
 <!-- /tycho-question-source -->
 

@@ -47,7 +47,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -55,7 +55,14 @@ content_verified_at: null
 
 # Disaster recovery: measured RTO, RPO, fencing and state reconciliation
 
-> **Tycho V08/C07 book manuscript**, 2026-10-19. Versioned PostgreSQL 17 PITR and public Well-Architected recovery-strategy guidance were reviewed. The failure chronology, tables and proposed drills are original fictional material. No failover, region loss, backup restore, replication test or independent human review was executed. Earlier [regional/DR research](../../../deployment/multi-region-disaster-recovery-contracts.md) is preserved.
+> **Tycho V08/C07 book manuscript**, 2026-10-19. Versioned PostgreSQL 17 PITR and public
+> Well-Architected recovery-strategy guidance were reviewed. The failure chronology, tables and
+> drills are original fictional material. No failover, region loss, backup restore, replication test
+> or independent human review was executed. Earlier [regional/DR
+> research](../../../deployment/multi-region-disaster-recovery-contracts.md) is preserved.
+>
+> The content_review field retains the decomposition-era draft state; no independent
+> acceptance is asserted.
 
 <!-- /tycho-question-source -->
 

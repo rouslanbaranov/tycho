@@ -45,7 +45,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -54,6 +54,9 @@ content_verified_at: null
 # User-visible service indicators, objectives and error-budget decisions
 
 > **Tycho chapter-owner draft V09/C01, 2026-10-19.** Public Google SRE Workbook, Prometheus and OpenTelemetry documentation inform the explanation. The workflow, numbers and examples are original fictional teaching material. No service SLO, alert rule, monitoring deployment, traffic trace, data sample or independent technical acceptance has been observed or executed.
+>
+> The content_review field retains the decomposition-era draft state; no independent
+> acceptance is asserted.
 
 <!-- /tycho-question-source -->
 

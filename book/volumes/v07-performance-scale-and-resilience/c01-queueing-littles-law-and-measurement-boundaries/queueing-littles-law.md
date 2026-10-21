@@ -42,7 +42,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-18"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -50,7 +50,13 @@ content_verified_at: null
 
 # Queueing, Little's Law and workload measurement boundaries
 
-> **Tycho technical chapter — first evidence-backed pilot**, issue [#38](https://github.com/rouslanbaranov/tycho/issues/38), proposed volume V07/C01. Research/read date: **2026-10-18**. Status: independently public-source-grounded draft, self-reviewed mechanically; **not** human-reviewed, a performance benchmark, production deployment or a capacity estimate.
+> **Tycho technical chapter — first evidence-backed pilot**, issue
+> [#38](https://github.com/rouslanbaranov/tycho/issues/38), volume V07/C01. Research/read date:
+> **2026-10-18**. Status: independently public-source-grounded draft, self-reviewed mechanically;
+> **not** human-reviewed, a performance benchmark, production deployment or a capacity estimate.
+>
+> The content_review field retains the decomposition-era draft state; no independent
+> acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b:0 -->

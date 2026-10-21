@@ -46,7 +46,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -54,7 +54,15 @@ content_verified_at: null
 
 # Layered, hexagonal and ports-and-adapters architecture
 
-> **Tycho book manuscript — proposed V02/C01.** Prepared 2026-10-19 from independent public architecture references. All case studies, diagrams and proposed tests are original. This is not a representation of a deployed system; no module-boundary checker, integration fixture, production trace or editorial peer review was executed. The combined earlier [architecture-styles research](../../../application/architecture-styles-and-module-boundaries.md) remains available until source/claim reconciliation.
+> **Tycho book manuscript — V02/C01.** Prepared 2026-10-19 from independent public architecture
+> references. All case studies, diagrams and proposed tests are original. This is not a
+> representation of a deployed system; no module-boundary checker, integration fixture, production
+> trace or editorial peer review was executed. The combined earlier [architecture-styles
+> research](../../../application/architecture-styles-and-module-boundaries.md) remains available
+> until source/claim reconciliation.
+>
+> The content_review field retains the decomposition-era draft state; no independent
+> acceptance is asserted.
 
 <!-- /tycho-question-source -->
 

@@ -45,7 +45,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -54,6 +54,9 @@ content_verified_at: null
 # Anti-corruption adapters: semantic translation and safe coexistence
 
 > **Tycho book manuscript V02/C06, 2026-10-19.** Independently reviewed public pattern guidance, original synthetic examples and diagrams. No actual legacy source, internal architecture, integration test, consumer migration or independent design review was used.
+>
+> The content_review field retains the decomposition-era draft state; no independent
+> acceptance is asserted.
 
 <!-- /tycho-question-source -->
 
