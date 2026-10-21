@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-21. Entries: 263.
+Inventory date: 2026-10-21. Entries: 268.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -373,3 +373,18 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.cell-boundaries / core | [Cell-based architecture fault isolation](https://docs.aws.amazon.com/wellarchitected/latest/reducing-scope-of-impact-with-cell-based-architecture/what-is-a-cell-based-architecture.html) — AWS Well-Architected documentation | Independent bounded cells, routing and fault-containment scope. | admitted-for-research / public-web-or-author-download |
 | src.fdb-simulation / core | [Simulation and Testing](https://github.com/apple/foundationdb/blob/f314e81f8ee1d2eeff4a35d4d658c47287f08e89/documentation/sphinx/source/testing.rst) — FoundationDB maintainers | Documentation Correctness and Performance and Simulation sections; no simulator implementation read or executed. | admitted-for-research / public-web-or-author-download |
 | src.shuffle-shard-isolation / core | [Shuffle sharding fault isolation](https://aws.amazon.com/blogs/architecture/shuffle-sharding-massive-and-magical-fault-isolation/) — AWS Architecture Blog | Tenant subsets and failure overlap; published explanation, not local isolation measurement. | admitted-for-research / public-web-or-author-download |
+
+## Software Delivery
+
+| ID / priority | Source | Planned use | Admission / access |
+|---|---|---|---|
+| src.fowler-feature-toggles / core | [Feature Toggles (aka Feature Flags)](https://martinfowler.com/articles/feature-toggles.html) — Martin Fowler | Primary article for toggle categories, lifecycle and release decoupling. | admitted-for-research / public-web-or-author-download |
+| src.fowler-branch / core | [Branch By Abstraction](https://martinfowler.com/bliki/BranchByAbstraction.html) — Martin Fowler | Primary article for mainline incremental replacement through abstraction seams. | admitted-for-research / public-web-or-author-download |
+| src.ibm-immutable-infrastructure / supporting | [What is Immutable Infrastructure?](https://www.ibm.com/think/topics/immutable-infrastructure) — IBM | Public overview of immutable infrastructure replacement and state boundaries. | admitted-for-research / public-web-or-author-download |
+
+## Scalability
+
+| ID / priority | Source | Planned use | Admission / access |
+|---|---|---|---|
+| src.cortex-shuffle-sharding / supporting | [Shuffle Sharding](https://cortexmetrics.io/docs/guides/shuffle-sharding/) — Cortex | Public explanation of shuffle-sharding allocation and blast-radius reduction. | admitted-for-research / public-web-or-author-download |
+| src.microsoft-multitenant / supporting | [Architectural Approaches for a Multitenant Solution](https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/approaches/overview) — Microsoft Learn | Public guidance for tenant isolation across compute, data, networking and identity. | admitted-for-research / public-web-or-author-download |
