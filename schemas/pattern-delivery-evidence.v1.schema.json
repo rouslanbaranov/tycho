@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.dev/schemas/pattern-delivery-evidence.v1.schema.json",
+  "title": "Tycho Phase 5 delivery evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "source_commit",
+    "generated_at",
+    "scope",
+    "summary",
+    "checks",
+    "dod",
+    "open_gaps",
+    "limits"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "status": {
+      "enum": [
+        "delivery-evidence-recorded",
+        "reviewed"
+      ]
+    },
+    "source_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "generated_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "volumes",
+        "chapters",
+        "pages",
+        "entries",
+        "cards",
+        "owner_linked",
+        "blocked_entries",
+        "routes",
+        "unresolved_related",
+        "retrieval_questions",
+        "ledger_records",
+        "sources",
+        "partial_technical",
+        "partial_decision",
+        "sufficient_technical",
+        "sufficient_decision",
+        "independent_reviews"
+      ],
+      "properties": {
+        "volumes": {
+          "const": 11
+        },
+        "chapters": {
+          "const": 82
+        },
+        "pages": {
+          "const": 419
+        },
+        "entries": {
+          "const": 145
+        },
+        "cards": {
+          "const": 144
+        },
+        "owner_linked": {
+          "const": 144
+        },
+        "blocked_entries": {
+          "const": 1
+        },
+        "routes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unresolved_related": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retrieval_questions": {
+          "const": 144
+        },
+        "ledger_records": {
+          "const": 115
+        },
+        "sources": {
+          "const": 268
+        },
+        "partial_technical": {
+          "const": 144
+        },
+        "partial_decision": {
+          "const": 144
+        },
+        "sufficient_technical": {
+          "const": 0
+        },
+        "sufficient_decision": {
+          "const": 0
+        },
+        "independent_reviews": {
+          "const": 0
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "$ref": "#/$defs/check"
+      }
+    },
+    "dod": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "$ref": "#/$defs/dod"
+      }
+    },
+    "open_gaps": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "$ref": "#/$defs/gap"
+      }
+    },
+    "limits": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "status",
+        "evidence"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "pass",
+            "not-run",
+            "fail"
+          ]
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "dod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "evidence"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "met",
+            "partial",
+            "not-met",
+            "blocked"
+          ]
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "count",
+        "action"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
