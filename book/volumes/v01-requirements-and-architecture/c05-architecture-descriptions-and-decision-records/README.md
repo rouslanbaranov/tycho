@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -96,11 +96,13 @@ The following original citation rows, review limits and earlier topical routes a
 | [§7 Deployment View](https://docs.arc42.org/section-7/) | Software mapping to physical/runtime infrastructure | A running, validated deployment |
 | [§9 Architecture Decisions](https://docs.arc42.org/section-9/) | Context, rationale, rejected alternatives and decision lifecycle | Approval of ADR-SYN-08 |
 
-Every component, failure path, ID and table in the fictional case is original teaching material. No real system, diagram export, experiment, source code, stakeholder acceptance or independent editorial approval was examined. This chapter needs integration into final volume/page structure.
+Every component, failure path, ID and table in the fictional case is original teaching material. No real system, diagram export, experiment, source code, stakeholder acceptance or independent editorial approval was examined. This chapter is canonical in V01; its proposal-era placement is archived.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.b42e3ffc4a924b7089d261d0a3dc33b0:9 -->
-## Navigation
+### Archived proposal-era navigation
 
-Proposed owner **V01/C05** in [the 69-chapter outline](../../../PROPOSED-STRUCTURE.md); current [application/foundations landing](../../../application/README.md). Read first [system boundaries](../c01-problem-framing/problem-framing-and-system-boundaries.md), then [quality drivers](../c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md), [modular boundaries](../../../application/architecture-styles-and-module-boundaries.md), [architectural alternatives and ADRs](../../v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md).
+This retained route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not repeated.
 <!-- /tycho-question-source -->
+

@@ -34,7 +34,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -180,7 +180,7 @@ Cryptographic erasure needs proof that all usable key copies and relevant plaint
 
 Proposed acceptance: retire D, hold one consumer offline, restore a pre-retirement backup in isolation, replay older events, and require no forbidden read through UI, direct object access, cache, search or export. No deletion or restore exercise was executed.
 
-Selected evidence inspected 2026-10-20: [Data deletion](https://docs.cloud.google.com/docs/security/deletion) for staged active/backup deletion; all revision numbers and the retirement protocol are original synthetic reasoning. Exact physical-removal guarantees remain provider-specific and require separately reviewed evidence.
+Selected evidence inspected 2026-10-20: [Data deletion](https://docs.cloud.google.com/docs/security/deletion) for staged active/backup deletion; all revision numbers and the retirement protocol are original synthetic reasoning. Exact physical-removal guarantees remain provider-specific and require separately reviewed evidence. The frontmatter evidence_scope is inherited from the decomposition baseline and records no source-specific inspection; this paragraph is the page-level provenance.
 
 ## Navigation, prerequisites and source scope
 

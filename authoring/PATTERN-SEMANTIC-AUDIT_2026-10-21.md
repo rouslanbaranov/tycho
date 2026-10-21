@@ -62,12 +62,12 @@ Severity:
 | Decision pages | 6 |
 | Navigation pages | 97 |
 | Atlas pages | 12 |
-| Sound | 283 |
+| Sound | 293 |
 | Sound with bounded findings | 93 |
-| Needs remediation | 42 |
+| Needs remediation | 32 |
 | Blocked | 1 |
 | Pages with findings | 141 |
-| Findings | 161 (118 low, 43 medium, 0 high) |
+| Findings | 148 (115 low, 33 medium, 0 high) |
 
 The blocked page is V11/C06, where Polyglot Persistence remains uncarded because no
 technical owner exists. Five gates remain open: owner acceptance, the blocked Polyglot
@@ -85,13 +85,13 @@ The owner separately confirmed that human review passed; see
 
 ## Finding themes
 
-- 80 status findings are mostly retained historical or "proposed" wording in chapter
+- 73 status findings are mostly retained historical or "proposed" wording in chapter
   source ledgers and older navigation pages that no longer matches the current tree.
-- 29 navigation findings identify case or supporting pages with no internal route to
+- 24 navigation findings identify case or supporting pages with no internal route to
   their parent, a decision guide or a source-read record.
 - 16 missing-item findings include pages that promise an original walkthrough or
   transfer limits that the page does not contain.
-- 13 contradictory findings include duplicate or mutually inconsistent sections and
+- 12 contradictory findings include duplicate or mutually inconsistent sections and
   naming or column mismatches in worked examples.
 - 11 unsupported findings identify page claims without on-page source linkage.
 - 11 duplicate findings restate the same case or claims in two sections.
@@ -102,7 +102,7 @@ of the 69 primary manuscripts; they identify remediation work against the exact 
 
 ## Remediation and external gates
 
-The 42 `needs-remediation` pages and the other findings remain work items. The audit
+The 32 `needs-remediation` pages and the other findings remain work items. The audit
 records each remediation or gate; it does not claim that all findings were fixed.
 
 - Human review: passed per owner confirmation on 2026-10-21; no per-page reviewer

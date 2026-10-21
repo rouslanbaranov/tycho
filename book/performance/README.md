@@ -46,7 +46,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-18"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -99,6 +99,7 @@ The chart is an **original reading and decision map**, not a simulated productio
 | Why do p99 and user-visible deadlines worsen under dependency fan-out? | [Tail latency, fan-out and deadline budgets](../volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-latency-fanout-and-deadline-budgets.md) | New V07/C04 evidence-based draft; no live tail benchmark |
 | How do admission control, load shedding and graceful degradation preserve correct outcomes? | [Overload protection and graceful degradation](../volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md) | Public SRE/Builders' Library explanations and original failure fixtures; no test executed |
 | When does autoscaling help, and what do startup lag and shared limits invalidate? | [Autoscaling lag and capacity limits](../volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md) | New V07/C06 draft against Kubernetes/AWS public docs; no executed platform test |
+| How do workload shape, service demand and saturation interact with scalability laws? | [Workload shape and scalability laws](workload-shape-and-scalability-laws.md) | Workload profile, Little's Law and the Universal Scalability Law with stated synthetic boundaries; not a measured forecast |
 
 ## Planned questions — **not yet written**
 
@@ -109,7 +110,10 @@ The planning owners are listed in the [proposed book structure](../PROPOSED-STRU
 
 ## Cross-domain boundaries
 
-Execution-model and connection-pool specifics belong to a future execution volume. Database shard placement belongs to the future data volume. This page intentionally does not duplicate those explanations or create dead links to nonexistent chapters.
+Execution-model and connection-pool specifics are owned by the
+[execution research landing](../execution/README.md). Database shard placement is owned
+by the [data research landing](../data/README.md). This page intentionally does not
+duplicate those explanations or create dead links to nonexistent chapters.
 
 ## Research limits and next actions
 

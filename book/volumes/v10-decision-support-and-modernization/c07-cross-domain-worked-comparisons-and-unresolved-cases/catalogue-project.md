@@ -51,12 +51,12 @@
   },
   "content_review": {
     "status": "self-checked",
-    "reviewed_at": "2026-10-20",
-    "reviewer": "Codex author; integration execution and independent acceptance pending",
+    "reviewed_at": "2026-10-21",
+    "reviewer": "Automated authoring agent; navigation remediation self-checked",
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-20",
+  "updated_at": "2026-10-21",
   "source_inspection_date": "2026-10-20",
   "content_verified_at": null
 }
@@ -141,3 +141,12 @@ Proposed tests inject every interruption in the table, reorder generations, revo
 Choose a simpler transactional byte store if objects are small enough and cross-store recovery costs exceed its storage burden. Choose a serving authorization gateway if revocation latency must be shorter than capability expiry. Reconsider the retention design if recovery cannot preserve the lifecycle journal, or if legal product requirements demand deletion semantics incompatible with retained backups.
 
 [Deploying configuration](https://docs.aws.amazon.com/appconfig/latest/userguide/appconfig-deploying.html) supports staged activation of parser changes, not atomic object publication. [Consistency models](https://jepsen.io/consistency/models) supplies consistency terminology. [Simulation and Testing](https://github.com/apple/foundationdb/blob/f314e81f8ee1d2eeff4a35d4d658c47287f08e89/documentation/sphinx/source/testing.rst) motivates fault exploration as a method, not evidence that this design was tested. All workload values, decisions, crash traces and calculations are original; product-specific storage and outbox claims remain scoped to the linked canonical pages.
+
+## Navigation and prerequisites
+
+- Parent: [V10/C07 — cross-domain worked comparisons](README.md).
+- Sibling projects: [collaboration project](collaboration-project.md) and
+  [multitenant project](multitenant-project.md).
+- Integrated decision page:
+  [cross-domain architecture decisions](cross-domain-modernization-and-adr-examples.md).
+- Volume: [V10 — decision support and modernization](../../README.md).

@@ -35,12 +35,12 @@ evidence_scope:
   status: "source-linked"
   notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
 content_review:
-  status: "draft"
-  reviewed_at: null
-  reviewer: null
+  status: "self-checked"
+  reviewed_at: "2026-10-21"
+  reviewer: "Automated authoring agent; historical research page self-checked"
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -161,4 +161,13 @@ A meaningful release review requires:
 | E04 | [Confluent Schema Registry Schema Evolution](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html), *compatibility types and transitive checks* | Format- and version-specific evolution semantics, not global end-to-end compatibility |
 | E05 | [PostgreSQL 17 ALTER TABLE](https://www.postgresql.org/docs/17/sql-altertable.html), *description/lock mode subforms* | PostgreSQL DDL constraints, not measurements of a Tycho example |
 
-This chapter owns the conceptual migration and verification model. The original deployment incident and all numbers are hypothetical. No real schema alteration, compatibility matrix execution, external event replay, production rollback, source-code inspection or independent expert review has been claimed.
+> **Historical research scope — current delivery owners are V08/C04 and V08/C05.**
+> This page retains the original conceptual migration and verification model as
+> supporting research. Current release and database-compatibility mechanisms are owned by
+> [V08/C04 GitOps and progressive delivery][v08c04] and
+> [V08/C05 backward-compatible database change][v08c05].
+
+[v08c04]: ../volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/README.md
+[v08c05]: ../volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/README.md
+
+This historical research page records the conceptual migration and verification model. The original deployment incident and all numbers are hypothetical. No real schema alteration, compatibility matrix execution, external event replay, production rollback, source-code inspection or independent expert review has been claimed.

@@ -40,7 +40,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -55,6 +55,10 @@ Connect authenticated identities, authorization, protected business objects and 
 
 - [Threat boundaries, identity, authorization and service isolation](../volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md) — threat worksheet, authentication versus authorization, policy enforcement, object-level access and multi-tenant boundaries, OAuth token audiences, service identity, failure matrix and original synthetic access-control scenario.
 - [Safe agent-accessible knowledge and bounded authority](../volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/safe-agent-access-and-knowledge-isolation.md) — V09/C07 untrusted retrieval, least-privilege tools, per-document authorization, citation isolation, privacy and negative tests; conceptual book chapter, not deployed MCP.
+- [Security architecture: identity, authorization and isolation][security-detail] —
+  detailed canonical chapter behind the V09/C05 overview; it does not replace that overview.
+
+[security-detail]: identity-authorization-threat-models-and-isolation.md
 
 ## Routes to adjacent material
 
