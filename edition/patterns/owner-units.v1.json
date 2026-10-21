@@ -6039,24 +6039,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A lock service can give worker B ownership after worker A stops renewing. It cannot make A's paused process disappear.",
-          "reason": "Explains lease-expiry takeover by a lock service but not lock acquisition, exclusion or release."
+          "state": "supported",
+          "quote": "A lease-based lock is a time-bounded grant from a lock service.",
+          "reason": "Defines the lease grant and time-bounded ownership."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "The synthetic example does not assert that a distributed lock alone enforces this protocol.",
-          "reason": "Warns that a lock alone does not enforce the fencing protocol, but states no mutual-exclusion guarantee."
+          "state": "supported",
+          "quote": "Mutual exclusion depends on the service's own consistency and on bounded process pauses, not on the holder's local belief.",
+          "reason": "States the exclusion precondition and its limit."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Renewal timeout | Treat ownership as uncertain; do not infer a successful renewal",
-          "reason": "Gives an explicit response for renewal timeout and stale-owner containment."
+          "quote": "The destination must reject stale epochs or the operation remains explicitly unsafe.",
+          "reason": "States the required stale-owner rejection and the unsafe fallback."
         },
         "alternative": {
           "state": "supported",
-          "quote": "For a single database, a transactional conditional update or unique constraint may satisfy the invariant without a separate lock service.",
-          "reason": "Offers a single-database conditional update instead of a separate lock service."
+          "quote": "For one database, a conditional update or unique constraint can provide the same exclusion without a separate lock service.",
+          "reason": "Names the single-database alternative."
         }
       },
       "decision_evidence": {
@@ -6074,7 +6074,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Shares the leases/fencing section with Lease-Based Ownership and Fencing Tokens; lock acquisition is not explained."
     },
@@ -8649,9 +8649,9 @@
       ],
       "unit_count": 2,
       "dedicated_units": 1,
-      "bounded_entries": 3,
+      "bounded_entries": 4,
       "decision": "deepen",
-      "rationale": "Four leadership and lease patterns share two units, and distributed-lock ownership is only partial; the page needs distinct units for election, locking, leases and fencing."
+      "rationale": "Four leadership and lease patterns share two units; expand the locking, election, lease and fencing units so each decision is independently evidenced."
     },
     {
       "document_id": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80",
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 101,
-    "invariant_supported": 117,
+    "mechanism_supported": 102,
+    "invariant_supported": 118,
     "failure_recovery_supported": 88,
     "alternative_supported": 69,
-    "technical_partial_bounded": 97,
-    "technical_partial": 48,
+    "technical_partial_bounded": 98,
+    "technical_partial": 47,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

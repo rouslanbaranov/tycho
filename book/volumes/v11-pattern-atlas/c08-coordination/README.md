@@ -143,17 +143,20 @@ coordination-pattern; priority core.
 **Decision question.** Should a shared lock prevent concurrent access to one resource
 across processes?
 
-**Good-fit conditions.** The lock protects a correctness-critical section; expiry and
-ownership are explicit; stale owners are fenced.
+**Good-fit conditions.** The lock protects a correctness-critical section; the service
+can maintain quorum; expiry and ownership are explicit; the resource checks a fencing
+epoch, or the operation is safe under uncertain ownership.
 
 **Hard contraindications.** Reject when work is naturally partitioned, when lock loss
-would corrupt state, or when no fencing is possible at the resource.
+would corrupt state, when the lock service cannot maintain quorum, or when the resource
+cannot reject a stale holder.
 
 **Competing alternative.** Lease-based ownership with fencing or single-writer
 partitioning. Reverse the choice when lock safety cannot be proven.
 
-**Failure and recovery.** Stale locks and clock assumptions are common; verify fencing in
-the owner section.
+**Failure and recovery.** Pauses, delayed writes, quorum loss and release races are
+common. Treat ownership as uncertain after a missed renewal; fence stale epochs at the
+resource or keep the outcome explicitly unsafe.
 
 **Technical owner.** [Leases, stale owners and fencing at the destination](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#leases-stale-owners-and-fencing-at-the-destination) — locks/leases/fencing are bounded, not a lock-service API guide.
 

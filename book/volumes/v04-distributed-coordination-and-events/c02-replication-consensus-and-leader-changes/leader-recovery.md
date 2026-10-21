@@ -96,6 +96,22 @@ These are proposed test cases, not results. Safety proofs require precise protoc
 
 A lock service can give worker B ownership after worker A stops renewing. It cannot make A's paused process disappear. AWS's leader-election discussion identifies timing and process pauses as practical lease hazards. etcd 3.6 documents KV ordering, leases and delayed watches; a watch notification is not a timely external write fence.
 
+**Lock semantics.** A lease-based lock is a time-bounded grant from a lock service.
+[Kubernetes leases](https://kubernetes.io/docs/concepts/architecture/leases/) record
+ownership and renewal/expiry times, not a guarantee that the holder has stopped. Mutual
+exclusion depends on the service's own consistency and on bounded process pauses, not on
+the holder's local belief.
+
+**Failure classes.** A holder can pause past expiry; a delayed write can arrive after a
+new holder is established; the lock service can lose quorum; release can race with
+expiry. The destination must reject stale epochs or the operation remains explicitly
+unsafe. A lock service that cannot establish a quorum cannot safely grant a new lease.
+
+**Alternative.** For one database, a conditional update or unique constraint can provide
+the same exclusion without a separate lock service. For cross-process coordination,
+single-writer partitioning or a consensus-backed lease may be safer than an independent
+lock service. Choose a lock only when its failure and clock assumptions are acceptable.
+
 ### Original stale-owner trace
 
 Assume a fictional thumbnail job updates an authoritative manifest. The destination stores an accepted epoch alongside the manifest.
