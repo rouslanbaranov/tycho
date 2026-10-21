@@ -3,6 +3,7 @@
 import argparse
 import json
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,6 +55,20 @@ def check_card_text(text, slug):
     require(any(state in decision_line for state in (
         "applicable-under-conditions", "candidate", "contraindicated",
         "insufficient-evidence", "not-required")), "card-decision-state: " + slug)
+
+
+def check_owner_link(text, chapter_path, owner_path, owner_anchor, root=ROOT):
+    line = next((item for item in text.splitlines()
+                 if item.startswith("**Technical owner.**")), None)
+    require(line is not None, "card-owner-link-missing")
+    match = re.search(r"\]\(([^)]+)\)", line)
+    require(match is not None, "card-owner-link-missing")
+    target = match.group(1)
+    path, separator, anchor = target.partition("#")
+    require(separator and anchor == owner_anchor, "card-owner-link-anchor")
+    resolved = (Path(root) / Path(chapter_path).parent / path).resolve()
+    expected = (Path(root) / owner_path).resolve()
+    require(resolved == expected, "card-owner-link-path")
 
 
 def check_backlink(owner_text, chapter_path, slug):
@@ -137,6 +152,7 @@ def validate_data(data, root=ROOT):
                 require(pattern["technical_owner"]["path"] == entry["owner_path"], "card-registry-owner-path: " + pattern_id)
                 require(pattern["technical_owner"]["anchor"] == entry["owner_anchor"], "card-registry-owner-anchor: " + pattern_id)
                 require(pattern["technical_owner"]["state"] == "partial", "card-registry-owner-state: " + pattern_id)
+                check_owner_link(text, chapter["path"], entry["owner_path"], entry["owner_anchor"], root)
                 require(pattern["coverage"]["technical"] == "partial", "card-registry-technical: " + pattern_id)
                 require(pattern["coverage"]["overall"] == "partial", "card-registry-coverage: " + pattern_id)
             else:

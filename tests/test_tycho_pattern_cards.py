@@ -6,7 +6,9 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from validate_pattern_cards import check_backlink, check_card_text, load, validate_data
+from validate_pattern_cards import (
+    check_backlink, check_card_text, check_owner_link, load, validate_data
+)
 
 
 class PatternCardTests(unittest.TestCase):
@@ -21,7 +23,7 @@ class PatternCardTests(unittest.TestCase):
 
     def test_complete_card_batch(self):
         result = validate_data(self.batches, ROOT)
-        self.assertEqual(result["entries"], 58)
+        self.assertEqual(result["entries"], 72)
 
     def test_unknown_pattern_is_rejected(self):
         data = copy.deepcopy(self.batches)
@@ -59,6 +61,23 @@ class PatternCardTests(unittest.TestCase):
         with self.assertRaises(ValueError) as raised:
             check_card_text("**Decision question.** only", "modular-monolith")
         self.assertIn("card-marker-missing", str(raised.exception))
+
+    def test_owner_link_path_is_rejected(self):
+        text = (
+            "**Technical owner.** [x](../../book/volumes/v06-caching-indexing-and-"\
+            "retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-"\
+            "design.md#local-and-distributed-caching-authority-freshness-and-placement)"
+        )
+        with self.assertRaises(ValueError) as raised:
+            check_owner_link(
+                text,
+                "book/volumes/v11-pattern-atlas/c05-caching-retrieval/README.md",
+                "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-"\
+                "distributed-caching/local-and-distributed-cache-design.md",
+                "local-and-distributed-caching-authority-freshness-and-placement",
+                ROOT,
+            )
+        self.assertIn("card-owner-link-path", str(raised.exception))
 
 
 if __name__ == "__main__":

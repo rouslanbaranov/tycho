@@ -59,6 +59,11 @@ This difference is architectural:
 The installed Caffeine version and precise loader/executor policy must be checked before promising behavior. “Refreshes asynchronously” is not equal to “returns current authoritative state under every failure”.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Cache-Aside / Lazy Loading](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cache-aside-lazy-loading) — decision conditions and contraindications.
+> [TTL-Based Expiration](../../v11-pattern-atlas/c05-caching-retrieval/README.md#ttl-based-expiration) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.33742c54f667446cbf57cb9f3696a533:4 -->
 ## 4. Cache-aside is a sequence, not a consistency theorem
 

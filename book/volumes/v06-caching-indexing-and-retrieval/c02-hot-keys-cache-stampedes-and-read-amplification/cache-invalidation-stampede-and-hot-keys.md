@@ -56,6 +56,10 @@ content_verified_at: null
 > **Original Tycho V06/C02 chapter draft**, 2026-10-19. Public Caffeine refresh, Redis cache-aside and EXPIRE sources describe mechanisms. All races and load examples here are educational inventions; no cache, Redis lock, version guard, database or benchmark was run or reviewed. The earlier [combined cache research](../../../scaling/local-distributed-caching-and-invalidation.md) remains intact until claims are reconciled.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Cache Invalidation](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cache-invalidation) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.e0f0d5b68f834acbae94cc6714895dd3:0 -->
 ## Purpose and mission
 

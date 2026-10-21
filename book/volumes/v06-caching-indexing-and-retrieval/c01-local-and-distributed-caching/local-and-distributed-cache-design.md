@@ -56,6 +56,15 @@ content_verified_at: null
 > **Independent Tycho draft V06/C01, 2026-10-19.** Public Redis cache-aside and Caffeine eviction/refresh specifications inform the mechanism. All examples are invented. No application, cache server, performance test or independent reviewer was involved. The former [combined caching research](../../../scaling/local-distributed-caching-and-invalidation.md) is retained for source/claim reconciliation.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Distributed Cache](../../v11-pattern-atlas/c05-caching-retrieval/README.md#distributed-cache) — decision conditions and contraindications.
+> [Read-Through Cache](../../v11-pattern-atlas/c05-caching-retrieval/README.md#read-through-cache) — decision conditions and contraindications.
+> [Write-Through Cache](../../v11-pattern-atlas/c05-caching-retrieval/README.md#write-through-cache) — decision conditions and contraindications.
+> [Write-Behind / Write-Back](../../v11-pattern-atlas/c05-caching-retrieval/README.md#write-behind-write-back) — decision conditions and contraindications.
+> [Write-Around](../../v11-pattern-atlas/c05-caching-retrieval/README.md#write-around) — decision conditions and contraindications.
+> [Multi-Level Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#multi-level-caching) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.33742c54f667446cbf57cb9f3696a533:0 -->
 ## Purpose and mission
 

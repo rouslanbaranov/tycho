@@ -77,6 +77,10 @@ Possible mitigations have different complexity:
 A TTL is *not* itself a monotonic-version or consistency guarantee. Source and cache clocks or refreshing a stale value may complicate any claimed maximum-age contract. [Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/) presents the basic flow, not a universal proof of protection from this concurrent fill order.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Stale-While-Revalidate](../../v11-pattern-atlas/c05-caching-retrieval/README.md#stale-while-revalidate) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.e0f0d5b68f834acbae94cc6714895dd3:3 -->
 ## 3. A refresh lock is not automatically a correctness lock
 
