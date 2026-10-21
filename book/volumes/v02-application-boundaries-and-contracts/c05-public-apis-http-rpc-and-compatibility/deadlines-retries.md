@@ -59,6 +59,23 @@ A **hypothetical** 900-ms request budget could be partitioned into 50 ms of edge
 
 The [gRPC retry guide](https://grpc.io/docs/guides/retry/) distinguishes transparent retries from configured retry policies; configurable retries are limited by status, attempts, backoff and commitment boundaries. A service configuration can also set per-method timeouts and retry/hedging behavior. These client mechanisms cannot infer application effect identity: an RPC retry is safe only when the underlying operation semantics and downstream effects allow it.
 
+**Exponential backoff.** A retry delay should grow with each failed attempt, be capped, and be
+randomized with jitter so clients do not retry in lockstep. The attempt cap, total delay and
+remaining deadline bound the policy; server pushback/backpressure should reduce or stop
+retries. Backoff does not make a non-idempotent effect safe.
+
+**Timeout and deadline.** A timeout is a local wait bound on one operation; the request
+deadline is the caller's end-to-end budget. Each hop should use at most the remaining
+deadline, minus its own processing and margin, and propagate the remainder. Cancellation
+stops work where possible but does not roll back a committed effect; an ambiguous timeout
+requires outcome lookup.
+
+**Alternatives.** Do not retry when the failure is permanent, the operation has no effect
+identity, or the remaining deadline cannot fit the attempt; fail fast or queue. A shorter
+local timeout with explicit cancellation may protect capacity better than a long caller
+deadline. Propagate a deadline when the caller has a real end-to-end budget; use
+independent timeouts only when each hop is genuinely independent.
+
 **Retry decision contract:**
 
 - First ask whether the operation is read-only, semantically idempotent, or protected by an application effect key.

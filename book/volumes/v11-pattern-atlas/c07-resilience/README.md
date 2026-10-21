@@ -143,8 +143,9 @@ resilience-pattern; priority core.
 
 **Decision question.** Should a failed call be retried after increasing delays?
 
-**Good-fit conditions.** The failure is transient; the operation is idempotent or has
-idempotency keys; a retry budget exists.
+**Good-fit conditions.** The failure is transient; the operation is idempotent or has an
+effect identity; the attempt cap, backoff cap, jitter and remaining deadline are explicit;
+a retry budget exists.
 
 **Hard contraindications.** Reject when the operation is non-idempotent, when retries
 amplify overload, or when the deadline cannot absorb the backoff.
@@ -152,8 +153,8 @@ amplify overload, or when the deadline cannot absorb the backoff.
 **Competing alternative.** No retry or a single bounded retry. Reverse the choice when
 retry latency and load exceed transient-failure benefit.
 
-**Failure and recovery.** Retry storms and duplicate effects are common; verify
-budget/idempotency in the owner section.
+**Failure and recovery.** Retry storms, duplicate effects and synchronized clients are
+common; jitter the delay, cap attempts and total delay, and stop on server pushback.
 
 **Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#3-end-to-end-deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
 
@@ -206,8 +207,8 @@ priority core.
 **Decision question.** Should each call have a bounded wait before it is treated as
 failed?
 
-**Good-fit conditions.** A deadline is known; cancellation is safe; late completion is
-handled; the timeout is shorter than the caller budget.
+**Good-fit conditions.** A local wait bound is known; cancellation is safe; late completion
+is handled; the timeout is shorter than the caller's remaining budget.
 
 **Hard contraindications.** Reject when work must complete regardless of time, when
 cancellation leaves irreversible effects, or when the timeout is longer than the caller
@@ -216,8 +217,9 @@ can wait.
 **Competing alternative.** Long-running async request-reply. Reverse the choice when
 synchronous waiting blocks capacity that could serve other work.
 
-**Failure and recovery.** Timeouts do not prove the remote effect stopped; verify
-cancellation in the owner section.
+**Failure and recovery.** A timeout is an ambiguous outcome, not proof that the remote
+effect stopped. Look up the durable outcome and clean up resources; do not blind-retry
+non-idempotent work.
 
 **Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#3-end-to-end-deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
 
@@ -249,8 +251,8 @@ timeout.
 **Competing alternative.** Independent per-hop timeouts with a parent budget. Reverse the
 choice when propagation complexity exceeds the benefit of end-to-end bounds.
 
-**Failure and recovery.** Clock skew and lost deadlines are common; verify budget
-semantics in the owner section.
+**Failure and recovery.** Clock skew, lost deadlines and independent per-hop timeouts are
+common; use the remaining budget at each hop and keep an explicit cleanup path.
 
 **Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#3-end-to-end-deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
 
@@ -365,8 +367,8 @@ priority core.
 
 **Decision question.** Should request rate be limited to protect a dependency or budget?
 
-**Good-fit conditions.** A safe rate is known; throttling is observable; callers can back
-off.
+**Good-fit conditions.** A measurable bottleneck rate is known; throttling is observable;
+callers can back off; queue age and per-class latency are measured.
 
 **Hard contraindications.** Reject when the limit is arbitrary, when clients cannot react,
 or when throttling would drop mandatory work.
@@ -374,8 +376,8 @@ or when throttling would drop mandatory work.
 **Competing alternative.** Rate limiting at the edge or admission control. Reverse the
 choice when per-client fairness matters more than aggregate rate.
 
-**Failure and recovery.** Throttle oscillation and unfairness are common; verify limit
-source in the owner section.
+**Failure and recovery.** Throttle oscillation, hidden capacity loss and unfairness are
+common; keep a bounded queue, propagate backpressure and measure per-class latency.
 
 **Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation) — overload policy is bounded, not a universal rate-limit algorithm.
 
@@ -395,8 +397,8 @@ resilience-pattern; priority core.
 
 **Decision question.** Should each client or tenant have an enforced request budget?
 
-**Good-fit conditions.** Client identity is known; limits reflect capacity/fairness;
-rejection is communicated.
+**Good-fit conditions.** Client identity is known; limits define window, burst and rejection
+response; limits reflect capacity and fairness.
 
 **Hard contraindications.** Reject when traffic is one internal caller, when limits would
 block essential work, or when identity cannot be trusted.
@@ -404,8 +406,8 @@ block essential work, or when identity cannot be trusted.
 **Competing alternative.** Global admission control or throttling. Reverse the choice when
 per-client fairness is not required.
 
-**Failure and recovery.** Bypass and unfair quotas are common; verify identity/limit in
-the owner section.
+**Failure and recovery.** Bypass through many keys, burst doubling and unfair quotas are
+common; bind limits to the scarce resource and declare retry guidance.
 
 **Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation) — overload policy is bounded, not a universal rate-limit algorithm.
 

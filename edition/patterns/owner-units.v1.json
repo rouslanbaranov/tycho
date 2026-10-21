@@ -5101,9 +5101,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "configurable retries are limited by status, attempts, backoff and commitment boundaries.",
-          "reason": "Retry and backoff policy are mentioned, but exponential delay growth is never explained."
+          "state": "supported",
+          "quote": "A retry delay should grow with each failed attempt, be capped, and be randomized with jitter so clients do not retry in lockstep.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
@@ -5116,9 +5116,9 @@
           "reason": "Describes broad-overload detection and containment by returning an explicit result instead of retrying."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Retry only at the layer immediately above the layer that rejected the request.",
-          "reason": "Names single-layer versus layered retry but gives no condition that reverses the choice."
+          "state": "supported",
+          "quote": "Do not retry when the failure is permanent, the operation has no effect identity, or the remaining deadline cannot fit the attempt; fail fast or queue.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -5136,7 +5136,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section covers retry safety and budgets, but never explains exponential delay growth; jitter is also absent."
     },
@@ -5150,7 +5150,7 @@
         "heading": "Retry with Jitter",
         "anchor": "retry-with-jitter",
         "level": 3,
-        "line": 137,
+        "line": 154,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Retry with Jitter"
@@ -5217,14 +5217,14 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A timeout on one socket is not a complete request deadline.",
-          "reason": "Timeout is used only as a contrast to an end-to-end deadline; its own operation is not explained."
+          "state": "supported",
+          "quote": "A timeout is a local wait bound on one operation; the request deadline is the caller's end-to-end budget.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Per-hop independent 900-ms timeouts would allow the aggregate to vastly exceed the caller's deadline.",
-          "reason": "States a composition hazard, not a must-hold timeout guarantee."
+          "state": "supported",
+          "quote": "Each hop should use at most the remaining deadline, minus its own processing and margin, and propagate the remainder.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "failure_recovery": {
           "state": "supported",
@@ -5232,9 +5232,9 @@
           "reason": "Treats timeout as an ambiguous outcome and prescribes authority lookup."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "At each hop the effective budget is at most the remaining time, subject to clock and propagation behavior.",
-          "reason": "Contrasts with propagated remaining time but gives no explicit condition that reverses the choice."
+          "state": "supported",
+          "quote": "A shorter local timeout with explicit cancellation may protect capacity better than a long caller deadline.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -5252,7 +5252,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Shared deadline/retry section; timeout appears mainly as a contrast to an end-to-end request deadline."
     },
@@ -5292,9 +5292,9 @@
           "reason": "Describes post-deadline cleanup and reconciliation via a durable workflow."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Per-hop independent 900-ms timeouts would allow the aggregate to vastly exceed the caller's deadline.",
-          "reason": "Contrasts per-hop timeouts with a caller deadline but gives no explicit reversal condition."
+          "state": "supported",
+          "quote": "Propagate a deadline when the caller has a real end-to-end budget; use independent timeouts only when each hop is genuinely independent.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -5505,24 +5505,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "An API-edge quota alone does not protect the specific scarce pool.",
-          "reason": ""
+          "state": "supported",
+          "quote": "Throttling paces or slows admitted work below offered load to protect a dependency.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The quota sentence states a limitation, not a throttling invariant."
+          "state": "supported",
+          "quote": "It needs a measurable bottleneck, a bounded queue and propagation of backpressure.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No throttle failure or recovery behaviour is described."
+          "state": "supported",
+          "quote": "Throttling can hide capacity loss, add latency to essential classes or turn a transient spike into a long tail; measure accepted work, queue age and per-class latency.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing rate-control mechanism is compared."
+          "state": "supported",
+          "quote": "Admission control, queueing or provisioning may be preferable when work is deferrable or capacity can expand.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -5540,7 +5540,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -5562,24 +5562,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "The same mechanism that protects total completions can unfairly starve low-traffic tenants unless admission policy declares fairness and per-principal limits.",
-          "reason": ""
+          "state": "supported",
+          "quote": "Rate limiting bounds requests per principal, key or window; it must define the identity, window, burst allowance and rejection response.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "Fairness and per-principal limits are named without an enforcement invariant."
+          "state": "supported",
+          "quote": "it must define the identity, window, burst allowance and rejection response.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No rate-limit rejection or recovery path is described."
+          "state": "supported",
+          "quote": "Unfair limits and synchronized retries are common failure modes.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No alternative to rate limiting is compared."
+          "state": "supported",
+          "quote": "Global admission or per-tenant quotas may be preferable when the scarce resource is shared across principals.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -5597,7 +5597,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -8619,9 +8619,9 @@
       ],
       "unit_count": 2,
       "dedicated_units": 1,
-      "bounded_entries": 2,
+      "bounded_entries": 4,
       "decision": "deepen",
-      "rationale": "Four time-budget patterns share one section; only the jitter note is dedicated, so retry, timeout and deadline propagation need separate bounded units."
+      "rationale": "All four time-budget patterns now have bounded evidence; keep the shared section and deepen only when a distinct mechanism needs its own unit."
     },
     {
       "document_id": "tycho.page.cccbd188936543a2aaf904f4002236d8",
@@ -8869,9 +8869,9 @@
       ],
       "unit_count": 2,
       "dedicated_units": 0,
-      "bounded_entries": 3,
+      "bounded_entries": 5,
       "decision": "deepen",
-      "rationale": "Fallback, graceful degradation and load shedding now have bounded evidence; throttling and rate limiting still need dedicated units."
+      "rationale": "All five overload-response patterns now have bounded evidence in the shared page."
     },
     {
       "document_id": "tycho.page.49d9df04c0b4488e936b02e580a62271",
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 106,
-    "invariant_supported": 123,
-    "failure_recovery_supported": 94,
-    "alternative_supported": 77,
-    "technical_partial_bounded": 103,
-    "technical_partial": 42,
+    "mechanism_supported": 110,
+    "invariant_supported": 126,
+    "failure_recovery_supported": 96,
+    "alternative_supported": 82,
+    "technical_partial_bounded": 107,
+    "technical_partial": 38,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

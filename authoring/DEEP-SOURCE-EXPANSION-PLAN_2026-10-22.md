@@ -94,7 +94,8 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
 
 - Fallback, Graceful Degradation and Load Shedding: owner vocabulary and cards
   expanded; each is `partial-bounded` with all four evidence dimensions supported.
-- Remaining resilience gaps: Retry with Exponential Backoff, Timeout, Deadline
-  Propagation, Throttling, Rate Limiting, Queue-Based Load Leveling, Health Endpoint
-  Monitoring, Failover/Failback, plus alternative/failure gaps for Circuit Breaker,
-  Bulkhead and Hedged Requests.
+- Retry with Exponential Backoff, Timeout, Deadline Propagation, Throttling and Rate
+  Limiting are also `partial-bounded` with all four dimensions supported.
+- Remaining resilience gaps: Queue-Based Load Leveling, Health Endpoint Monitoring,
+  Failover/Failback, plus alternative/failure gaps for Circuit Breaker, Bulkhead and
+  Hedged Requests.

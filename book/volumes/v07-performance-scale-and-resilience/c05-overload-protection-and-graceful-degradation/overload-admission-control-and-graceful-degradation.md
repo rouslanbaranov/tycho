@@ -116,6 +116,19 @@ the work is deferrable or the bottleneck can be expanded.
 
 A circuit breaker monitors a declared *failure signal*, while admission protects a chosen scarce resource. Neither restores an ambiguous external effect after commit. Rejection codes and retry hints must prevent all clients from retrying in lockstep. The same mechanism that protects total completions can unfairly starve low-traffic tenants unless admission policy declares fairness and per-principal limits.
 
+**Throttling.** Throttling paces or slows admitted work below offered load to protect a
+dependency. It needs a measurable bottleneck, a bounded queue and propagation of
+backpressure. Throttling can hide capacity loss, add latency to essential classes or turn
+a transient spike into a long tail; measure accepted work, queue age and per-class latency.
+Admission control, queueing or provisioning may be preferable when work is deferrable or
+capacity can expand.
+
+**Rate limiting.** Rate limiting bounds requests per principal, key or window; it must
+define the identity, window, burst allowance and rejection response. Fixed windows can
+allow burst doubling, while per-principal limits can be bypassed through many keys. Unfair
+limits and synchronized retries are common failure modes. Global admission or per-tenant
+quotas may be preferable when the scarce resource is shared across principals.
+
 **Proposed negative experiment (not run):** stall recommendation service, then restore it intermittently. Measure correct booking completion, per-tenant rejection shares, pool wait, queue age, retry amplification and stabilization time. Reject a policy with great mean latency that systematically denies one tenant or hides committed unknown outcomes. The Google SRE and AWS load-shedding references motivate overload design, not the invented thresholds.
 
 <!-- /tycho-question-source -->
