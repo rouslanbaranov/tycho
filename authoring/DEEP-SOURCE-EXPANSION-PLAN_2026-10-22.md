@@ -128,3 +128,9 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
   have all four evidence dimensions supported.
 - **Deployment family complete:** all 12 entries are `partial-bounded` with no evidence
   gaps. Next: application-architecture-and-boundaries.
+## Application-architecture progress — 2026-10-22
+
+- Layered Architecture, Modular Monolith, Microservices Architecture and SOA now have all
+  four evidence dimensions supported.
+- **Application-architecture family complete:** all 12 entries are `partial-bounded` with
+  no evidence gaps. Next: database-and-storage-architecture.

@@ -26,8 +26,8 @@ Owner acceptance remains open. See
 [the agent review](INDEPENDENT-AGENT-REVIEW_2026-10-21.md) and
 [the human review](HUMAN-REVIEW_2026-10-21.md).
 
-**Deep-source expansion (#228):** started 2026-10-22; sixty-nine entries are deepened to
-`partial-bounded`, with the remaining 76 tracked in the
+**Deep-source expansion (#228):** started 2026-10-22; seventy-three entries are deepened to
+`partial-bounded`, with the remaining 72 tracked in the
 [deep-source plan](DEEP-SOURCE-EXPANSION-PLAN_2026-10-22.md).
 
 **Updated:** 2026-10-20, after manuscript acceptance and merge. See [status reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md) and [roadmap](ROADMAP.md).

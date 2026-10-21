@@ -79,6 +79,17 @@ Neither style determines the number of processes or servers. The question is not
 
 The original [Cockburn Hexagonal Architecture paper, 2005](https://alistair.cockburn.us/hexagonal-architecture) frames an application that can be driven by a user, script or test, without depending on one UI or database. This chapter explains that mechanism; separate chapters own [modular monolith and internal events](../c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md), [domain authority](../c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md), and [SOA/microservice deployment decisions](../c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md).
 
+**Layer mechanism.** Layering groups responsibilities by abstraction and restricts source
+dependencies to an allowed direction. A layer may call only declared inward interfaces; the
+rule is enforced by build/dependency tests, not by a diagram. The inner domain must not
+depend on a UI, database or transport adapter.
+
+**Failure and alternative.** Dependency bypass, cyclic imports and a layer that becomes a
+pass-through are common; detect them in the build and fail the change. Hexagonal/clean
+architecture or a modular monolith may be preferable when explicit ports or module ownership
+add more value than layer count. Reverse the layering choice when the layers add indirection
+without a real change boundary.
+
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.77b512c4e2e946bd92d70b4a714600c8:10 -->
 ## Engineering walkthrough — The same adapter error in local and remote architectures

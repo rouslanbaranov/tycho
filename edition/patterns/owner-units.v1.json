@@ -36,24 +36,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "**Layering** groups responsibilities by abstraction and allowed call direction.",
-          "reason": "One-sentence definition only; layer structure, direction rules and enforcement are delegated to linked pages."
+          "state": "supported",
+          "quote": "Layering groups responsibilities by abstraction and restricts source dependencies to an allowed direction.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No guarantee, constraint or safety rule for layering is stated in the unit."
+          "state": "supported",
+          "quote": "The inner domain must not depend on a UI, database or transport adapter.",
+          "reason": "States the invariant."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No layering failure or recovery content in the unit."
+          "state": "supported",
+          "quote": "Dependency bypass, cyclic imports and a layer that becomes a pass-through are common; detect them in the build and fail the change.",
+          "reason": "Names failure and recovery."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing mechanism with a reversal condition."
+          "state": "supported",
+          "quote": "Hexagonal/clean architecture or a modular monolith may be preferable when explicit ports or module ownership add more value than layer count.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -71,7 +71,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Thin embedded definition; detailed layering mechanisms are explicitly delegated to dependencies-ports.md."
     },
@@ -96,24 +96,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A modular monolith is a single deployable whose functional responsibilities are divided into explicitly enforced modules.",
-          "reason": "Defines the single deployable with explicitly enforced modules; enforcement mechanics are delegated."
+          "state": "supported",
+          "quote": "Modules own their rules, data and contracts; internal interfaces define allowed calls and dependency tests enforce the boundary.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "It preserves appropriate local consistency while making *which module owns each rule, data object and contract* visible.",
-          "reason": "A claimed property/goal, not a stated must-hold rule; enforcement is delegated."
+          "state": "supported",
+          "quote": "internal interfaces define allowed calls and dependency tests enforce the boundary.",
+          "reason": "States the invariant."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The event-listener durability discussion concerns internal events, not modular-monolith failure/recovery."
+          "state": "supported",
+          "quote": "Hidden cross-module database access, cyclic dependencies and event-based coupling that recreates a distributed monolith are common.",
+          "reason": "Names failure and recovery."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing mechanism with a reversal condition in the unit."
+          "state": "supported",
+          "quote": "Microservices, hexagonal architecture or a simpler layered application may be preferable when module enforcement cost exceeds the coordination benefit.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -131,7 +131,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Definitional purpose section; module-enforcement detail is delegated to module-enforcement.md."
     },
@@ -156,24 +156,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A service is a published capability with an interaction contract; a microservice architecture is a particular set of design and operational choices around smaller independently deployable capabilities.",
-          "reason": "Defines the style but does not explain how independently deployable services operate or interact."
+          "state": "supported",
+          "quote": "Microservices emphasize independently deployable capabilities with their own data and lifecycle.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No guarantee, constraint or safety rule for the pattern is stated in the unit."
+          "state": "supported",
+          "quote": "Each capability needs a single authoritative owner for its data and invariant, and independent deployment must be real rather than a container label.",
+          "reason": "States the invariant."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No failure or recovery content in the unit."
+          "state": "supported",
+          "quote": "Shared databases, synchronized releases and chatty remote calls can recreate a distributed monolith; retries, version skew and partial failure are common.",
+          "reason": "Names failure and recovery."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "**SOA and microservices are not simply opposite network protocols**, and neither should be selected solely because a codebase has many modules.",
-          "reason": "Names SOA as a related mechanism and cautions against module-count selection, but gives no reversal condition."
+          "state": "supported",
+          "quote": "A modular monolith or layered application may be preferable when independent deployment and failure containment are not measured requirements.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -191,7 +191,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Definition-level purpose section; detailed deployment and failure mechanisms are delegated to service-independence.md."
     },
@@ -216,24 +216,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A service is a published capability with an interaction contract",
-          "reason": "Defines a service and cites OASIS visibility/interaction/effect but does not explain SOA composition or governance."
+          "state": "supported",
+          "quote": "SOA emphasizes published capabilities, explicit contracts and governed interaction across independent owners.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "it does not prescribe a mandatory message bus, SOAP transport or service deployment granularity.",
-          "reason": "States what SOA does not mandate, not a guarantee or safety rule."
+          "state": "supported",
+          "quote": "Each capability needs a single authoritative owner for its data and invariant, and independent deployment must be real rather than a container label.",
+          "reason": "States the invariant."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No failure or recovery content in the unit."
+          "state": "supported",
+          "quote": "Shared databases, synchronized releases and chatty remote calls can recreate a distributed monolith; retries, version skew and partial failure are common.",
+          "reason": "Names failure and recovery."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "**SOA and microservices are not simply opposite network protocols**, and neither should be selected solely because a codebase has many modules.",
-          "reason": "Names microservices as a related mechanism but gives no condition that reverses the choice."
+          "state": "supported",
+          "quote": "A modular monolith or layered application may be preferable when independent deployment and failure containment are not measured requirements.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -251,7 +251,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Shares Purpose and mission with microservices; composition/governance mechanics are not developed."
     },
@@ -265,7 +265,7 @@
         "heading": "Engineering walkthrough — The same adapter error in local and remote architectures",
         "anchor": "engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures",
         "level": 2,
-        "line": 84,
+        "line": 95,
         "unit_kind": "embedded",
         "unit_terms": [
           "InventoryPort.reserve(unitId, interval, operationId)",
@@ -325,7 +325,7 @@
         "heading": "Clean / Onion Architecture",
         "anchor": "clean-onion-architecture",
         "level": 3,
-        "line": 127,
+        "line": 138,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Clean / Onion Architecture"
@@ -8589,7 +8589,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 1,
-      "bounded_entries": 2,
+      "bounded_entries": 3,
       "decision": "keep",
       "rationale": "Three architecture styles share one coherent structural page with three distinct units and no split pressure."
     },
@@ -8603,9 +8603,9 @@
       ],
       "unit_count": 1,
       "dedicated_units": 0,
-      "bounded_entries": 0,
+      "bounded_entries": 2,
       "decision": "deepen",
-      "rationale": "SOA and microservices share one purpose unit and both remain partial; distinct bounded units are required before either style is assessable."
+      "rationale": "SOA and microservices now have bounded evidence in the shared purpose unit."
     },
     {
       "document_id": "tycho.page.43414664520b4866929f7f006f27f59b",
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 128,
-    "invariant_supported": 136,
-    "failure_recovery_supported": 115,
-    "alternative_supported": 113,
-    "technical_partial_bounded": 127,
-    "technical_partial": 18,
+    "mechanism_supported": 132,
+    "invariant_supported": 140,
+    "failure_recovery_supported": 119,
+    "alternative_supported": 117,
+    "technical_partial_bounded": 131,
+    "technical_partial": 14,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

@@ -71,6 +71,20 @@ The primary architecture question is: **which capabilities need independent depl
 
 The [OASIS SOA Reference Model v1.0](https://docs.oasis-open.org/soa-rm/v1.0/soa-rm.html) defines visibility, interaction and effect as core service ideas; it does not prescribe a mandatory message bus, SOAP transport or service deployment granularity. [Fowler and Lewis, *Microservices* (2014)](https://www.martinfowler.com/articles/microservices.html) describe independently deployable services organized around business capabilities, as a characterized style rather than a universal threshold for how small a service must be.
 
+**SOA and microservice mechanisms.** SOA emphasizes published capabilities, explicit
+contracts and governed interaction across independent owners. Microservices emphasize
+independently deployable capabilities with their own data and lifecycle. Both must name
+visibility, contract, authority and failure behavior rather than assuming a bus, protocol or
+container count supplies them.
+
+**Invariant and failure.** Each capability needs a single authoritative owner for its data
+and invariant, and independent deployment must be real rather than a container label.
+Shared databases, synchronized releases and chatty remote calls can recreate a distributed
+monolith; retries, version skew and partial failure are common. Detect shared authority and
+release coupling, then consolidate or split the boundary deliberately. A modular monolith
+or layered application may be preferable when independent deployment and failure containment
+are not measured requirements.
+
 <!-- /tycho-question-source -->
 
 ## Integrated decision and reading route

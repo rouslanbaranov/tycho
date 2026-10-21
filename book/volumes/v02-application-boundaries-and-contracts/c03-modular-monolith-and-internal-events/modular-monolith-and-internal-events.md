@@ -69,6 +69,14 @@ Internal events can reduce direct dependencies between modules, but “event-dri
 
 The [application style chapter](../../../application/architecture-styles-and-module-boundaries.md) compares architectural forms. The [domain ownership chapter](../c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md) owns bounded-context meaning. This chapter focuses on **module lifecycle and internal event contracts**.
 
+**Module enforcement and failure.** Modules own their rules, data and contracts; internal
+interfaces define allowed calls and dependency tests enforce the boundary. Hidden
+cross-module database access, cyclic dependencies and event-based coupling that recreates a
+distributed monolith are common. Detect them with dependency/contract tests and split a
+module only when independent deployment or failure containment is a measured requirement.
+Microservices, hexagonal architecture or a simpler layered application may be preferable
+when module enforcement cost exceeds the coordination benefit.
+
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.a06fd146f96b4b17a754f4d3b608ebdf:9 -->
 ## Engineering walkthrough — An internal event that survives neither process death nor commit
