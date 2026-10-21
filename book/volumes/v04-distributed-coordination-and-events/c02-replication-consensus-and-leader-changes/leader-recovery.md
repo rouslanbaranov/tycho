@@ -55,7 +55,19 @@ Under a Raft-style model:
 5. Reads require a separately defined policy: local follower reads can be stale; linearizable reads require valid confirmation/lease/read-index semantics as implemented.
 6. Client retries need stable effect identity because a network error alone cannot tell whether the previous attempt committed.
 
-A leader process's health endpoint or elected status is not the same as the cluster having quorum and serving correct reads. [Tycho causality/consensus](../c01-time-causality-and-ordering/causality-ordering-and-consensus.md) explains order/time relationships; [transaction/idempotency](../../../distributed/transactional-outbox-and-idempotency.md) explains state effects across service boundaries.
+A leader process's health endpoint or elected status is not the same as the cluster having quorum and serving correct reads.
+
+**Failure and recovery.** Elections can fail to reach quorum, split votes, or elect a
+leader whose log is behind. Randomized timeouts and pre-vote reduce disruption; log
+reconciliation, stable storage and membership rules preserve committed entries. A leader
+that cannot confirm quorum must stop serving authoritative writes and linearizable reads.
+Client retries still need stable effect identity because an election does not resolve an
+unknown outcome. [Raft](https://raft.github.io/) documents the election and log rules.
+
+**Alternative.** Leaderless quorum coordination, static primary assignment or single-writer
+partitioning may be simpler when elections add latency without a real failover
+requirement. Reverse the choice when election latency and split-brain risk exceed the
+coordination benefit. [Tycho causality/consensus](../c01-time-causality-and-ordering/causality-ordering-and-consensus.md) explains order/time relationships; [transaction/idempotency](../../../distributed/transactional-outbox-and-idempotency.md) explains state effects across service boundaries.
 
 <!-- /tycho-question-source -->
 
@@ -144,6 +156,12 @@ Text alternative: the destination rejects the resumed former owner's writes afte
 **Important limit:** monotonically increasing tokens protect only where the destination checks and persists them atomically. If B has not yet established its newer epoch there, comparing only against the last observed token does not prove A still owns the lease. Define the takeover linearization point, handling of in-flight writes and whether lease ownership or destination epoch is the actual authority. Unrelated side effects need their own guard.
 
 For a single database, a transactional conditional update or unique constraint may satisfy the invariant without a separate lock service. For an external API that cannot fence stale callers, serialize through an authoritative effect owner, use stable idempotent operation identities where supported, or retain an explicit unresolved-safety boundary.
+
+**Alternatives to a lease.** Static ownership or quorum-backed ownership avoids lease
+renewal but risks stale owners on failure. A transactional conditional update at the
+destination can replace a separate lease when the resource is one database. Reverse the
+lease choice when renewal cost exceeds the availability benefit, or when the destination
+cannot fence a stale holder.
 
 ### Failure and recovery decisions
 

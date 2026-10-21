@@ -86,6 +86,7 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
   server-switching failures and alternatives; evidence is `partial-bounded`.
 - Distributed Workflow Orchestration: owner section expanded with durable state,
   replay/repair failure modes and alternatives; evidence is `partial-bounded`.
-- Remaining distributed-coordination gaps: Leader Election (failure, alternative),
-  Lease-Based Ownership (alternative), Quorum Coordination (alternative) and Session
-  Consistency (alternative).
+- Leader Election, Lease-Based Ownership, Quorum Coordination and Session Consistency
+  now have all four evidence dimensions supported.
+- **Batch 1 complete:** all nine distributed-coordination entries are
+  `partial-bounded` with no evidence-dimension gaps. Next: resilience-and-fault-tolerance.

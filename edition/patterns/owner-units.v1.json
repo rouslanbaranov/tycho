@@ -5929,14 +5929,14 @@
           "reason": "States a durability/leader-completeness guarantee with its stable-storage precondition."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A newly elected leader may reconcile followers with divergent **uncommitted** suffixes.",
-          "reason": "Names reconciliation of divergent uncommitted suffixes but no detection or recovery procedure."
+          "state": "supported",
+          "quote": "A leader that cannot confirm quorum must stop serving authoritative writes and linearizable reads.",
+          "reason": "States the quorum-loss stop condition."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing leader-selection mechanism or reversal condition is named in this section."
+          "state": "supported",
+          "quote": "Leaderless quorum coordination, static primary assignment or single-writer partitioning may be simpler when elections add latency without a real failover requirement.",
+          "reason": "Names the competing coordination choices."
         }
       },
       "decision_evidence": {
@@ -6028,7 +6028,7 @@
         "heading": "Leases, stale owners and fencing at the destination",
         "anchor": "leases-stale-owners-and-fencing-at-the-destination",
         "level": 2,
-        "line": 93,
+        "line": 105,
         "unit_kind": "embedded",
         "unit_terms": [
           "lock service",
@@ -6088,7 +6088,7 @@
         "heading": "Leases, stale owners and fencing at the destination",
         "anchor": "leases-stale-owners-and-fencing-at-the-destination",
         "level": 2,
-        "line": 93,
+        "line": 105,
         "unit_kind": "embedded",
         "unit_terms": [
           "lease expires",
@@ -6114,9 +6114,9 @@
           "reason": "States the renewal-timeout response and stale-owner rejection."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "For a single database, a transactional conditional update or unique constraint may satisfy the invariant without a separate lock service.",
-          "reason": "Mentions a single-database constraint as an alternative to a lock service, not to lease-based ownership."
+          "state": "supported",
+          "quote": "Static ownership or quorum-backed ownership avoids lease renewal but risks stale owners on failure.",
+          "reason": "Names static and quorum-backed alternatives to leases."
         }
       },
       "decision_evidence": {
@@ -6148,7 +6148,7 @@
         "heading": "Leases, stale owners and fencing at the destination",
         "anchor": "leases-stale-owners-and-fencing-at-the-destination",
         "level": 2,
-        "line": 93,
+        "line": 105,
         "unit_kind": "embedded",
         "unit_terms": [
           "fencing",
@@ -6234,9 +6234,9 @@
           "reason": "Shows continued progress with one unavailable voter under stated communication and log conditions."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing coordination mechanism or reversal condition is named in this section."
+          "state": "supported",
+          "quote": "A leader-based protocol can simplify reads and writes but still needs a quorum for election and commit.",
+          "reason": "Names leader-based coordination as the alternative."
         }
       },
       "decision_evidence": {
@@ -6353,9 +6353,9 @@
           "reason": "Defines bounded wait, reroute and retryable failure without serving stale snapshots."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "In a genuinely multiwriter system, one scalar may not represent causal dependencies; use an appropriate frontier or narrow the guarantee.",
-          "reason": "Suggests a frontier for multiwriter cases, but does not develop a competing mechanism or explicit reversal condition."
+          "state": "supported",
+          "quote": "Linearizable reads require quorum or read-index and accept higher latency.",
+          "reason": "Names linearizable reads as the stronger alternative."
         }
       },
       "decision_evidence": {
@@ -9039,8 +9039,8 @@
     "embedded_units": 55,
     "mechanism_supported": 103,
     "invariant_supported": 120,
-    "failure_recovery_supported": 90,
-    "alternative_supported": 70,
+    "failure_recovery_supported": 91,
+    "alternative_supported": 74,
     "technical_partial_bounded": 100,
     "technical_partial": 45,
     "technical_name_only": 0,

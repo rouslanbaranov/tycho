@@ -75,6 +75,11 @@ In a simplified majority-voting cluster of N eligible voters, a quorum is floor(
 
 This arithmetic assumes the quorum protocol and membership-change rules are correct. It is **not a proof that any arbitrary implementation guarantees safety**.
 
+**Alternative.** A leader-based protocol can simplify reads and writes but still needs a
+quorum for election and commit. Static assignment or single-writer partitioning avoids
+quorum latency but loses automatic failover. Reverse the quorum choice when availability
+and latency cost exceed the safety benefit.
+
 The [etcd v3.6 FAQ](https://etcd.io/docs/v3.6/faq/) discusses why a dangerous membership addition can remove progress when the new member cannot join. A non-voting learner can receive state before safe promotion under implementation-specific rules. Changes to membership are themselves state-machine decisions that need supported joint/overlapping quorum safeguards, not a simple count update in a config file.
 
 <!-- /tycho-question-source -->

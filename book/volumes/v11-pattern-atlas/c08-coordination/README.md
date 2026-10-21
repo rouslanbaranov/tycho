@@ -88,8 +88,9 @@ election cannot be made safe, or when leader failover would block progress.
 **Competing alternative.** Leaderless/quorum coordination or static assignment. Reverse
 the choice when election latency and split-brain risk exceed coordination benefit.
 
-**Failure and recovery.** Stale leaders and election churn are common; verify terms in the
-owner section.
+**Failure and recovery.** Split votes, quorum loss, stale leaders and divergent uncommitted
+logs are common. Reconcile logs, stop authoritative writes without quorum and keep client
+retries idempotent; an election does not resolve an unknown outcome.
 
 **Technical owner.** [Leader elections, logs and client observations](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#4-leader-elections-logs-and-client-observations) — leader election is bounded, not a complete Raft implementation.
 
@@ -186,8 +187,9 @@ unbounded, or when expiry could allow two active owners without fencing.
 **Competing alternative.** Static ownership or quorum-backed ownership. Reverse the choice
 when lease renewal cost exceeds availability benefit.
 
-**Failure and recovery.** Expired owners continuing to act is common; verify fencing in
-the owner section.
+**Failure and recovery.** Pauses, delayed renewal and quorum loss can leave two owners
+acting. Treat ownership as uncertain after a missed renewal and fence the stale epoch at
+the destination.
 
 **Technical owner.** [Leases, stale owners and fencing at the destination](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#leases-stale-owners-and-fencing-at-the-destination) — lease ownership is bounded, not a scheduler implementation.
 
@@ -251,8 +253,9 @@ cannot maintain a majority, or when quorum latency violates the budget.
 **Competing alternative.** Leader-based coordination or static assignment. Reverse the
 choice when quorum availability/latency exceeds safety benefit.
 
-**Failure and recovery.** Quorum loss and slow replicas are common; verify envelope in the
-owner section.
+**Failure and recovery.** Quorum loss, slow replicas and unsafe membership changes are
+common. A minority must refuse conflicting authority; membership changes need joint or
+overlapping safeguards.
 
 **Technical owner.** [Majority quorum arithmetic and the failure envelope](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#2-majority-quorum-arithmetic-and-the-failure-envelope) — quorum arithmetic is bounded, not a consensus protocol.
 
@@ -318,8 +321,9 @@ cannot be maintained, or when failover loses session state.
 guarantees. Reverse the choice when session routing/failover cost exceeds client
 experience benefit.
 
-**Failure and recovery.** Token loss and replica routing are common; verify observations
-in the owner section.
+**Failure and recovery.** Token loss, server switching and multiwriter frontiers are
+common. Preserve the token across failover, bound waits, and return a retryable failure
+rather than serving an older snapshot.
 
 **Technical owner.** [Session-visible consistency](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md#an-explicit-session-token) — session consistency is bounded, not a complete client-session protocol.
 
