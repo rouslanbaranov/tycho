@@ -1,0 +1,373 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.dev/schemas/pattern-phase4.v1.schema.json",
+  "title": "Tycho pattern Phase 4 audit v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_from",
+    "dimensions",
+    "summary",
+    "page_dispositions",
+    "entry_audit",
+    "gap_matrix",
+    "routes",
+    "unresolved_related",
+    "retrieval_questions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "generated_from": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "dimensions": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pages",
+        "entries",
+        "cards",
+        "routes",
+        "unresolved_related",
+        "retrieval_questions",
+        "blocked_entries"
+      ],
+      "properties": {
+        "pages": {
+          "const": 419
+        },
+        "entries": {
+          "const": 145
+        },
+        "cards": {
+          "const": 144
+        },
+        "routes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unresolved_related": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retrieval_questions": {
+          "const": 144
+        },
+        "blocked_entries": {
+          "const": 1
+        }
+      }
+    },
+    "page_dispositions": {
+      "type": "array",
+      "minItems": 419,
+      "maxItems": 419,
+      "items": {
+        "$ref": "#/$defs/page"
+      }
+    },
+    "entry_audit": {
+      "type": "array",
+      "minItems": 145,
+      "maxItems": 145,
+      "items": {
+        "$ref": "#/$defs/audit"
+      }
+    },
+    "gap_matrix": {
+      "type": "array",
+      "minItems": 145,
+      "maxItems": 145,
+      "items": {
+        "$ref": "#/$defs/gap"
+      }
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/route"
+      }
+    },
+    "unresolved_related": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/unresolved"
+      }
+    },
+    "retrieval_questions": {
+      "type": "array",
+      "minItems": 144,
+      "maxItems": 144,
+      "items": {
+        "$ref": "#/$defs/question"
+      }
+    }
+  },
+  "$defs": {
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document_id",
+        "path",
+        "kind",
+        "disposition",
+        "reason"
+      ],
+      "properties": {
+        "document_id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "atlas-decision",
+            "technical-owner",
+            "candidate-owner",
+            "navigation",
+            "legacy-cross-volume",
+            "canonical-technical-page"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pattern_id",
+        "atlas_section",
+        "dimensions",
+        "gaps",
+        "question"
+      ],
+      "properties": {
+        "pattern_id": {
+          "type": "string",
+          "pattern": "^tycho\\.pattern\\."
+        },
+        "atlas_section": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "identity",
+            "decision_question",
+            "good_fit",
+            "contraindications",
+            "competing_alternative",
+            "failure_recovery",
+            "technical_owner",
+            "owner_anchor",
+            "backlink",
+            "source_ledger",
+            "read_source",
+            "decision_state",
+            "technical_coverage",
+            "decision_coverage"
+          ],
+          "properties": {
+            "identity": {
+              "$ref": "#/$defs/state"
+            },
+            "decision_question": {
+              "$ref": "#/$defs/state"
+            },
+            "good_fit": {
+              "$ref": "#/$defs/state"
+            },
+            "contraindications": {
+              "$ref": "#/$defs/state"
+            },
+            "competing_alternative": {
+              "$ref": "#/$defs/state"
+            },
+            "failure_recovery": {
+              "$ref": "#/$defs/state"
+            },
+            "technical_owner": {
+              "$ref": "#/$defs/state"
+            },
+            "owner_anchor": {
+              "$ref": "#/$defs/state"
+            },
+            "backlink": {
+              "$ref": "#/$defs/state"
+            },
+            "source_ledger": {
+              "$ref": "#/$defs/state"
+            },
+            "read_source": {
+              "$ref": "#/$defs/state"
+            },
+            "decision_state": {
+              "$ref": "#/$defs/state"
+            },
+            "technical_coverage": {
+              "$ref": "#/$defs/coverage"
+            },
+            "decision_coverage": {
+              "$ref": "#/$defs/coverage"
+            }
+          }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "question": {
+          "type": "string"
+        }
+      }
+    },
+    "state": {
+      "enum": [
+        "pass",
+        "partial",
+        "missing",
+        "blocked",
+        "not-applicable"
+      ]
+    },
+    "coverage": {
+      "enum": [
+        "sufficient",
+        "partial",
+        "name-only",
+        "missing",
+        "contradictory",
+        "not-yet-assessed",
+        "not-applicable"
+      ]
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pattern_id",
+        "technical",
+        "decision",
+        "overall",
+        "card",
+        "owner_state",
+        "gaps"
+      ],
+      "properties": {
+        "pattern_id": {
+          "type": "string"
+        },
+        "technical": {
+          "$ref": "#/$defs/coverage"
+        },
+        "decision": {
+          "$ref": "#/$defs/coverage"
+        },
+        "overall": {
+          "$ref": "#/$defs/coverage"
+        },
+        "card": {
+          "type": "boolean"
+        },
+        "owner_state": {
+          "$ref": "#/$defs/coverage"
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from",
+        "to",
+        "basis"
+      ],
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "basis": {
+          "const": "card-related-entry"
+        }
+      }
+    },
+    "unresolved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from",
+        "label",
+        "reason"
+      ],
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pattern_id",
+        "atlas_section",
+        "question"
+      ],
+      "properties": {
+        "pattern_id": {
+          "type": "string"
+        },
+        "atlas_section": {
+          "type": "string"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

@@ -29,6 +29,8 @@ def main():
         [sys.executable, "scripts/validate_pattern_coverage.py"],
         [sys.executable, "scripts/validate_pattern_sources.py"],
         [sys.executable, "scripts/validate_pattern_cards.py"],
+        [sys.executable, "scripts/phase4_audit.py", "--check"],
+        [sys.executable, "scripts/validate_pattern_phase4.py"],
         [sys.executable, "scripts/pattern_census.py", "--check"],
         [sys.executable, "-m", "unittest", "discover", "-s", "tests",
          "-p", "test_tycho*.py", "-v"],
