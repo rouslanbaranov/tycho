@@ -5334,24 +5334,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A sound architecture decides **which work to accept, reject, defer, cancel or degrade**, and makes those decisions visible to callers while protecting correctness invariants.",
-          "reason": ""
+          "state": "supported",
+          "quote": "A fallback returns a declared alternate result or dependency when the primary is unavailable.",
+          "reason": "Defines the mechanism and its scope."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The sentence names the decision space but states no fallback correctness rule."
+          "state": "supported",
+          "quote": "It must preserve the same correctness contract: a cached, fabricated or partial value is not a successful authoritative result.",
+          "reason": "States the correctness or policy invariant."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No alternate-result path or its failure handling is described."
+          "state": "supported",
+          "quote": "Name the fallback's freshness, authority and user-visible label; fail explicitly if none is valid.",
+          "reason": "Names the failure mode and required response."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing response mechanism is compared."
+          "state": "supported",
+          "quote": "An explicit failure or a queued retry may be safer than a plausible but wrong fallback.",
+          "reason": "Names the competing choice and reversal condition."
         }
       },
       "decision_evidence": {
@@ -5369,7 +5369,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -5391,24 +5391,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A sound architecture decides **which work to accept, reject, defer, cancel or degrade**, and makes those decisions visible to callers while protecting correctness invariants.",
-          "reason": ""
+          "state": "supported",
+          "quote": "Degradation removes optional features or reduces quality to protect an essential outcome under overload.",
+          "reason": "Defines the mechanism and its scope."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The sentence names degradation as an option but states no protected-outcome invariant."
+          "state": "supported",
+          "quote": "declare which outcomes remain mandatory, which become unavailable, and how callers observe the reduced state.",
+          "reason": "States the correctness or policy invariant."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No degraded-mode failure or recovery path is described."
+          "state": "supported",
+          "quote": "Hidden degradation that silently drops correctness is worse than an explicit failure.",
+          "reason": "Names the failure mode and required response."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No alternative to degradation is compared."
+          "state": "supported",
+          "quote": "A complete but explicit outage or horizontal capacity increase may be preferable when no safe degraded mode exists.",
+          "reason": "Names the competing choice and reversal condition."
         }
       },
       "decision_evidence": {
@@ -5426,7 +5426,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -5448,24 +5448,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A sound architecture decides **which work to accept, reject, defer, cancel or degrade**, and makes those decisions visible to callers while protecting correctness invariants.",
-          "reason": ""
+          "state": "supported",
+          "quote": "Shedding rejects or drops work before a scarce resource is exhausted so accepted work can meet its deadline.",
+          "reason": "Defines the mechanism and its scope."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "Rejection is named as an option without a selection or fairness invariant."
+          "state": "supported",
+          "quote": "It needs a bottleneck-specific signal, fair principal policy and retry guidance.",
+          "reason": "States the correctness or policy invariant."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No shedding failure path or recovery is described."
+          "state": "supported",
+          "quote": "A rejection without a retry hint can create a synchronized retry storm; shedding one tenant's traffic can be unfair if the policy does not declare quotas.",
+          "reason": "Names the failure mode and required response."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing overload response is compared."
+          "state": "supported",
+          "quote": "Queueing/backpressure, admission control or provisioning may be preferable when the work is deferrable or the bottleneck can be expanded.",
+          "reason": "Names the competing choice and reversal condition."
         }
       },
       "decision_evidence": {
@@ -5483,7 +5483,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -5497,7 +5497,7 @@
         "heading": "Engineering walkthrough — Optional dependency failure creates core-work starvation",
         "anchor": "engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
         "level": 2,
-        "line": 86,
+        "line": 106,
         "unit_kind": "embedded",
         "unit_terms": [
           "API-edge quota"
@@ -5554,7 +5554,7 @@
         "heading": "Engineering walkthrough — Optional dependency failure creates core-work starvation",
         "anchor": "engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
         "level": 2,
-        "line": 86,
+        "line": 106,
         "unit_kind": "embedded",
         "unit_terms": [
           "per-principal limits"
@@ -8869,9 +8869,9 @@
       ],
       "unit_count": 2,
       "dedicated_units": 0,
-      "bounded_entries": 0,
+      "bounded_entries": 3,
       "decision": "deepen",
-      "rationale": "Five overload-response patterns have no dedicated unit and all remain partial; the page needs bounded units for fallback, degradation, shedding, throttling and rate limiting."
+      "rationale": "Fallback, graceful degradation and load shedding now have bounded evidence; throttling and rate limiting still need dedicated units."
     },
     {
       "document_id": "tycho.page.49d9df04c0b4488e936b02e580a62271",
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 103,
-    "invariant_supported": 120,
-    "failure_recovery_supported": 91,
-    "alternative_supported": 74,
-    "technical_partial_bounded": 100,
-    "technical_partial": 45,
+    "mechanism_supported": 106,
+    "invariant_supported": 123,
+    "failure_recovery_supported": 94,
+    "alternative_supported": 77,
+    "technical_partial_bounded": 103,
+    "technical_partial": 42,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

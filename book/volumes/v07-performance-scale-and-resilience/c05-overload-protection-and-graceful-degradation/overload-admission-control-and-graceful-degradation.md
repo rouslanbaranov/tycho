@@ -81,6 +81,26 @@ When offered work exceeds a scarce resource's sustainable capacity, unlimited wa
 
 This chapter owns *overload policies and failure containment*, not the mathematical foundations of [Little's Law](../c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md), the [autoscaling control loop](../c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md) or [load-test validity](../c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md). Their evidence is necessary to size a control but does not itself supply a universal threshold.
 
+**Fallback.** A fallback returns a declared alternate result or dependency when the primary
+is unavailable. It must preserve the same correctness contract: a cached, fabricated or
+partial value is not a successful authoritative result. Name the fallback's freshness,
+authority and user-visible label; fail explicitly if none is valid. An explicit failure
+or a queued retry may be safer than a plausible but wrong fallback.
+
+**Graceful degradation.** Degradation removes optional features or reduces quality to
+protect an essential outcome under overload. It is a product decision, not an automatic
+consequence of a timeout: declare which outcomes remain mandatory, which become
+unavailable, and how callers observe the reduced state. Hidden degradation that silently
+drops correctness is worse than an explicit failure. A complete but explicit outage or
+horizontal capacity increase may be preferable when no safe degraded mode exists.
+
+**Load shedding.** Shedding rejects or drops work before a scarce resource is exhausted so
+accepted work can meet its deadline. It needs a bottleneck-specific signal, fair principal
+policy and retry guidance. A rejection without a retry hint can create a synchronized
+retry storm; shedding one tenant's traffic can be unfair if the policy does not declare
+quotas. Queueing/backpressure, admission control or provisioning may be preferable when
+the work is deferrable or the bottleneck can be expanded.
+
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:10 -->
 ## Engineering walkthrough — Optional dependency failure creates core-work starvation

@@ -271,17 +271,19 @@ priority core.
 
 **Decision question.** Should a failed primary path return a defined degraded result?
 
-**Good-fit conditions.** The caller can act on a degraded result; fallback semantics are
-honest; the fallback is cheaper and independently safe.
+**Good-fit conditions.** The caller can act on a degraded result; fallback freshness,
+authority and user-visible label are explicit; the fallback is cheaper and independently
+safe.
 
-**Hard contraindications.** Reject when no degraded result is meaningful, when fallback
-hides a correctness failure, or when the fallback depends on the same failed resource.
+**Hard contraindications.** Reject when no degraded result is meaningful, when fallback is
+cached/fabricated without disclosure, or when the fallback depends on the same failed
+resource.
 
 **Competing alternative.** Fail fast with an explicit error. Reverse the choice when a
 bounded degraded result is more useful than no result.
 
-**Failure and recovery.** Fallback can mask failures and drift; verify honesty in the
-owner section.
+**Failure and recovery.** Fallback can mask failures and drift; a stale or partial result
+must be labelled, and an explicit failure is safer than a plausible but wrong value.
 
 **Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#purpose-and-mission) — overload policy is bounded, not a universal rate-limit algorithm.
 
@@ -302,8 +304,8 @@ resilience-pattern; priority core.
 **Decision question.** Should non-essential capabilities be reduced to protect essential
 work under stress?
 
-**Good-fit conditions.** Essential and optional work are distinguishable; degradation is
-observable; recovery is defined.
+**Good-fit conditions.** Essential and optional work are distinguishable; the reduced
+outcomes and user-visible state are declared; recovery and hysteresis are defined.
 
 **Hard contraindications.** Reject when every capability is essential, when degradation
 cannot be communicated, or when it silently changes correctness.
@@ -311,8 +313,8 @@ cannot be communicated, or when it silently changes correctness.
 **Competing alternative.** Admission control or fail fast. Reverse the choice when partial
 service creates more confusion than value.
 
-**Failure and recovery.** Sticky degradation and unclear recovery are common; verify
-priority in the owner section.
+**Failure and recovery.** Hidden degradation, sticky reduced modes and unclear recovery are
+common; expose the reduced state and define how normal service resumes.
 
 **Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#purpose-and-mission) — overload policy is bounded, not a universal rate-limit algorithm.
 
@@ -333,8 +335,8 @@ resilience-pattern; priority core.
 **Decision question.** Should the system reject some work to preserve useful throughput
 under overload?
 
-**Good-fit conditions.** Load exceeds capacity; rejection is cheaper than queueing;
-priority and retry behavior are defined.
+**Good-fit conditions.** Load exceeds capacity; rejection is cheaper than queueing; a
+bottleneck-specific signal, fair principal policy and retry guidance are defined.
 
 **Hard contraindications.** Reject when all work is equally critical, when rejection would
 violate a hard obligation, or when capacity is actually available.
@@ -342,8 +344,8 @@ violate a hard obligation, or when capacity is actually available.
 **Competing alternative.** Queueing or autoscaling. Reverse the choice when queue delay is
 acceptable and capacity can expand.
 
-**Failure and recovery.** Shedding the wrong work is common; verify priority in the owner
-section.
+**Failure and recovery.** Shedding the wrong work, unfair tenant impact and synchronized
+retry storms are common; declare quotas and retry hints, and protect essential outcomes.
 
 **Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#purpose-and-mission) — overload policy is bounded, not a universal rate-limit algorithm.
 

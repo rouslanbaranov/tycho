@@ -90,3 +90,11 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
   now have all four evidence dimensions supported.
 - **Batch 1 complete:** all nine distributed-coordination entries are
   `partial-bounded` with no evidence-dimension gaps. Next: resilience-and-fault-tolerance.
+## Resilience progress — 2026-10-22
+
+- Fallback, Graceful Degradation and Load Shedding: owner vocabulary and cards
+  expanded; each is `partial-bounded` with all four evidence dimensions supported.
+- Remaining resilience gaps: Retry with Exponential Backoff, Timeout, Deadline
+  Propagation, Throttling, Rate Limiting, Queue-Based Load Leveling, Health Endpoint
+  Monitoring, Failover/Failback, plus alternative/failure gaps for Circuit Breaker,
+  Bulkhead and Hedged Requests.
