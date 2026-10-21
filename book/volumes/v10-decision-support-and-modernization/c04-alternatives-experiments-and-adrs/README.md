@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -95,12 +95,15 @@ The following original citation rows, review limits and earlier topical routes a
 | [Tycho candidate comparison method](../../../../authoring/models/candidate-comparison-adr.md) | Reusable authored screening/ADR structure | An automatically computed or approved architectural choice |
 | [Tycho performance experiments](../../../performance/workload-profiles-and-capacity-experiments.md) | Measurement boundaries and falsifiable trial design | Any real workload observation |
 
-All sample identities, outcomes, weights and experiments here are **independent original synthetic content**. No system was evaluated or benchmarked. Real technical review, claim-by-claim public-source check and final chapter/page metadata remain pending.
+All sample identities, outcomes, weights and experiments here are **independent original synthetic
+content**. No system was evaluated or benchmarked. Real technical review and claim-by-claim
+public-source check remain pending; chapter/page metadata is recorded.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.f05854fcc406435bbf38a192bc7ab2f1:8 -->
-## Navigation
+### Archived proposal-era navigation
 
-Proposed home: **V10/C04** in [proposed contents](../../../PROPOSED-STRUCTURE.md). Current landing: [Decision support](../../../decisions/README.md). Read [Requirements/workload](../c01-architecture-requirement-and-workload-profiles/requirements-and-workload-architecture-profiles.md), [Pattern applicability](../c03-pattern-applicability-and-contraindications/pattern-applicability-and-contraindications.md), [Legacy baseline](../c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md), then [target and transition planning](../../../../authoring/models/target-transition-architecture.md) for implementation readiness.
-
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

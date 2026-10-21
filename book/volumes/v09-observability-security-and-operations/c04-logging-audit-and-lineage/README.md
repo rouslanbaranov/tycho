@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -98,5 +98,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 All identities, system behavior, logging examples, risk tables, diagram nodes and trial descriptions are independent invented teaching materials. No real logs or customer data used, no records persisted, no security/privacy auditor or technical reviewer accepted this chapter. The former combined [traces/logs/lineage/audit research](../../../observability/trace-context-lineage-and-audit.md) remains available for editorial claim reconciliation.
 
-**Navigation:** proposed owner **V09/C04** in [book outline](../../../PROPOSED-STRUCTURE.md), current [observability landing](../../../observability/README.md); related [Distributed tracing](../c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md), [Agent-safe knowledge](../c07-safety-isolation-and-privacy-in-agent-accessible-services/safe-agent-access-and-knowledge-isolation.md), [Outbox/idempotency](../../../distributed/transactional-outbox-and-idempotency.md).
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

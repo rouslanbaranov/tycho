@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -96,12 +96,15 @@ The following original citation rows, review limits and earlier topical routes a
 | [Tycho architecture styles](../../../application/architecture-styles-and-module-boundaries.md) | Independently researched module and service boundaries | Compiled/enforced module graph for fictional app |
 | [Tycho distributed outbox](../../../distributed/transactional-outbox-and-idempotency.md) | Commit/pub ambiguity, deduplication limits | An implemented event registry or exactly-once external effect |
 
-All modules, diagrams, events and failure cases are original invented teaching materials. No real source code, build output, dependency checker, distributed test or human domain approval was used. The final book volume/chapter/page edition has not been assembled.
+All modules, diagrams, events and failure cases are original invented teaching materials. No real
+source code, build output, dependency checker, distributed test or human domain approval was used.
+The chapter is canonical in V02 and is part of the current edition.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.a06fd146f96b4b17a754f4d3b608ebdf:8 -->
-## Navigation
+### Archived proposal-era navigation
 
-Proposed owner **V02/C03** in [planned table of contents](../../../PROPOSED-STRUCTURE.md), [application landing](../../../application/README.md). Start with [bounded contexts and ownership](../c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md), then [module/service styles](../../../application/architecture-styles-and-module-boundaries.md), [internal vs external outbox](../../../distributed/transactional-outbox-and-idempotency.md) and [safe extraction](../../../application/architecture-evolution-and-extraction.md).
-
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

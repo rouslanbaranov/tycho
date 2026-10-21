@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -101,7 +101,9 @@ Every query scenario, diagram and table was independently authored for education
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.7a136445bbfe4a8194c2c4db8a8818ee:10 -->
-## Navigation
+### Archived proposal-era navigation
 
-Proposed **V05/C03** in [draft outline](../../../PROPOSED-STRUCTURE.md), [data landing](../../../data/README.md). Prerequisite [relational modeling and isolation](../c01-relational-modeling-and-transaction-isolation/relational-modeling-and-transaction-isolation.md). Related [PostgreSQL WAL/recovery](../c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md), [query distribution/performance](../../v01-requirements-and-architecture/c02-workload-and-demand-models/workload-demand-and-arrival-models.md), [lexical full-text ranking](../../v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md).
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

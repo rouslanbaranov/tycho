@@ -46,7 +46,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -55,6 +55,9 @@ content_verified_at: null
 # Metrics ingestion, cardinality and time-series retention architecture
 
 > **Tycho source-grounded System Design draft V09/C02, 2026-10-19.** OpenTelemetry and Prometheus public specifications support the narrow instrumentation and data-model descriptions. All pipelines, rate/budget figures and failure tests here are original hypothetical examples. No collector, database, remote-write service or runtime metric stream was deployed or exercised.
+>
+> The content_review field retains the decomposition-era draft state; no independent
+> acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53:0 -->

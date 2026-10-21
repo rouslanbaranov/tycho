@@ -39,7 +39,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -48,6 +48,9 @@ content_verified_at: null
 # Deployment topology and control-plane independence
 
 > Original Tycho technical chapter for [E14-09 / issue #87](https://github.com/rouslanbaranov/tycho/issues/87), research scope inspected 2026-10-19. Explains design trade-offs; NOT a deployment recipe or performance benchmark. The examples are synthetic, no employer/private architecture is used.
+>
+> The content_review field retains the decomposition-era draft state; no independent
+> acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.ea94649bfd8c4be183f9114618d7ccaa:5 -->

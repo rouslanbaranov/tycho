@@ -35,7 +35,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-22"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -114,6 +114,10 @@ PostgreSQL 17 documents deterministic/nondeterministic collation and provider-sp
 ### Evidence and proposed acceptance
 
 Inspected selected PostgreSQL 17 passages 2026-10-20: [timestamp storage and timezone rules](https://www.postgresql.org/docs/17/datatype-datetime.html); [exact/inexact numeric types](https://www.postgresql.org/docs/17/datatype-numeric.html); [collation equality and provider behavior](https://www.postgresql.org/docs/17/collation.html). Examples and interface rules above are original design reasoning.
+
+The frontmatter leaves `source_inspection_date` null because this decomposition source block keeps
+its inherited metadata; the 2026-10-20 date above is a source-scope inspection date, not page-level
+acceptance.
 
 Proposed cases: civil recurrence through both DST transitions, explicit versus default zone, unit mismatch, boundary rounding, numeric overflow, canonically equivalent Unicode, case collisions and a cursor after comparison-rule change. Compare intended user meaning, not just successful deserialization. No database/timezone/locale experiment was run.
 

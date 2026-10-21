@@ -118,7 +118,12 @@ The tombstone stall is especially instructive. Percent complete can conceal path
 
 ## Outcomes and unlike-for-like resources
 
-src.m9-di01 reports **177 Cassandra nodes versus 72 ScyllaDB nodes** after the migration, but the node configurations were not equal: approximately **4 TB disk/node** in Cassandra versus **9 TB/node** in ScyllaDB. Historical message-read p99 changed from **40–125 ms to ~15 ms**, and insert p99 from **5–70 ms to ~5 ms** in the publisher's workloads. These are dated vendor-operator measurements, not a controlled cross-database benchmark over identical hardware. Other capabilities (maintenance/repair burden, hot-key tolerance, team expertise) may determine actual total cost of ownership.
+src.m9-di01 reports fewer nodes after the migration, but the node configurations were not equal, so
+node counts are not like-for-like units. The reported node-count, capacity and latency deltas are
+recorded once under **Measured or reported outcome**. They are dated vendor-operator measurements,
+not a controlled cross-database benchmark over identical hardware. Other capabilities
+(maintenance/repair burden, hot-key tolerance, team expertise) may determine actual total cost of
+ownership.
 
 This **message-store** latency must not be conflated with the much later [Discord message-search index modernization](discord-search-index-cells.md), whose reported median/p99 concern Elasticsearch query response, not ScyllaDB message retrieval.
 

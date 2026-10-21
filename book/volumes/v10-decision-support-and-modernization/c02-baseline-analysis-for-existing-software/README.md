@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -102,12 +102,9 @@ The following original citation rows, review limits and earlier topical routes a
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1:9 -->
-## Navigation
+### Archived proposal-era navigation
 
-- Planned home: **V10/C02** in [Tycho's proposed chapters](../../../PROPOSED-STRUCTURE.md), currently linked from [decision-support landing](../../../decisions/README.md).
-- Before: [Requirements/workload profile](../c01-architecture-requirement-and-workload-profiles/requirements-and-workload-architecture-profiles.md).
-- Mechanisms: [Application architecture evolution](../../../application/architecture-evolution-and-extraction.md); [Transactional outbox](../../../distributed/transactional-outbox-and-idempotency.md); [HTTP/RPC compatibility](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md).
-- Transition owners: [Safe rollout and recovery](../../../delivery/safe-rollout-and-recovery.md); [Schema evolution](../../../delivery/progressive-delivery-and-schema-evolution.md).
-- Supporting method (not book chapter): [Legacy baseline authoring model](../../../../authoring/models/legacy-modernization-profile.md).
-
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -100,9 +100,9 @@ The booking application, all data flows, errors, tables, decision alternatives a
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.4318e542ac7e445b9e8b3150effd2cff:10 -->
-## Navigation
+### Archived proposal-era navigation
 
-- Intended canonical owner: **V01/C01** in [Tycho's planned contents](../../../PROPOSED-STRUCTURE.md); current [application/foundations landing](../../../application/README.md).
-- Continue with [Quality attributes and views](../c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md); [Architecture styles](../../../application/architecture-styles-and-module-boundaries.md); [Requirements/workload](../../v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/requirements-and-workload-architecture-profiles.md).
-- Failure mechanics: [HTTP/RPC compatibility](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md), [Outbox](../../../distributed/transactional-outbox-and-idempotency.md), [Authorization](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md).
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

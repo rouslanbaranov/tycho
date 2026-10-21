@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -99,5 +99,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 All example data, diagrams, test cases and recommendations are original educational design illustrations. No private corpus was accessed or used as a source, no customer data was processed, and no actual security test was performed. Further source precision, independent review, client compatibility and operating tests remain open.
 
-**Navigation:** future V09/C07 in [proposed book outline](../../../PROPOSED-STRUCTURE.md), current [security landing](../../../security/README.md). Prerequisites: [Authorization and trust boundaries](../c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md), [Tracing and audit](../../../observability/trace-context-lineage-and-audit.md). Related: [Search/retrieval architecture](../../v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md), [cross-domain architecture decisions](../../v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/cross-domain-modernization-and-adr-examples.md).
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

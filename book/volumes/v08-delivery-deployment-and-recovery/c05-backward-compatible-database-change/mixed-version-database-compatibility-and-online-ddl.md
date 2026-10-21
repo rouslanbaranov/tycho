@@ -49,7 +49,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -57,7 +57,15 @@ content_verified_at: null
 
 # Backward-compatible database change: mixed-version reads, writes and online DDL
 
-> **Tycho independent book manuscript — proposed V08/C05**, 2026-10-19. Official PostgreSQL 17 ALTER TABLE and Confluent Schema Registry evolution guidance were independently consulted for narrow semantics. The examples and rollout checks are original and fictional. No migration, SQL test, event replay, load test or independent expert review occurred. Previous [combined rollout/data study](../../../delivery/progressive-delivery-and-schema-evolution.md) remains preserved for detailed evidence mapping.
+> **Tycho independent book manuscript — V08/C05**, 2026-10-19. Official PostgreSQL 17 ALTER TABLE
+> and Confluent Schema Registry evolution guidance were independently consulted for narrow
+> semantics. The examples and rollout checks are original and fictional. No migration, SQL test,
+> event replay, load test or independent expert review occurred. Previous [combined rollout/data
+> study](../../../delivery/progressive-delivery-and-schema-evolution.md) remains preserved for
+> detailed evidence mapping.
+>
+> The content_review field retains the decomposition-era draft state; no independent
+> acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb:0 -->

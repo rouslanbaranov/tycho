@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -97,14 +97,16 @@ The following original citation rows, review limits and earlier topical routes a
 | [Microsoft — Anti-corruption layer pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer) | Translation protection and added latency/operations/consistency trade-offs | A validated schema mapping or real migration |
 | [Tycho HTTP/RPC chapter](../c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md) | Explanation of request/response compatibility and effect identity | Actual contract-test execution |
 
-The makerspace, rules, mappings, diagrams, decision alternatives and failures are original synthetic examples. The chapter does **not** claim complete reading of a proprietary DDD book, domain-expert review, executable contract tests or a measured distributed architecture. Canonical ownership and metadata for final edition are pending.
+The makerspace, rules, mappings, diagrams, decision alternatives and failures are original synthetic
+examples. The chapter does **not** claim complete reading of a proprietary DDD book, domain-expert
+review, executable contract tests or a measured distributed architecture. Canonical ownership and
+metadata are recorded in the current edition.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.4681b3ba9e234c46bdb4b5993634b0e3:9 -->
-## Navigation
+### Archived proposal-era navigation
 
-- Proposed V02/C02, currently [Application architecture landing](../../../application/README.md).
-- Prerequisite: [System boundaries](../../v01-requirements-and-architecture/c01-problem-framing/problem-framing-and-system-boundaries.md), [architecture styles](../../../application/architecture-styles-and-module-boundaries.md).
-- Further reading: [API/RPC compatibility](../c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md), [transaction and idempotency limits](../../../distributed/transactional-outbox-and-idempotency.md), [legacy transition](../../v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md).
-
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

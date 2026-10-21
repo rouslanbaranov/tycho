@@ -46,7 +46,7 @@ content_verified_at: null
 This page belongs to [V05/C07 — Replication, backups and restore drills](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits.
 
 <!-- tycho-question-source:tycho.page.81efb7e6d72349768b6f202845cbe35e:3 -->
-## 3. Original synthetic example: public equipment reservations
+## 4. Original synthetic example: public equipment reservations
 
 A fictional makerspace stores accepted reservations in PostgreSQL, plus a search index and an asynchronous notification service. A faulty software release accidentally deletes a day of reservation metadata while the database itself continues serving requests. A streaming standby receives those deletes.
 

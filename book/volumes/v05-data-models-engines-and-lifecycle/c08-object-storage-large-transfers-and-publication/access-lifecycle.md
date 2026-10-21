@@ -102,6 +102,10 @@ A leaked capability is a security event, not a cache miss. A missing key can mak
 
 The inspected [Multipart upload overview](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html) supports multipart storage cleanup obligations. General lifecycle/version/capability behavior above is original requirements analysis; no universal S3-compatible behavior or immediate provider erasure is claimed. Read [cross-store deletion](../c06-schema-evolution-data-migration-and-retention/migration-retirement.md#deletion-across-derived-state-and-restored-backups) and [key recovery](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md#key-rotation-revocation-and-unavailable-authorities).
 
+Google Cloud's [Object Lifecycle Management](https://cloud.google.com/storage/docs/lifecycle)
+documents provider-level delete and age rules; it supports separating lifecycle policy from
+capability minting, not immediate erasure across versions or caches.
+
 Proposed tests: retirement while a capability remains valid, cleanup concurrent with publication, an older retained version, delayed rendition deletion and restoration from a pre-retirement backup. Require the declared visible/access contract before asserting deletion complete.
 
 ## Navigation

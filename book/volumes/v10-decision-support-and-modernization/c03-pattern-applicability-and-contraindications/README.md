@@ -93,10 +93,10 @@ The following original citation rows, review limits and earlier topical routes a
 | [Fowler, Microservice Trade-Offs (2015)](https://martinfowler.com/articles/microservice-trade-offs.html) | Independent deployment, boundaries and distributed/operational costs | Not proof that any particular project needs microservices |
 | [SEI ATAM, Kazman et al. (1998)](https://www.sei.cmu.edu/library/the-architecture-tradeoff-analysis-method/) | Evaluating interacting quality attributes and design risks | Not an automated ranking or acceptance of this book's example |
 | [Tycho module and style chapter](../../../application/architecture-styles-and-module-boundaries.md) | Canonical mechanism distinction for modular monolith/SOA/services | No executable modularity enforcement for fictional app |
-| [Tycho caching, sharding, outbox and concurrency chapters](../../../scaling/local-distributed-caching-and-invalidation.md) | Boundaries of the referenced technical patterns | No real-world performance values transferred to the example |
+| [Tycho caching chapter](../../../scaling/local-distributed-caching-and-invalidation.md) | Boundaries of the referenced caching pattern | No real-world performance values transferred to the example |
 
 All matrix entries and the resource reservation example are original educational statements under explicit assumptions. No live workload, executed migration, independently reviewed pattern suitability, cost study or deployed architecture selection agent is claimed. Validation of a real decision requires source/version evidence and domain review.
 
-**Navigation:** planned **V10/C03** in [book outline](../../../PROPOSED-STRUCTURE.md), current [decision support landing](../../../decisions/README.md); prerequisite [requirements/workload](../c01-architecture-requirement-and-workload-profiles/requirements-and-workload-architecture-profiles.md), [legacy baseline](../c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md); next [cross-domain decisions](../c07-cross-domain-worked-comparisons-and-unresolved-cases/cross-domain-modernization-and-adr-examples.md), [target-vs-transition](../../../../authoring/models/target-transition-architecture.md).
+**Navigation:** canonical **V10/C03** in the current edition; start at the [decision-support landing](../../../decisions/README.md). Next: [V10/C04 — alternatives, experiments and ADRs](../c04-alternatives-experiments-and-adrs/README.md).
 
 <!-- /tycho-question-source -->

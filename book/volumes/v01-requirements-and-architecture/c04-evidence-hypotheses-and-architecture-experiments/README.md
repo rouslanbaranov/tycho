@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -110,7 +110,9 @@ The trial, metric hypotheses, workload, figure and failure consequences are orig
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.a2cd4465792a4740aa5150ad248fd420:9 -->
-## Navigation
+### Archived proposal-era navigation
 
-Proposed **V01/C04** in [planned outline](../../../PROPOSED-STRUCTURE.md); current [application landing](../../../application/README.md). Prerequisite [system context](../c01-problem-framing/problem-framing-and-system-boundaries.md), [quality drivers](../c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md). Continue to [architecture alternatives/ADRs](../../v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md), [benchmark methods](../../v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md), and [capacity experiments](../../../performance/workload-profiles-and-capacity-experiments.md).
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

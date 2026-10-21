@@ -132,3 +132,8 @@ Reconsider the design when refresh delay exceeds the decision's validity window,
 Exercise a stale process, a missing telemetry stream, a duplicate publication, an incompatible binary, and a rollback after durable B writes. The oracle requires whole-snapshot reads, nondecreasing accepted revisions, no unsupported record format, and no promotion without its evidence gate. Bound snapshot age separately for each decision class. These are proposed checks and have not been executed here.
 
 [Deploying configuration](https://docs.aws.amazon.com/appconfig/latest/userguide/appconfig-deploying.html) documents staged configuration deployment and rollback controls for that product. [Configuration validators](https://docs.aws.amazon.com/appconfig/latest/userguide/appconfig-creating-configuration-and-profile-validators.html) documents validation hooks and their scope. They support separating validation from monitored rollout; they do not establish that this synthetic application's data transition is reversible. Snapshot pinning, revision 41–43 and the manifest example are original design reasoning.
+## Navigation
+
+- Parent chapter: [GitOps, rollout and progressive delivery](README.md).
+- Related decision: [Safe rollout and recovery](../../../delivery/safe-rollout-and-recovery.md).
+- Pattern atlas: [Feature Toggles](../../v11-pattern-atlas/c12-delivery-and-operations/README.md).

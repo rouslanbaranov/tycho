@@ -47,7 +47,7 @@ content_verified_at: null
 This page belongs to [V03/C05 — Thread, connection and buffer pools](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits.
 
 <!-- tycho-question-source:tycho.page.dc2470904e004a4aa733abcdb25517ed:2 -->
-## 2. HikariCP bounds per-process JDBC connection use
+## 3. HikariCP bounds per-process JDBC connection use
 
 The official HikariCP README configuration explains:
 
@@ -80,7 +80,7 @@ Measure **connection hold time** by operation, query execution time, waiting for
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.dc2470904e004a4aa733abcdb25517ed:3 -->
-## 3. PgBouncer's pool modes change semantics
+## 4. PgBouncer's pool modes change semantics
 
 The official PgBouncer configuration reference defines distinct reuse boundaries:
 

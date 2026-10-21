@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -99,5 +99,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 All sample inputs, reading paths, diagrams and outputs are original educational cases. There is **no executed retrieval, model answer benchmark, operating agent, deployed adapter or independent domain sign-off**. Any numeric or version-sensitive claim requires source verification in its original chapter before operational adoption.
 
-**Reading navigation:** proposed **V10/C06** in [planned chapters](../../../PROPOSED-STRUCTURE.md); current section [decision support](../../../decisions/README.md). Start with [Requirements/workload](../c01-architecture-requirement-and-workload-profiles/requirements-and-workload-architecture-profiles.md), [Legacy evidence](../c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md), [Architecture decision examples](../c07-cross-domain-worked-comparisons-and-unresolved-cases/cross-domain-modernization-and-adr-examples.md). For source/graph distinctions, read [hybrid retrieval as a System Design subject](../../v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md)—not as a Tycho graph delivery requirement.
+**Reading navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

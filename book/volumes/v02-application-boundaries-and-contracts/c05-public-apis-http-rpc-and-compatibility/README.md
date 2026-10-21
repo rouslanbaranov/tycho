@@ -115,13 +115,19 @@ Inspected independently public reference sections on 2026-10-19, with the follow
   complementary retry budgets. Does not establish universal thresholds or sparse-client
   behavior.
 
-**Original modeling and unknowns:** preview-job identities, budget numbers, failure matrices, architecture selection table and tests above are original proposals/synthetic examples; no test, production observation, real latency measurement, independent expert review or citation-snapshot packaging is claimed. Language/runtime compatibility, actual OpenAPI 3.2.1 tooling support and any environment-specific protocol choice must be checked for the actual target deployment. The wider V02 volume and Tycho book remain incomplete.
+**Original modeling and unknowns:** preview-job identities, budget numbers, failure matrices,
+architecture selection table and tests above are original proposals/synthetic examples; no test,
+production observation, real latency measurement, independent expert review or citation-snapshot
+packaging is claimed. Language/runtime compatibility, actual OpenAPI 3.2.1 tooling support and any
+environment-specific protocol choice must be checked for the actual target deployment. The V02
+volume and this chapter are canonical in the current edition.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.cccbd188936543a2aaf904f4002236d8:8 -->
 ## Reading and navigation
 
-- Parent: [Application boundaries and architecture styles](../../../application/README.md); planned future volume owner **V02/C05** in the [69-chapter outline](../../../PROPOSED-STRUCTURE.md).
+- Parent: [Application boundaries and architecture styles](../../../application/README.md);
+  canonical **V02/C05**.
 - Before: [Architecture styles and module boundaries](../../../application/architecture-styles-and-module-boundaries.md).
 - Related: [Transactional outbox and idempotency](../../../distributed/transactional-outbox-and-idempotency.md), [Safe schema evolution](../../../delivery/progressive-delivery-and-schema-evolution.md), [Authorization isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md), [Java reactive execution](../../v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/reactor-webflux-r2dbc-and-backpressure.md).
 - Next: mixed-version runnable consumer/provider tests and detailed streaming reconnect semantics (unimplemented, future authoring work).

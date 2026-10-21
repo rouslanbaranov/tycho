@@ -38,7 +38,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -98,5 +98,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 All example events, diagrams and tracing behaviors are hypothetical educational work. No tracing backend, software build, distributed request, review or sampling evaluation was performed. Former combined tracing/logging research remains preserved for claim-level editorial reconciliation, not reproduced in full.
 
-**Navigation:** proposed **V09/C03** in [book outline](../../../PROPOSED-STRUCTURE.md), current [observability landing](../../../observability/README.md). Related [Metrics and SLOs](../c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md), [Audit and lineage](../c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md), [Tail latency](../../v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-latency-fanout-and-deadline-budgets.md).
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

@@ -39,7 +39,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -100,8 +100,9 @@ The following original citation rows, review limits and earlier topical routes a
 | [Danilo Sato Parallel Change](https://martinfowler.com/bliki/ParallelChange.html) | Expansion, migration and contraction as transition method | DB/backfill safety |
 | [Prior combined Tycho research](../../../delivery/progressive-delivery-and-schema-evolution.md) | Earlier rollout/schema study and failure matrix | Independently accepted chapter split |
 
-Every system, schema, migration diagram and experiment is original synthetic work. No SQL, client/consumer, restore or load test was run and final book metadata remains pending.
+Every system, schema, migration diagram and experiment is original synthetic work. No SQL,
+client/consumer, restore or load test was run; chapter metadata is recorded in the current edition.
 
-**Navigation:** **V08/C05** in [draft outline](../../../PROPOSED-STRUCTURE.md) via [delivery landing](../../../delivery/README.md). Read [data lifecycle](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md), [canary/rolling](../c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md), [target/transition states](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md), [safe recovery](../../../delivery/safe-rollout-and-recovery.md).
-
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

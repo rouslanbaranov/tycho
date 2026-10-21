@@ -72,7 +72,7 @@ Avoid saying "transactions use WAL, therefore RPO=0" without specifying the fail
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.ddeff7f1556f44f18c67659b73e6e15f:3 -->
-## 3. Acknowledgments and replication are not one binary switch
+## 2. Acknowledgments and replication are not one binary switch
 
 PostgreSQL §26.2.8 **Synchronous Replication** documents configurable commit waiting for standby acknowledgment, with trade-offs in lag and availability. It distinguishes the stage at which a standby has written/flushed/applied changes under configured policies. In a topology whose primary waits for one synchronous standby, an unreachable standby may prevent timely commit progress until configuration or availability changes. [E02]
 

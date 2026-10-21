@@ -39,7 +39,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -111,7 +111,9 @@ All domain names, operations, diagrams, failure modes and test plans are fiction
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.6b42723bd575413bb0d1b94d3e179b6a:8 -->
-## Navigation
+### Archived proposal-era navigation
 
-Proposed owner **V05/C01** in the [planned 10-volume outline](../../../PROPOSED-STRUCTURE.md), [data landing](../../../data/README.md). Related [PostgreSQL indexes and plans](../c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md), [transactions and sagas](../../v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/transaction-isolation-and-sagas.md), [backup/PITR recovery](../c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md).
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

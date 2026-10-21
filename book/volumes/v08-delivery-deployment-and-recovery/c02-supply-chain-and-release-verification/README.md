@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -119,9 +119,9 @@ The SLSA 1.2, SPDX, CycloneDX and Sigstore documents cited in this chapter descr
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.38bb8a14ebb54866a7004080318b47e1:10 -->
-## Navigation
+### Archived proposal-era navigation
 
-- Proposed owner V08/C02 in [planned contents](../../../PROPOSED-STRUCTURE.md); current [delivery landing](../../../delivery/README.md).
-- Prerequisite: [CI/CD provenance and GitOps](../c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md).
-- Follow-on: [Progressive deployment and schema evolution](../../../delivery/progressive-delivery-and-schema-evolution.md), [safe rollback/recovery](../../../delivery/safe-rollout-and-recovery.md), [security authority and isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md).
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

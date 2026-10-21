@@ -41,7 +41,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -149,3 +149,8 @@ Treat opt-in adoption, performance canary and removal of legacy modules as separ
 **Source pointers:** [src.m9-n09 — Netflix first-party integration account](https://netflixtechblog.com/a-tale-of-two-frameworks-the-domain-graph-service-framework-meets-spring-graphql-f8237f09c389), sections "Framework Architecture with Spring GraphQL", "Performance", "Going Forward"; [src.m9-n10 — DGS official announcements](https://netflix.github.io/dgs/announcements/), sections "8.5.0 with Spring GraphQL" and "10.0.0 released!".
 
 **Review state:** draft; acceptance requires independent verification of numerics and current semantic correctness in #121, no invented deployment measurements.
+## Related reading
+
+- [Casebook index](README.md) — scope, evaluation method and sibling cases.
+- [Decision playbooks](../decisions/README.md) — decision guides that consume this case.
+- [Pattern atlas](../volumes/v11-pattern-atlas/README.md) — applicability and contraindications.

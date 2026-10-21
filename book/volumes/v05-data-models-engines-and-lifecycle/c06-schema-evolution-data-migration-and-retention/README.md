@@ -38,7 +38,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -104,6 +104,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 The invented schema, example workflow, diagram, test matrix and conclusions are original. No versioned database data or human review was available.
 
-**Navigation:** proposed **V05/C06** in [book outline](../../../PROPOSED-STRUCTURE.md) and [data landing](../../../data/README.md). Read [relational modeling](../c01-relational-modeling-and-transaction-isolation/relational-modeling-and-transaction-isolation.md), [mixed-version schema compatibility](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md), [legacy transition](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md).
-
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

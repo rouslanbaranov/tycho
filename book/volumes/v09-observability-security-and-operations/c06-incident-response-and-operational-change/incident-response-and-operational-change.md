@@ -49,7 +49,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -58,6 +58,9 @@ content_verified_at: null
 # Incident response, containment and operational change
 
 > **Tycho System Design draft V09/C06**, 2026-10-19. Built from independently public reliability guidance and wholly synthetic scenarios. This is not an executed incident, operational playbook for a real service, incident review, tested drill, or independently approved response policy.
+>
+> The content_review field retains the decomposition-era draft state; no independent
+> acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.d87f9ba3852b49ee8188d150bb679716:0 -->

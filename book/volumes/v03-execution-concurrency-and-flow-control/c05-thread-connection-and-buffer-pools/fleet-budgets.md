@@ -82,7 +82,7 @@ Compute headroom for worst-case auto-scaling and failover, *then* verify measure
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.dc2470904e004a4aa733abcdb25517ed:4 -->
-## 4. Connection pooling is not queuing-capacity magic
+## 2. Connection pooling is not queuing-capacity magic
 
 Suppose a stable hypothetical service has a single pool of 20 connections and every operation holds a connection **0.10 seconds on average**. Even under unrealistic perfect utilization and no additional bottleneck, the simple upper-bound arithmetic would be **20 / 0.10 = 200 connection-holding operations/s**. This is *not* a measured throughput SLO and not a queueing-theoretic tail latency prediction; locks, CPU, I/O, variance and overhead can lower achieved throughput dramatically.
 

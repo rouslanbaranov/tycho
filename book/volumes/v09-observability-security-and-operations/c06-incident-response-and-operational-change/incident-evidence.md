@@ -81,7 +81,7 @@ Avoid pasting sensitive request bodies, tokens, private user identifiers or raw 
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.d87f9ba3852b49ee8188d150bb679716:7 -->
-## 7. After-action analysis: avoid a single invented root cause
+## 6. After-action analysis: avoid a single invented root cause
 
 The [SRE Postmortem Culture](https://sre.google/sre-book/postmortem-culture/) emphasizes documenting impact, timeline, contributing conditions and follow-up actions rather than blaming individuals. A correct after-action record may show multiple contributing causes: one bad config, an untested schema interaction, monitoring blind spots and inadequate failover verification.
 

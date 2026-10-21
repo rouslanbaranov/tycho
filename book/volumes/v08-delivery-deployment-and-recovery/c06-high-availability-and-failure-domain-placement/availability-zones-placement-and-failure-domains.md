@@ -44,7 +44,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -52,7 +52,15 @@ content_verified_at: null
 
 # Availability zones, placement and failure-domain architecture
 
-> **Independent Tycho manuscript — proposed V08/C06**, 2026-10-19. Public Kubernetes scheduling/topology and AWS Well-Architected DR planning references inform the explanation. The topology and fault tests are original hypothetical examples. No cluster, deployment, failover or independent technical acceptance was performed. The earlier [combined region/recovery research](../../../deployment/multi-region-disaster-recovery-contracts.md) is preserved.
+> **Independent Tycho manuscript — V08/C06**, 2026-10-19. Public Kubernetes
+> scheduling/topology and AWS Well-Architected DR planning references inform the
+> explanation. The topology and fault tests are original hypothetical examples. No
+> cluster, deployment, failover or independent technical
+> acceptance was performed. The earlier [combined region/recovery
+> research](../../../deployment/multi-region-disaster-recovery-contracts.md) is preserved.
+>
+> The content_review field retains the decomposition-era draft state; no independent
+> acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.6b3725950fad4c0db82417b3d0225d32:0 -->

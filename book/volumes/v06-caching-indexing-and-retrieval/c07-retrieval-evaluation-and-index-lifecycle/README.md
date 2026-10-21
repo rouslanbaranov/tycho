@@ -39,7 +39,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -97,10 +97,13 @@ The following original citation rows, review limits and earlier topical routes a
 |---|---|---|
 | [NIST TREC relevance judgments](https://trec.nist.gov/data/reljudge_eng.html) | qrels, test collections and judged relevance limitations | Complete truth set for hypothetical documents |
 | [BEIR evaluation framework](https://github.com/beir-cellar/beir) | Standard lexical/dense retrieval comparison using nDCG, MAP, Recall, Precision | Benchmark scores for the Tycho corpus |
-| [Tycho hybrid retrieval theory](../c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md) | Existing educational retrieval mechanisms | Built hybrid index or deployed MCP API |
 
 All queries, scores, data, diagrams, source snapshots and tests here are original hypothetical examples. No index, embeddings, graph, training, test fixture, evaluation run or independent expert review was executed. The chapter adds **System Design education only**, and does not change Tycho's separate retrieval infrastructure roadmap or resurrect a curated knowledge graph.
 
-**Navigation:** proposed **V06/C07** in [book outline](../../../PROPOSED-STRUCTURE.md), current [search architecture landing](../../../search/README.md). Read [Lexical full-text](../c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md), [Vector/ANN](../c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-hnsw-faiss-pgvector.md), [Hybrid retrieval](../c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md), [Graph traversal as educational topic](../c06-graph-relationships-and-traversal/graph-data-models-and-traversal.md).
+Internal cross-reference: the Tycho hybrid-retrieval page is an original Tycho explanation, not an
+independently inspected external source.
+
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 
 <!-- /tycho-question-source -->

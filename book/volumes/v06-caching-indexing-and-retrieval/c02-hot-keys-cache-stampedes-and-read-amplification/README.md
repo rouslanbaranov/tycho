@@ -104,5 +104,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 All race participants, diagrams, metrics and design results are synthetic. No cache service, load generator, source DB or reviewer was involved.
 
-**Navigation:** proposed **V06/C02** in [the 69-question outline](../../../PROPOSED-STRUCTURE.md), [scaling entry](../../../scaling/README.md), [cache placement/freshness](../c01-local-and-distributed-caching/local-and-distributed-cache-design.md), [pool budget](../../v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md), [overload](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md).
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

@@ -40,7 +40,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -134,3 +134,8 @@ A **per-job service account** may be preferable for a small fleet with strict is
 ## Evidence and reviewer gaps
 
 Company self-report from a May 2026 production description; not an independently reproduced audit. **Do not infer** a complete fleet migration or verified platform-wide policy reduction. This draft closes a *security/identity subject-matter gap in the case set*, while acceptance and rights remain with #121. The original source remains [src.m9-n17](https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e).
+## Related reading
+
+- [Casebook index](README.md) — scope, evaluation method and sibling cases.
+- [Decision playbooks](../decisions/README.md) — decision guides that consume this case.
+- [Pattern atlas](../volumes/v11-pattern-atlas/README.md) — applicability and contraindications.

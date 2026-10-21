@@ -108,7 +108,10 @@ Text alternative: establish ci/cd architecture and artifact provenance, compare 
 
 ## Counterexample and handoff
 
-Reverting a binary does not restore discarded data or reverse an external effect. Placement across zones does not remove a shared control or storage dependency. Hand operations a tested recovery procedure and a clear evidence boundary; documentation and proposed drills are not evidence that a live recovery occurred.
+Reverting a binary does not restore discarded data or reverse an external effect.
+Placement across zones does not remove a shared control or storage dependency. Hand
+operations over to a tested recovery procedure and a clear evidence boundary;
+documentation and proposed drills are not evidence that a live recovery occurred.
 
 ## Navigation and source boundaries
 

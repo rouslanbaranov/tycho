@@ -40,7 +40,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -129,3 +129,8 @@ The article's **36% worse CPU** result concerns **older non-generational ZGC ver
 **Alternative decisions:** latency-sensitive IO-heavy service → consider generational concurrent collection; bursty high-throughput batch → test G1 and Parallel; very small heap or runtime changes → measure native footprint; unknown traffic mix → **insufficient evidence**, do not rank collectors.
 
 **Unknowns:** Netflix's full test hardware, exact per-service SLO thresholds and causal variance of retries are not reproduced here. No graphs copied. **Review:** pending #121 and detailed source-admission gate.
+## Related reading
+
+- [Casebook index](README.md) — scope, evaluation method and sibling cases.
+- [Decision playbooks](../decisions/README.md) — decision guides that consume this case.
+- [Pattern atlas](../volumes/v11-pattern-atlas/README.md) — applicability and contraindications.

@@ -110,5 +110,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 All application names, diagrams, decisions, numerical examples and tests are original fictional teaching material. No cache implementation or benchmark was exercised.
 
-**Navigation:** proposed owner **V06/C01** in [outline](../../../PROPOSED-STRUCTURE.md), via [scaling landing](../../../scaling/README.md). Read [cache invalidation/stampedes](../c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md), [source connection pools](../../v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md), [overload controls](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md).
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

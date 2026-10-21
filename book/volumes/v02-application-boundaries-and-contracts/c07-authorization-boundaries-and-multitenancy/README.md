@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -95,8 +95,10 @@ The following original citation rows, review limits and earlier topical routes a
 | [OWASP Authorization Patterns](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Patterns_Cheat_Sheet.html) | Enforced object/tenant policy decisions near protected resource | End-to-end negative authorization test |
 | [Microsoft Multitenant Tenancy Models](https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/tenancy-models) | Shared/dedicated/hybrid placement trade-offs | Suitability for invented libraries |
 
-The software, names, diagrams, resources and attack cases are original invented examples. No policy/tenant/restore tests, deployed service, independent audit, actual cost comparison or final edition chapter metadata exists for this page.
+The software, names, diagrams, resources and attack cases are original invented examples. No
+policy/tenant/restore tests, deployed service, independent audit or actual cost comparison exists
+for this page; chapter metadata is recorded in the current edition.
 
-**Navigation:** proposed **V02/C07** in [outline](../../../PROPOSED-STRUCTURE.md), [application landing](../../../application/README.md). Related [Domain ownership](../c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md), [Identity and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md), [Safe agent-accessible knowledge](../../v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/safe-agent-access-and-knowledge-isolation.md), [Connection pool scaling](../../v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md).
-
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

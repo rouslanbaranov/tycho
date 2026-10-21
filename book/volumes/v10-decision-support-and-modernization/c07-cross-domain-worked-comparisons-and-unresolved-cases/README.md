@@ -41,7 +41,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-21"
+updated_at: "2026-10-22"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -97,6 +97,10 @@ The preceding and following chapters supply context; this landing does not repla
 ## Evidence and limits
 
 The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+
+The landing self-check was refreshed on 2026-10-21 after the SRE passages below were inspected. The
+frontmatter `reviewed_at` records the original baseline date; it is not a later independent
+acceptance.
 
 ## Chapter source ledger
 

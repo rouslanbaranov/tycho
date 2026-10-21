@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -97,5 +97,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 Everything here is original general System Design prose and wholly fictional examples. No data, measured cost, series count, alerts, collector or metric backend was actually generated. The old combined research article is **preserved** as supporting source while the V09/C01 and V09/C02 chapter ownership is separated. Further claim-level source and editorial review is required before release.
 
-**Navigation:** proposed **V09/C02** in [planned contents](../../../PROPOSED-STRUCTURE.md), [observability landing](../../../observability/README.md); related [SLIs and error budgets](../c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md), [tracing and audit](../../../observability/trace-context-lineage-and-audit.md), [capacity planning](../../v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md).
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

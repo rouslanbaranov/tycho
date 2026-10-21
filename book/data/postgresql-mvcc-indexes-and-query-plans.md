@@ -57,7 +57,11 @@ A storage engine choice must preserve **business invariants under concurrent tra
 
 ## 1. Data authority and an original relational model
 
-Take an invented workshop registration application. Each registration belongs to exactly one workshop and customer. A workshop has finite capacity. A synthetic schema might model `workshops(workshop_id, capacity)` and `registrations(registration_id, workshop_id, customer_id, status)`; constraints or a well-defined transactional allocation protocol must enforce the invariants.
+Take an invented workshop registration application. Each registration belongs to exactly one
+workshop and customer. A workshop has finite capacity. A synthetic schema might model
+`workshops(workshop_id, capacity)` and `registrations(registration_id, workshop_id, customer_id,
+status, created_at)`; constraints or a well-defined transactional allocation protocol must enforce
+the invariants.
 
 ```mermaid
 erDiagram
