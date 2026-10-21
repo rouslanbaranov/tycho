@@ -73,6 +73,16 @@ content_verified_at: null
 
 A release mechanism decides which version is **deployed and exposed**. It does not by itself prove which data, users or business effects each version can safely interpret. Progressive deployment can limit a failure's initial blast radius, but cannot prevent a small canary from writing incompatible shared state used by every older instance.
 
+**Canary mechanism.** Route a small, identifiable cohort to the new version, compare its
+SLIs with a baseline, then expand or abort. It needs exposure control, a representative
+cohort, measurable gates and a rollback/forward-repair decision. The exposure slice is not a
+data-compatibility boundary: a canary can write state that older instances cannot read.
+
+**Failure and recovery.** Small samples hide rare errors, the canary can contaminate shared
+state, and a binary rollback does not undo committed data. Stop expansion, drain the cohort,
+inspect the shared-state effect and reconcile before resuming. Blue/green, shadow traffic or
+a feature flag may be preferable when a canary cannot isolate users or state.
+
 This chapter owns **release-controller behavior, routing/exposure, analysis gates and GitOps reconciliation**. [V08/C05 data compatibility](../c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md) owns old/new readers and online DDL; [V05/C06 data lifecycle](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md) owns semantic migration itself.
 
 <!-- /tycho-question-source -->

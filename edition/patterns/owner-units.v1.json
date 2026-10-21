@@ -7042,7 +7042,7 @@
         "heading": "Rolling Deployment",
         "anchor": "rolling-deployment",
         "level": 3,
-        "line": 112,
+        "line": 122,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Rolling Deployment"
@@ -7099,7 +7099,7 @@
         "heading": "Blue/Green Deployment",
         "anchor": "bluegreen-deployment",
         "level": 3,
-        "line": 122,
+        "line": 132,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Blue/Green Deployment"
@@ -7164,24 +7164,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Progressive deployment can limit a failure's initial blast radius, but cannot prevent a small canary from writing incompatible shared state used by every older instance.",
-          "reason": ""
+          "state": "supported",
+          "quote": "Route a small, identifiable cohort to the new version, compare its SLIs with a baseline, then expand or abort.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The sentence warns about shared state but states no exposure or analysis-gate invariant."
+          "state": "supported",
+          "quote": "The exposure slice is not a data-compatibility boundary: a canary can write state that older instances cannot read.",
+          "reason": "States the invariant."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Progressive deployment can limit a failure's initial blast radius, but cannot prevent a small canary from writing incompatible shared state used by every older instance.",
-          "reason": "Names a shared-state failure without a stop or recovery procedure."
+          "state": "supported",
+          "quote": "Small samples hide rare errors, the canary can contaminate shared state, and a binary rollback does not undo committed data.",
+          "reason": "Names failure and recovery."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing release mechanism is compared on this page."
+          "state": "supported",
+          "quote": "Blue/green, shadow traffic or a feature flag may be preferable when a canary cannot isolate users or state.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -7199,7 +7199,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -7224,9 +7224,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A feature flag selects behavior; a dynamic parameter changes an operating limit. Neither becomes simultaneous merely because its value sits outside a binary.",
-          "reason": "Defines runtime behavior selection but does not explain flag evaluation, targeting or rollout."
+          "state": "supported",
+          "quote": "A flag decouples deployment from exposure by evaluating a versioned value at request time, scoped by tenant, user or cohort, with a documented default and kill switch.",
+          "reason": "Defines the flag mechanism."
         },
         "invariant": {
           "state": "supported",
@@ -7234,14 +7234,14 @@
           "reason": "Explicit safety rule separating flags from authorization."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Processes fetch at different times, disconnected workers retain old snapshots, and a rollback can encounter writes produced by the new behavior.",
-          "reason": "Names version skew and rollback hazards but no detection or recovery in this section."
+          "state": "supported",
+          "quote": "Stale snapshots, flag interactions, permanent flags and unauthorized overrides are common.",
+          "reason": "Names flag failure modes."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing mechanism or reversal condition is named in this section."
+          "state": "supported",
+          "quote": "A canary or branch-by-abstraction may be preferable when the flag would become a permanent configuration surface.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -7259,7 +7259,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded opening section; flags are defined there, rollout detail sits in later sections."
     },
@@ -7281,24 +7281,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "| Gate | Required independent trust decision | Negative case | |---|---|---| | Source admission | Authorized repository/ref, protected change approvals | Build uses an unreviewed transient ref | | Build provenance | Builder identity, materials, invocation and output digest within declared trust model | Artifact digest is unrelated to verified source/approved workflow | | Deployment admission | Verify exact digest, environment, approved provenance and signer constraints | Any valid signature is allowed regardless of key policy | | Runtime rollback | Check old-reader compatibility and previously committed new effects | Controller restores an old image that cannot decode stored data | Direct push gives the build system deployment credentials; a GitOps pull/reconcile controller can separate rights but still needs strong trust in desired configuration and artifact references.",
-          "reason": ""
+          "state": "supported",
+          "quote": "Desired state is stored in a versioned repository; a reconciler pulls it, compares the live state and applies the difference.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The sentence names separation of rights without a reconciliation invariant."
+          "state": "supported",
+          "quote": "The reconciled commit must be the reviewed desired state; drift is detected rather than silently overwritten, and the controller has least-privilege access.",
+          "reason": "States the invariant."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No controller failure or drift recovery path is described here."
+          "state": "supported",
+          "quote": "Controller outage, drift, a compromised repository and stale artifact references are common.",
+          "reason": "Names failure and recovery."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Neither removes the need for live operational authorization, business outcome checks and restore drills.",
-          "reason": "Contrasts push and pull but does not give a clear reversal condition."
+          "state": "supported",
+          "quote": "Direct push/CD or an imperative platform operator may be preferable when a separate pull controller adds more operational surface than it removes.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -7316,7 +7316,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -7567,7 +7567,7 @@
         "heading": "Dark Launching / Shadow Traffic",
         "anchor": "dark-launching-shadow-traffic",
         "level": 3,
-        "line": 99,
+        "line": 109,
         "unit_kind": "dedicated",
         "unit_terms": [
           "mirrored or synthetic traffic",
@@ -8915,7 +8915,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 3,
-      "bounded_entries": 3,
+      "bounded_entries": 4,
       "decision": "keep",
       "rationale": "Four release mechanisms have four distinct units, three dedicated, so the page remains coherent without a split."
     },
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 124,
-    "invariant_supported": 132,
-    "failure_recovery_supported": 110,
-    "alternative_supported": 107,
-    "technical_partial_bounded": 122,
-    "technical_partial": 23,
+    "mechanism_supported": 127,
+    "invariant_supported": 134,
+    "failure_recovery_supported": 113,
+    "alternative_supported": 110,
+    "technical_partial_bounded": 125,
+    "technical_partial": 20,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

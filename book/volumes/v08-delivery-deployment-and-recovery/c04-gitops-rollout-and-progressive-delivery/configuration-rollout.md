@@ -86,6 +86,16 @@ Separate three kinds of decision:
 
 The last row cannot safely inherit the first row's convenient cache policy. A flag is also not a substitute for an authorization check.
 
+**Feature-flag mechanism.** A flag decouples deployment from exposure by evaluating a
+versioned value at request time, scoped by tenant, user or cohort, with a documented default
+and kill switch. The flag service is not authoritative for permissions or irreversible
+actions; those need their own decision path.
+
+**Failure and recovery.** Stale snapshots, flag interactions, permanent flags and
+unauthorized overrides are common. Audit changes, expire temporary flags, bound snapshot age
+and keep a local default that fails safe. A canary or branch-by-abstraction may be preferable
+when the flag would become a permanent configuration surface.
+
 ## Publish, observe, promote
 
 The publisher validates schema and cross-field constraints, checks compatibility, records an immutable revision, and selects a small exposure cohort. Cohorts must be stable for the observation interval: hashing a tenant identifier is more useful than randomly changing the behavior on every request. Exposure percentage measures eligibility, not traffic or risk; a small cohort can contain the most expensive tenant.

@@ -147,7 +147,7 @@ deployment-pattern; priority core.
 promotion?
 
 **Good-fit conditions.** A measurable signal exists; traffic can be split; abort/rollback
-is defined; the canary is representative.
+is defined; the canary is representative; shared-state compatibility is explicit.
 
 **Hard contraindications.** Reject when traffic cannot be split, when metrics are too
 noisy, or when the canary shares hidden state with the baseline.
@@ -155,8 +155,8 @@ noisy, or when the canary shares hidden state with the baseline.
 **Competing alternative.** Blue/green or feature flag. Reverse the choice when canary
 analysis cost exceeds risk reduction.
 
-**Failure and recovery.** Low-traffic blindness and metric leakage are common; verify
-analysis in the owner section.
+**Failure and recovery.** Low-traffic blindness, metric leakage and shared-state
+contamination are common; a binary rollback does not undo committed data.
 
 **Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#purpose-and-mission) — rollout mechanisms are bounded, not a product-specific controller guide.
 
@@ -177,8 +177,8 @@ kind deployment-pattern; priority core.
 **Decision question.** Should activation be decoupled from deployment through a runtime
 toggle?
 
-**Good-fit conditions.** Toggle ownership and expiry are defined; default is safe; flag
-evaluation is observable.
+**Good-fit conditions.** Toggle ownership, expiry, scope and kill switch are defined; the
+default fails safe; flag evaluation is observable.
 
 **Hard contraindications.** Reject when a toggle would become permanent configuration
 debt, when no owner removes it, or when it hides a broken deployment.
@@ -186,8 +186,8 @@ debt, when no owner removes it, or when it hides a broken deployment.
 **Competing alternative.** Deploy dark code with no toggle or a separate release train.
 Reverse the choice when toggle lifecycle cost exceeds decoupling benefit.
 
-**Failure and recovery.** Stale flags and combinatorial states are common; verify
-lifecycle in the owner section.
+**Failure and recovery.** Stale snapshots, flag interactions, permanent flags and
+unauthorized overrides are common; audit changes, expire flags and bound snapshot age.
 
 **Technical owner.** [Dynamic configuration and feature flags](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md#a-configuration-change-is-a-distributed-transition) — flags are bounded, not a full toggle-lifecycle platform.
 
@@ -210,8 +210,8 @@ priority core.
 **Decision question.** Should desired state be versioned and reconciled automatically from
 a Git source?
 
-**Good-fit conditions.** Desired state is declarative; reconciliation is observable;
-secrets/drift are handled; rollback is a revert.
+**Good-fit conditions.** Desired state is declarative and reviewed; reconciliation is
+observable; secrets/drift are handled; rollback is a revert commit.
 
 **Hard contraindications.** Reject when imperative one-off changes dominate, when the
 reconciler is unowned, or when secrets cannot be managed safely.
@@ -219,8 +219,8 @@ reconciler is unowned, or when secrets cannot be managed safely.
 **Competing alternative.** Pipeline-driven deployment or manual release. Reverse the
 choice when reconciliation latency/ownership exceeds audit benefit.
 
-**Failure and recovery.** Drift and reconciler outages are common; verify reconciliation
-in the owner section.
+**Failure and recovery.** Drift, controller outage, a compromised repository and stale
+artifact references are common; alert on drift, revert reviewed commits and scope credentials.
 
 **Technical owner.** [CI/CD architecture, artifact provenance and GitOps reconciliation](../../v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md#engineering-walkthrough-compromised-build-worker-and-a-tempting-image-rollback) — GitOps is bounded to desired-state reconciliation.
 
