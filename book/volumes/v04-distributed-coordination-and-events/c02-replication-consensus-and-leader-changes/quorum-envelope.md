@@ -60,6 +60,10 @@ This page belongs to [V04/C02 — Replication, consensus and leader changes](REA
 For each architecture specify write acknowledgment, eligible reader, membership configuration, failure domain, consistency, reconfiguration and restore model. “Replicated” alone is not an acceptance criterion.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Quorum-Based Reads/Writes](../../v11-pattern-atlas/c06-database-storage/README.md#quorum-based-reads-writes) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.1b2657011d454460856103419095031b:2 -->
 ## 2. Majority quorum arithmetic and the failure envelope
 

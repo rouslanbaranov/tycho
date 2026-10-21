@@ -99,6 +99,10 @@ The [Vitess 24 resharding workflow documentation](https://vitess.io/docs/24.0/us
 **Alternative:** repair a hot query, introduce a bounded per-tenant work queue, cache genuinely immutable reads, or isolate a high-traffic tenant without general sharding if the real bottleneck supports it. **Proposed, not run:** inject stale routing, interrupted copy, duplicate retry, deletion replay and two simultaneous writers; refuse cutover unless the single-authority invariant and recoverability can be demonstrated. The [semantic-migration owner](../c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md) covers domain identity; this chapter owns physical ownership transfer and key skew.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Consistent Hashing](../../v11-pattern-atlas/c06-database-storage/README.md#consistent-hashing) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.0d34dd26886340b89fd4f1499d790a81:5 -->
 ## 5. Alternatives before sharding
 

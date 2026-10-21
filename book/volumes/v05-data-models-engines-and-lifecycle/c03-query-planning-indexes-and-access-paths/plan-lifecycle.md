@@ -66,6 +66,10 @@ flowchart LR
 **Text alternative:** reproducible query parameters and appropriate statistics shape the planner choice. Controlled execution compares actual row counts and times, then investigates misestimates and checks the end-to-end system cost. No plan was run for this page.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Index Table](../../v11-pattern-atlas/c06-database-storage/README.md#index-table) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.7a136445bbfe4a8194c2c4db8a8818ee:5 -->
 ## 5. An index is a data-lifecycle change
 
