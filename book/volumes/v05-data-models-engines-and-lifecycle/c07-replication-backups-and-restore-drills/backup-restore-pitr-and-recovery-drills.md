@@ -56,6 +56,10 @@ content_verified_at: null
 > **Tycho book draft V05/C07 (2026-10-19).** Scope: public PostgreSQL 17 backup, WAL, recovery and replication documentation, plus original synthetic examples. No database, backup set, disaster exercise, operational measurement or independent review was performed.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Backup, PITR and Restore](../../v11-pattern-atlas/c06-database-storage/README.md#backup-pitr-and-restore) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.81efb7e6d72349768b6f202845cbe35e:0 -->
 ## Purpose and mission
 

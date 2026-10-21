@@ -57,6 +57,12 @@ content_verified_at: null
 > **Tycho independent V04/C02 manuscript draft (2026-10-19).** Source scope: the public Raft project/paper entry and etcd 3.6 quorum/membership documentation, plus original synthetic figures. No distributed cluster, fault injection, model checker or independently reviewed proof was executed.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Leader-Follower Replication](../../v11-pattern-atlas/c06-database-storage/README.md#leader-follower-replication) — decision conditions and contraindications.
+> [Multi-Leader Replication](../../v11-pattern-atlas/c06-database-storage/README.md#multi-leader-replication) — decision conditions and contraindications.
+> [Read Replicas](../../v11-pattern-atlas/c06-database-storage/README.md#read-replicas) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.1b2657011d454460856103419095031b:0 -->
 ## Purpose and mission
 

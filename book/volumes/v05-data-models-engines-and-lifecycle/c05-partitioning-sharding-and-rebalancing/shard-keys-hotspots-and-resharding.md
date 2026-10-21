@@ -49,6 +49,11 @@ content_verified_at: null
 > Tycho bounded technical research for [Issue #84](https://github.com/rouslanbaranov/tycho/issues/84). Public source reading: **2026-10-19**. Selected implementation reference: **Vitess 24.0** Resharding/VSchema documentation. All workload numbers and diagrams are original synthetic models; there is no database shard cluster, measured benchmark or independently approved migration.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Sharding](../../v11-pattern-atlas/c06-database-storage/README.md#sharding) — decision conditions and contraindications.
+> [Partitioning](../../v11-pattern-atlas/c06-database-storage/README.md#partitioning) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.0d34dd26886340b89fd4f1499d790a81:0 -->
 ## Purpose and mission
 

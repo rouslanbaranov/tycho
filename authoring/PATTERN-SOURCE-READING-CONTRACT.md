@@ -188,10 +188,16 @@ TTL and invalidation, negative caching, stampede/single-flight, stale-while-
 revalidate, multi-level caching and edge caching. Registry coverage is `partial`
 for all 14; no `sufficient` state is claimed.
 
+Twelve V11/C06 entries also have self-checked cards with bounded owner sections.
+They cover sharding/partitioning, consistent hashing, replication variants, read
+replicas, quorum, index tables, CQRS projections, schema migration and backup/PITR.
+Polyglot Persistence remains blocked and has no card. Registry coverage is `partial`
+for the twelve; no `sufficient` state is claimed.
+
 The card batches are recorded in `edition/patterns/card-batches.v1.json` and checked
 by `scripts/validate_pattern_cards.py`, including adversarial tests. The validator
 now resolves each technical-owner link to the declared path and anchor. The other
-73 entries remain without Phase 3 cards; 72 are read and one is blocked.
+61 entries remain without Phase 3 cards; 60 are read and one is blocked.
 
 ## Family batches
 

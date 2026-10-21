@@ -54,6 +54,10 @@ content_verified_at: null
 > [Materialized View](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#materialized-view) — decision conditions and contraindications.
 > [Command-Side Replica](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#command-side-replica) — decision conditions and contraindications.
 
+
+> **Pattern atlas:**
+> [CQRS Read Projections](../volumes/v11-pattern-atlas/c06-database-storage/README.md#cqrs-read-projections) — decision conditions and contraindications.
+
 ## Purpose and mission
 
 "Event-driven" is not one architecture: publishing a notification after a CRUD update, capturing all authoritative state changes as durable events, and maintaining a separate read model are **different mechanisms**. Confusing them leads to inflated claims about auditability, reconstruction, ordering, scalability and correctness.

@@ -96,6 +96,11 @@ A useful **negative example** is a delete-and-recreate event arriving while S3 p
 **Choice and evidence boundary:** smaller changes may retain the existing schema and add an explicit mapping layer instead of migrating authority. The reversible point ends when new-only writes or deletion break old-reader expectations. The [deployment-compatibility owner](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md) covers mixed binaries and DDL locks; [transition architecture](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md) covers global go/no-go and fallback authorization. The protocol and all identifiers above are **synthetic**; Sato's Parallel Change and PostgreSQL's ALTER TABLE reference do **not** establish its safety.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Expand-and-Contract Schema](../../v11-pattern-atlas/c06-database-storage/README.md#expand-and-contract-schema) — decision conditions and contraindications.
+> [Online Data Migration](../../v11-pattern-atlas/c06-database-storage/README.md#online-data-migration) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.357c2d162bd44f3aa06a995a1e691551:4 -->
 ## 4. Data retirement has a no-return point
 
