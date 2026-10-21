@@ -134,3 +134,9 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
   four evidence dimensions supported.
 - **Application-architecture family complete:** all 12 entries are `partial-bounded` with
   no evidence gaps. Next: database-and-storage-architecture.
+## Cross-family progress — 2026-10-22
+
+- Distributed Cache, Cache Stampede Protection, Static Content Hosting and Zero Trust
+  Architecture: owner sections and cards expanded; each is `partial-bounded`.
+- Remaining partial entries: four in database-and-storage, six in
+  messaging-and-event-driven-integration (10 total, 135 `partial-bounded`).

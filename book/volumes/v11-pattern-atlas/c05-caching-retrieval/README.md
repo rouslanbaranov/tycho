@@ -90,8 +90,8 @@ an unowned single point, or when network latency dominates the hit benefit.
 **Competing alternative.** Local in-process cache or no cache. Reverse the choice when
 distributed coordination cost exceeds cross-instance reuse.
 
-**Failure and recovery.** Network partitions and stale replicas are common; verify
-placement/freshness in the owner section.
+**Failure and recovery.** Network partitions, stale replicas and a shared failure domain are
+common; bound fallback so a cache outage does not overload the source.
 
 **Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
@@ -385,8 +385,8 @@ coordination would block all callers, or when single-flight state has no owner.
 **Competing alternative.** TTL jitter or prewarming. Reverse the choice when coordination
 latency and failure outweigh source protection.
 
-**Failure and recovery.** Lock loss and retry storms are common; verify source protection
-in the owner section.
+**Failure and recovery.** Lease loss, retry storms and expired-lease double refresh are
+common; measure origin QPS, coalesce refreshes and cap source admission.
 
 **Technical owner.** [Stampedes and source protection](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#2-stampede-at-a-synchronized-expiry) — stampede protection is bounded, not a single-flight implementation.
 

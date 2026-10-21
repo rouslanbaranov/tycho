@@ -78,6 +78,17 @@ An edge can reduce distance and origin work, but only for responses it may reuse
 
 RFC 9111 sections 3.5 and 4 constrain reuse of authenticated responses by shared caches and describe cache selection/validation. An authorization header is not a complete design for private edge caching; explicit cache directives can alter reuse rules. Test the actual CDN/proxy configuration.
 
+**Static-content mechanism.** Immutable, versioned assets are published to an object store
+or CDN origin and served by URL without per-request application compute. A publication
+pipeline uploads and verifies the version; the edge caches by that URL; mutable or private
+content needs a separate key and authorization contract.
+
+**Failure and recovery.** Origin outage, incomplete purge, stale deletion and a cold-cache
+miss storm are common. Prewarm critical assets, verify propagation, keep an origin failover
+and use versioned rollback rather than mutating a cached object. A dynamic origin,
+self-hosted files or edge compute may be preferable when content changes per request or the
+publication pipeline cannot be governed.
+
 ## Original worked example
 
 A fictional catalogue exposes versioned public thumbnails and restricted source images. Public thumbnail URLs include immutable content versions. Restricted originals are fetched through an access decision and must not accidentally share a public-cache route. Changing visibility from public to private is a revocation problem: removing the database's public flag does not erase every distributed copy already served.

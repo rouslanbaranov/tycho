@@ -80,6 +80,20 @@ Place identity and resource authorization at the actual effect boundary, includi
 
 Network reachability or a valid token does not grant permission to every object; test denied operations through indirect paths.
 
+**Zero-trust mechanism.** Every request is authenticated and authorized at the resource
+boundary using principal identity, workload/device posture, policy and least privilege.
+Network location is not trust; a valid token is not object permission. Continuous
+verification applies to service-to-service and user-to-service paths alike.
+
+**Failure and recovery.** Policy gaps, legacy bypass paths and identity-provider outages are
+common. Deny by default, test indirect and confused-deputy paths, keep a bounded break-glass
+path with audit, and fail closed when authority cannot be established.
+
+**Alternative.** Network segmentation, a VPN or mTLS-only service identity may be preferable
+when legacy components cannot enforce per-request identity or when policy-evaluation cost
+exceeds the threat reduction. Reverse the zero-trust choice when the remaining perimeter
+control is the only enforceable boundary.
+
 The detailed pages separate the mechanisms that make this decision conditional:
 
 - [Threat models and authenticated identity](threat-identity.md) — Which asset and principal are protected and what does authentication establish?

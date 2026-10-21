@@ -67,6 +67,15 @@ Potential countermeasures:
 
 Single-flight may deduplicate only loads triggered inside one process. Caffeine's [Refresh documentation](https://github.com/ben-manes/caffeine/wiki/Refresh) describes eligible asynchronous refresh while an old value may remain available and a refresh operation may deduplicate concurrent refresh requests. That does not, by itself, provide global cross-replica coalescing or make the stale value safe for sensitive decisions.
 
+**Invariant.** A stampede policy must bound concurrent origin loads per key and total
+source work, and stale-while-revalidate is only valid when the operation accepts the stale
+value. A per-process single-flight that leaves every replica loading is not a global bound.
+
+**Failure and recovery.** An expired lease can release a second refresh while the first is
+still writing; jittered TTLs do not protect one extremely hot key. Measure origin QPS and
+queue age per key, coalesce or lease refreshes, cap source admission and return an explicit
+wait/reject/degrade response when the source budget is exhausted.
+
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**

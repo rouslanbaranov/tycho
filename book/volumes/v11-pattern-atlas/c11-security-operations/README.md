@@ -128,8 +128,8 @@ critical flows.
 **Competing alternative.** Perimeter security with explicit compensating controls. Reverse
 the choice when zero-trust policy complexity exceeds the trust-boundary risk.
 
-**Failure and recovery.** Policy gaps and legacy bypasses are common; verify enforcement
-in the owner section.
+**Failure and recovery.** Policy gaps, legacy bypasses and identity-provider outages are
+common; deny by default, test indirect paths and keep a bounded audited break-glass path.
 
 **Technical owner.** [Threat boundaries, identity, authorization and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#integrated-decision-and-reading-route) — identity/authorization is bounded, not a complete security control catalogue.
 

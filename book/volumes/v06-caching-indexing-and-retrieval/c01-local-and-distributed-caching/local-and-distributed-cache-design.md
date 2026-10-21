@@ -72,6 +72,18 @@ Caching trades extra, potentially stale copies for less source work and faster o
 
 This chapter owns **cache roles, authoritative ownership, local/shared placement, expiration and refresh policy**. [V06/C02 cache invalidation and stampede](../c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md) owns concurrency races, hot-key collapse and source protection; they are closely related but not interchangeable questions.
 
+**Distributed-cache mechanism.** A shared cache places copies outside a single process and
+serves many instances over a network. It can reduce repeated source reads across replicas,
+but adds serialization, network latency, a shared failure domain and cross-instance
+freshness problems. Key scope, partitioning, TTL/invalidation, stampede control and
+authorization must be explicit.
+
+**Failure and alternative.** A cache outage can turn every miss into origin load; stale
+tenant permissions or exclusive availability must not be served as harmless. Bound
+concurrent fallback and define an overload response. A local cache, CDN, read replica or
+no cache may be preferable when cross-instance freshness and shared-failure cost exceed the
+reuse benefit.
+
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.33742c54f667446cbf57cb9f3696a533:8 -->
 ## Engineering walkthrough — Local cache update versus cross-instance freshness

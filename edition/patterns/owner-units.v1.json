@@ -3450,7 +3450,7 @@
         "heading": "Engineering walkthrough — Local cache update versus cross-instance freshness",
         "anchor": "engineering-walkthrough-local-cache-update-versus-cross-instance-freshness",
         "level": 2,
-        "line": 77,
+        "line": 89,
         "unit_kind": "embedded",
         "unit_terms": [
           "cross-instance freshness",
@@ -3461,9 +3461,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "API replicas A and B cache the same inventory availability record, authoritative database revision v17. A writes v18 and invalidates *its own* local cache. B continues serving v17 until TTL expiry. A successful local invalidation has not provided globally strong freshness.",
-          "reason": "Explains the cross-instance freshness gap and shared-cache outage, not the cache layer's full read/write or placement model."
+          "state": "supported",
+          "quote": "API replicas A and B cache the same inventory availability record, authoritative database revision v17.",
+          "reason": "Illustrates a shared cache across replicas and the stale-freshness problem."
         },
         "invariant": {
           "state": "supported",
@@ -3496,7 +3496,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Shared local/shared-cache walkthrough; mechanism partial because topology and partitioning are not covered."
     },
@@ -3570,7 +3570,7 @@
         "heading": "Read-Through Cache",
         "anchor": "read-through-cache",
         "level": 3,
-        "line": 113,
+        "line": 125,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Read-Through Cache"
@@ -3627,7 +3627,7 @@
         "heading": "Write-Through Cache",
         "anchor": "write-through-cache",
         "level": 3,
-        "line": 125,
+        "line": 137,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Write-Through Cache"
@@ -3684,7 +3684,7 @@
         "heading": "Write-Behind / Write-Back",
         "anchor": "write-behind-write-back",
         "level": 3,
-        "line": 136,
+        "line": 148,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Write-Behind / Write-Back"
@@ -3741,7 +3741,7 @@
         "heading": "Write-Around",
         "anchor": "write-around",
         "level": 3,
-        "line": 146,
+        "line": 158,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Write-Around"
@@ -3991,14 +3991,14 @@
           "reason": "Defines the mechanism and its origin-load consequence."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Some reads must wait, reject or degrade explicitly",
-          "reason": "A technique caveat states a constraint, but the section gives no overarching must-hold invariant."
+          "state": "supported",
+          "quote": "A stampede policy must bound concurrent origin loads per key and total source work, and stale-while-revalidate is only valid when the operation accepts the stale value.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Lease expiry/failure, fencing and stale writer concerns",
-          "reason": "Names distributed-lease failure concerns but no detection or recovery for a stampede."
+          "state": "supported",
+          "quote": "An expired lease can release a second refresh while the first is still writing; jittered TTLs do not protect one extremely hot key.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
           "state": "supported",
@@ -4021,7 +4021,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "No dedicated heading; section 2 is the only section that explains stampedes and countermeasures."
     },
@@ -4152,7 +4152,7 @@
         "heading": "Multi-Level Caching",
         "anchor": "multi-level-caching",
         "level": 3,
-        "line": 157,
+        "line": 169,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Multi-Level Caching"
@@ -6936,9 +6936,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "An edge can reduce distance and origin work, but only for responses it may reuse.",
-          "reason": "Treats immutable public assets as edge-reusable but does not explain a dedicated static store or publication pipeline."
+          "state": "supported",
+          "quote": "Immutable, versioned assets are published to an object store or CDN origin and served by URL without per-request application compute.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
@@ -6946,14 +6946,14 @@
           "reason": "Requires cache key, freshness and authorization to agree for served static assets."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No static-hosting purge, stale-content or origin-failure handling appears in this section."
+          "state": "supported",
+          "quote": "Origin outage, incomplete purge, stale deletion and a cold-cache miss storm are common.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing hosting mechanism or reversal condition is named in this section."
+          "state": "supported",
+          "quote": "A dynamic origin, self-hosted files or edge compute may be preferable when content changes per request or the publication pipeline cannot be governed.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -6971,7 +6971,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "The section treats immutable public assets as edge-reusable; dedicated static storage and publication are not explained."
     },
@@ -6985,7 +6985,7 @@
         "heading": "Tenant-Based Resource Isolation",
         "anchor": "tenant-based-resource-isolation",
         "level": 3,
-        "line": 97,
+        "line": 111,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Tenant-Based Resource Isolation"
@@ -7747,7 +7747,7 @@
         "heading": "Federated Identity",
         "anchor": "federated-identity",
         "level": 3,
-        "line": 108,
+        "line": 122,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Federated Identity"
@@ -7815,9 +7815,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Place identity and resource authorization at the actual effect boundary, including object, tenant and credential scope.",
-          "reason": "Places authorization at the resource boundary but does not explain continuous verification, identity strength or segmentation."
+          "state": "supported",
+          "quote": "Every request is authenticated and authorized at the resource boundary using principal identity, workload/device posture, policy and least privilege.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
@@ -7825,14 +7825,14 @@
           "reason": "States the no-implicit-trust rule and requires denied-path testing."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No policy-gap or legacy-bypass failure and recovery is described."
+          "state": "supported",
+          "quote": "Policy gaps, legacy bypass paths and identity-provider outages are common.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing perimeter-security mechanism or reversal condition is named."
+          "state": "supported",
+          "quote": "Network segmentation, a VPN or mTLS-only service identity may be preferable when legacy components cannot enforce per-request identity or when policy-evaluation cost exceeds the threat reduction.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -7850,7 +7850,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Only a one-sentence no-implicit-trust rule exists; the page does not explain a full zero-trust architecture."
     },
@@ -7864,7 +7864,7 @@
         "heading": "Least Privilege",
         "anchor": "least-privilege",
         "level": 3,
-        "line": 119,
+        "line": 133,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Least Privilege"
@@ -7921,7 +7921,7 @@
         "heading": "RBAC / ABAC",
         "anchor": "rbac-abac",
         "level": 3,
-        "line": 130,
+        "line": 144,
         "unit_kind": "dedicated",
         "unit_terms": [
           "RBAC / ABAC"
@@ -7978,7 +7978,7 @@
         "heading": "Workload Identity / mTLS",
         "anchor": "workload-identity-mtls",
         "level": 3,
-        "line": 142,
+        "line": 156,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Workload Identity / mTLS"
@@ -8095,7 +8095,7 @@
         "heading": "Multitenant Isolation",
         "anchor": "multitenant-isolation",
         "level": 3,
-        "line": 154,
+        "line": 168,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Multitenant Isolation"
@@ -8810,7 +8810,7 @@
       ],
       "unit_count": 6,
       "dedicated_units": 5,
-      "bounded_entries": 5,
+      "bounded_entries": 6,
       "decision": "keep",
       "rationale": "Six cache-policy patterns have six distinct units, five of them dedicated notes, so the page remains a coherent policy catalogue."
     },
@@ -8838,7 +8838,7 @@
       ],
       "unit_count": 1,
       "dedicated_units": 0,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "keep",
       "rationale": "Stampede protection and single flight share one coherent stampede unit that explains both mechanisms."
     },
@@ -8962,9 +8962,9 @@
       ],
       "unit_count": 1,
       "dedicated_units": 0,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "deepen",
-      "rationale": "Edge caching is bounded but static content hosting remains partial; the page needs a distinct static-hosting unit."
+      "rationale": "Edge caching and static content hosting now have bounded evidence in the shared page; retain the unit unless a dedicated hosting page is needed."
     },
     {
       "document_id": "tycho.page.37a28a568f7e987941749e198c03439a",
@@ -9011,7 +9011,7 @@
       ],
       "unit_count": 7,
       "dedicated_units": 6,
-      "bounded_entries": 6,
+      "bounded_entries": 7,
       "decision": "split",
       "rationale": "Seven patterns span identity federation, authorization policy, workload credentials and tenant isolation; a single landing should split into separate identity, authorization and isolation pages while the bounded notes remain temporary owners."
     },
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 132,
-    "invariant_supported": 140,
-    "failure_recovery_supported": 119,
-    "alternative_supported": 117,
-    "technical_partial_bounded": 131,
-    "technical_partial": 14,
+    "mechanism_supported": 135,
+    "invariant_supported": 141,
+    "failure_recovery_supported": 122,
+    "alternative_supported": 119,
+    "technical_partial_bounded": 135,
+    "technical_partial": 10,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
