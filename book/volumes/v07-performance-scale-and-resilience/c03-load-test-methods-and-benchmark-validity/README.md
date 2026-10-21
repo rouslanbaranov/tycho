@@ -60,7 +60,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](load-testing-and-benchmark-validity.md) | How do open/closed arrivals, warmup and coordinated omission bias conclusions? |
+| [Integrated decision](load-testing-and-benchmark-validity.md) | How do open/closed arrivals, warmup and coordinated omission bias conclusions? |
 | [Experiment claims, arrival models and denominators](arrival-design.md) | Which offered workload must a load generator preserve while the system slows? |
 | [Confounders, fault injection and acceptance](benchmark-controls.md) | Which invariant and distribution must remain comparable across benchmark variants? |
 

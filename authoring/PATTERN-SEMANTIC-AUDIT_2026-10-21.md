@@ -62,12 +62,12 @@ Severity:
 | Decision pages | 6 |
 | Navigation pages | 97 |
 | Atlas pages | 12 |
-| Sound | 313 |
+| Sound | 317 |
 | Sound with bounded findings | 93 |
-| Needs remediation | 12 |
+| Needs remediation | 8 |
 | Blocked | 1 |
 | Pages with findings | 141 |
-| Findings | 119 (106 low, 13 medium, 0 high) |
+| Findings | 111 (102 low, 9 medium, 0 high) |
 
 The blocked page is V11/C06, where Polyglot Persistence remains uncarded because no
 technical owner exists. Five gates remain open: owner acceptance, the blocked Polyglot
@@ -85,11 +85,11 @@ The owner separately confirmed that human review passed; see
 
 ## Finding themes
 
-- 67 status findings are mostly retained historical or "proposed" wording in chapter
+- 63 status findings are mostly retained historical or "proposed" wording in chapter
   source ledgers and older navigation pages that no longer matches the current tree.
 - 22 navigation findings identify case or supporting pages with no internal route to
   their parent, a decision guide or a source-read record.
-- 8 missing-item findings include pages that promise an original walkthrough or
+- 4 missing-item findings include pages that promise an original walkthrough or
   transfer limits that the page does not contain.
 - 6 contradictory findings include duplicate or mutually inconsistent sections and
   naming or column mismatches in worked examples.
@@ -102,7 +102,7 @@ of the 69 primary manuscripts; they identify remediation work against the exact 
 
 ## Remediation and external gates
 
-The 12 `needs-remediation` pages and the other findings remain work items. The audit
+The 8 `needs-remediation` pages and the other findings remain work items. The audit
 records each remediation or gate; it does not claim that all findings were fixed.
 
 - Human review: passed per owner confirmation on 2026-10-21; no per-page reviewer

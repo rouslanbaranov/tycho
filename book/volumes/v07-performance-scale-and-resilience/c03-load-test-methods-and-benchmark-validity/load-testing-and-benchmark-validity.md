@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Integrated question, original scenario and transfer limits for Load-test methods and benchmark validity. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for Load-test methods and benchmark validity. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "How do open/closed arrivals, warmup and coordinated omission bias conclusions?"
@@ -47,7 +47,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -55,7 +55,7 @@ content_verified_at: null
 
 # Load-test methodology, generator validity and defensible benchmark evidence
 
-> **Tycho book draft V07/C03 (2026-10-19).** Original method and fictional examples. Primary public k6, HdrHistogram and SRE documentation is cited at limited scope. No test run, recorded benchmark, independent statistical review, or hardware comparison was performed. This chapter does not claim that a threshold or test tool creates an architecture decision automatically.
+> **Tycho V07/C03 integrated decision (2026-10-19).** Original method and fictional examples. Primary public k6, HdrHistogram and SRE documentation is cited at limited scope. No test run, recorded benchmark, independent statistical review, or hardware comparison was performed. This page does not claim that a threshold or test tool creates an architecture decision automatically. The content_review field retains the decomposition-era draft state; no independent acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e:0 -->

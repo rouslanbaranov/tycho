@@ -63,7 +63,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](tail-latency-fanout-and-deadline-budgets.md) | Why can p99 degrade despite adequate mean capacity? |
+| [Integrated decision](tail-latency-fanout-and-deadline-budgets.md) | Why can p99 degrade despite adequate mean capacity? |
 | [Percentiles, correlation and critical paths](tails-critical-path.md) | How do serial work and fan-out change end-to-end tail behavior? |
 | [Deadlines, hedging and bounded degradation](deadline-hedging.md) | When can an extra attempt improve a tail without exhausting the protected resource? |
 | [Latency measurement and competing remedies](tail-experiments.md) | Which observation would favor retaining, hedging or splitting a path? |

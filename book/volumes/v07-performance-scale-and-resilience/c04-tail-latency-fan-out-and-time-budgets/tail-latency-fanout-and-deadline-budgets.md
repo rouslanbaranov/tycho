@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Integrated question, original scenario and transfer limits for Tail latency, fan-out and time budgets. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for Tail latency, fan-out and time budgets. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "Why can p99 degrade despite adequate mean capacity?"
@@ -52,7 +52,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -60,7 +60,7 @@ content_verified_at: null
 
 # Tail latency, fan-out and end-to-end deadline budgets
 
-> **Tycho chapter draft:** intended canonical topic V07/C04 of the provisional 69-chapter table of contents. Source scope reviewed 2026-10-19. This page is original explanatory material with synthetic numbers; no live trace, experiment, performance benchmark, independent reviewer acceptance or production SLO is claimed.
+> **Tycho V07/C04 integrated decision:** canonical topic in the 69-chapter table of contents. Source scope reviewed 2026-10-19. This page is original explanatory material with synthetic numbers; no live trace, experiment, performance benchmark, independent reviewer acceptance or production SLO is claimed. The content_review field retains the decomposition-era draft state; no independent acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.eb130a7f820544a2ba0e0883c0ce587b:0 -->
