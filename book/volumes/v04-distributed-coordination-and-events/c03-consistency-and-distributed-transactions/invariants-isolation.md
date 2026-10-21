@@ -60,6 +60,10 @@ Imagine a wholly synthetic booking system with one workshop of ten seats. The in
 | Atomic publication | Which state changes must commit together? | Publishing to a broker within an application callback creates a global transaction |
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Two-Phase Commit (2PC)](../../v11-pattern-atlas/c04-consistency-events/README.md#two-phase-commit-2pc) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.3c78e2b17ac74973b2ae658977843c2a:2 -->
 ## 2. PostgreSQL transaction isolation as a concrete bounded example
 

@@ -46,6 +46,14 @@ content_verified_at: null
 
 > Tycho Issue [#80](https://github.com/rouslanbaranov/tycho/issues/80), proposed V04/C05–C06. Primary publicly accessible writing examined on 2026-10-18; author-created scenarios and Mermaid diagrams only. **Not** an implemented event store, tested projector or global delivery guarantee.
 
+
+> **Pattern atlas:**
+> [CQRS](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#command-query-responsibility-segregation-cqrs) — decision conditions and contraindications.
+> [Event Sourcing](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#event-sourcing) — decision conditions and contraindications.
+> [Domain Events](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#domain-events) — decision conditions and contraindications.
+> [Materialized View](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#materialized-view) — decision conditions and contraindications.
+> [Command-Side Replica](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#command-side-replica) — decision conditions and contraindications.
+
 ## Purpose and mission
 
 "Event-driven" is not one architecture: publishing a notification after a CRUD update, capturing all authoritative state changes as durable events, and maintaining a separate read model are **different mechanisms**. Confusing them leads to inflated claims about auditability, reconstruction, ordering, scalability and correctness.
