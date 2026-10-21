@@ -428,8 +428,8 @@ resilience-pattern; priority core.
 **Decision question.** Should work be buffered in a queue so producers and consumers can
 run at different rates?
 
-**Good-fit conditions.** Bursts exceed consumer capacity; queue durability and backlog
-bounds are owned; latency is acceptable.
+**Good-fit conditions.** Bursts exceed consumer capacity; queue durability, retention/age
+bounds and idempotent consumers are owned; latency is acceptable.
 
 **Hard contraindications.** Reject when the caller needs a synchronous result, when
 backlog would violate a deadline, or when the queue becomes an unbounded hiding place.
@@ -437,8 +437,8 @@ backlog would violate a deadline, or when the queue becomes an unbounded hiding 
 **Competing alternative.** Direct synchronous calls or admission control. Reverse the
 choice when queue delay and backlog risk exceed smoothing benefit.
 
-**Failure and recovery.** Unbounded backlog and poison messages are common; verify
-recovery in the owner section.
+**Failure and recovery.** Unbounded backlog, expired work, poison messages and duplicate
+effects after ambiguous acknowledgment are common; bound age, reject early and drain.
 
 **Technical owner.** [Partial failure, saturation and recovery](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#partial-failure-saturation-and-recovery) — recovery behavior is bounded, not a complete load-leveling design.
 
@@ -523,8 +523,9 @@ operations-pattern; priority core.
 **Decision question.** Should an external monitor distinguish liveness, readiness and
 startup health?
 
-**Good-fit conditions.** The runtime exposes separate probes; probe semantics match the
-failure; restart and traffic removal are distinct.
+**Good-fit conditions.** Startup, readiness and liveness are separate probes; probe
+semantics match the failure; restart and traffic removal are distinct; external journey
+monitoring exists.
 
 **Hard contraindications.** Reject when a liveness probe would restart a healthy process
 because a shared dependency is down, or when one probe is used for every failure.
@@ -532,8 +533,9 @@ because a shared dependency is down, or when one probe is used for every failure
 **Competing alternative.** Simple process check plus external journey monitoring. Reverse
 the choice when probe complexity causes false restarts.
 
-**Failure and recovery.** False positives and shared-dependency coupling are common;
-verify semantics in the owner section.
+**Failure and recovery.** Shared-dependency failures can fail every probe and cause mass
+restart/ejection; cached health can keep routing to a draining instance. Bound probe
+frequency and drain before removal.
 
 **Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#failure-and-recovery) — readiness/health is bounded, not a full monitoring product.
 
@@ -556,7 +558,7 @@ resilience-pattern; priority advanced.
 authority?
 
 **Good-fit conditions.** A standby exists; promotion is fenced; data reconciliation is
-owned; failback is planned.
+owned; failback is planned as a new migration, not a DNS switch.
 
 **Hard contraindications.** Reject when no standby is maintained, when split brain cannot
 be fenced, or when failback would lose writes.
@@ -564,8 +566,8 @@ be fenced, or when failback would lose writes.
 **Competing alternative.** Restore from backup or stay on the promoted primary. Reverse
 the choice when failback risk exceeds locality benefit.
 
-**Failure and recovery.** Split brain and lost writes are common; verify recovery state
-machine in the owner section.
+**Failure and recovery.** Split brain and lost writes are common; quarantine the old
+authority, reconcile before failback, and hold writes when fencing evidence is missing.
 
 **Technical owner.** [Recovery state machines, fencing and failback](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md#3-original-synthetic-recovery-scenario) — failover/failback is bounded to recovery state machines.
 

@@ -96,6 +96,7 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
   expanded; each is `partial-bounded` with all four evidence dimensions supported.
 - Retry with Exponential Backoff, Timeout, Deadline Propagation, Throttling and Rate
   Limiting are also `partial-bounded` with all four dimensions supported.
-- Remaining resilience gaps: Queue-Based Load Leveling, Health Endpoint Monitoring,
-  Failover/Failback, plus alternative/failure gaps for Circuit Breaker, Bulkhead and
-  Hedged Requests.
+- Queue-Based Load Leveling, Health Endpoint Monitoring and Failover/Failback are also
+  `partial-bounded`.
+- Remaining resilience gaps: alternative/failure evidence for Circuit Breaker, Bulkhead
+  and Hedged Requests.

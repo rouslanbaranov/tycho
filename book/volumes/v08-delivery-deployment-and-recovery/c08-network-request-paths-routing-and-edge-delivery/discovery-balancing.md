@@ -188,7 +188,19 @@ signal and the connection topology. Overload shedding is owned by `V07/C05`
 | Fresh discovery is unavailable | A last-known endpoint set may permit reads, but cannot grant write authority | Membership age, reachable data plane and authority epoch |
 | Retry selects another replica | May amplify work or repeat a committed effect | Logical operation IDs and retry budgets |
 
-Define startup eligibility, readiness, draining and permanent removal separately. A liveness endpoint should not restart every healthy process because one shared dependency is unavailable. Exact probe behavior belongs to the chosen runtime/version.
+Define startup eligibility, readiness, draining and permanent removal separately. A liveness endpoint should not restart every healthy process because one shared dependency is unavailable.
+
+**Health endpoint monitoring.** A startup probe answers "has initialization finished";
+readiness answers "may this instance receive new work"; liveness answers "must the process be
+restarted". They must not be collapsed into one endpoint. External monitoring should also
+observe user-level success and dependency state, because a green liveness probe does not
+prove readiness, correct routing or a healthy dependency.
+
+**Failure and recovery.** A shared dependency failure can fail every probe and cause mass
+ejection or restart; a cached "healthy" answer can keep sending traffic to a draining
+instance. Bound probe frequency/timeouts, separate instance-local from shared faults, and
+drain before removal. Synthetic checks or SLO-based external monitoring may be preferable
+when the runtime probe cannot observe the user journey. Exact probe behavior belongs to the chosen runtime/version.
 
 ## Choice, acceptance and evidence
 

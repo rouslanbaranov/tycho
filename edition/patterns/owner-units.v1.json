@@ -5620,24 +5620,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Admitted and offered rate are equal, so **backlog grows by** `(200 - 150) × 30 = 1,500` operations.",
-          "reason": ""
+          "state": "supported",
+          "quote": "A bounded queue between arrival and processing can absorb a short burst while workers drain at a sustainable rate.",
+          "reason": "Defines the mechanism and its scope."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "",
-          "reason": "Warns that growth is not steady state but states no bound on queue age or capacity."
+          "state": "supported",
+          "quote": "It needs an admission rule, a retention/age bound, durable acceptance when the caller is told \"accepted\", and idempotent consumers.",
+          "reason": "States the required invariant."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "But legitimate rejected requests may harm user-level success SLOs, and the rejection path itself consumes resources.",
-          "reason": "Names rejection cost without a recovery procedure for an overloaded queue."
+          "state": "supported",
+          "quote": "An unbounded queue converts overload into memory growth and expired work; retries can duplicate effects after an ambiguous acknowledgment.",
+          "reason": "Names the failure and recovery response."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No buffering alternative and reversal condition are compared."
+          "state": "supported",
+          "quote": "Shedding, backpressure or provisioning may be preferable when work is not deferrable or the burst is sustained.",
+          "reason": "Names the competing choice and reversal."
         }
       },
       "decision_evidence": {
@@ -5655,7 +5655,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -5800,24 +5800,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Define startup eligibility, readiness, draining and permanent removal separately. A liveness endpoint should not restart every healthy process because one shared dependency is unavailable.",
-          "reason": "Distinguishes eligibility, readiness and liveness restart semantics but not endpoint exposure or external monitoring."
+          "state": "supported",
+          "quote": "A startup probe answers \"has initialization finished\"; readiness answers \"may this instance receive new work\"; liveness answers \"must the process be restarted\".",
+          "reason": "Defines the mechanism and its scope."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Define startup eligibility, readiness, draining and permanent removal separately.",
-          "reason": "Requires distinct lifecycle states rather than one undifferentiated health action."
+          "quote": "They must not be collapsed into one endpoint.",
+          "reason": "States the required invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A liveness endpoint should not restart every healthy process because one shared dependency is unavailable.",
-          "reason": "Describes the shared-dependency failure and its containment rule against mass restarts."
+          "quote": "A shared dependency failure can fail every probe and cause mass ejection or restart; a cached \"healthy\" answer can keep sending traffic to a draining instance.",
+          "reason": "Names the failure and recovery response."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No alternative health-check mechanism or reversal condition is named."
+          "state": "supported",
+          "quote": "Synthetic checks or SLO-based external monitoring may be preferable when the runtime probe cannot observe the user journey.",
+          "reason": "Names the competing choice and reversal."
         }
       },
       "decision_evidence": {
@@ -5835,7 +5835,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Only the failure section bounds liveness/readiness semantics; endpoint exposure and external monitoring are not explained."
     },
@@ -5860,24 +5860,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "**Text alternative:** first establish the failure and authority boundaries, then promote or restore a valid state while preventing split-brain.",
-          "reason": "Explains failover/promotion but not a distinct failback procedure; return of old authority is only a table row."
+          "state": "supported",
+          "quote": "Returning traffic to A is a new migration, not the inverse of failover.",
+          "reason": "Defines the mechanism and its scope."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Authorize **one** active writer and fence or isolate any old writer capable of returning.",
-          "reason": "States single-writer authorization and fencing as a required safety rule."
+          "quote": "Quarantine A, reconcile any divergent writes under one selected authority, verify user journeys, then reintroduce A as a replica or standby before considering promotion.",
+          "reason": "States the required invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "If fencing or historical-state evidence is unavailable, **hold writes** rather than claim successful recovery.",
-          "reason": "Names the missing-evidence failure and the hold-writes containment action."
+          "quote": "A failback that merely points DNS back can resurrect stale writes and split authority.",
+          "reason": "Names the failure and recovery response."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing failover/failback mechanism or reversal condition is named; backups are only distinguished from fencing."
+          "state": "supported",
+          "quote": "Stay on the promoted region and rebuild the old region as a standby when failback risk exceeds its benefit.",
+          "reason": "Names the competing choice and reversal."
         }
       },
       "decision_evidence": {
@@ -5895,7 +5895,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded recovery-scenario section; failback itself is only a return-to-normal bullet in section 5."
     },
@@ -8948,7 +8948,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 0,
-      "bounded_entries": 2,
+      "bounded_entries": 3,
       "decision": "split",
       "rationale": "Six patterns cover discovery, load balancing, gateway routing and health monitoring; these are different request-path mechanisms whose future split into a discovery page and a routing page is warranted."
     },
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 110,
-    "invariant_supported": 126,
-    "failure_recovery_supported": 96,
-    "alternative_supported": 82,
-    "technical_partial_bounded": 107,
-    "technical_partial": 38,
+    "mechanism_supported": 113,
+    "invariant_supported": 127,
+    "failure_recovery_supported": 97,
+    "alternative_supported": 85,
+    "technical_partial_bounded": 110,
+    "technical_partial": 35,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

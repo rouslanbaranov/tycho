@@ -62,6 +62,18 @@ Change the admission policy: if **50 operations/s** are rejected *before* they e
 
 The public SRE *Handling Overload* chapter (2017 edition), specifically **Client-Side Throttling** and its final discussion of protecting backend tasks, describes why rejected calls can consume meaningful backend work and why distributed overload may require limiting work before it reaches an overloaded server. [E04] This is an author's described implementation and practice, **not** a measurement of the invented Tycho service.
 
+**Queue-based load leveling.** A bounded queue between arrival and processing can absorb a
+short burst while workers drain at a sustainable rate. It needs an admission rule, a
+retention/age bound, durable acceptance when the caller is told "accepted", and idempotent
+consumers. A queue does not create capacity: if offered work exceeds drain rate, backlog
+and age grow even while every worker is busy.
+
+**Failure and recovery.** An unbounded queue converts overload into memory growth and
+expired work; retries can duplicate effects after an ambiguous acknowledgment. Bound
+retention and age, reject before the queue is useless, and drain/reconcile rather than
+claiming success. Shedding, backpressure or provisioning may be preferable when work is not
+deferrable or the burst is sustained.
+
 ### Queue growth and admission control — synthetic flow
 
 ```mermaid
