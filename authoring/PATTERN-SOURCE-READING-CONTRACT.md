@@ -229,6 +229,19 @@ now resolves each technical-owner link to the declared path and anchor. All 144
 readable catalog entries have cards; only Polyglot Persistence remains blocked and
 uncarded. Card coverage is not technical sufficiency.
 
+## Phase 4 audit and retrieval routes
+
+The Phase 4 artifact `edition/patterns/phase4.v1.json` dispositions all 419
+canonical pages, audits 145 entries across 14 dimensions, records the gap matrix,
+derives 530 cross-pattern routes from card related entries, retains 44 unresolved
+related labels and extracts 144 retrieval questions. Polyglot Persistence is the one
+blocked entry and has no question.
+
+Page dispositions distinguish atlas pages, technical owners, candidate owners,
+navigation, legacy cross-volume pages and other canonical technical pages. They do
+not assert semantic acceptance. The artifact, schema, validator, freshness check and
+adversarial tests are structural evidence only; independent review remains Phase 5.
+
 ## Family batches
 
 Phase 2B proceeds in bounded batches, each with its own source units and
