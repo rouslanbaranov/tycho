@@ -99,15 +99,17 @@ The following original citation rows, review limits and earlier topical routes a
 | [Google SRE Book, Addressing Cascading Failures](https://sre.google/sre-book/addressing-cascading-failures/) | Deadlines, overload and cascading work | Published production lessons, not portable numerical SLO thresholds |
 | [gRPC Guides, Deadlines](https://grpc.io/docs/guides/deadlines/) | Propagated deadline and cancellation concepts | Language-specific implementations must be verified |
 | [AWS Builders' Library, Timeouts/Retries/Backoff/Jitter](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/) | Overload amplification and retry-jitter design considerations | Vendor experience, not empirical evidence for this book's hypothetical topology |
-| [Tycho queueing page](../c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md) | Original explanation of throughput versus mean and finite-window limits | Educational derivation; does not validate tail measurements |
 
 **Author-owned inference:** the independent-max CDF and example calculations follow the stated probability model; the budget table, diagrams, choices and workload scenario are entirely fictional. Correlated latency distributions, real hedging effectiveness, throughput under overload, timeout-success ratios, latency sampling bias and third-party review remain **unverified**. No benchmark was run and no production recommendation is made. The page must be reconciled with the final V07 volume/section hierarchy before edition release.
+
+Internal cross-reference: [Tycho queueing page](../c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md) is an original explanation, not an independently inspected external source.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.eb130a7f820544a2ba0e0883c0ce587b:8 -->
 ## Reading and navigation
 
-- Current landing: [Performance, scaling and resilience](../../../performance/README.md); target V07/C04 in [proposed book contents](../../../PROPOSED-STRUCTURE.md).
+- Parent volume: [V07 — performance, scale and resilience](../README.md).
+- Corpus entry: [Tycho book contents](../../../README.md).
 - Background: [Queueing and Little's Law](../c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md); [Workload experiments](../../../performance/workload-profiles-and-capacity-experiments.md).
 - Implementation boundaries: [Java concurrency](../../v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md); [Connection pools](../../v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md); [API deadlines and retries](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md).
 - Failure actions: [Safe rollout/recovery](../../../delivery/safe-rollout-and-recovery.md); [Distributed idempotency](../../../distributed/transactional-outbox-and-idempotency.md).
