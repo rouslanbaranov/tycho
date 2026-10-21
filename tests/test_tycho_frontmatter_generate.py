@@ -66,7 +66,8 @@ class FrontmatterGenerationTests(unittest.TestCase):
             self.assertEqual(gen.apply_safe(path, header, allow_write=True), "inserted")
             self.assertEqual(gen.apply_safe(path, header, allow_write=True), "unchanged")
             self.assertEqual(path.read_text(), header + "\n" + original)
-            self.assertEqual(gen.target_path(root, self.record), path)
+            # macOS temporary roots may be symlinked (/var -> /private/var).
+            self.assertEqual(gen.target_path(root, self.record), path.resolve())
 
     def test_traversal_and_nonbook_targets_rejected(self):
         with tempfile.TemporaryDirectory() as d:
