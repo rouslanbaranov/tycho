@@ -1,0 +1,5291 @@
+{
+  "schema_version": 1,
+  "registry_version": "0.1.0",
+  "edition_version": "2026.10.1-rc.3",
+  "status": "draft",
+  "updated_at": "2026-10-21",
+  "catalog": {
+    "issue": 228,
+    "title": "Research and document the full System Design pattern catalog; audit every Tycho technical page",
+    "entry_count": 145,
+    "family_count": 11,
+    "core_count": 123,
+    "advanced_count": 22,
+    "captured_at": "2026-10-21",
+    "source": "GitHub issue #228 catalog tables",
+    "order_note": "Catalog order is the issue family/table order; it is not a measured popularity ranking."
+  },
+  "atlas": {
+    "volume_code": "V11",
+    "volume_path": "book/volumes/v11-pattern-atlas",
+    "volume_title": "V11 — System Design pattern atlas",
+    "status": "planned",
+    "page_policy": "Page count is content-dependent. A chapter may have one page or many; split by coherent question and ownership. No fixed two- or three-page quota.",
+    "chapter_count": 11
+  },
+  "families": [
+    {
+      "id": "application-architecture-and-boundaries",
+      "number": 1,
+      "title": "Application architecture and boundaries",
+      "chapter": "V11/C01",
+      "chapter_path": "book/volumes/v11-pattern-atlas/c01-application-architecture-and-boundaries",
+      "pattern_ids": [
+        "tycho.pattern.layered-architecture",
+        "tycho.pattern.modular-monolith",
+        "tycho.pattern.microservices-architecture",
+        "tycho.pattern.service-oriented-architecture-soa",
+        "tycho.pattern.hexagonal-architecture-ports-and-adapters",
+        "tycho.pattern.clean-onion-architecture",
+        "tycho.pattern.domain-driven-design-bounded-context",
+        "tycho.pattern.database-per-service",
+        "tycho.pattern.self-contained-service",
+        "tycho.pattern.sidecar",
+        "tycho.pattern.ambassador",
+        "tycho.pattern.anti-corruption-layer"
+      ]
+    },
+    {
+      "id": "api-and-service-communication",
+      "number": 2,
+      "title": "API and service communication",
+      "chapter": "V11/C02",
+      "chapter_path": "book/volumes/v11-pattern-atlas/c02-api-and-service-communication",
+      "pattern_ids": [
+        "tycho.pattern.api-gateway",
+        "tycho.pattern.gateway-routing",
+        "tycho.pattern.gateway-aggregation",
+        "tycho.pattern.gateway-offloading",
+        "tycho.pattern.backend-for-frontend-bff",
+        "tycho.pattern.api-composition",
+        "tycho.pattern.reverse-proxy",
+        "tycho.pattern.service-discovery",
+        "tycho.pattern.client-side-discovery",
+        "tycho.pattern.server-side-discovery",
+        "tycho.pattern.asynchronous-request-reply",
+        "tycho.pattern.gatekeeper"
+      ]
+    },
+    {
+      "id": "messaging-and-event-driven-integration",
+      "number": 3,
+      "title": "Messaging and event-driven integration",
+      "chapter": "V11/C03",
+      "chapter_path": "book/volumes/v11-pattern-atlas/c03-messaging-and-event-driven-integration",
+      "pattern_ids": [
+        "tycho.pattern.publish-subscribe",
+        "tycho.pattern.point-to-point-queue",
+        "tycho.pattern.competing-consumers",
+        "tycho.pattern.event-driven-consumer",
+        "tycho.pattern.request-reply-messaging",
+        "tycho.pattern.correlation-identifier",
+        "tycho.pattern.content-based-router",
+        "tycho.pattern.message-filter",
+        "tycho.pattern.pipes-and-filters",
+        "tycho.pattern.splitter",
+        "tycho.pattern.aggregator",
+        "tycho.pattern.scatter-gather",
+        "tycho.pattern.dead-letter-channel-dlq",
+        "tycho.pattern.durable-subscriber",
+        "tycho.pattern.idempotent-receiver",
+        "tycho.pattern.resequencer",
+        "tycho.pattern.claim-check",
+        "tycho.pattern.message-broker-messaging-bridge",
+        "tycho.pattern.canonical-data-model",
+        "tycho.pattern.process-manager-routing-slip"
+      ]
+    },
+    {
+      "id": "data-consistency-transactions-and-event-sourcing",
+      "number": 4,
+      "title": "Data consistency, transactions and event sourcing",
+      "chapter": "V11/C04",
+      "chapter_path": "book/volumes/v11-pattern-atlas/c04-data-consistency-transactions-and-event-sourcing",
+      "pattern_ids": [
+        "tycho.pattern.command-query-responsibility-segregation-cqrs",
+        "tycho.pattern.event-sourcing",
+        "tycho.pattern.domain-events",
+        "tycho.pattern.saga",
+        "tycho.pattern.saga-choreography",
+        "tycho.pattern.saga-orchestration",
+        "tycho.pattern.compensating-transaction",
+        "tycho.pattern.transactional-outbox",
+        "tycho.pattern.transactional-inbox",
+        "tycho.pattern.idempotency-key",
+        "tycho.pattern.change-data-capture-cdc",
+        "tycho.pattern.materialized-view",
+        "tycho.pattern.command-side-replica",
+        "tycho.pattern.two-phase-commit-2pc"
+      ]
+    },
+    {
+      "id": "caching-and-retrieval",
+      "number": 5,
+      "title": "Caching and retrieval",
+      "chapter": "V11/C05",
+      "chapter_path": "book/volumes/v11-pattern-atlas/c05-caching-and-retrieval",
+      "pattern_ids": [
+        "tycho.pattern.distributed-cache",
+        "tycho.pattern.cache-aside-lazy-loading",
+        "tycho.pattern.read-through-cache",
+        "tycho.pattern.write-through-cache",
+        "tycho.pattern.write-behind-write-back",
+        "tycho.pattern.write-around",
+        "tycho.pattern.cache-invalidation",
+        "tycho.pattern.ttl-based-expiration",
+        "tycho.pattern.negative-caching",
+        "tycho.pattern.cache-stampede-protection",
+        "tycho.pattern.single-flight-request-coalescing",
+        "tycho.pattern.stale-while-revalidate",
+        "tycho.pattern.multi-level-caching",
+        "tycho.pattern.cdn-edge-caching"
+      ]
+    },
+    {
+      "id": "database-and-storage-architecture",
+      "number": 6,
+      "title": "Database and storage architecture",
+      "chapter": "V11/C06",
+      "chapter_path": "book/volumes/v11-pattern-atlas/c06-database-and-storage-architecture",
+      "pattern_ids": [
+        "tycho.pattern.sharding",
+        "tycho.pattern.partitioning",
+        "tycho.pattern.consistent-hashing",
+        "tycho.pattern.leader-follower-replication",
+        "tycho.pattern.multi-leader-replication",
+        "tycho.pattern.read-replicas",
+        "tycho.pattern.quorum-based-reads-writes",
+        "tycho.pattern.index-table",
+        "tycho.pattern.polyglot-persistence",
+        "tycho.pattern.cqrs-read-projections",
+        "tycho.pattern.expand-and-contract-schema",
+        "tycho.pattern.online-data-migration",
+        "tycho.pattern.backup-pitr-and-restore"
+      ]
+    },
+    {
+      "id": "resilience-and-fault-tolerance",
+      "number": 7,
+      "title": "Resilience and fault tolerance",
+      "chapter": "V11/C07",
+      "chapter_path": "book/volumes/v11-pattern-atlas/c07-resilience-and-fault-tolerance",
+      "pattern_ids": [
+        "tycho.pattern.circuit-breaker",
+        "tycho.pattern.bulkhead",
+        "tycho.pattern.retry-with-exponential-backoff",
+        "tycho.pattern.retry-with-jitter",
+        "tycho.pattern.timeout",
+        "tycho.pattern.deadline-propagation",
+        "tycho.pattern.fallback",
+        "tycho.pattern.graceful-degradation",
+        "tycho.pattern.load-shedding",
+        "tycho.pattern.throttling",
+        "tycho.pattern.rate-limiting",
+        "tycho.pattern.queue-based-load-leveling",
+        "tycho.pattern.priority-queue",
+        "tycho.pattern.hedged-requests",
+        "tycho.pattern.health-endpoint-monitoring",
+        "tycho.pattern.failover-failback"
+      ]
+    },
+    {
+      "id": "distributed-coordination",
+      "number": 8,
+      "title": "Distributed coordination",
+      "chapter": "V11/C08",
+      "chapter_path": "book/volumes/v11-pattern-atlas/c08-distributed-coordination",
+      "pattern_ids": [
+        "tycho.pattern.leader-election",
+        "tycho.pattern.consensus",
+        "tycho.pattern.distributed-lock",
+        "tycho.pattern.lease-based-ownership",
+        "tycho.pattern.fencing-tokens",
+        "tycho.pattern.quorum-coordination",
+        "tycho.pattern.causal-ordering",
+        "tycho.pattern.session-consistency",
+        "tycho.pattern.distributed-workflow-orchestration"
+      ]
+    },
+    {
+      "id": "scalability-and-load-distribution",
+      "number": 9,
+      "title": "Scalability and load distribution",
+      "chapter": "V11/C09",
+      "chapter_path": "book/volumes/v11-pattern-atlas/c09-scalability-and-load-distribution",
+      "pattern_ids": [
+        "tycho.pattern.load-balancing",
+        "tycho.pattern.horizontal-scaling",
+        "tycho.pattern.vertical-scaling",
+        "tycho.pattern.autoscaling",
+        "tycho.pattern.cell-based-architecture",
+        "tycho.pattern.shuffle-sharding",
+        "tycho.pattern.deployment-stamps",
+        "tycho.pattern.geode",
+        "tycho.pattern.static-content-hosting",
+        "tycho.pattern.tenant-based-resource-isolation"
+      ]
+    },
+    {
+      "id": "deployment-and-legacy-modernization",
+      "number": 10,
+      "title": "Deployment and legacy modernization",
+      "chapter": "V11/C10",
+      "chapter_path": "book/volumes/v11-pattern-atlas/c10-deployment-and-legacy-modernization",
+      "pattern_ids": [
+        "tycho.pattern.rolling-deployment",
+        "tycho.pattern.blue-green-deployment",
+        "tycho.pattern.canary-release",
+        "tycho.pattern.feature-flags-feature-toggles",
+        "tycho.pattern.gitops",
+        "tycho.pattern.immutable-infrastructure",
+        "tycho.pattern.strangler-fig",
+        "tycho.pattern.branch-by-abstraction",
+        "tycho.pattern.parallel-run",
+        "tycho.pattern.dark-launching-shadow-traffic",
+        "tycho.pattern.expand-and-contract",
+        "tycho.pattern.controlled-cutover"
+      ]
+    },
+    {
+      "id": "security-isolation-and-operational-architecture",
+      "number": 11,
+      "title": "Security, isolation and operational architecture",
+      "chapter": "V11/C11",
+      "chapter_path": "book/volumes/v11-pattern-atlas/c11-security-isolation-and-operational-architecture",
+      "pattern_ids": [
+        "tycho.pattern.federated-identity",
+        "tycho.pattern.zero-trust-architecture",
+        "tycho.pattern.least-privilege",
+        "tycho.pattern.rbac-abac",
+        "tycho.pattern.workload-identity-mtls",
+        "tycho.pattern.valet-key",
+        "tycho.pattern.multitenant-isolation",
+        "tycho.pattern.distributed-tracing",
+        "tycho.pattern.structured-logging",
+        "tycho.pattern.audit-trail",
+        "tycho.pattern.sli-slo-and-error-budgets",
+        "tycho.pattern.synthetic-monitoring",
+        "tycho.pattern.health-readiness-and-liveness-checks"
+      ]
+    }
+  ],
+  "patterns": [
+    {
+      "id": "tycho.pattern.layered-architecture",
+      "catalog_name": "Layered Architecture",
+      "catalog_order": 1,
+      "family": "application-architecture-and-boundaries",
+      "kind": "architecture-style",
+      "priority": "core",
+      "catalog_problem": "Separate responsibilities into layers with controlled dependency direction",
+      "aliases": [
+        "Layered Architecture"
+      ],
+      "relations": [],
+      "atlas_section": "layered-architecture",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C01",
+        "section": "layered-architecture",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.modular-monolith",
+      "catalog_name": "Modular Monolith",
+      "catalog_order": 2,
+      "family": "application-architecture-and-boundaries",
+      "kind": "architecture-style",
+      "priority": "core",
+      "catalog_problem": "Enforce module ownership while retaining one deployment unit",
+      "aliases": [
+        "Modular Monolith"
+      ],
+      "relations": [],
+      "atlas_section": "modular-monolith",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C01",
+        "section": "modular-monolith",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.microservices-architecture",
+      "catalog_name": "Microservices Architecture",
+      "catalog_order": 3,
+      "family": "application-architecture-and-boundaries",
+      "kind": "architecture-style",
+      "priority": "core",
+      "catalog_problem": "Independently deploy bounded business capabilities with explicit distributed costs",
+      "aliases": [
+        "Microservices Architecture"
+      ],
+      "relations": [],
+      "atlas_section": "microservices-architecture",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C01",
+        "section": "microservices-architecture",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.service-oriented-architecture-soa",
+      "catalog_name": "Service-Oriented Architecture (SOA)",
+      "catalog_order": 4,
+      "family": "application-architecture-and-boundaries",
+      "kind": "architecture-style",
+      "priority": "core",
+      "catalog_problem": "Compose independently governed service contracts and integrations",
+      "aliases": [
+        "Service-Oriented Architecture (SOA)",
+        "SOA"
+      ],
+      "relations": [],
+      "atlas_section": "service-oriented-architecture-soa",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C01",
+        "section": "service-oriented-architecture-soa",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.hexagonal-architecture-ports-and-adapters",
+      "catalog_name": "Hexagonal Architecture / Ports and Adapters",
+      "catalog_order": 5,
+      "family": "application-architecture-and-boundaries",
+      "kind": "architecture-style",
+      "priority": "core",
+      "catalog_problem": "Isolate core logic from technology-specific adapters",
+      "aliases": [
+        "Hexagonal Architecture / Ports and Adapters",
+        "Ports and Adapters"
+      ],
+      "relations": [],
+      "atlas_section": "hexagonal-architecture-ports-and-adapters",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C01",
+        "section": "hexagonal-architecture-ports-and-adapters",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.clean-onion-architecture",
+      "catalog_name": "Clean / Onion Architecture",
+      "catalog_order": 6,
+      "family": "application-architecture-and-boundaries",
+      "kind": "architecture-style",
+      "priority": "core",
+      "catalog_problem": "Direct dependencies inward toward domain policies",
+      "aliases": [
+        "Clean / Onion Architecture",
+        "Clean Architecture",
+        "Onion Architecture"
+      ],
+      "relations": [],
+      "atlas_section": "clean-onion-architecture",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C01",
+        "section": "clean-onion-architecture",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.domain-driven-design-bounded-context",
+      "catalog_name": "Domain-Driven Design / Bounded Context",
+      "catalog_order": 7,
+      "family": "application-architecture-and-boundaries",
+      "kind": "architecture-style",
+      "priority": "core",
+      "catalog_problem": "Separate models according to business meaning and ownership",
+      "aliases": [
+        "Domain-Driven Design / Bounded Context",
+        "DDD",
+        "Bounded Context"
+      ],
+      "relations": [],
+      "atlas_section": "domain-driven-design-bounded-context",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C01",
+        "section": "domain-driven-design-bounded-context",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.database-per-service",
+      "catalog_name": "Database per Service",
+      "catalog_order": 8,
+      "family": "application-architecture-and-boundaries",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Give each service independent authoritative data ownership",
+      "aliases": [
+        "Database per Service"
+      ],
+      "relations": [],
+      "atlas_section": "database-per-service",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C01",
+        "section": "database-per-service",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.self-contained-service",
+      "catalog_name": "Self-Contained Service",
+      "catalog_order": 9,
+      "family": "application-architecture-and-boundaries",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Reduce synchronous cross-service dependencies within a capability boundary",
+      "aliases": [
+        "Self-Contained Service"
+      ],
+      "relations": [],
+      "atlas_section": "self-contained-service",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C01",
+        "section": "self-contained-service",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.sidecar",
+      "catalog_name": "Sidecar",
+      "catalog_order": 10,
+      "family": "application-architecture-and-boundaries",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Add auxiliary runtime behavior in a colocated process/container",
+      "aliases": [
+        "Sidecar"
+      ],
+      "relations": [],
+      "atlas_section": "sidecar",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C01",
+        "section": "sidecar",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.ambassador",
+      "catalog_name": "Ambassador",
+      "catalog_order": 11,
+      "family": "application-architecture-and-boundaries",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Mediate client-side network capabilities through a local proxy",
+      "aliases": [
+        "Ambassador"
+      ],
+      "relations": [],
+      "atlas_section": "ambassador",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C01",
+        "section": "ambassador",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.anti-corruption-layer",
+      "catalog_name": "Anti-Corruption Layer",
+      "catalog_order": 12,
+      "family": "application-architecture-and-boundaries",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Translate legacy or external semantics without contaminating the domain model",
+      "aliases": [
+        "Anti-Corruption Layer"
+      ],
+      "relations": [],
+      "atlas_section": "anti-corruption-layer",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C01",
+        "section": "anti-corruption-layer",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.api-gateway",
+      "catalog_name": "API Gateway",
+      "catalog_order": 13,
+      "family": "api-and-service-communication",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Define a managed entry boundary for external clients and downstream services",
+      "aliases": [
+        "API Gateway"
+      ],
+      "relations": [],
+      "atlas_section": "api-gateway",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C02",
+        "section": "api-gateway",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.gateway-routing",
+      "catalog_name": "Gateway Routing",
+      "catalog_order": 14,
+      "family": "api-and-service-communication",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Route requests to the responsible backend via explicit contracts",
+      "aliases": [
+        "Gateway Routing"
+      ],
+      "relations": [],
+      "atlas_section": "gateway-routing",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C02",
+        "section": "gateway-routing",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.gateway-aggregation",
+      "catalog_name": "Gateway Aggregation",
+      "catalog_order": 15,
+      "family": "api-and-service-communication",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Aggregate multiple downstream responses into one client-facing result",
+      "aliases": [
+        "Gateway Aggregation"
+      ],
+      "relations": [],
+      "atlas_section": "gateway-aggregation",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C02",
+        "section": "gateway-aggregation",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.gateway-offloading",
+      "catalog_name": "Gateway Offloading",
+      "catalog_order": 16,
+      "family": "api-and-service-communication",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Centralize reusable cross-cutting gateway functions without moving domain authority",
+      "aliases": [
+        "Gateway Offloading"
+      ],
+      "relations": [],
+      "atlas_section": "gateway-offloading",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C02",
+        "section": "gateway-offloading",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.backend-for-frontend-bff",
+      "catalog_name": "Backend for Frontend (BFF)",
+      "catalog_order": 17,
+      "family": "api-and-service-communication",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Tailor server interaction contracts to client populations",
+      "aliases": [
+        "Backend for Frontend (BFF)",
+        "BFF"
+      ],
+      "relations": [],
+      "atlas_section": "backend-for-frontend-bff",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C02",
+        "section": "backend-for-frontend-bff",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.api-composition",
+      "catalog_name": "API Composition",
+      "catalog_order": 18,
+      "family": "api-and-service-communication",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Assemble responses requiring data from several service owners",
+      "aliases": [
+        "API Composition"
+      ],
+      "relations": [],
+      "atlas_section": "api-composition",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C02",
+        "section": "api-composition",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.reverse-proxy",
+      "catalog_name": "Reverse Proxy",
+      "catalog_order": 19,
+      "family": "api-and-service-communication",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Terminate and forward client connections with explicit trust/transport scope",
+      "aliases": [
+        "Reverse Proxy"
+      ],
+      "relations": [],
+      "atlas_section": "reverse-proxy",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C02",
+        "section": "reverse-proxy",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.service-discovery",
+      "catalog_name": "Service Discovery",
+      "catalog_order": 20,
+      "family": "api-and-service-communication",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Locate available service instances amid topology changes",
+      "aliases": [
+        "Service Discovery"
+      ],
+      "relations": [],
+      "atlas_section": "service-discovery",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C02",
+        "section": "service-discovery",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.client-side-discovery",
+      "catalog_name": "Client-Side Discovery",
+      "catalog_order": 21,
+      "family": "api-and-service-communication",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Make the requesting client responsible for backend selection",
+      "aliases": [
+        "Client-Side Discovery"
+      ],
+      "relations": [],
+      "atlas_section": "client-side-discovery",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C02",
+        "section": "client-side-discovery",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.server-side-discovery",
+      "catalog_name": "Server-Side Discovery",
+      "catalog_order": 22,
+      "family": "api-and-service-communication",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Delegate backend selection to gateway, router or load balancer",
+      "aliases": [
+        "Server-Side Discovery"
+      ],
+      "relations": [],
+      "atlas_section": "server-side-discovery",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C02",
+        "section": "server-side-discovery",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.asynchronous-request-reply",
+      "catalog_name": "Asynchronous Request-Reply",
+      "catalog_order": 23,
+      "family": "api-and-service-communication",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Separate long-running processing from the initiating request lifecycle",
+      "aliases": [
+        "Asynchronous Request-Reply",
+        "Async Request-Reply"
+      ],
+      "relations": [],
+      "atlas_section": "asynchronous-request-reply",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C02",
+        "section": "asynchronous-request-reply",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.gatekeeper",
+      "catalog_name": "Gatekeeper",
+      "catalog_order": 24,
+      "family": "api-and-service-communication",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Validate externally originated requests before privileged internal handling",
+      "aliases": [
+        "Gatekeeper"
+      ],
+      "relations": [],
+      "atlas_section": "gatekeeper",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C02",
+        "section": "gatekeeper",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.publish-subscribe",
+      "catalog_name": "Publish/Subscribe",
+      "catalog_order": 25,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Distribute an event to independent interested subscribers",
+      "aliases": [
+        "Publish/Subscribe",
+        "Pub/Sub"
+      ],
+      "relations": [],
+      "atlas_section": "publish-subscribe",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "publish-subscribe",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.point-to-point-queue",
+      "catalog_name": "Point-to-Point Queue",
+      "catalog_order": 26,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Dispatch individual work items to consumers",
+      "aliases": [
+        "Point-to-Point Queue",
+        "P2P Queue"
+      ],
+      "relations": [],
+      "atlas_section": "point-to-point-queue",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "point-to-point-queue",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.competing-consumers",
+      "catalog_name": "Competing Consumers",
+      "catalog_order": 27,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Parallelize processing from a shared work queue",
+      "aliases": [
+        "Competing Consumers"
+      ],
+      "relations": [],
+      "atlas_section": "competing-consumers",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "competing-consumers",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.event-driven-consumer",
+      "catalog_name": "Event-Driven Consumer",
+      "catalog_order": 28,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Trigger processing from message arrival rather than polling a data source",
+      "aliases": [
+        "Event-Driven Consumer"
+      ],
+      "relations": [],
+      "atlas_section": "event-driven-consumer",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "event-driven-consumer",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.request-reply-messaging",
+      "catalog_name": "Request-Reply Messaging",
+      "catalog_order": 29,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Correlate asynchronous message requests and responses",
+      "aliases": [
+        "Request-Reply Messaging"
+      ],
+      "relations": [],
+      "atlas_section": "request-reply-messaging",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "request-reply-messaging",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.correlation-identifier",
+      "catalog_name": "Correlation Identifier",
+      "catalog_order": 30,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Identify replies and events belonging to one logical operation",
+      "aliases": [
+        "Correlation Identifier"
+      ],
+      "relations": [],
+      "atlas_section": "correlation-identifier",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "correlation-identifier",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.content-based-router",
+      "catalog_name": "Content-Based Router",
+      "catalog_order": 31,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Select destinations from message contents",
+      "aliases": [
+        "Content-Based Router",
+        "CBR"
+      ],
+      "relations": [],
+      "atlas_section": "content-based-router",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "content-based-router",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.message-filter",
+      "catalog_name": "Message Filter",
+      "catalog_order": 32,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Reject or pass messages based on explicit conditions",
+      "aliases": [
+        "Message Filter"
+      ],
+      "relations": [],
+      "atlas_section": "message-filter",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "message-filter",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.pipes-and-filters",
+      "catalog_name": "Pipes and Filters",
+      "catalog_order": 33,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Compose processing from independent transformation stages",
+      "aliases": [
+        "Pipes and Filters",
+        "Pipeline"
+      ],
+      "relations": [],
+      "atlas_section": "pipes-and-filters",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "pipes-and-filters",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.splitter",
+      "catalog_name": "Splitter",
+      "catalog_order": 34,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Divide composite messages into processable parts",
+      "aliases": [
+        "Splitter"
+      ],
+      "relations": [],
+      "atlas_section": "splitter",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "splitter",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.aggregator",
+      "catalog_name": "Aggregator",
+      "catalog_order": 35,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Combine correlated messages with completion/time-window semantics",
+      "aliases": [
+        "Aggregator"
+      ],
+      "relations": [],
+      "atlas_section": "aggregator",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "aggregator",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.scatter-gather",
+      "catalog_name": "Scatter-Gather",
+      "catalog_order": 36,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Fan out requests and reconcile their responses",
+      "aliases": [
+        "Scatter-Gather"
+      ],
+      "relations": [],
+      "atlas_section": "scatter-gather",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "scatter-gather",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.dead-letter-channel-dlq",
+      "catalog_name": "Dead Letter Channel / DLQ",
+      "catalog_order": 37,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Isolate messages whose processing cannot safely complete",
+      "aliases": [
+        "Dead Letter Channel / DLQ",
+        "Dead Letter Channel",
+        "DLQ"
+      ],
+      "relations": [],
+      "atlas_section": "dead-letter-channel-dlq",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "dead-letter-channel-dlq",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.durable-subscriber",
+      "catalog_name": "Durable Subscriber",
+      "catalog_order": 38,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Retain deliverable events across temporary subscriber outages",
+      "aliases": [
+        "Durable Subscriber",
+        "Durable Subscription"
+      ],
+      "relations": [],
+      "atlas_section": "durable-subscriber",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "durable-subscriber",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.idempotent-receiver",
+      "catalog_name": "Idempotent Receiver",
+      "catalog_order": 39,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Handle duplicate deliveries without duplicate business effects",
+      "aliases": [
+        "Idempotent Receiver",
+        "Idempotent Consumer"
+      ],
+      "relations": [],
+      "atlas_section": "idempotent-receiver",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "idempotent-receiver",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.resequencer",
+      "catalog_name": "Resequencer",
+      "catalog_order": 40,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Reconstruct an acceptable order from reordered messages",
+      "aliases": [
+        "Resequencer"
+      ],
+      "relations": [],
+      "atlas_section": "resequencer",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "resequencer",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.claim-check",
+      "catalog_name": "Claim Check",
+      "catalog_order": 41,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Store a large payload separately and send a controlled reference",
+      "aliases": [
+        "Claim Check"
+      ],
+      "relations": [],
+      "atlas_section": "claim-check",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "claim-check",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.message-broker-messaging-bridge",
+      "catalog_name": "Message Broker / Messaging Bridge",
+      "catalog_order": 42,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Mediate routing or bridge incompatible messaging systems",
+      "aliases": [
+        "Message Broker / Messaging Bridge",
+        "Message Broker",
+        "Messaging Bridge"
+      ],
+      "relations": [],
+      "atlas_section": "message-broker-messaging-bridge",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "message-broker-messaging-bridge",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.canonical-data-model",
+      "catalog_name": "Canonical Data Model",
+      "catalog_order": 43,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Normalize interapplication messages via a shared representation",
+      "aliases": [
+        "Canonical Data Model",
+        "CDM"
+      ],
+      "relations": [],
+      "atlas_section": "canonical-data-model",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "canonical-data-model",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.process-manager-routing-slip",
+      "catalog_name": "Process Manager / Routing Slip",
+      "catalog_order": 44,
+      "family": "messaging-and-event-driven-integration",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Orchestrate or encode a multi-stage integration path",
+      "aliases": [
+        "Process Manager / Routing Slip",
+        "Process Manager",
+        "Routing Slip"
+      ],
+      "relations": [],
+      "atlas_section": "process-manager-routing-slip",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C03",
+        "section": "process-manager-routing-slip",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.command-query-responsibility-segregation-cqrs",
+      "catalog_name": "Command Query Responsibility Segregation (CQRS)",
+      "catalog_order": 45,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Separate write-command and read-query responsibilities/models",
+      "aliases": [
+        "Command Query Responsibility Segregation (CQRS)",
+        "CQRS"
+      ],
+      "relations": [],
+      "atlas_section": "command-query-responsibility-segregation-cqrs",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "command-query-responsibility-segregation-cqrs",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.event-sourcing",
+      "catalog_name": "Event Sourcing",
+      "catalog_order": 46,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Derive state from an authoritative ordered event history",
+      "aliases": [
+        "Event Sourcing"
+      ],
+      "relations": [],
+      "atlas_section": "event-sourcing",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "event-sourcing",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.domain-events",
+      "catalog_name": "Domain Events",
+      "catalog_order": 47,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Communicate meaningful changes to domain state or decisions",
+      "aliases": [
+        "Domain Events"
+      ],
+      "relations": [],
+      "atlas_section": "domain-events",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "domain-events",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.saga",
+      "catalog_name": "Saga",
+      "catalog_order": 48,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Coordinate multi-service business outcomes through local transactions",
+      "aliases": [
+        "Saga"
+      ],
+      "relations": [],
+      "atlas_section": "saga",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "saga",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.saga-choreography",
+      "catalog_name": "Saga Choreography",
+      "catalog_order": 49,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Coordinate local effects through events without central orchestration",
+      "aliases": [
+        "Saga Choreography",
+        "Choreography Saga"
+      ],
+      "relations": [],
+      "atlas_section": "saga-choreography",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "saga-choreography",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.saga-orchestration",
+      "catalog_name": "Saga Orchestration",
+      "catalog_order": 50,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Manage multi-step local transactions through an explicit coordinator",
+      "aliases": [
+        "Saga Orchestration",
+        "Orchestration Saga"
+      ],
+      "relations": [],
+      "atlas_section": "saga-orchestration",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "saga-orchestration",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.compensating-transaction",
+      "catalog_name": "Compensating Transaction",
+      "catalog_order": 51,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Counteract prior business effects with defined compensation semantics",
+      "aliases": [
+        "Compensating Transaction"
+      ],
+      "relations": [],
+      "atlas_section": "compensating-transaction",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "compensating-transaction",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.transactional-outbox",
+      "catalog_name": "Transactional Outbox",
+      "catalog_order": 52,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Atomically store local state and event-publication intent",
+      "aliases": [
+        "Transactional Outbox",
+        "Outbox"
+      ],
+      "relations": [],
+      "atlas_section": "transactional-outbox",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "transactional-outbox",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.transactional-inbox",
+      "catalog_name": "Transactional Inbox",
+      "catalog_order": 53,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Atomically track received message identity and local processing effect",
+      "aliases": [
+        "Transactional Inbox",
+        "Inbox"
+      ],
+      "relations": [],
+      "atlas_section": "transactional-inbox",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "transactional-inbox",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.idempotency-key",
+      "catalog_name": "Idempotency Key",
+      "catalog_order": 54,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Associate retries with one logical intent and payload",
+      "aliases": [
+        "Idempotency Key"
+      ],
+      "relations": [],
+      "atlas_section": "idempotency-key",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "idempotency-key",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.change-data-capture-cdc",
+      "catalog_name": "Change Data Capture (CDC)",
+      "catalog_order": 55,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Propagate committed database changes via change streams",
+      "aliases": [
+        "Change Data Capture (CDC)",
+        "CDC"
+      ],
+      "relations": [],
+      "atlas_section": "change-data-capture-cdc",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "change-data-capture-cdc",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.materialized-view",
+      "catalog_name": "Materialized View",
+      "catalog_order": 56,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Maintain a derived read representation with explicit freshness semantics",
+      "aliases": [
+        "Materialized View"
+      ],
+      "relations": [],
+      "atlas_section": "materialized-view",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "materialized-view",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.command-side-replica",
+      "catalog_name": "Command-Side Replica",
+      "catalog_order": 57,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Supply local read-only facts for decisions without synchronous owner calls",
+      "aliases": [
+        "Command-Side Replica"
+      ],
+      "relations": [],
+      "atlas_section": "command-side-replica",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "command-side-replica",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.two-phase-commit-2pc",
+      "catalog_name": "Two-Phase Commit (2PC)",
+      "catalog_order": 58,
+      "family": "data-consistency-transactions-and-event-sourcing",
+      "kind": "mechanism",
+      "priority": "advanced",
+      "catalog_problem": "Coordinate prepare/commit across transactional participants",
+      "aliases": [
+        "Two-Phase Commit (2PC)",
+        "2PC"
+      ],
+      "relations": [],
+      "atlas_section": "two-phase-commit-2pc",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C04",
+        "section": "two-phase-commit-2pc",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.distributed-cache",
+      "catalog_name": "Distributed Cache",
+      "catalog_order": 59,
+      "family": "caching-and-retrieval",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Provide a shared cache layer with explicit authority/failure semantics",
+      "aliases": [
+        "Distributed Cache"
+      ],
+      "relations": [],
+      "atlas_section": "distributed-cache",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "distributed-cache",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.cache-aside-lazy-loading",
+      "catalog_name": "Cache-Aside / Lazy Loading",
+      "catalog_order": 60,
+      "family": "caching-and-retrieval",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Populate cache after miss while preserving origin authority",
+      "aliases": [
+        "Cache-Aside / Lazy Loading",
+        "Cache-Aside",
+        "Lazy Loading"
+      ],
+      "relations": [],
+      "atlas_section": "cache-aside-lazy-loading",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "cache-aside-lazy-loading",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.read-through-cache",
+      "catalog_name": "Read-Through Cache",
+      "catalog_order": 61,
+      "family": "caching-and-retrieval",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Delegate miss loading to the caching layer",
+      "aliases": [
+        "Read-Through Cache"
+      ],
+      "relations": [],
+      "atlas_section": "read-through-cache",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "read-through-cache",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.write-through-cache",
+      "catalog_name": "Write-Through Cache",
+      "catalog_order": 62,
+      "family": "caching-and-retrieval",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Update authoritative store and cache on a controlled write path",
+      "aliases": [
+        "Write-Through Cache"
+      ],
+      "relations": [],
+      "atlas_section": "write-through-cache",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "write-through-cache",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.write-behind-write-back",
+      "catalog_name": "Write-Behind / Write-Back",
+      "catalog_order": 63,
+      "family": "caching-and-retrieval",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Defer durable writes behind cached mutations",
+      "aliases": [
+        "Write-Behind / Write-Back",
+        "Write-Behind",
+        "Write-Back"
+      ],
+      "relations": [],
+      "atlas_section": "write-behind-write-back",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "write-behind-write-back",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.write-around",
+      "catalog_name": "Write-Around",
+      "catalog_order": 64,
+      "family": "caching-and-retrieval",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Write directly to durable storage; populate cache on later reads",
+      "aliases": [
+        "Write-Around"
+      ],
+      "relations": [],
+      "atlas_section": "write-around",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "write-around",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.cache-invalidation",
+      "catalog_name": "Cache Invalidation",
+      "catalog_order": 65,
+      "family": "caching-and-retrieval",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Expire cached data when source state changes",
+      "aliases": [
+        "Cache Invalidation"
+      ],
+      "relations": [],
+      "atlas_section": "cache-invalidation",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "cache-invalidation",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.ttl-based-expiration",
+      "catalog_name": "TTL-Based Expiration",
+      "catalog_order": 66,
+      "family": "caching-and-retrieval",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Bound cache lifetime/freshness through expiry",
+      "aliases": [
+        "TTL-Based Expiration"
+      ],
+      "relations": [],
+      "atlas_section": "ttl-based-expiration",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "ttl-based-expiration",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.negative-caching",
+      "catalog_name": "Negative Caching",
+      "catalog_order": 67,
+      "family": "caching-and-retrieval",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Cache absence/errors when safely scoped and invalidatable",
+      "aliases": [
+        "Negative Caching"
+      ],
+      "relations": [],
+      "atlas_section": "negative-caching",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "negative-caching",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.cache-stampede-protection",
+      "catalog_name": "Cache Stampede Protection",
+      "catalog_order": 68,
+      "family": "caching-and-retrieval",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Prevent simultaneous regeneration from overwhelming the origin",
+      "aliases": [
+        "Cache Stampede Protection"
+      ],
+      "relations": [],
+      "atlas_section": "cache-stampede-protection",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "cache-stampede-protection",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.single-flight-request-coalescing",
+      "catalog_name": "Single Flight / Request Coalescing",
+      "catalog_order": 69,
+      "family": "caching-and-retrieval",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Coalesce concurrent equivalent requests into one origin fetch",
+      "aliases": [
+        "Single Flight / Request Coalescing",
+        "Single Flight",
+        "Request Coalescing"
+      ],
+      "relations": [],
+      "atlas_section": "single-flight-request-coalescing",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "single-flight-request-coalescing",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.stale-while-revalidate",
+      "catalog_name": "Stale-While-Revalidate",
+      "catalog_order": 70,
+      "family": "caching-and-retrieval",
+      "kind": "mechanism",
+      "priority": "advanced",
+      "catalog_problem": "Serve permitted stale data while refreshing asynchronously",
+      "aliases": [
+        "Stale-While-Revalidate",
+        "SWR"
+      ],
+      "relations": [],
+      "atlas_section": "stale-while-revalidate",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "stale-while-revalidate",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.multi-level-caching",
+      "catalog_name": "Multi-Level Caching",
+      "catalog_order": 71,
+      "family": "caching-and-retrieval",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Combine local/shared/edge caches with coherent invalidation contracts",
+      "aliases": [
+        "Multi-Level Caching"
+      ],
+      "relations": [],
+      "atlas_section": "multi-level-caching",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "multi-level-caching",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.cdn-edge-caching",
+      "catalog_name": "CDN / Edge Caching",
+      "catalog_order": 72,
+      "family": "caching-and-retrieval",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Serve permitted representations near requesters and protect origin",
+      "aliases": [
+        "CDN / Edge Caching",
+        "CDN",
+        "Edge Caching"
+      ],
+      "relations": [],
+      "atlas_section": "cdn-edge-caching",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C05",
+        "section": "cdn-edge-caching",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.sharding",
+      "catalog_name": "Sharding",
+      "catalog_order": 73,
+      "family": "database-and-storage-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Split authoritative data across independently routed shards",
+      "aliases": [
+        "Sharding"
+      ],
+      "relations": [],
+      "atlas_section": "sharding",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "sharding",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.partitioning",
+      "catalog_name": "Partitioning",
+      "catalog_order": 74,
+      "family": "database-and-storage-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Divide datasets within or across storage engines by explicit partition rules",
+      "aliases": [
+        "Partitioning"
+      ],
+      "relations": [],
+      "atlas_section": "partitioning",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "partitioning",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.consistent-hashing",
+      "catalog_name": "Consistent Hashing",
+      "catalog_order": 75,
+      "family": "database-and-storage-architecture",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Minimize key movement during node-set changes",
+      "aliases": [
+        "Consistent Hashing"
+      ],
+      "relations": [],
+      "atlas_section": "consistent-hashing",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "consistent-hashing",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.leader-follower-replication",
+      "catalog_name": "Leader-Follower Replication",
+      "catalog_order": 76,
+      "family": "database-and-storage-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Replicate writes under a single primary authority",
+      "aliases": [
+        "Leader-Follower Replication"
+      ],
+      "relations": [],
+      "atlas_section": "leader-follower-replication",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "leader-follower-replication",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.multi-leader-replication",
+      "catalog_name": "Multi-Leader Replication",
+      "catalog_order": 77,
+      "family": "database-and-storage-architecture",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Accept writes at multiple leaders and reconcile conflicts",
+      "aliases": [
+        "Multi-Leader Replication"
+      ],
+      "relations": [],
+      "atlas_section": "multi-leader-replication",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "multi-leader-replication",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.read-replicas",
+      "catalog_name": "Read Replicas",
+      "catalog_order": 78,
+      "family": "database-and-storage-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Offload some reads using defined replication lag/staleness contracts",
+      "aliases": [
+        "Read Replicas"
+      ],
+      "relations": [],
+      "atlas_section": "read-replicas",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "read-replicas",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.quorum-based-reads-writes",
+      "catalog_name": "Quorum-Based Reads/Writes",
+      "catalog_order": 79,
+      "family": "database-and-storage-architecture",
+      "kind": "mechanism",
+      "priority": "advanced",
+      "catalog_problem": "Use participant quorums to enforce stated consistency assumptions",
+      "aliases": [
+        "Quorum-Based Reads/Writes",
+        "Quorum Reads",
+        "Quorum Writes"
+      ],
+      "relations": [],
+      "atlas_section": "quorum-based-reads-writes",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "quorum-based-reads-writes",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.index-table",
+      "catalog_name": "Index Table",
+      "catalog_order": 80,
+      "family": "database-and-storage-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Maintain secondary lookup structures with a clear update contract",
+      "aliases": [
+        "Index Table"
+      ],
+      "relations": [],
+      "atlas_section": "index-table",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "index-table",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.polyglot-persistence",
+      "catalog_name": "Polyglot Persistence",
+      "catalog_order": 81,
+      "family": "database-and-storage-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Select heterogeneous stores for distinct needs and synchronize ownership",
+      "aliases": [
+        "Polyglot Persistence"
+      ],
+      "relations": [],
+      "atlas_section": "polyglot-persistence",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "polyglot-persistence",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.cqrs-read-projections",
+      "catalog_name": "CQRS Read Projections",
+      "catalog_order": 82,
+      "family": "database-and-storage-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Materialize read-optimized representations from change inputs",
+      "aliases": [
+        "CQRS Read Projections",
+        "CQRS Projections"
+      ],
+      "relations": [],
+      "atlas_section": "cqrs-read-projections",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "cqrs-read-projections",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.expand-and-contract-schema",
+      "catalog_name": "Expand-and-Contract Schema",
+      "catalog_order": 83,
+      "family": "database-and-storage-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Evolve schemas compatibly across old and new writers/readers",
+      "aliases": [
+        "Expand-and-Contract Schema",
+        "Schema Expand and Contract"
+      ],
+      "relations": [],
+      "atlas_section": "expand-and-contract-schema",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "expand-and-contract-schema",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.online-data-migration",
+      "catalog_name": "Online Data Migration",
+      "catalog_order": 84,
+      "family": "database-and-storage-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Change authoritative representation while serving live traffic",
+      "aliases": [
+        "Online Data Migration"
+      ],
+      "relations": [],
+      "atlas_section": "online-data-migration",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "online-data-migration",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.backup-pitr-and-restore",
+      "catalog_name": "Backup, PITR and Restore",
+      "catalog_order": 85,
+      "family": "database-and-storage-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Recover consistent user-visible state under explicit RPO/RTO objectives",
+      "aliases": [
+        "Backup, PITR and Restore",
+        "PITR",
+        "Point-in-Time Recovery"
+      ],
+      "relations": [],
+      "atlas_section": "backup-pitr-and-restore",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C06",
+        "section": "backup-pitr-and-restore",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.circuit-breaker",
+      "catalog_name": "Circuit Breaker",
+      "catalog_order": 86,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Bound repeated calls into failing dependencies",
+      "aliases": [
+        "Circuit Breaker"
+      ],
+      "relations": [],
+      "atlas_section": "circuit-breaker",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "circuit-breaker",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.bulkhead",
+      "catalog_name": "Bulkhead",
+      "catalog_order": 87,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Isolate resources and failure blast radii between workloads",
+      "aliases": [
+        "Bulkhead"
+      ],
+      "relations": [],
+      "atlas_section": "bulkhead",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "bulkhead",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.retry-with-exponential-backoff",
+      "catalog_name": "Retry with Exponential Backoff",
+      "catalog_order": 88,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Back off transient retries according to a finite budget",
+      "aliases": [
+        "Retry with Exponential Backoff",
+        "Exponential Backoff"
+      ],
+      "relations": [],
+      "atlas_section": "retry-with-exponential-backoff",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "retry-with-exponential-backoff",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.retry-with-jitter",
+      "catalog_name": "Retry with Jitter",
+      "catalog_order": 89,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Desynchronize retry storms by randomized delays",
+      "aliases": [
+        "Retry with Jitter",
+        "Jitter"
+      ],
+      "relations": [],
+      "atlas_section": "retry-with-jitter",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "retry-with-jitter",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.timeout",
+      "catalog_name": "Timeout",
+      "catalog_order": 90,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Bound waiting for a particular operation",
+      "aliases": [
+        "Timeout"
+      ],
+      "relations": [],
+      "atlas_section": "timeout",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "timeout",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.deadline-propagation",
+      "catalog_name": "Deadline Propagation",
+      "catalog_order": 91,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Preserve a shared end-to-end budget across hops",
+      "aliases": [
+        "Deadline Propagation"
+      ],
+      "relations": [],
+      "atlas_section": "deadline-propagation",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "deadline-propagation",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.fallback",
+      "catalog_name": "Fallback",
+      "catalog_order": 92,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Use a defined alternate result or dependency under failure",
+      "aliases": [
+        "Fallback"
+      ],
+      "relations": [],
+      "atlas_section": "fallback",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "fallback",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.graceful-degradation",
+      "catalog_name": "Graceful Degradation",
+      "catalog_order": 93,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Preserve essential outcomes under partial outage",
+      "aliases": [
+        "Graceful Degradation"
+      ],
+      "relations": [],
+      "atlas_section": "graceful-degradation",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "graceful-degradation",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.load-shedding",
+      "catalog_name": "Load Shedding",
+      "catalog_order": 94,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Reject excess work to preserve valid throughput",
+      "aliases": [
+        "Load Shedding"
+      ],
+      "relations": [],
+      "atlas_section": "load-shedding",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "load-shedding",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.throttling",
+      "catalog_name": "Throttling",
+      "catalog_order": 95,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Regulate the pace of resource consumption",
+      "aliases": [
+        "Throttling"
+      ],
+      "relations": [],
+      "atlas_section": "throttling",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "throttling",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.rate-limiting",
+      "catalog_name": "Rate Limiting",
+      "catalog_order": 96,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Limit requests per caller, identity, tenant or time window",
+      "aliases": [
+        "Rate Limiting"
+      ],
+      "relations": [],
+      "atlas_section": "rate-limiting",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "rate-limiting",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.queue-based-load-leveling",
+      "catalog_name": "Queue-Based Load Leveling",
+      "catalog_order": 97,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Buffer bounded bursts to decouple arrival from processing",
+      "aliases": [
+        "Queue-Based Load Leveling",
+        "Load Leveling"
+      ],
+      "relations": [],
+      "atlas_section": "queue-based-load-leveling",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "queue-based-load-leveling",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.priority-queue",
+      "catalog_name": "Priority Queue",
+      "catalog_order": 98,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Order queued work according to declared importance/fairness policy",
+      "aliases": [
+        "Priority Queue"
+      ],
+      "relations": [],
+      "atlas_section": "priority-queue",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "priority-queue",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.hedged-requests",
+      "catalog_name": "Hedged Requests",
+      "catalog_order": 99,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Race bounded equivalent requests to mitigate high tail latency",
+      "aliases": [
+        "Hedged Requests",
+        "Hedging"
+      ],
+      "relations": [],
+      "atlas_section": "hedged-requests",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "hedged-requests",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.health-endpoint-monitoring",
+      "catalog_name": "Health Endpoint Monitoring",
+      "catalog_order": 100,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Observe useful service health and unhealthy dependency states",
+      "aliases": [
+        "Health Endpoint Monitoring",
+        "Health Endpoint"
+      ],
+      "relations": [],
+      "atlas_section": "health-endpoint-monitoring",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "health-endpoint-monitoring",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.failover-failback",
+      "catalog_name": "Failover / Failback",
+      "catalog_order": 101,
+      "family": "resilience-and-fault-tolerance",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Move serving or write authority during failure and safely return",
+      "aliases": [
+        "Failover / Failback",
+        "Failover",
+        "Failback"
+      ],
+      "relations": [],
+      "atlas_section": "failover-failback",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C07",
+        "section": "failover-failback",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.leader-election",
+      "catalog_name": "Leader Election",
+      "catalog_order": 102,
+      "family": "distributed-coordination",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Select a coordinator under declared fault and authority assumptions",
+      "aliases": [
+        "Leader Election"
+      ],
+      "relations": [],
+      "atlas_section": "leader-election",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C08",
+        "section": "leader-election",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.consensus",
+      "catalog_name": "Consensus",
+      "catalog_order": 103,
+      "family": "distributed-coordination",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Agree on replicated decisions under modeled failures",
+      "aliases": [
+        "Consensus"
+      ],
+      "relations": [],
+      "atlas_section": "consensus",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C08",
+        "section": "consensus",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.distributed-lock",
+      "catalog_name": "Distributed Lock",
+      "catalog_order": 104,
+      "family": "distributed-coordination",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Coordinate exclusive access with explicit failure assumptions",
+      "aliases": [
+        "Distributed Lock"
+      ],
+      "relations": [],
+      "atlas_section": "distributed-lock",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C08",
+        "section": "distributed-lock",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.lease-based-ownership",
+      "catalog_name": "Lease-Based Ownership",
+      "catalog_order": 105,
+      "family": "distributed-coordination",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Bound temporary ownership with lease expiry and renewal",
+      "aliases": [
+        "Lease-Based Ownership"
+      ],
+      "relations": [],
+      "atlas_section": "lease-based-ownership",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C08",
+        "section": "lease-based-ownership",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.fencing-tokens",
+      "catalog_name": "Fencing Tokens",
+      "catalog_order": 106,
+      "family": "distributed-coordination",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Reject stale owners even after their leases expire",
+      "aliases": [
+        "Fencing Tokens"
+      ],
+      "relations": [],
+      "atlas_section": "fencing-tokens",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C08",
+        "section": "fencing-tokens",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.quorum-coordination",
+      "catalog_name": "Quorum Coordination",
+      "catalog_order": 107,
+      "family": "distributed-coordination",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Require sufficient independent participants to decide or proceed",
+      "aliases": [
+        "Quorum Coordination"
+      ],
+      "relations": [],
+      "atlas_section": "quorum-coordination",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C08",
+        "section": "quorum-coordination",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.causal-ordering",
+      "catalog_name": "Causal Ordering",
+      "catalog_order": 108,
+      "family": "distributed-coordination",
+      "kind": "mechanism",
+      "priority": "advanced",
+      "catalog_problem": "Preserve or reason about happens-before relationships",
+      "aliases": [
+        "Causal Ordering"
+      ],
+      "relations": [],
+      "atlas_section": "causal-ordering",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C08",
+        "section": "causal-ordering",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.session-consistency",
+      "catalog_name": "Session Consistency",
+      "catalog_order": 109,
+      "family": "distributed-coordination",
+      "kind": "mechanism",
+      "priority": "advanced",
+      "catalog_problem": "Preserve session-specific observations across replicas",
+      "aliases": [
+        "Session Consistency"
+      ],
+      "relations": [],
+      "atlas_section": "session-consistency",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C08",
+        "section": "session-consistency",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.distributed-workflow-orchestration",
+      "catalog_name": "Distributed Workflow Orchestration",
+      "catalog_order": 110,
+      "family": "distributed-coordination",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Execute recoverable, long-running multistep processes",
+      "aliases": [
+        "Distributed Workflow Orchestration"
+      ],
+      "relations": [],
+      "atlas_section": "distributed-workflow-orchestration",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C08",
+        "section": "distributed-workflow-orchestration",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.load-balancing",
+      "catalog_name": "Load Balancing",
+      "catalog_order": 111,
+      "family": "scalability-and-load-distribution",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Select healthy backends according to load and locality contracts",
+      "aliases": [
+        "Load Balancing"
+      ],
+      "relations": [],
+      "atlas_section": "load-balancing",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C09",
+        "section": "load-balancing",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.horizontal-scaling",
+      "catalog_name": "Horizontal Scaling",
+      "catalog_order": 112,
+      "family": "scalability-and-load-distribution",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Add replicas while accounting for shared bottlenecks",
+      "aliases": [
+        "Horizontal Scaling"
+      ],
+      "relations": [],
+      "atlas_section": "horizontal-scaling",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C09",
+        "section": "horizontal-scaling",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.vertical-scaling",
+      "catalog_name": "Vertical Scaling",
+      "catalog_order": 113,
+      "family": "scalability-and-load-distribution",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Add resources to individual instances within practical limits",
+      "aliases": [
+        "Vertical Scaling"
+      ],
+      "relations": [],
+      "atlas_section": "vertical-scaling",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C09",
+        "section": "vertical-scaling",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.autoscaling",
+      "catalog_name": "Autoscaling",
+      "catalog_order": 114,
+      "family": "scalability-and-load-distribution",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Adjust capacity using signals, lag, stability and cooldown controls",
+      "aliases": [
+        "Autoscaling"
+      ],
+      "relations": [],
+      "atlas_section": "autoscaling",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C09",
+        "section": "autoscaling",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.cell-based-architecture",
+      "catalog_name": "Cell-Based Architecture",
+      "catalog_order": 115,
+      "family": "scalability-and-load-distribution",
+      "kind": "architecture-style",
+      "priority": "core",
+      "catalog_problem": "Partition service topology into fault-contained cells",
+      "aliases": [
+        "Cell-Based Architecture",
+        "Cell-Based"
+      ],
+      "relations": [],
+      "atlas_section": "cell-based-architecture",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C09",
+        "section": "cell-based-architecture",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.shuffle-sharding",
+      "catalog_name": "Shuffle Sharding",
+      "catalog_order": 116,
+      "family": "scalability-and-load-distribution",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Allocate overlapping subsets of infrastructure per tenant/customer",
+      "aliases": [
+        "Shuffle Sharding"
+      ],
+      "relations": [],
+      "atlas_section": "shuffle-sharding",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C09",
+        "section": "shuffle-sharding",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.deployment-stamps",
+      "catalog_name": "Deployment Stamps",
+      "catalog_order": 117,
+      "family": "scalability-and-load-distribution",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Reproduce an independently managed deployment unit",
+      "aliases": [
+        "Deployment Stamps"
+      ],
+      "relations": [],
+      "atlas_section": "deployment-stamps",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C09",
+        "section": "deployment-stamps",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.geode",
+      "catalog_name": "Geode",
+      "catalog_order": 118,
+      "family": "scalability-and-load-distribution",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Serve global users from regionally situated cooperating deployments",
+      "aliases": [
+        "Geode"
+      ],
+      "relations": [],
+      "atlas_section": "geode",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C09",
+        "section": "geode",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.static-content-hosting",
+      "catalog_name": "Static Content Hosting",
+      "catalog_order": 119,
+      "family": "scalability-and-load-distribution",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Offload immutable/static content from application execution",
+      "aliases": [
+        "Static Content Hosting"
+      ],
+      "relations": [],
+      "atlas_section": "static-content-hosting",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C09",
+        "section": "static-content-hosting",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.tenant-based-resource-isolation",
+      "catalog_name": "Tenant-Based Resource Isolation",
+      "catalog_order": 120,
+      "family": "scalability-and-load-distribution",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Enforce fair capacity and prevent noisy-neighbor failures",
+      "aliases": [
+        "Tenant-Based Resource Isolation"
+      ],
+      "relations": [],
+      "atlas_section": "tenant-based-resource-isolation",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C09",
+        "section": "tenant-based-resource-isolation",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.rolling-deployment",
+      "catalog_name": "Rolling Deployment",
+      "catalog_order": 121,
+      "family": "deployment-and-legacy-modernization",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Replace instances incrementally while preserving service",
+      "aliases": [
+        "Rolling Deployment"
+      ],
+      "relations": [],
+      "atlas_section": "rolling-deployment",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C10",
+        "section": "rolling-deployment",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.blue-green-deployment",
+      "catalog_name": "Blue/Green Deployment",
+      "catalog_order": 122,
+      "family": "deployment-and-legacy-modernization",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Switch traffic between two provisioned versions/environments",
+      "aliases": [
+        "Blue/Green Deployment",
+        "Blue-Green Deployment"
+      ],
+      "relations": [],
+      "atlas_section": "blue-green-deployment",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C10",
+        "section": "blue-green-deployment",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.canary-release",
+      "catalog_name": "Canary Release",
+      "catalog_order": 123,
+      "family": "deployment-and-legacy-modernization",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Expose a controlled subset of traffic before promotion",
+      "aliases": [
+        "Canary Release"
+      ],
+      "relations": [],
+      "atlas_section": "canary-release",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C10",
+        "section": "canary-release",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.feature-flags-feature-toggles",
+      "catalog_name": "Feature Flags / Feature Toggles",
+      "catalog_order": 124,
+      "family": "deployment-and-legacy-modernization",
+      "kind": "practice",
+      "priority": "core",
+      "catalog_problem": "Decouple code rollout from feature activation",
+      "aliases": [
+        "Feature Flags / Feature Toggles",
+        "Feature Flags",
+        "Feature Toggles"
+      ],
+      "relations": [],
+      "atlas_section": "feature-flags-feature-toggles",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C10",
+        "section": "feature-flags-feature-toggles",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.gitops",
+      "catalog_name": "GitOps",
+      "catalog_order": 125,
+      "family": "deployment-and-legacy-modernization",
+      "kind": "practice",
+      "priority": "core",
+      "catalog_problem": "Reconcile declared desired deployment state with actual state",
+      "aliases": [
+        "GitOps"
+      ],
+      "relations": [],
+      "atlas_section": "gitops",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C10",
+        "section": "gitops",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.immutable-infrastructure",
+      "catalog_name": "Immutable Infrastructure",
+      "catalog_order": 126,
+      "family": "deployment-and-legacy-modernization",
+      "kind": "practice",
+      "priority": "core",
+      "catalog_problem": "Replace rather than mutate deployed infrastructure in place",
+      "aliases": [
+        "Immutable Infrastructure"
+      ],
+      "relations": [],
+      "atlas_section": "immutable-infrastructure",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C10",
+        "section": "immutable-infrastructure",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.strangler-fig",
+      "catalog_name": "Strangler Fig",
+      "catalog_order": 127,
+      "family": "deployment-and-legacy-modernization",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Incrementally replace old capabilities at controlled boundaries",
+      "aliases": [
+        "Strangler Fig"
+      ],
+      "relations": [],
+      "atlas_section": "strangler-fig",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C10",
+        "section": "strangler-fig",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.branch-by-abstraction",
+      "catalog_name": "Branch by Abstraction",
+      "catalog_order": 128,
+      "family": "deployment-and-legacy-modernization",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Switch implementations behind stable in-process interfaces",
+      "aliases": [
+        "Branch by Abstraction"
+      ],
+      "relations": [],
+      "atlas_section": "branch-by-abstraction",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C10",
+        "section": "branch-by-abstraction",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.parallel-run",
+      "catalog_name": "Parallel Run",
+      "catalog_order": 129,
+      "family": "deployment-and-legacy-modernization",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Execute old and new paths to reconcile outputs before authority transfer",
+      "aliases": [
+        "Parallel Run"
+      ],
+      "relations": [],
+      "atlas_section": "parallel-run",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C10",
+        "section": "parallel-run",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.dark-launching-shadow-traffic",
+      "catalog_name": "Dark Launching / Shadow Traffic",
+      "catalog_order": 130,
+      "family": "deployment-and-legacy-modernization",
+      "kind": "pattern",
+      "priority": "advanced",
+      "catalog_problem": "Exercise new implementation using mirrored traffic without publishing its effects",
+      "aliases": [
+        "Dark Launching / Shadow Traffic",
+        "Dark Launch",
+        "Shadow Traffic"
+      ],
+      "relations": [],
+      "atlas_section": "dark-launching-shadow-traffic",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C10",
+        "section": "dark-launching-shadow-traffic",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.expand-and-contract",
+      "catalog_name": "Expand-and-Contract",
+      "catalog_order": 131,
+      "family": "deployment-and-legacy-modernization",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Maintain version coexistence during interface/data migration",
+      "aliases": [
+        "Expand-and-Contract",
+        "Expand and Contract"
+      ],
+      "relations": [],
+      "atlas_section": "expand-and-contract",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C10",
+        "section": "expand-and-contract",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.controlled-cutover",
+      "catalog_name": "Controlled Cutover",
+      "catalog_order": 132,
+      "family": "deployment-and-legacy-modernization",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Transfer authoritative traffic/state at explicit verified gates",
+      "aliases": [
+        "Controlled Cutover"
+      ],
+      "relations": [],
+      "atlas_section": "controlled-cutover",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C10",
+        "section": "controlled-cutover",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.federated-identity",
+      "catalog_name": "Federated Identity",
+      "catalog_order": 133,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Delegate authentication to accepted identity authorities",
+      "aliases": [
+        "Federated Identity",
+        "Federation"
+      ],
+      "relations": [],
+      "atlas_section": "federated-identity",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "federated-identity",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.zero-trust-architecture",
+      "catalog_name": "Zero Trust Architecture",
+      "catalog_order": 134,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "practice",
+      "priority": "core",
+      "catalog_problem": "Require explicit verification across network and identity boundaries",
+      "aliases": [
+        "Zero Trust Architecture",
+        "Zero Trust"
+      ],
+      "relations": [],
+      "atlas_section": "zero-trust-architecture",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "zero-trust-architecture",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.least-privilege",
+      "catalog_name": "Least Privilege",
+      "catalog_order": 135,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "practice",
+      "priority": "core",
+      "catalog_problem": "Limit principals to the minimal required access and actions",
+      "aliases": [
+        "Least Privilege",
+        "PoLP"
+      ],
+      "relations": [],
+      "atlas_section": "least-privilege",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "least-privilege",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.rbac-abac",
+      "catalog_name": "RBAC / ABAC",
+      "catalog_order": 136,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Authorize resources by roles or attributes",
+      "aliases": [
+        "RBAC / ABAC",
+        "RBAC",
+        "ABAC",
+        "Role-Based Access Control",
+        "Attribute-Based Access Control"
+      ],
+      "relations": [],
+      "atlas_section": "rbac-abac",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "rbac-abac",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.workload-identity-mtls",
+      "catalog_name": "Workload Identity / mTLS",
+      "catalog_order": 137,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Authenticate service actors and secure service-to-service channels",
+      "aliases": [
+        "Workload Identity / mTLS",
+        "Mutual TLS",
+        "mTLS"
+      ],
+      "relations": [],
+      "atlas_section": "workload-identity-mtls",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "workload-identity-mtls",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.valet-key",
+      "catalog_name": "Valet Key",
+      "catalog_order": 138,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Grant time/resource-limited direct access via scoped capability",
+      "aliases": [
+        "Valet Key"
+      ],
+      "relations": [],
+      "atlas_section": "valet-key",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "valet-key",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.multitenant-isolation",
+      "catalog_name": "Multitenant Isolation",
+      "catalog_order": 139,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "pattern",
+      "priority": "core",
+      "catalog_problem": "Prevent tenant data, metadata and resource leakage",
+      "aliases": [
+        "Multitenant Isolation"
+      ],
+      "relations": [],
+      "atlas_section": "multitenant-isolation",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "multitenant-isolation",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.distributed-tracing",
+      "catalog_name": "Distributed Tracing",
+      "catalog_order": 140,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Reconstruct relevant request causality across services",
+      "aliases": [
+        "Distributed Tracing",
+        "Tracing"
+      ],
+      "relations": [],
+      "atlas_section": "distributed-tracing",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "distributed-tracing",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.structured-logging",
+      "catalog_name": "Structured Logging",
+      "catalog_order": 141,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "mechanism",
+      "priority": "core",
+      "catalog_problem": "Emit machine-readable operational events with safe correlation",
+      "aliases": [
+        "Structured Logging"
+      ],
+      "relations": [],
+      "atlas_section": "structured-logging",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "structured-logging",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.audit-trail",
+      "catalog_name": "Audit Trail",
+      "catalog_order": 142,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "practice",
+      "priority": "core",
+      "catalog_problem": "Preserve authorized, attributable records of important actions",
+      "aliases": [
+        "Audit Trail"
+      ],
+      "relations": [],
+      "atlas_section": "audit-trail",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "audit-trail",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.sli-slo-and-error-budgets",
+      "catalog_name": "SLI/SLO and Error Budgets",
+      "catalog_order": 143,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "practice",
+      "priority": "core",
+      "catalog_problem": "Define service objectives and error-budget decision mechanisms",
+      "aliases": [
+        "SLI/SLO and Error Budgets",
+        "SLI",
+        "SLO",
+        "Error Budget"
+      ],
+      "relations": [],
+      "atlas_section": "sli-slo-and-error-budgets",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "sli-slo-and-error-budgets",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.synthetic-monitoring",
+      "catalog_name": "Synthetic Monitoring",
+      "catalog_order": 144,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "practice",
+      "priority": "core",
+      "catalog_problem": "Probe externally visible journeys independently of internal metrics",
+      "aliases": [
+        "Synthetic Monitoring"
+      ],
+      "relations": [],
+      "atlas_section": "synthetic-monitoring",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "synthetic-monitoring",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    },
+    {
+      "id": "tycho.pattern.health-readiness-and-liveness-checks",
+      "catalog_name": "Health, Readiness and Liveness Checks",
+      "catalog_order": 145,
+      "family": "security-isolation-and-operational-architecture",
+      "kind": "practice",
+      "priority": "core",
+      "catalog_problem": "Distinguish process activity, serving readiness and meaningful health",
+      "aliases": [
+        "Health, Readiness and Liveness Checks",
+        "Readiness Check",
+        "Liveness Check",
+        "Health Check"
+      ],
+      "relations": [],
+      "atlas_section": "health-readiness-and-liveness-checks",
+      "technical_owner": {
+        "document_id": null,
+        "path": null,
+        "anchor": null,
+        "state": "not-yet-assessed"
+      },
+      "atlas_owner": {
+        "chapter": "V11/C11",
+        "section": "health-readiness-and-liveness-checks",
+        "state": "not-yet-assessed"
+      },
+      "coverage": {
+        "technical": "not-yet-assessed",
+        "decision": "not-yet-assessed",
+        "overall": "not-yet-assessed"
+      },
+      "confidence": "unknown",
+      "source_units": [],
+      "review_status": "not-assessed",
+      "notes": ""
+    }
+  ],
+  "source_policy": {
+    "admission": "Public and independently admissible sources only; no restricted or employer-specific material.",
+    "reading_unit": "Read the whole lawfully accessible admitted unit; a versioned documentation page is a unit only when explicitly admitted as such.",
+    "unread_citations": "forbidden",
+    "blocked_sources": "Record blocked, paywalled or unavailable units explicitly; do not infer content from a landing page.",
+    "reuse_issue_225": "Reuse #225 readings only at exact scope and revision; do not modify its frozen baseline."
+  },
+  "review": {
+    "status": "self-checked",
+    "reviewed_at": "2026-10-21",
+    "reviewer": "Automated authoring agent",
+    "independent_review": false,
+    "scope": "Catalog membership, stable IDs and structural schema; no technical claim or source reading is asserted."
+  }
+}
