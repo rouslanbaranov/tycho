@@ -1,12 +1,12 @@
 # Foundational book reading
 
-Issue [#225](https://github.com/rouslanbaranov/tycho/issues/225). Updated 2026-10-21. **Reading in progress; no whole book completed.** The owner prioritized foundational books over further technology-reference auditing. Earlier reference readings remain recorded; the next substantive work is book reading.
+Issue [#225](https://github.com/rouslanbaranov/tycho/issues/225). Updated 2026-10-21. **SRE whole-book reading complete; wider reading and comparison in progress.** The owner prioritized foundational books over further technology-reference auditing. Earlier reference readings remain recorded; one whole book is now complete. The wider source-reading and Tycho comparison obligations remain open.
 
 ## Current reading position
 
 | Book | Actual progress | Next action |
 | --- | --- | --- |
-| Site Reliability Engineering | Preface and chapters 1–18 read completely, including footnotes, examples, technical figures and image-based formulas | Read chapter 19, then continue through all remaining chapters, frontmatter/part introductions, six appendices and bibliography; see `sre-units.json` |
+| Site Reliability Engineering | All 48 public book units read: 34 chapters, foreword, preface, five part introductions, six appendices and bibliography, with footnotes, tables, examples and embedded figures/formulas | Whole scoped book complete; compare exact passages with the frozen Tycho baseline and separately read linked publications; see `SRE-COMPLETION.md` |
 | Operating Systems: Three Easy Pieces | Chapter 2 read completely, all 19 pages, examples, footnotes, references and homework text | Continue introductory dialogue and CPU/process chapters before deeper concurrency and persistence sections |
 | Designing Data-Intensive Applications, 2nd edition | Publisher contents and short chapter 1 preview only | Full text requires lawful access; do not count the preview as chapter reading or silently substitute the first edition |
 | Distributed Systems, 4th edition | Author's access instructions examined; no book text obtained | Personalized download requires an email and human-verification step; no request submitted |
@@ -14,7 +14,7 @@ Issue [#225](https://github.com/rouslanbaranov/tycho/issues/225). Updated 2026-1
 
 ## Reading notes for later comparison
 
-These are short original notes, not Tycho corrections or completed chapter audits. Exact reading coverage and limitations are in `book-readings.json`. Reported historical practices remain attributed to the source's setting and date.
+These are short original notes, not Tycho corrections or completed chapter audits. Exact reading coverage and limitations are in `book-readings.json` and its linked continuation ledgers. Reported historical practices remain attributed to the source's setting and date.
 
 - **SRE preface:** operational responsibility spans a system's lifecycle. General principles require translation from the source's environment; reliability goals and safety constraints cannot be transplanted without context. Keep bibliography follow-up distinct from reading the preface.
 - **SRE chapter 1:** operational staffing, automation, incentives and ownership interact with technical architecture. The described engineering-time allocation and incident practices are organizational policies, not universal measured laws. Later comparison should examine whether Tycho connects operational costs to architectural decisions clearly enough.
@@ -42,3 +42,32 @@ These are short original notes, not Tycho corrections or completed chapter audit
 No whole-book understanding is inferred from chapter summaries, contents or previous model knowledge. Exercises were read, not executed. Published references at chapter ends were read bibliographically, not automatically treated as fully read papers. No private companion corpus was consulted. No canonical book content, source registry or release metadata changed.
 
 Detailed source-to-book comparison follows reading and stays in this research directory. The current notes are hypotheses for that comparison, not claims that Tycho omits every mentioned topic.
+
+## Completion continuation — SRE chapters 19–34 and remaining units
+
+The prior chapter-19 continuation instruction is superseded by this completed reading. All 48 units in `sre-units.json` are now read. `sre-completion-readings.json` adds 29 exact records (B023–B051), including inspection of 44 embedded images in this continuation. References in earlier records describe what remained at those earlier checkpoints.
+
+- **Chapter 19:** global routing must combine proximity, capacity and health. Resolver caching limits DNS control; stable connection mapping and packet encapsulation add different failure and size constraints. Protocol-status statements belong to the source's historical date.
+- **Chapter 20:** connection count, request count and resource use are distinct. Subset selection affects balance and churn; fast errors can attract traffic under naive least-loaded selection. Graceful draining requires explicit client-visible state.
+- **Chapter 21:** rejecting traffic consumes resources too. Client throttling, priority propagation, task protection and bounded retries address different layers. Sparse clients see less history; identical retry policy is unsuitable for local imbalance and broad overload.
+- **Chapter 22:** remedial mechanisms can create positive feedback. Test beyond saturation and through recovery, including cold caches and slow dependencies. Distinguish process health from ability to serve, and propagate deadlines and cancellation.
+- **Chapter 23:** consensus safety, eventual progress and operational availability have different prerequisites. Placement changes quorum latency, durability costs and correlated-failure exposure. The protocol overview is not a complete correctness specification.
+- **Chapter 24:** scheduling agreement does not settle an uncertain external side effect. Recovery needs operation identity plus idempotency or authoritative outcome lookup. Persisting launch state, leadership boundaries and staggered execution solve different problems.
+- **Chapter 25:** shortening periodic intervals can reduce progress when runs overlap. Exactly-once published results depend on current leases, immutable task/configuration identity, unique outputs and coordinator validation; they do not imply arbitrary effects execute once.
+- **Chapter 26:** recovery must return usable data within its objective. Retention, early corruption detection, schema compatibility, media diversity and restore capacity all matter. Slow corruption can require selective recovery from different historical points.
+- **Chapter 27:** launch review should scale with risk and remain concrete. Staged deployment and client controls reduce exposure; peak launch traffic may differ from steady-state traffic. Review cannot remove ongoing architectural growth constraints.
+- **Chapter 28:** combine foundational reasoning, real tools, bounded failure practice and progressive ownership. A training checklist measures comprehension rather than mere document access; learning continues after joining the rotation.
+- **Chapter 29:** protect sustained engineering time by making interrupt responsibility explicit. Queue assignment, handoffs and recurring-cause analysis are organizational design choices with reliability consequences.
+- **Chapter 30:** temporary assistance should improve the team's ability to reason and prevent recurring work. Establish service objectives, reveal latent risks, demonstrate useful analysis and explain the reasons behind changes.
+- **Chapter 31:** production review connects observed service behavior with architecture and action ownership. Shared tooling needs maintained components and explicit decisions. Migration equivalence requires actual output validation, not interface similarity alone.
+- **Chapter 32:** late readiness review, early engagement and a common platform distribute responsibility differently. Standard control surfaces reduce repeated integration work, while application correctness still needs explicit ownership.
+- **Chapter 33:** transfer preparedness, learning and decision principles with their assumptions. Failure consequences and acceptable change rates govern applicability; interview reports are not universal empirical proof.
+- **Chapter 34:** operating experience should feed engineering improvements and usable controls. Increased system scale does not justify a proportional increase in manual work.
+- **Foreword and five part introductions:** the book presents contextual accounts and a coherent reliability progression, not a universally applicable implementation recipe. The practices hierarchy links observation, response, learning, testing, capacity and design.
+- **Appendix A:** time-based downtime tables assume a chosen window; operation-weighted success is often preferable under partial availability and varying traffic.
+- **Appendix B:** connect configuration validation, staged change, user-visible objectives, incident learning, overload controls and sustainable ownership. Numeric staffing and redundancy guidance is contextual.
+- **Appendix C:** an incident record separates current state, roles, exit conditions, tasks and timeline; the example is illustrative rather than a production observation.
+- **Appendix D:** impact, contributing causes, trigger, response and follow-up actions have different roles. Action ownership and context matter; the example and its placeholders are not evidence of a real incident.
+- **Appendix E:** the published checklist is explicitly historical and abridged. Its categories prompt dependency, capacity, failure, security, growth and rollout questions; it is not a current exhaustive standard.
+- **Appendix F:** the sample meeting turns service metrics and incidents into tracked operational changes. It is an example, not an independently observed team practice.
+- **Bibliography:** all entries read. Their publication texts, videos and code remain separate reading units; bibliography completion does not complete those dependencies.

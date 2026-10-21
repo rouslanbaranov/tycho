@@ -4,11 +4,11 @@ Refs [#225](https://github.com/rouslanbaranov/tycho/issues/225). **Incomplete. N
 
 The owner closed #214 after verifying its changes were merged. This research compares against main `6754bac6e26faa57d65a301a60be10b3da93f65b`. That closure does not establish full-source verification or a new final release. Existing repository status documents are retained unchanged as frozen historical inputs; GitHub records the current issue disposition.
 
-The owner subsequently prioritized reading foundational books. Start with [book reading and exact continuation](BOOK-READING.md), then [book reading records](book-readings.json). No whole book has been completed. Earlier finite reference readings are retained in [the reference ledger](readings.json); they are not the current priority and do not replace book reading.
+The owner subsequently prioritized reading foundational books. Start with [book reading and exact continuation](BOOK-READING.md), then [book reading records](book-readings.json). **One whole scoped book is complete: Site Reliability Engineering.** Earlier finite reference readings are retained in [the reference ledger](readings.json); they are not the current priority and do not replace book reading.
 
-Current SRE position: **preface and chapters 1–18 complete; next chapter 19**. Chapters 6–18 were read in this continuation, including all technical figures and image-based formulas. No source-to-book completeness claim follows from this reading milestone.
+Current SRE position: **48/48 public book units complete**, including all 34 numbered chapters, frontmatter, five part introductions, six appendices and bibliography. All examples, tables, footnotes and embedded images/formulas were read or visually inspected. See [completion scope and next research questions](SRE-COMPLETION.md). No source-to-book completeness claim follows from whole-book reading.
 
-The reading ledger links its [continuation records](sre-continuation-readings.json). Reading completion means the exact chapter, its examples, footnotes and embedded technical images; it does not include all publications linked from it. The [download fingerprints](reading-asset-fingerprints.json) identify the downloaded HTML/image representations for later revisiting, not an immutable publisher revision or proof of semantic reading.
+The reading ledger links its [chapters 6–18 continuation](sre-continuation-readings.json) and [completion continuation](sre-completion-readings.json). Reading completion means the exact chapter, its examples, footnotes and embedded technical images; it does not include all publications linked from it. The [download fingerprints](reading-asset-fingerprints.json) identify the downloaded HTML/image representations for later revisiting, not an immutable publisher revision or proof of semantic reading.
 
 ## Inventory
 
