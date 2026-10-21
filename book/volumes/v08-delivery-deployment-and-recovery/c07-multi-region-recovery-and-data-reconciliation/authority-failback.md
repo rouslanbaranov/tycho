@@ -93,6 +93,10 @@ flowchart LR
 **Proposed drill, not performed:** commit a named operation immediately before partition, record the last durable replication location at both regions, sever controller connectivity while maintaining a client path to A, then require deterministic old-writer fencing, ledger reconciliation and user-level outcome checks before exposing B. Measure RTO from impact to *correct* user capability; measure RPO against the declared acknowledged-operation boundary. If fencing or historical-state evidence is unavailable, **hold writes** rather than claim successful recovery. The [PostgreSQL PITR owner](../../v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md) covers database restore internals; this chapter owns region-level authority and business correctness.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Failover / Failback](../../v11-pattern-atlas/c07-resilience/README.md#failover-failback) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765:5 -->
 ## 5. Recovery is a state machine with abort conditions
 

@@ -68,6 +68,10 @@ Distinguish these outcomes:
 A fast rejection can be safer than admitting an operation that inevitably misses its deadline, but this does not allow rejecting required work and reporting a higher success rate. Track offered, admitted, rejected, completed and failed populations separately.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Priority Queue](../../v11-pattern-atlas/c07-resilience/README.md#priority-queue) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:2 -->
 ## 2. Admission must precede the expensive operation
 
