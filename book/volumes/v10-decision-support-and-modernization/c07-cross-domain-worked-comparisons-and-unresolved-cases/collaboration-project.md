@@ -46,7 +46,9 @@
     "source_ids": [
       "src.replicated-types-semantics",
       "src.jepsen-monotonic-reads",
-      "src.jepsen-read-your-writes"
+      "src.jepsen-read-your-writes",
+      "src.sre-cron-enrichment",
+      "src.sre"
     ],
     "claim_ids": [],
     "status": "source-linked",
@@ -59,8 +61,8 @@
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-20",
-  "source_inspection_date": "2026-10-20",
+  "updated_at": "2026-10-21",
+  "source_inspection_date": "2026-10-21",
   "content_verified_at": null
 }
 ---
@@ -130,6 +132,32 @@ If business policy instead permits pre-revocation edits, it needs trusted eviden
 Compaction retains the metadata needed to prevent removed data from returning. A seven-day offline limit is useful only if enforced through membership/sync epochs: an expired replica cannot inject changes as if it remained in the current compacted history. The reconnect protocol first validates epoch and snapshot compatibility, then admits eligible edits.
 
 Backups include snapshots, unapplied log suffix, authoritative approval records, permissions and their consistent recovery boundary. After restore, rebuild draft state from snapshot plus suffix and verify every approval still names an available frontier. If an approval references a missing frontier, quarantine it for recovery rather than attaching it to a different draft.
+
+### Periodic reconciliation and an ambiguous launch
+
+The service also runs a periodic reconciliation job that compares admitted
+draft frontiers with authoritative approvals. The job is outside the
+interactive request path, but a missed or duplicated run can leave stale
+approval evidence.
+
+- Give the job a stable identity: workspace, reconciliation epoch and
+  scheduled time. A new leader must look up the same identity before
+  launching a replacement.
+- If the launch outcome is unknown, query the external job by its precomputed
+  name before launching again. A timeout is not proof that the job did not
+  start.
+- Prefer a skipped run with an explicit alert over a duplicate run that
+  applies an irreversible repair. If the job is idempotent, state that
+  property and test it; do not assume it.
+- Bound the run time and detect overlap. A reconciliation that outlives its
+  interval can stack runs or be killed by the next schedule.
+- Record the applied frontier and output identity so a retry can verify what
+  was already done.
+
+The scheduler and pipeline mechanics are owned by the V04/C05 periodic-work
+page (`tycho.page.dd184f1c3947e0eab68938d31f51ec0e`); this project only shows
+how they compose with approval and offline state. The test is proposed, not
+executed.
 
 ## Capacity and cost model
 

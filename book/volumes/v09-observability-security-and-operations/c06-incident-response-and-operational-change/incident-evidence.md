@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -88,6 +88,10 @@ The [SRE Postmortem Culture](https://sre.google/sre-book/postmortem-culture/) em
 For the synthetic index scenario, a useful **hypothesis for prevention** is that the ingest consumer should reject an unrecognized mapping before publication; an independent source-to-index freshness invariant might detect lag; a repair procedure needs stable replay positions. These are *possible controls*, not proven fixes. Every action must have a responsible reviewer, reproducible acceptance test and residual-risk statement.
 
 Postmortem publication itself does not ensure issues were remedied; track closure evidence and re-evaluate when source versions, workflow or demand changes.
+
+When an action changes architecture, link it to the decision record owner in
+`V10/C04` (`tycho.chapter.809c2f1d12e544b38af2460b80d6d24e`). A prevention
+action without a design owner and acceptance test is a wish, not a control.
 
 <!-- /tycho-question-source -->
 

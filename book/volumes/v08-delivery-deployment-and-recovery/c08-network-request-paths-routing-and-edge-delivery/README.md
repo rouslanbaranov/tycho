@@ -57,7 +57,7 @@
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-20",
+  "updated_at": "2026-10-21",
   "source_inspection_date": "2026-10-20",
   "content_verified_at": null
 }
@@ -99,3 +99,7 @@ Parent: [V08](../README.md). Previous chapter: [region recovery](../c07-multi-re
 ## Chapter source ledger
 
 Selected passages were inspected on 2026-10-20; no implementation or network experiment was run. [Load Balancing at the Frontend](https://sre.google/sre-book/load-balancing-frontend/) and [Load Balancing in the Datacenter](https://sre.google/sre-book/load-balancing-datacenter/) provide published routing lessons; [HTTP/2](https://www.rfc-editor.org/rfc/rfc9113.html) defines HTTP/2, and [HTTP caching](https://www.rfc-editor.org/rfc/rfc9111.html) defines cache semantics. Page-local ledgers narrow the claim scope.
+
+- Exact sections re-inspected 2026-10-21 for #227: *Limiting the Connections Pool
+  with Subsetting*, *Varying query costs*, *Least-Loaded Round Robin* and
+  *Weighted Round Robin*. No new source or measurement is claimed.

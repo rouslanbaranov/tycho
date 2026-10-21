@@ -29,6 +29,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.k8s-deployments"
+    - "src.sre"
   claim_ids: []
   status: "source-linked"
   notes: "Bounded question from tycho.page.b938ff1a06264492a425f2eff555ae7d; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -38,7 +39,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -94,6 +95,34 @@ A controlled rollout needs:
 9. promotion and decommissioning evidence.
 
 A controller's “Available” status is one necessary operational signal; it is not evidence that an exclusive reservation or cross-version read still works.
+
+### Launch demand is a separate event
+
+A release can be technically correct and still fail at launch because demand,
+client behavior and dependency capacity differ from steady state.
+
+- **Launch traffic is not steady-state traffic.** A launch spike can have a
+  different mix, a shorter peak and a different geographic distribution. A
+  steady-state load test does not establish readiness for it.
+- **Clients can multiply load.** A new client version may sync more often,
+  retry more aggressively or refresh in lockstep. Test the actual client
+  mix, and use server-controlled feature or configuration rollout where
+  possible.
+- **Dependencies need their own capacity.** The new service may be ready
+  while a shared dependency is not. Include dependency quotas, connection
+  limits and failure behavior in the launch review.
+- **Stop conditions must be concrete.** Define the user-visible signal,
+  threshold, observation window and authorized action that pause, roll back
+  or reduce exposure. A healthy pod count is not a launch stop condition.
+- **Staged exposure is not a substitute for capacity.** A canary reduces the
+  blast radius; it does not create capacity for the full launch.
+
+The SRE book's *Capacity Planning*, *Client Behavior* and *Overload Behavior
+and Load Tests* sections describe these concerns; their examples are
+contextual, not universal traffic estimates. The demand model is owned by
+`V07/C05` (`tycho.page.c5d20ae7ef6445e5b23dd5fbac625060`); the retry
+contract is owned by `V02/C05`
+(`tycho.page.43414664520b4866929f7f006f27f59b`).
 
 <!-- /tycho-question-source -->
 

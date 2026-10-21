@@ -1,9 +1,11 @@
 # SRE #227 source-to-Tycho change map
 
 **Status:** implementation input for issue #227. P1 (overload, retries, caching and
-recovery) is implemented and validated in PR #229; P2 remains pending owner approval.
-This document is not book prose, an acceptance record, an independent review, or a
-completed comparison of the whole SRE book.
+recovery) is implemented and validated in PR #229; P2 (load balancing, consensus
+placement, periodic work, launch demand and operational clarification) is implemented
+and validated in PR #230. This document is not book prose,
+an acceptance record, an independent review, or a completed comparison of the whole
+SRE book.
 
 **Baseline:** `main` at `6754bac` (tree `751d6e08650173d4655370b4989585e4c7ecdaea`), the frozen baseline used by #225. The #227 branch starts from that baseline; its governance commit `5c911e0` changes only `AGENTS.md` and `sources/README.md`. The comparison below targets the book content at `6754bac`.
 
@@ -11,7 +13,7 @@ completed comparison of the whole SRE book.
 
 **Method:** for each candidate direction, locate the exact source section, then the
 current Tycho owner (stable ID, path and section), then classify the comparison. A
-**proposed change** is a proposal; except for the delivered P1 rows, it has not been
+**proposed change** is a proposal; except for the delivered P1/P2 rows, it has not been
 authored, reviewed or executed. A **verification** is a question, counterexample or
 failure scenario the eventual explanation must withstand, not a completed test.
 
@@ -46,9 +48,10 @@ describe the same substantive change under two directions; implement each once i
 - **P1 — implemented and validated:** overload rejection cost and criticality, retry
   layering and budgets, cache capacity versus latency, detection latency and selective
   restore, and multitenant fair re-admission. Delivered in PR #229.
-- **P2 — not started:** load balancing, consensus quorum placement, schedulers and
-  pipelines, launch demand, and operational manual-work clarification. Scheduling is the
-  largest missing owner and warrants its own review increment.
+- **P2 — implemented and validated:** resource/error/subsetting load-balancing
+  guidance, quorum placement, a new periodic-work/leases/exactly-once page, launch
+  demand and client behavior, recurring manual-work costs, and the collaboration
+  project's ambiguous periodic reconciliation. Delivered in PR #230.
 
 ## 1. Load balancing
 
@@ -142,15 +145,30 @@ overload, retries, caching and recovery. It is implemented and validated in PR #
 5. **Provenance** — add exact SRE chapter/section rows to the affected page or chapter ledgers; use `src.sre` unless a specific chapter ID already exists. Do not invent a new source ID without an admission record.
 6. **Indexes and validation** — rebuild the route index after any frontmatter change and run the repository gate ladder. No CI claim is implied.
 
-The load-balancing, consensus, scheduler, launch and operational rows remain P2 until
-the owner approves the next package. The scheduler rows are the largest missing owner;
-they warrant their own review increment rather than a clarification-only bundle.
+The load-balancing, consensus, scheduler, launch and operational rows are implemented
+in the P2 package. The scheduler rows received a separate canonical page and review
+increment rather than a clarification-only bundle.
+
+## P2 implementation package (delivered)
+
+- **Load balancing:** selection signals, fast-error sinkhole and bounded subsets in
+  `V08/C08` `discovery-balancing.md`.
+- **Consensus:** quorum placement and failure-domain trade-offs in `V04/C02`
+  `quorum-envelope.md`.
+- **Schedulers and pipelines:** new `V04/C05` page on periodic launches, leases and
+  exactly-once publication.
+- **Launches:** launch demand, client behavior and dependency capacity in `V08/C04`
+  `desired-state-exposure.md`.
+- **Operations:** recurring manual-work capacity in `V01/C06` `lifecycle-cost.md` and
+  an incident-to-design cross-link in `V09/C06`.
+- **Projects:** periodic reconciliation with an ambiguous launch in the collaboration
+  project.
 
 ## Review gate and unresolved questions
 
-- P1 was authorized and implemented; this map is still an implementation input, not a
-  reviewed finding set. P2 should not begin until the owner approves the next bounded
-  package.
+- P1 and P2 were authorized and implemented; this map is still an implementation input,
+  not a reviewed finding set. Any further content change requires a new bounded package
+  and a new content-revision entry.
 - The SRE book is a 2016 operational account. Its numeric examples and organizational practices are contextual. The map does not convert them into universal thresholds, staffing rules or current product behavior.
 - Protocol correctness for consensus, cron and pipeline leases must continue to rely on the existing protocol/implementation sources, not on the SRE overview alone. The map proposes operational conditions, not new protocol proofs.
 - #225 remains the broader research owner. This map does not complete its source inventory, material-claim matrix or final deep synthesis, and it does not close #225 or PR #226.

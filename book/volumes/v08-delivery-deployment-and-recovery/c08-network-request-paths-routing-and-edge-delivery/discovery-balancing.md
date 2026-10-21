@@ -56,7 +56,7 @@
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-20",
+  "updated_at": "2026-10-21",
   "source_inspection_date": "2026-10-20",
   "content_verified_at": null
 }
@@ -98,6 +98,71 @@ flowchart TD
 
 Text alternative: discovery updates the proxy's view. The proxy sends eligible new work to active backends; a draining backend may still own existing work. This is an original conceptual topology, not a deployed configuration.
 
+### Selection signals are not interchangeable
+
+A selector can count connections, active requests, completed work, errors or
+resource utilization. These signals answer different questions and fail in
+different ways.
+
+- **Connection count** reflects how many transports a client holds. It
+  misleads when one connection multiplexes many requests or when idle
+  connections still consume memory and health-check work.
+- **Active requests** reflect unfinished work visible to that client. They
+  misrank I/O-bound work: a request waiting on a remote response consumes
+  little CPU but still occupies a slot. The count also excludes work sent by
+  other clients, so each client sees only a partial view.
+- **Completed work and latency** capture useful progress but react after the
+  fact; a short window is noisy, and a slow-but-successful backend can look
+  better than a fast-but-failing one.
+- **Resource utilization** (CPU, queue depth, memory) is closer to capacity
+  but depends on comparable measurement across heterogeneous machines and
+  on the backend reporting it promptly.
+
+The source's *Weighted Round Robin* example combines backend-reported
+query, error and utilization signals into a capability score; its weights
+and thresholds are contextual. Choose a signal that matches the protected
+outcome: completed correct work, not raw connection count. Cap request cost
+at the interface where one request can dominate a backend, and test the
+selector under the real cost distribution.
+
+### Fast errors can attract traffic
+
+A least-loaded or active-request selector assumes that a backend with spare
+capacity will do useful work. A seriously unhealthy backend can instead
+return an error in milliseconds, so its active-request count falls and the
+selector sends it more traffic. The backend becomes a sinkhole.
+
+- Count recent errors, health signals or an explicit success rate as part of
+  the load signal, not only open requests.
+- Distinguish a fast failure from a slow dependency: the first can look idle,
+  the second can look busy while making no progress.
+- Keep recovery probes separate from the load signal so a recovered backend
+  can return without a thundering herd.
+- Test with a backend that fails in roughly 1 ms; observe whether new work is
+  diverted before the error budget is exhausted.
+
+### Bounded subsets reduce connection cost and churn
+
+A client does not need a connection to every backend. A bounded subset limits
+memory, health-check traffic and reconnect work, at the cost of a smaller
+choice set.
+
+- Assign backends uniformly so one subset does not overload a backend; a
+  skewed subset forces fleet-wide overprovisioning.
+- Handle restarts and resizes with minimal churn: replacing one backend
+  should not reconnect every client at once.
+- Use a larger subset when clients burst or when request costs vary widely;
+  a small subset concentrates a burst on fewer backends.
+- Keep the subset selection deterministic enough to reproduce, but not so
+  static that a failed backend remains in every client's set.
+- Test a rolling restart and a backend loss; measure reconnect rate,
+  per-backend load skew and time to uniform distribution.
+
+The retry decision that follows a rejection is owned by `V02/C05`
+(`tycho.page.43414664520b4866929f7f006f27f59b`); this page owns the selection
+signal and the connection topology. Overload shedding is owned by `V07/C05`
+(`tycho.page.d9abd43bb7394c04a6bf77d4014f870d`).
+
 ## Failure and recovery
 
 | Failure | Design consequence | Discriminating observation |
@@ -116,7 +181,14 @@ Use a simple static endpoint or one proxy when its failure and maintenance contr
 
 Proposed acceptance: maintain requests during endpoint churn, skew costs deliberately, disconnect discovery, and compare useful throughput, per-backend outstanding work and completion correctness. No benchmark or DNS convergence bound was measured.
 
-Sources: [Load Balancing at the Frontend](https://sre.google/sre-book/load-balancing-frontend/) (global routing and DNS discussion); [Load Balancing in the Datacenter](https://sre.google/sre-book/load-balancing-datacenter/) (backend policies and imbalance). Inspected selected passages 2026-10-20. Algorithm comparisons and the failure matrix are original design reasoning.
+Sources: [Load Balancing at the Frontend](https://sre.google/sre-book/load-balancing-frontend/)
+(global routing and DNS discussion);
+[Load Balancing in the Datacenter](https://sre.google/sre-book/load-balancing-datacenter/)
+(subsetting, selection policies, resource and error signals). Sections
+*Limiting the Connections Pool with Subsetting*, *Varying query costs*,
+*Least-Loaded Round Robin* and *Weighted Round Robin* were inspected
+2026-10-21. Algorithm comparisons and the failure matrix are original design
+reasoning.
 
 ## Navigation
 
