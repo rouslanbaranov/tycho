@@ -120,3 +120,21 @@ Text alternative: start with one authoritative source, build a shadow projection
 | Integrated question | [Original scenario and limits](target-and-transition-architecture-states.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is
+not the main subject of this page. They are synthetic design guidance, not
+measured evidence, and they do not create a new source claim.
+
+### Parallel Run
+
+Parallel run processes the same work in old and new implementations and compares the
+results while the old path remains authoritative. It needs a comparison key, a side-effect
+boundary, a divergence owner and a rule for which path may commit. Use it when output
+equality can be checked and duplicate effects can be suppressed. Do not use it when
+comparison is meaningless or when the doubled cost dominates the decision.
+
+The failure path is a silent divergence or a duplicate effect; halt promotion, reconcile
+the difference and keep the old authority until the cause is understood. A canary or
+shadow index is the alternative when full parallel processing is unnecessary.

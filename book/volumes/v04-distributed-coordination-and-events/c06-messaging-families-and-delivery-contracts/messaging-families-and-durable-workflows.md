@@ -106,3 +106,47 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Workflow state and messaging failure gates](workflow-failure.md) — When does a queue need an additional durable business-state protocol?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is
+not the main subject of this page. They are synthetic design guidance, not
+measured evidence, and they do not create a new source claim.
+
+### Aggregator
+
+An aggregator fans in related results from multiple participants and returns one composed
+result. It needs correlation, a per-participant timeout, a partial-failure policy and a
+rule for late or duplicate responses. Use it when callers need one response and the
+participants can be queried independently. Do not use it when one participant is
+authoritative, when atomicity across participants is required, or when one slow
+participant would consume the caller complete budget.
+
+The failure path is a stuck or missing participant; the aggregator must return a declared
+partial result, cancel remaining work or fail as a whole. Client-side composition is the
+alternative when the caller can tolerate multiple responses.
+
+### Splitter
+
+A splitter turns one input into several independently processable messages. It needs
+stable partition identity, per-part idempotency, a completion or compensation rule and a
+bounded fan-out. Use it when downstream steps can make progress independently and partial
+completion is meaningful. Do not use it when the whole input must succeed atomically or
+when downstream ordering cannot be reconstructed.
+
+The failure path is a split that produces only some parts; record part identity and
+completion, then retry missing parts without duplicating completed effects. A single
+consumer with internal fan-out is the alternative when the parts are small and atomicity
+is required.
+
+### Scatter-Gather
+
+Scatter-gather sends one request to several participants and gathers their responses. It
+needs a response contract, a quorum or completeness rule, a deadline and a policy for
+stragglers. Use it when independent participants can answer the same question and a
+partial view is useful. Do not use it when one authority must answer, when responses are
+not comparable, or when tail latency would exceed the caller budget.
+
+The failure path is a slow or missing participant; gather must return a bounded partial
+result or fail under a declared rule, and cancel outstanding work. A single authoritative
+call is the alternative when consistency matters more than coverage.

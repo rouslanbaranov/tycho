@@ -3,6 +3,7 @@
 import argparse
 import json
 from pathlib import Path
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,6 +64,10 @@ def validate_data(data, root=ROOT):
     require(dod.get("decision-sufficiency", {}).get("status") != "met",
             "delivery-decision-sufficiency-claim")
     require(data["status"] != "reviewed", "delivery-reviewed-claim")
+    head = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+    ancestor = subprocess.run(["git", "-C", str(root), "merge-base", "--is-ancestor",
+                               data["source_commit"], head], capture_output=True).returncode == 0
+    require(ancestor, "delivery-source-commit-not-ancestor")
     return {"entries": data["summary"]["entries"], "cards": data["summary"]["cards"],
             "gaps": len(data["open_gaps"]), "checks": len(data["checks"])}
 

@@ -87,3 +87,23 @@ The [SRE Workbook incident-response chapter](https://sre.google/workbook/inciden
 | Integrated question | [Original scenario and limits](incident-response-and-operational-change.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is
+not the main subject of this page. They are synthetic design guidance, not
+measured evidence, and they do not create a new source claim.
+
+### Health, Readiness and Liveness Checks
+
+Health checks answer different questions: liveness asks whether the process should be
+restarted, readiness asks whether it should receive traffic, and startup asks whether
+initialization has completed. Each needs its own endpoint, timeout and failure action. Use
+them when the runtime can separate process health from dependency readiness. Do not use a
+liveness check to test a shared dependency, because a dependency outage would restart
+healthy workers and amplify the failure.
+
+The failure path is a false restart or traffic sent to an unready instance; bound probe
+timeouts, require consecutive failures and keep shared-dependency checks out of liveness.
+External journey monitoring is the alternative when process-local probes cannot observe
+the user-visible contract.

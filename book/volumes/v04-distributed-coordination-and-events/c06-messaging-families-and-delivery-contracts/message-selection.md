@@ -153,3 +153,45 @@ Rows describe **documented conceptual capabilities** of selected versions, not m
 | Integrated question | [Original scenario and limits](messaging-families-and-durable-workflows.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is
+not the main subject of this page. They are synthetic design guidance, not
+measured evidence, and they do not create a new source claim.
+
+### Resequencer
+
+A resequencer restores an intended order from messages that arrive out of order. It needs
+a sequence domain, a bounded buffer, a gap timeout and a policy for missing or duplicate
+sequence numbers. Use it when order is a business invariant and the stream has a reliable
+sequence. Do not use it when order is irrelevant or when an unbounded gap would stall the
+stream.
+
+The failure path is a missing sequence that blocks later messages; release the buffer
+after a declared timeout or fail the affected partition. A partitioned consumer that
+preserves order within a key is the alternative when global order is unnecessary.
+
+### Content-Based Router
+
+A content-based router chooses a destination from message content. It needs a versioned
+predicate set, a default or dead-letter path and an owner for rule changes. Use it when
+routing depends on message attributes and destinations have different contracts. Do not
+use it when routing rules are unstable, unowned or unable to classify every message.
+
+The failure path is an unmatched or misrouted message; route to a declared fallback and
+record the predicate version. A static topic or queue per producer is the alternative when
+routing is known at publish time.
+
+### Pipes and Filters
+
+Pipes and filters decompose processing into ordered, replaceable stages connected by a
+message contract. Each stage needs its own failure and retry policy, and the pipeline
+needs backpressure and a rule for partial completion. Use it when stages can be developed,
+scaled or replaced independently. Do not use it when the work must be one atomic
+transaction or when per-stage latency would exceed the budget.
+
+The failure path is a failed middle stage with earlier effects already applied; record
+stage identity and compensate or replay from a declared checkpoint. A single in-process
+transformation is the alternative when the stages are small and cannot be operated
+independently.

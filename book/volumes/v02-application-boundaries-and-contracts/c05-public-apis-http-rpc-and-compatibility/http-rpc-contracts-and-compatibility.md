@@ -112,3 +112,21 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Behavioral compatibility and interface choice](version-compatibility.md) — Which old/new caller and server combinations must remain valid?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is
+not the main subject of this page. They are synthetic design guidance, not
+measured evidence, and they do not create a new source claim.
+
+### Backend for Frontend (BFF)
+
+A backend for frontend composes the API surface for one client experience. It needs a
+client owner, a composition contract, a policy for duplicated domain logic and a boundary
+that prevents the BFF from becoming a second domain authority. Use it when clients need
+materially different payloads, latency budgets or release cadences. Do not use it when one
+API contract serves all clients or when the BFF would own core business rules.
+
+The failure path is drift between the BFF and the domain API; version the composition and
+test the client contract. A shared API with client-side selection is the alternative when
+the differences are small and can be expressed without a new authority.

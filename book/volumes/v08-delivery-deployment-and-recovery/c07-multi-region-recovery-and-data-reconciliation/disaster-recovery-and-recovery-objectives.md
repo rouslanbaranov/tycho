@@ -94,3 +94,23 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Recovery state machines, fencing and failback](authority-failback.md) — Which steps prevent two writers and demonstrate recovered user journeys?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is
+not the main subject of this page. They are synthetic design guidance, not
+measured evidence, and they do not create a new source claim.
+
+### Geode
+
+Geode places identical regional nodes behind a global routing layer so clients can use a
+nearby healthy region. It needs a data replication and consistency contract, a regional
+health signal, a routing rule and an explicit failover authority. Use it when locality or
+regional survival is material and the data model can reconcile cross-region state. Do not
+use it when a single region meets the objective or when routing would hide divergent
+state.
+
+The failure path is a route to a stale or isolated region; the router must use an
+authoritative health and data-freshness signal, and failover must fence the old writer.
+Active-passive recovery is the alternative when cross-region consistency is not worth the
+routing complexity.

@@ -32,6 +32,7 @@ def main():
         [sys.executable, "scripts/phase4_audit.py", "--check"],
         [sys.executable, "scripts/validate_pattern_phase4.py"],
         [sys.executable, "scripts/validate_delivery_evidence.py"],
+        [sys.executable, "scripts/check_markdown_line_length.py"],
         [sys.executable, "scripts/pattern_census.py", "--check"],
         [sys.executable, "-m", "unittest", "discover", "-s", "tests",
          "-p", "test_tycho*.py", "-v"],

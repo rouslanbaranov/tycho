@@ -114,3 +114,22 @@ A release can legitimately improve average response time while degrading the wor
 | Integrated question | [Original scenario and limits](service-level-indicators-objectives-and-alerts.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is
+not the main subject of this page. They are synthetic design guidance, not
+measured evidence, and they do not create a new source claim.
+
+### Synthetic Monitoring
+
+Synthetic monitoring exercises a representative user journey from outside the service. It
+needs a safe identity, a journey definition, location and frequency choices and a rule
+that separates probe failure from product failure. Use it when internal metrics cannot
+observe an external dependency, DNS, TLS or end-to-end contract. Do not use shallow
+endpoint pings as evidence for a complete journey.
+
+The failure path is a probe that cannot authenticate or that tests only a trivial path;
+rotate credentials, cover the critical journey and triage probe noise separately. Real-
+user monitoring is the alternative when actual traffic provides enough coverage without
+synthetic load.
