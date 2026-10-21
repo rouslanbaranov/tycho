@@ -1,12 +1,19 @@
 # SRE #227 source-to-Tycho change map
 
-**Status:** implementation input for issue #227. This is not book prose, an acceptance record, an independent review, or a completed comparison of the whole SRE book. No `book/**` content is changed by this document.
+**Status:** implementation input for issue #227. P1 (overload, retries, caching and
+recovery) is implemented and validated in PR #229; P2 remains pending owner approval.
+This document is not book prose, an acceptance record, an independent review, or a
+completed comparison of the whole SRE book.
 
 **Baseline:** `main` at `6754bac` (tree `751d6e08650173d4655370b4989585e4c7ecdaea`), the frozen baseline used by #225. The #227 branch starts from that baseline; its governance commit `5c911e0` changes only `AGENTS.md` and `sources/README.md`. The comparison below targets the book content at `6754bac`.
 
 **Source scope:** *Site Reliability Engineering* (2016), public HTML at the [publisher's table of contents](https://sre.google/sre-book/table-of-contents/). Selected sections of chapters 19–27 and 33 were re-inspected on 2026-10-21 for this map. Chapters 28–30 were checked at heading and #225 note level; appendix E is referenced only through #225's notes and is not treated as a current standard. #225 records the full-scope reading of all 48 public book units and remains the broader research owner. Linked publications, videos and code named by the book are separate sources and were not read for this map. The source is a 2016 operational account; its examples are contextual, not universal laws or current product documentation.
 
-**Method:** for each candidate direction, locate the exact source section, then the current Tycho owner (stable ID, path and section), then classify the comparison. A **proposed change** is a proposal; it has not been authored, reviewed or executed. A **verification** is a question, counterexample or failure scenario the eventual explanation must withstand, not a completed test.
+**Method:** for each candidate direction, locate the exact source section, then the
+current Tycho owner (stable ID, path and section), then classify the comparison. A
+**proposed change** is a proposal; except for the delivered P1 rows, it has not been
+authored, reviewed or executed. A **verification** is a question, counterexample or
+failure scenario the eventual explanation must withstand, not a completed test.
 
 **Outcome legend:**
 
@@ -29,7 +36,19 @@
 | Operational architecture | 2 | 1 | 0 |
 | **Total** | **9** | **13** | **8** |
 
-The counts are a navigation aid, not a target. Several rows are small clarifications; the table must not be read as a demand to add ten pages. Rows CR-2/DI-1 and CR-3/DI-2 describe the same substantive change under two directions; implement each once in `V05/C07`.
+The counts are a navigation aid, not a target. Several rows are small clarifications;
+the table must not be read as a demand to add ten pages. Rows CR-2/DI-1 and CR-3/DI-2
+describe the same substantive change under two directions; implement each once in
+`V05/C07`.
+
+## Delivery status
+
+- **P1 — implemented and validated:** overload rejection cost and criticality, retry
+  layering and budgets, cache capacity versus latency, detection latency and selective
+  restore, and multitenant fair re-admission. Delivered in PR #229.
+- **P2 — not started:** load balancing, consensus quorum placement, schedulers and
+  pipelines, launch demand, and operational manual-work clarification. Scheduling is the
+  largest missing owner and warrants its own review increment.
 
 ## 1. Load balancing
 
@@ -111,9 +130,10 @@ The three original projects in `V10/C07` already exercise several of these mecha
 | `collaboration-project.md` | Durable edit admission, approval frontier, offline revocation, snapshot/log restore (`Failures, compaction and recovery`) | After SC-1 is implemented, add one periodic reconciliation job whose launch outcome is ambiguous. It must carry a stable job identity and an outcome-lookup path; the existing project does not test scheduler recovery. | Original synthetic design; no scheduler or reconciliation execution. |
 | `multitenant-project.md` | Tenant burst, poison input, budget revision, cell outage, per-tenant budgets and cells (`Three failures and explicit recovery`) | Add fair re-admission after a shared overload episode: recovery hysteresis, per-tenant queues and a controlled ramp. This directly tests OR-1/OR-2/OR-5 composition without inventing a new project. | Original synthetic design; no load test executed. |
 
-## Recommended P1 implementation package
+## P1 implementation package (delivered)
 
-The first package should remain bounded to the interacting mechanisms the issue recommends: overload, retries, caching and recovery.
+The first package remained bounded to the interacting mechanisms the issue recommends:
+overload, retries, caching and recovery. It is implemented and validated in PR #229.
 
 1. **Overload** — add rejection-path cost and criticality propagation to `admission-resource.md`; add the impulse/gradual and degraded-exit observations to `overload-recovery.md`.
 2. **Retries** — add the generic retry decision contract (local-versus-broad overload, retry-layer ownership and the three budget scopes) to `V02/C05` `deadlines-retries.md`; put the overload-specific regime selection in `V07/C05`; cross-link `V04/C04` for effect identity and the existing retry-amplification arithmetic rather than duplicating it.
@@ -122,11 +142,15 @@ The first package should remain bounded to the interacting mechanisms the issue 
 5. **Provenance** — add exact SRE chapter/section rows to the affected page or chapter ledgers; use `src.sre` unless a specific chapter ID already exists. Do not invent a new source ID without an admission record.
 6. **Indexes and validation** — rebuild the route index after any frontmatter change and run the repository gate ladder. No CI claim is implied.
 
-The load-balancing, consensus, scheduler and launch rows remain P2 until the P1 package is reviewed. The scheduler rows are the largest missing owner; they should not be forced into the P1 package just because they are interesting.
+The load-balancing, consensus, scheduler, launch and operational rows remain P2 until
+the owner approves the next package. The scheduler rows are the largest missing owner;
+they warrant their own review increment rather than a clarification-only bundle.
 
 ## Review gate and unresolved questions
 
-- This map is an **implementation input**, not a reviewed finding set. No `book/**` edit should begin until the owner reviews the proposed scope and confirms which P1 rows are in scope.
+- P1 was authorized and implemented; this map is still an implementation input, not a
+  reviewed finding set. P2 should not begin until the owner approves the next bounded
+  package.
 - The SRE book is a 2016 operational account. Its numeric examples and organizational practices are contextual. The map does not convert them into universal thresholds, staffing rules or current product behavior.
 - Protocol correctness for consensus, cron and pipeline leases must continue to rely on the existing protocol/implementation sources, not on the SRE overview alone. The map proposes operational conditions, not new protocol proofs.
 - #225 remains the broader research owner. This map does not complete its source inventory, material-claim matrix or final deep synthesis, and it does not close #225 or PR #226.
