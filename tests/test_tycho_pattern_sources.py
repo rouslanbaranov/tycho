@@ -37,10 +37,10 @@ class PatternSourceTests(unittest.TestCase):
         result = validate_data(self.plan, self.ledger, self.registry,
                                self.route, self.sources, ROOT)
         self.assertEqual(result["entries"], 145)
-        self.assertEqual(result["read_units"], 22)
-        self.assertEqual(result["planned_units"], 122)
+        self.assertEqual(result["read_units"], 29)
+        self.assertEqual(result["planned_units"], 115)
         self.assertEqual(result["blocked_units"], 1)
-        self.assertEqual(result["ledger_records"], 23)
+        self.assertEqual(result["ledger_records"], 29)
 
     def test_missing_plan_entry_is_rejected(self):
         plan, ledger, registry, route, sources = self.copy()
@@ -78,7 +78,9 @@ class PatternSourceTests(unittest.TestCase):
 
     def test_registry_binding_is_rejected(self):
         plan, ledger, registry, route, sources = self.copy()
-        registry["patterns"][0]["source_units"][0]["status"] = "read"
+        index = next(i for i, pattern in enumerate(registry["patterns"])
+                     if pattern["source_units"][0]["status"] == "not-read")
+        registry["patterns"][index]["source_units"][0]["status"] = "read"
         self.check_error(plan, ledger, registry, route, sources, "source-registry-mismatch")
 
     def test_summary_is_rejected(self):
