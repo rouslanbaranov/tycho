@@ -87,7 +87,7 @@ none claims sufficient technical or decision coverage.
 
 **Failure and recovery.** Stale projections and duplicate updates are common; verify freshness contract in the owner section.
 
-**Technical owner.** [CQRS and asynchronous projection freshness](../../book/distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — projection freshness is the bounded owner, not a full CQRS implementation guide.
+**Technical owner.** [CQRS and asynchronous projection freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — projection freshness is the bounded owner, not a full CQRS implementation guide.
 
 **Sources.** [src.fowler-cqrs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-cqrs.2026-10-21: sections "CQRS", "When to use it", "Further Reading". The source is a public pattern/specification
@@ -111,7 +111,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Replay duplication and schema drift are common; verify event authority in the owner section.
 
-**Technical owner.** [Event sourcing: what becomes authoritative?](../../book/distributed/cqrs-event-sourcing-and-projections.md#2-event-sourcing-what-becomes-authoritative) — event authority is the bounded owner, not a complete event-store design.
+**Technical owner.** [Event sourcing: what becomes authoritative?](../../../distributed/cqrs-event-sourcing-and-projections.md#2-event-sourcing-what-becomes-authoritative) — event authority is the bounded owner, not a complete event-store design.
 
 **Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-event-sourcing.2026-10-21: sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting context". The source is a public pattern/specification
@@ -135,7 +135,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Duplicate, late and out-of-order events are common; verify publication semantics in the owner section.
 
-**Technical owner.** [Distinguish source log from integration event](../../book/distributed/cqrs-event-sourcing-and-projections.md#distinguish-source-log-from-integration-event) — the distinction is bounded, not a domain-event catalogue.
+**Technical owner.** [Distinguish source log from integration event](../../../distributed/cqrs-event-sourcing-and-projections.md#distinguish-source-log-from-integration-event) — the distinction is bounded, not a domain-event catalogue.
 
 **Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-domain-event.2026-10-21: sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting context". The source is a public pattern/specification
@@ -159,7 +159,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Partial completion and compensation failure are common; verify saga protocol in the owner section.
 
-**Technical owner.** [Sagas, workflow recovery and compensation](../../book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#sagas-workflow-recovery-and-compensation) — saga recovery is the bounded owner, not a full saga engine.
+**Technical owner.** [Sagas, workflow recovery and compensation](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#sagas-workflow-recovery-and-compensation) — saga recovery is the bounded owner, not a full saga engine.
 
 **Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-saga.2026-10-21: sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting context". The source is a public pattern/specification
@@ -183,7 +183,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Hidden global state and event cycles are common; verify compensation boundaries in the owner section.
 
-**Technical owner.** [A saga is a business protocol, not an automatic rollback](../../book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — compensation/branching is bounded, not a complete orchestration product guide.
+**Technical owner.** [A saga is a business protocol, not an automatic rollback](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — compensation/branching is bounded, not a complete orchestration product guide.
 
 **Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-saga.2026-10-21: sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting context". The source is a public pattern/specification
@@ -207,7 +207,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Stuck workflows and coordinator outages are common; verify workflow recovery in the owner section.
 
-**Technical owner.** [Durable workflow selection is conditional](../../book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#5-durable-workflow-selection-is-conditional) — workflow selection is bounded, not a dedicated Temporal or orchestration manual.
+**Technical owner.** [Durable workflow selection is conditional](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#5-durable-workflow-selection-is-conditional) — workflow selection is bounded, not a dedicated Temporal or orchestration manual.
 
 **Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-temporal-workflows.2026-10-21: sections "Workflows", "Workflow Execution", "Determinism". The source is a public pattern/specification
@@ -231,7 +231,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Compensation may fail or be applied twice; verify idempotency and ordering in the owner section.
 
-**Technical owner.** [A saga is a business protocol, not an automatic rollback](../../book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — compensation/branching is bounded, not a complete orchestration product guide.
+**Technical owner.** [A saga is a business protocol, not an automatic rollback](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — compensation/branching is bounded, not a complete orchestration product guide.
 
 **Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-saga.2026-10-21: sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting context". The source is a public pattern/specification
@@ -255,7 +255,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Relay lag and duplicate publication are common; verify outbox coordination in the owner section.
 
-**Technical owner.** [Outbox, inbox, sagas and durable workflow coordination](../../book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#outbox-inbox-sagas-and-durable-workflow-coordination) — outbox coordination is bounded, not a connector manual.
+**Technical owner.** [Outbox, inbox, sagas and durable workflow coordination](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#outbox-inbox-sagas-and-durable-workflow-coordination) — outbox coordination is bounded, not a connector manual.
 
 **Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-outbox.2026-10-21: sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting context". The source is a public pattern/specification
@@ -279,7 +279,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Expired identities and concurrent duplicates are common; verify inbox atomicity in the owner section.
 
-**Technical owner.** [Inbox processing and atomic consumer effects](../../book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/inbox-atomicity.md#inbox-processing-and-atomic-consumer-effects) — inbox atomicity is bounded, not a complete idempotent-consumer recipe.
+**Technical owner.** [Inbox processing and atomic consumer effects](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/inbox-atomicity.md#inbox-processing-and-atomic-consumer-effects) — inbox atomicity is bounded, not a complete idempotent-consumer recipe.
 
 **Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-idempotent-consumer.2026-10-21: sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting context". The source is a public pattern/specification
@@ -303,7 +303,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Key reuse and expiry cause duplicate or rejected effects; verify fingerprint/expiry in the owner section.
 
-**Technical owner.** [Retries, idempotency and ambiguous side effects](../../book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md#retries-idempotency-and-ambiguous-side-effects) — retry/idempotency is bounded, not a complete HTTP idempotency guide.
+**Technical owner.** [Retries, idempotency and ambiguous side effects](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md#retries-idempotency-and-ambiguous-side-effects) — retry/idempotency is bounded, not a complete HTTP idempotency guide.
 
 **Sources.** [src.ietf-idempotency-key](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-ietf.2026-10-21: sections "Introduction", "Uniqueness of Idempotency Key", "Idempotency Key Validity and Expiry", "Idempotency Fingerprint", "Error Handling". The source is a public pattern/specification
@@ -327,7 +327,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Duplicate and schema-drift events are common; verify replay scope in the owner section.
 
-**Technical owner.** [From a database change to a replayable input](../../book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md#1-from-a-database-change-to-a-replayable-input) — CDC replay is bounded, not a full Debezium operations guide.
+**Technical owner.** [From a database change to a replayable input](../../v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md#1-from-a-database-change-to-a-replayable-input) — CDC replay is bounded, not a full Debezium operations guide.
 
 **Sources.** [src.debezium-outbox](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-debezium-outbox.2026-10-21: sections "Outbox Event Router", "Configuration", "Example". The source is a public pattern/specification
@@ -351,7 +351,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Stale data and refresh contention are common; verify refresh semantics in the owner section.
 
-**Technical owner.** [CQRS and asynchronous projection freshness](../../book/distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — projection freshness is bounded, not a PostgreSQL materialized-view manual.
+**Technical owner.** [CQRS and asynchronous projection freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — projection freshness is bounded, not a PostgreSQL materialized-view manual.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-pg-matview.2026-10-21: sections "Materialized Views", "Create Materialized View", "Refresh Materialized View". The source is a public pattern/specification
@@ -375,7 +375,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Stale replicas and split-brain decisions are common; verify authority in the owner section.
 
-**Technical owner.** [CQRS and asynchronous projection freshness](../../book/distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — command-side replication is bounded to the projection discussion.
+**Technical owner.** [CQRS and asynchronous projection freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — command-side replication is bounded to the projection discussion.
 
 **Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-command-side.2026-10-21: sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting context". The source is a public pattern/specification
@@ -399,7 +399,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Prepared transactions can hold locks and block recovery; verify protocol limits in the owner section.
 
-**Technical owner.** [Local atomic commit does not include the outside world](../../book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md#local-atomic-commit-does-not-include-the-outside-world) — local/global commit limits are bounded, not a 2PC protocol reference.
+**Technical owner.** [Local atomic commit does not include the outside world](../../v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md#local-atomic-commit-does-not-include-the-outside-world) — local/global commit limits are bounded, not a 2PC protocol reference.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-pg-2pc.2026-10-21: sections "Two-Phase Transactions", "Prepare Transaction", "Commit Prepared". The source is a public pattern/specification
