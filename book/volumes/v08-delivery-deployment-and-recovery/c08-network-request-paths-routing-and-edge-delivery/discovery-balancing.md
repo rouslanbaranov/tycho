@@ -66,6 +66,13 @@
 
 **Owning question:** How does an endpoint change become a correctly balanced request rather than merely a new address?
 
+
+> **Pattern atlas:**
+> [Gateway Routing](../../v11-pattern-atlas/c02-api-communication/README.md#gateway-routing) — decision conditions and contraindications.
+> [Service Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#service-discovery) — decision conditions and contraindications.
+> [Client-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#client-side-discovery) — decision conditions and contraindications.
+> [Server-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#server-side-discovery) — decision conditions and contraindications.
+
 ## The routing contract
 
 A caller needs a route to an eligible instance, not a timeless list of machines. Describe separately the externally resolved name, the service membership view, the connection destination and the backend selected for each request. A global route may choose a location; an internal selector chooses a process. A stale membership view can outlive a rollout.

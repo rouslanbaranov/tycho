@@ -56,9 +56,9 @@ def check_card_text(text, slug):
         "insufficient-evidence", "not-required")), "card-decision-state: " + slug)
 
 
-def check_backlink(owner_text, slug):
-    require("v11-pattern-atlas/c01-application-boundaries/README.md#" + slug in owner_text,
-            "card-backlink-missing: " + slug)
+def check_backlink(owner_text, chapter_path, slug):
+    marker = chapter_path.split("book/volumes/", 1)[-1] + "#" + slug
+    require(marker in owner_text, "card-backlink-missing: " + slug)
 
 
 def section_text(body, slug):
@@ -133,7 +133,7 @@ def validate_data(data, root=ROOT):
                 require(owner.is_file() and not owner.is_symlink(), "card-owner-file: " + entry["owner_path"])
                 require(entry["owner_anchor"] in heading_slugs(owner), "card-owner-anchor: " + entry["owner_anchor"])
                 owner_text = owner.read_text(encoding="utf-8")
-                check_backlink(owner_text, entry["atlas_section"])
+                check_backlink(owner_text, chapter["path"], entry["atlas_section"])
                 require(pattern["technical_owner"]["path"] == entry["owner_path"], "card-registry-owner-path: " + pattern_id)
                 require(pattern["technical_owner"]["anchor"] == entry["owner_anchor"], "card-registry-owner-anchor: " + pattern_id)
                 require(pattern["technical_owner"]["state"] == "partial", "card-registry-owner-state: " + pattern_id)

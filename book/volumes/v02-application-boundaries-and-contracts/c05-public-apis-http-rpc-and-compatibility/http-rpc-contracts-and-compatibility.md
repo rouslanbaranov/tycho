@@ -59,6 +59,11 @@ content_verified_at: null
 > **Research status:** independent, source-grounded book draft, 2026-10-19. **Proposed owner:** V02/C05 (public APIs, HTTP/RPC and compatibility). No runtime tests, empirical benchmark, client interoperability test or independent technical acceptance is claimed.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Backend for Frontend](../../v11-pattern-atlas/c02-api-communication/README.md#backend-for-frontend-bff) — decision conditions and contraindications.
+> [API Composition](../../v11-pattern-atlas/c02-api-communication/README.md#api-composition) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.cccbd188936543a2aaf904f4002236d8:0 -->
 ## Purpose and mission
 

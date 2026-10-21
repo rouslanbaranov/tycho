@@ -58,6 +58,10 @@ content_verified_at: null
 > **Independent Tycho V03/C04 book draft, 2026-10-19.** This chapter compares contract and flow-control choices. Official Reactive Streams 1.0.4 and gRPC guides supply bounded public facts. The example and acceptance tests are original synthetic material; no streaming client/server, implementation or benchmark was exercised.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Asynchronous Request-Reply](../../v11-pattern-atlas/c02-api-communication/README.md#asynchronous-request-reply) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5:0 -->
 ## Purpose and mission
 
