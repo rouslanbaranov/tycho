@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.dev/schemas/pattern-card-batches.v1.schema.json",
+  "title": "Tycho pattern card batches v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "batches"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "batches": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/batch"
+      }
+    }
+  },
+  "$defs": {
+    "batch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "issue",
+        "chapter",
+        "status",
+        "entries"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        },
+        "issue": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "chapter": {
+          "type": "string",
+          "pattern": "^V11/C(0[1-9]|1[01])$"
+        },
+        "status": {
+          "enum": [
+            "self-checked",
+            "independent-reviewed"
+          ]
+        },
+        "entries": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/entry"
+          }
+        }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pattern_id",
+        "atlas_section",
+        "owner_path",
+        "owner_anchor",
+        "ledger_record"
+      ],
+      "properties": {
+        "pattern_id": {
+          "type": "string",
+          "pattern": "^tycho\\.pattern\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "atlas_section": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "owner_path": {
+          "type": "string",
+          "pattern": "^book/.*\\.md$"
+        },
+        "owner_anchor": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "ledger_record": {
+          "type": "string",
+          "pattern": "^read\\.[a-z0-9.-]+$"
+        }
+      }
+    }
+  }
+}

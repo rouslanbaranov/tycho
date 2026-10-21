@@ -57,6 +57,8 @@ content_verified_at: null
 > **Tycho book manuscript — proposed V02/C01.** Prepared 2026-10-19 from independent public architecture references. All case studies, diagrams and proposed tests are original. This is not a representation of a deployed system; no module-boundary checker, integration fixture, production trace or editorial peer review was executed. The combined earlier [architecture-styles research](../../../application/architecture-styles-and-module-boundaries.md) remains available until source/claim reconciliation.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:** [Hexagonal Architecture](../../v11-pattern-atlas/c01-application-boundaries/README.md#hexagonal-architecture-ports-and-adapters) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.77b512c4e2e946bd92d70b4a714600c8:0 -->
 ## Purpose and decision question
 

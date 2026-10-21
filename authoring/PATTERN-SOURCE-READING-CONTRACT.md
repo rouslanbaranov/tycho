@@ -153,6 +153,19 @@ Only Polyglot Persistence remains blocked by its bibliography-only source.
 Entry-level source coverage is complete; technical and decision coverage remain
 unassessed and are not claimed.
 
+## Phase 3 first card batch
+
+Four V11/C01 entries have self-checked decision cards: Modular Monolith, Hexagonal
+Architecture / Ports and Adapters, Domain-Driven Design / Bounded Context and
+Anti-Corruption Layer. Each card cites its read ledger unit, links to an exact
+technical-owner anchor and has a reciprocal backlink. The registry records
+`partial` technical, decision and overall coverage; no `sufficient` state is
+claimed.
+
+The card batch is recorded in `edition/patterns/card-batches.v1.json` and checked
+by `scripts/validate_pattern_cards.py`, including adversarial tests. The other
+141 entries remain without Phase 3 cards; 140 are read and one is blocked.
+
 ## Family batches
 
 Phase 2B proceeds in bounded batches, each with its own source units and
