@@ -291,7 +291,7 @@ unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Session Consistency; Consensus; Causal Ordering; Event Sourcing.
+**Related entries.** Session Consistency; Consensus; Read Replicas; Event Sourcing.
 
 ### Session Consistency
 

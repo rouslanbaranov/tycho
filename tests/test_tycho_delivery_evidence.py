@@ -29,11 +29,16 @@ class DeliveryEvidenceTests(unittest.TestCase):
         data["summary"]["sufficient_technical"] = 1
         self.check_error(data, "delivery-schema")
 
-    def test_independent_review_claim_is_rejected(self):
+    def test_human_review_must_be_recorded(self):
         data = copy.deepcopy(self.data)
         item = next(x for x in data["dod"] if x["id"] == "independent-editorial-review")
-        item["status"] = "met"
-        self.check_error(data, "delivery-independent-review-claim")
+        item["status"] = "not-met"
+        self.check_error(data, "delivery-human-review-missing")
+
+    def test_human_review_count_mismatch_is_rejected(self):
+        data = copy.deepcopy(self.data)
+        data["summary"]["human_reviews"] = 0
+        self.check_error(data, "delivery-human-review-count")
 
     def test_owner_acceptance_claim_is_rejected(self):
         data = copy.deepcopy(self.data)

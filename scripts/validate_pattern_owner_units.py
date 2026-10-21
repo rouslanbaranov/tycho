@@ -384,6 +384,25 @@ def validate_data(data, root=ROOT):
         decisions[page["decision"]] += 1
     require(seen_pages == set(expected_shared), "owner-units-shared-partition")
 
+    deferrals = data["split_deferrals"]
+    split_pages = {page["path"]: page for page in shared if page["decision"] == "split"}
+    require(len(deferrals) == len(split_pages) == 3, "owner-units-split-deferral-count")
+    seen_deferrals = set()
+    for item in deferrals:
+        path = item["path"]
+        require(path in split_pages, "owner-units-split-deferral-page: " + path)
+        require(path not in seen_deferrals, "owner-units-split-deferral-duplicate: " + path)
+        seen_deferrals.add(path)
+        require(item["document_id"] == split_pages[path]["document_id"],
+                "owner-units-split-deferral-document: " + path)
+        require(item["pattern_ids"] == split_pages[path]["pattern_ids"],
+                "owner-units-split-deferral-patterns: " + path)
+        require(item["decision"] == "deferred",
+                "owner-units-split-deferral-decision: " + path)
+        require(len(item["gate"]) >= 40,
+                "owner-units-split-deferral-gate: " + path)
+    require(seen_deferrals == set(split_pages), "owner-units-split-deferral-partition")
+
     summary = data["summary"]
     counts = {
         "entries": len(entries),
@@ -424,6 +443,7 @@ def validate_data(data, root=ROOT):
         "independent_reviews": sum(1 for item in entries
                                    if item["review_state"] == "independent-reviewed"),
         "shared_page_decisions": decisions,
+        "split_deferred": len(deferrals),
     }
     require(summary == counts, "owner-units-summary-mismatch")
     require(counts["technical_name_only"] == 0, "owner-units-name-only-remaining")

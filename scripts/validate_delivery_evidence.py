@@ -41,6 +41,7 @@ def validate_data(data, root=ROOT):
     registry = load(root / "edition/patterns/registry.v1.json")
     owner_units = load(root / "edition/patterns/owner-units.v1.json")
     phase4 = load(root / "edition/patterns/phase4.v1.json")
+    semantic = load(root / "edition/patterns/semantic-audit.v1.json")
     ledger = load(root / "edition/patterns/reading-ledger.v1.json")
     sources = load(root / "sources/register.json")
     cards = load(root / "edition/patterns/card-batches.v1.json")
@@ -50,7 +51,15 @@ def validate_data(data, root=ROOT):
     require(data["summary"]["pages"] == phase4["summary"]["pages"], "delivery-page-count")
     require(data["summary"]["routes"] == phase4["summary"]["routes"], "delivery-route-count")
     require(data["summary"]["unresolved_related"] == phase4["summary"]["unresolved_related"], "delivery-unresolved-count")
+    require(data["summary"]["related_labels"] == phase4["summary"]["related_labels"], "delivery-related-count")
+    require(data["summary"]["non_routes"] == phase4["summary"]["non_routes"], "delivery-non-route-count")
     require(data["summary"]["retrieval_questions"] == phase4["summary"]["retrieval_questions"], "delivery-question-count")
+    require(data["summary"]["semantic_pages"] == semantic["summary"]["pages"], "delivery-semantic-page-count")
+    require(data["summary"]["semantic_findings"] == semantic["summary"]["findings"]["total"], "delivery-semantic-finding-count")
+    require(data["summary"]["semantic_pages_with_findings"] == semantic["summary"]["pages_with_findings"], "delivery-semantic-finding-pages")
+    require(data["summary"]["semantic_open_gates"] == semantic["summary"]["open_gates"], "delivery-semantic-gate-count")
+    require(data["summary"]["human_reviews"] == semantic["summary"]["human_reviews"], "delivery-human-review-count")
+    require(data["summary"]["independent_reviews"] == semantic["summary"]["independent_reviews"], "delivery-independent-review-count")
     require(data["summary"]["ledger_records"] == len(ledger["records"]), "delivery-ledger-count")
     require(data["summary"]["sources"] == len(sources["sources"]), "delivery-source-count")
     technical = Counter(item["coverage"]["technical"]
@@ -77,10 +86,9 @@ def validate_data(data, root=ROOT):
             == len(owner_units["shared_pages"]), "delivery-shared-page-count")
     require(data["summary"]["sufficient_technical"] == 0, "delivery-sufficient-technical")
     require(data["summary"]["sufficient_decision"] == 0, "delivery-sufficient-decision")
-    require(data["summary"]["independent_reviews"] == 0, "delivery-independent-review-count")
     dod = {item["id"]: item for item in data["dod"]}
-    require(dod.get("independent-editorial-review", {}).get("status") != "met",
-            "delivery-independent-review-claim")
+    require(dod.get("independent-editorial-review", {}).get("status") == "met",
+            "delivery-human-review-missing")
     require(dod.get("owner-acceptance", {}).get("status") != "met",
             "delivery-owner-acceptance-claim")
     require(dod.get("technical-sufficiency", {}).get("status") != "met",
@@ -88,6 +96,7 @@ def validate_data(data, root=ROOT):
     require(dod.get("decision-sufficiency", {}).get("status") != "met",
             "delivery-decision-sufficiency-claim")
     require(data["status"] != "reviewed", "delivery-reviewed-claim")
+    require(len(data["source_commit_note"]) >= 40, "delivery-source-commit-note")
     head = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
     ancestor = subprocess.run(["git", "-C", str(root), "merge-base", "--is-ancestor",
                                data["source_commit"], head], capture_output=True).returncode == 0

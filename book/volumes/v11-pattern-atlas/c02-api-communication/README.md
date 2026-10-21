@@ -57,7 +57,8 @@ the conditional decision route for 12 catalog entries, not the deep mechanism
 explanations. Read the exact owner section before applying a mechanism claim.
 
 All 12 entries have a self-checked card. Their owner sections are bounded: a gateway
-page may own the edge boundary without owning every aggregation or BFF mechanism.
+page may own the edge boundary and aggregation mechanics without owning every BFF
+mechanism.
 
 ## Pages and reasoning route
 
@@ -170,9 +171,9 @@ client simplification benefit.
 
 **Failure and recovery.** Fan-out latency, partial failure and retry amplification are
 common. Recovery requires per-dependency deadlines and explicit partial results;
-verify the gateway boundary in the owner section, which does not own aggregation.
+verify the gateway boundary and aggregation mechanics in the owner section.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#gateway-aggregation) — bounded edge boundary; aggregation mechanics are not owned here.
+**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#gateway-aggregation) — bounded edge boundary and aggregation mechanics.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)

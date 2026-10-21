@@ -55,6 +55,21 @@ class Phase4Tests(unittest.TestCase):
         data["summary"]["routes"] = 999
         self.check_error(data, "phase4-summary-routes")
 
+    def test_non_route_target_is_rejected(self):
+        data = copy.deepcopy(self.data)
+        data["related_dispositions"][0]["target"] = "tycho.pattern.retry-with-exponential-backoff"
+        self.check_error(data, "phase4-related-non-route-target")
+
+    def test_non_route_count_is_rejected(self):
+        data = copy.deepcopy(self.data)
+        data["summary"]["non_routes"] = 0
+        self.check_error(data, "phase4-non-route-count")
+
+    def test_unresolved_claim_is_rejected(self):
+        data = copy.deepcopy(self.data)
+        data["summary"]["unresolved_related"] = 40
+        self.check_error(data, "phase4-schema")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -116,6 +116,16 @@ class PatternOwnerUnitTests(unittest.TestCase):
         data["shared_pages"].pop()
         self.check_error(data, "owner-units-schema")
 
+    def test_unknown_split_deferral_page_is_rejected(self):
+        data = self.copy()
+        data["split_deferrals"][0]["path"] = "book/README.md"
+        self.check_error(data, "owner-units-split-deferral-page")
+
+    def test_split_deferral_gate_is_required(self):
+        data = self.copy()
+        data["split_deferrals"][0]["gate"] = "short"
+        self.check_error(data, "owner-units-schema")
+
 
 if __name__ == "__main__":
     unittest.main()

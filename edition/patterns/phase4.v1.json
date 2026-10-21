@@ -2,10 +2,10 @@
   "schema_version": 1,
   "generated_from": {
     "registry_sha256": "7412a1d2fae0ac2e9de4af2f4478f8ed20da1c263e403ee046cd997dfb2b9324",
-    "ledger_sha256": "7de694465f7641e3526d3b472f246e8de0aa13d44e881ffe7b78a56bc28413cc",
+    "ledger_sha256": "527baa32ae9b13a8331c82e92ef874f6dea233e8b78295af9fc42ca72a92e18a",
     "card_batches_sha256": "76698b7896a9f6ea0c75f7c3f558a223365cb40d201d3fc23a4adfe935881018",
-    "route_index_sha256": "b5c9488f91083f041e67cba93b7009c6498506179590634848c34b1d5beb3f3f",
-    "coverage_sha256": "0fcfb484be49dab5e9d54f3fadba0253921ac9d8f15f53bbdb0776491c91e175"
+    "route_index_sha256": "588c17e77436aef5b5a2a252312576b55f66c10f1ae67cf281d8899edeb860a0",
+    "coverage_sha256": "f425c3fdd237124adb19e2de0f1338ea119591402059197155697affd910f773"
   },
   "dimensions": [
     "identity",
@@ -27,8 +27,10 @@
     "pages": 419,
     "entries": 145,
     "cards": 144,
-    "routes": 534,
-    "unresolved_related": 40,
+    "routes": 536,
+    "related_labels": 40,
+    "non_routes": 40,
+    "unresolved_related": 0,
     "retrieval_questions": 144,
     "blocked_entries": 1
   },
@@ -8962,6 +8964,11 @@
     },
     {
       "from": "tycho.pattern.causal-ordering",
+      "to": "tycho.pattern.read-replicas",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.causal-ordering",
       "to": "tycho.pattern.session-consistency",
       "basis": "card-related-entry"
     },
@@ -10412,6 +10419,11 @@
     },
     {
       "from": "tycho.pattern.process-manager-routing-slip",
+      "to": "tycho.pattern.idempotent-receiver",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.process-manager-routing-slip",
       "to": "tycho.pattern.saga",
       "basis": "card-related-entry"
     },
@@ -11296,206 +11308,286 @@
       "basis": "card-related-entry"
     }
   ],
-  "unresolved_related": [
+  "related_dispositions": [
     {
       "from": "tycho.pattern.ambassador",
       "label": "Service Mesh",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.anti-corruption-layer",
       "label": "Adapter.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.asynchronous-request-reply",
       "label": "Retry with Idempotency",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.audit-trail",
       "label": "Retention.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.autoscaling",
       "label": "Capacity Planning.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.backup-pitr-and-restore",
       "label": "Disaster Recovery.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.canonical-data-model",
       "label": "Schema Evolution.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.compensating-transaction",
       "label": "Workflow Failure.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.consistent-hashing",
       "label": "Resharding",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.controlled-cutover",
       "label": "Rollback Limits.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.dead-letter-channel-dlq",
       "label": "Workflow Failure",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.deployment-stamps",
       "label": "Multi-Region.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.distributed-tracing",
       "label": "Sampling.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.expand-and-contract",
       "label": "Reader/Writer Compatibility",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.expand-and-contract-schema",
       "label": "Migration Retirement.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.failover-failback",
       "label": "Recovery Objectives.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.feature-flags-feature-toggles",
       "label": "Configuration Rollout.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.geode",
       "label": "Multi-Region Recovery",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.gitops",
       "label": "CI/CD Provenance.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.health-readiness-and-liveness-checks",
       "label": "Incident Response",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.immutable-infrastructure",
       "label": "Infrastructure as Code.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.multi-leader-replication",
       "label": "Conflict Resolution.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.parallel-run",
       "label": "Reconciliation.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.process-manager-routing-slip",
       "label": "Workflow Failure.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.resequencer",
       "label": "Message Sequence.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.saga-orchestration",
       "label": "Workflow Failure.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.session-consistency",
       "label": "Session Token.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.sidecar",
       "label": "Service Mesh",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.sli-slo-and-error-budgets",
       "label": "Alerting",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.sli-slo-and-error-budgets",
       "label": "Incident Response",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.structured-logging",
       "label": "OpenLineage",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.structured-logging",
       "label": "Retention.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.synthetic-monitoring",
       "label": "Alerting.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.synthetic-monitoring",
       "label": "Incident Response",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.transactional-inbox",
       "label": "Deduplication.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.two-phase-commit-2pc",
       "label": "Distributed Transactions.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.valet-key",
       "label": "Object Credentials",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.vertical-scaling",
       "label": "Capacity Planning",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.vertical-scaling",
       "label": "Contention.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
       "from": "tycho.pattern.workload-identity-mtls",
       "label": "Service Mesh.",
-      "reason": "no catalog alias"
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     }
   ],
   "retrieval_questions": [

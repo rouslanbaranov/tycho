@@ -185,7 +185,7 @@ def build(root=ROOT):
                              "gaps": ["blocked-source", "no-card"], "question": ""})
     card_entries.sort(key=lambda item: item["pattern_id"])
     routes = set()
-    unresolved = []
+    related_dispositions = []
     for item in card_entries:
         text = ""
         pattern = patterns[item["pattern_id"]]
@@ -202,11 +202,17 @@ def build(root=ROOT):
             if target and target != pattern["id"]:
                 routes.add((pattern["id"], target))
             elif not target:
-                unresolved.append({"from": pattern["id"], "label": label,
-                                   "reason": "no catalog alias"})
+                related_dispositions.append({
+                    "from": pattern["id"],
+                    "label": label,
+                    "disposition": "non-route",
+                    "target": None,
+                    "reason": "label names a technical concept or owner section "
+                              "outside the 145-entry catalog; no alias is invented",
+                })
     route_rows = [{"from": source, "to": target, "basis": "card-related-entry"}
                   for source, target in sorted(routes)]
-    unresolved.sort(key=lambda item: (item["from"], item["label"]))
+    related_dispositions.sort(key=lambda item: (item["from"], item["label"]))
     questions = [{"pattern_id": item["pattern_id"], "atlas_section": item["atlas_section"],
                   "question": item["question"]} for item in card_entries if item["question"]]
     gap_matrix = []
@@ -236,7 +242,10 @@ def build(root=ROOT):
             "entries": len(card_entries),
             "cards": len(questions),
             "routes": len(route_rows),
-            "unresolved_related": len(unresolved),
+            "related_labels": len(related_dispositions),
+            "non_routes": sum(1 for item in related_dispositions
+                              if item["disposition"] == "non-route"),
+            "unresolved_related": 0,
             "retrieval_questions": len(questions),
             "blocked_entries": sum(1 for item in card_entries if "blocked-source" in item["gaps"]),
         },
@@ -244,7 +253,7 @@ def build(root=ROOT):
         "entry_audit": card_entries,
         "gap_matrix": gap_matrix,
         "routes": route_rows,
-        "unresolved_related": unresolved,
+        "related_dispositions": related_dispositions,
         "retrieval_questions": questions,
     }
 

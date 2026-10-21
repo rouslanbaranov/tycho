@@ -14,7 +14,8 @@
     "coverage_rules",
     "entries",
     "shared_pages",
-    "summary"
+    "summary",
+    "split_deferrals"
   ],
   "properties": {
     "schema_version": {
@@ -75,6 +76,14 @@
     },
     "summary": {
       "$ref": "#/$defs/summary"
+    },
+    "split_deferrals": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/splitDeferral"
+      }
     }
   },
   "$defs": {
@@ -415,7 +424,8 @@
         "decision_sufficient",
         "partial_reviewed",
         "independent_reviews",
-        "shared_page_decisions"
+        "shared_page_decisions",
+        "split_deferred"
       ],
       "properties": {
         "entries": {
@@ -519,6 +529,51 @@
               "minimum": 0
             }
           }
+        },
+        "split_deferred": {
+          "const": 3
+        }
+      }
+    },
+    "splitDeferral": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document_id",
+        "path",
+        "pattern_ids",
+        "decision",
+        "rationale",
+        "gate"
+      ],
+      "properties": {
+        "document_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pattern_ids": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string"
+          }
+        },
+        "decision": {
+          "const": "deferred"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 60,
+          "maxLength": 600
+        },
+        "gate": {
+          "type": "string",
+          "minLength": 40,
+          "maxLength": 400
         }
       }
     }

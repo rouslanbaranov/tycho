@@ -724,7 +724,7 @@ unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Saga; Routing Slip; Correlation Identifier; Workflow Failure.
+**Related entries.** Saga; Idempotent Receiver; Correlation Identifier; Workflow Failure.
 
 ## Chapter result and counterexample
 

@@ -403,8 +403,8 @@ budgets. Reverse the choice when duplication and invalidation cost exceed the co
 benefit.
 
 **Failure and recovery.** Stale local data, hidden coupling and complex invalidation are
-common. Recovery requires reconciliation and clear ownership; the technical owner is
-missing.
+common. Recovery requires reconciliation and clear ownership; the bounded owner section
+describes hidden shared state and orchestration/BFF alternatives.
 
 **Technical owner.** [Independent deployment and its costs](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md#self-contained-service) — The section owns remote-boundary costs and local-transaction alternatives.
 
@@ -475,8 +475,8 @@ extra hop, or when the proxy becomes a single point of failure.
 the choice when the proxy adds a hop without providing a needed capability.
 
 **Failure and recovery.** Proxy outage, configuration drift and retry amplification are
-common. Recovery requires health checks and bounded retries; the technical owner is
-missing.
+common. Recovery requires health checks and bounded retries; the bounded owner section
+covers traffic intermediaries, not a dedicated ambassador lifecycle page.
 
 **Technical owner.** [Service mesh and traffic intermediaries](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — The section owns traffic intermediaries, not a dedicated ambassador lifecycle page.
 
