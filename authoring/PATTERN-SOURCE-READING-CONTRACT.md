@@ -92,8 +92,22 @@ units were complete as returned. The Message Broker and Process Manager pages
 do not separately read the bridge or routing-slip variants, and the Debezium
 outbox page is not a general CDC contract.
 
-Current plan totals: **62 read, 82 planned and 1 blocked** across 145 entries;
-the ledger has **60 records**, including three foundation catalog records.
+## Phase 2B batch 3 — caching and database storage
+
+26 of 27 caching/database entries have a read unit after batch 3. The five
+previously planned entries are now read: Negative Caching (Google Cloud CDN),
+Stale-While-Revalidate (RFC 5861), Multi-Leader and Quorum (Cassandra Dynamo
+page), and Online Data Migration (gh-ost README). Polyglot Persistence remains
+the one blocked bibliography-only entry.
+
+The caching guidance, Hazelcast, Citus and Google negative-caching pages
+returned truncated after their main sections; those records state the inspected
+scope. Flyway migration documentation is not a full expand-and-contract
+contract. gh-ost is a MySQL-specific implementation reference, not a general
+zero-downtime guarantee.
+
+Current plan totals: **88 read, 56 planned and 1 blocked** across 145 entries;
+the ledger has **77 records**, including three foundation catalog records.
 These numbers are progress, not completion.
 
 ## Family batches
