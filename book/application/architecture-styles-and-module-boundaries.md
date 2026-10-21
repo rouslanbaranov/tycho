@@ -57,7 +57,7 @@ content_verified_at: null
 
 Choosing between a layered application, a modular monolith, service orientation and microservices is not a vote about modernity. The engineering question is **which responsibilities and ownership boundaries must remain coherent, which changes must be independent, and which costs can the system and team support**. A useful architectural description states how functionality is divided, where data and invariants live, how components interact, what deploys independently, and what can fail independently.
 
-This page establishes those distinctions and reviews the conditions that could justify each style. Detailed extraction/modernization belongs to a separate page; detailed distributed transaction semantics are already researched in [the outbox and idempotency chapter](../distributed/transactional-outbox-and-idempotency.md). Load mathematics belongs to [the queueing page](../volumes/v07/c01/queueing-littles-law.md).
+This page establishes those distinctions and reviews the conditions that could justify each style. Detailed extraction/modernization belongs to a separate page; detailed distributed transaction semantics are already researched in [the outbox and idempotency chapter](../distributed/transactional-outbox-and-idempotency.md). Load mathematics belongs to [the queueing page](../volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md).
 
 ## 1. Separate four different architectural axes
 

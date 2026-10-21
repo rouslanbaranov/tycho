@@ -50,7 +50,7 @@ content_verified_at: null
 
 ## Purpose and question
 
-How do users, request rates, business transactions, concurrency, data volume, skew and growth determine which architecture change can actually increase useful throughput? The answer begins with **offered work and finite resources**, not registered-user counts. The canonical [queueing chapter](../volumes/v07/c01/queueing-littles-law.md) owns the deeper Little's Law derivation.
+How do users, request rates, business transactions, concurrency, data volume, skew and growth determine which architecture change can actually increase useful throughput? The answer begins with **offered work and finite resources**, not registered-user counts. The canonical [queueing chapter](../volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md) owns the deeper Little's Law derivation.
 
 ## 1. Workload profile before technology
 
@@ -100,7 +100,7 @@ Text alternative: adding parallelism can increase capacity and contention simult
 
 ## 4. Vertical, horizontal and partition scaling
 
-**Vertical scaling** gives a process more cores, memory or I/O; it can help a measured single-resource bottleneck but does not remove single-node availability limits. **Horizontal scaling** adds independently serving instances, but multiplies shared downstream connections and coordination. **Partition scaling** changes key ownership and may reduce hotspots while complicating cross-partition transactions, ordering and migration. Compare [pool budgets](../volumes/v03/c05/connection-pools-hikaricp-pgbouncer.md) and [sharding](../volumes/v05/c05/shard-keys-hotspots-and-resharding.md) before adopting either.
+**Vertical scaling** gives a process more cores, memory or I/O; it can help a measured single-resource bottleneck but does not remove single-node availability limits. **Horizontal scaling** adds independently serving instances, but multiplies shared downstream connections and coordination. **Partition scaling** changes key ownership and may reduce hotspots while complicating cross-partition transactions, ordering and migration. Compare [pool budgets](../volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md) and [sharding](../volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md) before adopting either.
 
 A defensible ADR names the limiting resource, workload profile, correctness invariants, proposed change, simpler alternatives, rollback and reversal criterion. A universal threshold such as "microservices after 1,000 RPS" is not supported.
 
@@ -113,7 +113,7 @@ Sweep offered arrival rate and concurrency independently with fixed data snapsho
 | ID | Primary public source and inspected scope | Supports / excludes |
 |---|---|---|
 | E01 | [Gunther, 2008, *A General Theory of Computational Scalability Based on Rational Functions*](https://arxiv.org/abs/0808.1431), abstract and USL model | Analytical capacity model; no fitted Tycho curve |
-| E02 | [Existing Tycho queueing research](../volumes/v07/c01/queueing-littles-law.md) | Little's Law interpretation; no independent empirical verification |
+| E02 | [Existing Tycho queueing research](../volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md) | Little's Law interpretation; no independent empirical verification |
 | E03 | [Existing pool and sharding research](../scaling/README.md) | Downstream coupling and partition trade-offs; no live scaling test |
 
 **Review:** self-authored, not independently reviewed. Synthetic arithmetic only; no actual USL fit, application benchmark or milestone Python CI.

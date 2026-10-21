@@ -170,4 +170,4 @@ An application with a single correct writer, good tested backups, reversible dep
 
 From requirements, name the failure class, correctness contract and tolerable loss. From legacy baselines, identify current single writer, backup reality and old/new compatibility. From a symptom, first distinguish zonal failure from data corruption. Compare backup/restore, pilot, warm standby and active/active with the same workload, permissions and failure/restore exercise. Return an ADR with **measured or explicitly unknown** safety gates; never select an active/active data architecture purely because two regions appear in a topology chart.
 
-Read the companion [deployment/control-plane chapter](../volumes/v08/c03/runtime-placement-and-control-plane.md) for instance placement, service mesh and IaC boundaries.
+Read the companion [deployment/control-plane chapter](../volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md) for instance placement, service mesh and IaC boundaries.

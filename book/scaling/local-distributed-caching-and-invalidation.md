@@ -195,7 +195,7 @@ A useful experiment reports cache hit rate by key popularity, size distribution,
 
 One **synthetic** example: a service handles 1,000 reads/s and has a 90% cache hit ratio, resulting in **100 source reads/s only if every miss leads to exactly one source read**, with no retry/background refresh. This arithmetic does not show that the cache reduces end-to-end latency, saves money or survives stampede. Coalescing, refresh work and write invalidations change the actual workload.
 
-For source size/cost and pooling, see [connection budgets](../volumes/v03/c05/connection-pools-hikaricp-pgbouncer.md) and [queueing](../volumes/v07/c01/queueing-littles-law.md).
+For source size/cost and pooling, see [connection budgets](../volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md) and [queueing](../volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md).
 
 **Insufficient evidence:** "Redis cache hit rate is 95%; can we halve the database instance count and still meet p99 under failover?" Cannot conclude. Need source query mix, cache-loss behavior, cold start, DB capacity without cache, staleness policy, retry/admission and a degraded-mode test.
 

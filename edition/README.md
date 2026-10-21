@@ -2,19 +2,25 @@
 
 Version: **2026.10.1-rc.3**. **#214 is OPEN.** This candidate extends the individually decomposed rc.1 corpus with two new critical-topic chapters and controlled enrichment. It is not a final release. The historical 2026.10.0 snapshot remains unchanged.
 
+## Readable directory migration
+
+All ten volumes and 71 chapters now use the [required descriptive names](../authoring/DIRECTORY-NAMING.md). The [directory map](directory-migration.json) records every old/new directory and all 406 document identities; 339 files moved. [The migration record](../authoring/DIRECTORY_MIGRATION_2026-10-20.md) explains the reversible historical view. Earlier migration/decomposition/enrichment records and their hash assertions remain unchanged. Current outline, frontmatter, identity paths, local links, pilot routes, derived index and inventory use the new paths.
+
+Run `python3 scripts/validate_directory_migration.py` in addition to the commands below. Edition validation, feature premerge and strict knowledge validation apply this gate automatically. Historical one-time assembly/decomposition scripts remain guarded migrations, not commands to regenerate the current path layout.
+
 ## Read the candidate
 
 Start at [book contents](../book/README.md). The candidate contains ten volumes, **71 chapters and 406 canonical documents**: all 389 rc.1 documents plus two chapter landings and fifteen technical pages across both enrichment passes. Twelve existing mechanism owners are deepened, with routes added to eleven existing chapter introductions.
 
 New chapters:
-- [V05/C08 — Object storage](../book/volumes/v05/c08/README.md): resumable transfer/integrity, cross-store publication, access/version/lifecycle.
-- [V08/C08 — Network request paths](../book/volumes/v08/c08/README.md): DNS/discovery and balancing, HTTP/2 and connection draining, hop trust/gateways, edge cache/origin protection.
+- [V05/C08 — Object storage](../book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/README.md): resumable transfer/integrity, cross-store publication, access/version/lifecycle.
+- [V08/C08 — Network request paths](../book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md): DNS/discovery and balancing, HTTP/2 and connection draining, hop trust/gateways, edge cache/origin protection.
 
 [The scope contracts](../authoring/ENRICHMENT_SCOPE_2026-10-20.md) map every approved gap to its owner and acceptance question. No fixed word or page count establishes completion.
 
 ## Second-pass additions
 
-The [second-pass contract](../authoring/SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) adds five independently scoped pages inside existing chapters and three worked architecture projects inside V10/C07. Read the [new routes from book contents](../book/README.md#content-enrichment-candidate--2026101-rc3). Existing chapter count remains 71; all 398 rc.2 document identities remain.
+The [second-pass contract](../authoring/SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) adds five independently scoped pages inside existing chapters and three worked architecture projects inside V10/C07. Read the [new routes from book contents](../book/README.md). Existing chapter count remains 71; all 398 rc.2 document identities remain.
 
 Each project explicitly chooses authority and state paths, rejects alternatives, works through interruptions and recovery, calculates capacity/cost from invented inputs, and states when the recommendation should change. The verification page includes a hand-derived counterexample and proposed oracles; no model checker or implementation harness was executed.
 
@@ -62,6 +68,6 @@ A deliberate `validate_edition.py --write-inventory` may refresh the inventory o
 
 ## Remaining acceptance
 
-Python premerge, strict metadata/edition/conservation validation, the new adversarial tests and Mermaid parsing passed on the exact snapshot in the executed report. The PR stays **draft** for substantive acceptance. Prior rc.1 results retain their historical scope.
+Python premerge, strict metadata/edition/conservation validation, the new adversarial tests and Mermaid parsing passed on the exact snapshot in the executed report. PR #222 is merged by owner instruction; #214 stays open for substantive acceptance. Prior rc.1 results retain their historical scope.
 
 After integration checks, substantive page-level reading must assess explanatory sufficiency, scope, exact support, failure recovery and cross-owner coherence. Keep #214 open until that gate is met. Final publication, retrieval/MCP and deployment do not follow from new files or mechanically passing checks.

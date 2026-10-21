@@ -10,6 +10,7 @@ import math
 import re
 from collections import Counter
 from pathlib import Path
+from directory_paths import HistoricalView
 
 ROOT = Path(__file__).resolve().parents[1]
 STOP = set(("the a an of to at in what how when does can is are with without and "
@@ -30,14 +31,15 @@ def evaluate():
     # This is not a new section-search or answer-quality benchmark.
     manifest_path = ROOT / 'edition/decomposition-manifest.json'
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else None
+    view = HistoricalView(ROOT)
     def route_text(path):
-        record = next((r for r in manifest['source_bodies'] if r['source_path'] == path), None) if manifest else None
+        record = next((r for r in manifest['source_bodies'] if r['source_path'] == view.original(path)), None) if manifest else None
         if record is None:
             return (ROOT / path).read_text()
         from decompose_chapters import extract_blocks
         blocks = {}
         for target in {s['target'] for s in record['sections']}:
-            blocks.update(extract_blocks((ROOT / target).read_text()))
+            blocks.update(extract_blocks(view.path(target).read_text()))
         return ''.join(blocks[(record['source_id'], s['index'])]
                        for s in sorted(record['sections'], key=lambda s: s['index']))
     docs = {path: Counter(terms(route_text(path))) for path in paths}

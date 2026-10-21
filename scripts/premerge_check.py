@@ -27,6 +27,8 @@ def main():
         [sys.executable, "-m", "unittest", "discover", "-s", "tests",
          "-p", "test_tycho*.py", "-v"],
     ]
+    if (ROOT / 'edition/directory-migration.json').is_file():
+        commands.insert(-1, [sys.executable, 'scripts/validate_directory_migration.py'])
     for command in commands:
         print("RUN:", " ".join(command), flush=True)
         subprocess.run(command, cwd=ROOT, check=True)

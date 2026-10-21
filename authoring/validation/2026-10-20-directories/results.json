@@ -1,0 +1,213 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "60ddcda6d82fa59cd39a660261b0846973ad5c0b",
+  "scope": "Full migration payload before archival of these execution logs; final postflight and exact delivered tree are recorded in the PR.",
+  "python": "3.12.14",
+  "packages": {
+    "PyYAML": "6.0.3",
+    "jsonschema": "4.26.0"
+  },
+  "groups": [
+    {
+      "group": "boundary",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/check_boundary.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.492,
+      "log_sha256": "8c468b616fafea777fdc8109e33c4851ff45ca54402ef15d14315e7544df06d4"
+    },
+    {
+      "group": "sources",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/validate_sources.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.058,
+      "log_sha256": "990146c50d27b4ebdaa134d31227085927c74f0307a211e2f0b3a27c20e049ef"
+    },
+    {
+      "group": "catalogue",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/source_catalog.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.033,
+      "log_sha256": "e00e8fe58d26f3b10b8873a0d8f12d97443305af12cb3dc156527c673faedd97"
+    },
+    {
+      "group": "claim-references",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/validate_claim_references.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.028,
+      "log_sha256": "f2b72c94b6cb4461ecb0b31dd53fccd1d25ce7eed6473bdb1ce7c04cb326b5c8"
+    },
+    {
+      "group": "metadata-examples",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/validate_metadata_schemas.py",
+        "examples"
+      ],
+      "exit_code": 0,
+      "seconds": 0.135,
+      "log_sha256": "a6245ed8af86ff935629f1fb34caa4964b6f02d38b4544446a723dba01b46a83"
+    },
+    {
+      "group": "book-metadata",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/validate_book_metadata.py"
+      ],
+      "exit_code": 0,
+      "seconds": 1.928,
+      "log_sha256": "40123a722f6085d47252847ae0f151164b01388b6817de14b69ed1bfe223aac1"
+    },
+    {
+      "group": "strict-knowledge",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/validate_knowledge.py",
+        "--mode",
+        "strict",
+        "--json"
+      ],
+      "exit_code": 0,
+      "seconds": 6.325,
+      "log_sha256": "8a4bd2774e708019f3fc21ddbcfe2ee9ca49ebe634c11097c47ffd6239fdb18e"
+    },
+    {
+      "group": "book-navigation",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/validate_book_navigation.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.494,
+      "log_sha256": "ff2cf5eb15d1c3cc0cea8d900622e92753c322b02e9847fe373e29dbf01b250f"
+    },
+    {
+      "group": "routing-index",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/route_index.py",
+        "check"
+      ],
+      "exit_code": 0,
+      "seconds": 1.14,
+      "log_sha256": "441ba707fc03c9623e086afbfb58b8e8c72c88b5c1dc172cb08be924475cc782"
+    },
+    {
+      "group": "directory-migration",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/validate_directory_migration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 2.55,
+      "log_sha256": "7756dbb247e3f477f744b6e0ef330efd3425f5bc5fd71ae596c7d1180fb6dac7"
+    },
+    {
+      "group": "decomposition",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/validate_decomposition.py"
+      ],
+      "exit_code": 0,
+      "seconds": 1.654,
+      "log_sha256": "af8aa02ffa9c8939e519ff63c29dd5580fb4e5e91e4eb06e3a5e4232a7862239"
+    },
+    {
+      "group": "enrichment",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/validate_enrichment.py"
+      ],
+      "exit_code": 0,
+      "seconds": 1.338,
+      "log_sha256": "335749aed902d4e091f6fd24f84d6bed011ecf56f68d953d71ab7aefa3210c34"
+    },
+    {
+      "group": "edition",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/validate_edition.py"
+      ],
+      "exit_code": 0,
+      "seconds": 6.452,
+      "log_sha256": "ac1d1e25e59866c8065ef400de805405673546c8f7a941d0322f9f025825b76e"
+    },
+    {
+      "group": "m9",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/validate_m9_cases.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.128,
+      "log_sha256": "d5ad9967c74c54a6224bae14c581d20fdc1dd997359edf48e1059963125f31b1"
+    },
+    {
+      "group": "m9-self-test",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/validate_m9_cases.py",
+        "--self-test"
+      ],
+      "exit_code": 0,
+      "seconds": 0.103,
+      "log_sha256": "8ca71abcee3182cd7e1793436d19914399497f953913e443fd6af271be79363e"
+    },
+    {
+      "group": "all-tests",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 26.319,
+      "log_sha256": "1218788ed44190a804ddec23b700402fd2bed6210c335333ac1dea91e5e4f812"
+    },
+    {
+      "group": "feature-premerge",
+      "command": [
+        "/workspace/scratch/0643fda70047/validation-venv/bin/python",
+        "scripts/premerge_check.py",
+        "--branch",
+        "feature/TYCHO-214-assemble-and-release-the-complete-ten-volume-tycho-book",
+        "--issue-title",
+        "[E14-14] Assemble and release the complete ten-volume Tycho book"
+      ],
+      "exit_code": 0,
+      "seconds": 30.013,
+      "log_sha256": "cb56ffc94dab634939060cf17545b3fd9a52d8f346cbea50d7cc3b559fb5e955"
+    }
+  ],
+  "tests": {
+    "run": 242,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "mermaid": {
+    "version": "11.17.2",
+    "total": 221,
+    "passed": 221
+  },
+  "content_snapshot_sha256": "f7d1ac89aad46b7af851694c55efd0e599ab5617c4f71b461f83f6d63607a6e8",
+  "route_snapshot_sha256": "8f51c9d01d8142b56377413a134d874ccfb7f819c384ce9a30f8ffe0748605db"
+}

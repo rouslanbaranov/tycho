@@ -25,6 +25,10 @@ Read [the independence policy](governance/INDEPENDENCE.md) before contributing. 
 
 All repository content is written in English. Reading the book must not require access to private repositories, accounts, internal networks, another book, or an external agent service. External citations support verification; essential explanations belong in the book itself. Public source dependencies must be recorded explicitly.
 
+## Readable book directories
+
+Volumes and chapters now use `vNN-<description>/cNN-<description>/` under `book/volumes`. The [directory migration record](authoring/DIRECTORY_MIGRATION_2026-10-20.md) records all ten volumes, 71 chapters and the retained 406 document identities. #214 remains open for substantive acceptance.
+
 ## Current enrichment candidate — 2026.10.1-rc.3
 
 **[Read the ten-volume manuscript](book/README.md).** The candidate contains 71 chapters and 406 canonical documents. This pass adds configuration rollout, session consistency, offline conflicts, cells/shuffle sharding and protocol verification, plus complete catalogue, collaboration and multitenant-service projects. It retains the earlier object-storage/network additions, twelve deepened pages and all existing identities/source blocks.

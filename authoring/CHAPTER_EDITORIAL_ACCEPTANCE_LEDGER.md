@@ -48,75 +48,75 @@ These numbers are **triage signals, not required word targets**. A relatively sh
 
 | Chapter | Proposed question owner | Unique primary draft | Markdown whitespace-separated count | Editorial acceptance |
 |---|---|---|---:|---|
-| V01/C01 | Problem framing and system boundaries | [Primary draft](../book/volumes/v01/c01/problem-framing-and-system-boundaries.md) | 2,168 | PENDING |
-| V01/C02 | Workload and demand models | [Primary draft](../book/volumes/v01/c02/workload-demand-and-arrival-models.md) | 1,825 | PENDING |
-| V01/C03 | Quality attributes and trade-offs | [Primary draft](../book/volumes/v01/c03/quality-drivers-and-architecture-views.md) | 1,823 | PENDING |
-| V01/C04 | Evidence, hypotheses and architecture experiments | [Primary draft](../book/volumes/v01/c04/architecture-evidence-hypotheses-and-experiments.md) | 1,387 | PENDING |
-| V01/C05 | Architecture descriptions and decision records | [Primary draft](../book/volumes/v01/c05/architecture-views-and-decision-records.md) | 1,421 | PENDING |
-| V01/C06 | Capacity, operational constraints and total cost | [Primary draft](../book/volumes/v01/c06/operational-constraints-and-total-cost-gates.md) | 1,355 | PENDING |
-| V02/C01 | Layered, modular and ports-and-adapters design | [Primary draft](../book/volumes/v02/c01/layered-hexagonal-ports-and-adapters.md) | 1,432 | PENDING |
-| V02/C02 | Domain boundaries, data ownership and contracts | [Primary draft](../book/volumes/v02/c02/domain-boundaries-data-ownership-and-contracts.md) | 1,810 | PENDING |
-| V02/C03 | Modular monolith and internal events | [Primary draft](../book/volumes/v02/c03/modular-monolith-and-internal-events.md) | 1,359 | PENDING |
-| V02/C04 | SOA, microservices and distributed boundaries | [Primary draft](../book/volumes/v02/c04/service-orientation-microservices-and-distribution.md) | 1,488 | PENDING |
-| V02/C05 | Public APIs, HTTP/RPC and compatibility | [Primary draft](../book/volumes/v02/c05/http-rpc-contracts-and-compatibility.md) | 2,357 | PENDING |
-| V02/C06 | Integration adapters and anti-corruption boundaries | [Primary draft](../book/volumes/v02/c06/anti-corruption-adapters-and-coexistence.md) | 1,653 | PENDING |
-| V02/C07 | Authorization boundaries and multitenancy | [Primary draft](../book/volumes/v02/c07/authorization-boundaries-and-multitenancy.md) | 1,354 | PENDING |
-| V03/C01 | Threads, tasks and coordination | [Primary draft](../book/volumes/v03/c01/threads-tasks-structured-coordination.md) | 1,018 | PENDING |
-| V03/C02 | Java execution and virtual threads | [Primary draft](../book/volumes/v03/c02/platform-threads-executors-and-virtual-threads.md) | 1,309 | PENDING |
-| V03/C03 | Reactive streams, demand and cancellation | [Primary draft](../book/volumes/v03/c03/reactor-webflux-r2dbc-and-backpressure.md) | 1,567 | PENDING |
-| V03/C04 | Asynchronous APIs and streaming | [Primary draft](../book/volumes/v03/c04/asynchronous-apis-streaming-and-cancellation.md) | 1,217 | PENDING |
-| V03/C05 | Thread, connection and buffer pools | [Primary draft](../book/volumes/v03/c05/connection-pools-hikaricp-pgbouncer.md) | 1,648 | PENDING |
-| V03/C06 | Memory, GC, CPU and blocking diagnostics | [Primary draft](../book/volumes/v03/c06/cpu-memory-gc-and-blocking-diagnostics.md) | 1,861 | PENDING |
-| V04/C01 | Time, causality and ordering | [Primary draft](../book/volumes/v04/c01/causality-ordering-and-consensus.md) | 1,726 | PENDING |
-| V04/C02 | Replication, consensus and leader changes | [Primary draft](../book/volumes/v04/c02/replication-consensus-and-leader-change.md) | 1,219 | PENDING |
-| V04/C03 | Consistency and distributed transactions | [Primary draft](../book/volumes/v04/c03/transaction-isolation-and-sagas.md) | 1,787 | PENDING |
-| V04/C04 | Retries, idempotency and duplicate effects | [Primary draft](../book/volumes/v04/c04/retries-idempotency-and-ambiguous-effects.md) | 1,458 | PENDING |
-| V04/C05 | Outbox, inbox, sagas and durable workflows | [Primary draft](../book/volumes/v04/c05/outbox-inbox-sagas-and-durable-workflows.md) | 1,487 | PENDING |
-| V04/C06 | Messaging families and delivery contracts | [Primary draft](../book/volumes/v04/c06/messaging-families-and-durable-workflows.md) | 1,564 | PENDING |
-| V04/C07 | Kafka logs, partitions and transactions | [Primary draft](../book/volumes/v04/c07/kafka-partitions-replication-and-contracts.md) | 1,715 | PENDING |
-| V04/C08 | Stateful/event-time stream processing | [Primary draft](../book/volumes/v04/c08/stateful-stream-processing-and-cdc.md) | 1,596 | PENDING |
-| V05/C01 | Relational modeling and transaction isolation | [Primary draft](../book/volumes/v05/c01/relational-modeling-and-transaction-isolation.md) | 1,574 | PENDING |
-| V05/C02 | PostgreSQL MVCC, WAL and recovery | [Primary draft](../book/volumes/v05/c02/postgresql-wal-replication-and-recovery.md) | 1,569 | PENDING |
-| V05/C03 | Query planning, indexes and access paths | [Primary draft](../book/volumes/v05/c03/postgresql-indexes-statistics-and-query-plans.md) | 1,456 | PENDING |
-| V05/C04 | Alternative data models and stores | [Primary draft](../book/volumes/v05/c04/storage-model-alternatives-and-workload-fit.md) | 2,065 | PENDING |
-| V05/C05 | Partitioning, sharding and rebalancing | [Primary draft](../book/volumes/v05/c05/shard-keys-hotspots-and-resharding.md) | 1,526 | PENDING |
-| V05/C06 | Schema evolution, data migration and retention | [Primary draft](../book/volumes/v05/c06/schema-lifecycle-and-semantic-migration.md) | 1,131 | PENDING |
-| V05/C07 | Replication, backups and restore drills | [Primary draft](../book/volumes/v05/c07/backup-restore-pitr-and-recovery-drills.md) | 1,629 | PENDING |
-| V06/C01 | Local and distributed caching | [Primary draft](../book/volumes/v06/c01/local-and-distributed-cache-design.md) | 1,254 | PENDING |
-| V06/C02 | Hot keys, cache stampedes and read amplification | [Primary draft](../book/volumes/v06/c02/cache-invalidation-stampede-and-hot-keys.md) | 1,338 | PENDING |
-| V06/C03 | Lexical full-text indexing and ranking | [Primary draft](../book/volumes/v06/c03/lexical-indexing-bm25-and-sql-fts.md) | 1,337 | PENDING |
-| V06/C04 | Vector embeddings and nearest-neighbor retrieval | [Primary draft](../book/volumes/v06/c04/vector-hnsw-faiss-pgvector.md) | 1,503 | PENDING |
-| V06/C05 | Hybrid retrieval and reranking | [Primary draft](../book/volumes/v06/c05/hybrid-ranking-graph-and-evaluation.md) | 1,711 | PENDING |
-| V06/C06 | Graph relationships and traversal | [Primary draft](../book/volumes/v06/c06/graph-data-models-and-traversal.md) | 1,113 | PENDING |
-| V06/C07 | Retrieval evaluation and index lifecycle | [Primary draft](../book/volumes/v06/c07/retrieval-evaluation-and-index-lifecycle.md) | 1,487 | PENDING |
-| V07/C01 | Queueing, Little's Law and measurement boundaries | [Primary draft](../book/volumes/v07/c01/queueing-littles-law.md) | 3,068 | PENDING |
-| V07/C02 | Contention, saturation and scaling laws | [Primary draft](../book/volumes/v07/c02/contention-saturation-and-scaling-laws.md) | 1,457 | PENDING |
-| V07/C03 | Load-test methods and benchmark validity | [Primary draft](../book/volumes/v07/c03/load-testing-and-benchmark-validity.md) | 1,773 | PENDING |
-| V07/C04 | Tail latency, fan-out and time budgets | [Primary draft](../book/volumes/v07/c04/tail-latency-fanout-and-deadline-budgets.md) | 2,155 | PENDING |
-| V07/C05 | Overload protection and graceful degradation | [Primary draft](../book/volumes/v07/c05/overload-admission-control-and-graceful-degradation.md) | 1,712 | PENDING |
-| V07/C06 | Horizontal/vertical scaling and autoscaling delay | [Primary draft](../book/volumes/v07/c06/autoscaling-lag-and-capacity-limits.md) | 1,794 | PENDING |
-| V07/C07 | Capacity planning and cost/performance trade-offs | [Primary draft](../book/volumes/v07/c07/capacity-planning-and-cost-performance.md) | 1,408 | PENDING |
-| V08/C01 | CI/CD architecture and artifact provenance | [Primary draft](../book/volumes/v08/c01/ci-cd-provenance-and-gitops.md) | 1,489 | PENDING |
-| V08/C02 | Supply chain and release verification | [Primary draft](../book/volumes/v08/c02/sbom-attestation-and-release-verification.md) | 1,841 | PENDING |
-| V08/C03 | VMs, containers, orchestration and serverless | [Primary draft](../book/volumes/v08/c03/runtime-placement-and-control-plane.md) | 1,783 | PENDING |
-| V08/C04 | GitOps, rollout and progressive delivery | [Primary draft](../book/volumes/v08/c04/gitops-canary-and-progressive-rollout.md) | 1,045 | PENDING |
-| V08/C05 | Backward-compatible database change | [Primary draft](../book/volumes/v08/c05/mixed-version-database-compatibility-and-online-ddl.md) | 1,239 | PENDING |
-| V08/C06 | High availability and failure-domain placement | [Primary draft](../book/volumes/v08/c06/availability-zones-placement-and-failure-domains.md) | 1,099 | PENDING |
-| V08/C07 | Multi-region recovery and data reconciliation | [Primary draft](../book/volumes/v08/c07/disaster-recovery-and-recovery-objectives.md) | 1,150 | PENDING |
-| V09/C01 | SLIs, SLOs and error budgets | [Primary draft](../book/volumes/v09/c01/service-level-indicators-objectives-and-alerts.md) | 1,475 | PENDING |
-| V09/C02 | Metrics ingestion, cardinality and time-series storage | [Primary draft](../book/volumes/v09/c02/metric-pipelines-cardinality-and-retention.md) | 1,548 | PENDING |
-| V09/C03 | Distributed tracing and propagation | [Primary draft](../book/volumes/v09/c03/distributed-tracing-context-and-sampling.md) | 1,173 | PENDING |
-| V09/C04 | Logging, audit and lineage | [Primary draft](../book/volumes/v09/c04/logs-audit-and-data-lineage.md) | 1,392 | PENDING |
-| V09/C05 | Identity, authorization and threat modeling | [Primary draft](../book/volumes/v09/c05/identity-authorization-and-isolation.md) | 1,796 | PENDING |
-| V09/C06 | Incident response and operational change | [Primary draft](../book/volumes/v09/c06/incident-response-and-operational-change.md) | 1,856 | PENDING |
-| V09/C07 | Safety, isolation and privacy in agent-accessible services | [Primary draft](../book/volumes/v09/c07/safe-agent-access-and-knowledge-isolation.md) | 1,775 | PENDING |
-| V10/C01 | Architecture requirement and workload profiles | [Primary draft](../book/volumes/v10/c01/requirements-and-workload-architecture-profiles.md) | 2,236 | PENDING |
-| V10/C02 | Baseline analysis for existing software | [Primary draft](../book/volumes/v10/c02/legacy-baseline-and-modernization-evidence.md) | 2,453 | PENDING |
-| V10/C03 | Pattern applicability and contraindications | [Primary draft](../book/volumes/v10/c03/pattern-applicability-and-contraindications.md) | 2,055 | PENDING |
-| V10/C04 | Alternatives, experiments and ADRs | [Primary draft](../book/volumes/v10/c04/architecture-alternatives-experiments-and-adrs.md) | 1,617 | PENDING |
-| V10/C05 | Target architecture versus transition states | [Primary draft](../book/volumes/v10/c05/target-and-transition-architecture-states.md) | 1,762 | PENDING |
-| V10/C06 | Search and question routes for architecture agents | [Primary draft](../book/volumes/v10/c06/question-routes-for-architecture-analysis.md) | 1,985 | PENDING |
-| V10/C07 | Cross-domain worked comparisons and unresolved cases | [Primary draft](../book/volumes/v10/c07/cross-domain-modernization-and-adr-examples.md) | 1,839 | PENDING |
+| V01/C01 | Problem framing and system boundaries | [Primary draft](../book/volumes/v01-requirements-and-architecture/c01-problem-framing/problem-framing-and-system-boundaries.md) | 2,168 | PENDING |
+| V01/C02 | Workload and demand models | [Primary draft](../book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/workload-demand-and-arrival-models.md) | 1,825 | PENDING |
+| V01/C03 | Quality attributes and trade-offs | [Primary draft](../book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md) | 1,823 | PENDING |
+| V01/C04 | Evidence, hypotheses and architecture experiments | [Primary draft](../book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/architecture-evidence-hypotheses-and-experiments.md) | 1,387 | PENDING |
+| V01/C05 | Architecture descriptions and decision records | [Primary draft](../book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/architecture-views-and-decision-records.md) | 1,421 | PENDING |
+| V01/C06 | Capacity, operational constraints and total cost | [Primary draft](../book/volumes/v01-requirements-and-architecture/c06-capacity-operational-constraints-and-total-cost/operational-constraints-and-total-cost-gates.md) | 1,355 | PENDING |
+| V02/C01 | Layered, modular and ports-and-adapters design | [Primary draft](../book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md) | 1,432 | PENDING |
+| V02/C02 | Domain boundaries, data ownership and contracts | [Primary draft](../book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md) | 1,810 | PENDING |
+| V02/C03 | Modular monolith and internal events | [Primary draft](../book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md) | 1,359 | PENDING |
+| V02/C04 | SOA, microservices and distributed boundaries | [Primary draft](../book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md) | 1,488 | PENDING |
+| V02/C05 | Public APIs, HTTP/RPC and compatibility | [Primary draft](../book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md) | 2,357 | PENDING |
+| V02/C06 | Integration adapters and anti-corruption boundaries | [Primary draft](../book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md) | 1,653 | PENDING |
+| V02/C07 | Authorization boundaries and multitenancy | [Primary draft](../book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md) | 1,354 | PENDING |
+| V03/C01 | Threads, tasks and coordination | [Primary draft](../book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md) | 1,018 | PENDING |
+| V03/C02 | Java execution and virtual threads | [Primary draft](../book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md) | 1,309 | PENDING |
+| V03/C03 | Reactive streams, demand and cancellation | [Primary draft](../book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/reactor-webflux-r2dbc-and-backpressure.md) | 1,567 | PENDING |
+| V03/C04 | Asynchronous APIs and streaming | [Primary draft](../book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md) | 1,217 | PENDING |
+| V03/C05 | Thread, connection and buffer pools | [Primary draft](../book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md) | 1,648 | PENDING |
+| V03/C06 | Memory, GC, CPU and blocking diagnostics | [Primary draft](../book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md) | 1,861 | PENDING |
+| V04/C01 | Time, causality and ordering | [Primary draft](../book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causality-ordering-and-consensus.md) | 1,726 | PENDING |
+| V04/C02 | Replication, consensus and leader changes | [Primary draft](../book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md) | 1,219 | PENDING |
+| V04/C03 | Consistency and distributed transactions | [Primary draft](../book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/transaction-isolation-and-sagas.md) | 1,787 | PENDING |
+| V04/C04 | Retries, idempotency and duplicate effects | [Primary draft](../book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md) | 1,458 | PENDING |
+| V04/C05 | Outbox, inbox, sagas and durable workflows | [Primary draft](../book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md) | 1,487 | PENDING |
+| V04/C06 | Messaging families and delivery contracts | [Primary draft](../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md) | 1,564 | PENDING |
+| V04/C07 | Kafka logs, partitions and transactions | [Primary draft](../book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/kafka-partitions-replication-and-contracts.md) | 1,715 | PENDING |
+| V04/C08 | Stateful/event-time stream processing | [Primary draft](../book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md) | 1,596 | PENDING |
+| V05/C01 | Relational modeling and transaction isolation | [Primary draft](../book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-modeling-and-transaction-isolation.md) | 1,574 | PENDING |
+| V05/C02 | PostgreSQL MVCC, WAL and recovery | [Primary draft](../book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md) | 1,569 | PENDING |
+| V05/C03 | Query planning, indexes and access paths | [Primary draft](../book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md) | 1,456 | PENDING |
+| V05/C04 | Alternative data models and stores | [Primary draft](../book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md) | 2,065 | PENDING |
+| V05/C05 | Partitioning, sharding and rebalancing | [Primary draft](../book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md) | 1,526 | PENDING |
+| V05/C06 | Schema evolution, data migration and retention | [Primary draft](../book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md) | 1,131 | PENDING |
+| V05/C07 | Replication, backups and restore drills | [Primary draft](../book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md) | 1,629 | PENDING |
+| V06/C01 | Local and distributed caching | [Primary draft](../book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md) | 1,254 | PENDING |
+| V06/C02 | Hot keys, cache stampedes and read amplification | [Primary draft](../book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md) | 1,338 | PENDING |
+| V06/C03 | Lexical full-text indexing and ranking | [Primary draft](../book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md) | 1,337 | PENDING |
+| V06/C04 | Vector embeddings and nearest-neighbor retrieval | [Primary draft](../book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-hnsw-faiss-pgvector.md) | 1,503 | PENDING |
+| V06/C05 | Hybrid retrieval and reranking | [Primary draft](../book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md) | 1,711 | PENDING |
+| V06/C06 | Graph relationships and traversal | [Primary draft](../book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/graph-data-models-and-traversal.md) | 1,113 | PENDING |
+| V06/C07 | Retrieval evaluation and index lifecycle | [Primary draft](../book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md) | 1,487 | PENDING |
+| V07/C01 | Queueing, Little's Law and measurement boundaries | [Primary draft](../book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md) | 3,068 | PENDING |
+| V07/C02 | Contention, saturation and scaling laws | [Primary draft](../book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-saturation-and-scaling-laws.md) | 1,457 | PENDING |
+| V07/C03 | Load-test methods and benchmark validity | [Primary draft](../book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md) | 1,773 | PENDING |
+| V07/C04 | Tail latency, fan-out and time budgets | [Primary draft](../book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-latency-fanout-and-deadline-budgets.md) | 2,155 | PENDING |
+| V07/C05 | Overload protection and graceful degradation | [Primary draft](../book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md) | 1,712 | PENDING |
+| V07/C06 | Horizontal/vertical scaling and autoscaling delay | [Primary draft](../book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md) | 1,794 | PENDING |
+| V07/C07 | Capacity planning and cost/performance trade-offs | [Primary draft](../book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md) | 1,408 | PENDING |
+| V08/C01 | CI/CD architecture and artifact provenance | [Primary draft](../book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md) | 1,489 | PENDING |
+| V08/C02 | Supply chain and release verification | [Primary draft](../book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/sbom-attestation-and-release-verification.md) | 1,841 | PENDING |
+| V08/C03 | VMs, containers, orchestration and serverless | [Primary draft](../book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md) | 1,783 | PENDING |
+| V08/C04 | GitOps, rollout and progressive delivery | [Primary draft](../book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md) | 1,045 | PENDING |
+| V08/C05 | Backward-compatible database change | [Primary draft](../book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md) | 1,239 | PENDING |
+| V08/C06 | High availability and failure-domain placement | [Primary draft](../book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/availability-zones-placement-and-failure-domains.md) | 1,099 | PENDING |
+| V08/C07 | Multi-region recovery and data reconciliation | [Primary draft](../book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md) | 1,150 | PENDING |
+| V09/C01 | SLIs, SLOs and error budgets | [Primary draft](../book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md) | 1,475 | PENDING |
+| V09/C02 | Metrics ingestion, cardinality and time-series storage | [Primary draft](../book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-pipelines-cardinality-and-retention.md) | 1,548 | PENDING |
+| V09/C03 | Distributed tracing and propagation | [Primary draft](../book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md) | 1,173 | PENDING |
+| V09/C04 | Logging, audit and lineage | [Primary draft](../book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md) | 1,392 | PENDING |
+| V09/C05 | Identity, authorization and threat modeling | [Primary draft](../book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md) | 1,796 | PENDING |
+| V09/C06 | Incident response and operational change | [Primary draft](../book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-response-and-operational-change.md) | 1,856 | PENDING |
+| V09/C07 | Safety, isolation and privacy in agent-accessible services | [Primary draft](../book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/safe-agent-access-and-knowledge-isolation.md) | 1,775 | PENDING |
+| V10/C01 | Architecture requirement and workload profiles | [Primary draft](../book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/requirements-and-workload-architecture-profiles.md) | 2,236 | PENDING |
+| V10/C02 | Baseline analysis for existing software | [Primary draft](../book/volumes/v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md) | 2,453 | PENDING |
+| V10/C03 | Pattern applicability and contraindications | [Primary draft](../book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-applicability-and-contraindications.md) | 2,055 | PENDING |
+| V10/C04 | Alternatives, experiments and ADRs | [Primary draft](../book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md) | 1,617 | PENDING |
+| V10/C05 | Target architecture versus transition states | [Primary draft](../book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md) | 1,762 | PENDING |
+| V10/C06 | Search and question routes for architecture agents | [Primary draft](../book/volumes/v10-decision-support-and-modernization/c06-search-and-question-routes-for-architecture-agents/question-routes-for-architecture-analysis.md) | 1,985 | PENDING |
+| V10/C07 | Cross-domain worked comparisons and unresolved cases | [Primary draft](../book/volumes/v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/cross-domain-modernization-and-adr-examples.md) | 1,839 | PENDING |
 
 ## Required acceptance evidence (per chapter)
 
@@ -144,7 +144,7 @@ A chapter can change from `PENDING` only after all applicable gates have records
 
 ## Focused source verification and manuscript deepening — V05/C01
 
-- Rechecked exact PostgreSQL **17** published sections for [transaction isolation](https://www.postgresql.org/docs/17/transaction-iso.html), [constraints](https://www.postgresql.org/docs/17/ddl-constraints.html), [range types and range constraints](https://www.postgresql.org/docs/17/rangetypes.html), and [`btree_gist` operator classes](https://www.postgresql.org/docs/17/btree-gist.html). Their documented behavior was used to add a **clearly unexecuted** example of an overlapping-booking exclusion constraint to [V05/C01](../book/volumes/v05/c01/relational-modeling-and-transaction-isolation.md). It now has **1,574** whitespace-separated Markdown terms at the new checkpoint (previously 1,224).
+- Rechecked exact PostgreSQL **17** published sections for [transaction isolation](https://www.postgresql.org/docs/17/transaction-iso.html), [constraints](https://www.postgresql.org/docs/17/ddl-constraints.html), [range types and range constraints](https://www.postgresql.org/docs/17/rangetypes.html), and [`btree_gist` operator classes](https://www.postgresql.org/docs/17/btree-gist.html). Their documented behavior was used to add a **clearly unexecuted** example of an overlapping-booking exclusion constraint to [V05/C01](../book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-modeling-and-transaction-isolation.md). It now has **1,574** whitespace-separated Markdown terms at the new checkpoint (previously 1,224).
 - Clarified a PostgreSQL-specific nuance: the Repeatable Read snapshot begins with the first non-transaction-control statement rather than simply at `BEGIN`; serialization anomaly limits and transaction retry requirements were checked against §13.2.
 - **The SQL example was not run.** No `psql` or PostgreSQL server executable was detected in the working runtime (only `pg_config`), and a static Markdown/link check cannot establish SQL correctness. A real PostgreSQL 17 fixture and concurrent-write/restore experiment remain required for operational acceptance.
 - This is a **partial evidence verification**, not comprehensive technical chapter sign-off. Its status remains PENDING. The recorded book-primary aggregate was updated by the measured 350-term difference.

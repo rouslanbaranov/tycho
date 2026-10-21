@@ -9,6 +9,7 @@ from pathlib import Path
 
 from assemble_edition import split, sha
 from route_index import canonical_scan
+from directory_paths import HistoricalView
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -20,10 +21,11 @@ def require(ok, message):
 
 def validate(root=ROOT):
     root = Path(root)
+    view = HistoricalView(root)
     manifest = json.loads((root/'edition/enrichment-manifest.json').read_text())
     require(manifest['schema_version'] == 1, 'enrichment-version')
     index = canonical_scan(root)
-    documents = {d['path']: d for d in index['documents']}
+    documents = {view.original(d['path']): d for d in index['documents']}
     current_ids = {d['id'] for d in index['documents']}
     retained = manifest['retained_document_ids']
     require(len(set(retained)) == len(retained) == manifest['baseline_canonical_documents'],
@@ -41,7 +43,7 @@ def validate(root=ROOT):
     for record in additions:
         path = record['path']
         require(path in documents, 'enrichment-missing-document')
-        text = (root/path).read_text()
+        text = view.read_text(path)
         meta, body = split(text)
         require(sha(text) == record['sha256'], 'enrichment-new-document-drift')
         require(all(meta[k] == record[k] for k in ('id', 'kind', 'parent_id', 'title')),
@@ -59,7 +61,7 @@ def validate(root=ROOT):
     require(len({r['path'] for r in edits}) == len(edits), 'enrichment-duplicate-edit')
     for record in edits:
         require(record['path'] in documents, 'enrichment-missing-owner')
-        text = (root/record['path']).read_text()
+        text = view.read_text(record['path'])
         require(documents[record['path']]['id'] == record['id'], 'enrichment-owner-identity')
         heading = record['addition_heading'] + '\n'
         marker = record['insertion_marker']
@@ -79,7 +81,7 @@ def validate(root=ROOT):
     require({c['id'] for c in outline['chapters']} == {d['id'] for d in chapters},
             'enrichment-outline-membership')
     for c in chapter_records:
-        landing = (root/c['path']).read_text()
+        landing = view.read_text(c['path'])
         children = [r for r in additions if r['parent_id'] == c['id']]
         require(children and all(r['kind'] == 'page' for r in children),
                 'enrichment-empty-chapter')

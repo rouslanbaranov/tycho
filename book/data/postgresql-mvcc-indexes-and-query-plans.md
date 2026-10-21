@@ -109,7 +109,7 @@ PostgreSQL 17 §13.2 documents **READ COMMITTED**, **REPEATABLE READ** and **SER
 - PostgreSQL treats SQL **READ UNCOMMITTED** as **READ COMMITTED**, not as an independent weaker implementation.
 - Row/table/advisory locks remain specific tools for selected contention; locking an apparently relevant row without capturing the whole invariant can still be insufficient.
 
-See the canonical [transaction-isolation and sagas](../volumes/v04/c03/transaction-isolation-and-sagas.md) chapter for cross-boundary invariants. This chapter owns the local storage/query mechanics rather than repeating distributed workflow rules.
+See the canonical [transaction-isolation and sagas](../volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/transaction-isolation-and-sagas.md) chapter for cross-boundary invariants. This chapter owns the local storage/query mechanics rather than repeating distributed workflow rules.
 
 ## 3. Indexes trade read access against writes, storage and maintenance
 
@@ -176,7 +176,7 @@ A candidate index could target `workshop_id` and `created_at`, potentially combi
 
 A platform thread, a virtual thread, a reactive subscriber and a database connection are **different resource budgets**. A connection is occupied while a database operation/transaction needs it; adding more request concurrency does not create more DB execution capacity. A growing connection acquisition queue can dominate p99 even if service CPU is low.
 
-The [queueing chapter](../volumes/v07/c01/queueing-littles-law.md) owns the mean occupancy identity and its stationary limitations; the [Java execution chapter](../volumes/v03/c02/platform-threads-executors-and-virtual-threads.md) covers pools/virtual threads. Do not size the connection pool by copying "number of users" or virtual-thread count. Measure mean and tail connection hold time, transaction length, lock conflicts, query service demand, active slots, DB saturation and the cost of retries.
+The [queueing chapter](../volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md) owns the mean occupancy identity and its stationary limitations; the [Java execution chapter](../volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md) covers pools/virtual threads. Do not size the connection pool by copying "number of users" or virtual-thread count. Measure mean and tail connection hold time, transaction length, lock conflicts, query service demand, active slots, DB saturation and the cost of retries.
 
 ## 6. Failure/recovery and a deliberately unanswered question
 

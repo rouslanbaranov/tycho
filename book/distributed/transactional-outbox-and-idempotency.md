@@ -55,7 +55,7 @@ A user command can commit durable state locally while external notification, eve
 
 **Primary question:** What guarantees can a local state transaction, an outbox record and a downstream event consumer actually enforce—and which end-to-end guarantees still require application-level identity, ordering and reconciliation?
 
-**Read route:** state ownership → local atomic transaction → event relay → ambiguous retries → consumer idempotency → failure/recovery evidence → alternatives and unknowns. Load/queue math belongs to [the queueing chapter](../volumes/v07/c01/queueing-littles-law.md).
+**Read route:** state ownership → local atomic transaction → event relay → ambiguous retries → consumer idempotency → failure/recovery evidence → alternatives and unknowns. Load/queue math belongs to [the queueing chapter](../volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md).
 
 ## 1. Boundaries: why the naive dual write is unsafe
 
