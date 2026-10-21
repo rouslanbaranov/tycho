@@ -114,21 +114,6 @@ Text alternative: a virtual task temporarily uses a carrier. Supported blocking 
 A **proposed, unexecuted comparison** would pin JVM/driver versions and flags, offered demand, downstream quotas and workload skew while comparing platform workers, virtual threads with bounded admission, and nonblocking execution. Report correct completions, p99, connection waits, heap and ambiguous effects. For bounded CPU work a conventional pool may remain preferable; for many independent I/O waits virtual threads can improve programming simplicity; for existing end-to-end reactive protocols nonblocking flow control may suit the contract. See [task lifecycle](../c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md) and [connection budgets](../c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md) for separate ownership.
 
 
-### Version-bound failure contrast: less pinning is not higher downstream capacity
-
-[JEP 444](https://openjdk.org/jeps/444) documents JDK 21 virtual threads as inexpensive waiting tasks, not faster CPU workers. JDK 24's [JEP 491](https://openjdk.org/jeps/491) changed the monitor-pinning behavior discussed for JDK 21, but cannot eliminate an application lock's mutual exclusion, native/foreign-call constraints, or database connection scarcity. The [Netflix JDK 21 incident](../../../cases/netflix-java21-virtual-thread-pinning.md) is historical and cannot establish what happens on a later JVM.
-
-**Original hypothetical:** 1,000 virtual tasks wait for twelve database leases. A driver holds a lease across an unrelated remote call, while a monitor guards one process-local counter. Changing monitor behavior might remove one carrier stall, but cannot increase the twelve-lease downstream budget, enforce that counter across replicas or undo a committed request whose response was lost.
-
-| Symptom | Owner to inspect | Unsafe inference |
-|---|---|---|
-| Carrier pinning drops; connection wait stays high | Database lease lifecycle | Virtual threads fixed throughput |
-| More live tasks, rising heap and p99 | Admission/queue budget | Cheap thread means cheap request |
-| High CPU, few parked tasks | Computation and contention | More virtual threads add cores |
-| Cancellation after external commit | Durable operation identity | Interruption reverses the commit |
-
-**Proposed, not run:** compare platform workers, virtual tasks plus admission, and a truly nonblocking implementation under the *same delivered arrival trace*, pinned JDK and driver revisions, pool size, downstream quota and error injection. Measure correct completions, heap, tail latency, blocked carriers, leased connections and unknown effects. Retain a bounded platform pool for CPU-heavy tasks when appropriate; choose virtual threads for suitable blocking I/O, or reactive execution if flow-controlled asynchronous APIs already fit the system. Detailed parent-child cancellation belongs to [task coordination](../c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md), while [pool budgets](../c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md) owns connection capacity.
-
 ### Canonical-release cross-check — JDK 24 JEP 491 (editorial update, 2026-10-20)
 
 The original 2026-10-18 research note above says the canonical JEP text was not fully accessible *during that research*. This limitation remains part of the historical provenance; it is **not** evidence that JEP 491 was merely proposed. The [Oracle JDK 24 release notes](https://www.oracle.com/java/technologies/javase/24-relnote-issues.html) and [Oracle's Java 24 release announcement](https://blogs.oracle.com/java/the-arrival-of-java-24) explicitly list **JEP 491, Synchronize Virtual Threads without Pinning**, as a JDK 24 feature. The [OpenJDK implementation-review thread](https://mail.openjdk.org/pipermail/nio-dev/2024-November/018122.html) specifies that the monitor fix addressed default `LM_LIGHTWEIGHT` and `LM_MONITOR` locking modes, **but not legacy `LM_LEGACY` mode** in that review. The [canonical JEP](https://openjdk.org/jeps/491) remains the normative feature reference; its full page could not be independently retrieved in this editorial environment, so this verification explicitly rests on the two linked release announcements and the dated OpenJDK implementation discussion.

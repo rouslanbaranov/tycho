@@ -64,7 +64,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](cross-domain-modernization-and-adr-examples.md) | How does a decision stay falsifiable and attributable to its sources? |
+| [Integrated decision](cross-domain-modernization-and-adr-examples.md) | How does a decision stay falsifiable and attributable to its sources? |
 | [Workload and runtime modernization comparisons](workload-runtime.md) | Which bottleneck and migration invariant distinguish the first alternatives? |
 | [Data, availability and hard feasibility gates](data-availability.md) | Which authoritative-state and recovery assumptions reject an appealing design? |
 | [Worked ADR and unresolved conclusions](worked-adr.md) | How is a complete recommendation kept falsifiable and source-scoped? |

@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "migration"
-summary: "Integrated question, original scenario and transfer limits for Cross-domain worked comparisons and unresolved cases. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for Cross-domain worked comparisons and unresolved cases. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "How does a decision stay falsifiable and attributable to its sources?"
@@ -53,7 +53,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -61,7 +61,7 @@ content_verified_at: null
 
 # Cross-domain architecture decisions and modernization under constraints
 
-> Tycho E14-12 [issue #90](https://github.com/rouslanbaranov/tycho/issues/90), original synthesis of existing canonical models and technical chapters, 2026-10-19. All scenarios are fictional and all outcomes conditional. No live modernization project, benchmark, review board decision or independent domain review is claimed.
+> Tycho E14-12 [issue #90](https://github.com/rouslanbaranov/tycho/issues/90), original synthesis of existing canonical models and technical chapters, 2026-10-19. All scenarios are fictional and all outcomes conditional. No live modernization project, benchmark, review board decision or independent domain review is claimed. The content_review field retains the decomposition-era draft state; no independent acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.0ce5d0aaf63f425ebf556ea97e2d24a9:0 -->

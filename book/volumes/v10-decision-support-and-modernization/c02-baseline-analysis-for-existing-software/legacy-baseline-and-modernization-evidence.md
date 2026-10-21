@@ -50,7 +50,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -72,7 +72,7 @@ The answer to "which architecture should replace a legacy system?" may legitimat
 <!-- tycho-question-source:tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1:10 -->
 ## Engineering walkthrough — Observed legacy baseline versus hypothetical future benefit
 
-**Original fictional estate:** a Java catalogue imports vendor records nightly to PostgreSQL while exposing lookup APIs. A planned microservice extraction claims it will shorten imports; yet no current SQL timing, lock and pool profile, startup time, replay correctness or team release-lead-time data has been collected.
+**Original fictional estate:** a catalogue service imports vendor records nightly into one relational database while exposing lookup APIs. The detailed case deliberately leaves language and database product unspecified. A planned microservice extraction claims it will shorten imports; yet no current query timing, lock and pool profile, startup time, replay correctness or team release-lead-time data has been collected.
 
 | Baseline question | Required observation | Candidate assumption, not yet fact |
 |---|---|---|

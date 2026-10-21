@@ -62,12 +62,12 @@ Severity:
 | Decision pages | 6 |
 | Navigation pages | 97 |
 | Atlas pages | 12 |
-| Sound | 317 |
+| Sound | 322 |
 | Sound with bounded findings | 93 |
-| Needs remediation | 8 |
+| Needs remediation | 3 |
 | Blocked | 1 |
 | Pages with findings | 141 |
-| Findings | 111 (102 low, 9 medium, 0 high) |
+| Findings | 106 (102 low, 4 medium, 0 high) |
 
 The blocked page is V11/C06, where Polyglot Persistence remains uncarded because no
 technical owner exists. Five gates remain open: owner acceptance, the blocked Polyglot
@@ -89,12 +89,12 @@ The owner separately confirmed that human review passed; see
   source ledgers and older navigation pages that no longer matches the current tree.
 - 22 navigation findings identify case or supporting pages with no internal route to
   their parent, a decision guide or a source-read record.
-- 4 missing-item findings include pages that promise an original walkthrough or
+- 3 missing-item findings include pages that promise an original walkthrough or
   transfer limits that the page does not contain.
-- 6 contradictory findings include duplicate or mutually inconsistent sections and
+- 5 contradictory findings include duplicate or mutually inconsistent sections and
   naming or column mismatches in worked examples.
-- 11 unsupported findings identify page claims without on-page source linkage.
-- 4 duplicate findings restate the same case or claims in two sections.
+- 10 unsupported findings identify page claims without on-page source linkage.
+- 2 duplicate findings restate the same case or claims in two sections.
 - One shallow finding records missing inline evidence links in a technical page.
 
 These are bounded editorial findings. They do not revoke the owner's earlier acceptance
@@ -102,7 +102,7 @@ of the 69 primary manuscripts; they identify remediation work against the exact 
 
 ## Remediation and external gates
 
-The 8 `needs-remediation` pages and the other findings remain work items. The audit
+The 3 `needs-remediation` pages and the other findings remain work items. The audit
 records each remediation or gate; it does not claim that all findings were fixed.
 
 - Human review: passed per owner confirmation on 2026-10-21; no per-page reviewer
