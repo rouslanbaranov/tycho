@@ -55,7 +55,7 @@ A release can be deployed successfully yet fail when old and new binaries coexis
 
 **Primary question:** How should rolling, canary and blue/green deployments be coordinated with schema, event and API changes so that a failed rollout is recoverable without making unsupported rollback promises?
 
-Companion chapters: [CI/CD identity and GitOps](../volumes/v08/c01/ci-cd-provenance-and-gitops.md), [safe rollout and recovery](safe-rollout-and-recovery.md), and [target-versus-transition architecture](../../authoring/models/target-transition-architecture.md).
+Companion chapters: [CI/CD identity and GitOps](../volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md), [safe rollout and recovery](safe-rollout-and-recovery.md), and [target-versus-transition architecture](../../authoring/models/target-transition-architecture.md).
 
 ## 1. Four distinct deployment modes
 

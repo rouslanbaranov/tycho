@@ -219,7 +219,7 @@ For an **invented** capacity thought experiment:
 - In case B completes only **90/s** while all 120/s are admitted, backlog grows by **30/s**, or **900** operations over 30 seconds, excluding retries/rejections.
 - A recovery design may require tested spare capacity, throttling, read-only fallback, priority isolation or degraded user outcomes; it cannot assume replicas automatically grant headroom.
 
-This arithmetic is deliberately synthetic. Queue/backlog definitions are owned by [the researched queueing page](../volumes/v07/c01/queueing-littles-law.md). No actual region has been measured.
+This arithmetic is deliberately synthetic. Queue/backlog definitions are owned by [the researched queueing page](../volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md). No actual region has been measured.
 
 ## 7. Alternatives and the conditions that reverse a choice
 

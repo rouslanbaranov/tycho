@@ -150,3 +150,7 @@ Eight original pages include explicit assumptions, counterexamples, failure/reco
 ## 2026-10-20 — Recovered Python and Mermaid execution
 
 The environment recovered and the exact PR #222 snapshot was checked locally: 16/16 Python groups, 233/233 tests with zero skips, and 221/221 Mermaid syntax parses passed. Python reproduced the 406-document candidate index byte for byte. [The executed report](PYTHON_MERMAID_VALIDATION_2026-10-20.md) pins the commit/tree and archives actual logs. No technical defect needed repair. Documentation status is reconciled; substantive acceptance remains pending and #214 stays open.
+
+## 2026-10-20 — Readable volume and chapter directories
+
+The owner authorized physical directory migration after the naming requirements were merged. The explicit map covers ten volumes, 71 chapters and all 406 canonical IDs; 339 files move. Only local path segments and current path metadata change. Every canonical file reconstructs the exact baseline bytes through inverse path transformation; external URLs and fragments retain their spelling. Four historical migration/decomposition/enrichment records retain their original bytes. New validation and nine negative/coverage tests preserve those boundaries. [Migration and validation record](DIRECTORY_MIGRATION_2026-10-20.md). #214 remains open.

@@ -12,6 +12,7 @@ from validate_decomposition import validate
 from assemble_edition import split
 from frontmatter_generate import render
 from decompose_chapters import extract_blocks,rebase
+from directory_paths import HistoricalView
 
 
 class EditionMigrationTests(unittest.TestCase):
@@ -22,9 +23,12 @@ class EditionMigrationTests(unittest.TestCase):
         (self.root/'edition').mkdir()
         for name in ('decomposition-plan.json','decomposition-manifest.json','migration.json'):
             shutil.copyfile(ROOT/'edition'/name,self.root/'edition'/name)
+        if (ROOT/'edition/directory-migration.json').exists():
+            shutil.copyfile(ROOT/'edition/directory-migration.json',self.root/'edition/directory-migration.json')
+        self.view=HistoricalView(self.root)
         self.plan=json.loads((self.root/'edition/decomposition-plan.json').read_text())
         self.chapter=self.plan['chapters'][0]
-        self.page=self.root/self.chapter['pages'][0]['path']
+        self.page=self.view.path(self.chapter['pages'][0]['path'])
 
     def check(self):
         return validate(self.root)
@@ -67,23 +71,23 @@ class EditionMigrationTests(unittest.TestCase):
     def test_removed_new_walkthrough_is_rejected(self):
         c=next(c for c in self.plan['chapters'] if c['code']=='V04/C05')
         p=next(p for p in c['pages'] if p['editorial_addition'])
-        f=self.root/p['path'];f.write_text(f.read_text().replace(p['editorial_addition'],'Removed'))
+        f=self.view.path(p['path']);f.write_text(f.read_text().replace(p['editorial_addition'],'Removed'))
         with self.assertRaisesRegex(ValueError,'missing-editorial-deepening'):self.check()
 
     def test_external_citation_change_is_rejected(self):
         manifest=json.loads((self.root/'edition/decomposition-manifest.json').read_text())
         record=manifest['source_bodies'][0]
-        target=next(s['target'] for s in record['sections'] if any('https://' in b for b in extract_blocks((self.root/s['target']).read_text()).values()))
-        p=self.root/target;p.write_text(p.read_text().replace('https://','http://'))
+        target=next(s['target'] for s in record['sections'] if any('https://' in b for b in extract_blocks(self.view.path(s['target']).read_text()).values()))
+        p=self.view.path(target);p.write_text(p.read_text().replace('https://','http://'))
         with self.assertRaisesRegex(ValueError,'altered-source-payload'):self.check()
 
     def test_original_provenance_is_protected(self):
-        p=self.root/self.chapter['source_page'];m,b=split(p.read_text())
+        p=self.view.path(self.chapter['source_page']);m,b=split(p.read_text())
         m['evidence_scope']['status']='independently-verified';p.write_text(render(m)+b)
         with self.assertRaisesRegex(ValueError,'altered-original-provenance'):self.check()
 
     def test_missing_chapter_source_ledger_is_rejected(self):
-        p=self.root/self.chapter['chapter_path']
+        p=self.view.path(self.chapter['chapter_path'])
         p.write_text(p.read_text().replace('## Chapter source ledger','## Removed ledger route'))
         with self.assertRaisesRegex(ValueError,'missing-chapter-ledger'):self.check()
 

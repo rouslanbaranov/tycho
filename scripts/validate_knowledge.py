@@ -55,6 +55,8 @@ def ordered_checks(root, mode):
     if mode not in {"available", "strict"}:
         raise ValueError("mode must be available or strict")
     checks = list(CORE)
+    if (root / 'edition/directory-migration.json').is_file():
+        checks.append(('directory-layout', ['scripts/validate_directory_migration.py']))
     missing = []
     index = root / "generated/route-index.v1.json"
     if index.is_file():

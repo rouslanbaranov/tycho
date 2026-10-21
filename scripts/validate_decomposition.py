@@ -6,6 +6,7 @@ from collections import Counter
 
 from assemble_edition import split,sha
 from decompose_chapters import extract_blocks,normalized
+from directory_paths import HistoricalView
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -16,6 +17,7 @@ def require(ok,message):
 
 def validate(root=ROOT):
     root=Path(root)
+    view=HistoricalView(root)
     plan=json.loads((root/'edition/decomposition-plan.json').read_text())
     manifest=json.loads((root/'edition/decomposition-manifest.json').read_text())
     migration=json.loads((root/'edition/migration.json').read_text())
@@ -25,7 +27,7 @@ def validate(root=ROOT):
     routes={(r['old_path'],r['old_fragment']):(r['new_path'],r['new_fragment']) for r in manifest['fragment_routes']}
     all_blocks={};metadata={};texts={}
     for path in (root/'book').rglob('*.md'):
-        relative=path.relative_to(root).as_posix();text=path.read_text()
+        relative=view.original(path.relative_to(root).as_posix());text=view.read_text(relative)
         meta,_=split(text);metadata[relative]=meta;texts[relative]=text
         for key,value in extract_blocks(text).items():
             require(key not in all_blocks,'duplicate-source-payload')

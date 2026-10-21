@@ -11,7 +11,7 @@ Book volume and chapter directories use **<number>-<description>**. Retain the e
 | Volume | `vNN-<description>` | `v01-requirements-and-architecture` |
 | Chapter within its volume | `cNN-<description>` | `c01-problem-framing` |
 
-A complete example path is `book/volumes/v01-requirements-and-architecture/c01-problem-framing/README.md`. This is a naming example, not a link to an already migrated directory.
+A complete example path is `book/volumes/v01-requirements-and-architecture/c01-problem-framing/README.md`. The current [example chapter](../book/volumes/v01-requirements-and-architecture/c01-problem-framing/README.md) follows this layout.
 
 The chapter ordinal is local to its parent volume. Preserve the existing reading order and numbering. Do not use bare `v01` or `c01` for new directories. The landing file remains `README.md`; descriptive technical page filenames remain below the chapter.
 
@@ -28,7 +28,7 @@ Human-facing codes such as `V01/C01` can remain short. Persistent document IDs r
 
 ## Existing corpus and migration acceptance
 
-The current corpus uses numbered directories under `book/volumes`. Those existing paths are a pending migration under #214, not proof that the new naming requirement has already been implemented. This requirements change adds no directory moves or placeholder book pages. Existing canonical paths remain authoritative until an atomic migration is delivered.
+All ten volumes and 71 chapters now use descriptive directories. The [explicit directory migration](../edition/directory-migration.json) records every directory and all 406 document identities, including 339 moved documents. [The migration record](DIRECTORY_MIGRATION_2026-10-20.md) describes conservation and validation. These paths are canonical; no duplicate canonical tree remains under the earlier numbered-only names.
 
 Before declaring the directory migration complete:
 
@@ -39,4 +39,4 @@ Before declaring the directory migration complete:
 5. Regenerate the routing index and edition inventory from the migrated canonical files. Verify complete membership, ID stability, numbering, path-map coverage, unique destinations, local files/anchors and unchanged source-block meaning.
 6. Run the relevant Python premerge, schema, navigation, conservation and edition checks, applicable tests and Mermaid syntax parsing on the exact migrated tree. A requirements-only check cannot be reported as a completed migration.
 
-No new naming validator is introduced by this document. Existing validation success does not establish conformance of the old numbered directories to this new policy. #214 remains open while physical migration and the remaining edition acceptance work are outstanding.
+`python3 scripts/validate_directory_migration.py` validates naming, complete path/identity membership, retired-path absence, protected historical manifests and reversible path-only content changes. The normal feature premerge and strict knowledge runners include this gate when the migration record is present; edition validation also applies it. #214 remains open for the remaining substantive edition acceptance.

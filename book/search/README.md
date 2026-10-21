@@ -72,11 +72,11 @@ Text alternative: exact tokens and vector similarity provide candidate sets, hyb
 
 | Question | Technical page | Evidence |
 |---|---|---|
-| How do inverted indexes, BM25, PostgreSQL FTS and Lucene differ? | [Lexical indexing, ranking and SQL FTS](../volumes/v06/c03/lexical-indexing-bm25-and-sql-fts.md) | PostgreSQL 17 FTS, Lucene 10.3 BM25 API |
-| What are exact vs approximate vector search, HNSW, IVF, Faiss and pgvector? | [Vector/ANN and filtered retrieval](../volumes/v06/c04/vector-hnsw-faiss-pgvector.md) | Official pgvector/Faiss index guides; versioned caveats |
-| When is a graph model and bounded traversal preferable to indexed relational joins? | [Graph data models and traversal](../volumes/v06/c06/graph-data-models-and-traversal.md) | V06/C06; graph architectures as a theoretical topic only, not a Tycho knowledge graph |
-| How do relevance judgments, index freshness and answer evidence determine search quality? | [Retrieval evaluation and index lifecycle](../volumes/v06/c07/retrieval-evaluation-and-index-lifecycle.md) | V06/C07; NIST TREC/BEIR methods; no benchmark/index built |
-| When does hybrid retrieval and graph expansion actually improve answer quality? | [Hybrid, graph and evaluation](../volumes/v06/c05/hybrid-ranking-graph-and-evaluation.md) | Elasticsearch RRF, Neo4j graph, pgvector and explicit evaluation protocol |
+| How do inverted indexes, BM25, PostgreSQL FTS and Lucene differ? | [Lexical indexing, ranking and SQL FTS](../volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md) | PostgreSQL 17 FTS, Lucene 10.3 BM25 API |
+| What are exact vs approximate vector search, HNSW, IVF, Faiss and pgvector? | [Vector/ANN and filtered retrieval](../volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-hnsw-faiss-pgvector.md) | Official pgvector/Faiss index guides; versioned caveats |
+| When is a graph model and bounded traversal preferable to indexed relational joins? | [Graph data models and traversal](../volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/graph-data-models-and-traversal.md) | V06/C06; graph architectures as a theoretical topic only, not a Tycho knowledge graph |
+| How do relevance judgments, index freshness and answer evidence determine search quality? | [Retrieval evaluation and index lifecycle](../volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md) | V06/C07; NIST TREC/BEIR methods; no benchmark/index built |
+| When does hybrid retrieval and graph expansion actually improve answer quality? | [Hybrid, graph and evaluation](../volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md) | Elasticsearch RRF, Neo4j graph, pgvector and explicit evaluation protocol |
 
 ## Cross-domain context
 

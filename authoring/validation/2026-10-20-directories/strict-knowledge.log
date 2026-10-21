@@ -1,0 +1,105 @@
+RUN source-register scripts/validate_sources.py
+PASS: 247 source records, mandatory IDs, cross-references and catalogue freshness
+RUN source-catalogue scripts/source_catalog.py --check
+Source catalogue matches the canonical register
+RUN public-repo-lock scripts/public_repo_snapshots.py check
+PASS: locked repositories and generated catalogue match
+RUN claim-provenance scripts/validate_claim_references.py
+PASS: traceable claims, inventory IDs, evidence status and pinned references {'claims': 3, 'sources': 247, 'pinned_repositories': 2}
+RUN document-observations scripts/document_observations.py validate
+PASS observation records: 0
+RUN research-checkpoints scripts/research_checkpoints.py check
+PASS: current research checkpoint report
+RUN strict-json-schemas scripts/validate_metadata_schemas.py examples
+PASS: schema definitions and valid examples checked: 4
+RUN book-metadata scripts/validate_book_metadata.py
+{
+  "documents": 406,
+  "coverage": "complete",
+  "topics": 17,
+  "snapshot_sha256": "8f51c9d01d8142b56377413a134d874ccfb7f819c384ce9a30f8ffe0748605db",
+  "scope": "structural metadata and registry references, not independent content acceptance"
+}
+RUN book-navigation scripts/validate_book_navigation.py
+Checked 406 book pages; issues 0
+RUN directory-layout scripts/validate_directory_migration.py
+{
+  "volumes": 10,
+  "chapters": 71,
+  "canonical_documents": 406,
+  "moved_documents": 339,
+  "protected_historical_manifests": 4,
+  "scope": "reversible path-only edits and retained identities; not substantive acceptance"
+}
+RUN routing-index scripts/route_index.py check
+PASS: 8f51c9d01d8142b56377413a134d874ccfb7f819c384ce9a30f8ffe0748605db complete
+{
+  "outcome": "passed",
+  "mode": "strict",
+  "contract_versions": {
+    "sources/register.json": 2,
+    "sources/public-repositories.lock.json": 1,
+    "sources/claim-references.json": 1,
+    "sources/document-observations.json": 1,
+    "sources/research-events.json": 1
+  },
+  "checks": [
+    {
+      "name": "source-register",
+      "exit_code": 0,
+      "status": "passed"
+    },
+    {
+      "name": "source-catalogue",
+      "exit_code": 0,
+      "status": "passed"
+    },
+    {
+      "name": "public-repo-lock",
+      "exit_code": 0,
+      "status": "passed"
+    },
+    {
+      "name": "claim-provenance",
+      "exit_code": 0,
+      "status": "passed"
+    },
+    {
+      "name": "document-observations",
+      "exit_code": 0,
+      "status": "passed"
+    },
+    {
+      "name": "research-checkpoints",
+      "exit_code": 0,
+      "status": "passed"
+    },
+    {
+      "name": "strict-json-schemas",
+      "exit_code": 0,
+      "status": "passed"
+    },
+    {
+      "name": "book-metadata",
+      "exit_code": 0,
+      "status": "passed"
+    },
+    {
+      "name": "book-navigation",
+      "exit_code": 0,
+      "status": "passed"
+    },
+    {
+      "name": "directory-layout",
+      "exit_code": 0,
+      "status": "passed"
+    },
+    {
+      "name": "routing-index",
+      "exit_code": 0,
+      "status": "passed"
+    }
+  ],
+  "missing_gates": [],
+  "warning": "Structural validation is NOT independent semantic/source review."
+}

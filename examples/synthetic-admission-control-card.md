@@ -2,7 +2,7 @@
 
 > Original Tycho illustrative case for [issue #19](https://github.com/rouslanbaranov/tycho/issues/19). Classification: resilience / backpressure mechanism. Card ID: `resilience.admission.boundary`, revision 0.1. All numbers below are invented. No service or load generator was benchmarked; no independent human approval is claimed.
 
-**Canonical mechanism:** [Queueing, Little's Law and workload boundaries](../book/volumes/v07/c01/queueing-littles-law.md). Related: [requirements profile](../authoring/models/requirements-workload-profile.md), [pattern card contract](../authoring/models/pattern-applicability-card.md). This card guides a **decision**, rather than repeating the full mechanism chapter.
+**Canonical mechanism:** [Queueing, Little's Law and workload boundaries](../book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md). Related: [requirements profile](../authoring/models/requirements-workload-profile.md), [pattern card contract](../authoring/models/pattern-applicability-card.md). This card guides a **decision**, rather than repeating the full mechanism chapter.
 
 ## The decision question
 
@@ -72,9 +72,9 @@ Prepare an open-model generator that tracks the intended schedule and actually i
 
 | ID | Evidence and inspected location | Supports / excludes |
 |---|---|---|
-| P01 | [Tycho canonical queueing chapter](../book/volumes/v07/c01/queueing-littles-law.md), *Partial failure, saturation and recovery* and its public-source ledger | Synthetic backlog arithmetic and the need to count rejected demand; no live workload |
+| P01 | [Tycho canonical queueing chapter](../book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md), *Partial failure, saturation and recovery* and its public-source ledger | Synthetic backlog arithmetic and the need to count rejected demand; no live workload |
 | P02 | [Google SRE book, Handling Overload](https://sre.google/sre-book/handling-overload/), *Client-Side Throttling*, *Criticality* and *Deciding to Retry*; source inspected 2026-10-19 | Real-world motivation for overload protection, criticality and controlled retries; not proof for the hypothetical API |
 | P03 | [Grafana k6, Open and closed models](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/), *Open Model* and *Closed Model*; living docs inspected 2026-10-19 | Load-generation model distinction; not a claim that a test actually ran |
-| P04 | [Tycho synthetic capacity model](../book/volumes/v07/c01/queueing-littles-law.md), original bounded example | Conceptual method; not empirical verification of an admission policy |
+| P04 | [Tycho synthetic capacity model](../book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md), original bounded example | Conceptual method; not empirical verification of an admission policy |
 
 **Acceptance boundary:** This card demonstrates classification, prerequisites, contraindications, alternatives, one scenario-local set of assumptions and falsifiability. The card's adoption result is **insufficient evidence pending workload and correctness measurements**. It does not implement rate limiting, modify a service, run a benchmark, approve a pattern library or validate a complete M1 decision engine.

@@ -59,9 +59,9 @@ The candidate contains ten volumes, 71 chapters and 406 canonical documents. The
 
 | New mechanism | Worked integration |
 | --- | --- |
-| [Configuration rollout](volumes/v08/c04/configuration-rollout.md) and [cells/shuffle sharding](volumes/v08/c06/cells-shuffle-sharding.md) | [A multitenant service under overload](volumes/v10/c07/multitenant-project.md) |
-| [Session observations](volumes/v04/c02/session-consistency.md) and [offline conflicts](volumes/v04/c03/multiwriter-conflicts.md) | [Offline collaboration](volumes/v10/c07/collaboration-project.md) |
-| [Protocol correctness verification](volumes/v01/c04/protocol-correctness.md) | [A large-file catalogue](volumes/v10/c07/catalogue-project.md) |
+| [Configuration rollout](volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md) and [cells/shuffle sharding](volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md) | [A multitenant service under overload](volumes/v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/multitenant-project.md) |
+| [Session observations](volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md) and [offline conflicts](volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/multiwriter-conflicts.md) | [Offline collaboration](volumes/v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/collaboration-project.md) |
+| [Protocol correctness verification](volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/protocol-correctness.md) | [A large-file catalogue](volumes/v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/catalogue-project.md) |
 
 Every project states its synthetic workload, authority, normal/failure/recovery paths, alternatives, cost arithmetic and conditions that reverse the choice. Source versions, actual read scopes and unknowns remain explicit. See the [second-pass contract](../authoring/SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) and [validation record](../authoring/SECOND_ENRICHMENT_VALIDATION_2026-10-20.md).
 
@@ -71,16 +71,16 @@ The execution environment is available again: 16/16 Python groups, 233/233 tests
 
 | Volume | Chapters | Learning outcome |
 |---|---|---|
-| [V01 — Requirements, quality attributes and architecture fundamentals](volumes/v01/README.md) | 6 | A reasoned requirements contract that distinguishes offered demand, qualities, hard constraints, observed data and speculative improvements. |
-| [V02 — Application boundaries and interaction contracts](volumes/v02/README.md) | 7 | Map ownership and interface semantics before splitting deployment: modular monolith, services and adapters are conditional alternatives; tenancy crosses every boundary. |
-| [V03 — Execution models, concurrency and flow control](volumes/v03/README.md) | 6 | A resource-budget view tracing request admission, execution/task/connection pools and cancellation to the external effect boundary. |
-| [V04 — Distributed coordination and event integration](volumes/v04/README.md) | 8 | A failure trace from request to durable state to event consumer: causal order, retry identity and transaction scope are different promises. |
-| [V05 — Data models, engines and lifecycle](volumes/v05/README.md) | 8 | A data-authority and lifecycle model from constraint/index/WAL through partitioning, migration and verified restore; storage engine is not an architecture shortcut. |
-| [V06 — Caching, indexing and information retrieval](volumes/v06/README.md) | 7 | Clarify authority/cache/projection/search separation; show lexical, vector, hybrid and graph fits with quantitative evaluation and failure boundaries. |
-| [V07 — Performance, scale and resilience under load](volumes/v07/README.md) | 7 | A capacity envelope joining Little's Law, offered load, contention, tails, overload controls, autoscaling lag and cost with falsification. |
-| [V08 — Delivery, deployment and disaster recovery](volumes/v08/README.md) | 8 | A cutover chain linking artifact trust, mixed versions, deployments, failure domains, data authority and recovery after the no-return point. |
-| [V09 — Observability, security and operational architecture](volumes/v09/README.md) | 7 | A user-visible truth/accountability loop: metrics, traces, audit, security and incident recovery have different completeness and trust guarantees. |
-| [V10 — Decision support and modernization playbooks](volumes/v10/README.md) | 7 | A full legacy-to-target-to-transition ADR with alternatives, reversible and irreversible stages, costs, authorization, evidence and an explicit unknown/refusal outcome. |
+| [V01 — Requirements, quality attributes and architecture fundamentals](volumes/v01-requirements-and-architecture/README.md) | 6 | A reasoned requirements contract that distinguishes offered demand, qualities, hard constraints, observed data and speculative improvements. |
+| [V02 — Application boundaries and interaction contracts](volumes/v02-application-boundaries-and-contracts/README.md) | 7 | Map ownership and interface semantics before splitting deployment: modular monolith, services and adapters are conditional alternatives; tenancy crosses every boundary. |
+| [V03 — Execution models, concurrency and flow control](volumes/v03-execution-concurrency-and-flow-control/README.md) | 6 | A resource-budget view tracing request admission, execution/task/connection pools and cancellation to the external effect boundary. |
+| [V04 — Distributed coordination and event integration](volumes/v04-distributed-coordination-and-events/README.md) | 8 | A failure trace from request to durable state to event consumer: causal order, retry identity and transaction scope are different promises. |
+| [V05 — Data models, engines and lifecycle](volumes/v05-data-models-engines-and-lifecycle/README.md) | 8 | A data-authority and lifecycle model from constraint/index/WAL through partitioning, migration and verified restore; storage engine is not an architecture shortcut. |
+| [V06 — Caching, indexing and information retrieval](volumes/v06-caching-indexing-and-retrieval/README.md) | 7 | Clarify authority/cache/projection/search separation; show lexical, vector, hybrid and graph fits with quantitative evaluation and failure boundaries. |
+| [V07 — Performance, scale and resilience under load](volumes/v07-performance-scale-and-resilience/README.md) | 7 | A capacity envelope joining Little's Law, offered load, contention, tails, overload controls, autoscaling lag and cost with falsification. |
+| [V08 — Delivery, deployment and disaster recovery](volumes/v08-delivery-deployment-and-recovery/README.md) | 8 | A cutover chain linking artifact trust, mixed versions, deployments, failure domains, data authority and recovery after the no-return point. |
+| [V09 — Observability, security and operational architecture](volumes/v09-observability-security-and-operations/README.md) | 7 | A user-visible truth/accountability loop: metrics, traces, audit, security and incident recovery have different completeness and trust guarantees. |
+| [V10 — Decision support and modernization playbooks](volumes/v10-decision-support-and-modernization/README.md) | 7 | A full legacy-to-target-to-transition ADR with alternatives, reversible and irreversible stages, costs, authorization, evidence and an explicit unknown/refusal outcome. |
 
 ## How to read
 
