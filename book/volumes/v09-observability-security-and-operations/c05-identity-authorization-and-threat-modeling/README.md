@@ -62,7 +62,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](identity-authorization-and-isolation.md) | Where do trust boundaries and permission checks have to sit? |
+| [Integrated decision](identity-authorization-and-isolation.md) | Where do trust boundaries and permission checks have to sit? |
 | [Threat models and authenticated identity](threat-identity.md) | Which asset and principal are protected and what does authentication establish? |
 | [Object permission, credentials and isolation](object-credentials.md) | Where must resource authorization be enforced across direct and indirect paths? |
 | [Synthetic attacks and decision gates](security-tests.md) | Which denied or confused-deputy outcome would invalidate the design? |

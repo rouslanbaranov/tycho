@@ -38,7 +38,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -97,5 +97,5 @@ The following original citation rows, review limits and earlier topical routes a
 | E02 | [Apache Lucene BM25Similarity API](https://lucene.apache.org/core/10_3_0/core/org/apache/lucene/search/similarities/BM25Similarity.html), selected **10.3.0** API | BM25 scorer as one versioned library implementation; full Lucene indexing docs not independently read end-to-end |
 | E03 | [Lucene Overview](https://lucene.apache.org/core/10_3_0/core/overview-summary.html), selected 10.3.0 | In-process full-text indexing/search APIs, not a managed distributed product deployment |
 
-**Review state:** original model with bounded official docs, no Lucene index built, PostgreSQL search executed, relevance judged by external annotators or human technical review. Full benchmark and choice remain future issues.
+**Review state:** original model with bounded official docs. No Lucene index was built, no PostgreSQL query was executed, and no external relevance judging or human technical review occurred; the SQL example is illustrative and marked not executed. Full benchmark and choice remain future issues.
 <!-- /tycho-question-source -->

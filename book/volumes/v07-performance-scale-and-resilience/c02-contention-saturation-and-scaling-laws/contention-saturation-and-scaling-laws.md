@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Integrated question, original scenario and transfer limits for Contention, saturation and scaling laws. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for Contention, saturation and scaling laws. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "When does coordination dominate additional capacity?"
@@ -50,7 +50,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -58,7 +58,7 @@ content_verified_at: null
 
 # Contention, saturation and scalability laws: distinguishing capacity limits
 
-> **Tycho V07/C02 draft**, 2026-10-19. Original equations worked under explicit assumptions and invented load examples, not observed performance. Independently public queueing literature and Gunther's Universal Scalability Law paper are cited with narrow scope. No scaling experiment, fit or independently verified hardware benchmark was performed.
+> **Tycho V07/C02 integrated decision**, 2026-10-19. Original equations worked under explicit assumptions and invented load examples, not observed performance. Independently public queueing literature and Gunther's Universal Scalability Law paper are cited with narrow scope. No scaling experiment, fit or independently verified hardware benchmark was performed. The content_review field retains the decomposition-era draft state; no independent acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.7ad835c06d5a4e3aabf6b14632f92c86:0 -->

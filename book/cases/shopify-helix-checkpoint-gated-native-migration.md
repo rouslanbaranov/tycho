@@ -42,7 +42,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -102,18 +102,11 @@ The [September 21, 2026 Shopify source](https://shopify.engineering/helix) (src.
 
 This is a process design around **reviewability**. A large final diff can contain several interacting defects and hide which early interpretation was wrong; committing independently verified small steps makes the failure location and allowable rollback surface easier to understand. It does **not** prove small commits are intrinsically correct—each must still pass its evidence gates.
 
-## Four sequential proofs and independent failure paths
+## Evidence reuse after a change
 
-| Shopify gate (src.m9-sh04) | Actual mechanism reported | Unproven or risky case |
-|---|---|---|
-| Behavior | CLI exposes reference screen state/actions; a subagent proposes user-perspective integration tests, executable without a simulator | A test suite may omit an unobserved gesture, accessibility feature, auth state or side effect |
-| Visual review | Matching reference and native screenshots are compared; reviewer reports location/severity of discrepancies | Two screenshots in different UI states make the comparison invalid; screenshot similarity cannot prove data correctness |
-| Adversarial code review | **Two context-isolated reviewer agents** enforce separately documented target architecture and code-quality guidelines | Same organization/model family may share an unknown blind spot; “two reviewers” is not external independent acceptance |
-| Engineer approval | Human reviews code and running result, feedback becomes the next checkpoint's memory | Approval can be explicitly relaxed; not proof a human inspected every autonomous checkpoint |
+The gate table above is the checklist. The source adds one precise safety rule: when the orchestrator presents screenshots from different states, its visual reviewer can mark the review **INVALID**, requiring recapture of equivalent states. This is better than repeatedly tweaking CSS until an arbitrary image score improves.
 
-The source names an instructive **invalid-comparison branch**: when the orchestrator presents screenshots from different states, its visual reviewer can mark the review **INVALID**, requiring recapture of equivalent states. This is a more precise safety rule than repeatedly tweaking CSS until an arbitrary image score improves.
-
-The authors also state that after adversarial code changes **affected tests run again**, and visual review runs again if the patch changes the appearance. A gate's prior success is not indefinitely reusable after a change to the artifact it checked. Every checkpoint ends in a commit, with test/visual/reviewer evidence available for later inspection. These are source-reported workflow mechanics, not independent defect-rate measurements. [src.m9-sh04, **Gate 1**, **The UI review gate**, **The adversarial reviews gate**, **An engineer closes the loop**].
+After adversarial code changes, **affected tests run again**, and visual review runs again if the patch changes the appearance. A gate's prior success is not indefinitely reusable after a change to the artifact it checked. Every checkpoint ends in a commit with evidence available for later inspection. These are source-reported workflow mechanics, not independent defect-rate measurements. [src.m9-sh04, **Gate 1**, **The UI review gate**, **The adversarial reviews gate**, **An engineer closes the loop**].
 
 ## Explicit autonomous mode is not removal of testing
 
@@ -131,17 +124,9 @@ Compare [Spotify Honk's incomplete dataset testing](spotify-honk-data-consumer-m
 
 ## What a checkpoint certifies—and what it cannot
 
-The September 2026 first-party src.m9-sh04 description separates **three review oracles**: expected reference behavior, visual correspondence, and adversarial code/architecture review. They do not certify the same thing. A script can correctly navigate a screen while violating the intended data authorization boundary; a screenshot can look correct while accessibility or state persistence fails; two AI reviewers can agree while sharing an incorrect assumption. Treat each as a **separate veto** over a bounded change.
+The September 2026 first-party src.m9-sh04 description separates **three review oracles**: expected reference behavior, visual correspondence, and adversarial code/architecture review. They do not certify the same thing. A script can correctly navigate a screen while violating the intended data authorization boundary; a screenshot can look correct while accessibility or state persistence fails; two AI reviewers can agree while sharing an incorrect assumption. Treat each as a **separate veto** over a bounded change; the gate table above already lists what each permits and what still needs other evidence.
 
-| Checkpoint evidence | Positive result permits | Additional evidence needed |
-|---|---|---|
-| Reference interaction states | Move to the next implementation/test gate | Failure-path state, offline/disconnected operation and test determinism |
-| Generated behavior tests | Assert observed mappings for exercised user actions | Real product invariants not represented in the reference |
-| Visual comparison | Validate layout, typography, spacing and state variants in tested viewport | Accessibility, localization, keyboard navigation, hardware/OS variants |
-| Adversarial code review | Catch implementation anti-patterns and unsupported assumptions | Human architecture and security ownership; reviewer disagreement resolution |
-| Approval/commit gate | Fix one checkpoint's state in version control | Deploy/canary telemetry, release safety and end-to-end defect monitoring |
-
-The table is **Tycho analytical categorization**; the source does not publish a universal coverage percentage for these oracles or an independently audited escaped-defect benchmark. Shopify's report distinguishes a shipped native **Shop** app from an **ongoing larger Shopify App** rewrite. A successful app-specific project cannot be treated as 100%-fleet migration.
+The source does not publish a universal coverage percentage for these oracles or an independently audited escaped-defect benchmark. Shopify's report distinguishes a shipped native **Shop** app from an **ongoing larger Shopify App** rewrite. A successful app-specific project cannot be treated as 100%-fleet migration.
 
 ## Original decision record for an unrelated UI modernization
 

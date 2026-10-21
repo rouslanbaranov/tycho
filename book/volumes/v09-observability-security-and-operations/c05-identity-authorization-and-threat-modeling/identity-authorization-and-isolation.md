@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "security"
-summary: "Integrated question, original scenario and transfer limits for Identity, authorization and threat modeling. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for Identity, authorization and threat modeling. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "Where do trust boundaries and permission checks have to sit?"
@@ -49,7 +49,7 @@ content_verified_at: null
 
 # Threat boundaries, identity, authorization and service isolation
 
-> Original Tycho E14-12 [#90](https://github.com/rouslanbaranov/tycho/issues/90), public-specification reading 2026-10-19. This is a decision-method chapter, **not** a penetration test, vulnerability assessment, product certification, configured policy or observed security guarantee.
+> Original Tycho E14-12 [#90](https://github.com/rouslanbaranov/tycho/issues/90), public-specification reading 2026-10-19. This is a decision-method chapter, **not** a penetration test, vulnerability assessment, product certification, configured policy or observed security guarantee. The content_review field retains the decomposition-era draft state; no independent acceptance is asserted.
 
 <!-- /tycho-question-source -->
 

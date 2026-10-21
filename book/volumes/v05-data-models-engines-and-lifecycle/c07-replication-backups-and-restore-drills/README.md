@@ -83,7 +83,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 ## Evidence and limits
 
-The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. No new benchmark, runtime compatibility test or source-access date is implied.
+The child manuscript belongs to the owner-accepted #213 baseline. This new landing is editorially self-checked; it is not an independent technical review. Published behavior, original synthetic reasoning and unknowns remain distinguished in the child page. The SRE *Data Integrity* page was inspected on 2026-10-21; the inherited frontmatter source_inspection_date remains null. No new benchmark or runtime compatibility test is implied.
 
 ## Chapter source ledger
 
@@ -103,13 +103,12 @@ The following original citation rows, review limits and earlier topical routes a
   inspected 2026-10-21: delayed detection, out-of-band validation, retention and selective
   recovery. The chapter's case studies are contextual; they do not establish a local drill.
 
-All names, failure chronologies, target examples and outcomes are original teaching proposals. No runtime, WAL archive, system configuration, benchmark, restore drill or expert review was exercised in this task. Edition metadata/volume assembly and full source-to-claim validation remain pending.
+All names, failure chronologies, target examples and outcomes are original teaching proposals. No runtime, WAL archive, system configuration, benchmark, restore drill or expert review was exercised in this task. The chapter is canonical in V05; its proposal-era navigation is archived.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.81efb7e6d72349768b6f202845cbe35e:9 -->
-## Navigation
+### Archived proposal-era navigation
 
-- Planned **V05/C07** from [proposed outline](../../../PROPOSED-STRUCTURE.md), current [Data architecture landing](../../../data/README.md).
-- Read before: [PostgreSQL WAL and replication](../c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md).
-- Expand: [Multi-region disaster recovery](../../../deployment/multi-region-disaster-recovery-contracts.md), [Safe rollout](../../../delivery/safe-rollout-and-recovery.md), [Transactional outbox](../../../distributed/transactional-outbox-and-idempotency.md).
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not repeated.
 <!-- /tycho-question-source -->

@@ -62,7 +62,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](retrieval-evaluation-and-index-lifecycle.md) | How are index freshness, reproducibility, latency and result quality measured? |
+| [Integrated decision](retrieval-evaluation-and-index-lifecycle.md) | How are index freshness, reproducibility, latency and result quality measured? |
 | [Judgments, metrics and matched retrieval baselines](retrieval-judgments.md) | Which relevance labels and query populations make variants comparable? |
 | [Index identity, access and provenance](snapshot-access.md) | Which identity and permission contract prevents stale or unauthorized results? |
 | [End-to-end evaluation and index recovery](task-recovery.md) | What distinguishes ranking quality from a correct information task? |

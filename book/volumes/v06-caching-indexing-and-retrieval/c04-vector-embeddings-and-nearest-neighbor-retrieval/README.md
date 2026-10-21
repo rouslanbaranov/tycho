@@ -61,7 +61,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](vector-hnsw-faiss-pgvector.md) | What are exact versus approximate search and recall trade-offs? |
+| [Integrated decision](vector-hnsw-faiss-pgvector.md) | What are exact versus approximate search and recall trade-offs? |
 | [Embedding contracts and approximate-neighbor trade-offs](exact-ann.md) | What exact reference and workload define acceptable ANN recall? |
 | [Filtering, authorization and recall](vector-filters.md) | How can filtering change the available neighbor set without granting access? |
 | [Vector engine selection and failure evaluation](vector-architecture.md) | Which lifecycle and operating constraints distinguish an index library from a serving system? |

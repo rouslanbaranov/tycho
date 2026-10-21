@@ -94,15 +94,13 @@ The following original citation rows, review limits and earlier topical routes a
 | [Kubernetes Horizontal Pod Autoscaling docs](https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/) | Horizontal controller concepts, target metrics, scaling behavior and limitations | Actual policy/version settings must be checked in deployed platform |
 | [AWS default instance warm-up](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-default-instance-warmup.html) | Time-to-metric readiness and why warm-up affects control | Not a startup measurement for a fictional workload |
 | [AWS scaling cooldowns](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-scaling-cooldowns.html) | Policy-family distinctions and anti-flapping considerations | Not a claim that fixed cooldowns should be universally applied |
-| [Tycho queueing study](../c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md) and [capacity experiments](../../../performance/workload-profiles-and-capacity-experiments.md) | Mean workload boundary and proposed testing discipline | No empirical scaling result |
 
-**Unverified:** everything numeric in the burst example, all diagrams, practical thresholds, cost and failure outcomes are synthetic. The chapter was not executed as a cloud/autoscaler experiment, does not prove provider interoperability, and has not been independently reviewed. It must be placed under the final V07/C06 chapter structure after content-completeness acceptance.
+**Unverified:** everything numeric in the burst example, all diagrams, practical thresholds, cost and failure outcomes are synthetic. The chapter was not executed as a cloud/autoscaler experiment, does not prove provider interoperability, and has not been independently reviewed. It is canonical in V07; the proposal-era placement is archived. Internal cross-reference: [Tycho queueing study](../c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md) and [capacity experiments](../../../performance/workload-profiles-and-capacity-experiments.md) are original explanations, not external evidence.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.49d9df04c0b4488e936b02e580a62271:9 -->
-## Navigation
+### Archived proposal-era navigation
 
-- Current landing: [Performance](../../../performance/README.md), future owner V07/C06 in [proposed TOC](../../../PROPOSED-STRUCTURE.md).
-- Core limits: [Queueing](../c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md), [Tail latency](../c04-tail-latency-fan-out-and-time-budgets/tail-latency-fanout-and-deadline-budgets.md), [Workload experiments](../../../performance/workload-profiles-and-capacity-experiments.md).
-- Dependency and deployment: [Connection pools](../../v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md), [Deployment topology](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md), [Multi-region recovery](../../../deployment/multi-region-disaster-recovery-contracts.md).
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not repeated.
 <!-- /tycho-question-source -->

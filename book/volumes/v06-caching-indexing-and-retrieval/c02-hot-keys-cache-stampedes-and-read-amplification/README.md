@@ -61,7 +61,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](cache-invalidation-stampede-and-hot-keys.md) | When does adding a cache worsen recovery or contention? |
+| [Integrated decision](cache-invalidation-stampede-and-hot-keys.md) | When does adding a cache worsen recovery or contention? |
 | [Stale fills and regeneration ownership](stale-fill.md) | Which version or fencing rule prevents a refresh from publishing obsolete state? |
 | [Stampedes and source protection](stampede-protection.md) | How do expiry and cache loss concentrate demand on the origin? |
 | [Negative caching and discriminating experiments](negative-cache.md) | Which revoked permission or absent value makes cached absence unsafe? |

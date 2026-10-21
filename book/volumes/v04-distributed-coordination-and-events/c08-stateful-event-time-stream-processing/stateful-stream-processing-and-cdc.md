@@ -41,7 +41,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-18"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -55,7 +55,7 @@ content_verified_at: null
 <!-- tycho-question-source:tycho.page.a2c47a0850154eaa95e1eb97e23f9c71:0 -->
 ## Purpose and mission
 
-Processing records in order is not the same as calculating correct, recoverable *state* while inputs arrive late, operators restart, partitions rebalance and external systems change. This page compares the **state/position ownership** of Kafka Streams and Apache Flink, and explains how a committed database change can enter an integration stream through CDC.
+Processing records in order is not the same as calculating correct, recoverable *state* while inputs arrive late, operators restart, partitions rebalance and external systems change. This page owns the recovery, event-time and CDC boundary. The Kafka Streams/Flink **state/position comparison** is on [processor-recovery.md](processor-recovery.md); this page does not repeat that table.
 
 **Primary question:** Which durable positions, state snapshots, event-time policies and sink semantics must align for a stream processor to recover without silently dropping or repeating material business effects?
 

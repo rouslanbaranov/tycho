@@ -60,7 +60,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](safe-agent-access-and-knowledge-isolation.md) | What can remote readers infer or retrieve under bounded permissions? |
+| [Integrated decision](safe-agent-access-and-knowledge-isolation.md) | What can remote readers infer or retrieve under bounded permissions? |
 | [Principals, retrieval and bounded tool effects](principal-tools.md) | Which boundary prevents retrieved instructions from acquiring execution authority? |
 | [Collection identity, privacy and retention](collection-privacy.md) | Which content and metadata may each caller observe across snapshots? |
 | [Negative access tests and architecture limits](agent-negative-tests.md) | Which denial or unavailable-evidence outcome must an agent-accessible service preserve? |

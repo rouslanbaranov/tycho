@@ -9,7 +9,7 @@ topic_ids:
   - "scaling-mechanisms"
 perspectives:
   - "architecture"
-summary: "Integrated question, original scenario and transfer limits for Hot keys, cache stampedes and read amplification. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for Hot keys, cache stampedes and read amplification. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "When does adding a cache worsen recovery or contention?"

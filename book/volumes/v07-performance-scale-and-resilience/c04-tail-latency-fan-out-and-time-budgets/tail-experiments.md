@@ -38,7 +38,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -82,13 +82,13 @@ The original [queueing chapter](../c01-queueing-littles-law-and-measurement-boun
 
 ### Original latency-budget counterexample: a retry consumes the same deadline
 
-Suppose a fictional API has a **300 ms total caller deadline**, two parallel dependency reads and a 40 ms response/composition allowance. A proposal grants each dependency a 280 ms timeout plus one 280 ms retry. These independent timers do **not** fit inside one 300 ms user deadline; a retry made after 280 ms cannot be treated as a fresh 300 ms operation without violating the caller contract.
+Suppose a fictional API has a **300 ms total caller deadline**, two parallel dependency reads and a 40 ms response/composition allowance. A proposal grants each dependency a 220 ms timeout plus one 220 ms retry. An attempt starting at T=20 expires at T=240; the retry then has only about 60 ms and cannot complete within the caller deadline.
 
 | Hypothetical timeline | Budget principle |
 |---|---|
 | T=0–20 ms: admission/authentication | The downstream work inherits **remaining** deadline, not initial 300 ms |
 | T=20–240 ms: first dependency attempts | Protect capacity with bounded per-hop work and cancellation propagation |
-| T=240 ms: one dependency times out | Only about 60 ms remain; a full 280 ms retry cannot complete on time |
+| T=240 ms: one dependency times out | Only about 60 ms remain; a full 220 ms retry cannot complete on time |
 | T=240–300 ms: optional fallback | Return degraded/explicit failure if allowed, not fabricated fully successful data |
 | After T=300 ms: late commit/reply arrives | User timeout means outcome **unknown**, not that a prior write did not occur |
 

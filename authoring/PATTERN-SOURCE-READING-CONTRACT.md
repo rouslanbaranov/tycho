@@ -269,13 +269,14 @@ final acceptance and does not close #233 or M10.
 ## Phase 6 semantic page audit
 
 The Phase 6 artifact `edition/patterns/semantic-audit.v1.json` records one
-self-checked disposition for each of the 419 canonical pages: 278 sound, 93
-sound-with-findings, 47 needs-remediation and 1 blocked. Its 166 findings are
-118 low and 48 medium; no high-severity finding was recorded under the recorded
+self-checked disposition for each of the 419 canonical pages: 325 sound, 93
+sound-with-findings, 0 needs-remediation and 1 blocked. Its 101 findings are
+100 low and 1 medium; no high-severity finding was recorded under the recorded
 rubric. Reviewer, an independent review agent, returned ACCEPT-WITH-FINDINGS and
 its findings were addressed. Owner-confirmed human review passed on 2026-10-21
-without a per-page reviewer record. Five gates remain open: owner acceptance, the
-blocked Polyglot entry and three deferred page splits.
+without a per-page reviewer record. The 100 low findings are explicitly deferred to
+#292. Five gates remain open: owner acceptance, the blocked Polyglot entry and three
+deferred page splits.
 
 Each record carries the page SHA-256, a required-check set for its tier, exact
 finding anchors and a remediation or gate. The validator recomputes coverage,

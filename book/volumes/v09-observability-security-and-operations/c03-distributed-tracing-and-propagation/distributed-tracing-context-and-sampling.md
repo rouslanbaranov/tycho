@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "operations"
-summary: "Integrated question, original scenario and transfer limits for Distributed tracing and propagation. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for Distributed tracing and propagation. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "Which context, sampling and async boundaries determine trace usefulness?"
@@ -49,7 +49,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -57,7 +57,7 @@ content_verified_at: null
 
 # Distributed tracing: context propagation, sampling and causal limits
 
-> **Tycho independent book draft V09/C03, 2026-10-19.** Draws on W3C Trace Context (Recommendation of 2021) and published OpenTelemetry tracing semantics. All requests, diagrams and fault scenarios are original fiction. No trace collection, backend or distributed experiment was executed.
+> **Tycho independent book draft V09/C03, 2026-10-19.** Draws on W3C Trace Context (Recommendation of 2021) and published OpenTelemetry tracing semantics. All requests, diagrams and fault scenarios are original fiction. No trace collection, backend or distributed experiment was executed. The content_review field retains the decomposition-era draft state; no independent acceptance is asserted.
 
 <!-- /tycho-question-source -->
 

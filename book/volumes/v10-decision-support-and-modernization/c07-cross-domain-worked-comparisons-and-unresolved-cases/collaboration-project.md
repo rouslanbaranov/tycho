@@ -56,8 +56,8 @@
   },
   "content_review": {
     "status": "self-checked",
-    "reviewed_at": "2026-10-20",
-    "reviewer": "Codex author; integration execution and independent acceptance pending",
+    "reviewed_at": "2026-10-21",
+    "reviewer": "Automated authoring agent; navigation and owner-link remediation self-checked",
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
@@ -154,10 +154,9 @@ approval evidence.
 - Record the applied frontier and output identity so a retry can verify what
   was already done.
 
-The scheduler and pipeline mechanics are owned by the V04/C05 periodic-work
-page (`tycho.page.dd184f1c3947e0eab68938d31f51ec0e`); this project only shows
-how they compose with approval and offline state. The test is proposed, not
-executed.
+The scheduler and pipeline mechanics are owned by the
+[V04/C05 periodic-work page][periodic-work]; this project only shows how they
+compose with approval and offline state. The test is proposed, not executed.
 
 ## Capacity and cost model
 
@@ -174,3 +173,14 @@ Proposed checks permute duplicate and delayed edits, conflict resolution, revoca
 Choose online-only editing when approvals dominate and offline drafts add little value. Choose a different merge model if users consistently reject these conflict outcomes. Increase or remove the offline window only after redesigning compaction, permission and retention obligations; changing a timeout alone is insufficient.
 
 [Replicated Data Types: Specification, Verification, Optimality](https://www.microsoft.com/en-us/research/publication/replicated-data-types-specification-verification-optimality/) grounds the distinction between deterministic replicated semantics and application meaning; inspection was limited to introductory sections. [Monotonic reads](https://jepsen.io/consistency/models/monotonic-reads) and [Read your writes](https://jepsen.io/consistency/models/read-your-writes) ground session expectations, not this synchronization implementation. The workload, hybrid design, revocation policy and acceptance oracles are original.
+
+## Navigation and prerequisites
+
+- Parent: [V10/C07 — cross-domain worked comparisons](README.md).
+- Sibling projects: [catalogue project](catalogue-project.md) and
+  [multitenant project](multitenant-project.md).
+- Integrated decision page:
+  [cross-domain architecture decisions](cross-domain-modernization-and-adr-examples.md).
+- Volume: [V10 — decision support and modernization](../../README.md).
+
+[periodic-work]: ../../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/periodic-work-leases-and-exactly-once.md

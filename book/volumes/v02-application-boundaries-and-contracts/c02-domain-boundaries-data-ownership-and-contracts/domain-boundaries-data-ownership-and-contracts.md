@@ -47,7 +47,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -55,7 +55,7 @@ content_verified_at: null
 
 # Domain boundaries, data ownership and contract evolution
 
-> **Tycho manuscript draft — proposed V02/C02**, 2026-10-19. Original explanatory text and fictional examples; independently public context-design references. This chapter is not a model of any real organization or its software. No operational measurement, customer research, migration or independent design review has been performed.
+> **Canonical integrated decision page — V02/C02**, 2026-10-19. Original explanatory text and fictional examples; independently public context-design references. This page is not a model of any real organization or its software. The content_review field retains the historical draft state; no independent acceptance is asserted. No operational measurement, customer research, migration or independent design review has been performed.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.4681b3ba9e234c46bdb4b5993634b0e3:0 -->

@@ -56,8 +56,8 @@
   },
   "content_review": {
     "status": "self-checked",
-    "reviewed_at": "2026-10-20",
-    "reviewer": "Codex author; integration execution and independent acceptance pending",
+    "reviewed_at": "2026-10-21",
+    "reviewer": "Automated authoring agent; navigation and owner-link remediation self-checked",
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
@@ -138,9 +138,9 @@ should:
 
 This is an original synthetic policy, not a measured result. The proposed test is to drive
 the service into shared overload, remove the fault, and compare recovery time, fairness and
-whether the service re-enters overload. The admission mechanics are owned by `V07/C05`
-(`tycho.page.d9abd43bb7394c04a6bf77d4014f870d`); the cache-loss interaction is owned by
-`V06/C02` (`tycho.page.edc267f2fa954e66891e006ddfbfb15f`). The SRE *Handling Overload* and
+whether the service re-enters overload. The admission mechanics are owned by
+[V07/C05 overload admission][v07c05]; the cache-loss interaction is owned by
+[V06/C02 cache stampedes][v06c02]. The SRE *Handling Overload* and
 *Addressing Cascading Failures* chapters describe the local-versus-broad distinction and
 recovery testing; their examples are contextual.
 
@@ -161,3 +161,15 @@ A shared service with enforced quotas is simpler when the shared failure envelop
 Reverse the design if its state partitions still converge on a single saturated endpoint, if tenant skew makes cell headroom unusable, or if recovery requires more capacity than the budget permits. Recalculate under measured CPU distributions and long-tail jobs before calling the invented envelope feasible.
 
 [Cell-based architecture fault isolation](https://docs.aws.amazon.com/wellarchitected/latest/reducing-scope-of-impact-with-cell-based-architecture/what-is-a-cell-based-architecture.html) grounds the cell concept; [Shuffle sharding fault isolation](https://aws.amazon.com/blogs/architecture/shuffle-sharding-massive-and-magical-fault-isolation/) grounds overlapping worker subsets, without a universal impact percentage. [Deploying configuration](https://docs.aws.amazon.com/appconfig/latest/userguide/appconfig-deploying.html) and [Configuration validators](https://docs.aws.amazon.com/appconfig/latest/userguide/appconfig-creating-configuration-and-profile-validators.html) distinguish monitored rollout and validation. No load test, migration, configuration deployment or price lookup was performed; the architecture and arithmetic are original synthetic reasoning.
+
+## Navigation and prerequisites
+
+- Parent: [V10/C07 — cross-domain worked comparisons](README.md).
+- Sibling projects: [catalogue project](catalogue-project.md) and
+  [collaboration project](collaboration-project.md).
+- Integrated decision page:
+  [cross-domain architecture decisions](cross-domain-modernization-and-adr-examples.md).
+- Volume: [V10 — decision support and modernization](../../README.md).
+
+[v07c05]: ../../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md
+[v06c02]: ../../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md

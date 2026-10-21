@@ -41,7 +41,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -86,12 +86,6 @@ First, the engineers padded the fields to avoid two unrelated data structures sh
 | First patch | Declare success after removing slow band | Retest at original throughput target; new bottleneck can emerge |
 | JVM optimization | Permanently change cross-workload behavior | Version/flag gate, regressions and revert path |
 
-## Why the original canary produced the wrong conclusion
-
-The first-party 2022 case (src.m9-n18, **The problem**) reveals a benchmark-design mistake: a **48-vCPU** canary and its **16-vCPU** baseline received **equal traffic**, so the larger host initially looked comfortable. The actual change intended *more throughput per large instance at the same ~55% autoscaling CPU target*. Under this **different** operating point, the reported improvement was only around **25%**, and latency became worse. A successful equal-RPS canary was not a capacity qualification.
-
-The subsequent fast/slow host split was also a constraint on the hypothesis space. Host groups retained their performance band across JVM lifetimes while receiving similar request rates. Source authors observed approximately **12% fast nodes**, aligning with a cache-line alignment hypothesis. The article does not demonstrate that 12% of every JDK deployment will be lucky, nor does it provide a universal server-throughput law.
-
 ## Competing diagnoses and falsifiable tests
 
 | Hypothesis for a new service | Initial diagnostic | Evidence that would argue against it |
@@ -106,7 +100,7 @@ These are **Tycho's analytical countertests**. The source specifically attribute
 
 ## Why the two patches need two separate quality gates
 
-Padding the adjacent fields changed **memory layout** and removed the slow-node band but left throughput around **150 RPS per instance**, below a roughly **250-RPS** target. Bypassing the contentious cache update changed JDK *behavior*, so the source team guarded it with a JVM flag and measured around **350 RPS at the same 55% CPU target**. A safe adoption procedure must therefore test (1) unchanged Java behavior with altered memory layout and (2) altered cache behavior under representative class-hierarchy and concurrency patterns as **different interventions**.
+Padding the adjacent fields changed **memory layout**; bypassing the contentious cache update changed JDK *behavior*. The source team guarded the second change with a JVM flag. A safe adoption procedure must therefore test (1) unchanged Java behavior with altered memory layout and (2) altered cache behavior under representative class-hierarchy and concurrency patterns as **different interventions**; the numeric outcomes remain in the earlier fix table.
 
 For another runtime, the test matrix must include class-loader changes, concurrent subtype checks, dynamically generated proxy types, long-running mixed workloads, end-to-end correctness and upstream/downstream latency; gather data for the exact JDK commit and target CPU architecture. A code patch that fixes one subtype-check benchmark may regress other workloads because the superclass cache serves as an optimization under different class shapes. Require a feature flag, a reversible JDK image and runtime class correctness tests; do not assume a blog's internal patch is still necessary or valid in a 2026 JDK.
 
@@ -115,12 +109,6 @@ For another runtime, the test matrix must include class-loader changes, concurre
 The reusable design lesson is **compare useful performance at the new intended operating point and challenge conventional profilers when execution profiles do not explain real CPU stalls**. Before adding host capacity, record workloads by concurrency and tail-latency class. If a node's CPU is inflated by coherence stalls, adding cores may worsen contention. If the true constraint is a network queue or a cache miss unrelated to JVM field sharing, the appropriate remedy is different.
 
 **Refuse an automatic HotSpot patch** when hardware counters are unavailable, the exact problematic source code is not present, or a production-representative correctness test cannot be executed. src.m9-n18 reports a specific service and historical JDK behavior; upstream bug history, current vendor fixes and complete replication remain unverified under M9 #121.
-
-## Why equal-traffic canaries concealed the capacity regression
-
-The [November 9, 2022 practitioner investigation](https://netflixtechblog.com/seeing-through-hardware-counters-a-journey-to-threefold-performance-increase-2721924a2822) (src.m9-n18, **The problem**) says the initial larger-instance canary received the **same number of requests** as the small instance, rather than the scaled load a three-times-larger CPU allocation was intended to carry. It looked healthy at that workload. Later, with autoscaling held near the same **55% CPU target**, the 48-vCPU node delivered only **~25% more throughput** than the original capacity expectation and had **>50% worse average latency**. Thus the acceptance error was not merely “we failed to look at RPS”; it was a mismatched **workload normalization**.
-
-A robust capacity experiment for an unrelated CPU-bound service would compare: same total traffic to validate compatibility; same requests per core to test scaling efficiency; same CPU-utilization target to model autoscaling; and equal useful output to compare cost, *including* tail latency and variance across instances. These are **Tycho evaluation categories**, not four published Netflix test phases.
 
 ## Separate the true causes, fixes and observation windows
 
@@ -147,3 +135,10 @@ Tycho's inferred procedure is to characterize CPU-bound service topology, shard 
 **Counterindication:** do **not** import the paper's HotSpot flag behavior into modern JVMs without checking whether the relevant upstream code and JDK bug remain applicable, and never assume this explains unrelated services' low CPU scaling. The authors refer to JDK-8180450; source-controlled patch identity, release inclusion and later OpenJDK status are not established here. No independent performance re-run or exact VM image is available.
 
 **Transfer:** architecture modernization needs workload-derived acceptance tests at the CPU and JVM layer as well as service boundaries. A larger cluster can be worse than the old one if scaling assumptions ignore shared-memory microarchitecture. **Review:** pending #121.
+
+## Related reading
+
+- [Casebook and synthetic decision playbooks](../README.md).
+- [Reactive versus virtual threads](../decisions/reactive-vs-virtual-threads.md).
+- [Virtual-thread pinning case](netflix-java21-virtual-thread-pinning.md).
+- [Generational ZGC workloads](netflix-generational-zgc-workloads.md).

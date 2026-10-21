@@ -9,7 +9,7 @@ topic_ids:
   - "application-architecture"
 perspectives:
   - "architecture"
-summary: "Integrated question, original scenario and transfer limits for SOA, microservices and distributed boundaries. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for SOA, microservices and distributed boundaries. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "When is independent deployment justified by measured coordination cost?"
@@ -48,7 +48,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -56,7 +56,7 @@ content_verified_at: null
 
 # Service orientation, microservices and distributed boundaries
 
-> **Tycho book manuscript — proposed V02/C04**, 2026-10-19. Source boundary: public OASIS SOA Reference Model v1.0 and Fowler/Lewis' 2014 microservices discussion. Examples and tests are original fictional material. No service topology was deployed, team structure observed or empirical architecture comparison performed. Prior [architecture-style research](../../../application/architecture-styles-and-module-boundaries.md) is preserved for editorial reconciliation.
+> **Canonical integrated decision page — V02/C04**, 2026-10-19. Source boundary: public OASIS SOA Reference Model v1.0 and Fowler/Lewis' 2014 microservices discussion. Examples and tests are original fictional material. No service topology was deployed, team structure observed or empirical architecture comparison performed. The content_review field retains the decomposition-era draft state; no independent acceptance is asserted.
 
 <!-- /tycho-question-source -->
 

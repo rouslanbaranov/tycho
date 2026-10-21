@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "operations"
-summary: "Integrated question, original scenario and transfer limits for Supply chain and release verification. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for Supply chain and release verification. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "How are reproducibility, signatures and promotion controls established?"
@@ -48,7 +48,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -56,7 +56,7 @@ content_verified_at: null
 
 # Software supply-chain evidence: SBOM, build attestations and release verification
 
-> **Tycho book manuscript draft V08/C02 (2026-10-19).** Based on independently public SLSA 1.2, SPDX, CycloneDX and Sigstore material. Original synthetic failure examples. No build, signing, scanning, provenance verifier, release policy, or security assessment has been executed for this book.
+> **Tycho book manuscript draft V08/C02 (2026-10-19).** Based on independently public SLSA 1.2, SPDX, CycloneDX and Sigstore material. Original synthetic failure examples. No build, signing, scanning, provenance verifier, release policy, or security assessment has been executed for this book. The content_review field retains the decomposition-era draft state; no independent acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.38bb8a14ebb54866a7004080318b47e1:0 -->

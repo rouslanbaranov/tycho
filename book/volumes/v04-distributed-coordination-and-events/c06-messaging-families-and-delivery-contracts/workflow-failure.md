@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -99,22 +99,10 @@ Use the [saga/isolation research](../c03-consistency-and-distributed-transaction
 
 **Enrichment contract:** keep scheduling, execution attempts and the resulting business effect separately identifiable. A queue acknowledgement or workflow completion flag is not proof that an external effect occurred once.
 
-### Original recurring-job example
-
-A fictional catalogue recalculates a summary for each completed UTC day. The logical job key is the task definition plus the covered interval, not the worker's launch timestamp. Two schedulers launching the same interval must converge on the same durable job identity. Two legitimate backfills for different intervals must remain distinct.
-
-Declare a missed-run policy: skip, execute every missed interval, or coalesce under an explicitly defined equivalent operation. Coalescing is wrong if intermediate results or side effects matter. Declare overlap policy too: reject, queue or allow parallel runs with guarded output. A singleton scheduler does not protect against a former worker completing late; use [destination fencing](../c02-replication-consensus-and-leader-changes/leader-recovery.md#leases-stale-owners-and-fencing-at-the-destination).
-
-The SRE distributed-cron chapter discusses missed versus duplicate launches as a workload-specific decision. Its chosen policy is not a universal promise for all schedulers.
-
-| Durable record | Why it matters |
-|---|---|
-| Definition/version and scheduled interval | Reconstruct intent independently of retries and clock observation |
-| Run ID and effect identity | Separate attempts from the logical outcome |
-| Current state and ownership epoch | Recover work without trusting a dead worker's memory |
-| Timer deadline and action | Resume waiting after process loss |
-| Retry count, age and last classified error | Prevent infinite poison-work loops |
-| Operator decision and repair evidence | Make manual intervention attributable and bounded |
+Generic scheduling, missed-run, overlap and durable-timer mechanics are owned by the
+[V04/C05 periodic-work page](../c05-outbox-inbox-sagas-and-durable-workflows/periodic-work-leases-and-exactly-once.md).
+This section keeps only the messaging-specific consequence: a queue acknowledgement or
+workflow-completion flag is not proof that the scheduled external effect occurred once.
 
 ### Poison work is a policy state
 

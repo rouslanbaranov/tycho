@@ -61,7 +61,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](distributed-tracing-context-and-sampling.md) | Which context, sampling and async boundaries determine trace usefulness? |
+| [Integrated decision](distributed-tracing-context-and-sampling.md) | Which context, sampling and async boundaries determine trace usefulness? |
 | [Trace identity and causal interpretation](trace-causality.md) | What execution relationship can a span and its timing establish? |
 | [Propagation, sampling and untrusted context](sampling-trust.md) | What does a missing span or forged context prevent a trace from proving? |
 

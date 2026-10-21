@@ -9,7 +9,7 @@ topic_ids:
   - "search-architecture"
 perspectives:
   - "architecture"
-summary: "Integrated question, original scenario and transfer limits for Vector embeddings and nearest-neighbor retrieval. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for Vector embeddings and nearest-neighbor retrieval. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "What are exact versus approximate search and recall trade-offs?"

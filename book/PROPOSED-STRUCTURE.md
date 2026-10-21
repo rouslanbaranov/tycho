@@ -34,14 +34,20 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-18"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
 
 # Tycho — proposed question-driven book structure
 
-Status: **proposal for Issue #23**, 2026-10-18. This is an authoring/navigation plan, **not** completed chapters, reviewed technical claims, approved JSON metadata IDs, or a commitment to replicate another book's numbering. Existing `book/README.md` remains the current canonical entry until a structure is accepted.
+> **Historical proposal — superseded 2026-10-21.** This page records the 2026-10-18
+> question-driven structure proposal. The current corpus has 11 volumes, 82 chapters and
+> 419 canonical documents with a generated route index; see [book contents](README.md).
+> The ten-volume plan and the proposal-era no-content/no-index statements below describe
+> that moment, not the current tree.
+
+Status: **proposal for Issue #23**, 2026-10-18. This is an authoring/navigation plan, **not** completed chapters, reviewed technical claims, approved JSON metadata IDs, or a commitment to replicate another book's numbering.
 
 ## Audience and use cases
 

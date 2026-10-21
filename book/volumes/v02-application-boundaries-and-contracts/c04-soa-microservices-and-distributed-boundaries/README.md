@@ -60,7 +60,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](service-orientation-microservices-and-distribution.md) | When is independent deployment justified by measured coordination cost? |
+| [Integrated decision](service-orientation-microservices-and-distribution.md) | When is independent deployment justified by measured coordination cost? |
 | [Independent deployment and its costs](service-independence.md) | Which coordination costs justify introducing a remote boundary? |
 | [Service contracts and failure evaluation](service-contracts.md) | What must be tested when a capability moves into another process? |
 

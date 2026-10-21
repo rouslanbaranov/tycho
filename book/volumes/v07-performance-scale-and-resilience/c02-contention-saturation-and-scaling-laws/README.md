@@ -60,7 +60,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](contention-saturation-and-scaling-laws.md) | When does coordination dominate additional capacity? |
+| [Integrated decision](contention-saturation-and-scaling-laws.md) | When does coordination dominate additional capacity? |
 | [Parallelism, serial work and scaling models](scaling-models.md) | Which model assumptions bound useful throughput as concurrency grows? |
 | [Contended authority and discriminating scaling experiments](contention-response.md) | Which observation distinguishes resource saturation from coordination overhead? |
 

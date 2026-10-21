@@ -10,7 +10,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "security"
-summary: "Integrated question, original scenario and transfer limits for Safety, isolation and privacy in agent-accessible services. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for Safety, isolation and privacy in agent-accessible services. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "What can remote readers infer or retrieve under bounded permissions?"
@@ -48,7 +48,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -56,7 +56,7 @@ content_verified_at: null
 
 # Safe agent-accessible knowledge: trust boundaries, privacy and bounded authority
 
-> **Tycho book draft V09/C07**, 2026-10-19. This is **System Design education**, not a deployed agent, authentication service, retrieval API, MCP adapter or security validation. Examples and policies are original and fictional; source-bound recommendations draw on public OWASP guidance.
+> **Tycho book draft V09/C07**, 2026-10-19. This is **System Design education**, not a deployed agent, authentication service, retrieval API, MCP adapter or security validation. Examples and policies are original and fictional; source-bound recommendations draw on public OWASP guidance. The content_review field retains the decomposition-era draft state; no independent acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.0ae1aabac3b64c2f924cc427684bdbab:0 -->

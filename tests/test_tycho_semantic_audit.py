@@ -61,7 +61,8 @@ class PatternSemanticAuditTests(unittest.TestCase):
     def test_needs_remediation_requires_medium_finding(self):
         data = self.copy()
         page = next(item for item in data["pages"]
-                    if item["review"]["disposition"] == "needs-remediation")
+                    if item["review"]["disposition"] == "sound-with-findings")
+        page["review"]["disposition"] = "needs-remediation"
         page["review"]["findings"] = []
         self.check_error(data, "semantic-audit-remediation-severity")
 
@@ -106,21 +107,12 @@ class PatternSemanticAuditTests(unittest.TestCase):
     def test_needs_remediation_requires_medium_remediation(self):
         data = self.copy()
         page = next(item for item in data["pages"]
-                    if item["review"]["disposition"] == "needs-remediation"
-                    and any(finding["severity"] == "medium"
-                            for finding in item["review"]["findings"]))
-        medium = next(finding for finding in page["review"]["findings"]
-                      if finding["severity"] == "medium")
-        medium["remediation"] = None
-        medium["gate"] = "A gate is not a remediation."
-        page["review"]["findings"].append({
-            "severity": "low",
-            "kind": "status",
-            "summary": "A low finding with remediation does not satisfy the rule.",
-            "anchor": "page",
-            "remediation": "Fix the low finding.",
-            "gate": None,
-        })
+                    if item["review"]["disposition"] == "sound-with-findings")
+        finding = page["review"]["findings"][0]
+        finding["severity"] = "medium"
+        finding["remediation"] = None
+        finding["gate"] = "A gate is not a remediation."
+        page["review"]["disposition"] = "needs-remediation"
         self.check_error(data, "semantic-audit-remediation-missing")
 
     def test_kind_mismatch_is_rejected(self):

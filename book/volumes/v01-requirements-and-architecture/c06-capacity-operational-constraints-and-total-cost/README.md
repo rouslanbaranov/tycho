@@ -103,11 +103,13 @@ The following original citation rows, review limits and earlier topical routes a
   operational load, recurring manual work and automation overhead. The source's
   staffing and automation examples are contextual, not universal requirements.
 
-Every workload, system, candidate, diagram and conclusion is invented for education. No security test, actual budget, backup exercise, execution evidence or independent review occurred. Metadata, exact chapter boundaries and final edition assembly remain pending.
+Every workload, system, candidate, diagram and conclusion is invented for education. No security test, actual budget, backup exercise, execution evidence or independent review occurred. Metadata and chapter boundaries are canonical; the proposal-era placement is archived.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.76244dbe2bd44035b7154f821191f6f2:9 -->
-## Navigation
+### Archived proposal-era navigation
 
-Proposed owner **V01/C06** in [outline](../../../PROPOSED-STRUCTURE.md), [application landing](../../../application/README.md). Prerequisites [system context](../c01-problem-framing/problem-framing-and-system-boundaries.md), [quality drivers](../c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md), [workload demand](../c02-workload-and-demand-models/workload-demand-and-arrival-models.md). Next [technical capacity cost](../../v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md) and [alternative decision gates](../../v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md).
+This retained route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not repeated.
 <!-- /tycho-question-source -->
+

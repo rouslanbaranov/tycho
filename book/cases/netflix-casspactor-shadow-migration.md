@@ -43,7 +43,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -127,12 +127,6 @@ Adopt a layered backup-reader + model-specific transformation approach when meta
 
 **Stop or reverse** when SSTable manifests cannot establish a stable snapshot, old/new comparisons use different TTL/consistency windows, wide-partition execution still OOMs, fallback produces stale customer tables, or the controller cannot guarantee one authoritative publication of a job's final artifact. Track both functional parity and operational fallback, not only new connector runtime. A [related data-authority decision guide](decisions/data-migration-correctness.md) contrasts this immutable/batch style with mutable Stripe subscriptions and streaming Meta ingestion.
 
-## Migration scale, ownership and unmeasured effects
-
-The May 2026 source (src.m9-n11, **Casspactor: The Engine We Outgrew**) reports roughly **1,200 movement jobs a day** and approximately **3 PB transferred** by the old connector. These are the publisher's workload observations, not the volume of one job, the size of the Cassandra fleet or a proven speedup. Existing consumers used Data Bridge job definitions and Iceberg table outputs. Maintaining both interfaces was therefore an explicit compatibility requirement: replacing a connector without changing the way consumers request data and interpret results.
-
-The new read layer combines Cassandra Analytics with backup metadata from object storage. This is a change in the **source of backup truth**, not proof of transactionality across all Cassandra writes and destination Iceberg commits. Abstraction-specific transformations operate over Spark DataFrames; the reported benefits include handling skewed partitions, avoiding repeated intermediate output and supporting historical schema/topology snapshots. The article's **dollar-millions** savings description lacks cost breakdown and is not an independent cost benchmark.
-
 ## Four distinct consistency proofs for another platform
 
 A comparable migration must specify more than the set-equality formula, because different data paths can agree on the wrong result:
@@ -148,7 +142,7 @@ src.m9-n11 specifically reports investigating differences involving TTL referenc
 
 ## Fallback is not the same as zero failure
 
-The reported Maestro Decider selects the connector by cohort and execution parameters, with a fallback to Casspactor after a new-connector failure. This makes a connector change locally reversible while the old path remains deployable. It **does not** prove bounded total job runtime, successful completion during an object-storage outage affecting both paths, or safe retirement without a replacement fallback.
+The decider's local reversibility does **not** prove bounded total job runtime, successful completion during an object-storage outage affecting both paths, or safe retirement without a replacement fallback.
 
 For a hypothetical platform, track: primary attempt count, fallback count and cause, job completion by cohort, artifact-quality diffs, p95/p99 job duration, processing cost and the last safe rollback date. Inject malformed backup metadata, a wide partition, partial Spark executor failure, stale snapshot and the case where both connectors produce different but nonempty outputs. Escalate unresolved mismatches; do not automatically choose legacy merely because the old implementation is familiar.
 
