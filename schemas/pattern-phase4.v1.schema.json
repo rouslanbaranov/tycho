@@ -13,7 +13,7 @@
     "entry_audit",
     "gap_matrix",
     "routes",
-    "unresolved_related",
+    "related_dispositions",
     "retrieval_questions"
   ],
   "properties": {
@@ -46,7 +46,9 @@
         "routes",
         "unresolved_related",
         "retrieval_questions",
-        "blocked_entries"
+        "blocked_entries",
+        "related_labels",
+        "non_routes"
       ],
       "properties": {
         "pages": {
@@ -63,14 +65,21 @@
           "minimum": 1
         },
         "unresolved_related": {
-          "type": "integer",
-          "minimum": 0
+          "const": 0
         },
         "retrieval_questions": {
           "const": 144
         },
         "blocked_entries": {
           "const": 1
+        },
+        "related_labels": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "non_routes": {
+          "type": "integer",
+          "minimum": 0
         }
       }
     },
@@ -104,18 +113,19 @@
         "$ref": "#/$defs/route"
       }
     },
-    "unresolved_related": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/unresolved"
-      }
-    },
     "retrieval_questions": {
       "type": "array",
       "minItems": 144,
       "maxItems": 144,
       "items": {
         "$ref": "#/$defs/question"
+      }
+    },
+    "related_dispositions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/related"
       }
     }
   },
@@ -330,26 +340,6 @@
         }
       }
     },
-    "unresolved": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "from",
-        "label",
-        "reason"
-      ],
-      "properties": {
-        "from": {
-          "type": "string"
-        },
-        "label": {
-          "type": "string"
-        },
-        "reason": {
-          "type": "string"
-        }
-      }
-    },
     "question": {
       "type": "object",
       "additionalProperties": false,
@@ -368,6 +358,45 @@
         "question": {
           "type": "string",
           "minLength": 1
+        }
+      }
+    },
+    "related": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from",
+        "label",
+        "disposition",
+        "target",
+        "reason"
+      ],
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "mapped",
+            "non-route"
+          ]
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 10
         }
       }
     }

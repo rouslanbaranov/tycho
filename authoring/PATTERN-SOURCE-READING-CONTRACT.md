@@ -233,9 +233,10 @@ uncarded. Card coverage is not technical sufficiency.
 
 The Phase 4 artifact `edition/patterns/phase4.v1.json` dispositions all 419
 canonical pages, audits 145 entries across 14 dimensions, records the gap matrix,
-derives 534 cross-pattern routes from card related entries, retains 40 unresolved
-related labels and extracts 144 retrieval questions. Polyglot Persistence is the one
-blocked entry and has no question.
+derives 536 cross-pattern routes from card related entries, records 40 related
+labels as deliberate non-routes when they name technical concepts outside the catalog,
+and extracts 144 retrieval questions. Polyglot Persistence is the one blocked entry and
+has no question.
 
 Page dispositions distinguish atlas pages, technical owners, candidate owners,
 navigation, legacy cross-volume pages and other canonical technical pages. They do
@@ -245,9 +246,9 @@ adversarial tests are structural evidence only; independent review remains Phase
 ## Phase 5 delivery evidence
 
 The Phase 5 artifact `edition/patterns/delivery-evidence.v1.json` records the
-locally executed checks, a twelve-item DoD matrix, ten open gaps and explicit
-limits. It covers 419 pages, 145 entries, 144 cards, 534 routes, 40 unresolved
-related labels, 144 partial technical and decision entries, and one blocked source.
+locally executed checks, a twelve-item DoD matrix, nine open gaps and explicit
+limits. It covers 419 pages, 145 entries, 144 cards, 536 routes, 40 recorded
+non-routes, 144 partial technical and decision entries, and one blocked source.
 
 Remediation issue #284 added bounded owner sections for the 17 cards whose owner
 pages previously mentioned the pattern only in a backlink. It also recorded the
@@ -257,12 +258,27 @@ because canonical paths cannot be split; all other V11 prose is checked at <=100
 `scripts/check_markdown_line_length.py`.
 
 Delivery checks, exact owner/backlink structure and the owner/blocked-source DoD
-are met. Page audit is structural only, 30 owner pages are shared and technical
-sufficiency, decision sufficiency, independent editorial review, owner acceptance
-and release evidence remain explicitly **not met**.
+are met. A self-checked semantic page audit now covers all 419 pages; 166 findings
+remain remediation items. Thirty owner pages are shared, and technical sufficiency,
+decision sufficiency, independent editorial review, owner acceptance and release
+evidence remain explicitly **not met**.
 The artifact status remains `delivery-evidence-recorded`; it cannot be marked
 `reviewed` without a named independent review record. Phase 5 is therefore not a
 final acceptance and does not close #233 or M10.
+
+## Phase 6 semantic page audit
+
+The Phase 6 artifact `edition/patterns/semantic-audit.v1.json` records one
+self-checked disposition for each of the 419 canonical pages: 278 sound, 100
+sound-with-findings, 40 needs-remediation and 1 blocked. Its 166 findings are
+118 low and 48 medium; no high-severity finding was recorded. Seven gates remain
+open: independent technical review, independent editorial review, owner acceptance,
+the blocked Polyglot entry and three deferred page splits.
+
+Each record carries the page SHA-256, a required-check set for its tier, exact
+finding anchors and a remediation or gate. The validator recomputes coverage,
+hashes, anchors, dispositions and summary counts. The audit is bounded agent
+self-review, not claim-by-claim source verification or independent acceptance.
 
 ## Family batches
 

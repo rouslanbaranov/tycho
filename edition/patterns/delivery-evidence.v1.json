@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "status": "delivery-evidence-recorded",
-  "source_commit": "99f072eddabdbf28c71996b94b8bd4fcdba70f84",
+  "source_commit": "300c63b8515d2f48535957a6c76fba90d285bcc7",
   "generated_at": "2026-10-21",
-  "scope": "structural delivery evidence, section-level owner units and explicit review gaps; not independent acceptance",
+  "scope": "structural delivery evidence, section-level owner units, semantic page audit and explicit review gaps; not independent acceptance",
   "summary": {
     "volumes": 11,
     "chapters": 82,
@@ -12,8 +12,8 @@
     "cards": 144,
     "owner_linked": 144,
     "blocked_entries": 1,
-    "routes": 534,
-    "unresolved_related": 40,
+    "routes": 536,
+    "unresolved_related": 0,
     "retrieval_questions": 144,
     "ledger_records": 115,
     "sources": 268,
@@ -28,7 +28,13 @@
     "shared_pages": 30,
     "sufficient_technical": 0,
     "sufficient_decision": 0,
-    "independent_reviews": 0
+    "independent_reviews": 0,
+    "related_labels": 40,
+    "non_routes": 40,
+    "semantic_pages": 419,
+    "semantic_findings": 166,
+    "semantic_pages_with_findings": 141,
+    "semantic_open_gates": 7
   },
   "checks": [
     {
@@ -39,7 +45,7 @@
     {
       "name": "full-tests",
       "status": "pass",
-      "evidence": "317 tests, OK"
+      "evidence": "333 tests, OK"
     },
     {
       "name": "pattern-atlas",
@@ -49,7 +55,7 @@
     {
       "name": "pattern-sources",
       "status": "pass",
-      "evidence": "145 entries, 144 read, 1 blocked, 115 ledger records"
+      "evidence": "145 entries, 144 read, 1 blocked, 115 ledger records, 3 catalog-index reads intentionally unused"
     },
     {
       "name": "pattern-cards",
@@ -64,7 +70,7 @@
     {
       "name": "phase4-audit",
       "status": "pass",
-      "evidence": "419 page dispositions, 145 entries x 14 dimensions, 534 routes"
+      "evidence": "419 page dispositions, 145 entries x 14 dimensions, 536 routes, 40 non-routes"
     },
     {
       "name": "strict-knowledge",
@@ -75,6 +81,11 @@
       "name": "github-actions",
       "status": "not-run",
       "evidence": "Milestone-only CI was not triggered for this branch"
+    },
+    {
+      "name": "semantic-audit",
+      "status": "pass",
+      "evidence": "419 page dispositions, 166 findings, 7 open gates; self-checked"
     }
   ],
   "dod": [
@@ -100,8 +111,8 @@
     },
     {
       "id": "page-census-and-audit",
-      "status": "partial",
-      "evidence": "Phase 4 structurally dispositions all 419 pages; semantic page review is not performed"
+      "status": "met",
+      "evidence": "419/419 pages have a self-checked semantic disposition; 166 findings recorded; independent review is still not performed"
     },
     {
       "id": "source-reading",
@@ -146,14 +157,9 @@
   ],
   "open_gaps": [
     {
-      "id": "unresolved-related-labels",
-      "count": 40,
-      "action": "resolve aliases or record deliberate non-routes in the semantic review"
-    },
-    {
       "id": "technical-sufficiency",
       "count": 144,
-      "action": "independent technical review remains required; 48 entries still lack a stated invariant"
+      "action": "independent technical review remains required; 48 entries remain partial and 28 lack a supported invariant"
     },
     {
       "id": "decision-sufficiency",
@@ -181,11 +187,6 @@
       "action": "record owner acceptance only after review"
     },
     {
-      "id": "uncited-read-records",
-      "count": 3,
-      "action": "record the catalog-index reads as intentionally unused or cite them explicitly"
-    },
-    {
       "id": "markdown-owner-link-exceptions",
       "count": 144,
       "action": "keep exact owner links while all prose stays at <=100 characters"
@@ -193,12 +194,12 @@
     {
       "id": "shared-owner-pages",
       "count": 30,
-      "action": "keep/deepen/split recorded; no page split performed in this task"
+      "action": "keep/deepen/split recorded; three split decisions are deferred with migration gates and no split was performed"
     },
     {
-      "id": "page-semantic-review",
-      "count": 419,
-      "action": "perform document-level editorial review beyond structural disposition"
+      "id": "semantic-findings",
+      "count": 166,
+      "action": "review and remediate the 166 recorded findings; 40 pages need remediation and one is blocked"
     }
   ],
   "limits": [
@@ -210,6 +211,7 @@
     "Owner units are section-level references validated against page text; they do not add independent technical review.",
     "Page dispositions are structural categories, not a semantic audit of every page.",
     "144 exact owner-link lines exceed 100 characters because canonical paths cannot be split; all prose is <=100.",
-    "No CI, release, deployment or benchmark result is claimed."
+    "No CI, release, deployment or benchmark result is claimed.",
+    "The semantic page audit is self-checked agent evidence; its findings are remediation items, not independent review or owner acceptance."
   ]
 }

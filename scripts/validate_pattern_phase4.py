@@ -60,6 +60,13 @@ def validate_data(data, root=ROOT):
     for route in routes:
         require(route["from"] in ids and route["to"] in ids, "phase4-route-endpoint")
         require(route["from"] != route["to"], "phase4-route-self")
+    related = data["related_dispositions"]
+    for item in related:
+        if item["disposition"] == "mapped":
+            require(item["target"] in ids, "phase4-related-target")
+        else:
+            require(item["target"] is None, "phase4-related-non-route-target")
+        require(len(item["reason"]) >= 10, "phase4-related-reason")
     questions = data["retrieval_questions"]
     require(len(questions) == 144, "phase4-question-count")
     require(len({item["pattern_id"] for item in questions}) == 144, "phase4-question-duplicate")
@@ -71,8 +78,13 @@ def validate_data(data, root=ROOT):
     require(summary["routes"] == len(routes), "phase4-summary-routes")
     require(summary["retrieval_questions"] == len(questions), "phase4-summary-questions")
     require(summary["blocked_entries"] == 1, "phase4-blocked-count")
+    require(summary["related_labels"] == len(related), "phase4-related-count")
+    require(summary["non_routes"] == sum(
+        1 for item in related if item["disposition"] == "non-route"),
+        "phase4-non-route-count")
+    require(summary["unresolved_related"] == 0, "phase4-unresolved-count")
     return {"pages": len(pages), "entries": len(audit), "cards": len(questions),
-            "routes": len(routes), "unresolved": len(data["unresolved_related"])}
+            "routes": len(routes), "non_routes": len(related)}
 
 
 def validate(root=ROOT):

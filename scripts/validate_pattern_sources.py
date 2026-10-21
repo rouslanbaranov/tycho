@@ -95,11 +95,22 @@ def validate_data(plan, ledger, registry, route, sources, root=ROOT):
 
     records = ledger["records"]
     require(len(records) == len({item["id"] for item in records}), "ledger-duplicate-id")
+    cards = load(root / "edition/patterns/card-batches.v1.json")
+    cited = {entry["ledger_record"] for batch in cards["batches"]
+             for entry in batch["entries"]}
     by_record = {}
     for record in records:
         require(record["source_id"] in source_ids,
                 "ledger-unknown-source: " + record["source_id"])
         require(record["access_date"] <= ledger["updated"], "ledger-access-date")
+        if record["id"] not in cited:
+            require(record.get("citation_status") == "intentionally-unused",
+                    "ledger-uncited-record: " + record["id"])
+            require(len(record.get("citation_note", "")) >= 10,
+                    "ledger-uncited-note: " + record["id"])
+        else:
+            require(record.get("citation_status") != "intentionally-unused",
+                    "ledger-cited-but-unused: " + record["id"])
         by_record[record["id"]] = record
     referenced = list(plan["foundation_records"]) + read_ids
     require(set(referenced) == set(by_record), "ledger-unreferenced-record")

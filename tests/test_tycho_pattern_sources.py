@@ -76,6 +76,14 @@ class PatternSourceTests(unittest.TestCase):
         ledger["records"][0]["source_id"] = "src.not-real"
         self.check_error(plan, ledger, registry, route, sources, "ledger-unknown-source")
 
+    def test_uncited_record_needs_disposition(self):
+        plan, ledger, registry, route, sources = self.copy()
+        record = next(item for item in ledger["records"]
+                      if item.get("citation_status") == "intentionally-unused")
+        del record["citation_status"]
+        del record["citation_note"]
+        self.check_error(plan, ledger, registry, route, sources, "ledger-uncited-record")
+
     def test_registry_binding_is_rejected(self):
         plan, ledger, registry, route, sources = self.copy()
         index = next(i for i, pattern in enumerate(registry["patterns"])

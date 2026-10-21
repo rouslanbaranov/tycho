@@ -245,6 +245,8 @@ decomposition and enrichment records remain immutable evidence.
 5. Phase 4: full page audit, gap matrix, cross-pattern routes and retrieval
    questions.
 6. Phase 5: delivery checks, independent review and final DoD evidence.
+7. Phase 6: semantic page audit of the canonical corpus, independent review and owner
+   acceptance.
 
 ## Review status and limits
 

@@ -8996,6 +8996,53 @@
       "keep": 14,
       "deepen": 13,
       "split": 3
+    },
+    "split_deferred": 3
+  },
+  "split_deferrals": [
+    {
+      "document_id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+      "pattern_ids": [
+        "tycho.pattern.client-side-discovery",
+        "tycho.pattern.gateway-routing",
+        "tycho.pattern.health-endpoint-monitoring",
+        "tycho.pattern.load-balancing",
+        "tycho.pattern.server-side-discovery",
+        "tycho.pattern.service-discovery"
+      ],
+      "decision": "deferred",
+      "rationale": "Six patterns cover discovery, load balancing, gateway routing and health monitoring; these are different request-path mechanisms whose future split into a discovery page and a routing page is warranted.",
+      "gate": "Deferred until a documented page migration splits discovery from routing while preserving document IDs and inbound links."
+    },
+    {
+      "document_id": "tycho.page.37a28a568f7e987941749e198c03439a",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",
+      "pattern_ids": [
+        "tycho.pattern.api-gateway",
+        "tycho.pattern.gateway-aggregation",
+        "tycho.pattern.gateway-offloading",
+        "tycho.pattern.reverse-proxy"
+      ],
+      "decision": "deferred",
+      "rationale": "Four gateway patterns sit on a TLS trust page; aggregation, offloading and reverse proxying are gateway responsibilities that warrant a dedicated gateway page rather than continued trust-page ownership.",
+      "gate": "Deferred until a documented page migration separates TLS trust ownership from gateway responsibilities with stable identities."
+    },
+    {
+      "document_id": "tycho.page.dde63373c50f4f4a80e727b6e160def5",
+      "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+      "pattern_ids": [
+        "tycho.pattern.federated-identity",
+        "tycho.pattern.least-privilege",
+        "tycho.pattern.multitenant-isolation",
+        "tycho.pattern.rbac-abac",
+        "tycho.pattern.tenant-based-resource-isolation",
+        "tycho.pattern.workload-identity-mtls",
+        "tycho.pattern.zero-trust-architecture"
+      ],
+      "decision": "deferred",
+      "rationale": "Seven patterns span identity federation, authorization policy, workload credentials and tenant isolation; a single landing should split into separate identity, authorization and isolation pages while the bounded notes remain temporary owners.",
+      "gate": "Deferred until a documented page migration splits identity, authorization and isolation into bounded pages with retained evidence links."
     }
-  }
+  ]
 }

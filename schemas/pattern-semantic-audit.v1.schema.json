@@ -1,0 +1,515 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.dev/schemas/pattern-semantic-audit.v1.schema.json",
+  "title": "Tycho page semantic audit v1",
+  "description": "One self-checked semantic disposition per canonical page. Not independent review, not source verification of every claim and not owner acceptance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "audit_date",
+    "source_commit",
+    "scope",
+    "method",
+    "review_rules",
+    "pages",
+    "summary",
+    "open_gates",
+    "limits"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "status": {
+      "enum": [
+        "semantic-audit-recorded"
+      ]
+    },
+    "audit_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "source_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 40
+    },
+    "method": {
+      "type": "string",
+      "minLength": 40
+    },
+    "review_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "technical",
+        "decision",
+        "navigation",
+        "atlas",
+        "dispositions"
+      ],
+      "properties": {
+        "technical": {
+          "type": "string",
+          "minLength": 40
+        },
+        "decision": {
+          "type": "string",
+          "minLength": 40
+        },
+        "navigation": {
+          "type": "string",
+          "minLength": 40
+        },
+        "atlas": {
+          "type": "string",
+          "minLength": 40
+        },
+        "dispositions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sound",
+            "sound-with-findings",
+            "needs-remediation",
+            "blocked"
+          ],
+          "properties": {
+            "sound": {
+              "type": "string",
+              "minLength": 20
+            },
+            "sound-with-findings": {
+              "type": "string",
+              "minLength": 20
+            },
+            "needs-remediation": {
+              "type": "string",
+              "minLength": 20
+            },
+            "blocked": {
+              "type": "string",
+              "minLength": 20
+            }
+          }
+        }
+      }
+    },
+    "pages": {
+      "type": "array",
+      "minItems": 419,
+      "maxItems": 419,
+      "items": {
+        "$ref": "#/$defs/page"
+      }
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "open_gates": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "$ref": "#/$defs/gate"
+      }
+    },
+    "limits": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "string",
+        "minLength": 20
+      }
+    }
+  },
+  "$defs": {
+    "checkState": {
+      "enum": [
+        "pass",
+        "partial",
+        "absent",
+        "not-applicable"
+      ]
+    },
+    "tier": {
+      "enum": [
+        "technical",
+        "decision",
+        "navigation",
+        "atlas"
+      ]
+    },
+    "disposition": {
+      "enum": [
+        "sound",
+        "sound-with-findings",
+        "needs-remediation",
+        "blocked"
+      ]
+    },
+    "phase4Disposition": {
+      "enum": [
+        "atlas-decision",
+        "technical-owner",
+        "candidate-owner",
+        "navigation",
+        "legacy-cross-volume",
+        "canonical-technical-page"
+      ]
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "severity",
+        "kind",
+        "summary",
+        "anchor",
+        "remediation",
+        "gate"
+      ],
+      "properties": {
+        "severity": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "missing",
+            "shallow",
+            "unsupported",
+            "contradictory",
+            "duplicate",
+            "navigation",
+            "status"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 400
+        },
+        "anchor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "remediation": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 400
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 400
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/checkState"
+        },
+        "question": {
+          "$ref": "#/$defs/checkState"
+        },
+        "content": {
+          "$ref": "#/$defs/checkState"
+        },
+        "evidence": {
+          "$ref": "#/$defs/checkState"
+        },
+        "limits": {
+          "$ref": "#/$defs/checkState"
+        },
+        "navigation": {
+          "$ref": "#/$defs/checkState"
+        },
+        "inventory": {
+          "$ref": "#/$defs/checkState"
+        },
+        "links": {
+          "$ref": "#/$defs/checkState"
+        },
+        "status": {
+          "$ref": "#/$defs/checkState"
+        },
+        "cards": {
+          "$ref": "#/$defs/checkState"
+        },
+        "owner_links": {
+          "$ref": "#/$defs/checkState"
+        },
+        "nonclaims": {
+          "$ref": "#/$defs/checkState"
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewed_at",
+        "reviewer_role",
+        "method",
+        "disposition",
+        "checks",
+        "findings",
+        "notes"
+      ],
+      "properties": {
+        "reviewed_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "reviewer_role": {
+          "const": "automated-authoring-agent"
+        },
+        "method": {
+          "const": "bounded-page-read"
+        },
+        "disposition": {
+          "$ref": "#/$defs/disposition"
+        },
+        "checks": {
+          "$ref": "#/$defs/checks"
+        },
+        "findings": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/finding"
+          }
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        }
+      }
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document_id",
+        "path",
+        "kind",
+        "tier",
+        "phase4_disposition",
+        "sha256",
+        "review"
+      ],
+      "properties": {
+        "document_id": {
+          "type": "string",
+          "pattern": "^tycho\\.(book|volume|chapter|page|landing|decision)\\.[a-z0-9]{6,32}$"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "book",
+            "volume",
+            "chapter",
+            "page",
+            "landing",
+            "decision"
+          ]
+        },
+        "tier": {
+          "$ref": "#/$defs/tier"
+        },
+        "phase4_disposition": {
+          "$ref": "#/$defs/phase4Disposition"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "description",
+        "action"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "blocked"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 400
+        },
+        "action": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 400
+        }
+      }
+    },
+    "countMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "technical",
+        "decision",
+        "navigation",
+        "atlas"
+      ],
+      "properties": {
+        "technical": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "decision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "navigation": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "atlas": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pages",
+        "by_tier",
+        "by_disposition",
+        "findings",
+        "pages_with_findings",
+        "independent_reviews",
+        "owner_acceptance",
+        "open_gates"
+      ],
+      "properties": {
+        "pages": {
+          "const": 419
+        },
+        "by_tier": {
+          "$ref": "#/$defs/countMap"
+        },
+        "by_disposition": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sound",
+            "sound-with-findings",
+            "needs-remediation",
+            "blocked"
+          ],
+          "properties": {
+            "sound": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "sound-with-findings": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "needs-remediation": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "blocked": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "findings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "total",
+            "low",
+            "medium",
+            "high"
+          ],
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "low": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "medium": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "high": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "pages_with_findings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "independent_reviews": {
+          "const": 0
+        },
+        "owner_acceptance": {
+          "const": "not-recorded"
+        },
+        "open_gates": {
+          "type": "integer",
+          "minimum": 3
+        }
+      }
+    }
+  }
+}
