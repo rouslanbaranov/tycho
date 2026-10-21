@@ -271,7 +271,8 @@ test or independent review was exercised.
 
 Parent: [V04/C05 — Outbox, inbox, sagas and durable workflows](README.md).
 Previous: [Sagas, workflow recovery and compensation](saga-workflows.md).
-Related: `V04/C04` (`tycho.page.33399db8d1574330951d9954801d6e71`) for retry
-budgets; `V07/C05` (`tycho.page.d9abd43bb7394c04a6bf77d4014f870d`) for
+Related: `V04/C04` (`tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f`) for the
+generic retry and effect-identity contract; `V07/C05`
+(`tycho.page.d9abd43bb7394c04a6bf77d4014f870d`) for
 overload admission; `V08/C04`
 (`tycho.page.3d13e39bb42a4458999803e40d7137cc`) for release exposure.

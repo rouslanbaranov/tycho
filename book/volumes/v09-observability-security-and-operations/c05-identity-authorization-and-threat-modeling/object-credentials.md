@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-22"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -143,6 +143,10 @@ Proposed negative cases: old valid token after logout, wrong issuer with a match
 ### Evidence and limits
 
 Selected passages inspected 2026-10-20: [Key Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Key_Management_Cheat_Sheet.html) (lifecycle/rotation/compromise), [REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html) (JWT and endpoint access control). The rollover plan, hypothetical durations and outage decisions are original design reasoning. No cryptographic implementation, issuer, key service or penetration test was executed; select supported algorithms and exact product procedures through separate versioned evidence.
+
+The frontmatter leaves `source_inspection_date` null because this decomposition source block keeps
+its inherited metadata; the 2026-10-20 date above is a source-scope inspection date, not page-level
+acceptance.
 
 ## Navigation, prerequisites and source scope
 

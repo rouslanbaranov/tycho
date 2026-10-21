@@ -35,7 +35,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-22"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -144,6 +144,10 @@ During promotion, solve writer fencing and historical acknowledged state separat
 ### Evidence and proposed tests
 
 Selected PostgreSQL 17 replication-configuration passages inspected 2026-10-20: [Replication configuration](https://www.postgresql.org/docs/17/runtime-config-replication.html) (slot WAL retention, standby feedback and replay-delay trade-offs). This section does not claim full inspection of every replication subsystem or a measured replica catch-up rate.
+
+The frontmatter leaves `source_inspection_date` null because this decomposition source block keeps
+its inherited metadata; the 2026-10-20 date above is a source-scope inspection date, not page-level
+acceptance.
 
 Proposed cases: stall one slot consumer, retain a standby snapshot, lose a response after primary commit, route the retry to a lagging replica, then exceed the available replay horizon. Observe named effects, retained bytes, read freshness and reinitialization requirements. No replication or failover test was run.
 
