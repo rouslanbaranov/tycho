@@ -2565,7 +2565,7 @@
         "heading": "Process Manager / Routing Slip",
         "anchor": "process-manager-routing-slip",
         "level": 3,
-        "line": 147,
+        "line": 159,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Process Manager / Routing Slip"
@@ -2753,24 +2753,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A domain event log can be the source of truth while a broker's integration stream is a **separate transport**.",
-          "reason": "Only distinguishes the event log from integration transport; it does not explain how domain events are produced, published or consumed."
+          "state": "supported",
+          "quote": "A domain event records a business fact that already occurred, named in past tense, with aggregate/event identity, version and causation where needed.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "it does not inherit global exactly-once execution simply because event sourcing is present.",
-          "reason": "States a delivery-guarantee caveat, not a must-hold domain-event invariant."
+          "state": "supported",
+          "quote": "It is not a command and not permission: a consumer must not treat receipt as authorization to repeat the effect.",
+          "reason": "States the invariant."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No failure detection, containment or recovery for domain events in the unit."
+          "state": "supported",
+          "quote": "Deduplicate by event identity, preserve per-aggregate order, version event schemas and keep an explicit unknown/repair state when publication is not atomic with state.",
+          "reason": "Names failure and recovery."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Conversely, a CRUD store plus transactional outbox **is not automatically event sourcing**: its history need not be sufficient to reconstruct all business state.",
-          "reason": "Names CRUD plus outbox as distinct but gives a distinguishing condition, not a condition that reverses the choice."
+          "state": "supported",
+          "quote": "Event-carried state transfer, polling or CDC may be preferable when consumers only need notification/current state, when no durable domain history is authoritative, or when event-schema ownership is absent.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -2788,7 +2788,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded distinction only: the section separates a domain-event log from broker transport; it does not cover event production or consumption."
     },
@@ -2871,24 +2871,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Choreography propagates progress through events; orchestration explicitly coordinates steps.",
-          "reason": "One clause states that progress propagates through events but does not explain subscriptions, event contracts or choreography failure handling."
+          "state": "supported",
+          "quote": "Each owner subscribes to events and emits the next business step; progress lives in the event contracts rather than a central coordinator.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "a delivered message cannot be un-delivered",
-          "reason": "Message irreversibility constrains event-driven progress, but the unit states no choreography-specific guarantee or precondition."
+          "state": "supported",
+          "quote": "It needs correlation identity, deduplication, dead-letter handling and an observable workflow state.",
+          "reason": "States the invariant."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Losing an acknowledgment creates an explicit unknown state requiring reconciliation; compensations can themselves remain incomplete.",
-          "reason": "The unknown-state reconciliation is described for the saga workflow generally, not for choreography-specific failure handling."
+          "state": "supported",
+          "quote": "Unbounded chains, hidden coupling and conflicting compensations are common; a trace can show correlation without proving durable business truth.",
+          "reason": "Names failure and recovery."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Choreography propagates progress through events; orchestration explicitly coordinates steps.",
-          "reason": "Names orchestration as the competing coordination style but states no condition that reverses the choice."
+          "state": "supported",
+          "quote": "Orchestration or a single local transaction may be preferable when steps need central visibility or when compensations cannot be made safe.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -2906,7 +2906,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Only one clause defines event propagation; risks and selection conditions sit in section 5."
     },
@@ -2920,7 +2920,7 @@
         "heading": "5. Durable workflow selection is conditional",
         "anchor": "5-durable-workflow-selection-is-conditional",
         "level": 2,
-        "line": 92,
+        "line": 104,
         "unit_kind": "embedded",
         "unit_terms": [
           "Move to orchestration only when",
@@ -2991,9 +2991,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "with compensating actions when a business step cannot complete",
-          "reason": "Names compensating actions triggered by an incomplete step and discusses reversibility, but does not explain how a compensation is designed, ordered or made idempotent."
+          "state": "supported",
+          "quote": "A compensating transaction is a new business action that creates an acceptable counter-effect; it is not rollback and it can fail.",
+          "reason": "Defines compensation as a new action, not rollback."
         },
         "invariant": {
           "state": "supported",
@@ -3006,9 +3006,9 @@
           "reason": ""
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "Manual reconciliation is a fallback for irreversible actions, not a competing mechanism selected by a reversal condition."
+          "state": "supported",
+          "quote": "Orchestration or a single local transaction may be preferable when steps need central visibility or when compensations cannot be made safe.",
+          "reason": "Names the alternative and reversal condition."
         }
       },
       "decision_evidence": {
@@ -3026,7 +3026,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Compensation is discussed inside the saga section, including failed release, irreversible effects and manual reconciliation."
     },
@@ -3336,7 +3336,7 @@
         "heading": "Command-Side Replica",
         "anchor": "command-side-replica",
         "level": 3,
-        "line": 204,
+        "line": 221,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Command-Side Replica"
@@ -8574,7 +8574,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 3,
-      "bounded_entries": 4,
+      "bounded_entries": 5,
       "decision": "keep",
       "rationale": "Six related patterns sit on one coherent CQRS and projection page, with four distinct units including a dedicated command-side replica note; no split is justified."
     },
@@ -8710,9 +8710,9 @@
       ],
       "unit_count": 3,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 4,
       "decision": "deepen",
-      "rationale": "Five saga and coordination patterns share three units and three are only partial; the page needs distinct bounded units for choreography, orchestration, process management and compensation."
+      "rationale": "Saga, choreography, orchestration and compensation now have bounded evidence; the process-manager note remains separate."
     },
     {
       "document_id": "tycho.page.0eee61f261054af0ad728d791036c5f4",
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 113,
-    "invariant_supported": 127,
-    "failure_recovery_supported": 99,
-    "alternative_supported": 89,
-    "technical_partial_bounded": 110,
-    "technical_partial": 35,
+    "mechanism_supported": 116,
+    "invariant_supported": 129,
+    "failure_recovery_supported": 101,
+    "alternative_supported": 92,
+    "technical_partial_bounded": 113,
+    "technical_partial": 32,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

@@ -102,3 +102,10 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
   evidence dimensions supported.
 - **Resilience family complete:** all 16 entries are `partial-bounded` with no evidence
   gaps. Next: data-consistency-transactions-and-event-sourcing.
+## Data-consistency progress — 2026-10-22
+
+- Domain Events, Saga Choreography and Compensating Transaction: owner sections and
+  cards expanded; each is `partial-bounded` with all four evidence dimensions supported.
+- Remaining: Saga Orchestration, Transactional Outbox, Idempotency Key, Materialized
+  View, plus alternative/failure evidence for CQRS, Event Sourcing, Saga, Transactional
+  Inbox and CDC.

@@ -164,6 +164,23 @@ Text alternative: a projection resumes from a recorded cursor, applies a version
 
 A domain event log can be the source of truth while a broker's integration stream is a **separate transport**. The operation that publishes integration messages may need an outbox/connector, change capture or durable cursor; it does not inherit global exactly-once execution simply because event sourcing is present. Conversely, a CRUD store plus transactional outbox **is not automatically event sourcing**: its history need not be sufficient to reconstruct all business state. See [outbox and duplicate effects](transactional-outbox-and-idempotency.md).
 
+**Domain-event contract.** A domain event records a business fact that already occurred,
+named in past tense, with aggregate/event identity, version and causation where needed. It
+is not a command and not permission: a consumer must not treat receipt as authorization to
+repeat the effect. The same event may feed an internal projection and an integration
+transport, but those are different contracts with different retry and schema rules.
+
+**Failure and recovery.** Duplicate delivery, lost publication, ordering and schema
+evolution are common. Deduplicate by event identity, preserve per-aggregate order, version
+event schemas and keep an explicit unknown/repair state when publication is not atomic with
+state. If consumers need the current authoritative value, query authority instead of
+inferring it from an event.
+
+**Alternative.** Event-carried state transfer, polling or CDC may be preferable when
+consumers only need notification/current state, when no durable domain history is
+authoritative, or when event-schema ownership is absent. Reverse the domain-event choice
+when event volume and schema coupling exceed the decoupling benefit.
+
 ## 5. Version changes and failure table
 
 | Condition | Expected risk | Minimal evidence before release |

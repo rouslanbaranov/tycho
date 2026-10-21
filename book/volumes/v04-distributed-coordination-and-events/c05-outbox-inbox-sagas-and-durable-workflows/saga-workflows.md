@@ -51,6 +51,18 @@ This page belongs to [V04/C05 — Outbox, inbox, sagas and durable workflows](RE
 
 Original invented workflow: reserve a device, allocate a supporting kit, confirm a booking, then optionally notify its requester. The business might allow the device reservation to be released if kit allocation definitively fails. But a release itself can fail; a delivered message cannot be un-delivered; the kit may already have been handed to a participant. The domain must determine which actions are reversible and which require manual reconciliation.
 
+**Choreography.** Each owner subscribes to events and emits the next business step;
+progress lives in the event contracts rather than a central coordinator. It needs
+correlation identity, deduplication, dead-letter handling and an observable workflow
+state. Unbounded chains, hidden coupling and conflicting compensations are common; a
+trace can show correlation without proving durable business truth.
+
+**Compensation.** A compensating transaction is a new business action that creates an
+acceptable counter-effect; it is not rollback and it can fail. It needs idempotent effect
+identity, retry/repair ownership and a user-visible unknown state when the counter-effect
+cannot be proven. Orchestration or a single local transaction may be preferable when steps
+need central visibility or when compensations cannot be made safe.
+
 | Step | Durable state needed | False assumption |
 |---|---|---|
 | Admit command | Stable workflow/operation identity | In-memory queue acceptance is durable |

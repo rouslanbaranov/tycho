@@ -146,8 +146,9 @@ kind integration-pattern; priority core.
 **Decision question.** Should a meaningful state change be published as an event that
 other owners can react to?
 
-**Good-fit conditions.** The event represents a committed business fact; consumers own
-their reactions; publication reliability and ordering are explicit.
+**Good-fit conditions.** The event represents a committed business fact with identity,
+version and causation; consumers own their reactions; publication reliability and ordering
+are explicit.
 
 **Hard contraindications.** Reject when the event is only a command in disguise, when
 publication is not tied to the state change, or when consumers need a shared transaction.
@@ -155,8 +156,9 @@ publication is not tied to the state change, or when consumers need a shared tra
 **Competing alternative.** Synchronous call or a command message. Reverse the choice when
 event fan-out and eventual consistency exceed the decoupling benefit.
 
-**Failure and recovery.** Duplicate, late and out-of-order events are common; verify
-publication semantics in the owner section.
+**Failure and recovery.** Duplicate, late, out-of-order and schema-evolved events are
+common; deduplicate by identity, preserve aggregate order and keep an unknown/repair state
+when publication is not atomic with the state change.
 
 **Technical owner.** [Distinguish source log from integration event](../../../distributed/cqrs-event-sourcing-and-projections.md#distinguish-source-log-from-integration-event) — the distinction is bounded, not a domain-event catalogue.
 
@@ -212,7 +214,8 @@ kind transaction-pattern; priority advanced.
 coordinator?
 
 **Good-fit conditions.** Participants can own reactions; event contracts are stable;
-dead-letter and timeout policy exist; the overall protocol is observable.
+correlation, deduplication, dead-letter and timeout policy exist; the overall protocol is
+observable.
 
 **Hard contraindications.** Reject when no one can see global progress, when cyclic
 reactions are likely, or when compensation ordering must be centrally enforced.
@@ -220,8 +223,8 @@ reactions are likely, or when compensation ordering must be centrally enforced.
 **Competing alternative.** Orchestrated saga or one local transaction. Reverse the choice
 when event chains become hard to trace and recover.
 
-**Failure and recovery.** Hidden global state and event cycles are common; verify
-compensation boundaries in the owner section.
+**Failure and recovery.** Hidden coupling, unbounded event chains and conflicting
+compensations are common; traces show correlation, not durable business truth.
 
 **Technical owner.** [A saga is a business protocol, not an automatic rollback](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — compensation/branching is bounded, not a complete orchestration product guide.
 
@@ -282,8 +285,9 @@ irreversible side effects, or when no owner can decide the business reversal.
 **Competing alternative.** Avoid the effect, or use a transaction boundary that can roll
 back. Reverse the choice when compensation cost exceeds the failed-step risk.
 
-**Failure and recovery.** Compensation may fail or be applied twice; verify idempotency
-and ordering in the owner section.
+**Failure and recovery.** Compensation is a new business action that can fail or be applied
+twice; use idempotent effect identity, bounded retries and a repair state for unknown
+counter-effects.
 
 **Technical owner.** [A saga is a business protocol, not an automatic rollback](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — compensation/branching is bounded, not a complete orchestration product guide.
 
