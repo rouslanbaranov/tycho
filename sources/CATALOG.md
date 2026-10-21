@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-20. Entries: 247.
+Inventory date: 2026-10-21. Entries: 252.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -55,6 +55,9 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.arc42 / supporting | [arc42 Documentation](https://docs.arc42.org/home/) — arc42 authors | Question-driven documentation and constraints. | admitted-for-research / public-web-or-author-download |
 | src.microservices-patterns / core | [Microservice Architecture Patterns](https://microservices.io/patterns/) — Chris Richardson | Pattern-level reference and implementation links. | admitted-for-research / public-web-or-author-download |
 | src.ddd-reference / supporting | [Domain-Driven Design Reference](https://www.domainlanguage.com/ddd/reference/) — Eric Evans / Domain Language | Domain boundaries and tactical design vocabulary. | admitted-for-research / public-web-or-author-download |
+| src.microsoft-cloud-patterns / core | [Cloud Design Patterns](https://learn.microsoft.com/en-us/azure/architecture/patterns/) — Microsoft Learn | Pattern catalog admission and source-unit planning for E17 Phase 2. | admitted-for-research / public-web-or-author-download |
+| src.fowler-cqrs / core | [CQRS](https://martinfowler.com/bliki/CQRS.html) — Martin Fowler | Primary article for CQRS applicability, trade-offs and reporting-database alternative. | admitted-for-research / public-web-or-author-download |
+| src.fowler-strangler / core | [Strangler Fig](https://martinfowler.com/bliki/StranglerFigApplication.html) — Martin Fowler | Primary article for incremental legacy replacement, seams and transitional architecture. | admitted-for-research / public-web-or-author-download |
 
 ## Contracts
 
@@ -252,6 +255,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.wrk2 / supporting | [wrk2](https://github.com/giltene/wrk2) — Gil Tene / contributors | Constant-throughput HTTP workload and latency measurement. | admitted-for-research / public-web-or-author-download |
 | src.tpc / supporting | [Transaction Processing Performance Council Specifications](https://www.tpc.org/information/benchmarks5.asp) — TPC | Workload definitions and limits of benchmark comparisons. | admitted-for-research / public-web-or-author-download |
 | src.performance-modeling / supporting | [Performance Modeling and Design of Computer Systems](https://www.cs.cmu.edu/~harchol/PerformanceModeling/book.html) — Mor Harchol-Balter | Queueing foundations and scheduling; full book access assessed separately. | bibliography-only / bibliographic-page-and-preview |
+| src.aws-caching-strategies / core | [Caching patterns](https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html) — Amazon Web Services | Planned primary page for cache-aside, write-through and related caching patterns. | admitted-for-research / public-web-or-author-download |
+| src.redis-cache-aside / supporting | [Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/) — Redis | Planned implementation page for cache-aside mechanics and invalidation. | admitted-for-research / public-web-or-author-download |
 
 ## Implementations
 

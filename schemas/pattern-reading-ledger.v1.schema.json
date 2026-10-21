@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.example.invalid/schemas/pattern-reading-ledger.v1.schema.json",
+  "title": "Tycho pattern reading ledger v1",
+  "description": "Exact public-unit reading records. Not independent review or technical proof.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "updated",
+    "scope",
+    "records"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/record"
+      }
+    }
+  },
+  "$defs": {
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source_id",
+        "unit_url",
+        "unit_label",
+        "unit_type",
+        "access_date",
+        "access_method",
+        "sections_read",
+        "sections_not_read",
+        "tables_figures",
+        "license_notes",
+        "claims_supported",
+        "claims_not_supported",
+        "limitations",
+        "content_sha256",
+        "read_scope",
+        "reviewer",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^read\\.[a-z0-9-]+\\.[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "source_id": {
+          "type": "string",
+          "pattern": "^src\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "unit_url": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "unit_label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit_type": {
+          "enum": [
+            "catalog-index",
+            "pattern-page",
+            "article",
+            "book-chapter",
+            "documentation-page",
+            "specification",
+            "engineering-article",
+            "paper"
+          ]
+        },
+        "access_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "access_method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sections_read": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sections_not_read": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "tables_figures": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "license_notes": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claims_supported": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "claims_not_supported": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "read_scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "read"
+        }
+      }
+    }
+  }
+}
