@@ -87,6 +87,7 @@ The Netflix gateway write-up describes significant persistent-connection scalabi
 | CPU-bound/API gateway | No significant CPU efficiency gain | CPU share dominant; no universal improvement |
 | Lower-work logging gateway | Approximately 25% throughput gain | Historical workload, configuration and fleet; not transferable 1:1 |
 | Developer/operational cost | More complex thread locals, blocking boundaries, testability and debugging | Narrative trade-off, not measured engineering hours |
+| Retry-storm resilience | Some benefit, requiring tuning | Not a zero-failure guarantee |
 
 ## Migration safety as a decision framework
 
@@ -111,16 +112,6 @@ The change required investigating **thread-local request context**, hidden block
 In the Servlet model a thread can remain attached to a request while it waits on a downstream dependency. A downstream latency spike and repeated device retries can amplify open connections, threads, memory and scheduler pressure. A Netty event loop lowers the cost of *waiting connections*, but this trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup. Netflix describes difficult-to-debug **ByteBuf leaks, file-descriptor leaks and dropped responses** as possible failures of incomplete async error paths. These are publisher-identified failure classes, not a confirmed list of every Zuul 2 production incident. [src.m9-n07, **Differences Between Blocking vs. Non-Blocking Systems**].
 
 **Operating guards for a different gateway (Tycho synthesis):** explicit event-loop blocking detector; bounded offload executor for unavoidable synchronous dependencies; request context and principal propagation across callbacks; cancellation/deadline cleanup; leak detection for reference-counted buffers; retry/hedging and upstream admission limits; p99 measured by route and connection cohort rather than aggregated at cluster level. A partially converted framework must support a known rollback version while downstream contract and security behavior are stable. No universal Netflix rollback threshold is documented.
-
-## Historical result table: distinguish two gateway workloads
-
-| 2016 company-reported comparison | Result | Why not universal |
-|---|---|---|
-| Persistent client connections | Substantially cheaper connection-scale behavior; product capability driver | The source does not publish a transferable fixed connection-per-vCPU benchmark |
-| API-facing Zuul cluster | **No significant CPU-efficiency increase** at comparable work; similarly bounded throughput/node | On-box encryption, compression and logging kept this cluster compute-heavy |
-| Logging Zuul cluster | Approximately **25% greater throughput** with approximately **25% less CPU use** | Write-heavy, smaller responses and a different per-request workload; not the same cohort |
-| Retry-storm resilience | Authors report some benefit, **requiring tuning** | Not a measured zero-failure guarantee |
-| Developer/operator cost | Harder debug, code and test cycle, context and lifecycle management | Cost was described qualitatively, not in audited team-hours |
 
 These are the actual distinctions in src.m9-n07, **Results of Zuul 2 in Production**. A second modern Java case about a CPU-bound [gRPC worker-pool regression under virtual threads](netflix-grpc-cpu-workerpool-virtual-thread-regression.md) is a different scheduling experiment and must not be collapsed into this 2016 result. The [2024 tracing-lock virtual-thread incident](netflix-java21-virtual-thread-pinning.md) is likewise a different failure mechanism.
 

@@ -46,7 +46,7 @@ content_verified_at: null
 This page belongs to [V05/C02 — PostgreSQL MVCC, WAL and recovery](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits.
 
 <!-- tycho-question-source:tycho.page.ddeff7f1556f44f18c67659b73e6e15f:2 -->
-## 2. Physical streaming replication versus logical replication
+## 3. Physical streaming replication versus logical replication
 
 | Mechanism | What is transferred | Common purpose | Applicability/recovery limit |
 |---|---|---|---|

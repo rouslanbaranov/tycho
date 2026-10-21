@@ -62,26 +62,24 @@ Severity:
 | Decision pages | 6 |
 | Navigation pages | 97 |
 | Atlas pages | 12 |
-| Sound | 402 |
-| Sound with bounded findings | 16 |
+| Sound | 418 |
+| Sound with bounded findings | 0 |
 | Needs remediation | 0 |
 | Blocked | 1 |
 | Pages with findings | 141 |
-| Findings | 19 (18 low, 1 medium, 0 high) |
+| Findings | 1 (0 low, 1 medium, 0 high) |
 
 The blocked page is V11/C06, where Polyglot Persistence remains uncarded because no
 technical owner exists. Five gates remain open: owner acceptance, the blocked Polyglot
 entry and three deferred page-split decisions. Human review is recorded by owner
 confirmation; no per-page reviewer record was supplied.
 
-## Low-severity deferral
+## Low-severity cleanup
 
-The 18 remaining low-severity findings are explicitly deferred to
-[#292](https://github.com/rouslanbaranov/tycho/issues/292). They remain listed in the
-artifact with a gate because they are editorial polish — stale status or navigation
-wording, missing supporting routes and weak source labels — rather than unresolved
-technical or decision claims. No page is promoted to sufficient and no owner acceptance
-is implied.
+All 100 low-severity findings tracked by [#292](https://github.com/rouslanbaranov/tycho/issues/292)
+are fixed. The audit now has no `sound-with-findings` page; only the blocked Polyglot
+Persistence entry remains. No page is promoted to sufficient and no owner acceptance is
+implied.
 
 ## Independent agent review
 

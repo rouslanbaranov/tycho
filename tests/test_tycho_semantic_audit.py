@@ -21,6 +21,20 @@ class PatternSemanticAuditTests(unittest.TestCase):
             validate_data(data, ROOT)
         self.assertIn(message, str(raised.exception))
 
+    def bounded_page(self, data):
+        page = next(item for item in data["pages"]
+                    if item["review"]["disposition"] == "sound")
+        page["review"]["disposition"] = "sound-with-findings"
+        page["review"]["findings"] = [{
+            "severity": "low",
+            "kind": "status",
+            "summary": "A bounded test finding.",
+            "anchor": "page",
+            "remediation": "Fix the local wording.",
+            "gate": None,
+        }]
+        return page
+
     def test_complete_artifact(self):
         result = validate_data(self.data, ROOT)
         self.assertEqual(result["pages"], 419)
@@ -60,8 +74,7 @@ class PatternSemanticAuditTests(unittest.TestCase):
 
     def test_needs_remediation_requires_medium_finding(self):
         data = self.copy()
-        page = next(item for item in data["pages"]
-                    if item["review"]["disposition"] == "sound-with-findings")
+        page = self.bounded_page(data)
         page["review"]["disposition"] = "needs-remediation"
         page["review"]["findings"] = []
         self.check_error(data, "semantic-audit-remediation-severity")
@@ -85,8 +98,7 @@ class PatternSemanticAuditTests(unittest.TestCase):
 
     def test_high_finding_in_bounded_is_rejected(self):
         data = self.copy()
-        page = next(item for item in data["pages"]
-                    if item["review"]["disposition"] == "sound-with-findings")
+        page = self.bounded_page(data)
         page["review"]["findings"].append({
             "severity": "high",
             "kind": "contradictory",
@@ -106,8 +118,7 @@ class PatternSemanticAuditTests(unittest.TestCase):
 
     def test_needs_remediation_requires_medium_remediation(self):
         data = self.copy()
-        page = next(item for item in data["pages"]
-                    if item["review"]["disposition"] == "sound-with-findings")
+        page = self.bounded_page(data)
         finding = page["review"]["findings"][0]
         finding["severity"] = "medium"
         finding["remediation"] = None
@@ -134,8 +145,7 @@ class PatternSemanticAuditTests(unittest.TestCase):
 
     def test_medium_finding_in_bounded_is_rejected(self):
         data = self.copy()
-        page = next(item for item in data["pages"]
-                    if item["review"]["disposition"] == "sound-with-findings")
+        page = self.bounded_page(data)
         page["review"]["findings"].append({
             "severity": "medium",
             "kind": "contradictory",
@@ -182,9 +192,7 @@ class PatternSemanticAuditTests(unittest.TestCase):
 
     def test_finding_needs_resolution(self):
         data = self.copy()
-        page = next(item for item in data["pages"]
-                    if item["review"]["disposition"] == "sound-with-findings"
-                    and item["review"]["findings"])
+        page = self.bounded_page(data)
         page["review"]["findings"][0]["remediation"] = None
         page["review"]["findings"][0]["gate"] = None
         self.check_error(data, "semantic-audit-finding-resolution-missing")

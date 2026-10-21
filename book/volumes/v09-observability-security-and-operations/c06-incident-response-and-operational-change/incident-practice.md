@@ -47,7 +47,7 @@ content_verified_at: null
 This page belongs to [V09/C06 — Incident response and operational change](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits.
 
 <!-- tycho-question-source:tycho.page.d87f9ba3852b49ee8188d150bb679716:6 -->
-## 6. Practice response before production failure
+## 7. Practice response before production failure
 
 The architecture should be exercised with bounded **failure drills**, preferably in a safe isolated environment first: change a response to error, pause a synthetic consumer, kill a nonauthoritative replica, simulate unavailable backup, corrupt a generated *test* index. Check not only recovery speed but whether metrics detect it, responder permissions are sufficient, instructions are unambiguous, and business invariants survive.
 

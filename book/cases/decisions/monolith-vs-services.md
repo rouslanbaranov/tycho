@@ -89,7 +89,9 @@ flowchart TD
 
 **Use this evidence when:** a real system has the same dominant constraint, the relevant execution model/data semantics have been measured and its team can operate the new architecture.
 
-**Do not generalize when:** Split services when teams can operate service discovery, SLOs, identity, distributed tracing, outbox/consistency, independent rollout and on-call. Do not split if your only actual problem is ungoverned package dependencies.
+**Do not generalize the monolith-first result when:** teams can operate service discovery, SLOs,
+identity, distributed tracing, outbox/consistency, independent rollout and on-call. Do not split if
+your only actual problem is ungoverned package dependencies.
 
 **Independent decision dimensions to measure:** Dependency cycles, cross-team PR touches, number of independently meaningful releases, DB transaction crossings, degraded-user minutes, p99 under failure.
 

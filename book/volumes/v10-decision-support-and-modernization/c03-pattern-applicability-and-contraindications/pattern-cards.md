@@ -101,6 +101,9 @@ A useful design review includes *retain, tune or modularize* as candidates. Reta
 
 **Test:** inspect dependency rules and change impact, compare deployment risk and recovery under bounded changes. Read [module boundaries](../../../application/architecture-styles-and-module-boundaries.md) for the mechanism.
 
+**Revisit if:** the named contraindication changes, the test fails, or measured
+benefit no longer exceeds the stated cost.
+
 ### Service decomposition / microservices
 
 **Applies if:** independently owned capabilities can expose stable contracts, their state ownership and consistency model can be deliberately separated, and independent deployment or failure isolation is a real requirement.
@@ -111,6 +114,9 @@ A useful design review includes *retain, tune or modularize* as candidates. Reta
 
 **Test:** an incremental boundary pilot with actual shared-state and consumer tests, rollback/forward recovery, and bounded release time. Fowler's [Microservice Trade-Offs](https://martinfowler.com/articles/microservice-trade-offs.html) explicitly warns that distribution costs can overwhelm benefits in insufficiently complex systems. Independent service count is not a quality target.
 
+**Revisit if:** the named contraindication changes, the test fails, or measured
+benefit no longer exceeds the stated cost.
+
 ### Asynchronous queue / durable workflow
 
 **Applies if:** work can complete later than a synchronous response; durable acceptance and user-visible status are defined; volume spikes can be buffered within bounded retention/age budgets.
@@ -120,6 +126,9 @@ A useful design review includes *retain, tune or modularize* as candidates. Reta
 **Contraindications:** caller requires immediately committed final result; workflow lacks durable operation identity; replay can repeat irreversible effects; upstream keeps retrying indefinitely; retention and overload are unbounded.
 
 **Test:** acknowledgment loss after acceptance, consumer restart after side effect, duplicate delivery, dead-letter/recovery and queue-age SLO. Read [outbox/idempotency](../../../distributed/transactional-outbox-and-idempotency.md), [Kafka](../../v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/kafka-partitions-replication-and-contracts.md) and [durable messaging choices](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md).
+
+**Revisit if:** the named contraindication changes, the test fails, or measured
+benefit no longer exceeds the stated cost.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.35d5be6a4e074758afff95bf3ec68bc5:4 -->
@@ -135,6 +144,9 @@ A useful design review includes *retain, tune or modularize* as candidates. Reta
 
 **Test:** read hit ratio under the real key distribution, post-write freshness, cache outage fallback, hot-key and stampede injection. Read [cache correctness](../../../scaling/local-distributed-caching-and-invalidation.md).
 
+**Revisit if:** the named contraindication changes, the test fails, or measured
+benefit no longer exceeds the stated cost.
+
 ### Sharding and partitioning
 
 **Applies if:** a measurable datastore/resource ceiling is caused by *distributable* independent key ranges, routing identity is stable and resharding/reconciliation is feasible.
@@ -145,6 +157,9 @@ A useful design review includes *retain, tune or modularize* as candidates. Reta
 
 **Test:** replay skew distribution, shard migration with dual-version readers, failure mid-copy, correctness of exclusive ownership and response tail. Read [shard keys and migration](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md).
 
+**Revisit if:** the named contraindication changes, the test fails, or measured
+benefit no longer exceeds the stated cost.
+
 ### Virtual threads / reactive execution
 
 **Applies if:** I/O waiting dominates and an execution model's task/stack/flow semantics match the dependency behavior and runtime version.
@@ -154,6 +169,9 @@ A useful design review includes *retain, tune or modularize* as candidates. Reta
 **Contraindications:** CPU-saturated hot path, uncontrolled shared connection pool, lack of cancellation/backpressure correctness, or chosen libraries that do not obey the required execution contract.
 
 **Test:** compare at fixed **offered** work and downstream capacity; measure CPU, queue/pool waits, timeout, cancellation and correctness. Read [Java execution](../../v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md), [reactive demand](../../v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/reactor-webflux-r2dbc-and-backpressure.md) and [CPU/GC diagnostics](../../v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md).
+
+**Revisit if:** the named contraindication changes, the test fails, or measured
+benefit no longer exceeds the stated cost.
 
 <!-- /tycho-question-source -->
 

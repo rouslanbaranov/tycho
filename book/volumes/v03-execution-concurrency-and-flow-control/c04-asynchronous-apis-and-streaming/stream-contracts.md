@@ -62,9 +62,9 @@ A durable job is deliberately listed separately: it can use polling, webhooks or
 <!-- tycho-question-source:tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5:2 -->
 ## 2. Backpressure is a contract between producers and consumers
 
-Reactive Streams define Publisher/Subscriber and Subscription demand semantics; a Subscriber signals how many elements it is prepared to receive. This supports bounded in-memory processing when compliant components coordinate demand. It does not constrain arbitrarily large database queries, transport-level retries or an external producer outside that demand contract.
+[Reactive Streams](https://github.com/reactive-streams/reactive-streams-jvm) define Publisher/Subscriber and Subscription demand semantics; a Subscriber signals how many elements it is prepared to receive. This supports bounded in-memory processing when compliant components coordinate demand. It does not constrain arbitrarily large database queries, transport-level retries or an external producer outside that demand contract.
 
-gRPC streaming flow control operates at a different level: available receiver/transport buffers influence when data may progress, and completion of a framework write call does not necessarily mean the bytes have reached the remote application. gRPC documentation explicitly distinguishes application writes from actual network transmission.
+[gRPC streaming flow control](https://grpc.io/docs/guides/flow-control/) operates at a different level: available receiver/transport buffers influence when data may progress, and completion of a framework write call does not necessarily mean the bytes have reached the remote application. gRPC documentation explicitly distinguishes application writes from actual network transmission.
 
 ```mermaid
 sequenceDiagram

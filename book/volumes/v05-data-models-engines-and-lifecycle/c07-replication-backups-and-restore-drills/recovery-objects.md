@@ -74,7 +74,7 @@ Do not call synchronous replication, standby promotion and PITR interchangeable.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.81efb7e6d72349768b6f202845cbe35e:4 -->
-## 4. WAL gaps, timelines and version dependencies
+## 3. WAL gaps, timelines and version dependencies
 
 PostgreSQL 17 documentation describes WAL archive segments, recovery targets, timeline histories, base backup requirements, and how incremental base backups depend on prior backups and WAL summaries. It notes that archive lag can increase potential data loss and create local WAL-disk pressure; configuration files are not automatically protected by WAL replay.
 

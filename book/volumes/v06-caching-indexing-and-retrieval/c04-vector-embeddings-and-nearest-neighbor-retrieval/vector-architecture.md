@@ -64,7 +64,7 @@ A purely illustrative corpus of **4,500 chunks × 768 dimensions × 4 bytes (FP3
 
 **Original synthetic corpus:** a shared knowledge system contains 10,000 vectors, but the requesting tenant is authorized to read only 100. An HNSW candidate scan returns forty approximate neighbors; only two are tenant-eligible after applying an authorization filter. A query with `LIMIT 10` can then return two results even though ten relevant authorized documents exist elsewhere in the corpus. This is a deliberately invented case, **not** a measured recall or a claim about the default behavior of every ANN engine.
 
-The [pgvector README, Filtering and Iterative Index Scans](https://github.com/pgvector/pgvector/blob/master/README.md) documents that with approximate indexes, predicates can be applied after candidate scanning and too few rows can survive. Its **0.8.0+** iterative-scan controls can continue scanning under configured bounds; partitioning or partial indexes can be alternatives for selected filters. These performance mechanisms must not become security gates.
+The pinned [pgvector 0.8.0 README, Filtering and Iterative Index Scans](https://github.com/pgvector/pgvector/blob/v0.8.0/README.md) documents that with approximate indexes, predicates can be applied after candidate scanning and too few rows can survive. Its **0.8.0+** iterative-scan controls can continue scanning under configured bounds; partitioning or partial indexes can be alternatives for selected filters. These performance mechanisms must not become security gates.
 
 | Retrieval boundary | Required invariant | Falsifying observation |
 |---|---|---|

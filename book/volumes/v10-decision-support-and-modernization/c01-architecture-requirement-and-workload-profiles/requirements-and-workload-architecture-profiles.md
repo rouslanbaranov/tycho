@@ -68,12 +68,15 @@ The profile's job is to preserve what is *known*, what is required, what is assu
 <!-- tycho-question-source:tycho.page.868027aee4884210bea1d8a6542fbfb0:9 -->
 ## Engineering walkthrough — Complete intake without choosing a style first
 
-**Original fictional platform:** 12,000 registered accounts, a short launch-day surge proposed at 120 distinct booking intents/s, one exclusive-resource invariant and partner clients that cannot all upgrade together. "Cloud native" is not a requirement. The actual observed arrival distribution, retry amplification, hot-key share and current release lead time are unknown.
+**Original fictional platform:** 10,000 registered accounts, a short launch-day surge proposed at
+120 distinct booking intents/s, one exclusive-resource invariant and partner clients that cannot all
+upgrade together. "Cloud native" is not a requirement. The actual observed arrival distribution,
+retry amplification, hot-key share and current release lead time are unknown.
 
 | Kind | Assumed requirement | Gate and missing evidence |
 |---|---|---|
 | Functional | One confirmed allocation per physical item and interval | Concurrency, lost acknowledgment and unique state-owner tests |
-| Workload | 15-second burst of 120 new intents/s | Calibrated offered vs delivered arrivals; unknown actual baseline |
+| Workload | 20-second burst of 120 new intents/s | Calibrated arrivals; unknown baseline |
 | Quality | Correct outcome within a bounded user deadline | Stakeholder-approved SLI/SLO and eligible population needed |
 | Security/operations | Object-level tenant authorization, one maintainable state authority | Reject an unowned new privileged writer |
 | Compatibility | Legacy clients/events coexist during change | Consumer inventory and retention horizon unknown |
