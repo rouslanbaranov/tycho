@@ -62,6 +62,10 @@ For each architecture specify write acknowledgment, eligible reader, membership 
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
+> [Quorum Coordination](../../v11-pattern-atlas/c08-coordination/README.md#quorum-coordination) — decision conditions and contraindications.
+
+
+> **Pattern atlas:**
 > [Quorum-Based Reads/Writes](../../v11-pattern-atlas/c06-database-storage/README.md#quorum-based-reads-writes) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.1b2657011d454460856103419095031b:2 -->

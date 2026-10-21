@@ -59,6 +59,10 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
+> [Consensus](../../v11-pattern-atlas/c08-coordination/README.md#consensus) — decision conditions and contraindications.
+
+
+> **Pattern atlas:**
 > [Leader-Follower Replication](../../v11-pattern-atlas/c06-database-storage/README.md#leader-follower-replication) — decision conditions and contraindications.
 > [Multi-Leader Replication](../../v11-pattern-atlas/c06-database-storage/README.md#multi-leader-replication) — decision conditions and contraindications.
 > [Read Replicas](../../v11-pattern-atlas/c06-database-storage/README.md#read-replicas) — decision conditions and contraindications.

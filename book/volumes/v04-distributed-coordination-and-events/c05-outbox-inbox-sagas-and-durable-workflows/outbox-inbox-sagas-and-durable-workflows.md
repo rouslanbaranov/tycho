@@ -59,6 +59,10 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
+> [Distributed Workflow Orchestration](../../v11-pattern-atlas/c08-coordination/README.md#distributed-workflow-orchestration) — decision conditions and contraindications.
+
+
+> **Pattern atlas:**
 > [Transactional Outbox](../../v11-pattern-atlas/c04-consistency-events/README.md#transactional-outbox) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:0 -->

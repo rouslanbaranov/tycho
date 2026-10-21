@@ -69,6 +69,10 @@
 
 **Owning question:** Which observations must a user session retain when requests move between replicas?
 
+
+> **Pattern atlas:**
+> [Session Consistency](../../v11-pattern-atlas/c08-coordination/README.md#session-consistency) — decision conditions and contraindications.
+
 ## Name the observation that must survive routing
 
 A session is an application-defined sequence of operations, not automatically a browser, connection or human identity. Define how tabs, devices, workers and anonymous requests acquire and transfer session context. Requests without that context cannot inherit its guarantees by accident.
