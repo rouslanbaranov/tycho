@@ -4996,9 +4996,9 @@
           "reason": "Covers failure detection, call containment and recovery probing."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Retry budget + jitter | Spread bounded safe transient retries across time | Multiply load during outage or repeat non-idempotent effects",
-          "reason": "Contrasts retry budget/jitter but states no condition that reverses the breaker choice."
+          "state": "supported",
+          "quote": "A retry budget with jitter, admission/rate limit, or a bounded timeout may be preferable when failures are not fast, when the dependency recovers quickly, or when an open breaker would hide a local resource problem.",
+          "reason": "Names the competing controls and reversal condition."
         }
       },
       "decision_evidence": {
@@ -5051,14 +5051,14 @@
           "reason": "Names the two dangerous misuses that the isolation boundary must avoid."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "",
-          "reason": "Names isolation failure modes (wasted capacity, bypass) but no detection, containment or recovery path."
+          "state": "supported",
+          "quote": "Bulkhead bypass, undersized partitions and a shared hidden queue can defeat isolation; detect per-pool queue age, utilization and rejected work, and rebalance or fail the isolated class explicitly.",
+          "reason": "Names the isolation failures and the detection/response."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Admission/rate limit | Bound offered or admitted work before resource exhaustion | Hide rejected attempts from service-level outcomes",
-          "reason": "Contrasts admission/rate limiting but gives no condition reversing the bulkhead choice."
+          "state": "supported",
+          "quote": "Admission/rate limiting may be preferable when one global resource can be bounded directly; a circuit breaker may be preferable when the failure is dependency-specific rather than capacity-specific.",
+          "reason": "Names the competing controls and reversal condition."
         }
       },
       "decision_evidence": {
@@ -5695,9 +5695,9 @@
           "reason": "Names starvation and requires max-wait, starvation and isolation rules to contain it."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A token bucket rate limiter constrains arrival over time according to configured tokens and burst capacity; a concurrency semaphore limits simultaneous resident work. These solve related but different problems.",
-          "reason": "Contrasts rate limiting and semaphore admission but gives no condition that reverses the priority-queue choice."
+          "state": "supported",
+          "quote": "FIFO with admission control, separate lanes per class, or a shared queue with reserved capacity may be preferable when priority cannot be authenticated or starvation is unacceptable.",
+          "reason": "Names the competing queue policies and reversal condition."
         }
       },
       "decision_evidence": {
@@ -5750,14 +5750,14 @@
           "reason": "Lists the required preconditions and contraindications for hedging."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "it can also double work exactly when a shared dependency is already saturated",
-          "reason": "Names the doubled-work harm but does not describe detection, containment or recovery."
+          "state": "supported",
+          "quote": "Hedging can double work exactly when a shared dependency is saturated; it also risks duplicate side effects if the read is not truly equivalent.",
+          "reason": "Names the doubled-work and duplicate-effect failure modes."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Retry with jitter | Transient failure, safely repeatable effect and spare capacity | Retries magnify overload; caller deadline already expired",
-          "reason": "Names competing mitigations with conditions but gives no rule that reverses the hedging choice."
+          "state": "supported",
+          "quote": "Retry with jitter, improve the slow path, or parallelize truly independent reads may be preferable when replicas share a bottleneck or the operation is not safely repeatable.",
+          "reason": "Names the competing mitigations and reversal condition."
         }
       },
       "decision_evidence": {
@@ -9039,8 +9039,8 @@
     "embedded_units": 55,
     "mechanism_supported": 113,
     "invariant_supported": 127,
-    "failure_recovery_supported": 97,
-    "alternative_supported": 85,
+    "failure_recovery_supported": 99,
+    "alternative_supported": 89,
     "technical_partial_bounded": 110,
     "technical_partial": 35,
     "technical_name_only": 0,

@@ -82,8 +82,8 @@ resilience-pattern; priority core.
 **Decision question.** Should calls to a failing dependency be rejected early until it
 recovers?
 
-**Good-fit conditions.** Failures are observable; a half-open probe is safe; the fallback
-is defined; state is local or shared deliberately.
+**Good-fit conditions.** Failures are observable; a half-open probe is bounded and safe;
+the fallback is defined; state is local or shared deliberately.
 
 **Hard contraindications.** Reject when failures are caller-specific, when a circuit would
 hide a required dependency, or when recovery probing would overload the dependency.
@@ -91,8 +91,8 @@ hide a required dependency, or when recovery probing would overload the dependen
 **Competing alternative.** Retry with backoff or bulkhead isolation. Reverse the choice
 when circuit state and fallback complexity exceed failure containment benefit.
 
-**Failure and recovery.** Shared opens and false recovery are common; verify
-state/fallback in the owner section.
+**Failure and recovery.** Shared opens, false recovery and a breaker that hides a local
+resource problem are common; probe with a bounded budget and do not treat open as recovered.
 
 **Technical owner.** [Bulkheads, retries and optional dependencies](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities) — dependency isolation is bounded, not a full circuit-breaker library guide.
 
@@ -114,7 +114,7 @@ priority core.
 the rest of the workload?
 
 **Good-fit conditions.** One dependency can exhaust shared pools; isolation limits blast
-radius; rejection behavior is defined.
+radius; per-pool queue age/utilization are observable; rejection behavior is defined.
 
 **Hard contraindications.** Reject when isolation would strand capacity, when the
 dependency is essential to all work, or when pool sizing cannot be observed.
@@ -122,8 +122,8 @@ dependency is essential to all work, or when pool sizing cannot be observed.
 **Competing alternative.** Shared pool with admission control. Reverse the choice when
 isolation overhead and stranded capacity exceed containment benefit.
 
-**Failure and recovery.** Pool exhaustion and starvation are common; verify isolation in
-the owner section.
+**Failure and recovery.** Bypass, undersized partitions, a shared hidden queue and
+starvation are common; detect per-pool metrics and fail the isolated class explicitly.
 
 **Technical owner.** [Bulkheads, retries and optional dependencies](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities) — dependency isolation is bounded, not a full circuit-breaker library guide.
 
@@ -469,8 +469,9 @@ low-priority work indefinitely, or when producers can self-assign priority unche
 **Competing alternative.** FIFO with admission control. Reverse the choice when priority
 inversion or starvation exceeds latency benefit.
 
-**Failure and recovery.** Starvation and priority abuse are common; verify policy in the
-owner section.
+**Failure and recovery.** Starvation, priority abuse and unauthenticated class claims are
+common; define max wait, tenant isolation and a starvation policy, and verify the class at
+each hop.
 
 **Technical owner.** [Scarce resources, admission and queues](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md#3-queues-limits-and-priority-create-new-contracts) — admission/queue policy is bounded, not a universal priority scheme.
 
@@ -491,8 +492,8 @@ resilience-pattern; priority advanced.
 **Decision question.** Should a duplicate request be issued after a latency threshold to
 reduce tail latency?
 
-**Good-fit conditions.** Tail latency dominates; duplicate work is safe/idempotent; extra
-load is budgeted; the first response wins.
+**Good-fit conditions.** Replicas have independent tails; duplicate work is safe/idempotent;
+the speculative budget is bounded; cancellation works; the first acceptable response wins.
 
 **Hard contraindications.** Reject when operations are non-idempotent, when extra load
 would overload the dependency, or when the threshold is below normal latency.
@@ -500,7 +501,8 @@ would overload the dependency, or when the threshold is below normal latency.
 **Competing alternative.** Single request with retries or deadline tuning. Reverse the
 choice when duplicate load and cancellation cost exceed tail benefit.
 
-**Failure and recovery.** Hedging amplifies load; verify budget in the owner section.
+**Failure and recovery.** Hedging doubles work under shared saturation and can duplicate
+effects; cap speculation, cancel losers and disable when tails are not independent.
 
 **Technical owner.** [Hedging, replication and selective degradation](../../v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/deadline-hedging.md#4-hedging-replication-and-selective-degradation) — hedging is bounded to the tail-latency discussion.
 

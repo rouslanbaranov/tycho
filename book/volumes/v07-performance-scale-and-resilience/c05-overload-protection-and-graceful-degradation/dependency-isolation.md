@@ -63,6 +63,17 @@ This page belongs to [V07/C05 — Overload protection and graceful degradation](
 
 Across multiple layers, retries compound. If three independent layers make three attempts per incoming logical operation, a pathological path can create up to **27 downstream attempts** per logical intent (under a deliberately simplified fully nested retry model). No such amplification was observed here. [AWS Builders' Library retry and jitter discussion](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/) explains why coordinated repeated retries can worsen overload. [Tycho's RPC and idempotency chapter](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md) owns effect-safe retry identity.
 
+**Circuit-breaker alternative.** A retry budget with jitter, admission/rate limit, or a
+bounded timeout may be preferable when failures are not fast, when the dependency recovers
+quickly, or when an open breaker would hide a local resource problem. Reverse the breaker
+choice when its state adds more coordination than the repeated-call cost it avoids.
+
+**Bulkhead failure and alternative.** Bulkhead bypass, undersized partitions and a shared
+hidden queue can defeat isolation; detect per-pool queue age, utilization and rejected
+work, and rebalance or fail the isolated class explicitly. Admission/rate limiting may be
+preferable when one global resource can be bounded directly; a circuit breaker may be
+preferable when the failure is dependency-specific rather than capacity-specific.
+
 The generic retry decision contract, including local-versus-broad overload and the
 per-request, per-client and service-wide budgets, is owned by `V02/C05`
 (`tycho.page.43414664520b4866929f7f006f27f59b`). This section owns the overload regime and

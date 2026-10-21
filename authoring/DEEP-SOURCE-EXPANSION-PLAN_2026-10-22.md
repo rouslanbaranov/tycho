@@ -98,5 +98,7 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
   Limiting are also `partial-bounded` with all four dimensions supported.
 - Queue-Based Load Leveling, Health Endpoint Monitoring and Failover/Failback are also
   `partial-bounded`.
-- Remaining resilience gaps: alternative/failure evidence for Circuit Breaker, Bulkhead
-  and Hedged Requests.
+- Circuit Breaker, Bulkhead, Hedged Requests and Priority Queue now have all four
+  evidence dimensions supported.
+- **Resilience family complete:** all 16 entries are `partial-bounded` with no evidence
+  gaps. Next: data-consistency-transactions-and-event-sourcing.

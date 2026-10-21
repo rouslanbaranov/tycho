@@ -131,6 +131,11 @@ deadline and from any client-asserted priority, and verify at each hop that lowe
 rejected before higher ones. Propagation is not a license to starve ordinary work; keep a
 bounded wait and a starvation policy.
 
+**Alternative.** FIFO with admission control, separate lanes per class, or a shared queue
+with reserved capacity may be preferable when priority cannot be authenticated or
+starvation is unacceptable. Reverse the priority choice when inversion and starvation
+exceed the latency benefit for critical work.
+
 <!-- /tycho-question-source -->
 
 ## Local limits, global quotas and fair admission
