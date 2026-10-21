@@ -59,6 +59,10 @@ Define:
 A cached negative must never become a universal statement that an object does not exist for all authorized principals if visibility varies by principal or tenant.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Negative Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#negative-caching) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.e0f0d5b68f834acbae94cc6714895dd3:6 -->
 ## 6. A discriminating failure experiment
 

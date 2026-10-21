@@ -68,6 +68,11 @@ Potential countermeasures:
 Single-flight may deduplicate only loads triggered inside one process. Caffeine's [Refresh documentation](https://github.com/ben-manes/caffeine/wiki/Refresh) describes eligible asynchronous refresh while an old value may remain available and a refresh operation may deduplicate concurrent refresh requests. That does not, by itself, provide global cross-replica coalescing or make the stale value safe for sensitive decisions.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Cache Stampede Protection](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cache-stampede-protection) — decision conditions and contraindications.
+> [Single Flight / Request Coalescing](../../v11-pattern-atlas/c05-caching-retrieval/README.md#single-flight-request-coalescing) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.e0f0d5b68f834acbae94cc6714895dd3:5 -->
 ## 5. Cache-loss and source-protection policy
 

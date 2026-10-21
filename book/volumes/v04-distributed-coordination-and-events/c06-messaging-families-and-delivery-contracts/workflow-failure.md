@@ -73,6 +73,7 @@ Use the [saga/isolation research](../c03-consistency-and-distributed-transaction
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
+> [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/README.md#request-reply-messaging) — decision conditions and contraindications.
 > [Correlation Identifier](../../v11-pattern-atlas/c03-messaging-integration/README.md#correlation-identifier) — decision conditions and contraindications.
 > [Claim Check](../../v11-pattern-atlas/c03-messaging-integration/README.md#claim-check) — decision conditions and contraindications.
 > [Dead Letter Channel / DLQ](../../v11-pattern-atlas/c03-messaging-integration/README.md#dead-letter-channel-dlq) — decision conditions and contraindications.
