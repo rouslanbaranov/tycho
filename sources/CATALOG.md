@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-21. Entries: 261.
+Inventory date: 2026-10-21. Entries: 263.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -266,6 +266,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.microsoft-caching-guidance / core | [Caching guidance](https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching) — Microsoft Learn | Primary public guidance for cache consistency, expiration, concurrency and caching patterns. | admitted-for-research / public-web-or-author-download |
 | src.google-cdn-negative-caching / supporting | [Use negative caching](https://docs.cloud.google.com/cdn/docs/using-negative-caching?hl=en) — Google Cloud | Primary public page for per-status negative-caching policy and TTLs. | admitted-for-research / public-web-or-author-download |
 | src.gh-ost / supporting | [gh-ost — online schema migration](https://github.com/github/gh-ost) — GitHub | Public implementation reference for triggerless online schema migration and controlled cut-over. | admitted-for-research / public-web-or-author-download |
+| src.morning-paper-tail-at-scale / supporting | [The Tail at Scale — summary](https://blog.acolyer.org/2015/01/15/the-tail-at-scale/) — The Morning Paper (Adrian Colyer) | Secondary public summary for tail latency, hedged requests and tail-tolerant design. | admitted-for-research / public-web-or-author-download |
 
 ## Implementations
 
@@ -329,6 +330,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | ID / priority | Source | Planned use | Admission / access |
 |---|---|---|---|
 | src.idempotent-consumer-pattern / core | [Idempotent Consumer pattern](https://microservices.io/patterns/communication-style/idempotent-consumer.html) — Chris Richardson | Explain the local atomic boundary of recording message identity and its consumer effect. | admitted-for-research / public-web-or-author-download |
+| src.kleppmann-distributed-locking / core | [How to do distributed locking](https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html) — Martin Kleppmann | Primary article for lock safety, fencing tokens and timing assumptions. | admitted-for-research / public-web-or-author-download |
 
 ## Reliability
 
