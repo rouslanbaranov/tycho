@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-21. Entries: 252.
+Inventory date: 2026-10-21. Entries: 256.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -58,6 +58,10 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.microsoft-cloud-patterns / core | [Cloud Design Patterns](https://learn.microsoft.com/en-us/azure/architecture/patterns/) — Microsoft Learn | Pattern catalog admission and source-unit planning for E17 Phase 2. | admitted-for-research / public-web-or-author-download |
 | src.fowler-cqrs / core | [CQRS](https://martinfowler.com/bliki/CQRS.html) — Martin Fowler | Primary article for CQRS applicability, trade-offs and reporting-database alternative. | admitted-for-research / public-web-or-author-download |
 | src.fowler-strangler / core | [Strangler Fig](https://martinfowler.com/bliki/StranglerFigApplication.html) — Martin Fowler | Primary article for incremental legacy replacement, seams and transitional architecture. | admitted-for-research / public-web-or-author-download |
+| src.fowler-layering / core | [Presentation Domain Data Layering](https://martinfowler.com/bliki/PresentationDomainDataLayering.html) — Martin Fowler | Primary article for layered application modularization and dependency direction. | admitted-for-research / public-web-or-author-download |
+| src.fowler-bounded-context / core | [Bounded Context](https://martinfowler.com/bliki/BoundedContext.html) — Martin Fowler | Primary article for bounded contexts, ubiquitous language and context mapping. | admitted-for-research / public-web-or-author-download |
+| src.clean-architecture / core | [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) — Robert C. Martin (Clean Coder Blog) | Primary article for clean/onion dependency direction and boundary crossing. | admitted-for-research / public-web-or-author-download |
+| src.aws-hexagonal / core | [Hexagonal architecture pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/hexagonal-architecture.html) — AWS Prescriptive Guidance | Primary public page for ports-and-adapters intent, applicability and trade-offs. | admitted-for-research / public-web-or-author-download |
 
 ## Contracts
 

@@ -67,20 +67,22 @@ structure only, not individual pattern mechanisms.
 
 ## Phase 2B batch 1 — application and API
 
-Seventeen of the 24 application/API entries have a read unit after batch 1:
+All 24 application/API entries have a read unit after batch 1:
 Sidecar, Ambassador, Anti-Corruption Layer, Gateway Routing, Gateway
 Aggregation, Gateway Offloading, Backends for Frontends, Database per Service,
 Self-contained Service, API Composition, API Gateway, Client-side Discovery,
-Server-side Discovery, Microservices, Monolith First, Service Discovery and
-Reverse Proxy.
+Server-side Discovery, Microservices, Monolith First, Service Discovery,
+Reverse Proxy, Layered Architecture, Hexagonal Architecture, Clean/Onion
+Architecture, Domain-Driven Design, Asynchronous Request-Reply and Gatekeeper.
 
-Seven remain planned: Layered Architecture, SOA, Hexagonal Architecture,
-Clean/Onion Architecture, Domain-Driven Design, Asynchronous Request-Reply and
-Gatekeeper. Their sources are truncated, landing-only or too large to claim a
-complete reading in this batch.
+SOA uses the Microservices article's explicit SOA comparison; the OASIS SOA-RM
+specification remains a later primary source. Hexagonal uses AWS Prescriptive
+Guidance because the original Cockburn page was truncated by the fetch tool.
+The DDD entry is bounded-context scoped; the full DDD reference remains a
+later source. Batch 1 is complete for its planned units, not for the catalog.
 
-Current plan totals: **22 read, 122 planned and 1 blocked** across 145 entries;
-the ledger has **23 records**, including three foundation catalog records.
+Current plan totals: **29 read, 115 planned and 1 blocked** across 145 entries;
+the ledger has **29 records**, including three foundation catalog records.
 These numbers are progress, not completion.
 
 ## Family batches

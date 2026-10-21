@@ -88,6 +88,7 @@ class PatternRegistryTests(unittest.TestCase):
             "state": "sufficient",
         }
         pattern["atlas_owner"]["state"] = "sufficient"
+        pattern["source_units"] = []
         pattern["coverage"]["technical"] = "sufficient"
         pattern["coverage"]["decision"] = "sufficient"
         pattern["coverage"]["overall"] = "sufficient"
