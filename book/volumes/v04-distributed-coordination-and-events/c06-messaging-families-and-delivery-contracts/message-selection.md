@@ -113,6 +113,20 @@ flowchart LR
 Text alternative: Pulsar brokers serve publishers/subscribers while separate managed-ledger storage persists messages; a subscription's backlog and broker/ledger availability must be considered together. This simplified architecture is based on documented roles and does not represent an actual cluster's topology.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Publish / Subscribe](../../v11-pattern-atlas/c03-messaging-integration/README.md#publish-subscribe) — decision conditions and contraindications.
+> [Point-to-Point Queue](../../v11-pattern-atlas/c03-messaging-integration/README.md#point-to-point-queue) — decision conditions and contraindications.
+> [Competing Consumers](../../v11-pattern-atlas/c03-messaging-integration/README.md#competing-consumers) — decision conditions and contraindications.
+> [Event-Driven Consumer](../../v11-pattern-atlas/c03-messaging-integration/README.md#event-driven-consumer) — decision conditions and contraindications.
+> [Durable Subscriber](../../v11-pattern-atlas/c03-messaging-integration/README.md#durable-subscriber) — decision conditions and contraindications.
+> [Message Broker / Messaging Bridge](../../v11-pattern-atlas/c03-messaging-integration/README.md#message-broker-messaging-bridge) — decision conditions and contraindications.
+> [Content-Based Router](../../v11-pattern-atlas/c03-messaging-integration/README.md#content-based-router) — decision conditions and contraindications.
+> [Message Filter](../../v11-pattern-atlas/c03-messaging-integration/README.md#message-filter) — decision conditions and contraindications.
+> [Pipes and Filters](../../v11-pattern-atlas/c03-messaging-integration/README.md#pipes-and-filters) — decision conditions and contraindications.
+> [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/README.md#resequencer) — decision conditions and contraindications.
+> [Canonical Data Model](../../v11-pattern-atlas/c03-messaging-integration/README.md#canonical-data-model) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.98616bdc3c514ea997b2cfe30ad7c070:2 -->
 ## 2. Requirement-driven comparison, not a ranking
 

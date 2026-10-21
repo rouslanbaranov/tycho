@@ -77,6 +77,10 @@ stateDiagram-v2
 **Text alternative:** the workflow progresses through recorded states. Losing an acknowledgment creates an explicit unknown state requiring reconciliation; compensations can themselves remain incomplete. The diagram is a conceptual state machine, **not** an executed durable workflow.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Process Manager / Routing Slip](../../v11-pattern-atlas/c03-messaging-integration/README.md#process-manager-routing-slip) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:5 -->
 ## 5. Durable workflow selection is conditional
 

@@ -71,6 +71,12 @@ Text alternative: a long-running process holds a seat and waits for approval. It
 Use the [saga/isolation research](../c03-consistency-and-distributed-transactions/transaction-isolation-and-sagas.md) for compensation and concurrency. Choosing a workflow product does not make its external SQL transactions automatically atomic.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Correlation Identifier](../../v11-pattern-atlas/c03-messaging-integration/README.md#correlation-identifier) — decision conditions and contraindications.
+> [Claim Check](../../v11-pattern-atlas/c03-messaging-integration/README.md#claim-check) — decision conditions and contraindications.
+> [Dead Letter Channel / DLQ](../../v11-pattern-atlas/c03-messaging-integration/README.md#dead-letter-channel-dlq) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.98616bdc3c514ea997b2cfe30ad7c070:4 -->
 ## 4. Failure and applicability gates
 

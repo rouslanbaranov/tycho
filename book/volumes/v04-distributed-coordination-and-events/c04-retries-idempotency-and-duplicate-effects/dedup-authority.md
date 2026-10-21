@@ -63,6 +63,10 @@ A minimal conceptual contract is:
 If a downstream system can commit independently without supporting a stable effect key or readback, the caller may be unable to give an exactly-once **business** guarantee. Say **unknown** and design recovery rather than promising idempotence through an interface wrapper.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Idempotent Receiver](../../v11-pattern-atlas/c03-messaging-integration/README.md#idempotent-receiver) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f:5 -->
 ## 5. Message redelivery and consumer effects
 
