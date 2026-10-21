@@ -85,6 +85,16 @@ Adding an index may change:
 
 For high write demand, an index improving one query by a few milliseconds can be a net loss if it increases every update or checkpoint cost. Keep the unit of value as correct completed user operations across the whole workload.
 
+**Index-table mechanism.** A secondary index maps a search key to a row locator and is
+maintained on base-table writes; the planner chooses it when estimated selectivity and cost
+favor it. The index is derived state, not an independent source of truth.
+
+**Invariant and failure.** Every index entry must remain consistent with the base row, and
+its write/backup/maintenance cost belongs to the workload budget. Bloat, failed concurrent
+builds, stale statistics and write amplification are common; rebuild or repair explicitly
+and compare end-to-end cost. A sequential scan, covering index, partition pruning or
+materialized view may be preferable when the index would cost more writes than it saves.
+
 <!-- /tycho-question-source -->
 
 ## Navigation, prerequisites and source scope

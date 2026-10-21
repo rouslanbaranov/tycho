@@ -93,6 +93,16 @@ An acknowledged write's durability depends on the actual replication/commit ackn
 
 **Proposed, not run:** partition old leader, issue reads/writes on both sides, restore connectivity and change membership while checking committed-history invariants, stale-term rejection, duplicate effects and correct client error classification. For read-mostly telemetry where temporary staleness is acceptable, simpler asynchronous replicas may avoid quorum overhead; if single-key linearizable authority is mandatory, that alternative may fail the requirement.
 
+**Leader-follower mechanism.** One leader accepts writes and appends a replicated log;
+followers apply it in order. Reads may be served by the leader or by a follower with an
+explicit freshness contract. Failover selects a new leader only under the protocol's
+quorum/term rules; an old leader must not commit independently.
+
+**Alternative.** Quorum-replicated consensus, multi-leader replication or asynchronous
+read replicas may be preferable depending on the required write availability, read freshness
+and conflict model. Reverse leader-follower when cross-region writes or read scale dominate,
+or when the failover window is unacceptable.
+
 <!-- /tycho-question-source -->
 
 ## Integrated decision and reading route

@@ -86,6 +86,17 @@ Text alternative: RabbitMQ can confirm taking responsibility for a task separate
 
 Quorum queues are not automatically ideal for very short-lived temporary queues, the lowest latency or arbitrarily large replay backlogs; RabbitMQ's [quorum-queue guide](https://www.rabbitmq.com/docs/quorum-queues) explicitly discusses these choices. It also describes replicated queue members and the costs of data safety; the existence of replication does not prove a specific application's recovery SLO.
 
+**Point-to-point queue.** A queue dispatches each message to one eligible consumer;
+competing consumers share the work, and a consumer acknowledgement retires the message
+(after any configured redelivery policy). A publisher confirm means the broker accepted
+responsibility, not that a consumer completed the business effect.
+
+**Message broker and bridge.** A broker routes, stores and delivers messages between
+producers and consumers. A bridge forwards or translates between brokers/protocols, adding
+another hop, retention policy and failure domain. Direct request/response, pub/sub fan-out
+or a shared log may be preferable when one consumer owns each task or when brokered
+indirection adds no routing/reliability value.
+
 ### NATS Core and JetStream
 
 The current public [NATS JetStream concept documentation](https://docs.nats.io/concepts/jetstream) distinguishes **Core NATS** pub/sub delivery to online subscribers from **JetStream** persistent streams with server-side consumer cursors and acknowledgements. The page describes Core as at-most-once and JetStream's ordinary redelivery as at-least-once, under their respective configurations. [E03]
@@ -93,6 +104,25 @@ The current public [NATS JetStream concept documentation](https://docs.nats.io/c
 A fictional notification can use ephemeral pub/sub if losing a signal when no subscriber is listening is acceptable. A durable business task should not casually use Core alone if clients require recoverable delivery; a JetStream durable consumer or another persisted queue may better match that requirement.
 
 JetStream stream retention and consumer policies still need version/configuration-specific testing, especially around publisher deduplication windows, consumer ack timeouts, replicas and restart behavior. No NATS server was installed or exercised for this page.
+
+**Publish/subscribe.** A topic fans each publication out to every current matching
+subscriber; ephemeral subscribers lose messages published while they are absent. Topic
+design, subscriber registration and per-subscriber cursors are part of the delivery
+contract.
+
+**Event-driven consumer.** The consumer reacts to a delivered message rather than polling a
+queue. It must own effect identity, deduplication and acknowledgement ordering: a crash
+after the effect but before acknowledgement causes redelivery, while acknowledging before
+the effect can lose work.
+
+**Durable subscriber.** A durable subscriber keeps a server-side cursor and retained
+messages for an offline consumer, so delivery can resume after disconnect. Retention,
+acknowledgement timeout and replay policy determine whether that resume is bounded.
+
+**Invariant and alternative.** Every consumer still needs a stable effect identity and a
+deduplication/acknowledgement rule; durable storage does not make the business effect
+idempotent. Polling a queue or a direct request may be preferable when delivery volume is
+low or the consumer cannot own a cursor.
 
 ### Apache Pulsar broker and storage split
 

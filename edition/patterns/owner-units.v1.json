@@ -1441,7 +1441,7 @@
         "heading": "NATS Core and JetStream",
         "anchor": "nats-core-and-jetstream",
         "level": 3,
-        "line": 89,
+        "line": 100,
         "unit_kind": "embedded",
         "unit_terms": [
           "Core NATS",
@@ -1452,9 +1452,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "distinguishes **Core NATS** pub/sub delivery to online subscribers from **JetStream** persistent streams with server-side consumer cursors and acknowledgements.",
-          "reason": "Contrasts Core pub/sub with JetStream and states its delivery scope, but does not explain topic fan-out or subscriber registration."
+          "state": "supported",
+          "quote": "A topic fans each publication out to every current matching subscriber; ephemeral subscribers lose messages published while they are absent.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
@@ -1462,9 +1462,9 @@
           "reason": ""
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "if losing a signal when no subscriber is listening is acceptable",
-          "reason": "Acknowledges signal loss for absent subscribers but gives no detection, containment or recovery."
+          "state": "supported",
+          "quote": "a crash after the effect but before acknowledgement causes redelivery, while acknowledging before the effect can lose work.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
           "state": "supported",
@@ -1487,7 +1487,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "NATS subsection is the only sustained pub/sub discussion; it is framed as a durability contrast."
     },
@@ -1512,9 +1512,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "the broker's confirmation to the publisher (acceptance/persistence responsibility according to queue mode) and the consumer's acknowledgement of processing to the broker.",
-          "reason": "Explains publisher and consumer acknowledgements for a queue but not one-consumer dispatch or message removal on acknowledgement."
+          "state": "supported",
+          "quote": "A queue dispatches each message to one eligible consumer; competing consumers share the work, and a consumer acknowledgement retires the message (after any configured redelivery policy).",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
@@ -1527,9 +1527,9 @@
           "reason": ""
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "Mentions temporary queues and latency-sensitive cases as poor fits but names no competing mechanism selected by a reversal condition."
+          "state": "supported",
+          "quote": "Direct request/response, pub/sub fan-out or a shared log may be preferable when one consumer owns each task or when brokered indirection adds no routing/reliability value.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -1547,7 +1547,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "RabbitMQ subsection explains queue acknowledgements and redelivery, not single-consumer dispatch."
     },
@@ -1561,7 +1561,7 @@
         "heading": "Competing Consumers",
         "anchor": "competing-consumers",
         "level": 3,
-        "line": 199,
+        "line": 229,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Competing Consumers"
@@ -1618,7 +1618,7 @@
         "heading": "NATS Core and JetStream",
         "anchor": "nats-core-and-jetstream",
         "level": 3,
-        "line": 89,
+        "line": 100,
         "unit_kind": "embedded",
         "unit_terms": [
           "delivery to online subscribers",
@@ -1627,24 +1627,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "The current public [NATS JetStream concept documentation](https://docs.nats.io/concepts/jetstream) distinguishes **Core NATS** pub/sub delivery to online subscribers from **JetStream** persistent streams with server-side consumer cursors and acknowledgements.",
-          "reason": ""
+          "state": "supported",
+          "quote": "The consumer reacts to a delivered message rather than polling a queue.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The section describes delivery styles but states no consumer-side guarantee."
+          "state": "supported",
+          "quote": "It must own effect identity, deduplication and acknowledgement ordering",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "JetStream stream retention and consumer policies still need version/configuration-specific testing, especially around publisher deduplication windows, consumer ack timeouts, replicas and restart behavior.",
-          "reason": "Names configuration-dependent ack, retention and restart behaviour without a recovery procedure."
+          "state": "supported",
+          "quote": "a crash after the effect but before acknowledgement causes redelivery, while acknowledging before the effect can lose work.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing consumer mechanism is compared."
+          "state": "supported",
+          "quote": "Polling a queue or a direct request may be preferable when delivery volume is low or the consumer cannot own a cursor.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -1662,7 +1662,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -1676,7 +1676,7 @@
         "heading": "Request-Reply Messaging",
         "anchor": "request-reply-messaging",
         "level": 3,
-        "line": 183,
+        "line": 192,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Request-Reply Messaging"
@@ -1733,7 +1733,7 @@
         "heading": "Correlation Identifier",
         "anchor": "correlation-identifier",
         "level": 3,
-        "line": 171,
+        "line": 180,
         "unit_kind": "dedicated",
         "unit_terms": [
           "ties together messages",
@@ -1793,7 +1793,7 @@
         "heading": "Content-Based Router",
         "anchor": "content-based-router",
         "level": 3,
-        "line": 175,
+        "line": 205,
         "unit_kind": "dedicated",
         "unit_terms": [
           "A content-based router chooses a destination",
@@ -1853,7 +1853,7 @@
         "heading": "Message Filter",
         "anchor": "message-filter",
         "level": 3,
-        "line": 210,
+        "line": 240,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Message Filter"
@@ -1910,7 +1910,7 @@
         "heading": "Pipes and Filters",
         "anchor": "pipes-and-filters",
         "level": 3,
-        "line": 186,
+        "line": 216,
         "unit_kind": "dedicated",
         "unit_terms": [
           "ordered, replaceable stages",
@@ -2161,9 +2161,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A dead-letter queue is a holding mechanism, not successful delivery or an automatically safe replayer.",
-          "reason": "Characterizes a DLQ as a holding area but does not explain routing, retention or replay from the dead-letter channel."
+          "state": "supported",
+          "quote": "A dead-letter channel routes a message that exceeds its retry or age policy to a quarantine queue, preserving payload, headers and failure reason.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
@@ -2176,9 +2176,9 @@
           "reason": ""
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing mechanism with a reversal condition is stated; quarantine and repair are steps, not alternatives."
+          "state": "supported",
+          "quote": "Retrying with backoff, dropping with an audit record, or parking the work in a repair table/outbox may be preferable when the failure is deterministic or the broker cannot retain evidence safely.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -2196,7 +2196,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Poison-work subsection treats the DLQ as holding state; routing and retention mechanics are not described."
     },
@@ -2210,7 +2210,7 @@
         "heading": "NATS Core and JetStream",
         "anchor": "nats-core-and-jetstream",
         "level": 3,
-        "line": 89,
+        "line": 100,
         "unit_kind": "embedded",
         "unit_terms": [
           "persistent streams",
@@ -2221,9 +2221,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "**JetStream** persistent streams with server-side consumer cursors and acknowledgements.",
-          "reason": "Identifies persistence and per-consumer cursors but does not explain retention or offline delivery for a durable subscription."
+          "state": "supported",
+          "quote": "A durable subscriber keeps a server-side cursor and retained messages for an offline consumer, so delivery can resume after disconnect.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
@@ -2231,9 +2231,9 @@
           "reason": ""
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A durable business task should not casually use Core alone if clients require recoverable delivery; a JetStream durable consumer or another persisted queue may better match that requirement.",
-          "reason": "States that recoverable delivery needs a durable consumer but gives no failure detection or recovery procedure."
+          "state": "supported",
+          "quote": "Retention, acknowledgement timeout and replay policy determine whether that resume is bounded.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
           "state": "supported",
@@ -2256,7 +2256,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "JetStream subsection explains persistent consumers but not retention or offline subscription semantics."
     },
@@ -2330,7 +2330,7 @@
         "heading": "Resequencer",
         "anchor": "resequencer",
         "level": 3,
-        "line": 163,
+        "line": 193,
         "unit_kind": "dedicated",
         "unit_terms": [
           "restores an intended order",
@@ -2390,7 +2390,7 @@
         "heading": "Claim Check",
         "anchor": "claim-check",
         "level": 3,
-        "line": 158,
+        "line": 167,
         "unit_kind": "dedicated",
         "unit_terms": [
           "stores a large or sensitive payload outside the message",
@@ -2459,9 +2459,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Official RabbitMQ **4.3** *Reliability Guide* and *Consumer Acknowledgements and Publisher Confirms* distinguish two acknowledgements: the broker's confirmation to the publisher (acceptance/persistence responsibility according to queue mode) and the consumer's acknowledgement of processing to the broker.",
-          "reason": ""
+          "state": "supported",
+          "quote": "A broker routes, stores and delivers messages between producers and consumers.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
@@ -2474,9 +2474,9 @@
           "reason": ""
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The section does not compare brokered delivery with an alternative and a reversal condition."
+          "state": "supported",
+          "quote": "Direct request/response, pub/sub fan-out or a shared log may be preferable when one consumer owns each task or when brokered indirection adds no routing/reliability value.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -2494,7 +2494,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -2508,7 +2508,7 @@
         "heading": "Canonical Data Model",
         "anchor": "canonical-data-model",
         "level": 3,
-        "line": 221,
+        "line": 251,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Canonical Data Model"
@@ -4277,24 +4277,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Splitting a database into shards is useful only if **resource or operational constraints** justify distributing ownership and the application can tolerate the resulting coordination and migration requirements.",
-          "reason": ""
+          "state": "supported",
+          "quote": "Partition rows by a shard key, route each request to its shard and maintain a versioned shard map.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The section states a condition for usefulness, not an ownership or routing invariant."
+          "state": "supported",
+          "quote": "One authoritative owner must exist per key, and a resharding move must fence writes or preserve a verifiable handoff.",
+          "reason": "States the invariant."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "Hotspot and migration failure paths are owned by the detailed pages in this chapter."
+          "state": "supported",
+          "quote": "Hotspots, map drift, split brain and a failed migration are common; detect skew, throttle the hot key and dual-read/verify during movement.",
+          "reason": "Names failure and recovery."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing distribution mechanism is compared here."
+          "state": "supported",
+          "quote": "Partitioning inside one database, read replicas or vertical scaling may be preferable when distribution would add cross-shard coordination without relieving the measured constraint.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -4312,7 +4312,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -4326,7 +4326,7 @@
         "heading": "Partitioning",
         "anchor": "partitioning",
         "level": 3,
-        "line": 94,
+        "line": 105,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Partitioning"
@@ -4451,9 +4451,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "nodes A, B and C replicate one state machine. A was leader. A's network connection to B and C fails; B and C may form a quorum and eventually select a new leader.",
-          "reason": "Shows a leader replicating state to B and C during failover, but not write acknowledgment or follower log application."
+          "state": "supported",
+          "quote": "One leader accepts writes and appends a replicated log; followers apply it in order.",
+          "reason": "Defines the leader/follower replication path."
         },
         "invariant": {
           "state": "supported",
@@ -4466,9 +4466,9 @@
           "reason": "Covers isolation, new-leader election and stale-leader rejection with log catch-up."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing replication mechanism is named in this section."
+          "state": "supported",
+          "quote": "Quorum-replicated consensus, multi-leader replication or asynchronous read replicas may be preferable depending on the required write availability, read freshness and conflict model.",
+          "reason": "Names the alternatives and reversal."
         }
       },
       "decision_evidence": {
@@ -4486,7 +4486,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Page-level owner; the walkthrough shows leader-based failover but not the follower replication protocol."
     },
@@ -4500,7 +4500,7 @@
         "heading": "Multi-Leader Replication",
         "anchor": "multi-leader-replication",
         "level": 3,
-        "line": 117,
+        "line": 127,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Multi-Leader Replication"
@@ -4557,7 +4557,7 @@
         "heading": "Read Replicas",
         "anchor": "read-replicas",
         "level": 3,
-        "line": 129,
+        "line": 139,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Read Replicas"
@@ -4624,24 +4624,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "In a simplified majority-voting cluster of N eligible voters, a quorum is floor(N/2)+1.",
-          "reason": "Covers majority quorum arithmetic, not read/write quorum intersection or freshness."
+          "state": "supported",
+          "quote": "A write is acknowledged by W voters and a read consults R voters; when R + W > N and membership is correctly configured, the sets intersect on the latest committed value.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "This arithmetic assumes the quorum protocol and membership-change rules are correct.",
-          "reason": "States a correctness precondition but no read/write quorum guarantee."
+          "state": "supported",
+          "quote": "Quorums must intersect and every membership change must preserve that intersection; a minority partition cannot commit authoritatively.",
+          "reason": "States the invariant."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A **3-voter** cluster requires 2 votes, and can normally make progress with one unavailable voter if remaining voters can communicate and have necessary log state.",
-          "reason": "Describes tolerance of one unavailable voter, not read/write failure detection or recovery."
+          "state": "supported",
+          "quote": "A read with too small R can return stale data, and an unsafe membership edit can remove progress.",
+          "reason": "Names failure and recovery."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing read/write mechanism or reversal condition is named in this section."
+          "state": "supported",
+          "quote": "A leader-based protocol can simplify reads and writes but still needs a quorum for election and commit.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -4659,7 +4659,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Registry anchor is section 2, but the text covers voting-quorum arithmetic, not read/write quorum intersection."
     },
@@ -4684,24 +4684,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Adding an index may change: - write/update latency and WAL volume; - storage and backup/restore size; - vacuum/maintenance, cache pressure and bloat management; - schema rollout constraints and lock exposure during index creation; - planning time and scan choice; - resource cost when multiple replicas or tenants repeat the same index.",
-          "reason": "Explains index maintenance as a lifecycle cost (writes, WAL, storage, vacuum, planning) but not the lookup-table structure or its update contract."
+          "state": "supported",
+          "quote": "A secondary index maps a search key to a row locator and is maintained on base-table writes; the planner chooses it when estimated selectivity and cost favor it.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "For high write demand, an index improving one query by a few milliseconds can be a net loss if it increases every update or checkpoint cost.",
-          "reason": "States a cost tradeoff to weigh, not a guarantee or precondition that must hold."
+          "state": "supported",
+          "quote": "Every index entry must remain consistent with the base row, and its write/backup/maintenance cost belongs to the workload budget.",
+          "reason": "States the invariant."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "documents creation and concurrent build choices, including limitations and failure recovery",
-          "reason": "Only points to PostgreSQL documentation for limitations and recovery; no failure mode or recovery step is described."
+          "state": "supported",
+          "quote": "Bloat, failed concurrent builds, stale statistics and write amplification are common; rebuild or repair explicitly and compare end-to-end cost.",
+          "reason": "Names failure and recovery."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "The choice to create an index concurrently reduces some write-blocking behavior but has **its own** constraints, phases and resource costs; it is not a free online operation.",
-          "reason": "Contrasts concurrent and standard index builds but gives no condition that reverses the choice."
+          "state": "supported",
+          "quote": "A sequential scan, covering index, partition pruning or materialized view may be preferable when the index would cost more writes than it saves.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -4719,7 +4719,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level anchor; covers index lifecycle, not the access-path catalogue."
     },
@@ -8663,9 +8663,9 @@
       ],
       "unit_count": 1,
       "dedicated_units": 0,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "deepen",
-      "rationale": "Quorum reads and writes share one majority-arithmetic unit while quorum coordination is partial; the page needs separate bounded units for the arithmetic and the read/write intersection rules."
+      "rationale": "Quorum reads/writes and quorum coordination now have bounded evidence in the shared majority-arithmetic page."
     },
     {
       "document_id": "tycho.page.1b2657011d454460856103419095031b",
@@ -8679,7 +8679,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 2,
-      "bounded_entries": 3,
+      "bounded_entries": 4,
       "decision": "deepen",
       "rationale": "Four replication patterns share a page whose leader-follower unit is embedded and whose multi-leader and read-replica units are bounded notes; deeper sections are still required."
     },
@@ -8733,9 +8733,9 @@
       ],
       "unit_count": 8,
       "dedicated_units": 6,
-      "bounded_entries": 6,
+      "bounded_entries": 11,
       "decision": "deepen",
-      "rationale": "Eleven consumer and routing patterns share one requirements page; six have dedicated units, while five remain partial and need deeper per-pattern sections rather than a split."
+      "rationale": "Eleven consumer and routing patterns share one requirements page; all now have bounded evidence, with dedicated notes for the routing mechanisms."
     },
     {
       "document_id": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070",
@@ -8764,7 +8764,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 3,
-      "bounded_entries": 3,
+      "bounded_entries": 4,
       "decision": "keep",
       "rationale": "Four messaging-failure patterns have four distinct units, three dedicated, and the page remains a coherent failure-gate page."
     },
@@ -8778,7 +8778,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 1,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Sharding is only partially bounded and partitioning now has a separate note; the page still needs a key-routing section before it can own both patterns."
     },
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 135,
-    "invariant_supported": 141,
-    "failure_recovery_supported": 122,
-    "alternative_supported": 119,
-    "technical_partial_bounded": 135,
-    "technical_partial": 10,
+    "mechanism_supported": 145,
+    "invariant_supported": 145,
+    "failure_recovery_supported": 128,
+    "alternative_supported": 127,
+    "technical_partial_bounded": 145,
+    "technical_partial": 0,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

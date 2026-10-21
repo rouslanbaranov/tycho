@@ -82,6 +82,17 @@ and latency cost exceed the safety benefit.
 
 The [etcd v3.6 FAQ](https://etcd.io/docs/v3.6/faq/) discusses why a dangerous membership addition can remove progress when the new member cannot join. A non-voting learner can receive state before safe promotion under implementation-specific rules. Changes to membership are themselves state-machine decisions that need supported joint/overlapping quorum safeguards, not a simple count update in a config file.
 
+**Quorum mechanism.** A write is acknowledged by W voters and a read consults R voters;
+when R + W > N and membership is correctly configured, the sets intersect on the latest
+committed value. Election and log commitment also require a quorum under the protocol's
+term rules.
+
+**Invariant and failure.** Quorums must intersect and every membership change must preserve
+that intersection; a minority partition cannot commit authoritatively. A read with too
+small R can return stale data, and an unsafe membership edit can remove progress. Track term,
+commit index and voter configuration, and repair or reconfigure deliberately rather than
+counting replicas.
+
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.1b2657011d454460856103419095031b:3 -->
 ## 3. Original synthetic network-partition scenario

@@ -140,3 +140,12 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
   Architecture: owner sections and cards expanded; each is `partial-bounded`.
 - Remaining partial entries: four in database-and-storage, six in
   messaging-and-event-driven-integration (10 total, 135 `partial-bounded`).
+## Final gap closure — 2026-10-22
+
+- Database/storage: Sharding, Leader-Follower Replication, Quorum Reads/Writes and Index
+  Table now have all four evidence dimensions supported.
+- Messaging: Publish/Subscribe, Point-to-Point Queue, Event-Driven Consumer, Durable
+  Subscriber, Message Broker/Bridge and DLQ now have all four evidence dimensions supported.
+- **All 145 entries are `partial-bounded`, 0 are partial, 0 are `sufficient`.** The
+  remaining gates are sufficient evidence, independent per-page review and owner acceptance,
+  not missing bounded evidence.

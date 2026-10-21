@@ -110,6 +110,15 @@ An invalid schema or permanently rejected target is not repaired by retrying for
 
 For a fictional failed publication command K, repair may require correcting input while preserving the same logical effect identity, or creating an explicitly new operation if intent changes. Replaying with a new ID merely to bypass deduplication risks a duplicate external effect. Recheck current authorization before repair.
 
+**Dead-letter mechanism.** A dead-letter channel routes a message that exceeds its retry or
+age policy to a quarantine queue, preserving payload, headers and failure reason. It is a
+holding and triage mechanism, not delivery, repair or an automatically safe replay.
+
+**Alternative.** Retrying with backoff, dropping with an audit record, or parking the work in
+a repair table/outbox may be preferable when the failure is deterministic or the broker
+cannot retain evidence safely. Reverse the DLQ choice when quarantine retention and manual
+repair cost exceed the value of preserving the message.
+
 ### Workflow history and upgrades
 
 Temporal's overview describes replay against recorded history; its patching documentation explains explicit branches for compatible changes. That supports a concrete concern: changing code that old histories will replay is an ongoing compatibility obligation. It does not prove arbitrary application effects are exactly once.
