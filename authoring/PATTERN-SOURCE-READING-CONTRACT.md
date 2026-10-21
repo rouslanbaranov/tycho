@@ -122,8 +122,21 @@ read as returned. Hedged Requests relies on a secondary summary, not the
 original paper; Failover/Failback is a database example, not a generic service
 failover contract.
 
-Current plan totals: **110 read, 34 planned and 1 blocked** across 145 entries;
-the ledger has **91 records**, including three foundation catalog records.
+## Phase 2B batch 5 — scalability and deployment
+
+All 22 scalability/deployment entries have a read unit after batch 5. Cell-Based
+Architecture reuses the deployment-stamps unit as a bounded comparison; Shuffle
+Sharding uses Cortex documentation; Geode uses the Microsoft pattern page;
+Tenant-Based Resource Isolation uses Microsoft multitenant guidance; Immutable
+Infrastructure uses an IBM overview.
+
+SRE frontend load balancing, KEDA, deployment stamps, Argo blue-green/canary and
+Fowler feature-toggle/branch pages were read as returned. Kubernetes HPA,
+resource, Deployment and OpenGitOps pages were truncated after their main
+sections; those records state the inspected scope.
+
+Current plan totals: **131 read, 13 planned and 1 blocked** across 145 entries;
+the ledger has **106 records**, including three foundation catalog records.
 These numbers are progress, not completion.
 
 ## Family batches
