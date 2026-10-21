@@ -105,7 +105,7 @@ This chapter's source ledger deliberately cites [SLSA v1.0 Build requirements](h
 
 | Route | Destination |
 |---|---|
-| Parent and source ledger | [Chapter introduction and exact source rows](README.md#chapter-source-ledger) |
+| Source map | [Chapter source index](README.md#chapter-source-ledger) |
 | Previous / prerequisite | [Read preceding context](ci-cd-provenance-and-gitops.md) |
 | Next | [Continue the reasoning](promotion-rollout.md) |
 | Integrated question | [Original scenario and limits](ci-cd-provenance-and-gitops.md) |

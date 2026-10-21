@@ -89,7 +89,7 @@ For a first reading, follow the chapter order. For diagnosis, connect the observ
 
 Prerequisite context: V02/C02, C05; V03/C03–C05.
 
-Read [V02/C02](../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/README.md), [V02/C05](../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/README.md), [V03/C03](../v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/README.md), [V03/C05](../v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/README.md) for the named entry assumptions.
+Read [V02/C02](../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/README.md), [V02/C05](../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/README.md), [V03/C03](../v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/README.md), [V03/C04](../v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/README.md), [V03/C05](../v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/README.md) for the named entry assumptions.
 
 ### Reasoning boundaries
 

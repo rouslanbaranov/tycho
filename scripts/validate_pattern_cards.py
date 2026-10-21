@@ -73,7 +73,10 @@ def check_owner_link(text, chapter_path, owner_path, owner_anchor, root=ROOT):
 
 def check_backlink(owner_text, chapter_path, slug):
     marker = chapter_path.split("book/volumes/", 1)[-1] + "#" + slug
-    require(marker in owner_text, "card-backlink-missing: " + slug)
+    # GitHub keeps the extra separator when a heading contains " / ".
+    normalized = owner_text.replace("--", "-")
+    require(marker in owner_text or marker in normalized,
+            "card-backlink-missing: " + slug)
 
 
 def section_text(body, slug):

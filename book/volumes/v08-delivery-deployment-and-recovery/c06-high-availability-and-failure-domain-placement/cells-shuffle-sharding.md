@@ -155,3 +155,8 @@ deployment meets the objective or when stamps still share an unowned global depe
 The failure path is configuration drift or split state across stamps; version the stamp
 definition, route by an explicit key and reconcile state at the authority. A cell-based
 deployment is the alternative when isolation is the main goal and scale is secondary.
+## Navigation
+
+- Parent chapter: [High availability and failure-domain placement](README.md).
+- [Integrated decision](availability-zones-placement-and-failure-domains.md).
+- Pattern atlas: [Shuffle Sharding](../../v11-pattern-atlas/c09-scalability/README.md).

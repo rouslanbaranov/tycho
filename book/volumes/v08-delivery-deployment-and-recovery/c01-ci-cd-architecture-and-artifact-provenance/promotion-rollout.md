@@ -112,7 +112,7 @@ All diagrams, recommendations and failure cases in this chapter are conceptual. 
 
 | Route | Destination |
 |---|---|
-| Parent and source ledger | [Chapter introduction and exact source rows](README.md#chapter-source-ledger) |
+| Source map | [Chapter source index](README.md#chapter-source-ledger) |
 | Previous / prerequisite | [Read preceding context](build-identity.md) |
 | Next | [Continue the reasoning](README.md) |
 | Integrated question | [Original scenario and limits](ci-cd-provenance-and-gitops.md) |

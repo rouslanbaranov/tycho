@@ -41,7 +41,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -131,3 +131,8 @@ Choose a workload-specific data access API and cache hierarchy when a few predic
 **Metrics required before reuse:** actual p95/p99, throughput versus CPU/storage, error and retry rate, divergence/correctness, rollback time and SRE toil, with historical time window. No new performance measurement or independent replication was performed by Tycho. All source-reported numbers are scoped to this publisher's observations.
 
 **Provenance:** [src.m9-me01](https://engineering.fb.com/2013/06/25/core-infra/tao-the-power-of-the-graph/), TAO data model and API; Implementation; Consistency. Source-admission review [#114](https://github.com/rouslanbaranov/tycho/issues/114); independent technical review [#121](https://github.com/rouslanbaranov/tycho/issues/121). **Status remains draft** pending both gates.
+## Related reading
+
+- [Casebook index](README.md) — scope, evaluation method and sibling cases.
+- [Decision playbooks](../decisions/README.md) — decision guides that consume this case.
+- [Pattern atlas](../volumes/v11-pattern-atlas/README.md) — applicability and contraindications.

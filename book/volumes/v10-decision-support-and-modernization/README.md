@@ -113,6 +113,7 @@ A historical case supplies a conditional lesson, not a portable performance prom
 |---|---|
 | Parent | [Book contents](../../README.md) |
 | Previous volume | [V09](../v09-observability-security-and-operations/README.md) |
+| Next volume | [V11 — Pattern Atlas](../v11-pattern-atlas/README.md) |
 | Historical applications | [Casebook and synthetic playbooks](../../cases/README.md) |
 
 ## Evidence and known limits

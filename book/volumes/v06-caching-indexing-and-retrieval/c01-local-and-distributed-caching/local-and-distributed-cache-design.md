@@ -61,7 +61,7 @@ content_verified_at: null
 > [Distributed Cache](../../v11-pattern-atlas/c05-caching-retrieval/README.md#distributed-cache) — decision conditions and contraindications.
 > [Read-Through Cache](../../v11-pattern-atlas/c05-caching-retrieval/README.md#read-through-cache) — decision conditions and contraindications.
 > [Write-Through Cache](../../v11-pattern-atlas/c05-caching-retrieval/README.md#write-through-cache) — decision conditions and contraindications.
-> [Write-Behind / Write-Back](../../v11-pattern-atlas/c05-caching-retrieval/README.md#write-behind-write-back) — decision conditions and contraindications.
+> [Write-Behind / Write-Back](../../v11-pattern-atlas/c05-caching-retrieval/README.md#write-behind--write-back) — decision conditions and contraindications.
 > [Write-Around](../../v11-pattern-atlas/c05-caching-retrieval/README.md#write-around) — decision conditions and contraindications.
 > [Multi-Level Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#multi-level-caching) — decision conditions and contraindications.
 
