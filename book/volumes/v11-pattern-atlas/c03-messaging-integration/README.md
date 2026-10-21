@@ -82,7 +82,7 @@ none claims sufficient technical or decision coverage.
 
 **Failure and recovery.** Fan-out amplifies load and duplicate effects; verify retention and acknowledgement semantics in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#consumer-requirements-and-messaging-families) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#consumer-requirements-and-messaging-families) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-pubsub.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -106,7 +106,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Duplicate delivery and poison messages are normal; verify acknowledgement and redelivery semantics in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#consumer-requirements-and-messaging-families) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#consumer-requirements-and-messaging-families) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-p2p.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -130,7 +130,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Concurrency increases duplicate and reorder exposure; verify ordering and acknowledgement in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#consumer-requirements-and-messaging-families) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#consumer-requirements-and-messaging-families) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-competing.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -154,7 +154,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Push delivery can outrun processing; verify backpressure and acknowledgement in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#consumer-requirements-and-messaging-families) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#consumer-requirements-and-messaging-families) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-event-consumer.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -178,7 +178,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Lost replies and duplicate requests are normal; verify correlation and timeout handling in the owner section.
 
-**Technical owner.** [A durable workflow is more than a queue](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#3-a-durable-workflow-is-more-than-a-queue) — workflow failure gates are bounded, not a complete request-reply contract.
+**Technical owner.** [A durable workflow is more than a queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#3-a-durable-workflow-is-more-than-a-queue) — workflow failure gates are bounded, not a complete request-reply contract.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-request-reply.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -202,7 +202,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Identifier collisions or premature expiry break matching; verify scope and retention in the owner section.
 
-**Technical owner.** [A durable workflow is more than a queue](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#3-a-durable-workflow-is-more-than-a-queue) — workflow failure gates are bounded, not a complete request-reply contract.
+**Technical owner.** [A durable workflow is more than a queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#3-a-durable-workflow-is-more-than-a-queue) — workflow failure gates are bounded, not a complete request-reply contract.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-correlation.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -226,7 +226,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Rule drift and unmatched messages are common; verify rule ownership and fallback in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#2-requirement-driven-comparison-not-a-ranking) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#2-requirement-driven-comparison-not-a-ranking) — the comparison section is bounded; it does not own every EIP mechanism.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-cbr.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -250,7 +250,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Silent loss is the main risk; verify rejected-message policy in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#2-requirement-driven-comparison-not-a-ranking) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#2-requirement-driven-comparison-not-a-ranking) — the comparison section is bounded; it does not own every EIP mechanism.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-filter.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -274,7 +274,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Partial failure and duplicate processing grow with stages; verify stage contracts in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#2-requirement-driven-comparison-not-a-ranking) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#2-requirement-driven-comparison-not-a-ranking) — the comparison section is bounded; it does not own every EIP mechanism.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-pipes.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -298,7 +298,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Partial completion and orphaned parts are common; verify aggregation and error policy in the owner section.
 
-**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history) — the walkthrough owns fan-out/history trade-offs, not a dedicated splitter/aggregator page.
+**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history) — the walkthrough owns fan-out/history trade-offs, not a dedicated splitter/aggregator page.
 
 **Sources.** [src.camel](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-splitter.2026-10-21: sections "Split", "Options". The source is a public pattern/documentation
@@ -322,7 +322,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Late, missing and duplicate messages are common; verify completion and eviction in the owner section.
 
-**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history) — the walkthrough owns fan-out/history trade-offs, not a dedicated splitter/aggregator page.
+**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history) — the walkthrough owns fan-out/history trade-offs, not a dedicated splitter/aggregator page.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-aggregator.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -346,7 +346,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Slow or missing recipients dominate tail latency; verify deadlines and partial results in the owner section.
 
-**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history) — the walkthrough owns fan-out/history trade-offs, not a dedicated splitter/aggregator page.
+**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history) — the walkthrough owns fan-out/history trade-offs, not a dedicated splitter/aggregator page.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-scatter.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -370,7 +370,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** DLQ growth and silent abandonment are common; verify poison-work policy in the owner section.
 
-**Technical owner.** [Poison work is a policy state](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#poison-work-is-a-policy-state) — poison-work policy is bounded, not a full DLQ operations manual.
+**Technical owner.** [Poison work is a policy state](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#poison-work-is-a-policy-state) — poison-work policy is bounded, not a full DLQ operations manual.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-dlq.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -394,7 +394,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Retention growth and stale replay are common; verify retention and acknowledgement in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#consumer-requirements-and-messaging-families) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#consumer-requirements-and-messaging-families) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-durable.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -418,7 +418,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Identity collisions and retention expiry create duplicate effects; verify dedup authority in the owner section.
 
-**Technical owner.** [Message redelivery and consumer effects](../../book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md#5-message-redelivery-and-consumer-effects) — deduplication authority is bounded, not a complete idempotent-receiver recipe.
+**Technical owner.** [Message redelivery and consumer effects](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md#5-message-redelivery-and-consumer-effects) — deduplication authority is bounded, not a complete idempotent-receiver recipe.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-idempotent.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -442,7 +442,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Head-of-line blocking and buffer growth are common; verify timeout and missing policy in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#2-requirement-driven-comparison-not-a-ranking) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#2-requirement-driven-comparison-not-a-ranking) — the comparison section is bounded; it does not own every EIP mechanism.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-resequencer.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -466,7 +466,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Orphaned claims and access leaks are common; verify storage and retrieval policy in the owner section.
 
-**Technical owner.** [A durable workflow is more than a queue](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#3-a-durable-workflow-is-more-than-a-queue) — workflow failure gates are bounded, not a complete request-reply contract.
+**Technical owner.** [A durable workflow is more than a queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#3-a-durable-workflow-is-more-than-a-queue) — workflow failure gates are bounded, not a complete request-reply contract.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-claim.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -490,7 +490,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Broker outage and bridge semantic drift are common; verify bridge contracts in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#consumer-requirements-and-messaging-families) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#consumer-requirements-and-messaging-families) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-broker.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -514,7 +514,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Model drift and translation debt are common; verify ownership and versioning in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#2-requirement-driven-comparison-not-a-ranking) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#2-requirement-driven-comparison-not-a-ranking) — the comparison section is bounded; it does not own every EIP mechanism.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-canonical.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
@@ -538,7 +538,7 @@ unit, not a benchmark.
 
 **Failure and recovery.** Stuck workflows and ambiguous effects are common; verify workflow recovery in the owner section.
 
-**Technical owner.** [A saga is a business protocol, not an automatic rollback](../../book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — saga protocol ownership is bounded, not a full process-manager engine specification.
+**Technical owner.** [A saga is a business protocol, not an automatic rollback](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — saga protocol ownership is bounded, not a full process-manager engine specification.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-process.2026-10-21: sections "Problem", "Solution", "Example". The source is a public pattern/documentation
