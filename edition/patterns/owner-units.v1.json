@@ -788,12 +788,12 @@
       "catalog_name": "Gateway Routing",
       "family": "api-and-service-communication",
       "owner": {
-        "document_id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
-        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+        "document_id": "tycho.page.07904f22ca8249069cedc8c2e1140630",
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
         "heading": "The routing contract",
         "anchor": "the-routing-contract",
         "level": 2,
-        "line": 84,
+        "line": 75,
         "unit_kind": "embedded",
         "unit_terms": [
           "route to an eligible instance",
@@ -1147,7 +1147,7 @@
         "heading": "DNS and discovery have different update boundaries",
         "anchor": "dns-and-discovery-have-different-update-boundaries",
         "level": 2,
-        "line": 97,
+        "line": 79,
         "unit_kind": "embedded",
         "unit_terms": [
           "Service discovery may publish addresses",
@@ -1207,7 +1207,7 @@
         "heading": "DNS and discovery have different update boundaries",
         "anchor": "dns-and-discovery-have-different-update-boundaries",
         "level": 2,
-        "line": 97,
+        "line": 79,
         "unit_kind": "embedded",
         "unit_terms": [
           "proxy or client",
@@ -1267,7 +1267,7 @@
         "heading": "DNS and discovery have different update boundaries",
         "anchor": "dns-and-discovery-have-different-update-boundaries",
         "level": 2,
-        "line": 97,
+        "line": 79,
         "unit_kind": "embedded",
         "unit_terms": [
           "proxy or client",
@@ -5784,13 +5784,13 @@
       "catalog_name": "Health Endpoint Monitoring",
       "family": "resilience-and-fault-tolerance",
       "owner": {
-        "document_id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
-        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
-        "heading": "Failure and recovery",
-        "anchor": "failure-and-recovery",
+        "document_id": "tycho.page.07904f22ca8249069cedc8c2e1140630",
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
+        "heading": "Health endpoint monitoring",
+        "anchor": "health-endpoint-monitoring",
         "level": 2,
-        "line": 200,
-        "unit_kind": "embedded",
+        "line": 93,
+        "unit_kind": "dedicated",
         "unit_terms": [
           "startup eligibility",
           "liveness endpoint",
@@ -6445,7 +6445,7 @@
         "heading": "Original worked design: one connection is not one unit of work",
         "anchor": "original-worked-design-one-connection-is-not-one-unit-of-work",
         "level": 2,
-        "line": 117,
+        "line": 99,
         "unit_kind": "embedded",
         "unit_terms": [
           "one connection is not one unit of work",
@@ -8937,20 +8937,18 @@
     {
       "document_id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
       "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
-      "pattern_count": 6,
+      "pattern_count": 4,
       "pattern_ids": [
         "tycho.pattern.client-side-discovery",
-        "tycho.pattern.gateway-routing",
-        "tycho.pattern.health-endpoint-monitoring",
         "tycho.pattern.load-balancing",
         "tycho.pattern.server-side-discovery",
         "tycho.pattern.service-discovery"
       ],
-      "unit_count": 4,
+      "unit_count": 2,
       "dedicated_units": 0,
-      "bounded_entries": 6,
-      "decision": "split",
-      "rationale": "Six patterns cover discovery, load balancing, gateway routing and health monitoring; these are different request-path mechanisms whose future split into a discovery page and a routing page is warranted."
+      "bounded_entries": 4,
+      "decision": "keep",
+      "rationale": "Discovery, selection and load balancing remain on one page; gateway routing and health signals moved to the routing page."
     },
     {
       "document_id": "tycho.page.3349b84b088ebcca496bb52fbdbbc565",
@@ -9028,15 +9026,29 @@
       "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Branch by abstraction and controlled cutover appear in shared tables without a dedicated unit for either; distinct bounded units are required."
+    },
+    {
+      "document_id": "tycho.page.07904f22ca8249069cedc8c2e1140630",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
+      "pattern_count": 2,
+      "pattern_ids": [
+        "tycho.pattern.gateway-routing",
+        "tycho.pattern.health-endpoint-monitoring"
+      ],
+      "unit_count": 2,
+      "dedicated_units": 1,
+      "bounded_entries": 2,
+      "decision": "keep",
+      "rationale": "Gateway routing and health signals have distinct bounded units on the new routing page."
     }
   ],
   "summary": {
     "entries": 145,
-    "owner_pages": 66,
-    "shared_pages": 30,
+    "owner_pages": 67,
+    "shared_pages": 31,
     "owner_units": 119,
-    "dedicated_units": 64,
-    "embedded_units": 55,
+    "dedicated_units": 65,
+    "embedded_units": 54,
     "mechanism_supported": 145,
     "invariant_supported": 145,
     "failure_recovery_supported": 128,
@@ -9052,28 +9064,13 @@
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
-      "keep": 14,
+      "keep": 16,
       "deepen": 13,
-      "split": 3
+      "split": 2
     },
-    "split_deferred": 3
+    "split_deferred": 2
   },
   "split_deferrals": [
-    {
-      "document_id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
-      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
-      "pattern_ids": [
-        "tycho.pattern.client-side-discovery",
-        "tycho.pattern.gateway-routing",
-        "tycho.pattern.health-endpoint-monitoring",
-        "tycho.pattern.load-balancing",
-        "tycho.pattern.server-side-discovery",
-        "tycho.pattern.service-discovery"
-      ],
-      "decision": "deferred",
-      "rationale": "Six patterns cover discovery, load balancing, gateway routing and health monitoring; these are different request-path mechanisms whose future split into a discovery page and a routing page is warranted.",
-      "gate": "Deferred until a documented page migration splits discovery from routing while preserving document IDs and inbound links."
-    },
     {
       "document_id": "tycho.page.37a28a568f7e987941749e198c03439a",
       "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",

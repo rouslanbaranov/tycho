@@ -25,8 +25,8 @@ class PatternOwnerUnitTests(unittest.TestCase):
     def test_every_card_has_one_owner_unit(self):
         result = validate_data(self.data, ROOT)
         self.assertEqual(result["entries"], 145)
-        self.assertEqual(result["owner_pages"], 66)
-        self.assertEqual(result["shared_pages"], 30)
+        self.assertEqual(result["owner_pages"], 67)
+        self.assertEqual(result["shared_pages"], 31)
         self.assertEqual(result["bounded"] + result["partial"], 145)
         self.assertGreater(result["units"], 30)
 

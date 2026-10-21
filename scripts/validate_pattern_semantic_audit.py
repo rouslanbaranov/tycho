@@ -138,8 +138,8 @@ def validate_data(data, root=ROOT):
     phase4 = load(root / PHASE4)
     dispositions = {item["path"]: item["disposition"]
                     for item in phase4["page_dispositions"]}
-    require(len(documents) == 419, "semantic-audit-route-count")
-    require(len(data["pages"]) == 419, "semantic-audit-page-count")
+    require(len(documents) == 420, "semantic-audit-route-count")
+    require(len(data["pages"]) == 420, "semantic-audit-page-count")
 
     seen_paths = set()
     seen_ids = set()

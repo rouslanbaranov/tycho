@@ -11,7 +11,7 @@ from pattern_census import build, load, CENSUS
 class PatternCensusTests(unittest.TestCase):
     def test_census_counts(self):
         result = build(ROOT)
-        self.assertEqual(result["document_count"], 419)
+        self.assertEqual(result["document_count"], 420)
         self.assertEqual(result["counts"]["by_kind"]["volume"], 11)
         self.assertEqual(result["counts"]["by_kind"]["chapter"], 82)
         self.assertEqual(result["counts"]["by_volume"]["v11-pattern-atlas"], 12)

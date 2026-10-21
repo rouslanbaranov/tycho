@@ -68,31 +68,13 @@
 
 
 > **Pattern atlas:**
-> [Gateway Routing](../../v11-pattern-atlas/c02-api-communication/README.md#gateway-routing) — decision conditions and contraindications.
 > [Service Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#service-discovery) — decision conditions and contraindications.
 > [Client-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#client-side-discovery) — decision conditions and contraindications.
 > [Server-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#server-side-discovery) — decision conditions and contraindications.
 
 
 > **Pattern atlas:**
-> [Health Endpoint Monitoring](../../v11-pattern-atlas/c07-resilience/README.md#health-endpoint-monitoring) — decision conditions and contraindications.
-
-
-> **Pattern atlas:**
 > [Load Balancing](../../v11-pattern-atlas/c09-scalability/README.md#load-balancing) — decision conditions and contraindications.
-
-## The routing contract
-
-A caller needs a route to an eligible instance, not a timeless list of machines. Describe separately the externally resolved name, the service membership view, the connection destination and the backend selected for each request. A global route may choose a location; an internal selector chooses a process. A stale membership view can outlive a rollout.
-
-**Gateway-routing mechanism.** A gateway matches request attributes to a declared route and
-backend, then applies its policy. Routes need stable identity, precedence, versioning and an
-explicit no-match behavior; the selected backend still needs its own authorization and
-failure budget. Stale routes, ambiguous matches and bypass around the gateway are common.
-A reverse proxy, client-side discovery or a BFF may be preferable when routing policy is
-simple or the gateway would become a hidden shared dependency.
-
-The two SRE load-balancing chapters distinguish global routing from backend selection. Their examples support the need to examine locality, workload and selection policy; they do not prescribe one algorithm for every service.
 
 ## DNS and discovery have different update boundaries
 
@@ -209,18 +191,7 @@ signal and the connection topology. Overload shedding is owned by `V07/C05`
 
 Define startup eligibility, readiness, draining and permanent removal separately. A liveness endpoint should not restart every healthy process because one shared dependency is unavailable.
 
-**Health endpoint monitoring.** A startup probe answers "has initialization finished";
-readiness answers "may this instance receive new work"; liveness answers "must the process be
-restarted". They must not be collapsed into one endpoint. External monitoring should also
-observe user-level success and dependency state, because a green liveness probe does not
-prove readiness, correct routing or a healthy dependency.
-
-**Failure and recovery.** A shared dependency failure can fail every probe and cause mass
-ejection or restart; a cached "healthy" answer can keep sending traffic to a draining
-instance. Bound probe frequency/timeouts, separate instance-local from shared faults, and
-drain before removal. Synthetic checks or SLO-based external monitoring may be preferable
-when the runtime probe cannot observe the user journey. Exact probe behavior belongs to the chosen runtime/version.
-
+Health signal semantics are owned by [request routing and health](routing-and-health.md).
 ## Choice, acceptance and evidence
 
 Use a simple static endpoint or one proxy when its failure and maintenance contract is adequate. Introduce client-side discovery only if clients can maintain and test membership, backoff, observability and upgrade behavior. A mesh adds a policy/control plane; it does not remove those obligations.
@@ -238,4 +209,4 @@ reasoning.
 
 ## Navigation
 
-Parent: [network chapter](README.md). Next: [connection draining](connections-draining.md). Related: [failure domains](../c06-high-availability-and-failure-domain-placement/README.md), [overload admission](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md).
+Parent: [network chapter](README.md). Next: [request routing and health](routing-and-health.md). Related: [failure domains](../c06-high-availability-and-failure-domain-placement/README.md), [overload admission](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md).

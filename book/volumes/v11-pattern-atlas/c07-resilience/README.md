@@ -539,7 +539,7 @@ the choice when probe complexity causes false restarts.
 restart/ejection; cached health can keep routing to a draining instance. Bound probe
 frequency and drain before removal.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#failure-and-recovery) — readiness/health is bounded, not a full monitoring product.
+**Technical owner.** [Request routing and health signals](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#health-endpoint-monitoring) — readiness/health is bounded, not a full monitoring product.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-probes.2026-10-21: sections "Liveness", "Readiness",
