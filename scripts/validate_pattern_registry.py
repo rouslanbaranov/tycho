@@ -22,12 +22,15 @@ HEAD = re.compile(r"^\s{0,3}(#{1,6})\s+(.+?)\s*$")
 INLINE = re.compile("[" + TICK + "][^" + TICK + r"\n]*[" + TICK + "]")
 SEVERITY = {
     "sufficient": 0,
-    "partial": 1,
-    "name-only": 2,
-    "contradictory": 3,
-    "missing": 4,
-    "not-yet-assessed": 5,
+    "partial-reviewed": 1,
+    "partial-bounded": 2,
+    "partial": 3,
+    "name-only": 4,
+    "contradictory": 5,
+    "missing": 6,
+    "not-yet-assessed": 7,
 }
+EVIDENCE_STATES = ("partial-reviewed", "partial-bounded", "partial")
 
 
 def require(ok, message):
@@ -226,6 +229,15 @@ def validate_data(data, root=ROOT):
         if coverage["decision"] == "sufficient":
             require(pattern["atlas_owner"]["state"] == "sufficient",
                     "registry-atlas-state: " + pattern_id)
+        if coverage["technical"] in EVIDENCE_STATES:
+            require(owner["state"] == coverage["technical"],
+                    "registry-owner-evidence-state: " + pattern_id)
+        if coverage["decision"] in EVIDENCE_STATES:
+            require(pattern["atlas_owner"]["state"] == coverage["decision"],
+                    "registry-atlas-evidence-state: " + pattern_id)
+        if "partial-reviewed" in (coverage["technical"], coverage["decision"]):
+            require(data["review"]["independent_review"] is True,
+                    "registry-reviewed-without-independent-review: " + pattern_id)
         if "sufficient" in (coverage["technical"], coverage["decision"]):
             require(any(unit["status"] == "read"
                         for unit in pattern["source_units"]),

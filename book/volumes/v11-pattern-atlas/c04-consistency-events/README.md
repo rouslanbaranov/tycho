@@ -190,7 +190,7 @@ Reverse the choice when compensation complexity exceeds distribution benefit.
 **Failure and recovery.** Partial completion and compensation failure are common; verify
 saga protocol in the owner section.
 
-**Technical owner.** [Sagas, workflow recovery and compensation](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#sagas-workflow-recovery-and-compensation) — saga recovery is the bounded owner, not a full saga engine.
+**Technical owner.** [Sagas, workflow recovery and compensation](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — saga recovery is the bounded owner, not a full saga engine.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -317,7 +317,7 @@ choice when lost/duplicate publication risk exceeds relay complexity.
 **Failure and recovery.** Relay lag and duplicate publication are common; verify outbox
 coordination in the owner section.
 
-**Technical owner.** [Outbox, inbox, sagas and durable workflow coordination](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#outbox-inbox-sagas-and-durable-workflow-coordination) — outbox coordination is bounded, not a connector manual.
+**Technical owner.** [Outbox, inbox, sagas and durable workflow coordination](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#purpose-and-decision-question) — outbox coordination is bounded, not a connector manual.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -349,7 +349,7 @@ the choice when inbox storage and contention exceed duplicate risk.
 **Failure and recovery.** Expired identities and concurrent duplicates are common; verify
 inbox atomicity in the owner section.
 
-**Technical owner.** [Inbox processing and atomic consumer effects](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/inbox-atomicity.md#inbox-processing-and-atomic-consumer-effects) — inbox atomicity is bounded, not a complete idempotent-consumer recipe.
+**Technical owner.** [Inbox processing and atomic consumer effects](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/inbox-atomicity.md#3-inbox-and-consumer-local-atomicity) — inbox atomicity is bounded, not a complete idempotent-consumer recipe.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -383,7 +383,7 @@ Reverse the choice when key storage and fingerprinting cost exceed retry risk.
 **Failure and recovery.** Key reuse and expiry cause duplicate or rejected effects; verify
 fingerprint/expiry in the owner section.
 
-**Technical owner.** [Retries, idempotency and ambiguous side effects](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md#retries-idempotency-and-ambiguous-side-effects) — retry/idempotency is bounded, not a complete HTTP idempotency guide.
+**Technical owner.** [Retries, idempotency and ambiguous side effects](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md#integrated-decision-and-reading-route) — retry/idempotency is bounded, not a complete HTTP idempotency guide.
 
 **Sources.**
 [src.ietf-idempotency-key](../../../../edition/patterns/reading-ledger.v1.json)
@@ -481,7 +481,7 @@ stale decisions and reconciliation cost exceed latency benefit.
 **Failure and recovery.** Stale replicas and split-brain decisions are common; verify
 authority in the owner section.
 
-**Technical owner.** [CQRS and asynchronous projection freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — command-side replication is bounded to the projection discussion.
+**Technical owner.** [CQRS and asynchronous projection freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#command-side-replica) — command-side replication is bounded to the projection discussion.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -514,7 +514,7 @@ when blocking and coordinator complexity exceed atomicity benefit.
 **Failure and recovery.** Prepared transactions can hold locks and block recovery; verify
 protocol limits in the owner section.
 
-**Technical owner.** [Local atomic commit does not include the outside world](../../v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md#local-atomic-commit-does-not-include-the-outside-world) — local/global commit limits are bounded, not a 2PC protocol reference.
+**Technical owner.** [Local atomic commit does not include the outside world](../../v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md#two-phase-commit-2pc) — local/global commit limits are bounded, not a 2PC protocol reference.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-pg-2pc.2026-10-21: sections "Two-Phase Transactions", "Prepare

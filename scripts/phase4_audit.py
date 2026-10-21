@@ -152,7 +152,9 @@ def build(root=ROOT):
                 "contraindications": "pass" if "**Hard contraindications.**" in text else "missing",
                 "competing_alternative": "pass" if "**Competing alternative.**" in text else "missing",
                 "failure_recovery": "pass" if "**Failure and recovery.**" in text else "missing",
-                "technical_owner": "partial" if owner.get("state") == "partial" else owner.get("state", "missing"),
+                "technical_owner": ("partial" if owner.get("state") in (
+                    "partial", "partial-bounded", "partial-reviewed")
+                    else owner.get("state", "missing")),
                 "owner_anchor": "pass" if owner.get("anchor") else "missing",
                 "backlink": "pass" if atlas_link in owner_text else "missing",
                 "source_ledger": "pass" if record else "missing",
@@ -161,7 +163,10 @@ def build(root=ROOT):
                 "technical_coverage": patterns[entry["pattern_id"]]["coverage"]["technical"],
                 "decision_coverage": patterns[entry["pattern_id"]]["coverage"]["decision"],
             }
-            gaps = ["technical-partial", "decision-partial", "independent-review-missing"]
+            pattern_coverage = patterns[entry["pattern_id"]]["coverage"]
+            gaps = ["technical-" + pattern_coverage["technical"],
+                    "decision-" + pattern_coverage["decision"],
+                    "independent-review-missing"]
             if dimensions["backlink"] != "pass":
                 gaps.append("backlink-missing")
             card_entries.append({"pattern_id": entry["pattern_id"],

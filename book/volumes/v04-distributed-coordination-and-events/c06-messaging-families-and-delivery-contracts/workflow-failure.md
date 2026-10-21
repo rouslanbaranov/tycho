@@ -191,3 +191,14 @@ when the transport already provides an equivalent identity.
 The failure path is a lost or duplicated identifier; carry it in the message contract and
 record it at every boundary. A transport-native message identity is the alternative when
 the broker guarantees the needed scope and lifetime.
+
+### Request-Reply Messaging
+
+A requester sends a message with a reply address and a correlation value, and the responder returns
+a message that the requester matches to the original request. A reply must correlate to exactly one
+outstanding request and must not be processed as a new command by another consumer.
+
+A lost request or reply leaves an unresolved operation; expose the outstanding request record, apply
+a reply deadline and reconcile before retrying. Synchronous RPC with a deadline is simpler when the
+responder is reachable and the work fits the request budget; choose messaging when availability or
+latency requires decoupling.

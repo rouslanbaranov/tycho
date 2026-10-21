@@ -103,3 +103,64 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Cache cost, failure and acceptance](cache-acceptance.md) — When should stale service, origin protection or no cache be preferred?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Read-Through Cache
+
+A read-through cache loads a miss from the source on behalf of the caller and stores the result, so
+the application never performs the fill itself. A fill failure must be returned or mapped
+explicitly, never hidden as an ordinary cache miss, and concurrent fills must not stampede the
+source.
+
+Slow fills and error masking make the cache appear healthy while the source degrades; bound fill
+concurrency, timeouts and error translation. Cache-aside with application-owned fill keeps loading
+policy visible; prefer read-through when the cache can call the source and the loading contract is
+uniform.
+
+### Write-Through Cache
+
+A write-through path updates the cache and the authoritative store in one controlled sequence, so a
+later read can use the cached copy. A write must not be acknowledged before both sides reach the
+declared state, or an explicit reconciliation must repair a partial write.
+
+Failure between the two updates leaves cache and store divergent; version the value and retry or
+invalidate with an audit trail of the failed write. Write-behind or cache-aside with invalidation
+reduces write latency; choose write-through when read-after-write freshness outweighs the extra
+write cost.
+
+### Write-Behind / Write-Back
+
+A write-behind cache acknowledges the cached write and flushes it to durable storage asynchronously.
+An acknowledged write must survive the declared durability window, so the pending buffer needs its
+own durable or replicated record.
+
+Cache loss before flush discards acknowledged writes; track the flush backlog and make the
+durability window explicit to callers. Write-through acknowledges only after both sides update;
+prefer write-behind when write throughput dominates and a measured loss window is acceptable.
+
+### Write-Around
+
+A write-around policy writes directly to the authoritative store and does not populate the cache,
+leaving later reads to fill it. A cached copy must be invalidated or versioned at the update, or a
+later read can restore a value older than the committed write.
+
+A stale entry survives the update and is served until it expires; pair the policy with invalidation
+or a bounded TTL and test a read immediately after a write. Write-through keeps the cache current at
+the cost of write amplification; choose write-around when write volume is high and later reads can
+tolerate a refill.
+
+### Multi-Level Caching
+
+A multi-level cache keeps a fast local tier in front of a shared tier, trading fewer remote reads
+for more places that can hold a stale copy. Every tier must receive the invalidation, or each tier
+must carry a bounded staleness contract and a version check.
+
+Tier divergence serves different values from different processes; version keys and measure the
+propagation delay of each invalidation path. One shared cache keeps a single copy but pays remote
+latency; add a local tier when the measured remote-read cost exceeds the staleness and invalidation
+effort.

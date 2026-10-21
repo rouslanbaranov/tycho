@@ -9,7 +9,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from assemble_edition import split
-from validate_pattern_registry import heading_slugs, slug_heading
+from validate_pattern_registry import EVIDENCE_STATES, heading_slugs, slug_heading
 
 SCHEMA = Path("schemas/pattern-card-batches.v1.schema.json")
 BATCHES = Path("edition/patterns/card-batches.v1.json")
@@ -151,10 +151,13 @@ def validate_data(data, root=ROOT):
                 check_backlink(owner_text, chapter["path"], entry["atlas_section"])
                 require(pattern["technical_owner"]["path"] == entry["owner_path"], "card-registry-owner-path: " + pattern_id)
                 require(pattern["technical_owner"]["anchor"] == entry["owner_anchor"], "card-registry-owner-anchor: " + pattern_id)
-                require(pattern["technical_owner"]["state"] == "partial", "card-registry-owner-state: " + pattern_id)
+                require(pattern["technical_owner"]["state"] in EVIDENCE_STATES,
+                        "card-registry-owner-state: " + pattern_id)
                 check_owner_link(text, chapter["path"], entry["owner_path"], entry["owner_anchor"], root)
-                require(pattern["coverage"]["technical"] == "partial", "card-registry-technical: " + pattern_id)
-                require(pattern["coverage"]["overall"] == "partial", "card-registry-coverage: " + pattern_id)
+                require(pattern["coverage"]["technical"] in EVIDENCE_STATES,
+                        "card-registry-technical: " + pattern_id)
+                require(pattern["coverage"]["overall"] in EVIDENCE_STATES,
+                        "card-registry-coverage: " + pattern_id)
             else:
                 issue = str(entry["remediation_issue"])
                 require("technical-owner-missing" in text, "card-missing-owner-marker: " + entry["atlas_section"])
@@ -164,7 +167,8 @@ def validate_data(data, root=ROOT):
                 require(pattern["technical_owner"]["anchor"] is None, "card-registry-owner-anchor: " + pattern_id)
                 require(pattern["coverage"]["technical"] == "missing", "card-registry-technical: " + pattern_id)
                 require(pattern["coverage"]["overall"] == "missing", "card-registry-coverage: " + pattern_id)
-            require(pattern["coverage"]["decision"] == "partial", "card-registry-decision: " + pattern_id)
+            require(pattern["coverage"]["decision"] in EVIDENCE_STATES,
+                    "card-registry-decision: " + pattern_id)
             require(pattern["review_status"] == "self-checked", "card-registry-review: " + pattern_id)
             count += 1
     return {

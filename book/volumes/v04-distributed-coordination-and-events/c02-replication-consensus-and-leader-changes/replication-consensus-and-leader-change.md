@@ -107,3 +107,33 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Leader changes, reconfiguration and restoration](leader-recovery.md) — How should clients classify outcomes while leadership or membership changes?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Multi-Leader Replication
+
+Several nodes accept writes for the same logical data and replicate them to each other, so every
+accepted write must eventually converge to one declared outcome. The system must define a
+conflict-resolution rule and preserve every acknowledged effect according to that rule; silent
+last-writer-wins is not a convergence proof.
+
+Concurrent writes to one key produce conflicts that surface later during reads or reconciliation;
+record the conflicting versions and expose a deterministic resolution path. Single-leader
+replication avoids write conflicts at the cost of write availability across regions; choose
+multi-leader only when accepting local writes outweighs the conflict contract.
+
+### Read Replicas
+
+Read replicas serve read-only traffic from followers, reducing load on the leader while accepting
+that a replica can lag behind the latest committed write. A read must state the freshness it
+requires, and read-your-writes or monotonic guarantees must be enforced by routing, a position wait
+or an authority read.
+
+A lag spike serves stale data even though replication is healthy; monitor applied position and lag,
+and route freshness-critical reads away from a lagging replica. Read from the leader or use a quorum
+read when freshness dominates; add replicas when read volume and tolerance for bounded staleness
+justify the extra copies.

@@ -94,7 +94,7 @@ when balancing complexity and stale membership exceed availability benefit.
 **Failure and recovery.** Stale membership and fast-error attraction are common; verify
 selection in the owner section.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#discovery-load-balancing-and-backend-selection) — load balancing is bounded, not a product-specific algorithm survey.
+**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#original-worked-design-one-connection-is-not-one-unit-of-work) — load balancing is bounded, not a product-specific algorithm survey.
 
 **Sources.**
 [src.sre-frontend-enrichment](../../../../edition/patterns/reading-ledger.v1.json)
@@ -126,7 +126,7 @@ shared-state contention dominates added instances.
 **Failure and recovery.** Coordination and cold-start lag are common; verify ceiling in
 the owner section.
 
-**Technical owner.** [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#horizontal-and-vertical-scaling-autoscaling-lag-resource-ceilings-and-stability) — scaling trade-offs are bounded, not a capacity-planning benchmark.
+**Technical owner.** [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#purpose-and-mission) — scaling trade-offs are bounded, not a capacity-planning benchmark.
 
 **Sources.** [src.k8s-hpa](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-k8s-hpa.2026-10-21: sections "Horizontal Pod Autoscaling", "How
@@ -157,7 +157,7 @@ larger node no longer meets availability/cost constraints.
 **Failure and recovery.** Ceiling and restart risk are common; verify limits in the owner
 section.
 
-**Technical owner.** [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#horizontal-and-vertical-scaling-autoscaling-lag-resource-ceilings-and-stability) — scaling trade-offs are bounded, not a capacity-planning benchmark.
+**Technical owner.** [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#purpose-and-mission) — scaling trade-offs are bounded, not a capacity-planning benchmark.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-k8s-resources.2026-10-21: sections "Resource Management for Pods
@@ -188,7 +188,7 @@ autoscaling churn and cold starts dominate cost.
 **Failure and recovery.** Lag and oscillation are common; verify stability in the owner
 section.
 
-**Technical owner.** [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#horizontal-and-vertical-scaling-autoscaling-lag-resource-ceilings-and-stability) — scaling trade-offs are bounded, not a capacity-planning benchmark.
+**Technical owner.** [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#purpose-and-mission) — scaling trade-offs are bounded, not a capacity-planning benchmark.
 
 **Sources.** [src.keda](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-keda.2026-10-21: sections "Getting Started", "Scalers",
@@ -221,7 +221,7 @@ blast-radius benefit.
 **Failure and recovery.** Cell routing and cross-cell dependencies are common; verify
 boundaries in the owner section.
 
-**Technical owner.** [Cells and shuffle sharding](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#cells-and-shuffle-sharding) — cell placement is bounded, not a universal stamp deployment recipe.
+**Technical owner.** [Cells and shuffle sharding](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#a-cell-is-a-boundary-in-the-dependency-graph) — cell placement is bounded, not a universal stamp deployment recipe.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -350,7 +350,7 @@ choice when edge complexity exceeds origin offload benefit.
 **Failure and recovery.** Stale content and purge failures are common; verify cacheability
 in the owner section.
 
-**Technical owner.** [Edge caching, private content and origin recovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#edge-caching-private-content-and-origin-recovery) — static hosting is bounded to edge/origin behavior.
+**Technical owner.** [Edge caching, private content and origin recovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#cacheability-is-a-content-and-authority-contract) — static hosting is bounded to edge/origin behavior.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -382,7 +382,7 @@ when isolation cost exceeds noisy-neighbor risk.
 **Failure and recovery.** Quota bypass and cross-tenant leakage are common; verify
 isolation in the owner section.
 
-**Technical owner.** [Threat boundaries, identity, authorization and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#threat-boundaries-identity-authorization-and-service-isolation) — tenant isolation is bounded, not a full control catalogue.
+**Technical owner.** [Threat boundaries, identity, authorization and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#tenant-based-resource-isolation) — tenant isolation is bounded, not a full control catalogue.
 
 **Sources.**
 [src.microsoft-multitenant](../../../../edition/patterns/reading-ledger.v1.json)

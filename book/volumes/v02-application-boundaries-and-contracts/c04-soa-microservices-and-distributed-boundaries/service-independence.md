@@ -106,3 +106,22 @@ These costs must be measured against concrete promised benefits; they cannot be 
 | Integrated question | [Original scenario and limits](service-orientation-microservices-and-distribution.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Self-Contained Service
+
+A self-contained service completes a request using its own state and a bounded set of dependencies,
+instead of requiring a caller to coordinate several owners for one user-visible outcome. The service
+contract must state which dependencies are required, which are optional, and what response is valid
+when an optional dependency is unavailable.
+
+Hidden shared state or a chatty dependency chain turns an apparently local request into a
+multi-owner transaction; dependency and latency traces reveal the undeclared coupling. An
+orchestrating service or backend for frontend can coordinate owners explicitly; accept that
+composition when the workflow genuinely spans separate authorities and the coordinator's failure
+behaviour is designed.

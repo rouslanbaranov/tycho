@@ -93,7 +93,7 @@ distributed coordination cost exceeds cross-instance reuse.
 **Failure and recovery.** Network partitions and stale replicas are common; verify
 placement/freshness in the owner section.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#local-and-distributed-caching-authority-freshness-and-placement) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-hazelcast-cache.2026-10-21: sections "Caching Data". The source is
@@ -159,7 +159,7 @@ when cache-layer coupling or opaque failures outweigh simpler fill logic.
 **Failure and recovery.** Fill latency and error masking are common; verify loading
 semantics in the owner section.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#local-and-distributed-caching-authority-freshness-and-placement) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#read-through-cache) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -191,7 +191,7 @@ choice when write amplification or dual-write failure dominates.
 **Failure and recovery.** Partial writes and stale cache entries are common; verify
 ordering in the owner section.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#local-and-distributed-caching-authority-freshness-and-placement) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#write-through-cache) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
 **Sources.**
 [src.aws-caching-strategies](../../../../edition/patterns/reading-ledger.v1.json)
@@ -223,7 +223,7 @@ durability and replay complexity exceed latency benefit.
 **Failure and recovery.** Cache loss and reordering are common; verify durability in the
 owner section.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#local-and-distributed-caching-authority-freshness-and-placement) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#write-behind-write-back) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -255,7 +255,7 @@ post-write misses dominate the read path.
 **Failure and recovery.** Stale entries after invalidation failure are common; verify
 invalidation in the owner section.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#local-and-distributed-caching-authority-freshness-and-placement) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#write-around) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -287,7 +287,7 @@ when invalidation fan-out and coupling exceed staleness cost.
 **Failure and recovery.** Lost invalidations and races with fills are common; verify
 invalidation semantics in the owner section.
 
-**Technical owner.** [Cache invalidation, stampedes and hot-key failure modes](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md#cache-invalidation-stampedes-and-hot-key-failure-modes) — invalidation is bounded, not a complete invalidation matrix.
+**Technical owner.** [Cache invalidation, stampedes and hot-key failure modes](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md#cache-invalidation) — invalidation is bounded, not a complete invalidation matrix.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -355,7 +355,7 @@ choice when repeated misses amplify origin load.
 **Failure and recovery.** Stale failures and information leakage are common; verify
 status/TTL policy in the owner section.
 
-**Technical owner.** [Negative caching and discriminating experiments](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md#negative-caching-and-discriminating-experiments) — negative-cache policy is bounded, not a universal error-cache rule.
+**Technical owner.** [Negative caching and discriminating experiments](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md#4-negative-caching-and-evicted-authorization) — negative-cache policy is bounded, not a universal error-cache rule.
 
 **Sources.**
 [src.google-cdn-negative-caching](../../../../edition/patterns/reading-ledger.v1.json)
@@ -388,7 +388,7 @@ latency and failure outweigh source protection.
 **Failure and recovery.** Lock loss and retry storms are common; verify source protection
 in the owner section.
 
-**Technical owner.** [Stampedes and source protection](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#stampedes-and-source-protection) — stampede protection is bounded, not a single-flight implementation.
+**Technical owner.** [Stampedes and source protection](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#2-stampede-at-a-synchronized-expiry) — stampede protection is bounded, not a single-flight implementation.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -422,7 +422,7 @@ Reverse the choice when shared latency/failure outweighs duplicate-call reductio
 **Failure and recovery.** One failure fans out to all waiters; verify scope and
 cancellation in the owner section.
 
-**Technical owner.** [Cache loss and source protection policy](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#5-cache-loss-and-source-protection-policy) — source protection is bounded, not a request-coalescing library.
+**Technical owner.** [Cache loss and source protection policy](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#2-stampede-at-a-synchronized-expiry) — source protection is bounded, not a request-coalescing library.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -454,7 +454,7 @@ stale responses violate a business contract.
 **Failure and recovery.** Background refresh failure can extend staleness; verify
 boundaries in the owner section.
 
-**Technical owner.** [Stale fills and regeneration ownership](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md#stale-fills-and-regeneration-ownership) — stale-fill ownership is bounded, not a full HTTP cache specification.
+**Technical owner.** [Stale fills and regeneration ownership](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md#stale-while-revalidate) — stale-fill ownership is bounded, not a full HTTP cache specification.
 
 **Sources.** [src.rfc5861](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-rfc5861.2026-10-21: sections "Introduction", "The
@@ -487,7 +487,7 @@ choice when tier coordination cost exceeds latency benefit.
 **Failure and recovery.** Cross-tier stale data and invalidation fan-out are common;
 verify placement in the owner section.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#local-and-distributed-caching-authority-freshness-and-placement) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#multi-level-caching) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-hazelcast-near.2026-10-21: sections "Near Cache". The source is a
@@ -519,7 +519,7 @@ cacheability and purge cost outweigh latency benefit.
 **Failure and recovery.** Stale private content and purge failures are common; verify
 cacheability in the owner section.
 
-**Technical owner.** [Edge caching, private content and origin recovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#edge-caching-private-content-and-origin-recovery) — edge caching is bounded, not a CDN product manual.
+**Technical owner.** [Edge caching, private content and origin recovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#cacheability-is-a-content-and-authority-contract) — edge caching is bounded, not a CDN product manual.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)

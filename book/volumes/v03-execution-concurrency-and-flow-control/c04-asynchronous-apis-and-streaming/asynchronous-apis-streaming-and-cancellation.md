@@ -102,3 +102,21 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Cancellation, reconnect and durable resume](resume-cancellation.md) — Which persisted state permits replay after a disconnect and when must a client resnapshot?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Asynchronous Request-Reply
+
+An asynchronous request-reply interface accepts a request, returns a durable handle and later
+exposes the terminal result through polling or a callback. The handle must identify one recorded
+operation whose outcome is durable, so a lost reply cannot turn an accepted request into an unknown
+effect.
+
+A lost or expired reply leaves the caller unable to decide the outcome; keep the operation record
+queryable and reconcile before retrying the original request. A synchronous call with a bounded
+deadline is simpler when the work reliably finishes inside the request budget; split the interaction
+only when waiting would exceed it.

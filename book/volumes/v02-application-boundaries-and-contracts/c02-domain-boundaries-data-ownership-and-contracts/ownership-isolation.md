@@ -77,3 +77,21 @@ An acceptance suite would test two concurrent booking attempts for the same unit
 | Integrated question | [Original scenario and limits](domain-boundaries-data-ownership-and-contracts.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Database per Service
+
+Each service owns its schema and storage, and other services reach that data only through the
+owner's contract or published events. The boundary is an ownership rule even when several schemas
+share one physical server. Only the owning service writes its records, and no critical-path query
+joins another service's tables without an explicit contract.
+
+Shared-table shortcuts and distributed joins reappear as hidden coupling; detect them through schema
+ownership review and cross-service access inspection rather than assuming the boundary exists. A
+shared database with enforced module ownership is simpler when teams release together; choose
+separate stores only when independent ownership, scaling or recovery justify the coordination cost.

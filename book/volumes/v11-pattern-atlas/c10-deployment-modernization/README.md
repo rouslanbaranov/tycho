@@ -94,7 +94,7 @@ compatibility cost exceeds rollout benefit.
 **Failure and recovery.** Partial-version exposure is common; verify readiness in the
 owner section.
 
-**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#gitops-rolling-bluegreen-and-canary-release-architecture) — rollout mechanisms are bounded, not a product-specific controller guide.
+**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#rolling-deployment) — rollout mechanisms are bounded, not a product-specific controller guide.
 
 **Sources.** [src.k8s-deployments](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-k8s-deployment.2026-10-21: sections "Deployments", "Rolling
@@ -126,7 +126,7 @@ environment cost exceeds rollback benefit.
 **Failure and recovery.** Data compatibility and switch atomicity are common; verify state
 in the owner section.
 
-**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#gitops-rolling-bluegreen-and-canary-release-architecture) — rollout mechanisms are bounded, not a product-specific controller guide.
+**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#bluegreen-deployment) — rollout mechanisms are bounded, not a product-specific controller guide.
 
 **Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-argo-bluegreen.2026-10-21: sections "BlueGreen", "Overview",
@@ -158,7 +158,7 @@ analysis cost exceeds risk reduction.
 **Failure and recovery.** Low-traffic blindness and metric leakage are common; verify
 analysis in the owner section.
 
-**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#gitops-rolling-bluegreen-and-canary-release-architecture) — rollout mechanisms are bounded, not a product-specific controller guide.
+**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#purpose-and-mission) — rollout mechanisms are bounded, not a product-specific controller guide.
 
 **Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-argo-canary.2026-10-21: sections "Canary", "Overview", "Analysis".
@@ -189,7 +189,7 @@ Reverse the choice when toggle lifecycle cost exceeds decoupling benefit.
 **Failure and recovery.** Stale flags and combinatorial states are common; verify
 lifecycle in the owner section.
 
-**Technical owner.** [Dynamic configuration and feature flags](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md#dynamic-configuration-and-feature-flags) — flags are bounded, not a full toggle-lifecycle platform.
+**Technical owner.** [Dynamic configuration and feature flags](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md#a-configuration-change-is-a-distributed-transition) — flags are bounded, not a full toggle-lifecycle platform.
 
 **Sources.**
 [src.fowler-feature-toggles](../../../../edition/patterns/reading-ledger.v1.json)
@@ -222,7 +222,7 @@ choice when reconciliation latency/ownership exceeds audit benefit.
 **Failure and recovery.** Drift and reconciler outages are common; verify reconciliation
 in the owner section.
 
-**Technical owner.** [CI/CD architecture, artifact provenance and GitOps reconciliation](../../v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md#cicd-architecture-artifact-provenance-and-gitops-reconciliation) — GitOps is bounded to desired-state reconciliation.
+**Technical owner.** [CI/CD architecture, artifact provenance and GitOps reconciliation](../../v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md#engineering-walkthrough-compromised-build-worker-and-a-tempting-image-rollback) — GitOps is bounded to desired-state reconciliation.
 
 **Sources.** [src.opengitops](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-opengitops.2026-10-21: sections "Home", "Principles". The source
@@ -253,7 +253,7 @@ choice when replacement cost exceeds drift/recovery benefit.
 **Failure and recovery.** Orphaned state and image drift are common; verify lifecycle in
 the owner section.
 
-**Technical owner.** [Infrastructure as code and drift](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#infrastructure-as-code-and-drift) — immutable infrastructure is bounded to replacement/drift, not a cloud product.
+**Technical owner.** [Infrastructure as code and drift](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#immutable-infrastructure) — immutable infrastructure is bounded to replacement/drift, not a cloud product.
 
 **Sources.**
 [src.ibm-immutable-infrastructure](../../../../edition/patterns/reading-ledger.v1.json)
@@ -285,7 +285,7 @@ when coexistence cost exceeds incremental replacement benefit.
 **Failure and recovery.** Dual writes and façade bottlenecks are common; verify transition
 states in the owner section.
 
-**Technical owner.** [Target architecture versus transition states: coexistence, reversibility and recovery](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md#target-architecture-versus-transition-states-coexistence-reversibility-and-recovery) — strangler is bounded to transition-state reasoning.
+**Technical owner.** [Target architecture versus transition states: coexistence, reversibility and recovery](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md#purpose-and-mission) — strangler is bounded to transition-state reasoning.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
@@ -410,7 +410,7 @@ exceeds rollout risk.
 **Failure and recovery.** Partial backfills and old readers are common; verify gates in
 the owner section.
 
-**Technical owner.** [Reader/writer compatibility and migration stages](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md#readerwriter-compatibility-and-migration-stages) — expand/contract is bounded to reader/writer compatibility.
+**Technical owner.** [Reader/writer compatibility and migration stages](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md#2-expand-migrate-contract-includes-a-compatibility-window) — expand/contract is bounded to reader/writer compatibility.
 
 **Sources.** [src.flyway](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-flyway.2026-10-21: sections "Migrations", "Versioned Migrations",

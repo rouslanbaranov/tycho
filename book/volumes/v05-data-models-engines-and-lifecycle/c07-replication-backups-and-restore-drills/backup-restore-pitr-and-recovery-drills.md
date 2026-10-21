@@ -81,3 +81,21 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [User-level restore drills and alternatives](restore-drills.md) — What distinguishes a successful backup command from a demonstrated recovery?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Backup, PITR and Restore
+
+A base backup plus a continuous archive of write-ahead records lets an operator restore the data to
+a chosen point in time before an incident. The backup chain must be complete and restorable, and a
+recovery target must be validated against the application's consistency requirements, not only
+produced.
+
+A missing or corrupt archive segment makes the target unreachable; run restore drills on a schedule
+and verify checksums and recovery completion. Promote a replica for availability, but it does not
+protect against replicated deletion or corruption; use backups when recovery point and retained
+history matter.

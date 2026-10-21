@@ -84,3 +84,19 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Resharding and alternatives](resharding-transition.md) — How can ownership move without accepting conflicting writes or unnecessary distribution?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Partitioning
+
+Partitioning splits one logical data set into key ranges or lists inside a store so the planner can
+prune unrelated partitions for a query. Each row belongs to exactly one partition, and the main
+query must name a partition key so pruning is possible.
+
+A query without the partition key fans out across every partition; inspect plans and measure fan-out
+when access paths or keys change. Keep one table and add an index when the main query already
+prunes; partition only when the data volume, retention or maintenance benefit is measured.

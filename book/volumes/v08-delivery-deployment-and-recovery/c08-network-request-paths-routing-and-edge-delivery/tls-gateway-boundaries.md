@@ -109,3 +109,20 @@ Choose a simpler reverse proxy when it meets these contracts. Adopt service-mesh
 Selected public passages inspected 2026-10-20: [HTTPS authority](https://www.rfc-editor.org/rfc/rfc9110.html#section-4.3.4) and [OWASP HTTPS, access control and JWT sections](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html). The table and counterexample are original unexecuted design analysis.
 
 Parent: [network chapter](README.md). Previous: [connection fate](connections-draining.md). Next: [edge caching](edge-cache-origin.md). Related: [threat identity](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md).
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Gateway Aggregation
+
+A gateway aggregation layer calls several downstream services for one client request and returns a
+single composed response. Each downstream call must carry its own deadline, and a partial failure
+must be represented explicitly in the aggregate response.
+
+One slow participant delays the whole response, and a silent omission hides incomplete data; fan out
+in parallel with per-call budgets and mark missing parts. Client-side composition or a backend for
+frontend keeps aggregation closer to the client; use gateway aggregation when the composition is
+shared and the gateway is already the trust boundary.

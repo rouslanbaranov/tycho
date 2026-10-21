@@ -137,3 +137,20 @@ Acceptance requires the same **correct authoritative business result** under per
 | Integrated question | [Original scenario and limits](outbox-inbox-sagas-and-durable-workflows.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Process Manager / Routing Slip
+
+A process manager records workflow progress and decides which step runs next, while a routing slip
+carries the remaining itinerary with the message. The durable progress record must be updated before
+the next step is dispatched, so a crash cannot repeat or skip a step without detection.
+
+A lost dispatch or duplicate step leaves the workflow stuck or with a duplicated effect; idempotent
+steps, a recorded state and a reconciliation query are required. Event choreography removes the
+central coordinator but hides the overall protocol; prefer a process manager when steps need
+explicit compensation and visibility.

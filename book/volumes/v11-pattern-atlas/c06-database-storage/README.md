@@ -91,7 +91,7 @@ the choice when operational shard complexity exceeds scale benefit.
 **Failure and recovery.** Hotspots and resharding are common; verify routing/rebalancing
 in the owner section.
 
-**Technical owner.** [Sharding, partition keys, hotspots and safe resharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#sharding-partition-keys-hotspots-and-safe-resharding) — sharding/partition keys are bounded, not a universal distribution recipe.
+**Technical owner.** [Sharding, partition keys, hotspots and safe resharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#purpose-and-mission) — sharding/partition keys are bounded, not a universal distribution recipe.
 
 **Sources.** [src.citus](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-citus.2026-10-21: sections "Concepts". The source is a public
@@ -123,7 +123,7 @@ when partition maintenance and pruning no longer justify the split.
 **Failure and recovery.** Partition skew and maintenance are common; verify
 pruning/lifecycle in the owner section.
 
-**Technical owner.** [Sharding, partition keys, hotspots and safe resharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#sharding-partition-keys-hotspots-and-safe-resharding) — sharding/partition keys are bounded, not a universal distribution recipe.
+**Technical owner.** [Sharding, partition keys, hotspots and safe resharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#partitioning) — sharding/partition keys are bounded, not a universal distribution recipe.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-partition.2026-10-21: sections "Table Partitioning", "Partition
@@ -154,7 +154,7 @@ choice when ring operations and virtual-node tuning exceed movement savings.
 **Failure and recovery.** Hotspots and uneven rebalancing are common; verify ring
 ownership in the owner section.
 
-**Technical owner.** [Resharding is a multi-state data transition](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md#4-resharding-is-a-multi-state-data-transition) — resharding transition is bounded, not a consistent-hashing implementation.
+**Technical owner.** [Resharding is a multi-state data transition](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md#consistent-hashing) — resharding transition is bounded, not a consistent-hashing implementation.
 
 **Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-cassandra-arch.2026-10-21: sections "Overview", "Architecture".
@@ -185,7 +185,7 @@ unavailability or write locality dominates.
 **Failure and recovery.** Lag, failover and split-brain are common; verify leader change
 in the owner section.
 
-**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#replication-consensus-and-leader-change-safety-and-progress-under-failures) — replication/leader change is bounded, not a complete multi-leader protocol.
+**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment) — replication/leader change is bounded, not a complete multi-leader protocol.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",
@@ -215,7 +215,7 @@ conflict handling and divergent histories exceed locality benefit.
 **Failure and recovery.** Conflicting writes and reconciliation are common; verify
 versioning in the owner section.
 
-**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#replication-consensus-and-leader-change-safety-and-progress-under-failures) — replication/leader change is bounded, not a complete multi-leader protocol.
+**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#multi-leader-replication) — replication/leader change is bounded, not a complete multi-leader protocol.
 
 **Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-cassandra-dynamo.2026-10-21: sections "Dynamo", "Multi-master
@@ -247,7 +247,7 @@ replica lag and routing complexity exceed read-scale benefit.
 **Failure and recovery.** Stale reads and replica lag are common; verify read routing in
 the owner section.
 
-**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#replication-consensus-and-leader-change-safety-and-progress-under-failures) — replication/leader change is bounded, not a complete multi-leader protocol.
+**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#read-replicas) — replication/leader change is bounded, not a complete multi-leader protocol.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",
@@ -436,7 +436,7 @@ when snapshot/restore cost meets recovery needs.
 **Failure and recovery.** Corrupt backups and untested restores are common; verify PITR in
 the owner section.
 
-**Technical owner.** [Backup, restore and recovery drills: proving data recoverability](../../v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md#backup-restore-and-recovery-drills-proving-data-recoverability) — backup/restore is bounded, not a universal RPO/RTO model.
+**Technical owner.** [Backup, restore and recovery drills: proving data recoverability](../../v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md#backup-pitr-and-restore) — backup/restore is bounded, not a universal RPO/RTO model.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-archiving.2026-10-21: sections "Continuous Archiving and

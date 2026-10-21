@@ -194,3 +194,21 @@ Choose event sourcing deliberately where history is itself business authority, t
 | E04 | [Richardson, *CQRS pattern*](https://microservices.io/patterns/data/cqrs.html), **Context, Solution, Resulting context** | Query projection pattern and eventual-consistency cost in multi-owner designs |
 
 **Quality state:** bounded research draft, original fictitious case and diagrams; no empirical event replay, independently reviewed privacy claims, schema migration test, deployed system or independent subject expert approval. Numerical examples are not production observations.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Command-Side Replica
+
+A command-side replica serves reads that must observe the latest accepted command state while the
+read projections still lag. The query is routed to a replica of the command-side store, and the
+reply reports the applied position it observed. The replica must apply a committed command before it
+answers a query that claims to include that command; otherwise the result is stale.
+
+Replication delay or failover can serve an older position, so the client must check the reported
+position or wait for the required one before treating a read as current. Serve the same read from
+the authoritative command store or block until the projection catches up; reverse the choice when
+replica lag is bounded and read load would otherwise overload the authority.

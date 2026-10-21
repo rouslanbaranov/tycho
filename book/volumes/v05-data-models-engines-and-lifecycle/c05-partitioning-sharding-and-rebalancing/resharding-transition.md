@@ -122,3 +122,20 @@ Database query/index optimization, bounded connection pools, increasing storage/
 | Integrated question | [Original scenario and limits](shard-keys-hotspots-and-resharding.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
+this page. They are synthetic design guidance, not measured evidence, and they do not create a new
+source claim.
+
+### Consistent Hashing
+
+Consistent hashing maps keys onto a ring so adding or removing a node moves only the adjacent share
+of keys instead of remapping the whole keyspace. Clients and owners must agree on a versioned
+mapping, and a key must retain one authoritative owner at any mapping epoch.
+
+A ring change temporarily routes a key to the wrong owner or serves an incomplete copy; dual-read or
+version-check during the transition and record the epoch. Explicit key-range assignment gives direct
+control of hot ranges; choose consistent hashing when node membership changes often and manual range
+planning is impractical.
