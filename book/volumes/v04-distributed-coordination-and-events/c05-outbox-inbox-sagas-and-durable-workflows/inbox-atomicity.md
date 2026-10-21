@@ -57,6 +57,10 @@ The identity must include the correct subscriber and event/effect scope; two dif
 
 <!-- /tycho-question-source -->
 
+> **Pattern atlas:**
+> [Transactional Inbox](../../v11-pattern-atlas/c04-consistency-events/README.md#transactional-inbox) — decision conditions and contraindications.
+
+
 ## A four-window consumer recovery trace
 
 In an original fictional booking consumer, an incoming message carries a stable logical identity. The consumer's local transaction attempts to record that identity and change the authoritative booking state. The two writes belong to the same commit boundary; a separate acknowledgment to the broker follows the durable outcome.

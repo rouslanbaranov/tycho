@@ -67,6 +67,10 @@ Text alternative: authoritative business state and outbox intent are committed l
 **Important distinctions:** database WAL position, Kafka partition offset, application state-store checkpoint and external sink commit are **not the same cursor**. An implementation must document where their alignment is guaranteed and where duplicates or gaps may be replayed.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Change Data Capture (CDC)](../../v11-pattern-atlas/c04-consistency-events/README.md#change-data-capture-cdc) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.a2c47a0850154eaa95e1eb97e23f9c71:2 -->
 ## 2. Kafka Streams: tasks, state stores and changelogs
 

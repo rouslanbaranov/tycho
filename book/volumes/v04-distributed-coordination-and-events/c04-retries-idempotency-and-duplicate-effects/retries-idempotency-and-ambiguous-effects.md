@@ -57,6 +57,10 @@ content_verified_at: null
 > **Tycho book manuscript — proposed V04/C04**, 2026-10-19. Original synthetic command and failure sequences. Independently inspected RFC 9110 §9.2.2 and public idempotent-consumer pattern references. No service, transaction, replay, production trace or independently reviewed contract test was executed. Previous combined [outbox/idempotency research](../../../distributed/transactional-outbox-and-idempotency.md) remains preserved for detailed source-claim reconciliation.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Idempotency Key](../../v11-pattern-atlas/c04-consistency-events/README.md#idempotency-key) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f:0 -->
 ## Purpose and mission
 

@@ -79,6 +79,13 @@ stateDiagram-v2
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
+> [Saga](../../v11-pattern-atlas/c04-consistency-events/README.md#saga) — decision conditions and contraindications.
+> [Saga Choreography](../../v11-pattern-atlas/c04-consistency-events/README.md#saga-choreography) — decision conditions and contraindications.
+> [Saga Orchestration](../../v11-pattern-atlas/c04-consistency-events/README.md#saga-orchestration) — decision conditions and contraindications.
+> [Compensating Transaction](../../v11-pattern-atlas/c04-consistency-events/README.md#compensating-transaction) — decision conditions and contraindications.
+
+
+> **Pattern atlas:**
 > [Process Manager / Routing Slip](../../v11-pattern-atlas/c03-messaging-integration/README.md#process-manager-routing-slip) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:5 -->

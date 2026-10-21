@@ -177,9 +177,14 @@ They cover channel, consumer, routing, pipeline, aggregation, dead-letter, durab
 subscription, idempotency, claim-check and process-manager decisions. Registry
 coverage is `partial` for all 20; no `sufficient` state is claimed.
 
+All 14 V11/C04 entries also have self-checked cards with bounded owner sections.
+They cover CQRS, event sourcing, domain events, saga variants, outbox/inbox,
+idempotency keys, CDC, materialized views, command-side replicas and 2PC. Registry
+coverage is `partial` for all 14; no `sufficient` state is claimed.
+
 The card batches are recorded in `edition/patterns/card-batches.v1.json` and checked
 by `scripts/validate_pattern_cards.py`, including adversarial tests. The other
-101 entries remain without Phase 3 cards; 100 are read and one is blocked.
+87 entries remain without Phase 3 cards; 86 are read and one is blocked.
 
 ## Family batches
 

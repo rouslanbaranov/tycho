@@ -57,6 +57,10 @@ content_verified_at: null
 > **Tycho manuscript — proposed V04/C05**, 2026-10-19. Primary public references: transactional-outbox and saga/consumer patterns, plus Debezium 3.6 configuration. Original synthetic sequence and state diagram. No broker, CDC process, workflow runner or actual database was deployed, exercised or independently reviewed. Earlier combined [outbox/idempotency research](../../../distributed/transactional-outbox-and-idempotency.md) remains preserved for line-level source comparison.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Transactional Outbox](../../v11-pattern-atlas/c04-consistency-events/README.md#transactional-outbox) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:0 -->
 ## Purpose and decision question
 
