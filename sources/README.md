@@ -29,4 +29,4 @@ For every material claim, explain why the exact source supports it and state app
 
 Run `python3 scripts/source_catalog.py` after changing the register. Run `python3 scripts/validate_sources.py` and `python3 scripts/source_catalog.py --check` before committing. Structural source-register checks are implemented in Python; strict **document metadata** and **normalized individual source-reference** JSON Schemas already exist in `schemas/` and are exercised by dedicated validators. The latter is **not** a wholesale JSON Schema replacement for the v2 source discovery register or a source-truth certificate; additional end-to-end source-register/API contracts may still be planned.
 
-Research, authoring and review are performed in the ChatGPT project. The GitHub repository stores the book and its supporting artifacts. No coding-assistant delegation is configured.
+Research, authoring and review are performed in the repository's working environment. The GitHub repository stores the book and its supporting artifacts. Tasks may be delegated to coding assistants, agents and subagents under the same independence, evidence and editorial rules.
