@@ -82,5 +82,10 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
 - Distributed Lock: owner section expanded with lock semantics, failure classes
   and alternatives; owner unit is `partial-bounded` with all four evidence
   dimensions supported.
-- Remaining distributed-coordination gaps: Causal Ordering and Distributed
-  Workflow Orchestration.
+- Causal Ordering: owner section expanded with the causal invariant, partition/
+  server-switching failures and alternatives; evidence is `partial-bounded`.
+- Distributed Workflow Orchestration: owner section expanded with durable state,
+  replay/repair failure modes and alternatives; evidence is `partial-bounded`.
+- Remaining distributed-coordination gaps: Leader Election (failure, alternative),
+  Lease-Based Ownership (alternative), Quorum Coordination (alternative) and Session
+  Consistency (alternative).

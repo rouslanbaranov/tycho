@@ -273,23 +273,27 @@ priority advanced.
 **Decision question.** Should operations that are causally related preserve their order
 without requiring a total order?
 
-**Good-fit conditions.** Happens-before relationships are meaningful; causal metadata can
-be carried; concurrent operations may diverge.
+**Good-fit conditions.** Happens-before relationships are meaningful; causal metadata such
+as vector clocks can be carried; concurrent operations may diverge but must converge once
+the same updates are visible.
 
 **Hard contraindications.** Reject when a total order is required, when causal metadata
-cannot be propagated, or when clients cannot tolerate concurrent divergence.
+cannot be kept with the operation, when clients switch servers without a session
+guarantee, or when concurrent writes have no merge rule.
 
 **Competing alternative.** Total ordering via consensus or per-key ordering. Reverse the
 choice when causal metadata cost exceeds ordering benefit.
 
-**Failure and recovery.** Metadata growth and orphaned causality are common; verify scope
-in the owner section.
+**Failure and recovery.** Partition, reordered delivery, lost metadata and server switching
+can expose missing dependencies. Keep durable causal metadata, replay/deduplicate, and
+define a merge; if total order is mandatory, use consensus and accept its cost.
 
 **Technical owner.** [The happens-before relation describes causal knowledge](../../v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md#1-the-happens-before-relation-describes-causal-knowledge) — causal ordering is bounded, not a universal clock service.
 
 **Sources.** [src.jepsen-consistency](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-causal.2026-10-21: sections "Causal Consistency", "Formally". The
-source is a public pattern/documentation
+read record read.batch4-causal.2026-10-21: sections "Causal Consistency", "Example",
+"Convergent causal systems", "Sticky availability", "Formally". The source is a public
+pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -337,17 +341,20 @@ coordination-pattern; priority core.
 **Decision question.** Should a durable orchestration engine own multi-step progress,
 timers and recovery?
 
-**Good-fit conditions.** Steps span services/time; progress must survive crashes; retries
-and compensation are business decisions; the engine can own state.
+**Good-fit conditions.** Steps span services or long timers; progress must survive crashes;
+activities can be idempotent; retries, cancellation and compensation are business
+decisions; the team can operate a durable engine and version its histories.
 
-**Hard contraindications.** Reject when one local transaction suffices, when workflow
-state has no owner, or when orchestration becomes a hidden monolith.
+**Hard contraindications.** Reject when one local transaction suffices, when workflow state
+has no owner, when replay/versioning cannot be governed, or when orchestration becomes a
+hidden monolith.
 
 **Competing alternative.** Saga choreography or a simple queue pipeline. Reverse the
 choice when central workflow state and engine operations exceed coordination benefit.
 
-**Failure and recovery.** Stuck workflows and nondeterministic replay are common; verify
-recovery in the owner section.
+**Failure and recovery.** Stuck workflows, duplicate activities, lost timers,
+nondeterministic replay and version conflicts are common. Replay from durable history,
+keep activities idempotent and use a repair state for unknown external effects.
 
 **Technical owner.** [Outbox, inbox, sagas and durable workflow coordination](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#purpose-and-decision-question) — durable workflow coordination is bounded, not a Temporal product guide.
 

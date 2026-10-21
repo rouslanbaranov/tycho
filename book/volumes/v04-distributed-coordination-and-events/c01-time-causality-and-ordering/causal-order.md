@@ -77,6 +77,23 @@ An integer **Lamport logical clock** can be incremented for a local event, attac
 
 **Decision impact:** if the business only needs every item to preserve its own update order, requiring global total order can introduce unnecessary coordination. If conflicting updates of a shared invariant must be serialized, merely generating timestamps does not create atomic or correct resolution.
 
+**Invariant.** A causal system must deliver causally related operations in the same order
+to every process. Concurrent operations may be ordered differently, but a convergent
+variant requires all nodes to converge once the same updates are visible. Causal metadata
+such as vector clocks carries the dependency; Lamport clocks alone cannot distinguish
+concurrency. [E03]
+
+**Failure and recovery.** A partition can preserve availability only while each client
+stays on one server; reconnecting elsewhere can expose missing dependencies. Lost
+metadata, reordered messages or a switched server can violate causal order. Recovery
+needs durable causal metadata, replay/deduplication and an explicit merge for concurrent
+writes. If total order is required, use consensus or sequential consistency and accept
+the availability and latency cost.
+
+**Alternative.** Use total order via consensus, per-key ordering, or session guarantees
+(read-your-writes, monotonic reads) when full causal metadata is too costly. Reverse the
+choice when causal metadata and convergence cost exceed the ordering requirement. [E03]
+
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**

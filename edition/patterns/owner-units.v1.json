@@ -6283,14 +6283,14 @@
           "reason": "Explains the three happens-before generating rules and Lamport-clock advancement."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "the converse does **not** follow: two events with ordered clock numbers may still be causally unrelated.",
-          "reason": "Gives transitivity and inference limits, but no system rule that an implementation must enforce."
+          "state": "supported",
+          "quote": "A causal system must deliver causally related operations in the same order to every process.",
+          "reason": "States the core causal-order invariant."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No failure mode, detection or recovery behavior is described."
+          "state": "supported",
+          "quote": "Recovery needs durable causal metadata, replay/deduplication and an explicit merge for concurrent writes.",
+          "reason": "States the recovery requirements after metadata loss or reordering."
         },
         "alternative": {
           "state": "supported",
@@ -6313,7 +6313,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section 1 explains happens-before, Lamport clocks and the total-order trade-off; ordering scope is also discussed in section 3."
     },
@@ -6396,24 +6396,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "**Durable workflow:** how can a coordinator record its progress, resume after failure and surface unknown outcomes?",
-          "reason": ""
+          "state": "supported",
+          "quote": "A durable workflow is a persistent state machine: steps, timers, retries, versions, compensation and human tasks survive process loss.",
+          "reason": "Defines the durable state machine and replay model."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The bullet asks what a coordinator must do but states no recorded-progress invariant."
+          "state": "supported",
+          "quote": "Recovery needs replay from durable history, idempotent activities, explicit retry/cancel/compensation, and a repair state for unknown external effects.",
+          "reason": "States the recovery invariants."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No coordinator failure, restart or unknown-outcome path is described here."
+          "state": "supported",
+          "quote": "Do not infer success from a completed workflow flag when an external effect is uncertain.",
+          "reason": "Names the unknown-effect failure and the repair boundary."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The page names sibling patterns rather than a competing workflow-coordination alternative."
+          "state": "supported",
+          "quote": "Saga choreography, a database-backed job table, or a simple queue pipeline may be simpler when steps are few, no long timers are needed, or the team cannot operate an engine.",
+          "reason": "Names the competing orchestration alternatives."
         }
       },
       "decision_evidence": {
@@ -6431,7 +6431,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -8693,9 +8693,9 @@
       ],
       "unit_count": 1,
       "dedicated_units": 0,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "deepen",
-      "rationale": "The outbox and durable-workflow patterns share one purpose unit and both remain partial; each needs a bounded section instead of a question bullet."
+      "rationale": "Distributed workflow now has bounded evidence; the outbox still needs its own bounded unit rather than a shared question bullet."
     },
     {
       "document_id": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd",
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 102,
-    "invariant_supported": 118,
-    "failure_recovery_supported": 88,
-    "alternative_supported": 69,
-    "technical_partial_bounded": 98,
-    "technical_partial": 47,
+    "mechanism_supported": 103,
+    "invariant_supported": 120,
+    "failure_recovery_supported": 90,
+    "alternative_supported": 70,
+    "technical_partial_bounded": 100,
+    "technical_partial": 45,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

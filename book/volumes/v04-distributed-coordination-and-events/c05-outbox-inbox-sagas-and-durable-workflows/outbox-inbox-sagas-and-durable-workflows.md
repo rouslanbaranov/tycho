@@ -76,6 +76,23 @@ Four patterns address different questions:
 - **Saga:** how can several owners coordinate business steps and appropriate compensating actions without claiming one global transaction?
 - **Durable workflow:** how can a coordinator record its progress, resume after failure and surface unknown outcomes?
 
+**Workflow state.** A durable workflow is a persistent state machine: steps, timers,
+retries, versions, compensation and human tasks survive process loss. The engine records
+history and replays deterministic code; activity boundaries hold non-deterministic or
+external effects. [Temporal documentation](https://docs.temporal.io/workflows) describes
+this execution model; it is not a product recommendation.
+
+**Failure and recovery.** Stuck workflows, duplicate activities, lost timers,
+non-deterministic replay and version conflicts are common. Recovery needs replay from
+durable history, idempotent activities, explicit retry/cancel/compensation, and a repair
+state for unknown external effects. Do not infer success from a completed workflow flag
+when an external effect is uncertain.
+
+**Alternative.** Saga choreography, a database-backed job table, or a simple queue
+pipeline may be simpler when steps are few, no long timers are needed, or the team cannot
+operate an engine. Reverse when coordination and versioning cost exceed the workflow
+benefit.
+
 The exact retry/operation identity contract is owned by [V04/C04](../c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md); this chapter owns multi-boundary state coordination.
 
 <!-- /tycho-question-source -->
