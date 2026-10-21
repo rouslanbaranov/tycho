@@ -35,7 +35,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -53,6 +53,12 @@ Retry only when an error class and the business contract permit it. Backoff/jitt
 Nested retries can multiply calls; a bounded outer retry policy may still overload a downstream service with its own retry layer. Degraded conditions need explicit rejection and **unknown outcome** states rather than suppressed failures. [Overload/admission](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md) owns broader capacity policy.
 
 A successful API response is not a guarantee that unrelated optional notification is completed. Use a durable accepted/pending contract when the business effect truly spans time.
+
+The generic retry decision contract, including local-versus-broad overload and the three
+budget scopes, is owned by `V02/C05`
+(`tycho.page.43414664520b4866929f7f006f27f59b`). This page owns effect identity, retention
+and duplicate outcomes; the overload regime is owned by `V07/C05`
+(`tycho.page.d9abd43bb7394c04a6bf77d4014f870d`).
 
 
 ### Worked race: two simultaneous first requests

@@ -40,3 +40,19 @@ Before declaring the directory migration complete:
 6. Run the relevant Python premerge, schema, navigation, conservation and edition checks, applicable tests and Mermaid syntax parsing on the exact migrated tree. A requirements-only check cannot be reported as a completed migration.
 
 `python3 scripts/validate_directory_migration.py` validates naming, complete path/identity membership, retired-path absence, protected historical manifests and reversible path-only content changes. The normal feature premerge and strict knowledge runners include this gate when the migration record is present; edition validation also applies it. #214 remains open for the remaining substantive edition acceptance.
+
+## Authorized content revisions after migration
+
+The directory, decomposition and enrichment manifests record immutable baselines.
+A later content change must not silently rewrite those baselines. Record it in
+[`edition/content-revisions.json`](../edition/content-revisions.json) with:
+
+- the issue number and authorization date;
+- the exact document path or source-block key;
+- the previous and current SHA-256 values.
+
+The validators accept a changed payload only when the overlay matches both hashes.
+An unlisted change, or a further change to an already revised payload, still fails.
+The original manifests remain byte-identical, so their historical protection is not
+rewritten. The routing index and edition inventory are regenerated after the
+authorized change.

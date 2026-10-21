@@ -38,7 +38,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -62,6 +62,12 @@ This page belongs to [V07/C05 — Overload protection and graceful degradation](
 | Optional feature degradation | Preserve core outcome when nonessential enrichment fails | Present missing mandatory data as a complete result |
 
 Across multiple layers, retries compound. If three independent layers make three attempts per incoming logical operation, a pathological path can create up to **27 downstream attempts** per logical intent (under a deliberately simplified fully nested retry model). No such amplification was observed here. [AWS Builders' Library retry and jitter discussion](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/) explains why coordinated repeated retries can worsen overload. [Tycho's RPC and idempotency chapter](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md) owns effect-safe retry identity.
+
+The generic retry decision contract, including local-versus-broad overload and the
+per-request, per-client and service-wide budgets, is owned by `V02/C05`
+(`tycho.page.43414664520b4866929f7f006f27f59b`). This section owns the overload regime and
+the isolation boundary; `V04/C04` (`tycho.page.33399db8d1574330951d9954801d6e71`) owns
+effect identity and retention.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:5 -->

@@ -30,6 +30,7 @@ evidence_scope:
   source_ids:
     - "src.aws-backoff"
     - "src.sre-overload"
+    - "src.sre-cascading"
   claim_ids: []
   status: "source-linked"
   notes: "Editorial synthesis of the linked accepted manuscript; exact source versions and nonclaims remain in its page-local evidence ledger."
@@ -39,7 +40,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -103,6 +104,10 @@ The following original citation rows, review limits and earlier topical routes a
 | [AWS Builders' Library, Using load shedding to avoid overload](https://aws.amazon.com/builders-library/using-load-shedding-to-avoid-overload/) | Shedding strategies and failure containment rationale | Measured benefit in the synthetic trail-guide scenario |
 | [AWS Builders' Library, Timeouts, retries and backoff with jitter](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/) | Retry multiplication and bounded backoff motivation | Real retry traffic or safe unconditional retry behavior |
 | [Tycho capacity experiment chapter](../../../performance/workload-profiles-and-capacity-experiments.md) | Defined workload/queue and synthetic failure methodology | Completed independent experiment |
+
+- [SRE, *Cascading Failures*](https://sre.google/sre-book/addressing-cascading-failures/),
+  inspected 2026-10-21: rejection-path cost, retry amplification and cold-start effects.
+  The source's examples are contextual, not universal thresholds.
 
 All example data, percentages, capacity statements and system behavior are hypothetical. No fault injection, cloud service, policy configuration, correctness exercise or independent review has been performed. Do not present this as an operational playbook without verifying actual target workload, authorizations, deadlines and state semantics.
 

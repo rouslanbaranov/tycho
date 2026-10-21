@@ -88,7 +88,7 @@ def inventory_members(root):
                 require(not p.is_symlink(),'inventory-symlink')
                 members.add(p.relative_to(root).as_posix())
     members.update(('generated/route-index.v1.json','edition/outline.json','edition/migration.json'))
-    for path in ('edition/decomposition-plan.json','edition/decomposition-manifest.json','edition/enrichment-manifest.json','edition/directory-migration.json'):
+    for path in ('edition/decomposition-plan.json','edition/decomposition-manifest.json','edition/enrichment-manifest.json','edition/directory-migration.json','edition/content-revisions.json'):
         if (root/path).is_file(): members.add(path)
     for path in sorted(members):
         result[path]=hashlib.sha256((root/path).read_bytes()).hexdigest()

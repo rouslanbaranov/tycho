@@ -29,6 +29,8 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.http-semantics"
+    - "src.sre-overload"
+    - "src.sre-cascading"
   claim_ids: []
   status: "source-linked"
   notes: "Editorial synthesis of the linked accepted manuscript; exact source versions and nonclaims remain in its page-local evidence ledger."
@@ -38,7 +40,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -106,6 +108,12 @@ Inspected independently public reference sections on 2026-10-19, with the follow
 | [gRPC deadlines](https://grpc.io/docs/guides/deadlines/) and [cancellation](https://grpc.io/docs/guides/cancellation/) | Deadline concepts, propagation, responsibility to terminate spawned work | Identical defaults in all languages or effect rollback |
 | [gRPC retries](https://grpc.io/docs/guides/retry/) and [service configuration](https://grpc.io/docs/guides/service-config/) | Retry scopes, configured attempts/backoff and client policy | Domain idempotency for arbitrary methods |
 | [Protocol Buffers editions](https://protobuf.dev/programming-guides/editions/) and [schema best practices](https://protobuf.dev/best-practices/dos-donts/) | Wire tag identity, reserved tags and evolution hazards | Safe behavior of every decoder or deployed schema migration |
+
+- [SRE, *Handling Overload*](https://sre.google/sre-book/handling-overload/) and
+  [*Addressing Cascading Failures*](https://sre.google/sre-book/addressing-cascading-failures/),
+  inspected 2026-10-21: local-versus-broad overload, retry-layer ownership and
+  complementary retry budgets. Does not establish universal thresholds or sparse-client
+  behavior.
 
 **Original modeling and unknowns:** preview-job identities, budget numbers, failure matrices, architecture selection table and tests above are original proposals/synthetic examples; no test, production observation, real latency measurement, independent expert review or citation-snapshot packaging is claimed. Language/runtime compatibility, actual OpenAPI 3.2.1 tooling support and any environment-specific protocol choice must be checked for the actual target deployment. The wider V02 volume and Tycho book remain incomplete.
 

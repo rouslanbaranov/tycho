@@ -29,6 +29,7 @@ evidence_scope:
   source_ids:
     - "src.aws-backoff"
     - "src.sre-overload"
+    - "src.sre-cascading"
   claim_ids: []
   status: "source-linked"
   notes: "Bounded question from tycho.page.c5d20ae7ef6445e5b23dd5fbac625060; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -38,7 +39,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -88,6 +89,27 @@ flowchart LR
 
 **Design caveat:** cheap authentication/validation is still needed to enforce permission; overload controls must not bypass authorization or permit malicious clients to reserve disproportionate capacity.
 
+### Rejection has a cost
+
+A rejection is not free. Parsing, authentication, authorization checks, logging, error
+rendering, network transfer and client retries still consume resources. If a large fraction
+of offered work is rejected, the rejection path can dominate the remaining capacity.
+
+- Validate identity, permission, basic shape and deadline before expensive work.
+- Keep the overload response small and bounded; avoid per-rejection work that scales with
+  payload size or produces high-cardinality telemetry.
+- Make the rejection contract explicit: which work was not accepted, whether a retry could
+  help, and how long the caller should wait. A retry hint that every client follows
+  immediately recreates the overload.
+- Prefer client-side self-throttling when a client observes a sustained rejection rate; a
+  client that keeps retrying shifts the cost back to the server.
+- Measure the rejection path itself: CPU, allocation, logging, network and the ratio of
+  rejected to admitted and completed work. A service can be overloaded while most of its
+  CPU is spent rejecting requests.
+
+The SRE book's *Client-Side Throttling* section describes this effect; its adaptive
+throttling example is source-specific, not a default policy.
+
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:3 -->
 ## 3. Queues, limits and priority create new contracts
@@ -97,6 +119,13 @@ A bounded queue must name both **number of items** and **maximum age**. A small 
 Choose concurrency/queue limits from observed service-time and downstream saturation behavior rather than a universal rule. A token bucket rate limiter constrains arrival over time according to configured tokens and burst capacity; a concurrency semaphore limits simultaneous resident work. These solve related but different problems. Neither prevents unbounded work within the other dimension unless combined with deadlines and measured downstream budgets.
 
 **Fairness and priority:** reserving some capacity for critical operations can preserve essential user journeys, but naive priority queues can starve ordinary work forever. Define which classes may overtake, maximum wait, starvation policy and tenant isolation. Do not treat one high-paying or high-volume client as entitled to consume all shared resource without an explicitly authorized service policy.
+
+Criticality must be authenticated and propagated. A class visible only at the edge cannot
+protect a downstream dependency: the dependency sees an ordinary caller and may shed the
+high-criticality work first. Propagate the class with the request, keep it separate from the
+deadline and from any client-asserted priority, and verify at each hop that lower classes are
+rejected before higher ones. Propagation is not a license to starve ordinary work; keep a
+bounded wait and a starvation policy.
 
 <!-- /tycho-question-source -->
 

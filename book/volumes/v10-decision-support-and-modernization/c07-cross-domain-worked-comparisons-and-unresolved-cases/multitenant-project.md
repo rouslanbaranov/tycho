@@ -61,7 +61,7 @@
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-20",
+  "updated_at": "2026-10-21",
   "source_inspection_date": "2026-10-20",
   "content_verified_at": null
 }
@@ -120,6 +120,29 @@ At the assumed cell rate of 1,600 units/s, a queue of 400 one-unit operations re
 **Bad budget revision.** Revision 58 raises concurrency enough to exhaust database connections. Roll out a replacement revision 59 that restores conservative limits, freeze promotion and drain outstanding work without double-releasing permits. Whole-snapshot configuration prevents a mixed set of limits, but cannot undo already admitted operations. Existing workers retain the semantic policy needed to complete or safely abort them. Missing telemetry halts expansion.
 
 A cell outage removes its serving capacity. Keep unaffected placement stable, recover durable state into reserved capacity, and migrate a bounded cohort at a time using an ownership epoch. Source writes are fenced before destination activation. If the source is unreachable and cannot be proven fenced, the destination requires a store-level authority mechanism or remains unavailable; a routing update alone cannot prevent split ownership.
+
+### Fair re-admission after shared overload
+
+Recovery is a separate policy from steady-state admission. Reopening every tenant budget at
+once can recreate the overload with deferred work and retries. A controlled re-admission
+should:
+
+- Verify that the shared dependency and the cell's own resources are healthy; a successful
+  health check is not proof that the backlog can be served.
+- Ramp capacity in bounded steps with per-tenant and per-class limits, not one global switch.
+- Keep deferred work and retries inside the same tenant budget; recovery traffic must not
+  bypass the limits that applied during the overload.
+- Protect a minimum share for quiet tenants and record starvation, queue age and rejection by
+  tenant, not only the global success rate.
+- Define who may authorize a faster ramp and which observation stops it.
+
+This is an original synthetic policy, not a measured result. The proposed test is to drive
+the service into shared overload, remove the fault, and compare recovery time, fairness and
+whether the service re-enters overload. The admission mechanics are owned by `V07/C05`
+(`tycho.page.d9abd43bb7394c04a6bf77d4014f870d`); the cache-loss interaction is owned by
+`V06/C02` (`tycho.page.edc267f2fa954e66891e006ddfbfb15f`). The SRE *Handling Overload* and
+*Addressing Cascading Failures* chapters describe the local-versus-broad distinction and
+recovery testing; their examples are contextual.
 
 ## Common dependencies and cost
 

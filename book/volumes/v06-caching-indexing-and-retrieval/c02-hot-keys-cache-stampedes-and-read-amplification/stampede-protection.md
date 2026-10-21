@@ -25,7 +25,8 @@ route_hints:
     - "stampede"
     - "protection"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre-cascading"
   claim_ids: []
   status: "unknown"
   notes: "Bounded question from tycho.page.e0f0d5b68f834acbae94cc6714895dd3; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -35,7 +36,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -87,6 +88,12 @@ flowchart TD
 
 The correct fallback depends on data importance. For public noncritical descriptions, serving a labeled stale value may be acceptable. For an authoritative reservation or access grant, a stale cache value may be forbidden; reject and explain lack of current state instead.
 
+Cache loss is a load event, not only a latency event. Classify the cache as a latency cache
+or a capacity cache using
+[V06/C01 cache acceptance](../c01-local-and-distributed-caching/cache-acceptance.md).
+If it is a capacity cache, the source cannot accept full miss traffic; admit, queue or
+reject explicitly, and state the degraded contract. A broad restart of every replica is the
+relevant test, not only one expired key.
 
 ### Original race: an old asynchronous fill resurrects invalid data
 

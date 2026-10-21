@@ -6,6 +6,7 @@ import re
 import sys
 
 from assemble_edition import split
+from content_revisions import authorized
 from directory_paths import HistoricalView, MANIFEST, rewrite, sha
 from route_index import canonical_scan
 
@@ -54,7 +55,12 @@ def validate(root=ROOT):
         meta, _ = split(text)
         require(meta['canonical_path'] == r['new_path'] and meta['parent_id'] == r['parent_id'] and meta['kind'] == r['kind'], 'directory-document-identity')
         original = view.read_text(r['old_path'])
-        require(sha(original) == r['baseline_sha256'], 'directory-baseline-payload-drift')
+        current_sha = sha(original)
+        require(
+            current_sha == r['baseline_sha256']
+            or authorized(root, 'directory_documents', r['new_path'],
+                          r['baseline_sha256'], current_sha),
+            'directory-baseline-payload-drift')
         require(rewrite(original, r['old_path'], view.directories) == text, 'directory-non-reversible-edit')
         if r['old_path'] != r['new_path']:
             require(not (root / r['old_path']).exists(), 'directory-duplicate-old-path')
