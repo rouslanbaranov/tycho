@@ -63,7 +63,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](hybrid-ranking-graph-and-evaluation.md) | When do fusion and metadata filters improve measured relevance? |
+| [Integrated decision](hybrid-ranking-graph-and-evaluation.md) | When do fusion and metadata filters improve measured relevance? |
 | [Retrieval signals and rank fusion](fusion-signals.md) | How does rank fusion combine rankings without treating scores as comparable probabilities? |
 | [Traversal, evidence and calibrated refusal](evidence-refusal.md) | Which relation or passage supports an answer and when should a system refuse? |
 | [Hybrid evaluation and snapshot consistency](hybrid-evaluation.md) | What matched judgments and snapshot boundaries make an evaluation reproducible? |

@@ -9,7 +9,7 @@ topic_ids:
   - "search-architecture"
 perspectives:
   - "architecture"
-summary: "Integrated question, original scenario and transfer limits for Hybrid retrieval and reranking. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for Hybrid retrieval and reranking. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "When do fusion and metadata filters improve measured relevance?"

@@ -9,7 +9,7 @@ topic_ids:
   - "search-architecture"
 perspectives:
   - "architecture"
-summary: "Integrated question, original scenario and transfer limits for Retrieval evaluation and index lifecycle. Detailed mechanisms have separate question owners."
+summary: "Integrated decision and bounded source limits for Retrieval evaluation and index lifecycle. Detailed mechanisms have separate question owners."
 route_hints:
   questions:
     - "How are index freshness, reproducibility, latency and result quality measured?"
