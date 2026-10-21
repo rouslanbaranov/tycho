@@ -44,7 +44,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -129,7 +129,7 @@ A recommendation to change the executor is unsupported when no CPU-vs-wait profi
 
 The historical src.m9-n02 source gives a **qualitative negative experiment**, not a complete benchmark. An outgoing gRPC client can perform both network waiting and CPU-heavy work, but merely labeling an executor “gRPC” does not establish which phase consumes its threads. What matters is the proportion of **runnable computation, socket waiting and synchronization** on the actual executor whose implementation is being changed.
 
-For another Java platform, the correct unit of experimentation is the worker's *actual task class*, not a whole mixed gateway. Split end-to-end traces into serialization, authorization, local transformation, send/wait and response processing. Record carrier/platform-thread occupancy, CPU per *completed useful request*, queue age, downstream connection limits, p99 and cancellation. Hold transport/library/JDK versions fixed when changing the scheduling model.
+For another Java platform, the correct unit of experimentation is the worker's *actual task class*, not a whole mixed gateway. Split end-to-end traces into serialization, authorization, local transformation, send/wait and response processing, then apply the controlled-comparison protocol above. This section adds only the cohort split; it does not repeat the measurement list.
 
 | Synthetic test cohort | Candidate choice | Falsification condition |
 |---|---|---|
