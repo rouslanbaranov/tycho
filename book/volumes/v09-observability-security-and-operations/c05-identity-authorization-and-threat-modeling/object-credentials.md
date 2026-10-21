@@ -65,6 +65,10 @@ The isolation boundary must cover:
 A shared database can be legitimate if object/tenant isolation is enforceable and tested. A separate database or runtime can reduce some blast radius, but it does **not** replace permission checks, credential separation and cross-tenant backup/restore controls.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Valet Key](../../v11-pattern-atlas/c11-security-operations/README.md#valet-key) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.dde63373c50f4f4a80e727b6e160def5:4 -->
 ## 4. Token and credential boundaries
 

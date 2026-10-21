@@ -56,6 +56,10 @@ content_verified_at: null
 > **Tycho chapter-owner draft V09/C01, 2026-10-19.** Public Google SRE Workbook, Prometheus and OpenTelemetry documentation inform the explanation. The workflow, numbers and examples are original fictional teaching material. No service SLO, alert rule, monitoring deployment, traffic trace, data sample or independent technical acceptance has been observed or executed.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [SLI/SLO and Error Budgets](../../v11-pattern-atlas/c11-security-operations/README.md#sli-slo-and-error-budgets) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.c987c475cc5340bcb967f4b6f963b295:0 -->
 ## Purpose and mission
 

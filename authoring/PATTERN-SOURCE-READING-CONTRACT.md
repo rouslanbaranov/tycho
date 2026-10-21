@@ -217,10 +217,17 @@ infrastructure, Strangler Fig, branch by abstraction, parallel run, dark launch,
 expand-and-contract and controlled cutover. Registry coverage is `partial` for all
 12; no `sufficient` state is claimed.
 
+All 13 V11/C11 entries also have self-checked cards with bounded owner sections.
+They cover federated/zero-trust identity, least privilege, RBAC/ABAC, workload
+identity, Valet Key, multitenant isolation, tracing, logging, audit, SLOs,
+synthetic monitoring and health checks. Registry coverage is `partial` for all 13;
+no `sufficient` state is claimed.
+
 The card batches are recorded in `edition/patterns/card-batches.v1.json` and checked
 by `scripts/validate_pattern_cards.py`, including adversarial tests. The validator
-now resolves each technical-owner link to the declared path and anchor. The other
-14 entries remain without Phase 3 cards; 13 are read and one is blocked.
+now resolves each technical-owner link to the declared path and anchor. All 144
+readable catalog entries have cards; only Polyglot Persistence remains blocked and
+uncarded. Card coverage is not technical sufficiency.
 
 ## Family batches
 

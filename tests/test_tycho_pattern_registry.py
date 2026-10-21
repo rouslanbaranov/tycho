@@ -26,7 +26,7 @@ class PatternRegistryTests(unittest.TestCase):
         self.assertEqual(result["patterns"], 145)
         self.assertEqual(result["families"], 11)
         self.assertEqual((result["core"], result["advanced"]), (123, 22))
-        self.assertEqual(result["technical_owners"], 131)
+        self.assertEqual(result["technical_owners"], 144)
         self.assertEqual(result["atlas_sections"], 145)
         self.assertEqual(result["source_units"], 145)
 
