@@ -135,9 +135,23 @@ Fowler feature-toggle/branch pages were read as returned. Kubernetes HPA,
 resource, Deployment and OpenGitOps pages were truncated after their main
 sections; those records state the inspected scope.
 
-Current plan totals: **131 read, 13 planned and 1 blocked** across 145 entries;
-the ledger has **106 records**, including three foundation catalog records.
-These numbers are progress, not completion.
+## Phase 2B batch 6 — security and operations
+
+All 13 security/isolation/operations entries have a read unit after batch 6.
+OWASP ASVS is shared by Zero Trust, Least Privilege, RBAC/ABAC and Multitenant
+Isolation as a verification-framing source; Health checks reuse the batch 4
+Kubernetes probe record. Federated Identity, workload identity, tracing,
+logging, audit, SLOs and synthetic monitoring have dedicated public units.
+
+The RFC 9700, Istio security and OpenTelemetry traces/logs pages returned
+truncated after their main sections. ASVS is an overview only, not the detailed
+requirement chapters; those records state the inspected scope.
+
+Current plan totals: **144 read, 0 planned and 1 blocked** across 145 entries;
+the ledger has **115 records**, including three foundation catalog records.
+Only Polyglot Persistence remains blocked by its bibliography-only source.
+Entry-level source coverage is complete; technical and decision coverage remain
+unassessed and are not claimed.
 
 ## Family batches
 
