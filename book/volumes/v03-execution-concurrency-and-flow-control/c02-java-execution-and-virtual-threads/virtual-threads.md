@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -54,7 +54,7 @@ JDK 21 introduced `Thread.ofVirtual()` and `Executors.newVirtualThreadPerTaskExe
 
 ```java
 // Illustrative Java 21+ policy fragment, NOT a complete server.
-// Gate accepted request count BEFORE submitting tasks.
+// Gate only the database operation; a separate admission limit bounds pending tasks.
 Semaphore dbPermits = new Semaphore(12);
 try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
     for (Request request : admittedRequests) {

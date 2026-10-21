@@ -45,7 +45,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -53,7 +53,7 @@ content_verified_at: null
 
 # Capacity planning and cost/performance trade-offs
 
-> **Tycho original book manuscript V07/C07**, 2026-10-19. Calculations, scenario, parameters and diagrams are fictional; official public AWS Well-Architected cost guidance was consulted for principles, not for prices, forecasts or measured performance. No cloud bill, simulator, benchmark or production cost study was used.
+> **Tycho original book manuscript V07/C07**, 2026-10-19. Calculations, scenario, parameters and diagrams are fictional; official public AWS Well-Architected cost guidance was consulted for principles, not for prices, forecasts or measured performance. No cloud bill, simulator, benchmark or production cost study was used. The content_review field retains the decomposition-era draft state; no independent acceptance is asserted.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8:0 -->
@@ -62,6 +62,8 @@ content_verified_at: null
 Performance decisions buy *capacity over time*, not just a lower measured p99. More replicas can reduce queueing and absorb uneven demand while increasing total resource cost, per-instance connection pressure and operational work. A larger instance can improve one CPU-bound operation without changing an upstream quota or serialized data key.
 
 The economic question is: **What is the least costly configuration that satisfies correctness, user-visible service targets, recovery and operational constraints across the actual demand distribution?** It is different from “Which option has the lowest price per virtual machine?”
+
+The owning question is which experiments confirm or falsify a scaling hypothesis. Here the hypothesis is an economic capacity choice, so the decision test compares service outcomes and total operating cost under the demand distribution, not a raw price or a single peak metric.
 
 The [AWS Well-Architected Cost Optimization principles](https://docs.aws.amazon.com/wellarchitected/latest/framework/cost-dp.html) recommend measuring business output against expenditure, adopting consumption where appropriate and attributing costs to their actual owners. The [demand/supply guidance](https://docs.aws.amazon.com/wellarchitected/2024-06-27/framework/cost-mandem.html) notes the cost/latency role of scaling, throttling, buffering and deferred work. These references describe principles, not universally optimal budgets.
 

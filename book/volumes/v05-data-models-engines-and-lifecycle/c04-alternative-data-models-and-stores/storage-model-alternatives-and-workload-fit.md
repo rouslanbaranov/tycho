@@ -49,7 +49,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-18"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -57,7 +57,7 @@ content_verified_at: null
 
 # Storage model alternatives: embedded SQL, distributed SQL, document, wide-column, OLAP, graph and time series
 
-> Tycho Issue [#83](https://github.com/rouslanbaranov/tycho/issues/83). Independent official public documentation inspected on 2026-10-19, versions recorded below. This is a **bounded comparative architecture primer**, not a vendor ranking, empirical TCO calculation or claim of testing production databases.
+> Tycho Issue [#83](https://github.com/rouslanbaranov/tycho/issues/83). Independent official public documentation was inspected on 2026-10-19; exact versions and limits are in the chapter source ledger, not repeated here. This is a **bounded comparative architecture primer**, not a vendor ranking, empirical TCO calculation or claim of testing production databases.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.c75a11f9786442a5b5456f11c2412df4:0 -->
