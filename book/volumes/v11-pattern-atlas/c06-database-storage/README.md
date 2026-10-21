@@ -11,7 +11,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "12 C06 cards with bounded owner links; Polyglot Persistence remains blocked."
+summary: "13 C06 cards with bounded owner links."
 route_hints:
   questions:
     - "Which storage patterns fit the workload and recovery boundary?"
@@ -23,7 +23,7 @@ route_hints:
     - "tycho.chapter.87e52392e206a451ea5c79a4194c384b"
     - "tycho.chapter.69085752a11c69305aa2a369b8ec9d29"
   excludes:
-    - "Polyglot Persistence remains blocked; no card or sufficient coverage is claimed."
+    - "No entry claims sufficient technical or decision coverage."
   keywords:
     - "pattern atlas"
     - "database and storage architecture"
@@ -38,14 +38,14 @@ evidence_scope:
     - "src.gh-ost"
   claim_ids: []
   status: "source-linked"
-  notes: "12 cards cite read units; Polyglot Persistence remains blocked."
+  notes: "13 cards cite read units; Polyglot Persistence is bounded."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-21"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
+updated_at: "2026-10-22"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -57,8 +57,8 @@ content_verified_at: null
 
 This chapter is the atlas entry point for **Database and storage architecture**. It
 owns the conditional decision route for 13 catalog entries, not the deep mechanism
-explanations. Twelve entries have a card; Polyglot Persistence remains blocked by its
-bibliography-only source and is not carded.
+explanations. All thirteen entries have a bounded card; Polyglot Persistence uses a
+public article and the V05/C04 selection section.
 
 ## Pages and reasoning route
 
@@ -321,6 +321,41 @@ unit, not a benchmark.
 
 **Related entries.** Partitioning; Materialized View; CQRS Read Projections; Sharding.
 
+### Polyglot Persistence
+
+**Identity.** Polyglot Persistence; family Database and storage architecture; kind
+data-pattern; priority core.
+
+**Decision question.** Should different data responsibilities use different stores
+while one authoritative boundary owns consistency?
+
+**Good-fit conditions.** Distinct responsibilities have materially different access
+patterns; one store cannot meet a measured requirement; cross-store ownership,
+freshness and failure handling are explicit; the team can operate each store.
+
+**Hard contraindications.** Reject when one store meets the requirement, when no
+authoritative owner exists, when cross-store consistency is undocumented, or when the
+team cannot operate the additional store.
+
+**Competing alternative.** Single store with derived projections or query-time joins.
+Reverse the choice when coordination, migration and operational cost exceed the
+workload benefit.
+
+**Failure and recovery.** Stale projections, dual-write ambiguity and partial migration
+are common; verify freshness and rebuild in the owner section.
+
+**Technical owner.** [Multiple databases create a new synchronization problem](../../v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md#7-multiple-databases-create-a-new-synchronization-problem)
+— bounded selection criteria, not a complete multi-store design.
+
+**Sources.** [src.fowler-polyglot](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-fowler-polyglot.2026-10-22: sections "DatabaseThaw",
+"Polyglot persistence", "Complexity and consistency", "Strategic versus utility
+projects". The source is a public article, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** CQRS Read Projections; CDC; Sharding; Materialized View.
+
 ### CQRS Read Projections
 
 **Identity.** CQRS Read Projections; family Database and storage architecture; kind
@@ -449,20 +484,9 @@ unit, not a benchmark.
 **Related entries.** Leader-Follower Replication; Read Replicas; Expand-and-Contract;
 Disaster Recovery.
 
-### Polyglot Persistence
-
-**Catalog problem:** Choose different stores for different data responsibilities while preserving
-cross-store consistency and operations.
-
-**State:** blocked; the admitted book is bibliography-only and no card is asserted.
-
-**Technical owner:** `technical-owner-missing` — no admissible technical owner
-exists. Remediation is tracked by #284; the entry remains blocked and uncarded.
-The entry remains visible for catalog completeness.
-
 ## Chapter result and counterexample
 
-Twelve cards establish a conditional decision route. Owner sections are bounded; none
+Thirteen cards establish a conditional decision route. Owner sections are bounded; none
 establishes technical sufficiency.
 
 Counterexample: a sharded system with one hot tenant and no resharding plan is not
@@ -480,8 +504,8 @@ evidence for the sharding card's partition-key conditions.
 
 ## Evidence and known limits
 
-- Twelve cards cite read ledger units; owner links and backlinks are self-checked.
-- Polyglot Persistence remains blocked and has no card.
+- Thirteen cards cite read ledger units; owner links and backlinks are self-checked.
+- Polyglot Persistence is bounded by a public article and an embedded owner section.
 - Owner links are bounded sections, not dedicated pattern pages.
 - No entry claims sufficient technical or decision coverage.
 - No independent editorial review, benchmark, production observation or runtime test

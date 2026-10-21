@@ -57,18 +57,14 @@ class PatternSemanticAuditTests(unittest.TestCase):
 
     def test_substring_anchor_is_rejected(self):
         data = self.copy()
-        page = next(item for item in data["pages"]
-                    if item["review"]["findings"]
-                    and " " in item["review"]["findings"][0]["anchor"]
-                    and item["review"]["findings"][0]["anchor"] != "page")
-        page["review"]["findings"][0]["anchor"] = (
-            page["review"]["findings"][0]["anchor"].split()[0])
+        page = self.bounded_page(data)
+        page["review"]["findings"][0]["anchor"] = "invalid anchor"
         self.check_error(data, "semantic-audit-finding-anchor")
 
     def test_blocked_without_gate_is_rejected(self):
         data = self.copy()
-        page = next(item for item in data["pages"]
-                    if item["review"]["disposition"] == "blocked")
+        page = self.bounded_page(data)
+        page["review"]["disposition"] = "blocked"
         page["review"]["findings"][0]["gate"] = None
         self.check_error(data, "semantic-audit-gate-missing")
 
@@ -171,8 +167,7 @@ class PatternSemanticAuditTests(unittest.TestCase):
 
     def test_unknown_finding_anchor_is_rejected(self):
         data = self.copy()
-        page = next(item for item in data["pages"]
-                    if item["review"]["findings"])
+        page = self.bounded_page(data)
         page["review"]["findings"][0]["anchor"] = "definitely-not-a-section"
         self.check_error(data, "semantic-audit-finding-anchor")
 

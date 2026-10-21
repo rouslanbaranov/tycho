@@ -157,12 +157,6 @@ def build(root, reviews_dir, out):
             "action": "Record owner acceptance only after the independent review gates are closed.",
         },
         {
-            "id": "polyglot-persistence-owner",
-            "status": "blocked",
-            "description": "Polyglot Persistence remains uncarded because no technical owner exists.",
-            "action": "Keep the entry blocked and uncited, or assign an owner through a separate task.",
-        },
-        {
             "id": "split-discovery-balancing",
             "status": "open",
             "description": "The discovery and balancing page has a recorded split decision that is deferred.",

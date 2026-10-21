@@ -22,7 +22,7 @@ class DeliveryEvidenceTests(unittest.TestCase):
     def test_complete_evidence(self):
         result = validate_data(self.data, ROOT)
         self.assertEqual(result["entries"], 145)
-        self.assertEqual(result["cards"], 144)
+        self.assertEqual(result["cards"], 145)
 
     def test_sufficient_claim_is_rejected(self):
         data = copy.deepcopy(self.data)

@@ -100,6 +100,9 @@ A credible selection compares:
 
 **Insufficient evidence — unanswered architecture choice:** "Our product has 5 million users and wants a fast dashboard, so should we migrate everything from PostgreSQL to Cassandra, MongoDB and ClickHouse?" **No determination is possible.** User count and the word "fast" do not establish the authority, query mix, dataset, costs, latency window, migration compatibility or consistency requirements. Start by profiling actual PostgreSQL query plans and workload; consider a single purpose-built projection only if the evidence supports it.
 
+Pattern atlas: [Polyglot Persistence](../../v11-pattern-atlas/c06-database-storage/README.md#polyglot-persistence)
+— decision conditions and contraindications.
+
 <!-- /tycho-question-source -->
 
 ## Navigation, prerequisites and source scope

@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-21. Entries: 268.
+Inventory date: 2026-10-22. Entries: 269.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -62,6 +62,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.fowler-bounded-context / core | [Bounded Context](https://martinfowler.com/bliki/BoundedContext.html) — Martin Fowler | Primary article for bounded contexts, ubiquitous language and context mapping. | admitted-for-research / public-web-or-author-download |
 | src.clean-architecture / core | [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) — Robert C. Martin (Clean Coder Blog) | Primary article for clean/onion dependency direction and boundary crossing. | admitted-for-research / public-web-or-author-download |
 | src.aws-hexagonal / core | [Hexagonal architecture pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/hexagonal-architecture.html) — AWS Prescriptive Guidance | Primary public page for ports-and-adapters intent, applicability and trade-offs. | admitted-for-research / public-web-or-author-download |
+| src.fowler-polyglot / core | [Polyglot Persistence](https://martinfowler.com/bliki/PolyglotPersistence.html) — Martin Fowler | Bounded public article supporting the polyglot-persistence decision card. | admitted-for-research / public-web-or-author-download |
 
 ## Contracts
 

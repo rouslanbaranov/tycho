@@ -23,7 +23,7 @@ class Phase4Tests(unittest.TestCase):
         result = validate_data(self.data, ROOT)
         self.assertEqual(result["pages"], 419)
         self.assertEqual(result["entries"], 145)
-        self.assertEqual(result["cards"], 144)
+        self.assertEqual(result["cards"], 145)
 
     def test_page_count_is_rejected(self):
         data = copy.deepcopy(self.data)
@@ -44,11 +44,6 @@ class Phase4Tests(unittest.TestCase):
         data = copy.deepcopy(self.data)
         data["retrieval_questions"][1]["pattern_id"] = data["retrieval_questions"][0]["pattern_id"]
         self.check_error(data, "phase4-question-duplicate")
-
-    def test_blocked_question_is_rejected(self):
-        data = copy.deepcopy(self.data)
-        data["retrieval_questions"][0]["pattern_id"] = "tycho.pattern.polyglot-persistence"
-        self.check_error(data, "phase4-blocked-question")
 
     def test_summary_mismatch_is_rejected(self):
         data = copy.deepcopy(self.data)

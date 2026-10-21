@@ -94,11 +94,11 @@ outbox page is not a general CDC contract.
 
 ## Phase 2B batch 3 — caching and database storage
 
-26 of 27 caching/database entries have a read unit after batch 3. The five
+27 of 27 caching/database entries have a read unit after batch 3. The five
 previously planned entries are now read: Negative Caching (Google Cloud CDN),
 Stale-While-Revalidate (RFC 5861), Multi-Leader and Quorum (Cassandra Dynamo
-page), and Online Data Migration (gh-ost README). Polyglot Persistence remains
-the one blocked bibliography-only entry.
+page), and Online Data Migration (gh-ost README). Polyglot Persistence now uses
+the public Fowler article; its DDIA unit remains blocked and uncited.
 
 The caching guidance, Hazelcast, Citus and Google negative-caching pages
 returned truncated after their main sections; those records state the inspected
@@ -147,11 +147,11 @@ The RFC 9700, Istio security and OpenTelemetry traces/logs pages returned
 truncated after their main sections. ASVS is an overview only, not the detailed
 requirement chapters; those records state the inspected scope.
 
-Current plan totals: **144 read, 0 planned and 1 blocked** across 145 entries;
-the ledger has **115 records**, including three foundation catalog records.
-Only Polyglot Persistence remains blocked by its bibliography-only source.
-Entry-level source coverage is complete; technical and decision coverage remain
-unassessed and are not claimed.
+Current plan totals: **145 read units, 0 planned and 1 blocked unit** across 145
+entries; the ledger has **116 records**, including three foundation catalog records.
+Polyglot Persistence's DDIA unit remains blocked, but the entry is supported by the
+public Fowler article. Entry-level source coverage is complete; technical and decision
+coverage remain unassessed and are not claimed.
 
 ## Phase 3 card batches
 
@@ -188,11 +188,11 @@ TTL and invalidation, negative caching, stampede/single-flight, stale-while-
 revalidate, multi-level caching and edge caching. Registry coverage is `partial`
 for all 14; no `sufficient` state is claimed.
 
-Twelve V11/C06 entries also have self-checked cards with bounded owner sections.
+Thirteen V11/C06 entries also have self-checked cards with bounded owner sections.
 They cover sharding/partitioning, consistent hashing, replication variants, read
-replicas, quorum, index tables, CQRS projections, schema migration and backup/PITR.
-Polyglot Persistence remains blocked and has no card. Registry coverage is `partial`
-for the twelve; no `sufficient` state is claimed.
+replicas, quorum, index tables, Polyglot Persistence, CQRS projections, schema
+migration and backup/PITR. Registry coverage is `partial` for all thirteen; no
+`sufficient` state is claimed.
 
 All 16 V11/C07 entries also have self-checked cards with bounded owner sections.
 They cover circuit breaking, bulkheads, retries/timeouts/deadlines, fallback and
@@ -226,17 +226,15 @@ no `sufficient` state is claimed.
 The card batches are recorded in `edition/patterns/card-batches.v1.json` and checked
 by `scripts/validate_pattern_cards.py`, including adversarial tests. The validator
 now resolves each technical-owner link to the declared path and anchor. All 144
-readable catalog entries have cards; only Polyglot Persistence remains blocked and
-uncarded. Card coverage is not technical sufficiency.
+catalog entries have cards. Card coverage is not technical sufficiency.
 
 ## Phase 4 audit and retrieval routes
 
 The Phase 4 artifact `edition/patterns/phase4.v1.json` dispositions all 419
 canonical pages, audits 145 entries across 14 dimensions, records the gap matrix,
-derives 536 cross-pattern routes from card related entries, records 40 related
+derives 540 cross-pattern routes from card related entries, records 40 related
 labels as deliberate non-routes when they name technical concepts outside the catalog,
-and extracts 144 retrieval questions. Polyglot Persistence is the one blocked entry and
-has no question.
+and extracts 145 retrieval questions. No catalog entry remains blocked.
 
 Page dispositions distinguish atlas pages, technical owners, candidate owners,
 navigation, legacy cross-volume pages and other canonical technical pages. They do
@@ -247,13 +245,13 @@ adversarial tests are structural evidence only; independent review remains Phase
 
 The Phase 5 artifact `edition/patterns/delivery-evidence.v1.json` records the
 locally executed checks, a twelve-item DoD matrix, nine open gaps and explicit
-limits. It covers 419 pages, 145 entries, 144 cards, 536 routes, 40 recorded
-non-routes, 144 partial technical and decision entries, and one blocked source.
+limits. It covers 419 pages, 145 entries, 145 cards, 540 routes, 40 recorded
+non-routes, 145 partial technical and decision entries, and no blocked source.
 
 Remediation issue #284 added bounded owner sections for the 17 cards whose owner
-pages previously mentioned the pattern only in a backlink. It also recorded the
-Polyglot `technical-owner-missing` disposition, resolved four avoidable aliases and
-wrapped card prose. The 144 exact owner links remain longer than 100 characters
+pages previously mentioned the pattern only in a backlink. Issue #294 later carded
+Polyglot Persistence with a public article and the V05/C04 owner section. The 145 exact
+owner links remain longer than 100 characters
 because canonical paths cannot be split; all other V11 prose is checked at <=100 by
 `scripts/check_markdown_line_length.py`.
 
@@ -269,14 +267,13 @@ final acceptance and does not close #233 or M10.
 ## Phase 6 semantic page audit
 
 The Phase 6 artifact `edition/patterns/semantic-audit.v1.json` records one
-self-checked disposition for each of the 419 canonical pages: 418 sound, 0
-sound-with-findings, 0 needs-remediation and 1 blocked. Its single finding is the
-blocked Polyglot entry; no high-severity finding was recorded under the recorded
-rubric. Reviewer, an independent review agent, returned ACCEPT-WITH-FINDINGS and
-its findings were addressed. Owner-confirmed human review passed on 2026-10-21
-without a per-page reviewer record. The 100 low findings were closed under
-#292. Five gates remain open: owner acceptance, the blocked Polyglot entry and three
-deferred page splits.
+self-checked disposition for each of the 419 canonical pages: 419 sound, 0
+sound-with-findings, 0 needs-remediation and 0 blocked. No semantic finding remains;
+no high-severity finding was recorded under the recorded rubric. Reviewer, an
+independent review agent, returned ACCEPT-WITH-FINDINGS and its findings were
+addressed. Owner-confirmed human review passed on 2026-10-21 without a per-page
+reviewer record. The 100 low findings were closed under #292. Four gates remain open:
+owner acceptance and three deferred page splits.
 
 Each record carries the page SHA-256, a required-check set for its tier, exact
 finding anchors and a remediation or gate. The validator recomputes coverage,
