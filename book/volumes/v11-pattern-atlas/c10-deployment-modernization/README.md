@@ -11,7 +11,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "migration"
-summary: "Phase 1 inventory of 12 catalog entries with candidate areas; no technical claim."
+summary: "All 12 C10 cards with bounded owner links; decision coverage partial."
 route_hints:
   questions:
     - "Which deployment patterns keep change reversible?"
@@ -23,16 +23,24 @@ route_hints:
     - "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142"
     - "tycho.chapter.419769c372ccaa569796954878e3bef9"
   excludes:
-    - "No source reading, card authoring or technical sufficiency is asserted."
+    - "Bounded owner links; no sufficient coverage or independent review."
   keywords:
     - "pattern atlas"
     - "deployment and legacy modernization"
     - "decision layer"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.k8s-deployments"
+    - "src.argo-rollouts"
+    - "src.fowler-feature-toggles"
+    - "src.opengitops"
+    - "src.ibm-immutable-infrastructure"
+    - "src.fowler-strangler"
+    - "src.fowler-branch"
+    - "src.flyway"
   claim_ids: []
-  status: "unknown"
-  notes: "Phase 1 entry inventory; no source or technical claim."
+  status: "source-linked"
+  notes: "All 12 cards cite read units; owner links are bounded sections, not dedicated pattern pages."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-21"
@@ -40,7 +48,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-21"
 updated_at: "2026-10-21"
-source_inspection_date: null
+source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
 # V11/C10 — Deployment and legacy modernization
@@ -49,155 +57,319 @@ content_verified_at: null
 
 ## Purpose and mission
 
-This chapter is the atlas entry point for **Deployment and legacy modernization**. It owns the
-conditional decision route for 12 catalog entries, not the deep mechanism explanations. Read the
-candidate technical owner before applying a mechanism claim.
+This chapter is the atlas entry point for **Deployment and legacy modernization**. It
+owns the conditional decision route for 12 catalog entries, not the deep mechanism
+explanations. Read the exact owner section before applying a mechanism claim.
+
+All 12 entries have a self-checked card. Owner sections are bounded: a rollout or
+transition-state page may own the reversibility contract without owning every pattern.
 
 ## Pages and reasoning route
 
-Page count is content-dependent. Phase 1 uses this landing as the entry inventory: all entries
-are visible, but full decision cards, source ledgers and any page split follow in later phases.
-A chapter may need one page or many; there is no fixed two- or three-page quota.
-
-Start with the entry inventory below, then follow the candidate area and the candidate page when
-one exists. A candidate is a reading hypothesis, not a confirmed canonical owner.
+Page count is content-dependent. This chapter currently uses one landing page for all
+entries; a later split is an editorial change, not a plan failure. Start with the card,
+check its conditions and contraindications, then read the exact owner section.
 
 ## Entry inventory
 
-Each level-three heading is a stable atlas anchor. Candidate areas and pages are not audited. No
-source was read for an entry in Phase 1.
+Each level-three heading is a stable atlas anchor. Owner links are bounded sections;
+none claims sufficient technical or decision coverage.
 
 ### Rolling Deployment
 
-**Catalog problem:** Replace instances incrementally while preserving service
+**Identity.** Rolling Deployment; family Deployment and legacy modernization; kind deployment-pattern; priority core.
 
-**Candidate area:** V08/C04 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should instances be replaced incrementally while traffic continues?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Multiple instances and a readiness signal exist; old/new versions are compatible; drain/rollback is defined.
+
+**Hard contraindications.** Reject when versions cannot coexist, when no readiness/drain control exists, or when rollback requires simultaneous replacement.
+
+**Competing alternative.** Blue/green or recreate. Reverse the choice when incremental compatibility cost exceeds rollout benefit.
+
+**Failure and recovery.** Partial-version exposure is common; verify readiness in the owner section.
+
+**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#gitops-rolling-bluegreen-and-canary-release-architecture) — rollout mechanisms are bounded, not a product-specific controller guide.
+
+**Sources.** [src.k8s-deployments](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-k8s-deployment.2026-10-21: sections "Deployments", "Rolling update", "Rollback". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Blue/Green Deployment; Canary Release; Feature Flags; Readiness Probes.
 
 ### Blue / Green Deployment
 
-**Catalog problem:** Switch traffic between two provisioned versions/environments
+**Identity.** Blue/Green Deployment; family Deployment and legacy modernization; kind deployment-pattern; priority core.
 
-**Candidate area:** V08/C04 (provisional; not audited).
+**Decision question.** Should traffic switch between two complete environments rather than replace in place?
 
-**Candidate page:** GitOps, rolling, blue/green and canary release architecture
+**Good-fit conditions.** Two environments fit the cost; state is externalized; switch/rollback is quick; data compatibility is explicit.
 
-**Candidate confidence:** medium; candidate only, not audited.
+**Hard contraindications.** Reject when duplicate capacity is prohibitive, when state cannot be shared, or when a switch would lose in-flight work.
 
-**State:** not-yet-assessed; no source inspected.
+**Competing alternative.** Rolling deployment or canary. Reverse the choice when duplicate environment cost exceeds rollback benefit.
+
+**Failure and recovery.** Data compatibility and switch atomicity are common; verify state in the owner section.
+
+**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#gitops-rolling-bluegreen-and-canary-release-architecture) — rollout mechanisms are bounded, not a product-specific controller guide.
+
+**Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-argo-bluegreen.2026-10-21: sections "BlueGreen", "Overview", "Service". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Rolling Deployment; Canary Release; Immutable Infrastructure; Controlled Cutover.
 
 ### Canary Release
 
-**Catalog problem:** Expose a controlled subset of traffic before promotion
+**Identity.** Canary Release; family Deployment and legacy modernization; kind deployment-pattern; priority core.
 
-**Candidate area:** V08/C04 (provisional; not audited).
+**Decision question.** Should a new version receive a small traffic share before full promotion?
 
-**Candidate page:** GitOps, rolling, blue/green and canary release architecture
+**Good-fit conditions.** A measurable signal exists; traffic can be split; abort/rollback is defined; the canary is representative.
 
-**Candidate confidence:** strong; candidate only, not audited.
+**Hard contraindications.** Reject when traffic cannot be split, when metrics are too noisy, or when the canary shares hidden state with the baseline.
 
-**State:** not-yet-assessed; no source inspected.
+**Competing alternative.** Blue/green or feature flag. Reverse the choice when canary analysis cost exceeds risk reduction.
+
+**Failure and recovery.** Low-traffic blindness and metric leakage are common; verify analysis in the owner section.
+
+**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#gitops-rolling-bluegreen-and-canary-release-architecture) — rollout mechanisms are bounded, not a product-specific controller guide.
+
+**Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-argo-canary.2026-10-21: sections "Canary", "Overview", "Analysis". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Blue/Green; Rolling Deployment; Feature Flags; Dark Launching.
 
 ### Feature Flags / Feature Toggles
 
-**Catalog problem:** Decouple code rollout from feature activation
+**Identity.** Feature Flags / Feature Toggles; family Deployment and legacy modernization; kind deployment-pattern; priority core.
 
-**Candidate area:** V08/C04 (provisional; not audited).
+**Decision question.** Should activation be decoupled from deployment through a runtime toggle?
 
-**Candidate page:** Dynamic configuration and feature flags
+**Good-fit conditions.** Toggle ownership and expiry are defined; default is safe; flag evaluation is observable.
 
-**Candidate confidence:** medium; candidate only, not audited.
+**Hard contraindications.** Reject when a toggle would become permanent configuration debt, when no owner removes it, or when it hides a broken deployment.
 
-**State:** not-yet-assessed; no source inspected.
+**Competing alternative.** Deploy dark code with no toggle or a separate release train. Reverse the choice when toggle lifecycle cost exceeds decoupling benefit.
+
+**Failure and recovery.** Stale flags and combinatorial states are common; verify lifecycle in the owner section.
+
+**Technical owner.** [Dynamic configuration and feature flags](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md#dynamic-configuration-and-feature-flags) — flags are bounded, not a full toggle-lifecycle platform.
+
+**Sources.** [src.fowler-feature-toggles](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-fowler-feature-toggles.2026-10-21: sections "Feature Toggles (aka Feature Flags)", "Categories of toggles", "Implementation". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Canary Release; Dark Launching; GitOps; Configuration Rollout.
 
 ### GitOps
 
-**Catalog problem:** Reconcile declared desired deployment state with actual state
+**Identity.** GitOps; family Deployment and legacy modernization; kind delivery-pattern; priority core.
 
-**Candidate area:** V08/C01 (provisional; not audited).
+**Decision question.** Should desired state be versioned and reconciled automatically from a Git source?
 
-**Candidate page:** CI/CD architecture, artifact provenance and GitOps reconciliation
+**Good-fit conditions.** Desired state is declarative; reconciliation is observable; secrets/drift are handled; rollback is a revert.
 
-**Candidate confidence:** strong; candidate only, not audited.
+**Hard contraindications.** Reject when imperative one-off changes dominate, when the reconciler is unowned, or when secrets cannot be managed safely.
 
-**State:** not-yet-assessed; no source inspected.
+**Competing alternative.** Pipeline-driven deployment or manual release. Reverse the choice when reconciliation latency/ownership exceeds audit benefit.
+
+**Failure and recovery.** Drift and reconciler outages are common; verify reconciliation in the owner section.
+
+**Technical owner.** [CI/CD architecture, artifact provenance and GitOps reconciliation](../../v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md#cicd-architecture-artifact-provenance-and-gitops-reconciliation) — GitOps is bounded to desired-state reconciliation.
+
+**Sources.** [src.opengitops](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-opengitops.2026-10-21: sections "Home", "Principles". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Immutable Infrastructure; Rolling Deployment; Feature Flags; CI/CD Provenance.
 
 ### Immutable Infrastructure
 
-**Catalog problem:** Replace rather than mutate deployed infrastructure in place
+**Identity.** Immutable Infrastructure; family Deployment and legacy modernization; kind delivery-pattern; priority core.
 
-**Candidate area:** V08/C03 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should infrastructure be replaced rather than mutated in place?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Images/artifacts are versioned; state is externalized; replacement and rollback are automated.
+
+**Hard contraindications.** Reject when in-place state cannot be externalized, when replacement is too slow, or when configuration drift is invisible.
+
+**Competing alternative.** Mutable servers with configuration management. Reverse the choice when replacement cost exceeds drift/recovery benefit.
+
+**Failure and recovery.** Orphaned state and image drift are common; verify lifecycle in the owner section.
+
+**Technical owner.** [Infrastructure as code and drift](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#infrastructure-as-code-and-drift) — immutable infrastructure is bounded to replacement/drift, not a cloud product.
+
+**Sources.** [src.ibm-immutable-infrastructure](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-ibm-immutable.2026-10-21: sections "What is immutable infrastructure?", "Benefits", "Challenges". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** GitOps; Blue/Green; Rolling Deployment; Infrastructure as Code.
 
 ### Strangler Fig
 
-**Catalog problem:** Incrementally replace old capabilities at controlled boundaries
+**Identity.** Strangler Fig; family Deployment and legacy modernization; kind modernization-pattern; priority core.
 
-**Candidate area:** V10/C05 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should a legacy capability be replaced incrementally behind a routing seam rather than by a rewrite?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** A seam can route old/new; coexistence is funded; data authority transfer is staged; rollback is possible until a no-return point.
+
+**Hard contraindications.** Reject when the legacy has no seam, when dual-running data cannot be reconciled, or when the team cannot own two paths.
+
+**Competing alternative.** Branch by abstraction or a bounded rewrite. Reverse the choice when coexistence cost exceeds incremental replacement benefit.
+
+**Failure and recovery.** Dual writes and façade bottlenecks are common; verify transition states in the owner section.
+
+**Technical owner.** [Target architecture versus transition states: coexistence, reversibility and recovery](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md#target-architecture-versus-transition-states-coexistence-reversibility-and-recovery) — strangler is bounded to transition-state reasoning.
+
+**Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Branch by Abstraction; Parallel Run; Dark Launching; Controlled Cutover.
 
 ### Branch by Abstraction
 
-**Catalog problem:** Switch implementations behind stable in-process interfaces
+**Identity.** Branch by Abstraction; family Deployment and legacy modernization; kind modernization-pattern; priority advanced.
 
-**Candidate area:** V10/C05 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should an internal abstraction seam allow old/new implementations to coexist in one deployable?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** The seam can be introduced without breaking callers; both implementations can be tested; removal date is owned.
+
+**Hard contraindications.** Reject when no internal seam exists, when the abstraction adds no substitution value, or when the old implementation cannot coexist.
+
+**Competing alternative.** Strangler Fig or a big-bang replacement. Reverse the choice when abstraction cost exceeds incremental change benefit.
+
+**Failure and recovery.** Permanent seams and divergent behavior are common; verify removal in the owner section.
+
+**Technical owner.** [Alternative migration mechanisms and contraindications](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#6-alternative-migration-mechanisms-and-contraindications) — branch by abstraction is bounded to internal interface replacement.
+
+**Sources.** [src.fowler-branch](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch5-fowler-branch.2026-10-21: sections "Branch By Abstraction", "How it works". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Strangler Fig; Parallel Run; Feature Flags; Controlled Cutover.
 
 ### Parallel Run
 
-**Catalog problem:** Execute old and new paths to reconcile outputs before authority transfer
+**Identity.** Parallel Run; family Deployment and legacy modernization; kind modernization-pattern; priority advanced.
 
-**Candidate area:** V10/C05 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should old and new implementations process the same work concurrently for comparison?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Outputs can be compared safely; side effects are controlled; the old path remains authoritative until cutover.
+
+**Hard contraindications.** Reject when duplicate side effects cannot be suppressed, when comparison is meaningless, or when cost is prohibitive.
+
+**Competing alternative.** Shadow traffic or canary. Reverse the choice when comparison cost exceeds confidence benefit.
+
+**Failure and recovery.** Divergent outputs and doubled cost are common; verify authority in the owner section.
+
+**Technical owner.** [A versioned sequence of safe intermediate states](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md#3-a-versioned-sequence-of-safe-intermediate-states) — parallel run is bounded to coexistence/authority states.
+
+**Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Dark Launching; Strangler Fig; Controlled Cutover; Reconciliation.
 
 ### Dark Launching / Shadow Traffic
 
-**Catalog problem:** Exercise new implementation using mirrored traffic without publishing its
-effects
+**Identity.** Dark Launching / Shadow Traffic; family Deployment and legacy modernization; kind modernization-pattern; priority advanced.
 
-**Candidate area:** V10/C05 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should new code receive real or shadow traffic before it is authoritative?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Traffic can be mirrored without side effects; comparison/observability exists; the old path remains authoritative.
+
+**Hard contraindications.** Reject when shadow requests cause writes, when traffic cannot be mirrored safely, or when load cost is prohibitive.
+
+**Competing alternative.** Canary release or feature flags. Reverse the choice when shadow load/cost exceeds confidence benefit.
+
+**Failure and recovery.** Hidden side effects and load amplification are common; verify isolation in the owner section.
+
+**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#gitops-rolling-bluegreen-and-canary-release-architecture) — dark launch/shadow traffic is bounded to progressive exposure.
+
+**Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Canary Release; Parallel Run; Feature Flags; Strangler Fig.
 
 ### Expand-and-Contract
 
-**Catalog problem:** Maintain version coexistence during interface/data migration
+**Identity.** Expand-and-Contract; family Deployment and legacy modernization; kind migration-pattern; priority core.
 
-**Candidate area:** V08/C05 (provisional; not audited).
+**Decision question.** Should a schema change be rolled out in expand, migrate and contract stages?
 
-**Candidate page:** Reader/writer compatibility and migration stages
+**Good-fit conditions.** Old/new readers coexist; compatibility window is owned; backfill/validation are explicit.
 
-**Candidate confidence:** medium; candidate only, not audited.
+**Hard contraindications.** Reject when downtime is acceptable and a direct migration is simpler, when no compatibility window exists, or when rollback is impossible.
 
-**State:** not-yet-assessed; no source inspected.
+**Competing alternative.** Direct migration. Reverse the choice when staged migration cost exceeds rollout risk.
+
+**Failure and recovery.** Partial backfills and old readers are common; verify gates in the owner section.
+
+**Technical owner.** [Reader/writer compatibility and migration stages](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md#readerwriter-compatibility-and-migration-stages) — expand/contract is bounded to reader/writer compatibility.
+
+**Sources.** [src.flyway](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch3-flyway.2026-10-21: sections "Migrations", "Versioned Migrations", "Repeatable Migrations". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Online Data Migration; Controlled Cutover; Reader/Writer Compatibility; Backup/PITR.
 
 ### Controlled Cutover
 
-**Catalog problem:** Transfer authoritative traffic/state at explicit verified gates
+**Identity.** Controlled Cutover; family Deployment and legacy modernization; kind modernization-pattern; priority advanced.
 
-**Candidate area:** V10/C05 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should the final authority switch be gated by explicit go/no-go evidence and a no-return contract?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Cutover criteria are measurable; rollback limits are known; authority transfer is explicit.
+
+**Hard contraindications.** Reject when no measurable gate exists, when rollback is assumed but not possible, or when the switch can be partial without detection.
+
+**Competing alternative.** Progressive canary or parallel run before cutover. Reverse the choice when gate cost exceeds risk reduction.
+
+**Failure and recovery.** No-return points and partial cutovers are common; verify gates in the owner section.
+
+**Technical owner.** [Go/no-go and the no-return contract](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#7-gono-go-and-the-no-return-contract) — controlled cutover is bounded to gate/reversal reasoning.
+
+**Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading". The source is a public pattern/documentation
+unit, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Strangler Fig; Expand-and-Contract; Blue/Green; Rollback Limits.
 
 ## Chapter result and counterexample
 
-This chapter inventories 12 catalog entries and routes each to a provisional candidate area; it
-does not establish technical sufficiency.
+Twelve cards establish a conditional decision route. Owner sections are bounded; none
+establishes technical sufficiency.
 
-A pattern name, a candidate link or a passing structural check is not evidence that the pattern
-fits a workload.
+Counterexample: a canary that receives no meaningful traffic is not evidence for the
+canary card's analysis conditions.
 
 ## Navigation and prerequisites
 
@@ -206,12 +378,13 @@ fits a workload.
 - Next: [V11/C11](../c11-security-operations/README.md).
 - Prerequisite: V10/C03 — pattern applicability and contraindications.
 - Registry: [pattern registry](../../../../edition/patterns/registry.v1.json).
+- Card batch: [card batches](../../../../edition/patterns/card-batches.v1.json).
 - Coverage map: [candidate coverage](../../../../edition/patterns/coverage-map.v1.json).
 
 ## Evidence and known limits
 
-- No external source was read for this chapter in Phase 1.
-- Candidate area and page entries are provisional; no page-level audit was performed.
-- All entries remain not-yet-assessed; no technical or decision coverage is claimed.
-- The chapter is an inventory and route, not a full pattern card or a replacement for the
-  technical owner.
+- All 12 cards cite read ledger units; owner links and backlinks are self-checked.
+- Owner links are bounded sections, not dedicated pattern pages.
+- No entry claims sufficient technical or decision coverage.
+- No independent editorial review, benchmark, production observation or runtime test
+  is asserted.

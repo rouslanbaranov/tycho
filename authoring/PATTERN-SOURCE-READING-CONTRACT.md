@@ -211,10 +211,16 @@ architecture, shuffle sharding, deployment stamps, Geode, static content hosting
 and tenant resource isolation. Registry coverage is `partial` for all 10; no
 `sufficient` state is claimed.
 
+All 12 V11/C10 entries also have self-checked cards with bounded owner sections.
+They cover rolling/blue-green/canary, feature flags, GitOps, immutable
+infrastructure, Strangler Fig, branch by abstraction, parallel run, dark launch,
+expand-and-contract and controlled cutover. Registry coverage is `partial` for all
+12; no `sufficient` state is claimed.
+
 The card batches are recorded in `edition/patterns/card-batches.v1.json` and checked
 by `scripts/validate_pattern_cards.py`, including adversarial tests. The validator
 now resolves each technical-owner link to the declared path and anchor. The other
-26 entries remain without Phase 3 cards; 25 are read and one is blocked.
+14 entries remain without Phase 3 cards; 13 are read and one is blocked.
 
 ## Family batches
 

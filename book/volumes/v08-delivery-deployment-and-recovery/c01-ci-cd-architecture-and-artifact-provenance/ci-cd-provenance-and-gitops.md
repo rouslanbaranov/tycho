@@ -53,6 +53,10 @@ content_verified_at: null
 > Tycho E14-10 [#88](https://github.com/rouslanbaranov/tycho/issues/88). Original technical chapter; official public sections inspected 2026-10-19. All examples are synthetic. No release, signature verification, compromise experiment or independent expert review has been performed.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [GitOps](../../v11-pattern-atlas/c10-deployment-modernization/README.md#gitops) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.7921e82a71b9446790f185c818326911:0 -->
 ## Purpose and mission
 

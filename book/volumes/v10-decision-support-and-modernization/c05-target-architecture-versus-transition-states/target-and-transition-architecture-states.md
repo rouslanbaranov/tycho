@@ -62,6 +62,10 @@ content_verified_at: null
 > **Independent Tycho manuscript draft V10/C05, 2026-10-19.** Original fictional case and decision tables. This chapter applies, but does not replace or copy, the reusable [target/transition authoring model](../../../../authoring/models/target-transition-architecture.md). No real migration, data movement, approval or restore drill occurred.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Strangler Fig](../../v11-pattern-atlas/c10-deployment-modernization/README.md#strangler-fig) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.cf0ce38c73e44950aec5a9c2869bee63:0 -->
 ## Purpose and mission
 

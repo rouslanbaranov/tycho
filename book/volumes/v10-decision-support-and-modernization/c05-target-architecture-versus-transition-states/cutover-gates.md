@@ -60,6 +60,11 @@ This page belongs to [V10/C05 — Target architecture versus transition states](
 These are conditions, not prescriptive steps. The [Microsoft Strangler Fig pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig) explicitly treats the façade as a temporary infrastructure cost and warns that request interception may be impossible. Use [anti-corruption adapters](../../v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md) when foreign meanings must be translated.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Branch by Abstraction](../../v11-pattern-atlas/c10-deployment-modernization/README.md#branch-by-abstraction) — decision conditions and contraindications.
+> [Controlled Cutover](../../v11-pattern-atlas/c10-deployment-modernization/README.md#controlled-cutover) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.cf0ce38c73e44950aec5a9c2869bee63:7 -->
 ## 7. Go/no-go and the no-return contract
 

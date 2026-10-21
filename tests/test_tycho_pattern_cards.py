@@ -23,7 +23,7 @@ class PatternCardTests(unittest.TestCase):
 
     def test_complete_card_batch(self):
         result = validate_data(self.batches, ROOT)
-        self.assertEqual(result["entries"], 119)
+        self.assertEqual(result["entries"], 131)
 
     def test_unknown_pattern_is_rejected(self):
         data = copy.deepcopy(self.batches)

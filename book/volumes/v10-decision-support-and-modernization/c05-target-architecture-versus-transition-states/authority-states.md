@@ -60,6 +60,10 @@ This page belongs to [V10/C05 — Target architecture versus transition states](
 A target architecture might consist of one improved modular application; a transition need not split services. Conversely, a migration that introduces a second deployment needs extra protection even if the target only promises the same user journey.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Parallel Run](../../v11-pattern-atlas/c10-deployment-modernization/README.md#parallel-run) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.cf0ce38c73e44950aec5a9c2869bee63:2 -->
 ## 2. The fictional migration: moving a public catalogue read model
 

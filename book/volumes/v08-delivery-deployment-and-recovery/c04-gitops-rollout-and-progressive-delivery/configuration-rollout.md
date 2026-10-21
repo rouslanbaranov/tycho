@@ -66,6 +66,10 @@
 
 **Owning question:** How can configuration change safely while different processes observe different versions?
 
+
+> **Pattern atlas:**
+> [Feature Flags / Feature Toggles](../../v11-pattern-atlas/c10-deployment-modernization/README.md#feature-flags-feature-toggles) — decision conditions and contraindications.
+
 ## A configuration change is a distributed transition
 
 A feature flag selects behavior; a dynamic parameter changes an operating limit. Neither becomes simultaneous merely because its value sits outside a binary. Processes fetch at different times, disconnected workers retain old snapshots, and a rollback can encounter writes produced by the new behavior. Define the scope of consistency before choosing a configuration service.

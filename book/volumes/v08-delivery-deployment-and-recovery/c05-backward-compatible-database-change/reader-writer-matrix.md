@@ -63,6 +63,10 @@ For two binary versions N and N+1 with old, expanded and contracted schema state
 An *additive field* may still be semantically incompatible: old code might deserialize a fixed projection, treat unknown enum values as errors, or misclassify absence as an allowed action.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Expand-and-Contract](../../v11-pattern-atlas/c10-deployment-modernization/README.md#expand-and-contract) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb:2 -->
 ## 2. Expand-migrate-contract includes a compatibility window
 
