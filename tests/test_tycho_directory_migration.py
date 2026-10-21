@@ -29,8 +29,8 @@ class DirectoryMigrationTests(unittest.TestCase):
 
     def test_complete_reversible_membership(self):
         result = validate(self.root)
-        self.assertEqual(result['canonical_documents'], 407)
-        self.assertEqual((result['volumes'], result['chapters']), (10, 71))
+        self.assertEqual(result['canonical_documents'], 419)
+        self.assertEqual((result['volumes'], result['chapters']), (11, 82))
         self.assertEqual(result['protected_historical_manifests'], 4)
 
     def test_prose_change_is_not_a_path_migration(self):

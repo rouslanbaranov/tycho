@@ -36,27 +36,27 @@ technical owner also cites sources; the atlas does not replace it.
 - Each chapter has a landing and as many bounded pages as its content requires.
 - The 145 catalog entries are sections within chapter pages, not 145 chapters.
 
-- `V11/C01` — `c01-application-architecture-and-boundaries` —
+- `V11/C01` — `c01-application-boundaries` —
   application architecture and boundaries; 12 entries.
-- `V11/C02` — `c02-api-and-service-communication` — API and service
+- `V11/C02` — `c02-api-communication` — API and service
   communication; 12 entries.
-- `V11/C03` — `c03-messaging-and-event-driven-integration` — messaging and
+- `V11/C03` — `c03-messaging-integration` — messaging and
   event-driven integration; 20 entries.
-- `V11/C04` — `c04-data-consistency-transactions-and-event-sourcing` — data
+- `V11/C04` — `c04-consistency-events` — data
   consistency, transactions and event sourcing; 14 entries.
-- `V11/C05` — `c05-caching-and-retrieval` — caching and retrieval;
+- `V11/C05` — `c05-caching-retrieval` — caching and retrieval;
   14 entries.
-- `V11/C06` — `c06-database-and-storage-architecture` — database and storage
+- `V11/C06` — `c06-database-storage` — database and storage
   architecture; 13 entries.
-- `V11/C07` — `c07-resilience-and-fault-tolerance` — resilience and fault
+- `V11/C07` — `c07-resilience` — resilience and fault
   tolerance; 16 entries.
-- `V11/C08` — `c08-distributed-coordination` — distributed coordination;
+- `V11/C08` — `c08-coordination` — distributed coordination;
   9 entries.
-- `V11/C09` — `c09-scalability-and-load-distribution` — scalability and load
+- `V11/C09` — `c09-scalability` — scalability and load
   distribution; 10 entries.
-- `V11/C10` — `c10-deployment-and-legacy-modernization` — deployment and
+- `V11/C10` — `c10-deployment-modernization` — deployment and
   legacy modernization; 12 entries.
-- `V11/C11` — `c11-security-isolation-and-operational-architecture` — security,
+- `V11/C11` — `c11-security-operations` — security,
   isolation and operational architecture; 13 entries.
 
 ## Page-count policy

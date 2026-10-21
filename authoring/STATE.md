@@ -1,5 +1,10 @@
 # Current state — Tycho
 
+> **Current structural candidate — 2026.10.2-rc.1 (2026-10-21):** 11 volumes,
+> 82 chapters and 419 canonical documents. V11 is the Phase 1 pattern-atlas
+> scaffold (#234). The #214/rc.3 status below remains historical until a full
+> status reconciliation.
+
 **Updated:** 2026-10-20, after manuscript acceptance and merge. See [status reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md) and [roadmap](ROADMAP.md).
 
 ## Accepted manuscript baseline

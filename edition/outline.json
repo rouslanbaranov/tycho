@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "edition": "Tycho — content enrichment candidate",
-  "version": "2026.10.1-rc.3",
+  "version": "2026.10.2-rc.1",
   "baseline_commit": "08ac0da83c30d2f2e6aea3446142ad183987f01c",
   "manuscript_acceptance_commit": "986b1ddbe985079b7c647182fcf1c2fc8911d96c",
   "volumes": [
@@ -247,6 +247,34 @@
         "V01/C04",
         "V01/C05",
         "V01/C06"
+      ]
+    },
+    {
+      "code": "V11",
+      "title": "System Design pattern atlas",
+      "id": "tycho.volume.fe327f72cf81df0237ce47b841e8aef5",
+      "path": "book/volumes/v11-pattern-atlas/README.md",
+      "mission": "Turn a bounded problem into a conditional pattern decision without replacing technical owners.",
+      "prerequisite_description": "V10/C03 pattern applicability and contraindications.",
+      "synthesis_question": "Which pattern fits, under which conditions, and what would reverse the choice?",
+      "scenario": "A fictional partner-facing service needs one request to assemble data from three owners, enforce a per-client quota and keep a degraded but explicit response when one owner is unavailable.",
+      "synthesis": "Use the atlas to turn that scenario into bounded questions: which ownership and contract conditions hold, which alternatives compete, which failure mode is acceptable, and which technical owner and exact source must be read before deciding.",
+      "counterexample": "Naming a pattern does not establish fit: a hot single-writer workload can make a sharded or event-driven design worse, and a passing link check is not technical evidence.",
+      "diagnostic_route": [
+        "V11/C01",
+        "V11/C02",
+        "V11/C03",
+        "V11/C04",
+        "V11/C05",
+        "V11/C06",
+        "V11/C07",
+        "V11/C08",
+        "V11/C09",
+        "V11/C10",
+        "V11/C11"
+      ],
+      "prerequisite_codes": [
+        "V10/C03"
       ]
     }
   ],
@@ -2116,6 +2144,138 @@
           "question": "How do tenant placement, budgets and bounded cells preserve useful service through overload and rollout failure?"
         }
       ]
+    },
+    {
+      "code": "V11/C01",
+      "title": "Application architecture and boundaries",
+      "question": "Which application patterns fit a bounded ownership model?",
+      "id": "tycho.chapter.e996607f707421ca388796732547cafd",
+      "path": "book/volumes/v11-pattern-atlas/c01-application-boundaries/README.md",
+      "old_page_path": "book/volumes/v11-pattern-atlas/c01-application-boundaries/README.md",
+      "page_path": "book/volumes/v11-pattern-atlas/c01-application-boundaries/README.md",
+      "result": "This chapter inventories 12 catalog entries and routes each to a provisional candidate area; it does not establish technical sufficiency.",
+      "counterexample": "A pattern name, a candidate link or a passing structural check is not evidence that the pattern fits a workload.",
+      "question_pages": []
+    },
+    {
+      "code": "V11/C02",
+      "title": "API and service communication",
+      "question": "Which API and discovery patterns fit the trust boundary?",
+      "id": "tycho.chapter.9825cb82eb2142754c638aea1ba8d845",
+      "path": "book/volumes/v11-pattern-atlas/c02-api-communication/README.md",
+      "old_page_path": "book/volumes/v11-pattern-atlas/c02-api-communication/README.md",
+      "page_path": "book/volumes/v11-pattern-atlas/c02-api-communication/README.md",
+      "result": "This chapter inventories 12 catalog entries and routes each to a provisional candidate area; it does not establish technical sufficiency.",
+      "counterexample": "A pattern name, a candidate link or a passing structural check is not evidence that the pattern fits a workload.",
+      "question_pages": []
+    },
+    {
+      "code": "V11/C03",
+      "title": "Messaging and event-driven integration",
+      "question": "Which messaging patterns fit the delivery contract?",
+      "id": "tycho.chapter.a4b31346a691566550633efe0cf2693e",
+      "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/README.md",
+      "old_page_path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/README.md",
+      "page_path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/README.md",
+      "result": "This chapter inventories 20 catalog entries and routes each to a provisional candidate area; it does not establish technical sufficiency.",
+      "counterexample": "A pattern name, a candidate link or a passing structural check is not evidence that the pattern fits a workload.",
+      "question_pages": []
+    },
+    {
+      "code": "V11/C04",
+      "title": "Data consistency, transactions and event sourcing",
+      "question": "Which consistency patterns preserve the required invariants?",
+      "id": "tycho.chapter.e9c650012060143639af44b0cfdc4236",
+      "path": "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md",
+      "old_page_path": "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md",
+      "page_path": "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md",
+      "result": "This chapter inventories 14 catalog entries and routes each to a provisional candidate area; it does not establish technical sufficiency.",
+      "counterexample": "A pattern name, a candidate link or a passing structural check is not evidence that the pattern fits a workload.",
+      "question_pages": []
+    },
+    {
+      "code": "V11/C05",
+      "title": "Caching and retrieval",
+      "question": "Which cache patterns fit the authority and freshness contract?",
+      "id": "tycho.chapter.87e52392e206a451ea5c79a4194c384b",
+      "path": "book/volumes/v11-pattern-atlas/c05-caching-retrieval/README.md",
+      "old_page_path": "book/volumes/v11-pattern-atlas/c05-caching-retrieval/README.md",
+      "page_path": "book/volumes/v11-pattern-atlas/c05-caching-retrieval/README.md",
+      "result": "This chapter inventories 14 catalog entries and routes each to a provisional candidate area; it does not establish technical sufficiency.",
+      "counterexample": "A pattern name, a candidate link or a passing structural check is not evidence that the pattern fits a workload.",
+      "question_pages": []
+    },
+    {
+      "code": "V11/C06",
+      "title": "Database and storage architecture",
+      "question": "Which storage patterns fit the workload and recovery boundary?",
+      "id": "tycho.chapter.22fa23c6c7a6b0c29a52137bc67a00c9",
+      "path": "book/volumes/v11-pattern-atlas/c06-database-storage/README.md",
+      "old_page_path": "book/volumes/v11-pattern-atlas/c06-database-storage/README.md",
+      "page_path": "book/volumes/v11-pattern-atlas/c06-database-storage/README.md",
+      "result": "This chapter inventories 13 catalog entries and routes each to a provisional candidate area; it does not establish technical sufficiency.",
+      "counterexample": "A pattern name, a candidate link or a passing structural check is not evidence that the pattern fits a workload.",
+      "question_pages": []
+    },
+    {
+      "code": "V11/C07",
+      "title": "Resilience and fault tolerance",
+      "question": "Which resilience mechanisms bound failure without amplifying it?",
+      "id": "tycho.chapter.69085752a11c69305aa2a369b8ec9d29",
+      "path": "book/volumes/v11-pattern-atlas/c07-resilience/README.md",
+      "old_page_path": "book/volumes/v11-pattern-atlas/c07-resilience/README.md",
+      "page_path": "book/volumes/v11-pattern-atlas/c07-resilience/README.md",
+      "result": "This chapter inventories 16 catalog entries and routes each to a provisional candidate area; it does not establish technical sufficiency.",
+      "counterexample": "A pattern name, a candidate link or a passing structural check is not evidence that the pattern fits a workload.",
+      "question_pages": []
+    },
+    {
+      "code": "V11/C08",
+      "title": "Distributed coordination",
+      "question": "Which coordination mechanisms preserve safety and progress?",
+      "id": "tycho.chapter.bee261b76181706235dd8fa7ccde01a9",
+      "path": "book/volumes/v11-pattern-atlas/c08-coordination/README.md",
+      "old_page_path": "book/volumes/v11-pattern-atlas/c08-coordination/README.md",
+      "page_path": "book/volumes/v11-pattern-atlas/c08-coordination/README.md",
+      "result": "This chapter inventories 9 catalog entries and routes each to a provisional candidate area; it does not establish technical sufficiency.",
+      "counterexample": "A pattern name, a candidate link or a passing structural check is not evidence that the pattern fits a workload.",
+      "question_pages": []
+    },
+    {
+      "code": "V11/C09",
+      "title": "Scalability and load distribution",
+      "question": "Which scaling patterns fit the bottleneck and failure domain?",
+      "id": "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142",
+      "path": "book/volumes/v11-pattern-atlas/c09-scalability/README.md",
+      "old_page_path": "book/volumes/v11-pattern-atlas/c09-scalability/README.md",
+      "page_path": "book/volumes/v11-pattern-atlas/c09-scalability/README.md",
+      "result": "This chapter inventories 10 catalog entries and routes each to a provisional candidate area; it does not establish technical sufficiency.",
+      "counterexample": "A pattern name, a candidate link or a passing structural check is not evidence that the pattern fits a workload.",
+      "question_pages": []
+    },
+    {
+      "code": "V11/C10",
+      "title": "Deployment and legacy modernization",
+      "question": "Which deployment patterns keep change reversible?",
+      "id": "tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0",
+      "path": "book/volumes/v11-pattern-atlas/c10-deployment-modernization/README.md",
+      "old_page_path": "book/volumes/v11-pattern-atlas/c10-deployment-modernization/README.md",
+      "page_path": "book/volumes/v11-pattern-atlas/c10-deployment-modernization/README.md",
+      "result": "This chapter inventories 12 catalog entries and routes each to a provisional candidate area; it does not establish technical sufficiency.",
+      "counterexample": "A pattern name, a candidate link or a passing structural check is not evidence that the pattern fits a workload.",
+      "question_pages": []
+    },
+    {
+      "code": "V11/C11",
+      "title": "Security, isolation and operational architecture",
+      "question": "Which security and operational patterns enforce the trust boundary?",
+      "id": "tycho.chapter.419769c372ccaa569796954878e3bef9",
+      "path": "book/volumes/v11-pattern-atlas/c11-security-operations/README.md",
+      "old_page_path": "book/volumes/v11-pattern-atlas/c11-security-operations/README.md",
+      "page_path": "book/volumes/v11-pattern-atlas/c11-security-operations/README.md",
+      "result": "This chapter inventories 13 catalog entries and routes each to a provisional candidate area; it does not establish technical sufficiency.",
+      "counterexample": "A pattern name, a candidate link or a passing structural check is not evidence that the pattern fits a workload.",
+      "question_pages": []
     }
   ]
 }

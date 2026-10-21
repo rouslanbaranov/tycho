@@ -88,7 +88,7 @@ def inventory_members(root):
                 require(not p.is_symlink(),'inventory-symlink')
                 members.add(p.relative_to(root).as_posix())
     members.update(('generated/route-index.v1.json','edition/outline.json','edition/migration.json'))
-    for path in ('edition/decomposition-plan.json','edition/decomposition-manifest.json','edition/enrichment-manifest.json','edition/directory-migration.json','edition/content-revisions.json'):
+    for path in ('edition/decomposition-plan.json','edition/decomposition-manifest.json','edition/enrichment-manifest.json','edition/directory-migration.json','edition/content-revisions.json','edition/atlas-manifest.json'):
         if (root/path).is_file(): members.add(path)
     for path in sorted(members):
         result[path]=hashlib.sha256((root/path).read_bytes()).hexdigest()
@@ -99,6 +99,10 @@ def validate(root=ROOT,write_inventory=False):
     root=Path(root).resolve()
     outline=read_json(root,'edition/outline.json')
     migration=read_json(root,'edition/migration.json')
+    atlas_path=root/'edition/atlas-manifest.json'
+    atlas=read_json(root,'edition/atlas-manifest.json') if atlas_path.is_file() else None
+    atlas_documents=len(atlas['documents']) if atlas else 0
+    atlas_chapters=len(atlas['chapters']) if atlas else 0
     require(outline['schema_version']==migration['schema_version']==1,'edition-schema-version')
     require(outline['baseline_commit']==migration['baseline_commit'],'migration-baseline')
     directory_migration={}
@@ -116,11 +120,12 @@ def validate(root=ROOT,write_inventory=False):
     if (root/'edition/enrichment-manifest.json').exists():
         from validate_enrichment import validate as validate_enrichment
         enrichment=validate_enrichment(root)
-    expected_documents=215+added+enrichment['new_documents']
-    expected_chapters=69+enrichment['new_chapters']
+    expected_documents=215+added+enrichment['new_documents']+atlas_documents
+    expected_chapters=69+enrichment['new_chapters']+atlas_chapters
+    expected_volumes=10+(1 if atlas else 0)
     index=canonical_scan(root)
     kinds=Counter(d['kind'] for d in index['documents'])
-    require(kinds['volume']==10 and kinds['chapter']==expected_chapters,'canonical-kind-counts')
+    require(kinds['volume']==expected_volumes and kinds['chapter']==expected_chapters,'canonical-kind-counts')
     require(len(index['documents'])==expected_documents,'canonical-corpus-count')
     require(len({d['id'] for d in index['documents']})==expected_documents,'canonical-id-uniqueness')
     require(index==read_json(root,'generated/route-index.v1.json'),'edition-index-stale')
@@ -135,7 +140,7 @@ def validate(root=ROOT,write_inventory=False):
     else:
         require(invpath.is_file(),'edition-inventory-missing')
         require(read_json(root,'edition/inventory.json')==inventory,'edition-inventory-drift')
-    return {**result,'enrichment':enrichment,'directory_migration':directory_migration,'volumes':10,'chapters':expected_chapters,'canonical_documents':len(index['documents']),
+    return {**result,'enrichment':enrichment,'directory_migration':directory_migration,'atlas_documents':atlas_documents,'volumes':expected_volumes,'chapters':expected_chapters,'canonical_documents':len(index['documents']),
             'kinds':dict(kinds),'inventory_files':len(members),
             'content_snapshot_sha256':snapshot,'route_snapshot_sha256':index['snapshot_sha256'],
             'scope':'structure, preserved payload and frozen membership; not independent claim review or external URL availability'}

@@ -27,6 +27,8 @@ class EditionMigrationTests(unittest.TestCase):
             shutil.copyfile(ROOT/'edition/directory-migration.json',self.root/'edition/directory-migration.json')
         if (ROOT/'edition/content-revisions.json').exists():
             shutil.copyfile(ROOT/'edition/content-revisions.json',self.root/'edition/content-revisions.json')
+        if (ROOT/'edition/atlas-manifest.json').exists():
+            shutil.copyfile(ROOT/'edition/atlas-manifest.json',self.root/'edition/atlas-manifest.json')
         self.view=HistoricalView(self.root)
         self.plan=json.loads((self.root/'edition/decomposition-plan.json').read_text())
         self.chapter=self.plan['chapters'][0]

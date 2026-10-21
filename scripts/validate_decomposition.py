@@ -26,10 +26,15 @@ def validate(root=ROOT):
     require(len(plan['chapters'])==len(manifest['source_bodies'])==69,'decomposition-chapter-count')
     require(len({x['code'] for x in plan['chapters']})==69,'duplicate-chapter-code')
     routes={(r['old_path'],r['old_fragment']):(r['new_path'],r['new_fragment']) for r in manifest['fragment_routes']}
+    atlas_path=root/'edition/atlas-manifest.json'
+    atlas_ids={d['id'] for d in json.loads(atlas_path.read_text())['documents']} if atlas_path.is_file() else set()
     all_blocks={};metadata={};texts={}
     for path in (root/'book').rglob('*.md'):
         relative=view.original(path.relative_to(root).as_posix());text=view.read_text(relative)
-        meta,_=split(text);metadata[relative]=meta;texts[relative]=text
+        meta,_=split(text)
+        if meta['id'] in atlas_ids:
+            continue
+        metadata[relative]=meta;texts[relative]=text
         for key,value in extract_blocks(text).items():
             require(key not in all_blocks,'duplicate-source-payload')
             all_blocks[key]=(relative,value)

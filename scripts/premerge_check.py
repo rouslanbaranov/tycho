@@ -24,6 +24,10 @@ def main():
         [sys.executable, "scripts/check_boundary.py"],
         [sys.executable, "scripts/validate_sources.py"],
         [sys.executable, "scripts/source_catalog.py", "--check"],
+        [sys.executable, "scripts/validate_pattern_registry.py"],
+        [sys.executable, "scripts/validate_pattern_atlas.py"],
+        [sys.executable, "scripts/validate_pattern_coverage.py"],
+        [sys.executable, "scripts/pattern_census.py", "--check"],
         [sys.executable, "-m", "unittest", "discover", "-s", "tests",
          "-p", "test_tycho*.py", "-v"],
     ]

@@ -1,5 +1,10 @@
 # Tycho — content enrichment candidate
 
+> **Current structural candidate — 2026.10.2-rc.1 (2026-10-21):** 11 volumes,
+> 82 chapters and 419 canonical documents. V11 is the Phase 1 pattern-atlas
+> scaffold (#234); it adds navigation and candidate coverage only. The rc.3
+> statements below remain historical and dated.
+
 Version: **2026.10.1-rc.3**. **#214 is OPEN.** This candidate extends the individually decomposed rc.1 corpus with two new critical-topic chapters and controlled enrichment. It is not a final release. The historical 2026.10.0 snapshot remains unchanged.
 
 ## Readable directory migration
