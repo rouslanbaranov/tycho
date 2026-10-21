@@ -106,8 +106,24 @@ scope. Flyway migration documentation is not a full expand-and-contract
 contract. gh-ost is a MySQL-specific implementation reference, not a general
 zero-downtime guarantee.
 
-Current plan totals: **88 read, 56 planned and 1 blocked** across 145 entries;
-the ledger has **77 records**, including three foundation catalog records.
+## Phase 2B batch 4 — resilience and coordination
+
+All 25 resilience/coordination entries have a read unit after batch 4. The tail
+added Hedged Requests (a secondary Tail-at-Scale summary), Failover/Failback (a
+bounded PostgreSQL standby example), Fencing Tokens (Kleppmann's lock-safety
+article) and Causal Ordering (Jepsen's causal model). Load Shedding, Throttling
+and Rate Limiting reuse the Phase 2A SRE Handling Overload record; Distributed
+Workflow Orchestration reuses the batch 2 Temporal record.
+
+Resilience4j, SRE cascading-failure, Kubernetes probe/lease and Tail-at-Scale
+pages were truncated after their main sections or landing content; those records
+state the inspected scope. RabbitMQ, Raft overview and Jepsen model pages were
+read as returned. Hedged Requests relies on a secondary summary, not the
+original paper; Failover/Failback is a database example, not a generic service
+failover contract.
+
+Current plan totals: **110 read, 34 planned and 1 blocked** across 145 entries;
+the ledger has **91 records**, including three foundation catalog records.
 These numbers are progress, not completion.
 
 ## Family batches
