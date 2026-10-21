@@ -13,8 +13,8 @@ self-checked evidence, not independent review or owner acceptance. See
 [the audit](PATTERN-OWNER-UNIT-AUDIT_2026-10-21.md).
 
 **Semantic page audit — 2026-10-21 (#288):** 419/419 canonical pages have a
-self-checked semantic disposition: 309 sound, 93 sound-with-findings, 16
-needs-remediation and 1 blocked. The 127 findings (110 low, 17 medium, 0 high)
+self-checked semantic disposition: 313 sound, 93 sound-with-findings, 12
+needs-remediation and 1 blocked. The 119 findings (106 low, 13 medium, 0 high)
 remain remediation items. The V11 landing was refreshed, the 40 non-catalog related
 labels are recorded as non-routes, three catalog-index reads are intentionally
 unused, and three split decisions are deferred. The independent review agent

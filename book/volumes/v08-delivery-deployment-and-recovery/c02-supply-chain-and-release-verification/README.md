@@ -60,7 +60,7 @@ Begin with the integrated decision, then open the independent question that matc
 
 | Page | Independent question and role |
 |---|---|
-| [Integrated decision and original walkthrough](sbom-attestation-and-release-verification.md) | How are reproducibility, signatures and promotion controls established? |
+| [Integrated decision](sbom-attestation-and-release-verification.md) | How are reproducibility, signatures and promotion controls established? |
 | [Artifact subjects, provenance and component inventories](provenance-subjects.md) | What does each evidence object describe and what does it omit? |
 | [Authorized promotion and missing evidence](promotion-authorization.md) | Why is authentic evidence insufficient to authorize an artifact in every environment? |
 
