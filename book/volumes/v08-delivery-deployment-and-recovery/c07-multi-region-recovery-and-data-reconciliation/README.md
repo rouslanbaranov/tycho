@@ -38,7 +38,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -100,6 +100,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 All services, failures, roles and diagrams are original inventions. No real incident or recovery operation occurred.
 
-**Navigation:** proposed **V08/C07** via [deployment landing](../../../deployment/README.md) and [book outline](../../../PROPOSED-STRUCTURE.md). Read [placement](../c06-high-availability-and-failure-domain-placement/availability-zones-placement-and-failure-domains.md), [backup and recovery drills](../../v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md), [safe release recovery](../../../delivery/safe-rollout-and-recovery.md).
-
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

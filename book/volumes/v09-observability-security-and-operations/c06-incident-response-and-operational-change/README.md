@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -99,5 +99,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 All incident events, system names, mitigations, diagrams and example consequences above are original **synthetic** constructs; no real user incident or operational metric is asserted. A future editor must verify actual versioned source excerpts, authority and compatibility before applying the model in a specific setting.
 
-**Navigation:** proposed owner V09/C06 in [book outline](../../../PROPOSED-STRUCTURE.md); section landing [Observability and audit](../../../observability/README.md). Related [metrics/SLOs](../../../observability/metrics-slo-timeseries-architecture.md), [tracing and audit](../../../observability/trace-context-lineage-and-audit.md), [recovery](../../../deployment/multi-region-disaster-recovery-contracts.md), and [safe deployment](../../../delivery/progressive-delivery-and-schema-evolution.md).
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

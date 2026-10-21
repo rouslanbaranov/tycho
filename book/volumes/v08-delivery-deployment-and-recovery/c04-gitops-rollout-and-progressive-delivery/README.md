@@ -112,5 +112,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 All examples, diagrams and acceptance steps are invented for teaching. No cluster, signed release, test, rollback or source-to-claim independent approval occurred.
 
-**Navigation:** proposed **V08/C04** in [book outline](../../../PROPOSED-STRUCTURE.md), [delivery landing](../../../delivery/README.md). Continue [mixed-version DB](../c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md), [data schema lifecycle](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md), [safe rollout and recovery](../../../delivery/safe-rollout-and-recovery.md).
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

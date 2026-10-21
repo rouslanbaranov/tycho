@@ -38,7 +38,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -101,5 +101,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 The equipment-booking example, logical outcomes, figures, hypothetical threshold and policy are original invented educational material. No data was collected, alert fired, recording rule executed, production target evaluated, privacy audit or technical peer review performed. The former combined [metrics/SLO/TSDB research page](../../../observability/metrics-slo-timeseries-architecture.md) remains as prior source material until a complete source-to-claim consolidation is accepted.
 
-**Navigation:** proposed **V09/C01**, [observability landing](../../../observability/README.md). Next [Metrics pipeline, cardinality and retention](../c02-metrics-ingestion-cardinality-and-time-series-storage/metric-pipelines-cardinality-and-retention.md), [Tracing and audit](../../../observability/trace-context-lineage-and-audit.md), and [Incident response](../c06-incident-response-and-operational-change/incident-response-and-operational-change.md).
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->

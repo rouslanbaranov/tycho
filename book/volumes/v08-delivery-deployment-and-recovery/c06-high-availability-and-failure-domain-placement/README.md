@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -105,5 +105,6 @@ The following original citation rows, review limits and earlier topical routes a
 
 All examples and topology representations are synthetic; no cloud or cluster action was made and no recovery objective achieved. Publication chapter/page structure and independent source-by-claim review remain open.
 
-**Navigation:** owner **V08/C06**, via [deployment landing](../../../deployment/README.md) and [book outline](../../../PROPOSED-STRUCTURE.md). Related [runtime placement](../c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md), [quorum](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md), [disaster recovery](../c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md).
+**Navigation:** canonical chapter in the current edition. Start at the
+[volume landing](../README.md).
 <!-- /tycho-question-source -->
