@@ -25,6 +25,10 @@ def validate(root=ROOT):
     view = HistoricalView(root)
     manifest = json.loads((root/'edition/enrichment-manifest.json').read_text())
     require(manifest['schema_version'] == 1, 'enrichment-version')
+    atlas_path = root/'edition/atlas-manifest.json'
+    atlas = json.loads(atlas_path.read_text()) if atlas_path.is_file() else None
+    atlas_ids = {item['id'] for item in atlas['documents']} if atlas else set()
+    atlas_chapters = atlas['chapters'] if atlas else []
     index = canonical_scan(root)
     documents = {view.original(d['path']): d for d in index['documents']}
     current_ids = {d['id'] for d in index['documents']}
@@ -36,7 +40,7 @@ def validate(root=ROOT):
     require(len({r['path'] for r in additions}) == len(additions), 'enrichment-duplicate-path')
     require(len({r['id'] for r in additions}) == len(additions), 'enrichment-duplicate-id')
     require(not (set(retained) & {r['id'] for r in additions}), 'enrichment-reused-identity')
-    require(current_ids == set(retained) | {r['id'] for r in additions},
+    require(current_ids == set(retained) | {r['id'] for r in additions} | atlas_ids,
             'enrichment-unregistered-document')
     sources = {s['id'] for s in json.loads((root/'sources/register.json').read_text())['sources']}
     inspections = json.loads((root/manifest['inspection_record']).read_text())['inspections']
@@ -86,10 +90,13 @@ def validate(root=ROOT):
                               record['baseline_sha256'], baseline_sha),
                 'enrichment-baseline-altered')
     outline = json.loads((root/'edition/outline.json').read_text())
-    require(outline['version'] == manifest['version'], 'enrichment-edition-version')
+    if atlas:
+        require(outline['version'] == atlas['version'], 'enrichment-atlas-version')
+    else:
+        require(outline['version'] == manifest['version'], 'enrichment-edition-version')
     chapter_records = [r for r in additions if r['kind'] == 'chapter']
     chapters = [d for d in index['documents'] if d['kind'] == 'chapter']
-    require(len(chapters) == manifest['baseline_chapters'] + len(chapter_records),
+    require(len(chapters) == manifest['baseline_chapters'] + len(chapter_records) + len(atlas_chapters),
             'enrichment-chapter-membership')
     require({c['id'] for c in outline['chapters']} == {d['id'] for d in chapters},
             'enrichment-outline-membership')
@@ -103,6 +110,7 @@ def validate(root=ROOT):
         require(all(Path(r['path']).name in landing for r in children),
                 'enrichment-chapter-route')
     return {'new_documents': len(additions), 'new_chapters': len(chapter_records),
+            'atlas_documents': len(atlas_ids), 'atlas_chapters': len(atlas_chapters),
             'deepened_existing_pages': len(edits),
             'retained_document_ids': len(retained),
             'scope': 'explicit membership and byte conservation; not semantic acceptance'}

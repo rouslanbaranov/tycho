@@ -9,7 +9,7 @@ topic_ids:
   - "system-design"
 perspectives:
   - "architecture"
-summary: "Ten-volume System Design candidate with 71 chapter routes, source-scoped mechanism enrichment and explicit pending integration and substantive acceptance."
+summary: "Eleven-volume System Design candidate with 82 chapter routes and a pattern atlas."
 route_hints:
   questions:
     - "What are the scope, mechanisms and limits of Tycho — System Design?"
@@ -25,6 +25,7 @@ route_hints:
     - "tycho.volume.cb10070ba233477fae8aa5d18e74fee8"
     - "tycho.volume.4a94b1e6f8234841afaa51af14330627"
     - "tycho.volume.e826731e3543471f94d5eb9af68cbfa7"
+    - "tycho.volume.fe327f72cf81df0237ce47b841e8aef5"
   excludes:
     - "No hosted service or runtime reproduction is implied."
   keywords:
@@ -52,6 +53,13 @@ content_verified_at: null
 ## Purpose and mission
 
 Reason about requirements, mechanisms, partial failure and safe modernization using independently published evidence and original synthetic examples. The book develops conditional engineering judgment: retain a simple design, measure first or state insufficient evidence whenever the facts require it.
+
+## Current structural candidate — 2026.10.2-rc.1
+
+The current tree contains **11 volumes, 82 chapters and 419 canonical documents**.
+The V11 Pattern Atlas adds a navigation and decision layer over 145 catalog
+entries; it does not replace technical owners or assert source reading. The
+historical rc.3 statement below remains dated and unchanged.
 
 ## Content enrichment candidate — 2026.10.1-rc.3
 
@@ -86,6 +94,7 @@ The execution environment is available again: 16/16 Python groups, 233/233 tests
 | [V08 — Delivery, deployment and disaster recovery](volumes/v08-delivery-deployment-and-recovery/README.md) | 8 | A cutover chain linking artifact trust, mixed versions, deployments, failure domains, data authority and recovery after the no-return point. |
 | [V09 — Observability, security and operational architecture](volumes/v09-observability-security-and-operations/README.md) | 7 | A user-visible truth/accountability loop: metrics, traces, audit, security and incident recovery have different completeness and trust guarantees. |
 | [V10 — Decision support and modernization playbooks](volumes/v10-decision-support-and-modernization/README.md) | 7 | A full legacy-to-target-to-transition ADR with alternatives, reversible and irreversible stages, costs, authorization, evidence and an explicit unknown/refusal outcome. |
+| [V11 — Pattern atlas](volumes/v11-pattern-atlas/README.md) | 11 | Pattern decision layer. |
 
 ## How to read
 
@@ -95,7 +104,9 @@ The [29 historical cases and six synthetic playbooks](cases/README.md) are a lin
 
 ## Supporting topic routes
 
-These retained topical entries provide secondary routes into the same canonical pages and supporting essays. The ten-volume contents above remain the primary reading order.
+These retained topical entries provide secondary routes into the same canonical
+pages and supporting essays. The volume contents above remain the primary
+reading order.
 
 [Application](application/README.md) | [Performance](performance/README.md) | [Distributed](distributed/README.md) | [Search](search/README.md) | [Scaling](scaling/README.md) | [Data](data/README.md) | [Integration](integration/README.md) | [Execution](execution/README.md) | [Delivery](delivery/README.md) | [Deployment](deployment/README.md) | [Observability](observability/README.md) | [Security](security/README.md) | [Decisions](decisions/README.md)
 

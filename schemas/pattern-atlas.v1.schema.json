@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.example.invalid/schemas/pattern-atlas.v1.schema.json",
+  "title": "Tycho pattern atlas manifest v1",
+  "description": "Structural manifest for the V11 pattern atlas scaffold. Not source truth, technical sufficiency or review.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "version",
+    "status",
+    "authorization",
+    "baseline_commit",
+    "task_issue",
+    "parent_issue",
+    "epic_issue",
+    "registry",
+    "registry_sha256",
+    "volume",
+    "chapters",
+    "documents",
+    "page_policy",
+    "review_scope"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]{4}\\.[0-9]{2}\\.[0-9]+-rc\\.[0-9]+$"
+    },
+    "status": {
+      "enum": [
+        "scaffolded",
+        "authoring",
+        "reviewed"
+      ]
+    },
+    "authorization": {
+      "type": "string",
+      "minLength": 1
+    },
+    "baseline_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "task_issue": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "parent_issue": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "epic_issue": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "registry": {
+      "type": "string",
+      "pattern": "^edition/patterns/registry\\.v1\\.json$"
+    },
+    "registry_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "volume": {
+      "$ref": "#/$defs/volume"
+    },
+    "chapters": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "$ref": "#/$defs/chapter"
+      }
+    },
+    "documents": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "$ref": "#/$defs/document"
+      }
+    },
+    "page_policy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "review_scope": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$defs": {
+    "documentId": {
+      "type": "string",
+      "pattern": "^tycho\\.(book|volume|chapter|page|landing|decision)\\.[a-z0-9]{6,32}$"
+    },
+    "chapterCode": {
+      "type": "string",
+      "pattern": "^V11/C(0[1-9]|1[01])$"
+    },
+    "volume": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "id",
+        "path",
+        "title"
+      ],
+      "properties": {
+        "code": {
+          "const": "V11"
+        },
+        "id": {
+          "$ref": "#/$defs/documentId"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^book/volumes/v11-pattern-atlas/README\\.md$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "chapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "id",
+        "path",
+        "title",
+        "family",
+        "pattern_ids"
+      ],
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/chapterCode"
+        },
+        "id": {
+          "$ref": "#/$defs/documentId"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^book/volumes/v11-pattern-atlas/c(0[1-9]|1[01])-[a-z0-9]+(?:-[a-z0-9]+)*/README\\.md$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "family": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        },
+        "pattern_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^tycho\\.pattern\\.(?:[a-z0-9]+(?:-[a-z0-9]+)*)$"
+          }
+        }
+      }
+    },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "parent_id",
+        "path",
+        "title",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/documentId"
+        },
+        "kind": {
+          "enum": [
+            "volume",
+            "chapter"
+          ]
+        },
+        "parent_id": {
+          "$ref": "#/$defs/documentId"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^book/volumes/v11-pattern-atlas/.+\\.md$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}

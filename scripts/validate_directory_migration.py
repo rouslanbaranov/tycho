@@ -38,8 +38,18 @@ def validate(root=ROOT):
         require((root / r['new'] / 'README.md').is_file(), 'directory-missing-landing')
         if len(old) == 4:
             require('/'.join(new[:3]) == view.directories['/'.join(old[:3])], 'directory-parent-map')
+    post_dirs = m.get('post_migration_directories', [])
+    require(len(post_dirs) == 12, 'directory-post-migration-directory-count')
+    for item in post_dirs:
+        path = item['path']
+        require(path.startswith('book/volumes/') and (root / path).is_dir(), 'directory-post-migration-path')
+        require(item['kind'] in ('volume', 'chapter'), 'directory-post-migration-kind')
+        require(re.fullmatch(r'book/volumes/v(?:0[1-9]|[1-9][0-9])-[a-z0-9]+(?:-[a-z0-9]+)*', path) is not None
+                or re.fullmatch(r'book/volumes/v(?:0[1-9]|[1-9][0-9])-[a-z0-9]+(?:-[a-z0-9]+)*/c(?:0[1-9]|[1-9][0-9])-[a-z0-9]+(?:-[a-z0-9]+)*', path) is not None,
+                'directory-post-migration-name')
+        require((root / path / 'README.md').is_file(), 'directory-post-migration-landing')
     actual_dirs = {p.relative_to(root).as_posix() for p in (root / 'book/volumes').rglob('*') if p.is_dir()}
-    require(actual_dirs == set(view.inverse), 'directory-unregistered-directory')
+    require(actual_dirs == set(view.inverse) | {item['path'] for item in post_dirs}, 'directory-unregistered-directory')
     required_history = {'edition/migration.json', 'edition/decomposition-plan.json', 'edition/decomposition-manifest.json', 'edition/enrichment-manifest.json'}
     require(set(m['protected_manifests']) == required_history, 'directory-historical-manifest-coverage')
     for path, digest in m['protected_manifests'].items():
@@ -65,10 +75,11 @@ def validate(root=ROOT):
         if r['old_path'] != r['new_path']:
             require(not (root / r['old_path']).exists(), 'directory-duplicate-old-path')
     outline = json.loads((root / 'edition/outline.json').read_text())
+    registered_dirs = set(view.inverse) | {item['path'] for item in post_dirs}
     for r in [*outline['volumes'], *outline['chapters']]:
-        require(r['path'].rsplit('/', 1)[0] in view.inverse, 'directory-outline-path')
-    require(len(outline['volumes']) == 10 and len(outline['chapters']) == 71, 'directory-outline-membership')
-    return {'volumes': 10, 'chapters': 71, 'canonical_documents': len(records), 'moved_documents': sum(r['old_path'] != r['new_path'] for r in records), 'protected_historical_manifests': len(m['protected_manifests']), 'scope': 'reversible path-only edits and retained identities; not substantive acceptance'}
+        require(r['path'].rsplit('/', 1)[0] in registered_dirs, 'directory-outline-path')
+    require(len(outline['volumes']) == 11 and len(outline['chapters']) == 82, 'directory-outline-membership')
+    return {'volumes': 11, 'chapters': 82, 'canonical_documents': len(records), 'moved_documents': sum(r['old_path'] != r['new_path'] for r in records), 'post_migration_directories': len(post_dirs), 'protected_historical_manifests': len(m['protected_manifests']), 'scope': 'reversible path-only edits and retained identities; not substantive acceptance'}
 
 
 if __name__ == '__main__':
