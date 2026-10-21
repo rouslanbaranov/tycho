@@ -63,6 +63,13 @@
 
 **Owning question:** Which identity and confidentiality boundary does each proxy hop establish?
 
+
+> **Pattern atlas:**
+> [API Gateway](../../v11-pattern-atlas/c02-api-communication/README.md#api-gateway) — decision conditions and contraindications.
+> [Gateway Aggregation](../../v11-pattern-atlas/c02-api-communication/README.md#gateway-aggregation) — decision conditions and contraindications.
+> [Gateway Offloading](../../v11-pattern-atlas/c02-api-communication/README.md#gateway-offloading) — decision conditions and contraindications.
+> [Reverse Proxy](../../v11-pattern-atlas/c02-api-communication/README.md#reverse-proxy) — decision conditions and contraindications.
+
 ## The trust question
 
 Draw each hop and name its authenticated peer. In a client → edge → gateway → application path, the certificate seen by the client normally identifies the TLS endpoint it contacted. It does not by itself authenticate the final application process or authorize a particular object. If encryption terminates at a proxy, the next connection needs its own declared protection.

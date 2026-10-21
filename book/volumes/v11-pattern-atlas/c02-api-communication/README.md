@@ -11,7 +11,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Phase 1 inventory of 12 catalog entries with candidate areas; no technical claim."
+summary: "All 12 C02 cards with bounded owner links; decision coverage partial."
 route_hints:
   questions:
     - "Which API and discovery patterns fit the trust boundary?"
@@ -23,16 +23,19 @@ route_hints:
     - "tycho.chapter.e996607f707421ca388796732547cafd"
     - "tycho.chapter.a4b31346a691566550633efe0cf2693e"
   excludes:
-    - "No source reading, card authoring or technical sufficiency is asserted."
+    - "Bounded owner links; no sufficient coverage or independent review."
   keywords:
     - "pattern atlas"
     - "api and service communication"
     - "decision layer"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.microservices-patterns"
+    - "src.microsoft-cloud-patterns"
+    - "src.envoy"
   claim_ids: []
-  status: "unknown"
-  notes: "Phase 1 entry inventory; no source or technical claim."
+  status: "source-linked"
+  notes: "All 12 cards cite read units; owner links are bounded sections, not dedicated pattern manuscripts."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-21"
@@ -40,7 +43,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-21"
 updated_at: "2026-10-21"
-source_inspection_date: null
+source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
 # V11/C02 — API and service communication
@@ -49,145 +52,467 @@ content_verified_at: null
 
 ## Purpose and mission
 
-This chapter is the atlas entry point for **API and service communication**. It owns the
-conditional decision route for 12 catalog entries, not the deep mechanism explanations. Read the
-candidate technical owner before applying a mechanism claim.
+This chapter is the atlas entry point for **API and service communication**. It owns
+the conditional decision route for 12 catalog entries, not the deep mechanism
+explanations. Read the exact owner section before applying a mechanism claim.
+
+All 12 entries have a self-checked card. Their owner sections are bounded: a gateway
+page may own the edge boundary without owning every aggregation or BFF mechanism.
 
 ## Pages and reasoning route
 
-Page count is content-dependent. Phase 1 uses this landing as the entry inventory: all entries
-are visible, but full decision cards, source ledgers and any page split follow in later phases.
-A chapter may need one page or many; there is no fixed two- or three-page quota.
-
-Start with the entry inventory below, then follow the candidate area and the candidate page when
-one exists. A candidate is a reading hypothesis, not a confirmed canonical owner.
+Page count is content-dependent. This chapter currently uses one landing page for all
+entries; a later split is an editorial change, not a plan failure. Start with the card,
+check its conditions and contraindications, then read the exact owner section.
 
 ## Entry inventory
 
-Each level-three heading is a stable atlas anchor. Candidate areas and pages are not audited. No
-source was read for an entry in Phase 1.
+Each level-three heading is a stable atlas anchor. Owner links are bounded sections;
+none claims sufficient technical or decision coverage.
 
 ### API Gateway
 
-**Catalog problem:** Define a managed entry boundary for external clients and downstream
-services
+**Identity.** API Gateway; family API and service communication; kind integration
+pattern; priority core.
 
-**Candidate area:** V08/C08 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should external clients enter through a managed gateway that
+owns routing, authentication and cross-cutting edge policy?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Multiple clients or backends share edge concerns; routing,
+TLS, authentication or rate policy must be consistent; the gateway can be operated and
+observed as a critical component; backend authority remains explicit.
+
+**Hard contraindications.** Reject the claim when one simple client can call one
+backend directly; when the gateway would become an unowned single point of failure;
+when it hides domain authorization in the backend; when every request needs a unique
+policy that the gateway cannot safely express.
+
+**Competing alternative.** A reverse proxy with a narrow edge contract, or direct
+backend exposure with client-side policy. Reverse the choice when gateway complexity
+and outage blast radius exceed the shared edge benefit.
+
+**Failure and recovery.** Gateway outage, stale routes and confused authentication are
+common. Recovery requires a bypass or degraded edge path, bounded retries and health
+checks; verify the trust boundary in the owner section.
+
+**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#tls-termination-gateways-and-trusted-identity) — edge identity and gateway boundary; not a full API management specification.
+
+**Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microservices-api-gateway.2026-10-21: API Gateway, sections
+"Context", "Problem", "Forces", "Solution", "Variation: Backends for frontends",
+"Examples", "Resulting context", "Related patterns". Pattern page, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Gateway Routing; Gateway Aggregation; Gateway Offloading; Reverse
+Proxy.
 
 ### Gateway Routing
 
-**Catalog problem:** Route requests to the responsible backend via explicit contracts
+**Identity.** Gateway Routing; family API and service communication; kind integration
+pattern; priority core.
 
-**Candidate area:** V08/C08 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should a gateway route requests to the responsible backend using
+an explicit contract rather than exposing every backend address to clients?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Multiple backends or versions exist; routing rules are stable
+enough to own; discovery and health signals are available; the gateway can resolve
+version and tenant routing without guessing.
+
+**Hard contraindications.** Reject the claim when clients can resolve one stable
+backend; when routes are ad hoc and unversioned; when routing depends on unchecked
+client-supplied identifiers; when a route change cannot be rolled back.
+
+**Competing alternative.** Direct client-to-backend calls or a simpler reverse proxy.
+Reverse the choice when routing logic becomes domain logic or the gateway cannot observe
+backend health.
+
+**Failure and recovery.** Stale routes, wrong-version selection and retry loops are
+common. Recovery requires route versioning and observability; verify the routing
+contract in the owner section.
+
+**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#the-routing-contract) — routing and backend selection; not a dedicated gateway routing product guide.
+
+**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microsoft-gateway-routing.2026-10-21: Gateway Routing pattern,
+sections "Context and problem", "Solution", "Multiple disparate services", "Multiple
+instances of the same service", "Multiple versions of the same service", "Issues and
+considerations", "When to use this pattern", "Workload design", "Example". Vendor
+pattern page, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** API Gateway; Service Discovery; Reverse Proxy; Gateway
+Aggregation.
 
 ### Gateway Aggregation
 
-**Catalog problem:** Aggregate multiple downstream responses into one client-facing result
+**Identity.** Gateway Aggregation; family API and service communication; kind
+integration pattern; priority advanced.
 
-**Candidate area:** V08/C08 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should a gateway aggregate several downstream responses into one
+client-facing result, rather than making the client orchestrate every call?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Clients need a small stable response from several owners; the
+aggregation is read-mostly; per-call deadlines and partial-failure policy can be
+defined; the gateway can expose which dependency failed.
+
+**Hard contraindications.** Reject the claim when the aggregate needs strong
+consistency across owners; when one slow dependency would exhaust the gateway; when
+the aggregate becomes a hidden domain workflow; when partial results cannot be
+represented honestly.
+
+**Competing alternative.** Client-side composition or an API Composition layer with a
+narrow contract. Reverse the choice when aggregation latency and coupling exceed the
+client simplification benefit.
+
+**Failure and recovery.** Fan-out latency, partial failure and retry amplification are
+common. Recovery requires per-dependency deadlines and explicit partial results;
+verify the gateway boundary in the owner section, which does not own aggregation.
+
+**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#tls-termination-gateways-and-trusted-identity) — bounded edge boundary; aggregation mechanics are not owned here.
+
+**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microsoft-gateway-aggregation.2026-10-21: Gateway Aggregation pattern,
+sections "Context and problem", "Solution", "Problems and considerations", "When to use
+this pattern", "Workload design", "Example". Vendor pattern page, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** API Gateway; API Composition; Gateway Routing; Backend for
+Frontend.
 
 ### Gateway Offloading
 
-**Catalog problem:** Centralize reusable cross-cutting gateway functions without moving domain
-authority
+**Identity.** Gateway Offloading; family API and service communication; kind integration
+pattern; priority advanced.
 
-**Candidate area:** V08/C08 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should reusable cross-cutting functions be moved to a gateway
+without moving domain authority there?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** TLS, authentication, rate policy or compression is shared
+across backends; the gateway can enforce and observe the function; backend authority
+and object-level authorization remain explicit.
+
+**Hard contraindications.** Reject the claim when the offloaded function needs domain
+state; when the gateway becomes the only authorization check; when a gateway outage
+blocks all work; when the team cannot own gateway configuration.
+
+**Competing alternative.** A library in each backend or a narrower reverse proxy.
+Reverse the choice when gateway configuration drift or blast radius exceeds the reuse
+benefit.
+
+**Failure and recovery.** Misconfigured TLS, stale policy and false trust in gateway
+headers are common. Recovery requires configuration tests and explicit trust
+boundaries; verify the edge contract in the owner section.
+
+**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#tls-termination-gateways-and-trusted-identity) — edge functions and trusted identity; not a complete offloading catalogue.
+
+**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microsoft-gateway-offloading.2026-10-21: Gateway Offloading pattern,
+sections "Context and problem", "Solution", "Problems and considerations", "When to use
+this pattern", "Workload design", "Example", "Application Gateway with TLS offloading",
+"Supporting technologies". Vendor pattern page, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** API Gateway; Reverse Proxy; Gatekeeper; Gateway Routing.
 
 ### Backend for Frontend (BFF)
 
-**Catalog problem:** Tailor server interaction contracts to client populations
+**Identity.** Backend for Frontend; alias BFF; family API and service communication;
+kind integration pattern; priority core.
 
-**Candidate area:** V02/C05 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should each client population get a tailored server contract,
+rather than share one general-purpose API?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Client populations have materially different interaction
+needs; a team can own each BFF; shared domain services remain authoritative; duplicated
+client-specific composition is acceptable.
+
+**Hard contraindications.** Reject the claim when one client contract is adequate; when
+BFFs would duplicate domain logic; when no team owns a BFF lifecycle; when the split
+multiplies deployments without a measured client benefit.
+
+**Competing alternative.** One API with versioned representations or a gateway
+aggregation. Reverse the choice when BFF maintenance and duplication exceed the client
+fit benefit.
+
+**Failure and recovery.** Contract drift across BFFs and duplicated logic are common.
+Recovery requires shared domain contracts and per-BFF observability; verify the API
+contract boundary in the owner section.
+
+**Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#http-and-rpc-contracts-compatibility-deadlines-and-retry-safety) — API contract ownership; BFF tailoring is not a dedicated section.
+
+**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microsoft-bff.2026-10-21: Backends for Frontends pattern, sections
+"Context and problem", "Solution", "Problems and considerations", "When to use this
+pattern", "Workload design", "Example", "Design". Vendor pattern page, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** API Gateway; Gateway Aggregation; API Composition; Reverse Proxy.
 
 ### API Composition
 
-**Catalog problem:** Assemble responses requiring data from several service owners
+**Identity.** API Composition; family API and service communication; kind integration
+pattern; priority core.
 
-**Candidate area:** V02/C05 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should an in-memory composition layer assemble a response from
+several service owners, rather than forcing one owner to duplicate all data?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** The query is read-mostly; per-owner calls have bounded
+deadlines; partial results can be represented; composition logic is owned and tested;
+the response does not require a distributed transaction.
+
+**Hard contraindications.** Reject the claim when strong consistency is required; when
+fan-out latency exceeds the client budget; when composition needs writes across owners;
+when one service can answer the query directly without duplicating authority.
+
+**Competing alternative.** A materialized read model, CQRS projection or direct
+service query. Reverse the choice when composition latency and partial-failure
+complexity exceed the duplication alternative.
+
+**Failure and recovery.** Slow dependencies, partial results and retry amplification are
+common. Recovery requires deadlines and explicit degradation; verify the API contract
+boundary in the owner section.
+
+**Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#http-and-rpc-contracts-compatibility-deadlines-and-retry-safety) — contract boundary; composition is not a dedicated section.
+
+**Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microservices-api-composition.2026-10-21: API Composition, sections
+"Context", "Problem", "Solution", "Example", "Resulting context", "Related patterns".
+Pattern page, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Backend for Frontend; Gateway Aggregation; CQRS; Self-Contained
+Service.
 
 ### Reverse Proxy
 
-**Catalog problem:** Terminate and forward client connections with explicit trust/transport
-scope
+**Identity.** Reverse Proxy; family API and service communication; kind infrastructure
+pattern; priority core.
 
-**Candidate area:** V08/C08 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should a reverse proxy terminate client connections and forward
+requests to backends, rather than exposing backends directly?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Backends need connection management, TLS termination or
+header normalization; the proxy can be operated with health checks and draining; backend
+selection is explicit; the extra hop is acceptable.
+
+**Hard contraindications.** Reject the claim when one backend can be exposed safely;
+when the proxy would become an unowned single point; when it hides backend authorization;
+when connection draining or timeout behavior cannot be tested.
+
+**Competing alternative.** Direct backend exposure or a richer API gateway. Reverse the
+choice when proxy configuration and outage cost exceed the connection-management
+benefit.
+
+**Failure and recovery.** Stale connections, header trust and draining failures are
+common. Recovery requires connection lifecycle tests; verify the edge boundary in the
+owner section.
+
+**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#tls-termination-gateways-and-trusted-identity) — proxy and gateway boundary; not a full Envoy operations guide.
+
+**Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.envoy-http-connection.2026-10-21: HTTP connection management, sections
+"HTTP protocols", "HTTP lifecycle", "HTTP header sanitizing", "Route table
+configuration", "Retry plugin configuration", "Internal redirects", "Timeouts". Vendor
+documentation, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** API Gateway; Gateway Offloading; Service Discovery; Sidecar.
 
 ### Service Discovery
 
-**Catalog problem:** Locate available service instances amid topology changes
+**Identity.** Service Discovery; family API and service communication; kind
+infrastructure pattern; priority core.
 
-**Candidate area:** V08/C08 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should callers resolve backend instances through a discovery
+mechanism rather than static addresses?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Instances change frequently; membership and health are
+observable; stale membership can be detected; callers can handle resolution failure and
+backoff; the routing contract is owned.
+
+**Hard contraindications.** Reject the claim when a small static endpoint is stable;
+when discovery would publish stale or unauthorized endpoints; when clients cannot
+maintain backoff and observability; when discovery is treated as authorization.
+
+**Competing alternative.** Static endpoints, DNS or a single proxy. Reverse the choice
+when discovery control-plane cost and stale-state risk exceed the change rate.
+
+**Failure and recovery.** Stale membership, discovery outage and fast-error attraction
+are common. Recovery requires last-known-good policy and health checks; verify the
+routing contract in the owner section.
+
+**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#discovery-load-balancing-and-backend-selection) — discovery and selection; not a full control-plane implementation.
+
+**Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.envoy-service-discovery.2026-10-21: Service discovery, sections
+"Supported service discovery types", "Static", "Strict DNS", "Logical DNS", "Original
+destination", "Endpoint discovery service (EDS)", "Custom cluster", "On eventually
+consistent service discovery". Vendor documentation, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Client-Side Discovery; Server-Side Discovery; Gateway Routing;
+Reverse Proxy.
 
 ### Client-Side Discovery
 
-**Catalog problem:** Make the requesting client responsible for backend selection
+**Identity.** Client-Side Discovery; family API and service communication; kind
+discovery pattern; priority advanced.
 
-**Candidate area:** V08/C08 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should the caller own service lookup and backend selection,
+rather than delegating both to an intermediary?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Clients can maintain membership, backoff and observability;
+the client platform is controlled; selection policy is stable; stale membership can be
+detected and bounded.
+
+**Hard contraindications.** Reject the claim when clients cannot be upgraded; when
+discovery logic would be duplicated across many runtimes; when the client cannot observe
+backend health; when selection policy must be centrally governed.
+
+**Competing alternative.** Server-side discovery through a proxy or load balancer.
+Reverse the choice when client complexity and inconsistent policies exceed the
+resolution benefit.
+
+**Failure and recovery.** Stale caches, divergent policies and retry storms are common.
+Recovery requires a shared contract and bounded backoff; verify the routing contract in
+the owner section.
+
+**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#discovery-load-balancing-and-backend-selection) — discovery and selection; client-specific policy is not a dedicated section.
+
+**Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microservices-client-discovery.2026-10-21: Client-side service
+discovery, sections "Context", "Problem", "Forces", "Solution", "Examples", "Resulting
+context", "Related patterns". Pattern page, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Service Discovery; Server-Side Discovery; Gateway Routing; Reverse
+Proxy.
 
 ### Server-Side Discovery
 
-**Catalog problem:** Delegate backend selection to gateway, router or load balancer
+**Identity.** Server-Side Discovery; family API and service communication; kind
+discovery pattern; priority advanced.
 
-**Candidate area:** V08/C08 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should a proxy or load balancer own service lookup and backend
+selection for the caller?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** Clients should stay simple; the intermediary can observe
+health and membership; selection policy is centrally owned; the extra hop and proxy
+lifecycle are acceptable.
+
+**Hard contraindications.** Reject the claim when the intermediary becomes an unowned
+single point; when it cannot observe backend health; when clients need a selection
+policy the proxy cannot express; when the extra hop violates a hard latency budget.
+
+**Competing alternative.** Client-side discovery or static endpoints. Reverse the
+choice when proxy blast radius and operational cost exceed the client simplification
+benefit.
+
+**Failure and recovery.** Proxy outage, stale membership and retry amplification are
+common. Recovery requires health checks and a degraded path; verify the routing
+contract in the owner section.
+
+**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#discovery-load-balancing-and-backend-selection) — discovery and selection; server-side specifics are not a dedicated section.
+
+**Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microservices-server-discovery.2026-10-21: Server-side service
+discovery, sections "Context", "Problem", "Forces", "Solution", "Examples", "Resulting
+context", "Related patterns". Pattern page, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Service Discovery; Client-Side Discovery; Gateway Routing; API
+Gateway.
 
 ### Asynchronous Request-Reply
 
-**Catalog problem:** Separate long-running processing from the initiating request lifecycle
+**Identity.** Asynchronous Request-Reply; family API and service communication; kind
+integration pattern; priority core.
 
-**Candidate area:** V03/C04 (provisional; not audited).
+**Decision question.** Should a client submit work and later fetch a result, rather than
+hold one synchronous request open?
 
-**Candidate page:** Asynchronous APIs and streaming: demand, deadlines and cancellation
+**Good-fit conditions.** Work exceeds a request deadline; durable acceptance and
+recovery are required; clients can poll or receive a callback; operation identity and
+cleanup are defined.
 
-**Candidate confidence:** medium; candidate only, not audited.
+**Hard contraindications.** Reject the claim when a synchronous call reliably meets the
+deadline; when the client cannot handle pending state; when result retention and
+cleanup have no owner; when the operation is not idempotent.
 
-**State:** not-yet-assessed; no source inspected.
+**Competing alternative.** Synchronous request-reply with a bounded deadline. Reverse
+the choice when durable work and client polling add more complexity than the latency
+benefit.
+
+**Failure and recovery.** Lost replies, duplicate submissions and orphaned jobs are
+common. Recovery requires stable operation IDs and status cleanup; verify the async
+contract in the owner section.
+
+**Technical owner.** [Asynchronous APIs and streaming: demand, deadlines and cancellation](../../v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md#asynchronous-apis-and-streaming-demand-deadlines-and-cancellation) — async demand and cancellation; not a full request-reply implementation.
+
+**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microsoft-async-request-reply.2026-10-21: Asynchronous Request-Reply
+pattern, sections "Context and problem", "Solution", "Problems and considerations",
+"When to use this pattern", "Workload design", "Example". Vendor pattern page, not a
+benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** API Gateway; API Composition; Retry with Idempotency; Deadline
+Propagation.
 
 ### Gatekeeper
 
-**Catalog problem:** Validate externally originated requests before privileged internal handling
+**Identity.** Gatekeeper; family API and service communication; kind security pattern;
+priority advanced.
 
-**Candidate area:** V02/C07 (provisional; not audited). **Candidate page:** no strong or medium
-candidate yet; see the coverage map.
+**Decision question.** Should a narrow gatekeeper validate and shape requests before
+they reach a sensitive backend, rather than exposing the backend directly?
 
-**State:** not-yet-assessed; no source inspected.
+**Good-fit conditions.** A small validation surface can reject malformed or
+unauthorized requests; the gatekeeper can authenticate and forward trusted context;
+the backend retains object-level authorization; the gatekeeper is highly available.
+
+**Hard contraindications.** Reject the claim when the gatekeeper would become the only
+authorization check; when it forwards unchecked identity or tenant headers; when its
+outage blocks all access; when validation logic needs backend domain state.
+
+**Competing alternative.** Backend-side validation and authorization, or an API gateway
+with a narrow policy. Reverse the choice when gatekeeper complexity and blast radius
+exceed the reduced attack surface.
+
+**Failure and recovery.** False trust in forwarded identity, stale policy and gatekeeper
+outage are common. Recovery requires explicit trust boundaries and backend checks;
+verify the authorization boundary in the owner section.
+
+**Technical owner.** [Authorization boundaries and multitenancy: domain ownership and isolation](../../v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md#authorization-boundaries-and-multitenancy-domain-ownership-and-isolation) — authorization boundary; gatekeeper mechanics are not a dedicated section.
+
+**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microsoft-gatekeeper.2026-10-21: Gatekeeper pattern, sections "Context
+and problem", "Solution", "Problems and considerations", "When to use this pattern",
+"Workload design", "Example". Vendor pattern page, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** API Gateway; Gateway Offloading; Zero Trust Architecture; Valet
+Key.
 
 ## Chapter result and counterexample
 
-This chapter inventories 12 catalog entries and routes each to a provisional candidate area; it
-does not establish technical sufficiency.
+Twelve cards establish a conditional decision route. Owner sections are bounded; none
+establishes technical sufficiency.
 
-A pattern name, a candidate link or a passing structural check is not evidence that the pattern
-fits a workload.
+Counterexample: an API gateway that validates a token but forwards an untrusted tenant
+header to every backend is not evidence for the gatekeeper or offloading cards.
 
 ## Navigation and prerequisites
 
@@ -196,12 +521,13 @@ fits a workload.
 - Next: [V11/C03](../c03-messaging-integration/README.md).
 - Prerequisite: V10/C03 — pattern applicability and contraindications.
 - Registry: [pattern registry](../../../../edition/patterns/registry.v1.json).
+- Card batch: [card batches](../../../../edition/patterns/card-batches.v1.json).
 - Coverage map: [candidate coverage](../../../../edition/patterns/coverage-map.v1.json).
 
 ## Evidence and known limits
 
-- No external source was read for this chapter in Phase 1.
-- Candidate area and page entries are provisional; no page-level audit was performed.
-- All entries remain not-yet-assessed; no technical or decision coverage is claimed.
-- The chapter is an inventory and route, not a full pattern card or a replacement for the
-  technical owner.
+- All 12 cards cite read ledger units; owner links and backlinks are self-checked.
+- Owner links are bounded sections, not dedicated pattern manuscripts.
+- No entry claims sufficient technical or decision coverage.
+- No independent editorial review, benchmark, production observation or runtime test
+  is asserted.

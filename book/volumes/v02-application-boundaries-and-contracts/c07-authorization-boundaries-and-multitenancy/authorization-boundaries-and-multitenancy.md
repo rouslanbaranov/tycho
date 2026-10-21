@@ -57,6 +57,10 @@ content_verified_at: null
 > **Tycho book chapter draft V02/C07**, 2026-10-19. Original abstract design and hypothetical fixtures. Public OWASP and independently available multitenancy design guidance consulted. No real tenant data, authorization engine, system credentials, or security assessment was used. [Threat modeling, identity and isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md) owns the security primitives; this chapter owns how tenancy affects *application decomposition and domain authority*.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:**
+> [Gatekeeper](../../v11-pattern-atlas/c02-api-communication/README.md#gatekeeper) — decision conditions and contraindications.
+
 <!-- tycho-question-source:tycho.page.31cda61d174248eaa326559d256ce352:0 -->
 ## Purpose and mission
 

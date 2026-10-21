@@ -153,7 +153,7 @@ Only Polyglot Persistence remains blocked by its bibliography-only source.
 Entry-level source coverage is complete; technical and decision coverage remain
 unassessed and are not claimed.
 
-## Phase 3 first card batch
+## Phase 3 card batches
 
 All 12 V11/C01 entries have self-checked decision cards with a technical-owner
 section and a reciprocal backlink. Four use dedicated mechanisms: Modular Monolith,
@@ -166,9 +166,15 @@ The registry records `partial` technical, decision and overall coverage for all 
 No `sufficient` state is claimed. Remediation issue #254 is closed by explicit owner
 bindings; it did not create independent review or complete technical coverage.
 
-The card batch is recorded in `edition/patterns/card-batches.v1.json` and checked
+All 12 V11/C02 entries also have self-checked cards with bounded owner sections.
+They cover API Gateway, gateway routing/aggregation/offloading, BFF, API
+composition, reverse proxy, service discovery variants, asynchronous request-reply
+and Gatekeeper. Registry coverage is `partial` for all 12; no `sufficient` state is
+claimed.
+
+The card batches are recorded in `edition/patterns/card-batches.v1.json` and checked
 by `scripts/validate_pattern_cards.py`, including adversarial tests. The other
-133 entries remain without Phase 3 cards; 132 are read and one is blocked.
+121 entries remain without Phase 3 cards; 120 are read and one is blocked.
 
 ## Family batches
 

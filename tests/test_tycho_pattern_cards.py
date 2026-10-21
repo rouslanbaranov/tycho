@@ -21,7 +21,7 @@ class PatternCardTests(unittest.TestCase):
 
     def test_complete_card_batch(self):
         result = validate_data(self.batches, ROOT)
-        self.assertEqual(result["entries"], 12)
+        self.assertEqual(result["entries"], 24)
 
     def test_unknown_pattern_is_rejected(self):
         data = copy.deepcopy(self.batches)
@@ -50,7 +50,9 @@ class PatternCardTests(unittest.TestCase):
 
     def test_missing_backlink_is_rejected(self):
         with self.assertRaises(ValueError) as raised:
-            check_backlink("no atlas link here", "modular-monolith")
+            check_backlink("no atlas link here",
+                           "book/volumes/v11-pattern-atlas/c01-application-boundaries/README.md",
+                           "modular-monolith")
         self.assertIn("card-backlink-missing", str(raised.exception))
 
     def test_missing_card_marker_is_rejected(self):
