@@ -7398,24 +7398,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "façade-based incremental routing, coexistence cost and conditions where the pattern is unsuitable",
-          "reason": "Summarizes façade-based routing from cited guidance but not interception or routing mechanics."
+          "state": "supported",
+          "quote": "Intercept requests at a façade or route and send one capability at a time to the new implementation while the old path remains available.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Neither guarantees a safe migration for a particular data model.",
-          "reason": "Cautions that the cited guidance is not a guarantee but states no system invariant."
+          "state": "supported",
+          "quote": "Keep one authoritative writer for each invariant and define routing plus data compatibility during coexistence.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "conditions where the pattern is unsuitable",
-          "reason": "Names unsuitability conditions but no failure detection, containment or recovery."
+          "state": "supported",
+          "quote": "Interception may be impossible, internal callers may bypass the façade, and old/new state can diverge.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "motivates gradual replacement rather than assuming a wholesale rewrite is well understood",
-          "reason": "Contrasts wholesale rewrite but states no explicit reversal condition."
+          "state": "supported",
+          "quote": "Branch by abstraction, parallel run or a big-bang replacement may be preferable when interception is impossible or the system is small enough to replace whole.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -7433,7 +7433,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Strangler Fig appears in prose, not a heading; the section summarizes cited guidance without routing mechanics."
     },
@@ -7463,14 +7463,14 @@
           "reason": "Explains the internal abstraction that routes old and new implementations in one deployable."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The section gives fit and failure conditions, not a guarantee or safety rule."
+          "state": "supported",
+          "quote": "Old and new implementations behind the internal interface must preserve the same contract and observable effects; the switch must remain reversible until the old path is removed.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Components cannot be separated without untested side effects",
-          "reason": "Names a failure condition but no detection, containment or recovery."
+          "state": "supported",
+          "quote": "Untested side effects, a bypass around the abstraction and divergent implementations can break that contract.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
           "state": "supported",
@@ -7493,7 +7493,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Table row supplies mechanism and fit/failure conditions; no dedicated branch-by-abstraction section."
     },
@@ -7653,15 +7653,15 @@
           "reason": "Names the failure, the hold, and forward repair as recovery."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Applying that to database schemas requires versioned DB-specific locks and data invariants, not just a column rename.",
-          "reason": "Rejects a simple column rename but states no explicit condition that reverses the choice."
+          "state": "supported",
+          "quote": "A big-bang migration, a parallel run or a versioned API cutover may be preferable when no mixed-version compatibility window is possible or the dataset is small enough to migrate under a verified pause.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
         "atlas_section": "expand-and-contract",
         "question": "Should a schema change be rolled out in expand, migrate and contract stages?",
-        "competing_alternative": "Direct migration. Reverse the choice when staged migration cost exceeds rollout risk.",
+        "competing_alternative": "Big-bang migration, parallel run or versioned API cutover. Reverse when no compatibility window is possible or the dataset is small enough to pause.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -7687,7 +7687,7 @@
         "heading": "7. Go/no-go and the no-return contract",
         "anchor": "7-gono-go-and-the-no-return-contract",
         "level": 2,
-        "line": 69,
+        "line": 75,
         "unit_kind": "embedded",
         "unit_terms": [
           "observed gate",
@@ -7713,15 +7713,15 @@
           "reason": "Describes post-no-return failure and the required recovery path."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing cutover mechanism or reversal condition is named in this section."
+          "state": "supported",
+          "quote": "Rolling or blue/green deployment, a canary with a reversible gate, or scheduled maintenance may be preferable when the no-return evidence cannot be obtained or the change is small enough to reverse.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
         "atlas_section": "controlled-cutover",
         "question": "Should the final authority switch be gated by explicit go/no-go evidence and a no-return contract?",
-        "competing_alternative": "Progressive canary or parallel run before cutover. Reverse the choice when gate cost exceeds risk reduction.",
+        "competing_alternative": "Rolling/blue-green deployment, a reversible canary gate or scheduled maintenance. Reverse when no-return evidence cannot be obtained or the change is small enough to reverse.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -9025,7 +9025,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 0,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Branch by abstraction and controlled cutover appear in shared tables without a dedicated unit for either; distinct bounded units are required."
     }
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 127,
-    "invariant_supported": 134,
-    "failure_recovery_supported": 113,
-    "alternative_supported": 110,
-    "technical_partial_bounded": 125,
-    "technical_partial": 20,
+    "mechanism_supported": 128,
+    "invariant_supported": 136,
+    "failure_recovery_supported": 115,
+    "alternative_supported": 113,
+    "technical_partial_bounded": 127,
+    "technical_partial": 18,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

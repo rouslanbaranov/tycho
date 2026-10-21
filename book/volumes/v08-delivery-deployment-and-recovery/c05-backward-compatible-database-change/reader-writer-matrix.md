@@ -89,6 +89,11 @@ stateDiagram-v2
 
 **Text alternative:** expand the representation, run a tested mixed-version phase, reconcile migrated data, and contract only after old readers are proven absent. Incompatible writes hold the rollout and may require forward repair rather than redeploying N. Nothing was actually deployed or migrated.
 
+**Alternative.** A big-bang migration, a parallel run or a versioned API cutover may be
+preferable when no mixed-version compatibility window is possible or the dataset is small
+enough to migrate under a verified pause. Reverse the expand/contract choice when the
+compatibility window and old-reader inventory cost exceed the migration risk.
+
 <!-- /tycho-question-source -->
 
 ## Navigation, prerequisites and source scope

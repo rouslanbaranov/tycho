@@ -59,6 +59,12 @@ This page belongs to [V10/C05 — Target architecture versus transition states](
 
 These are conditions, not prescriptive steps. The [Microsoft Strangler Fig pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig) explicitly treats the façade as a temporary infrastructure cost and warns that request interception may be impossible. Use [anti-corruption adapters](../../v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md) when foreign meanings must be translated.
 
+**Branch-by-abstraction invariant.** Old and new implementations behind the internal
+interface must preserve the same contract and observable effects; the switch must remain
+reversible until the old path is removed. Untested side effects, a bypass around the
+abstraction and divergent implementations can break that contract. Detect with contract
+tests and a bounded switch, then hold or roll back to the compatible path.
+
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
@@ -83,6 +89,11 @@ Before a transition changes authoritative state or retirements become irreversib
 **Negative synthetic test:** insert then revoke an item permission while the indexing connector is stopped, restart from an older offset, replay the delete and test a stale query. A correct solution either filters by authoritative access at the point of response or refuses the stale result according to the approved policy. Merely reaching a “green” index state is insufficient evidence.
 
 A transition state should end with **an observed gate**, not a calendar milestone. A failure after the no-return point must use an approved forward-repair path rather than fictional rollback.
+
+**Alternative.** Rolling or blue/green deployment, a canary with a reversible
+gate, or scheduled maintenance may be preferable when the no-return evidence cannot be
+obtained or the change is small enough to reverse. Reverse the controlled-cutover choice
+when its evidence and hold costs exceed the no-return risk.
 
 <!-- /tycho-question-source -->
 

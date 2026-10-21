@@ -273,8 +273,8 @@ modernization-pattern; priority core.
 **Decision question.** Should a legacy capability be replaced incrementally behind a
 routing seam rather than by a rewrite?
 
-**Good-fit conditions.** A seam can route old/new; coexistence is funded; data authority
-transfer is staged; rollback is possible until a no-return point.
+**Good-fit conditions.** A seam can intercept and route old/new; coexistence is funded;
+routing and data compatibility are explicit; rollback is possible until a no-return point.
 
 **Hard contraindications.** Reject when the legacy has no seam, when dual-running data
 cannot be reconciled, or when the team cannot own two paths.
@@ -282,8 +282,8 @@ cannot be reconciled, or when the team cannot own two paths.
 **Competing alternative.** Branch by abstraction or a bounded rewrite. Reverse the choice
 when coexistence cost exceeds incremental replacement benefit.
 
-**Failure and recovery.** Dual writes and façade bottlenecks are common; verify transition
-states in the owner section.
+**Failure and recovery.** Interception may be impossible, callers may bypass the façade,
+and old/new state can diverge; detect bypass, hold and route back until proven.
 
 **Technical owner.** [Target architecture versus transition states: coexistence, reversibility and recovery](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md#purpose-and-mission) — strangler is bounded to transition-state reasoning.
 
@@ -306,7 +306,7 @@ modernization-pattern; priority advanced.
 to coexist in one deployable?
 
 **Good-fit conditions.** The seam can be introduced without breaking callers; both
-implementations can be tested; removal date is owned.
+implementations preserve the same contract; removal date and reversible switch are owned.
 
 **Hard contraindications.** Reject when no internal seam exists, when the abstraction adds
 no substitution value, or when the old implementation cannot coexist.
@@ -314,8 +314,8 @@ no substitution value, or when the old implementation cannot coexist.
 **Competing alternative.** Strangler Fig or a big-bang replacement. Reverse the choice
 when abstraction cost exceeds incremental change benefit.
 
-**Failure and recovery.** Permanent seams and divergent behavior are common; verify
-removal in the owner section.
+**Failure and recovery.** Permanent seams, bypass around the abstraction and divergent
+behavior are common; use contract tests, a bounded switch and a removal owner.
 
 **Technical owner.** [Alternative migration mechanisms and contraindications](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#6-alternative-migration-mechanisms-and-contraindications) — branch by abstraction is bounded to internal interface replacement.
 
@@ -404,8 +404,8 @@ backfill/validation are explicit.
 **Hard contraindications.** Reject when downtime is acceptable and a direct migration is
 simpler, when no compatibility window exists, or when rollback is impossible.
 
-**Competing alternative.** Direct migration. Reverse the choice when staged migration cost
-exceeds rollout risk.
+**Competing alternative.** Big-bang migration, parallel run or versioned API cutover.
+Reverse when no compatibility window is possible or the dataset is small enough to pause.
 
 **Failure and recovery.** Partial backfills and old readers are common; verify gates in
 the owner section.
@@ -436,8 +436,9 @@ authority transfer is explicit.
 **Hard contraindications.** Reject when no measurable gate exists, when rollback is
 assumed but not possible, or when the switch can be partial without detection.
 
-**Competing alternative.** Progressive canary or parallel run before cutover. Reverse the
-choice when gate cost exceeds risk reduction.
+**Competing alternative.** Rolling/blue-green deployment, a reversible canary gate or
+scheduled maintenance. Reverse when no-return evidence cannot be obtained or the change is
+small enough to reverse.
 
 **Failure and recovery.** No-return points and partial cutovers are common; verify gates
 in the owner section.

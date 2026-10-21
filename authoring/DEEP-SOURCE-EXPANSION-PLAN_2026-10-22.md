@@ -124,5 +124,7 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
 
 - Canary Release, Feature Flags / Feature Toggles and GitOps: owner sections and cards
   expanded; each is `partial-bounded` with all four evidence dimensions supported.
-- Remaining: Strangler Fig, Branch by Abstraction, plus alternatives for Expand-and-Contract
-  and Controlled Cutover.
+- Strangler Fig, Branch by Abstraction, Expand-and-Contract and Controlled Cutover now
+  have all four evidence dimensions supported.
+- **Deployment family complete:** all 12 entries are `partial-bounded` with no evidence
+  gaps. Next: application-architecture-and-boundaries.
