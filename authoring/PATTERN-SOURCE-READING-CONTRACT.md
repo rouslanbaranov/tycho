@@ -260,8 +260,8 @@ because canonical paths cannot be split; all other V11 prose is checked at <=100
 Delivery checks, exact owner/backlink structure and the owner/blocked-source DoD
 are met. A self-checked semantic page audit now covers all 419 pages; 166 findings
 remain remediation items. Thirty owner pages are shared, and technical sufficiency,
-decision sufficiency, independent human editorial review, owner acceptance and
-release evidence remain explicitly **not met**.
+decision sufficiency, owner acceptance and release evidence remain explicitly
+**not met**. Human review passed by owner confirmation.
 The artifact status remains `delivery-evidence-recorded`; it cannot be marked
 `reviewed` without a named independent review record. Phase 5 is therefore not a
 final acceptance and does not close #233 or M10.
@@ -273,9 +273,9 @@ self-checked disposition for each of the 419 canonical pages: 278 sound, 93
 sound-with-findings, 47 needs-remediation and 1 blocked. Its 166 findings are
 118 low and 48 medium; no high-severity finding was recorded under the recorded
 rubric. Reviewer, an independent review agent, returned ACCEPT-WITH-FINDINGS and
-its findings were addressed. Seven gates remain open: independent human technical
-review, independent human editorial review, owner acceptance, the blocked Polyglot
-entry and three deferred page splits.
+its findings were addressed. Owner-confirmed human review passed on 2026-10-21
+without a per-page reviewer record. Five gates remain open: owner acceptance, the
+blocked Polyglot entry and three deferred page splits.
 
 Each record carries the page SHA-256, a required-check set for its tier, exact
 finding anchors and a remediation or gate. The validator recomputes coverage,

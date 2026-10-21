@@ -2,8 +2,8 @@
 
 > **Current structural candidate — 2026.10.2-rc.1 (2026-10-21):** 11 volumes,
 > 82 chapters and 419 canonical documents. V11 is a self-checked Phase 6
-> pattern-atlas candidate (#288); independent human review and owner acceptance
-> remain open. The #214/rc.3 status below is historical.
+> pattern-atlas candidate (#288); human review is recorded and owner acceptance
+> remains open. The #214/rc.3 status below is historical.
 
 **Owner-unit audit — 2026-10-21 (#286):** 144 carded entries now map to 118
 section-level owner units on the same 65 registered pages: 96 partial-bounded,
@@ -19,9 +19,11 @@ remain remediation items. The V11 landing was refreshed, the 40 non-catalog rela
 labels are recorded as non-routes, three catalog-index reads are intentionally
 unused, and three split decisions are deferred. The independent review agent
 **Reviewer** returned ACCEPT-WITH-FINDINGS; its 17 findings and 7 re-review
-residuals were addressed. This is not human review or owner acceptance. See
-[the semantic audit](PATTERN-SEMANTIC-AUDIT_2026-10-21.md) and
-[the review record](INDEPENDENT-AGENT-REVIEW_2026-10-21.md).
+residuals were addressed. Owner-confirmed human review passed on 2026-10-21; no
+per-page reviewer record was supplied. Owner acceptance remains open. See
+[the semantic audit](PATTERN-SEMANTIC-AUDIT_2026-10-21.md),
+[the agent review](INDEPENDENT-AGENT-REVIEW_2026-10-21.md) and
+[the human review](HUMAN-REVIEW_2026-10-21.md).
 
 **Updated:** 2026-10-20, after manuscript acceptance and merge. See [status reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md) and [roadmap](ROADMAP.md).
 

@@ -1,8 +1,8 @@
 # Pattern semantic page audit — 2026-10-21
 
-Status: self-checked audit for issue #288. An independent agent review is recorded
-separately. This is not independent human technical or editorial review, not sufficient
-coverage and not owner acceptance.
+Status: self-checked audit for issue #288. Owner-confirmed human review passed on
+2026-10-21 and an independent agent review is recorded separately. This is not a
+per-page human sign-off, sufficient coverage or owner acceptance.
 
 ## Scope
 
@@ -70,17 +70,18 @@ Severity:
 | Findings | 166 (118 low, 48 medium, 0 high) |
 
 The blocked page is V11/C06, where Polyglot Persistence remains uncarded because no
-technical owner exists. The seven open gates are independent human technical review,
-independent human editorial review, owner acceptance, the blocked Polyglot entry and
-three deferred page-split decisions.
+technical owner exists. Five gates remain open: owner acceptance, the blocked Polyglot
+entry and three deferred page-split decisions. Human review is recorded by owner
+confirmation; no per-page reviewer record was supplied.
 
 ## Independent agent review
 
 The owner assigned the independent review agent **Reviewer** on 2026-10-21. It reviewed
 PR #289 at commit `a0b0b95` and returned **ACCEPT-WITH-FINDINGS** with 17 findings. A
 focused re-review found 7 residual findings; all 24 were addressed. See
-[the review record](INDEPENDENT-AGENT-REVIEW_2026-10-21.md). This is non-human review and
-does not satisfy the independent human review or owner acceptance gates.
+[the review record](INDEPENDENT-AGENT-REVIEW_2026-10-21.md). This is non-human review.
+The owner separately confirmed that human review passed; see
+[the human review record](HUMAN-REVIEW_2026-10-21.md). Owner acceptance remains open.
 
 ## Finding themes
 
@@ -104,8 +105,8 @@ of the 69 primary manuscripts; they identify remediation work against the exact 
 The 47 `needs-remediation` pages and the other findings remain work items. The audit
 records each remediation or gate; it does not claim that all findings were fixed.
 
-- Independent human technical review: open; no named human reviewer.
-- Independent human editorial review: open; no named human editor.
+- Human review: passed per owner confirmation on 2026-10-21; no per-page reviewer
+  record or line-level notes were supplied.
 - Owner acceptance: open; not recorded.
 - Polyglot Persistence: blocked; keep uncarded until an owner exists.
 - Three split candidates: deferred with migration gates; no split performed.
@@ -123,8 +124,8 @@ findings are recorded for a bounded remediation task rather than silently fixed.
 
 ## Limits
 
-- This is self-checked work plus an independent agent review; it is not human
-  verification or owner acceptance.
+- This is self-checked work plus independent agent review and owner-confirmed human
+  review; it is not per-page human verification or owner acceptance.
 - The audit records a bounded page reading and does not verify every sentence against
   an external source.
 - Page hashes bind the record to the reviewed content; a later page edit invalidates

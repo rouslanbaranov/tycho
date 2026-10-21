@@ -31,7 +31,7 @@ All Python commands used `.venv/bin/python3` (Python 3.9.6, jsonschema 4.25.1).
   `validate_delivery_evidence.py`, source and edition checks, directory migration,
   markdown line length, pattern census and boundary check — all PASS.
 - `-m unittest discover -s tests -p 'test_tycho*.py' -v` — 333 tests in the first
-  pass and 342 in the focused re-review, both OK; the final suite has 348 tests.
+  pass and 342 in the focused re-review, both OK; the final suite has 349 tests.
 - Independent probes recomputed coverage, IDs, kinds, tiers, Phase 4 dispositions,
   SHA-256 values, anchors, disposition rules and summary counts; checked 380 local links
   across the V11 files and the audit report with 0 broken; normalized the 40 related
@@ -104,7 +104,7 @@ All 24 were addressed in the working tree before this record was added.
   repeated measurement terms and keeps the four sections distinct.
 - **A6, low, workflow-failure ownership claim.** Fixed: the finding now covers only the
   duplicated launch/timer material and records that V04/C05 does not own poison-work.
-- **A7, low, stale test and premerge evidence.** Fixed: the final 348 tests and the
+- **A7, low, stale test and premerge evidence.** Fixed: the final 349 tests and the
   #288 branch are recorded.
 - **A8, low, provenance fields.** Addressed with the same source-commit note as T4.
 

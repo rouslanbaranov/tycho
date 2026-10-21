@@ -109,10 +109,14 @@ def compute_summary(pages, gates, review_events):
         "by_disposition": dispositions,
         "findings": severity,
         "pages_with_findings": with_findings,
-        "independent_reviews": 0,
-        "agent_reviews": len(review_events),
+        "independent_reviews": sum(1 for event in review_events
+                                  if event["kind"] == "human"),
+        "human_reviews": sum(1 for event in review_events
+                             if event["kind"] == "human"),
+        "agent_reviews": sum(1 for event in review_events
+                             if event["kind"] == "independent-agent"),
         "owner_acceptance": "not-recorded",
-        "open_gates": len(gates),
+        "open_gates": sum(1 for gate in gates if gate["status"] != "closed"),
     }
 
 
@@ -197,10 +201,16 @@ def validate_data(data, root=ROOT):
         require(event["reviewer"].strip(), "semantic-audit-reviewer-empty")
         require((root / event["report_path"]).is_file(),
                 "semantic-audit-review-report: " + event["report_path"])
-    require(data["summary"]["agent_reviews"] == len(data["review_events"]),
-            "semantic-audit-agent-review-count")
-    require(data["summary"]["independent_reviews"] == 0,
-            "semantic-audit-independent-review-claim")
+    require(any(event["kind"] == "human" for event in data["review_events"]),
+            "semantic-audit-human-review-missing")
+    require(data["summary"]["agent_reviews"] == sum(
+        1 for event in data["review_events"] if event["kind"] == "independent-agent"),
+        "semantic-audit-agent-review-count")
+    require(data["summary"]["human_reviews"] == sum(
+        1 for event in data["review_events"] if event["kind"] == "human"),
+        "semantic-audit-human-review-count")
+    require(data["summary"]["independent_reviews"] == data["summary"]["human_reviews"],
+            "semantic-audit-independent-review-count")
     require(data["summary"]["owner_acceptance"] == "not-recorded",
             "semantic-audit-owner-acceptance-claim")
     require(data["status"] != "reviewed", "semantic-audit-reviewed-claim")

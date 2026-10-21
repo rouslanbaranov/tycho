@@ -58,6 +58,8 @@ def validate_data(data, root=ROOT):
     require(data["summary"]["semantic_findings"] == semantic["summary"]["findings"]["total"], "delivery-semantic-finding-count")
     require(data["summary"]["semantic_pages_with_findings"] == semantic["summary"]["pages_with_findings"], "delivery-semantic-finding-pages")
     require(data["summary"]["semantic_open_gates"] == semantic["summary"]["open_gates"], "delivery-semantic-gate-count")
+    require(data["summary"]["human_reviews"] == semantic["summary"]["human_reviews"], "delivery-human-review-count")
+    require(data["summary"]["independent_reviews"] == semantic["summary"]["independent_reviews"], "delivery-independent-review-count")
     require(data["summary"]["ledger_records"] == len(ledger["records"]), "delivery-ledger-count")
     require(data["summary"]["sources"] == len(sources["sources"]), "delivery-source-count")
     technical = Counter(item["coverage"]["technical"]
@@ -84,10 +86,9 @@ def validate_data(data, root=ROOT):
             == len(owner_units["shared_pages"]), "delivery-shared-page-count")
     require(data["summary"]["sufficient_technical"] == 0, "delivery-sufficient-technical")
     require(data["summary"]["sufficient_decision"] == 0, "delivery-sufficient-decision")
-    require(data["summary"]["independent_reviews"] == 0, "delivery-independent-review-count")
     dod = {item["id"]: item for item in data["dod"]}
-    require(dod.get("independent-editorial-review", {}).get("status") != "met",
-            "delivery-independent-review-claim")
+    require(dod.get("independent-editorial-review", {}).get("status") == "met",
+            "delivery-human-review-missing")
     require(dod.get("owner-acceptance", {}).get("status") != "met",
             "delivery-owner-acceptance-claim")
     require(dod.get("technical-sufficiency", {}).get("status") != "met",

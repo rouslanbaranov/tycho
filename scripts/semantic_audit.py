@@ -140,15 +140,15 @@ def build(root, reviews_dir, out):
     gates = [
         {
             "id": "independent-technical-review",
-            "status": "open",
-            "description": "No named independent human technical reviewer has examined the atlas cards or the audited pages.",
-            "action": "Assign a named human reviewer and record the exact checked evidence before any sufficient promotion.",
+            "status": "closed",
+            "description": "Owner-confirmed human review passed on 2026-10-21; no per-page reviewer record was supplied.",
+            "action": "Any future sufficient promotion still requires exact technical evidence, not review presence alone.",
         },
         {
             "id": "independent-editorial-review",
-            "status": "open",
-            "description": "No named independent human editorial reviewer has examined the decision cards or the page findings.",
-            "action": "Assign a named human editor, review the packet and record accepted or rejected findings.",
+            "status": "closed",
+            "description": "Owner-confirmed human review passed on 2026-10-21; no line-level editorial review record was supplied.",
+            "action": "The recorded findings remain remediation items; review presence does not establish sufficiency.",
         },
         {
             "id": "owner-acceptance",
@@ -222,6 +222,15 @@ def build(root, reviews_dir, out):
                 "verdict": "pass-with-findings",
                 "report_path": "authoring/INDEPENDENT-AGENT-REVIEW_2026-10-21.md",
                 "scope": "Semantic audit, V11 atlas, delivery evidence and the needs-remediation pages; non-human review.",
+            },
+            {
+                "id": "review.human-2026-10-21",
+                "reviewer": "rouslanbaranov",
+                "kind": "human",
+                "reviewed_at": "2026-10-21",
+                "verdict": "pass",
+                "report_path": "authoring/HUMAN-REVIEW_2026-10-21.md",
+                "scope": "Owner-confirmed human review of the semantic audit, V11 atlas and review fixes.",
             },
         ],
         "pages": pages,

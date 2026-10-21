@@ -154,9 +154,9 @@ technical owner. If no owner is confirmed, record the gap instead of inventing o
   the three catalog-index reads are marked intentionally unused. The self-checked
   semantic audit of all 419 pages is recorded in
   [semantic-audit.v1.json](../../../edition/patterns/semantic-audit.v1.json).
-- No independent human technical or editorial review and no owner acceptance exist; an
-  independent agent review is recorded separately. No release, deployment, hosted
-  retrieval or CI result is claimed.
+- Owner-confirmed human review passed on 2026-10-21; an independent agent review is also
+  recorded. Owner acceptance remains open. No release, deployment, hosted retrieval or
+  CI result is claimed.
 - The registry, owner-unit evidence, delivery evidence and audit record are the
   machine-readable sources for these counts.
 

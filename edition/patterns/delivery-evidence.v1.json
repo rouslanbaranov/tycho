@@ -28,24 +28,25 @@
     "shared_pages": 30,
     "sufficient_technical": 0,
     "sufficient_decision": 0,
-    "independent_reviews": 0,
+    "independent_reviews": 1,
     "related_labels": 40,
     "non_routes": 40,
     "semantic_pages": 419,
     "semantic_findings": 166,
     "semantic_pages_with_findings": 141,
-    "semantic_open_gates": 7
+    "semantic_open_gates": 5,
+    "human_reviews": 1
   },
   "checks": [
     {
       "name": "premerge",
       "status": "pass",
-      "evidence": "Local premerge passed on the #288 branch after review fixes; 342 tests OK"
+      "evidence": "Local premerge passed on the #288 branch after human review; 349 tests OK"
     },
     {
       "name": "full-tests",
       "status": "pass",
-      "evidence": "342 tests, OK"
+      "evidence": "349 tests, OK"
     },
     {
       "name": "pattern-atlas",
@@ -91,6 +92,11 @@
       "name": "independent-agent-review",
       "status": "pass",
       "evidence": "Reviewer, 2026-10-21, ACCEPT-WITH-FINDINGS; 17 findings and 7 re-review residuals addressed; non-human review"
+    },
+    {
+      "name": "independent-human-review",
+      "status": "pass",
+      "evidence": "Owner-confirmed human review passed 2026-10-21; no per-page reviewer record supplied"
     }
   ],
   "dod": [
@@ -132,17 +138,17 @@
     {
       "id": "technical-sufficiency",
       "status": "not-met",
-      "evidence": "96 entries are partial-bounded and 48 partial; 0 sufficient and no independent human technical review"
+      "evidence": "96 entries are partial-bounded and 48 partial; 0 sufficient; human review does not promote partial coverage"
     },
     {
       "id": "decision-sufficiency",
       "status": "not-met",
-      "evidence": "144 cards are partial-bounded; 0 sufficient and no independent human editorial review"
+      "evidence": "144 cards are partial-bounded; 0 sufficient; human review does not promote partial coverage"
     },
     {
       "id": "independent-editorial-review",
-      "status": "partial",
-      "evidence": "Reviewer independent agent review recorded; 17 findings and 7 re-review residuals addressed; no human independent editorial review or acceptance"
+      "status": "met",
+      "evidence": "Owner-confirmed human review passed 2026-10-21; no per-page reviewer record or line-level editorial notes supplied"
     },
     {
       "id": "owner-acceptance",
@@ -152,7 +158,7 @@
     {
       "id": "delivery-checks",
       "status": "met",
-      "evidence": "Local premerge, 342 tests, owner-unit, semantic-audit, atlas/source/card/Phase 4 and V11 line checks passed"
+      "evidence": "Local premerge, 349 tests, owner-unit, semantic-audit, atlas/source/card/Phase 4 and V11 line checks passed"
     },
     {
       "id": "release-or-deployment",
@@ -164,12 +170,12 @@
     {
       "id": "technical-sufficiency",
       "count": 144,
-      "action": "independent human technical review remains required; 48 entries remain partial and 28 lack a supported invariant"
+      "action": "deepen the 48 partial entries and promote only with exact evidence; human review is recorded"
     },
     {
       "id": "decision-sufficiency",
       "count": 144,
-      "action": "independent human editorial review remains required; no card is sufficient"
+      "action": "deepen the cards and promote only with exact evidence; human review is recorded"
     },
     {
       "id": "partial-owner-units",
@@ -180,11 +186,6 @@
       "id": "blocked-polyglot-source",
       "count": 1,
       "action": "retain blocked; do not card or cite as support"
-    },
-    {
-      "id": "independent-review",
-      "count": 1,
-      "action": "Reviewer agent review recorded; a named independent human reviewer and owner acceptance remain open"
     },
     {
       "id": "owner-acceptance",
@@ -218,7 +219,8 @@
     "144 exact owner-link lines exceed 100 characters because canonical paths cannot be split; all prose is <=100.",
     "No CI, release, deployment or benchmark result is claimed.",
     "The semantic page audit is self-checked agent evidence; its findings are remediation items, not independent review or owner acceptance.",
-    "Reviewer is an independent agent reviewer, not a human expert or owner; human independent review and owner acceptance remain open."
+    "Reviewer is an independent agent reviewer, not a human expert or owner; owner acceptance remains open; human review is recorded.",
+    "Owner-confirmed human review passed on 2026-10-21; no per-page reviewer record or line-level notes were supplied."
   ],
   "source_commit_note": "The source_commit is the branch base before the audit changes; page and artifact hashes bind the reviewed content."
 }
