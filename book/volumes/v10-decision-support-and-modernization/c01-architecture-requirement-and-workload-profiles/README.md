@@ -41,7 +41,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -110,10 +110,9 @@ All booking numbers, diagrams, decision tables, tests, hypotheses and outcomes a
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.868027aee4884210bea1d8a6542fbfb0:10 -->
-## Navigation
+### Archived proposal-era navigation
 
-- Planned owner: **V10/C01** in [book outline](../../../PROPOSED-STRUCTURE.md); current section [System Design decision support](../../../decisions/README.md).
-- Prerequisite: [Quality drivers](../../v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md); [Queueing](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md).
-- Next concepts: [Legacy evolution](../../../application/architecture-evolution-and-extraction.md); [Cross-domain ADR decisions](../c07-cross-domain-worked-comparisons-and-unresolved-cases/cross-domain-modernization-and-adr-examples.md); [Safe rollout](../../../delivery/safe-rollout-and-recovery.md).
-- Supporting non-book tooling: [Requirements/workload template](../../../../authoring/models/requirements-workload-profile.md), [Candidate ADR format](../../../../authoring/models/candidate-comparison-adr.md).
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

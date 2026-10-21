@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -100,9 +100,9 @@ The example reading-list system, arithmetic, diagrams, proposed experiments and 
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e:8 -->
-## Navigation
+### Archived proposal-era navigation
 
-- Proposed V07/C03; current [performance topic landing](../../../performance/README.md).
-- Prerequisite: [Workload and capacity experiment method](../../../performance/workload-profiles-and-capacity-experiments.md).
-- Related: [Queueing and Little's Law](../c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md), [tail latency](../c04-tail-latency-fan-out-and-time-budgets/tail-latency-fanout-and-deadline-budgets.md), [autoscaling feedback](../c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md), and [pattern selection](../../v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-applicability-and-contraindications.md).
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

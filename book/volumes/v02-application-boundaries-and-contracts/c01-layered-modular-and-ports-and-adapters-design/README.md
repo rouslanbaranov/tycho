@@ -39,7 +39,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -99,12 +99,15 @@ The following original citation rows, review limits and earlier topical routes a
 | [Fowler/Lewis, *Microservices* (2014)](https://www.martinfowler.com/articles/microservices.html) | Distinction between one deployable and independently deployed collaborators | That a port should become its own service |
 | [Existing Tycho application-style research](../../../application/architecture-styles-and-module-boundaries.md) | Earlier bounded treatment of module/deployment axes | An independently reviewed or compiler-enforced boundary |
 
-The synthetic project, figure, tables and acceptance protocols are original. No executable module architecture, real workload, interface fixture or claim-by-claim human audit was performed. Final volume/chapter/page IDs and frontmatter remain pending.
+The synthetic project, figure, tables and acceptance protocols are original. No executable module
+architecture, real workload, interface fixture or claim-by-claim human audit was performed. Volume,
+chapter and page IDs and frontmatter are canonical in V02.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.77b512c4e2e946bd92d70b4a714600c8:9 -->
-## Navigation
+### Archived proposal-era navigation
 
-Proposed **V02/C01** in the [10-volume outline](../../../PROPOSED-STRUCTURE.md). See [application landing](../../../application/README.md), then [domain/data ownership](../c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md), [modular monoliths](../c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md), [SOA/microservice boundaries](../c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md), [safe extraction](../../../application/architecture-evolution-and-extraction.md).
-
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

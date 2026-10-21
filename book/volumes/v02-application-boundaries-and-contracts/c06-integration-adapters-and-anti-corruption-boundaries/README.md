@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -95,13 +95,16 @@ The following original citation rows, review limits and earlier topical routes a
 | [Microsoft Strangler Fig pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig) | Controlled coexistence during incremental replacement | Validated cutover of fictional data |
 | [Tycho legacy baseline](../../v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md) | General evidence-first modernization methodology | Executed migration or accepted target architecture |
 
-All system names, mappings, state-machine decisions, examples and figures are invented for teaching. No proprietary DDD book was reproduced. No integration, failure injection, independent reviewer or real-system validation has been performed. The exact final edition chapter/page hierarchy remains pending.
+All system names, mappings, state-machine decisions, examples and figures are invented for teaching.
+No proprietary DDD book was reproduced. No integration, failure injection, independent reviewer or
+real-system validation has been performed. The chapter/page hierarchy is recorded in the current
+edition.
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.31c8e450f78c451d90cb6090df330c5a:9 -->
-## Navigation
+### Archived proposal-era navigation
 
-- Proposed **V02/C06**, current [application landing](../../../application/README.md).
-- Prerequisites: [Domain boundaries/data ownership](../c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md), [API contract evolution](../c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md).
-- Related: [Outbox/retries](../../../distributed/transactional-outbox-and-idempotency.md), [safe rollout](../../../delivery/safe-rollout-and-recovery.md), [legacy assessment](../../v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md).
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

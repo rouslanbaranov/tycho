@@ -39,7 +39,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -109,8 +109,9 @@ The example, diagrams, client versions, recovery gates and migration states are 
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.cf0ce38c73e44950aec5a9c2869bee63:9 -->
-## Navigation
+### Archived proposal-era navigation
 
-Proposed **V10/C05**, currently [decision support landing](../../../decisions/README.md). Prerequisites: [legacy baseline](../c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md), [API compatibility](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md), [data ownership](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md). Next: [architecture alternatives/ADR](../c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md), [safe rollout](../../../delivery/safe-rollout-and-recovery.md), and [question-driven decision routes](../c06-search-and-question-routes-for-architecture-agents/question-routes-for-architecture-analysis.md).
-
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->

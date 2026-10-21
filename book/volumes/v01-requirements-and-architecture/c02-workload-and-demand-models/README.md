@@ -38,7 +38,7 @@ content_review:
   reviewer: "Codex editorial assembly"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-21"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -102,9 +102,9 @@ The user populations, arrival rates, averages, resource budgets, diagrams and wo
 
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.fdb4ef7f69154f8c8c433591f71494f9:9 -->
-## Navigation
+### Archived proposal-era navigation
 
-- Proposed owner **V01/C02** in [book outline](../../../PROPOSED-STRUCTURE.md); current [performance topic](../../../performance/README.md).
-- First read: [System framing](../c01-problem-framing/problem-framing-and-system-boundaries.md).
-- Expand: [Queueing](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md), [benchmark validity](../../v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md), [capacity experiments](../../../performance/workload-profiles-and-capacity-experiments.md), [architecture requirements](../../v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/requirements-and-workload-architecture-profiles.md).
+This retained proposal-era route is historical. Current navigation is the
+"Navigation and prerequisites" table above; the original outline links are not
+repeated.
 <!-- /tycho-question-source -->
