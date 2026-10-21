@@ -6,6 +6,10 @@ The owner closed #214 after verifying its changes were merged. This research com
 
 The owner subsequently prioritized reading foundational books. Start with [book reading and exact continuation](BOOK-READING.md), then [book reading records](book-readings.json). No whole book has been completed. Earlier finite reference readings are retained in [the reference ledger](readings.json); they are not the current priority and do not replace book reading.
 
+Current SRE position: **preface and chapters 1–18 complete; next chapter 19**. Chapters 6–18 were read in this continuation, including all technical figures and image-based formulas. No source-to-book completeness claim follows from this reading milestone.
+
+The reading ledger links its [continuation records](sre-continuation-readings.json). Reading completion means the exact chapter, its examples, footnotes and embedded technical images; it does not include all publications linked from it. The [download fingerprints](reading-asset-fingerprints.json) identify the downloaded HTML/image representations for later revisiting, not an immutable publisher revision or proof of semantic reading.
+
 ## Inventory
 
 The read-only census found 247 registered entries, 406 canonical documents and 763 lexical URL occurrences representing 316 fragmentless URL candidates. Of 214 candidates without an exact register URL match, 17 are this project's issue links and 197 require source/alias classification. These are not 197 confirmed missing publications. Exact editions, redirects and collection descendants remain to reconcile.

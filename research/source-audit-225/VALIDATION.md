@@ -10,3 +10,7 @@ This is validation of research artifact integrity, not technical acceptance of t
 - No book, source register, canonical metadata, index, edition, release, historical report, workflow or runtime implementation was changed. The research directory is the entire proposed delta.
 
 The previous full book test run remains attached to main's frozen baseline; it was not rerun or relabeled as a new research result. No Mermaid diagrams or runtime code were changed. No integration experiment, peer review, whole-book completion, complete publication census reconciliation or complete material-claim audit is asserted.
+
+## Reading continuation
+
+Chapters 6–18 add 13 finite reading records, with 18 technical figures/formulas inspected. Retrieval line-label coverage was checked across the available representations; missing tail passages in chapters 7, 10, 12, 17 and 18 were separately opened and read. This coverage check detects extraction gaps, not comprehension. The combined chapter reading ledger and finite SRE manifest are checked for matching unique entries. The next unread numbered chapter is 19. Original tracked-file hashes, JSON parsing, lexical boundary and whitespace checks are repeated for this research delta before committing.
