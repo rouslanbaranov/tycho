@@ -62,6 +62,8 @@ This page belongs to [V02/C04 — SOA, microservices and distributed boundaries]
 Some service-oriented systems use large-grained capabilities and centrally governed contracts; others use narrower services with distributed ownership. Neither label tells you whether a product has acceptable latency, isolation or release economics.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:** [Self-Contained Service](../../v11-pattern-atlas/c01-application-boundaries/README.md#self-contained-service) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.acb452608a8b42898aae7482c27f5f04:2 -->
 ## 2. Independence is not proved by a separate container
 

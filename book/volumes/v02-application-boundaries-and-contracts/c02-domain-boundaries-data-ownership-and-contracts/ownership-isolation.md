@@ -52,6 +52,8 @@ A domain owner should decide the business effect, but must validate the caller's
 Object-level authorization needs server-side enforcement at the resource authority, not only at an API gateway. See [identity and isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md). Cross-context integration should minimize shared secrets and data, and should explicitly document which fields may be published.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:** [Database per Service](../../v11-pattern-atlas/c01-application-boundaries/README.md#database-per-service) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.4681b3ba9e234c46bdb4b5993634b0e3:7 -->
 ## 7. Selecting boundaries and proving they work
 

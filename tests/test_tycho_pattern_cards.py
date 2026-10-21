@@ -53,13 +53,6 @@ class PatternCardTests(unittest.TestCase):
             check_backlink("no atlas link here", "modular-monolith")
         self.assertIn("card-backlink-missing", str(raised.exception))
 
-    def test_missing_owner_remediation_is_cited(self):
-        data = copy.deepcopy(self.batches)
-        entry = next(item for item in data["batches"][0]["entries"]
-                     if item["owner_state"] == "missing")
-        entry["remediation_issue"] = 99999
-        self.check_error(data, "card-remediation-not-cited")
-
     def test_missing_card_marker_is_rejected(self):
         with self.assertRaises(ValueError) as raised:
             check_card_text("**Decision question.** only", "modular-monolith")

@@ -59,6 +59,9 @@ content_verified_at: null
 > **Tycho book manuscript — proposed V02/C04**, 2026-10-19. Source boundary: public OASIS SOA Reference Model v1.0 and Fowler/Lewis' 2014 microservices discussion. Examples and tests are original fictional material. No service topology was deployed, team structure observed or empirical architecture comparison performed. Prior [architecture-style research](../../../application/architecture-styles-and-module-boundaries.md) is preserved for editorial reconciliation.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:** [Microservices Architecture](../../v11-pattern-atlas/c01-application-boundaries/README.md#microservices-architecture) — decision conditions and contraindications.
+> [Service-Oriented Architecture](../../v11-pattern-atlas/c01-application-boundaries/README.md#service-oriented-architecture-soa) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.acb452608a8b42898aae7482c27f5f04:0 -->
 ## Purpose and mission
 

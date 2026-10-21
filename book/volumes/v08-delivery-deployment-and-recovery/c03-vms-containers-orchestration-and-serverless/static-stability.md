@@ -80,6 +80,9 @@ Text alternative: an ingress routes requests to workers already spread across th
 Assume three zones, each can demonstrably serve 60 *identical invented* units/s at the specified operation mix, with no shared downstream saturation. Normal demand is 100 units/s. Total nominal capacity is 180, but failure of one zone leaves 120: only 20 units/s of nominal headroom (relative to the demand of 100) and **not** a guarantee of satisfying p99 or correctness. A shared database limited to 80 units/s invalidates the premise; likewise if traffic cannot be steered, authentication unavailable or concurrency surges. For a real design, test loss of zone and control-plane concurrently, offered versus completed logical operations, queue, network ingress and downstream behavior.
 
 <!-- /tycho-question-source -->
+
+> **Pattern atlas:** [Sidecar](../../v11-pattern-atlas/c01-application-boundaries/README.md#sidecar) — decision conditions and contraindications.
+> [Ambassador](../../v11-pattern-atlas/c01-application-boundaries/README.md#ambassador) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.ea94649bfd8c4be183f9114618d7ccaa:3 -->
 ## Placement and topology constraints
 
