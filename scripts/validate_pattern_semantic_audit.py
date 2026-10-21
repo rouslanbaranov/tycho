@@ -75,7 +75,7 @@ def anchor_ok(anchor, text):
         return False
     slug = slug_heading(label)
     for heading in headings(text):
-        if label.lower() in heading.lower() or slug_heading(heading) == slug:
+        if heading.strip().lower() == label.lower() or slug_heading(heading) == slug:
             return True
     return False
 
@@ -88,7 +88,7 @@ def engine():
     return Draft202012Validator, FormatChecker
 
 
-def compute_summary(pages, gates):
+def compute_summary(pages, gates, review_events):
     tiers = {"technical": 0, "decision": 0, "navigation": 0, "atlas": 0}
     dispositions = {"sound": 0, "sound-with-findings": 0,
                     "needs-remediation": 0, "blocked": 0}
@@ -110,6 +110,7 @@ def compute_summary(pages, gates):
         "findings": severity,
         "pages_with_findings": with_findings,
         "independent_reviews": 0,
+        "agent_reviews": len(review_events),
         "owner_acceptance": "not-recorded",
         "open_gates": len(gates),
     }
@@ -166,16 +167,17 @@ def validate_data(data, root=ROOT):
             require(not failed_checks, "semantic-audit-sound-with-partial: " + path)
         if review["disposition"] == "sound-with-findings":
             require(findings, "semantic-audit-findings-missing: " + path)
-            require(not any(item["severity"] == "high" for item in findings),
-                    "semantic-audit-high-in-bounded: " + path)
+            require(all(item["severity"] == "low" for item in findings),
+                    "semantic-audit-medium-in-bounded: " + path)
         if review["disposition"] == "needs-remediation":
-            require(any(item["remediation"] for item in findings),
+            require(any(item["severity"] in ("medium", "high") for item in findings),
+                    "semantic-audit-remediation-severity: " + path)
+            require(any(item["severity"] in ("medium", "high") and item["remediation"]
+                        for item in findings),
                     "semantic-audit-remediation-missing: " + path)
         if review["disposition"] == "blocked":
             require(any(item["gate"] for item in findings),
                     "semantic-audit-gate-missing: " + path)
-        if failed_checks:
-            require(findings, "semantic-audit-partial-without-finding: " + path)
         for finding in findings:
             require(finding["remediation"] or finding["gate"],
                     "semantic-audit-finding-resolution-missing: " + path)
@@ -186,16 +188,23 @@ def validate_data(data, root=ROOT):
                         "semantic-audit-high-disposition: " + path)
 
     require(seen_paths == set(documents), "semantic-audit-coverage-mismatch")
-    summary = compute_summary(data["pages"], data["open_gates"])
+    summary = compute_summary(data["pages"], data["open_gates"], data["review_events"])
     require(summary == data["summary"], "semantic-audit-summary-mismatch")
     gate_ids = {gate["id"] for gate in data["open_gates"]}
     for gate in REQUIRED_GATES:
         require(gate in gate_ids, "semantic-audit-gate-missing: " + gate)
+    for event in data["review_events"]:
+        require(event["reviewer"].strip(), "semantic-audit-reviewer-empty")
+        require((root / event["report_path"]).is_file(),
+                "semantic-audit-review-report: " + event["report_path"])
+    require(data["summary"]["agent_reviews"] == len(data["review_events"]),
+            "semantic-audit-agent-review-count")
     require(data["summary"]["independent_reviews"] == 0,
             "semantic-audit-independent-review-claim")
     require(data["summary"]["owner_acceptance"] == "not-recorded",
             "semantic-audit-owner-acceptance-claim")
     require(data["status"] != "reviewed", "semantic-audit-reviewed-claim")
+    require(len(data["source_commit_note"]) >= 40, "semantic-audit-source-commit-note")
 
     head = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"],
                                    text=True).strip()

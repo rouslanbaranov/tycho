@@ -11,8 +11,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from validate_pattern_semantic_audit import (  # noqa: E402
-    ARTIFACT, PHASE4, REQUIRED_CHECKS, ROUTE, compute_summary, load,
-    tier_for, validate_data,
+    ARTIFACT, PHASE4, REQUIRED_CHECKS, ROUTE, compute_summary, headings as page_headings,
+    load, tier_for, validate_data,
 )
 
 
@@ -21,20 +21,7 @@ def sha(path):
 
 
 def headings(path):
-    found = []
-    fenced = False
-    fence = chr(96) * 3
-    for line in Path(path).read_text(encoding="utf-8").splitlines():
-        if line.strip().startswith(fence):
-            fenced = not fenced
-            continue
-        if fenced:
-            continue
-        if line.startswith("## ") or line.startswith("### "):
-            label = line.lstrip("#").strip()
-            if label:
-                found.append(label)
-    return found[:40]
+    return page_headings(Path(path).read_text(encoding="utf-8"))
 
 
 def page_records(root):
@@ -154,14 +141,14 @@ def build(root, reviews_dir, out):
         {
             "id": "independent-technical-review",
             "status": "open",
-            "description": "No named independent technical reviewer has examined the atlas cards or the audited pages.",
-            "action": "Assign a named reviewer and record the exact checked evidence before any sufficient promotion.",
+            "description": "No named independent human technical reviewer has examined the atlas cards or the audited pages.",
+            "action": "Assign a named human reviewer and record the exact checked evidence before any sufficient promotion.",
         },
         {
             "id": "independent-editorial-review",
             "status": "open",
-            "description": "No named independent editorial reviewer has examined the decision cards or the page findings.",
-            "action": "Assign a named editor, review the packet and record accepted or rejected findings.",
+            "description": "No named independent human editorial reviewer has examined the decision cards or the page findings.",
+            "action": "Assign a named human editor, review the packet and record accepted or rejected findings.",
         },
         {
             "id": "owner-acceptance",
@@ -199,6 +186,8 @@ def build(root, reviews_dir, out):
         "status": "semantic-audit-recorded",
         "audit_date": date.today().isoformat(),
         "source_commit": source_commit(root),
+        "source_commit_note": "The source_commit is the branch base before the audit changes. "
+                              "Each page SHA-256 binds the record to the reviewed content.",
         "scope": "One self-checked semantic disposition for each of the 419 canonical pages, "
                  "including technical, decision, navigation and atlas pages; not independent review.",
         "method": "Every page was read as a bounded page, its identity and links were checked, "
@@ -212,13 +201,29 @@ def build(root, reviews_dir, out):
             "navigation": "Check inventory claims, child links, status wording, limits and "
                           "page identity.",
             "atlas": "Check card completeness, exact owner links, nonclaims, links and page identity.",
+            "severity": {
+                "low": "Wording, staleness, navigation or duplicate text that does not change a mechanism or evidence claim.",
+                "medium": "Missing, contradictory, unsupported or duplicate content that could mislead a technical or editorial decision, or an unsupported claim of executed work or external judging.",
+                "high": "Fabricated independent human review or owner acceptance, or a central mechanism or safety claim contradicted with no bounded remediation.",
+            },
             "dispositions": {
                 "sound": "No finding and all required checks pass.",
-                "sound-with-findings": "Only bounded low or medium findings, each with a remediation or gate.",
-                "needs-remediation": "At least one finding has a concrete remediation.",
+                "sound-with-findings": "Only low findings, each with a remediation or gate.",
+                "needs-remediation": "At least one medium or high finding with a concrete remediation.",
                 "blocked": "At least one finding has an explicit unresolved gate.",
             },
         },
+        "review_events": [
+            {
+                "id": "review.agent-2026-10-21",
+                "reviewer": "Reviewer",
+                "kind": "independent-agent",
+                "reviewed_at": "2026-10-21",
+                "verdict": "pass-with-findings",
+                "report_path": "authoring/INDEPENDENT-AGENT-REVIEW_2026-10-21.md",
+                "scope": "Semantic audit, V11 atlas, delivery evidence and the needs-remediation pages; non-human review.",
+            },
+        ],
         "pages": pages,
         "open_gates": gates,
         "limits": [
@@ -229,7 +234,7 @@ def build(root, reviews_dir, out):
             "No page split, document ID change or ownership migration was performed.",
         ],
     }
-    data["summary"] = compute_summary(pages, gates)
+    data["summary"] = compute_summary(pages, gates, data["review_events"])
     validate_data(data, root)
     Path(out).write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n",
                          encoding="utf-8")

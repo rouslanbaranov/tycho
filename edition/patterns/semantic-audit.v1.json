@@ -3,6 +3,7 @@
   "status": "semantic-audit-recorded",
   "audit_date": "2026-10-21",
   "source_commit": "300c63b8515d2f48535957a6c76fba90d285bcc7",
+  "source_commit_note": "The source_commit is the branch base before the audit changes. Each page SHA-256 binds the record to the reviewed content.",
   "scope": "One self-checked semantic disposition for each of the 419 canonical pages, including technical, decision, navigation and atlas pages; not independent review.",
   "method": "Every page was read as a bounded page, its identity and links were checked, and findings were recorded against section headings. The review does not re-verify every sentence against external sources.",
   "review_rules": {
@@ -10,13 +11,29 @@
     "decision": "Check the decision question, decision content, evidence, limits, internal navigation and page identity.",
     "navigation": "Check inventory claims, child links, status wording, limits and page identity.",
     "atlas": "Check card completeness, exact owner links, nonclaims, links and page identity.",
+    "severity": {
+      "low": "Wording, staleness, navigation or duplicate text that does not change a mechanism or evidence claim.",
+      "medium": "Missing, contradictory, unsupported or duplicate content that could mislead a technical or editorial decision, or an unsupported claim of executed work or external judging.",
+      "high": "Fabricated independent human review or owner acceptance, or a central mechanism or safety claim contradicted with no bounded remediation."
+    },
     "dispositions": {
       "sound": "No finding and all required checks pass.",
-      "sound-with-findings": "Only bounded low or medium findings, each with a remediation or gate.",
-      "needs-remediation": "At least one finding has a concrete remediation.",
+      "sound-with-findings": "Only low findings, each with a remediation or gate.",
+      "needs-remediation": "At least one medium or high finding with a concrete remediation.",
       "blocked": "At least one finding has an explicit unresolved gate."
     }
   },
+  "review_events": [
+    {
+      "id": "review.agent-2026-10-21",
+      "reviewer": "Reviewer",
+      "kind": "independent-agent",
+      "reviewed_at": "2026-10-21",
+      "verdict": "pass-with-findings",
+      "report_path": "authoring/INDEPENDENT-AGENT-REVIEW_2026-10-21.md",
+      "scope": "Semantic audit, V11 atlas, delivery evidence and the needs-remediation pages; non-human review."
+    }
+  ],
   "pages": [
     {
       "document_id": "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0",
@@ -745,9 +762,9 @@
           {
             "severity": "medium",
             "kind": "duplicate",
-            "summary": "Three consecutive sections design the same executor comparison, repeating the pinned JDK and caller mix, CPU per completed request, p99, downstream in-flight limit and context-propagation checks under different headings.",
+            "summary": "The measurement protocol and workload-matrix sections repeat the pinned JDK, caller mix, CPU per completed request, p99, downstream in-flight limit and context-propagation checks, although the sections serve distinct protocol, rejection, matrix and transition purposes.",
             "anchor": "How to design an actual controlled comparison",
-            "remediation": "Merge the synthetic method, comparison table and workload matrix into one test protocol with one set of falsification criteria.",
+            "remediation": "Deduplicate the repeated measurement terms and keep the four sections distinct: measurement protocol, rejection criteria, workload matrix and transition/rollback.",
             "gate": null
           }
         ],
@@ -1234,7 +1251,7 @@
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
         "method": "bounded-page-read",
-        "disposition": "sound-with-findings",
+        "disposition": "needs-remediation",
         "checks": {
           "identity": "pass",
           "inventory": "partial",
@@ -1313,7 +1330,7 @@
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
         "method": "bounded-page-read",
-        "disposition": "sound-with-findings",
+        "disposition": "needs-remediation",
         "checks": {
           "identity": "pass",
           "question": "pass",
@@ -1629,7 +1646,7 @@
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
         "method": "bounded-page-read",
-        "disposition": "sound-with-findings",
+        "disposition": "needs-remediation",
         "checks": {
           "identity": "pass",
           "inventory": "partial",
@@ -1787,7 +1804,7 @@
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
         "method": "bounded-page-read",
-        "disposition": "sound-with-findings",
+        "disposition": "needs-remediation",
         "checks": {
           "identity": "pass",
           "inventory": "partial",
@@ -2378,7 +2395,7 @@
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
         "method": "bounded-page-read",
-        "disposition": "sound-with-findings",
+        "disposition": "needs-remediation",
         "checks": {
           "identity": "pass",
           "inventory": "pass",
@@ -2482,7 +2499,7 @@
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
         "method": "bounded-page-read",
-        "disposition": "sound-with-findings",
+        "disposition": "needs-remediation",
         "checks": {
           "identity": "pass",
           "inventory": "pass",
@@ -2835,7 +2852,7 @@
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
         "method": "bounded-page-read",
-        "disposition": "sound-with-findings",
+        "disposition": "needs-remediation",
         "checks": {
           "identity": "pass",
           "question": "pass",
@@ -3950,7 +3967,7 @@
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
         "method": "bounded-page-read",
-        "disposition": "needs-remediation",
+        "disposition": "sound-with-findings",
         "checks": {
           "identity": "pass",
           "question": "pass",
@@ -4030,7 +4047,7 @@
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
         "method": "bounded-page-read",
-        "disposition": "needs-remediation",
+        "disposition": "sound-with-findings",
         "checks": {
           "identity": "pass",
           "question": "pass",
@@ -4992,9 +5009,9 @@
           {
             "severity": "medium",
             "kind": "duplicate",
-            "summary": "This enrichment section repeats the periodic-launch, durable-timer and poison-work coverage owned by V04/C05's periodic-work page, even reusing a catalogue example, without linking to that owner.",
+            "summary": "This section repeats periodic-launch and durable-timer material from V04/C05 periodic-work, even reusing a catalogue example, without linking to that owner; the claim that V04/C05 owns the poison-work material is not supported by that page.",
             "anchor": "Scheduled runs, durable timers and poison-work recovery",
-            "remediation": "Move the generic scheduling material to the V04/C05 owner, or cross-link it and narrow this section to messaging-specific timer and poison-message behavior.",
+            "remediation": "Deduplicate the launch and timer material or cross-link the V04/C05 owner, and assign poison-work content to an actual owner rather than claiming V04/C05 owns it.",
             "gate": null
           }
         ],
@@ -7620,7 +7637,7 @@
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
         "method": "bounded-page-read",
-        "disposition": "sound-with-findings",
+        "disposition": "needs-remediation",
         "checks": {
           "identity": "pass",
           "inventory": "pass",
@@ -7927,7 +7944,7 @@
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
         "method": "bounded-page-read",
-        "disposition": "sound-with-findings",
+        "disposition": "needs-remediation",
         "checks": {
           "identity": "pass",
           "inventory": "pass",
@@ -11155,7 +11172,7 @@
       "kind": "volume",
       "tier": "atlas",
       "phase4_disposition": "atlas-decision",
-      "sha256": "57ac46ba6014adcc4ea10945af1a68a9b28f3a92f85447195b2e744f5cb9762d",
+      "sha256": "9d9f40535e448b1ee0e69ba84c09fd64f3e54ae09b9b17282c803deabab3b25a",
       "review": {
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
@@ -11169,7 +11186,7 @@
           "links": "pass"
         },
         "findings": [],
-        "notes": "Re-read after the stable-heading wording correction; identity, cards, owner links, nonclaims and links pass."
+        "notes": "Re-read after the Phase 6/recorded-audit and human/agent review corrections."
       }
     },
     {
@@ -11178,7 +11195,7 @@
       "kind": "chapter",
       "tier": "atlas",
       "phase4_disposition": "atlas-decision",
-      "sha256": "1e342a05cbecea96712af5d42ac1fe65701defdf17ef1304ed371dbe01616f80",
+      "sha256": "6fc5a757053d2ffc01cc4ea55b924c4f19846a98d480389fba7fa14bd31c90ce",
       "review": {
         "reviewed_at": "2026-10-21",
         "reviewer_role": "automated-authoring-agent",
@@ -11192,7 +11209,7 @@
           "links": "pass"
         },
         "findings": [],
-        "notes": "Re-read after the bounded card correction; all required checks pass."
+        "notes": "Re-read after narrowing the Self-Contained Service owner note to the anchored hidden-state and orchestration/BFF text."
       }
     },
     {
@@ -11215,7 +11232,7 @@
           "links": "pass"
         },
         "findings": [],
-        "notes": "Re-read after the bounded card correction; all required checks pass."
+        "notes": "Re-read after removing the does-not-own-aggregation contradiction and aligning the owner note with the Gateway Aggregation section."
       }
     },
     {
@@ -11238,7 +11255,7 @@
           "links": "pass"
         },
         "findings": [],
-        "notes": "Re-read after the bounded card correction; all required checks pass."
+        "notes": "Re-read after replacing the self-referential Routing Slip related entry with Idempotent Receiver."
       }
     },
     {
@@ -11362,7 +11379,7 @@
           "links": "pass"
         },
         "findings": [],
-        "notes": "Re-read after the bounded card correction; all required checks pass."
+        "notes": "Re-read after replacing the self-referential Causal Ordering related entry with Read Replicas."
       }
     },
     {
@@ -11439,14 +11456,14 @@
     {
       "id": "independent-technical-review",
       "status": "open",
-      "description": "No named independent technical reviewer has examined the atlas cards or the audited pages.",
-      "action": "Assign a named reviewer and record the exact checked evidence before any sufficient promotion."
+      "description": "No named independent human technical reviewer has examined the atlas cards or the audited pages.",
+      "action": "Assign a named human reviewer and record the exact checked evidence before any sufficient promotion."
     },
     {
       "id": "independent-editorial-review",
       "status": "open",
-      "description": "No named independent editorial reviewer has examined the decision cards or the page findings.",
-      "action": "Assign a named editor, review the packet and record accepted or rejected findings."
+      "description": "No named independent human editorial reviewer has examined the decision cards or the page findings.",
+      "action": "Assign a named human editor, review the packet and record accepted or rejected findings."
     },
     {
       "id": "owner-acceptance",
@@ -11496,8 +11513,8 @@
     },
     "by_disposition": {
       "sound": 278,
-      "sound-with-findings": 100,
-      "needs-remediation": 40,
+      "sound-with-findings": 93,
+      "needs-remediation": 47,
       "blocked": 1
     },
     "findings": {
@@ -11508,6 +11525,7 @@
     },
     "pages_with_findings": 141,
     "independent_reviews": 0,
+    "agent_reviews": 1,
     "owner_acceptance": "not-recorded",
     "open_gates": 7
   }

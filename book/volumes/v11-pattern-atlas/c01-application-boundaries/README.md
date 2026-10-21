@@ -404,7 +404,7 @@ benefit.
 
 **Failure and recovery.** Stale local data, hidden coupling and complex invalidation are
 common. Recovery requires reconciliation and clear ownership; the bounded owner section
-states the remote-boundary cost and local-transaction alternative.
+describes hidden shared state and orchestration/BFF alternatives.
 
 **Technical owner.** [Independent deployment and its costs](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md#self-contained-service) — The section owns remote-boundary costs and local-transaction alternatives.
 

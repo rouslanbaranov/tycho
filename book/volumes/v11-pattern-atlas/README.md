@@ -32,7 +32,7 @@ route_hints:
     - "tycho.chapter.b20625a099bc4c82b7d547c32c7da28a"
     - "tycho.book.37c50125355948f1b52ec66229ef59bd"
   excludes:
-    - "No independent review, sufficient coverage or owner acceptance is asserted."
+    - "No independent human review, sufficient coverage or owner acceptance is asserted."
   keywords:
     - "pattern atlas"
     - "system design"
@@ -56,7 +56,7 @@ content_verified_at: null
 ---
 # V11 — System Design pattern atlas
 
-**Status:** Phase 5 structural candidate, 2026-10-21. This volume is a navigation and
+**Status:** Phase 6 self-checked candidate, 2026-10-21. This volume is a navigation and
 decision layer. It does not replace technical owners and does not establish technical
 sufficiency.
 
@@ -151,11 +151,12 @@ technical owner. If no owner is confirmed, record the gap instead of inventing o
   have 14 keep, 13 deepen and 3 split decisions; the three splits are deferred with
   migration gates and no split was performed.
 - The 40 related labels outside the catalog are recorded as deliberate non-routes, and
-  the three catalog-index reads are marked intentionally unused. The semantic audit of
-  all 419 pages remains open in
-  [#288](https://github.com/rouslanbaranov/tycho/issues/288).
-- No independent technical or editorial review and no owner acceptance exist. No
-  release, deployment, hosted retrieval or CI result is claimed.
+  the three catalog-index reads are marked intentionally unused. The self-checked
+  semantic audit of all 419 pages is recorded in
+  [semantic-audit.v1.json](../../../edition/patterns/semantic-audit.v1.json).
+- No independent human technical or editorial review and no owner acceptance exist; an
+  independent agent review is recorded separately. No release, deployment, hosted
+  retrieval or CI result is claimed.
 - The registry, owner-unit evidence, delivery evidence and audit record are the
   machine-readable sources for these counts.
 

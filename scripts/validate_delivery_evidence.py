@@ -95,6 +95,7 @@ def validate_data(data, root=ROOT):
     require(dod.get("decision-sufficiency", {}).get("status") != "met",
             "delivery-decision-sufficiency-claim")
     require(data["status"] != "reviewed", "delivery-reviewed-claim")
+    require(len(data["source_commit_note"]) >= 40, "delivery-source-commit-note")
     head = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
     ancestor = subprocess.run(["git", "-C", str(root), "merge-base", "--is-ancestor",
                                data["source_commit"], head], capture_output=True).returncode == 0

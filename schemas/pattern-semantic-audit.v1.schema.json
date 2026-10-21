@@ -16,7 +16,9 @@
     "pages",
     "summary",
     "open_gates",
-    "limits"
+    "limits",
+    "source_commit_note",
+    "review_events"
   ],
   "properties": {
     "schema_version": {
@@ -51,7 +53,8 @@
         "decision",
         "navigation",
         "atlas",
-        "dispositions"
+        "dispositions",
+        "severity"
       ],
       "properties": {
         "technical": {
@@ -97,6 +100,29 @@
               "minLength": 20
             }
           }
+        },
+        "severity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "properties": {
+            "low": {
+              "type": "string",
+              "minLength": 20
+            },
+            "medium": {
+              "type": "string",
+              "minLength": 20
+            },
+            "high": {
+              "type": "string",
+              "minLength": 20
+            }
+          }
         }
       }
     },
@@ -124,6 +150,18 @@
       "items": {
         "type": "string",
         "minLength": 20
+      }
+    },
+    "source_commit_note": {
+      "type": "string",
+      "minLength": 40,
+      "maxLength": 400
+    },
+    "review_events": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/reviewEvent"
       }
     }
   },
@@ -430,7 +468,8 @@
         "pages_with_findings",
         "independent_reviews",
         "owner_acceptance",
-        "open_gates"
+        "open_gates",
+        "agent_reviews"
       ],
       "properties": {
         "pages": {
@@ -500,7 +539,8 @@
           "minimum": 0
         },
         "independent_reviews": {
-          "const": 0
+          "const": 0,
+          "description": "Named human independent reviews; agent reviews are counted in agent_reviews."
         },
         "owner_acceptance": {
           "const": "not-recorded"
@@ -508,6 +548,59 @@
         "open_gates": {
           "type": "integer",
           "minimum": 3
+        },
+        "agent_reviews": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Completed independent agent reviews, recorded in review_events; not human review."
+        }
+      }
+    },
+    "reviewEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "reviewer",
+        "kind",
+        "reviewed_at",
+        "verdict",
+        "report_path",
+        "scope"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^review\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "reviewer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "independent-agent"
+          ]
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "verdict": {
+          "enum": [
+            "pass",
+            "pass-with-findings",
+            "fail"
+          ]
+        },
+        "report_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 400
         }
       }
     }
