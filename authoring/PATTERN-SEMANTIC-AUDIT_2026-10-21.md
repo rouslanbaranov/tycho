@@ -74,6 +74,15 @@ technical owner exists. Five gates remain open: owner acceptance, the blocked Po
 entry and three deferred page-split decisions. Human review is recorded by owner
 confirmation; no per-page reviewer record was supplied.
 
+## Low-severity deferral
+
+The 100 remaining low-severity findings are explicitly deferred to
+[#292](https://github.com/rouslanbaranov/tycho/issues/292). They remain listed in the
+artifact with a gate because they are editorial polish — stale status or navigation
+wording, missing supporting routes and weak source labels — rather than unresolved
+technical or decision claims. No page is promoted to sufficient and no owner acceptance
+is implied.
+
 ## Independent agent review
 
 The owner assigned the independent review agent **Reviewer** on 2026-10-21. It reviewed

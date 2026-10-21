@@ -274,8 +274,9 @@ sound-with-findings, 0 needs-remediation and 1 blocked. Its 101 findings are
 100 low and 1 medium; no high-severity finding was recorded under the recorded
 rubric. Reviewer, an independent review agent, returned ACCEPT-WITH-FINDINGS and
 its findings were addressed. Owner-confirmed human review passed on 2026-10-21
-without a per-page reviewer record. Five gates remain open: owner acceptance, the
-blocked Polyglot entry and three deferred page splits.
+without a per-page reviewer record. The 100 low findings are explicitly deferred to
+#292. Five gates remain open: owner acceptance, the blocked Polyglot entry and three
+deferred page splits.
 
 Each record carries the page SHA-256, a required-check set for its tier, exact
 finding anchors and a remediation or gate. The validator recomputes coverage,

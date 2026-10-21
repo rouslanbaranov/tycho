@@ -20,7 +20,8 @@ labels are recorded as non-routes, three catalog-index reads are intentionally
 unused, and three split decisions are deferred. The independent review agent
 **Reviewer** returned ACCEPT-WITH-FINDINGS; its 17 findings and 7 re-review
 residuals were addressed. Owner-confirmed human review passed on 2026-10-21; no
-per-page reviewer record was supplied. Owner acceptance remains open. See
+per-page reviewer record was supplied. The 100 remaining low findings are explicitly
+deferred to #292. Owner acceptance remains open. See
 [the semantic audit](PATTERN-SEMANTIC-AUDIT_2026-10-21.md),
 [the agent review](INDEPENDENT-AGENT-REVIEW_2026-10-21.md) and
 [the human review](HUMAN-REVIEW_2026-10-21.md).
