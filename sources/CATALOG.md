@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-21. Entries: 258.
+Inventory date: 2026-10-21. Entries: 261.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -76,6 +76,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.cloudevents / supporting | [CloudEvents Specification](https://github.com/cloudevents/spec) — CNCF CloudEvents | Event-envelope interoperability and bindings. | admitted-for-research / public-web-or-author-download |
 | src.grpc / supporting | [gRPC Core Concepts](https://grpc.io/docs/what-is-grpc/core-concepts/) — gRPC authors | RPC lifecycle, deadlines and streaming contracts. | admitted-for-research / public-web-or-author-download |
 | src.ietf-idempotency-key / core | [The Idempotency-Key HTTP Header Field](https://www.ietf.org/archive/id/draft-ietf-httpapi-idempotency-key-header-07.txt) — IETF (Internet-Draft) | Primary draft for idempotency-key scope, retry correlation and duplicate-request semantics. | admitted-for-research / public-web-or-author-download |
+| src.rfc5861 / core | [HTTP Cache-Control Extensions for Stale Content](https://www.rfc-editor.org/rfc/rfc5861.txt) — IETF | Primary specification for stale-while-revalidate and stale-if-error. | admitted-for-research / public-web-or-author-download |
 
 ## Java
 
@@ -263,6 +264,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.aws-caching-strategies / core | [Caching patterns](https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html) — Amazon Web Services | Planned primary page for cache-aside, write-through and related caching patterns. | admitted-for-research / public-web-or-author-download |
 | src.redis-cache-aside / supporting | [Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/) — Redis | Planned implementation page for cache-aside mechanics and invalidation. | admitted-for-research / public-web-or-author-download |
 | src.microsoft-caching-guidance / core | [Caching guidance](https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching) — Microsoft Learn | Primary public guidance for cache consistency, expiration, concurrency and caching patterns. | admitted-for-research / public-web-or-author-download |
+| src.google-cdn-negative-caching / supporting | [Use negative caching](https://docs.cloud.google.com/cdn/docs/using-negative-caching?hl=en) — Google Cloud | Primary public page for per-status negative-caching policy and TTLs. | admitted-for-research / public-web-or-author-download |
+| src.gh-ost / supporting | [gh-ost — online schema migration](https://github.com/github/gh-ost) — GitHub | Public implementation reference for triggerless online schema migration and controlled cut-over. | admitted-for-research / public-web-or-author-download |
 
 ## Implementations
 
