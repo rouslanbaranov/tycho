@@ -3,7 +3,7 @@
 **Status:** implementation input for issue #227. P1 (overload, retries, caching and
 recovery) is implemented and validated in PR #229; P2 (load balancing, consensus
 placement, periodic work, launch demand and operational clarification) is implemented
-and validated in the current #227 delivery branch. This document is not book prose,
+and validated in PR #230. This document is not book prose,
 an acceptance record, an independent review, or a completed comparison of the whole
 SRE book.
 
@@ -51,8 +51,7 @@ describe the same substantive change under two directions; implement each once i
 - **P2 — implemented and validated:** resource/error/subsetting load-balancing
   guidance, quorum placement, a new periodic-work/leases/exactly-once page, launch
   demand and client behavior, recurring manual-work costs, and the collaboration
-  project's ambiguous periodic reconciliation. The P2 changes are in the current
-  #227 delivery branch.
+  project's ambiguous periodic reconciliation. Delivered in PR #230.
 
 ## 1. Load balancing
 
