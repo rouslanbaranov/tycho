@@ -93,6 +93,17 @@ pipeline may be simpler when steps are few, no long timers are needed, or the te
 operate an engine. Reverse when coordination and versioning cost exceed the workflow
 benefit.
 
+**Outbox mechanism.** Commit the authoritative state change and a publication-intent row
+in one local transaction. A relay reads unpublished rows, publishes them and records a
+checkpoint; consumers deduplicate by event identity. The outbox gives durable intent, not
+atomicity with the broker or exactly-once delivery.
+
+**Failure and recovery.** A relay can crash after publish but before checkpoint, causing a
+duplicate; after commit but before publish, causing a retry; a poison row can block
+progress. Bound attempts and age, retain repair evidence and make publication idempotent.
+Snapshot/log-based CDC, transactional messaging, or direct publish with reconciliation may
+be preferable when the outbox table or relay is not operationally justified.
+
 The exact retry/operation identity contract is owned by [V04/C04](../c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md); this chapter owns multi-boundary state coordination.
 
 <!-- /tycho-question-source -->

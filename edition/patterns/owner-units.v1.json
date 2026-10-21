@@ -2565,7 +2565,7 @@
         "heading": "Process Manager / Routing Slip",
         "anchor": "process-manager-routing-slip",
         "level": 3,
-        "line": 159,
+        "line": 170,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Process Manager / Routing Slip"
@@ -2742,7 +2742,7 @@
         "heading": "Distinguish source log from integration event",
         "anchor": "distinguish-source-log-from-integration-event",
         "level": 3,
-        "line": 163,
+        "line": 175,
         "unit_kind": "embedded",
         "unit_terms": [
           "domain event log",
@@ -2931,9 +2931,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A durable coordinator may help with long waits, retries and auditability, but its actual guarantees depend on versioned workflow state persistence, activity semantics, timer reliability and recovery configuration.",
-          "reason": "Describes what a durable coordinator offers and what its guarantees depend on, but not how commands and steps are coordinated."
+          "state": "supported",
+          "quote": "A coordinator persists the workflow state machine and issues commands to participants, waiting for replies and timers.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
@@ -2941,9 +2941,9 @@
           "reason": ""
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "**Orchestration risks:** central coordinator as an added operational dependency; poor command/event boundaries; storing critical progress only in a volatile scheduler; failed compensation hidden behind an automatically “completed” state.",
-          "reason": "Lists orchestration failure modes but not how they are detected, contained or recovered."
+          "state": "supported",
+          "quote": "Coordinator loss, stuck histories, duplicate activities and incompatible workflow upgrades are common.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
           "state": "supported",
@@ -2966,7 +2966,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section 5 explains guarantee dependencies, risks and the single-transaction alternative; step coordination itself is not detailed."
     },
@@ -3049,24 +3049,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "**Transactional outbox:** how can the local state change and a durable intent to publish one event be committed atomically?",
-          "reason": ""
+          "state": "supported",
+          "quote": "Commit the authoritative state change and a publication-intent row in one local transaction.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The page states the atomicity question but not the guarantee that one commit includes both state and publication intent."
+          "state": "supported",
+          "quote": "The outbox gives durable intent, not atomicity with the broker or exactly-once delivery.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No relay, duplicate-publication or recovery path is described on this page."
+          "state": "supported",
+          "quote": "A relay can crash after publish but before checkpoint, causing a duplicate; after commit but before publish, causing a retry; a poison row can block progress.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "Other patterns are named as ownership boundaries, not as a competing alternative with a reversal condition."
+          "state": "supported",
+          "quote": "Snapshot/log-based CDC, transactional messaging, or direct publish with reconciliation may be preferable when the outbox table or relay is not operationally justified.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -3084,7 +3084,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -3167,14 +3167,14 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Bind retries to a stable logical intent, payload and retention policy with an authoritative recorded outcome.",
-          "reason": ""
+          "state": "supported",
+          "quote": "The key binds one logical intent, caller/payload scope and retention window to an authoritative outcome record.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "After an acknowledgment is lost, a new identity can duplicate a committed effect; an expired key cannot guarantee historical deduplication.",
-          "reason": "States the duplicate-effect risk but not the retention window or caller-scope invariant of the key."
+          "state": "supported",
+          "quote": "The key does not make a different payload safe: a reused key with changed intent is a conflict, not idempotency.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "failure_recovery": {
           "state": "supported",
@@ -3182,9 +3182,9 @@
           "reason": ""
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The page does not compare idempotency keys with a competing mechanism and reversal condition."
+          "state": "supported",
+          "quote": "A naturally idempotent operation, a conditional/unique constraint, or a single-writer serialization may be preferable when the effect can be expressed without a key store.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -3202,7 +3202,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -3292,19 +3292,19 @@
           "reason": "Describes the event-fed read store and its freshness limit, which is the materialized-view mechanism."
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Some user journeys tolerate short projection lag; others require \"read your writes\" or an immediate authoritative confirmation.",
-          "reason": "States varying freshness requirements but not a must-hold guarantee."
+          "state": "supported",
+          "quote": "A materialized view must record its source version or offset, refresh trigger and freshness contract.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "wait for a projection to reach a specified version within a bounded timeout (with explicit failure)",
-          "reason": "Only bounded waiting for a stale view; projector crash/rebuild is section 4, outside the unit."
+          "state": "supported",
+          "quote": "Projector crash, cursor gaps, schema drift and partial rebuilds are common.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing mechanism or reversal condition in the unit."
+          "state": "supported",
+          "quote": "Direct authority reads, cache-aside or a synchronous read may be preferable when the required freshness exceeds the projection benefit.",
+          "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
       "decision_evidence": {
@@ -3322,7 +3322,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded in the CQRS section: a derived read store is described, but the term 'materialized view' is only in the atlas backlink."
     },
@@ -3336,7 +3336,7 @@
         "heading": "Command-Side Replica",
         "anchor": "command-side-replica",
         "level": 3,
-        "line": 221,
+        "line": 233,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Command-Side Replica"
@@ -8574,7 +8574,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 3,
-      "bounded_entries": 5,
+      "bounded_entries": 6,
       "decision": "keep",
       "rationale": "Six related patterns sit on one coherent CQRS and projection page, with four distinct units including a dedicated command-side replica note; no split is justified."
     },
@@ -8693,7 +8693,7 @@
       ],
       "unit_count": 1,
       "dedicated_units": 0,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Distributed workflow now has bounded evidence; the outbox still needs its own bounded unit rather than a shared question bullet."
     },
@@ -8710,7 +8710,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 2,
-      "bounded_entries": 4,
+      "bounded_entries": 5,
       "decision": "deepen",
       "rationale": "Saga, choreography, orchestration and compensation now have bounded evidence; the process-manager note remains separate."
     },
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 116,
-    "invariant_supported": 129,
-    "failure_recovery_supported": 101,
-    "alternative_supported": 92,
-    "technical_partial_bounded": 113,
-    "technical_partial": 32,
+    "mechanism_supported": 119,
+    "invariant_supported": 132,
+    "failure_recovery_supported": 104,
+    "alternative_supported": 95,
+    "technical_partial_bounded": 117,
+    "technical_partial": 28,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

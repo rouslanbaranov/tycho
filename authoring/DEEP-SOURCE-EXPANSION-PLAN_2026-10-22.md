@@ -106,6 +106,7 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
 
 - Domain Events, Saga Choreography and Compensating Transaction: owner sections and
   cards expanded; each is `partial-bounded` with all four evidence dimensions supported.
-- Remaining: Saga Orchestration, Transactional Outbox, Idempotency Key, Materialized
-  View, plus alternative/failure evidence for CQRS, Event Sourcing, Saga, Transactional
-  Inbox and CDC.
+- Saga Orchestration, Transactional Outbox, Idempotency Key and Materialized View are
+  also `partial-bounded`.
+- Remaining data-consistency gaps: alternative/failure evidence for CQRS, Event Sourcing,
+  Saga, Transactional Inbox and CDC.

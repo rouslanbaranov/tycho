@@ -143,6 +143,18 @@ Some user journeys tolerate short projection lag; others require "read your writ
 
 Measure actual **projection age**, offset gap, end-to-end good-event SLI and failure amplification. Avoid claiming a numeric freshness threshold without an approved requirement and representative tests.
 
+**Materialized-view invariant.** A materialized view must record its source version or
+offset, refresh trigger and freshness contract. A stale view is a derived read, not
+authority; a query that requires current state must use an authority path.
+
+**Failure and recovery.** Projector crash, cursor gaps, schema drift and partial rebuilds
+are common. Resume from a recorded cursor, rebuild with external side effects disabled, and
+represent an unknown or lagging view explicitly rather than serving it as current.
+
+**Alternative.** Direct authority reads, cache-aside or a synchronous read may be preferable
+when the required freshness exceeds the projection benefit. Reverse the view choice when
+rebuild and freshness coordination cost more than the read-latency gain.
+
 ## 4. Replay, duplication, ordering and external side effects
 
 If a projector crashes after applying an event but before recording its cursor, it may consume the **same event again**. The read-side update must be idempotent or use an atomic record of event/stream version with the state change. In an event-sourced business application, replaying old authoritative events must **not** resend real money, email or notifications unless that is an explicitly isolated new business workflow. Fowler's *External Updates* discussion highlights this hazard. [E03]

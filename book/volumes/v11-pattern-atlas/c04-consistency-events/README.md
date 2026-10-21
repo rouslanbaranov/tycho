@@ -246,7 +246,8 @@ sourcing; kind transaction-pattern; priority advanced.
 **Decision question.** Should a central coordinator drive saga steps and compensations?
 
 **Good-fit conditions.** The workflow is complex; central visibility and recovery are
-required; the orchestrator can own state and timeouts.
+required; the orchestrator can own durable history, timers, idempotent activities and
+versioned workflow code.
 
 **Hard contraindications.** Reject when the orchestrator becomes a hidden monolith, when
 participants must remain autonomous, or when no team can own workflow state.
@@ -254,8 +255,9 @@ participants must remain autonomous, or when no team can own workflow state.
 **Competing alternative.** Choreography or one local transaction. Reverse the choice when
 central coordination becomes a bottleneck or single point of failure.
 
-**Failure and recovery.** Stuck workflows and coordinator outages are common; verify
-workflow recovery in the owner section.
+**Failure and recovery.** Coordinator loss, stuck histories, duplicate activities and
+incompatible upgrades are common; replay from durable history and hold unknown external
+effects for repair.
 
 **Technical owner.** [Durable workflow selection is conditional](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#5-durable-workflow-selection-is-conditional) — workflow selection is bounded, not a dedicated Temporal or orchestration manual.
 
@@ -310,7 +312,8 @@ sourcing; kind data-pattern; priority core.
 as the state change?
 
 **Good-fit conditions.** The database supports a local transaction; a relay can publish
-later; duplicate publication is handled; relay ownership is explicit.
+later within a bounded age; duplicate publication is deduplicated; relay ownership and
+retention are explicit.
 
 **Hard contraindications.** Reject when the state store cannot share a transaction with an
 outbox, when publication latency is unacceptable, or when no relay is operated.
@@ -318,8 +321,9 @@ outbox, when publication latency is unacceptable, or when no relay is operated.
 **Competing alternative.** Publish directly after commit with reconciliation. Reverse the
 choice when lost/duplicate publication risk exceeds relay complexity.
 
-**Failure and recovery.** Relay lag and duplicate publication are common; verify outbox
-coordination in the owner section.
+**Failure and recovery.** A crash after publish/before checkpoint duplicates; a crash after
+commit/before publish retries; a poison row can block progress. Bound attempts/age and keep
+repair evidence.
 
 **Technical owner.** [Outbox, inbox, sagas and durable workflow coordination](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#purpose-and-decision-question) — outbox coordination is bounded, not a connector manual.
 
@@ -375,8 +379,8 @@ kind api-pattern; priority core.
 **Decision question.** Should a client-supplied key let the server recognize retries of
 one logical request?
 
-**Good-fit conditions.** Retries are expected; key scope and expiry are defined; the
-server stores the key with the effect; concurrent requests are handled.
+**Good-fit conditions.** Retries are expected; key scope, payload fingerprint and retention
+window are defined; the server records the outcome atomically with the effect.
 
 **Hard contraindications.** Reject when operations are naturally idempotent, when keys can
 collide across tenants, or when retention cannot cover the retry window.
@@ -384,8 +388,9 @@ collide across tenants, or when retention cannot cover the retry window.
 **Competing alternative.** Natural idempotency or server-generated operation identity.
 Reverse the choice when key storage and fingerprinting cost exceed retry risk.
 
-**Failure and recovery.** Key reuse and expiry cause duplicate or rejected effects; verify
-fingerprint/expiry in the owner section.
+**Failure and recovery.** Expiry ends historical deduplication; a reused key with changed
+intent is a conflict, not idempotency. Reject mismatched fingerprints and keep the record
+for the retry window.
 
 **Technical owner.** [Retries, idempotency and ambiguous side effects](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md#integrated-decision-and-reading-route) — retry/idempotency is bounded, not a complete HTTP idempotency guide.
 
@@ -441,8 +446,8 @@ kind data-pattern; priority core.
 **Decision question.** Should a query result be stored and refreshed explicitly rather
 than recomputed per request?
 
-**Good-fit conditions.** The query is expensive or cross-store; freshness requirements are
-explicit; refresh ownership and locking are defined.
+**Good-fit conditions.** The query is expensive or cross-store; source version/offset and
+freshness contract are explicit; refresh ownership and locking are defined.
 
 **Hard contraindications.** Reject when strong freshness is required on every read, when
 refresh blocks critical traffic, or when invalidation has no owner.
@@ -450,8 +455,8 @@ refresh blocks critical traffic, or when invalidation has no owner.
 **Competing alternative.** Query on demand or a cache with TTL. Reverse the choice when
 refresh cost and staleness exceed query cost.
 
-**Failure and recovery.** Stale data and refresh contention are common; verify refresh
-semantics in the owner section.
+**Failure and recovery.** Projector crash, cursor gaps, schema drift and partial rebuilds
+are common; resume from a recorded cursor and rebuild with side effects disabled.
 
 **Technical owner.** [CQRS and asynchronous projection freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — projection freshness is bounded, not a PostgreSQL materialized-view manual.
 

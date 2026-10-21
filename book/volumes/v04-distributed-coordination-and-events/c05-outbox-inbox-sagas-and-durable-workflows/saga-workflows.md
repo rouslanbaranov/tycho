@@ -109,6 +109,17 @@ One service and one database transaction are often simpler than a saga. Move to 
 
 **Orchestration risks:** central coordinator as an added operational dependency; poor command/event boundaries; storing critical progress only in a volatile scheduler; failed compensation hidden behind an automatically “completed” state.
 
+**Orchestration mechanism.** A coordinator persists the workflow state machine and issues
+commands to participants, waiting for replies and timers. Its guarantees depend on durable
+history, idempotent activities, versioned workflow code and reliable timer/retry handling.
+A central coordinator is another operational dependency, but it gives one place to inspect
+progress, compensation and unknown outcomes.
+
+**Failure and recovery.** Coordinator loss, stuck histories, duplicate activities and
+incompatible workflow upgrades are common. Recover from the durable history, keep
+activities idempotent and hold or repair an ambiguous external effect rather than marking
+the workflow complete.
+
 Neither is universally superior. Measure the number of participating owners, duration, idempotency requirements, recoverability, operations burden and business acceptance conditions.
 
 
