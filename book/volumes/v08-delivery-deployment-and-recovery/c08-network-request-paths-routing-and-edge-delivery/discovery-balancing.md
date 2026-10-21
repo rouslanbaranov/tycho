@@ -100,6 +100,18 @@ In a typical DNS path, a recursive resolver may answer from a cached record or c
 
 Service discovery may publish addresses plus eligibility metadata to a proxy or client. Document who observes updates and how stale membership is detected. Distinguish the discovery control path from data-plane requests that can continue against a last-known usable set. If membership is stale, continued reachability still cannot establish write authority.
 
+**Client-side discovery.** The caller obtains the membership view from a registry/control
+plane, caches it and selects a backend. It owns client-side load balancing, health/ejection,
+retry budget and stale-membership handling. Registry unavailability, stale cache and uneven
+client logic are common; a last-known set may serve reads but cannot grant write authority.
+
+**Server-side discovery.** A proxy, gateway or platform keeps the membership view and selects
+a backend for a stable virtual name. The client carries no discovery logic, but the proxy
+becomes a shared dependency and must expose routing/health behavior. It may be preferable
+for thin or heterogeneous clients; client-side discovery may be preferable when callers need
+direct routing or cannot share a proxy. Static DNS, a service mesh or direct endpoint
+configuration may be simpler when membership changes are rare.
+
 For an original cutover decision, publish the replacement endpoint, establish its readiness and trust, and account for old route/connection lifetimes before retiring the former endpoint. A DNS change alone is neither a drain procedure nor a database failover protocol. The exact resolver/runtime's cache and failure behavior remains a product-specific verification task.
 
 ## Original worked design: one connection is not one unit of work

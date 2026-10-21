@@ -92,9 +92,9 @@ policy that the gateway cannot safely express.
 backend exposure with client-side policy. Reverse the choice when gateway complexity
 and outage blast radius exceed the shared edge benefit.
 
-**Failure and recovery.** Gateway outage, stale routes and confused authentication are
-common. Recovery requires a bypass or degraded edge path, bounded retries and health
-checks; verify the trust boundary in the owner section.
+**Failure and recovery.** Gateway bypass, configuration drift, stale routes, confused
+authentication and an outage blocking every backend are common. Keep backend authorization,
+test the bypass path and version gateway policy.
 
 **Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#original-fictional-boundary-contract) — edge identity and gateway boundary; not a full API management specification.
 
@@ -388,9 +388,8 @@ backend health; when selection policy must be centrally governed.
 Reverse the choice when client complexity and inconsistent policies exceed the
 resolution benefit.
 
-**Failure and recovery.** Stale caches, divergent policies and retry storms are common.
-Recovery requires a shared contract and bounded backoff; verify the routing contract in
-the owner section.
+**Failure and recovery.** Registry outage, stale caches, divergent client policies and
+retry storms are common. Keep a last-known set for reads, detect staleness and bound retries.
 
 **Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#dns-and-discovery-have-different-update-boundaries) — discovery and selection; client-specific policy is not a dedicated section.
 
@@ -425,9 +424,8 @@ policy the proxy cannot express; when the extra hop violates a hard latency budg
 choice when proxy blast radius and operational cost exceed the client simplification
 benefit.
 
-**Failure and recovery.** Proxy outage, stale membership and retry amplification are
-common. Recovery requires health checks and a degraded path; verify the routing
-contract in the owner section.
+**Failure and recovery.** Proxy outage, stale membership, retry amplification and a shared
+proxy bottleneck are common. Health-check backends, expose a degraded path and bound retries.
 
 **Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#dns-and-discovery-have-different-update-boundaries) — discovery and selection; server-side specifics are not a dedicated section.
 

@@ -100,6 +100,12 @@ A private image catalogue uses a public edge and an internal service. Its contra
 | Edge to gateway | Deliberate peer authentication and allowed ingress | Trust a caller-supplied identity header |
 | Gateway to application | Integrity-protected principal/context or independently validated token | Treat network location as object permission |
 | Application to data | Resource-level decision with tenant and action | Use a storage key as proof of authorization |
+
+**API-gateway failure and alternative.** Gateway bypass, configuration drift, a stale route
+and an outage that blocks every backend are common. Keep backend authorization, test the
+network path that excludes the gateway and version gateway policy. A BFF, a service-mesh
+sidecar or direct backend exposure with an explicit identity contract may be preferable when
+the gateway adds a shared bottleneck without a required central policy.
 | Administrative policy path | Separate authority and controlled changes | Let ordinary request data alter trusted routes |
 
 A gateway can centralize routing, quotas and common policy. Keep resource authorization at the boundary owning the resource, with documented delegation if a central decision service is used. Removing every backend check creates a privileged bypass path unless network and identity contracts actually exclude it.

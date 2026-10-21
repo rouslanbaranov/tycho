@@ -116,5 +116,7 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
 
 - Gateway Routing, Gateway Offloading and Reverse Proxy: owner sections and cards
   expanded; each is `partial-bounded` with all four evidence dimensions supported.
-- Remaining: Client-Side Discovery, Server-Side Discovery, plus alternative/failure
-  evidence for API Gateway and Service Discovery.
+- Client-Side Discovery, Server-Side Discovery, API Gateway and Service Discovery now
+  have all four evidence dimensions supported.
+- **API communication family complete:** all 12 entries are `partial-bounded` with no
+  evidence gaps. Next: deployment-and-legacy-modernization.

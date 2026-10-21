@@ -754,14 +754,14 @@
           "reason": "Requires domain authorization to remain at the resource-owning boundary."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Removing every backend check creates a privileged bypass path unless network and identity contracts actually exclude it.",
-          "reason": "Names the bypass failure and a containment condition but no detection or recovery step."
+          "state": "supported",
+          "quote": "Gateway bypass, configuration drift, a stale route and an outage that blocks every backend are common.",
+          "reason": "Names failure and recovery."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing gateway mechanism is named in this section."
+          "state": "supported",
+          "quote": "A BFF, a service-mesh sidecar or direct backend exposure with an explicit identity contract may be preferable when the gateway adds a shared bottleneck without a required central policy.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -853,7 +853,7 @@
         "heading": "Gateway Aggregation",
         "anchor": "gateway-aggregation",
         "level": 3,
-        "line": 133,
+        "line": 139,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Gateway Aggregation"
@@ -1173,9 +1173,9 @@
           "reason": "Requires stale-membership detection and separates the control path from last-known data-plane continuity."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "In a typical DNS path, a recursive resolver may answer from a cached record or consult the authoritative naming hierarchy.",
-          "reason": "Presents DNS resolution as a parallel mechanism but states no condition that reverses the choice."
+          "state": "supported",
+          "quote": "Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes are rare.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -1218,9 +1218,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Service discovery may publish addresses plus eligibility metadata to a proxy or client.",
-          "reason": "Names the client as a discovery consumer but does not explain client-side lookup, caching or selection ownership."
+          "state": "supported",
+          "quote": "The caller obtains the membership view from a registry/control plane, caches it and selects a backend.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
           "state": "supported",
@@ -1233,9 +1233,9 @@
           "reason": "Requires the client-side observer to detect stale membership and bound continued data-plane use."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "In a typical DNS path, a recursive resolver may answer from a cached record or consult the authoritative naming hierarchy.",
-          "reason": "Contrasts DNS with discovery but gives no condition for choosing client-side discovery over it."
+          "state": "supported",
+          "quote": "Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes are rare.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -1253,7 +1253,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "The section names the client as a discovery consumer; client-specific lookup, caching and selection are not explained."
     },
@@ -1278,9 +1278,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Service discovery may publish addresses plus eligibility metadata to a proxy or client.",
-          "reason": "Names a proxy as a discovery consumer but does not explain proxy-owned lookup or selection policy."
+          "state": "supported",
+          "quote": "A proxy, gateway or platform keeps the membership view and selects a backend for a stable virtual name.",
+          "reason": "Defines the mechanism."
         },
         "invariant": {
           "state": "supported",
@@ -1293,9 +1293,9 @@
           "reason": "Requires the proxy to detect stale membership and bound last-known data-plane use."
         },
         "alternative": {
-          "state": "partial",
-          "quote": "In a typical DNS path, a recursive resolver may answer from a cached record or consult the authoritative naming hierarchy.",
-          "reason": "Contrasts DNS with discovery but gives no condition for choosing proxy-side discovery over it."
+          "state": "supported",
+          "quote": "Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes are rare.",
+          "reason": "Names the alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -1313,7 +1313,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "The section names a proxy as a discovery consumer; proxy-owned lookup and selection policy are not explained."
     },
@@ -5789,7 +5789,7 @@
         "heading": "Failure and recovery",
         "anchor": "failure-and-recovery",
         "level": 2,
-        "line": 188,
+        "line": 200,
         "unit_kind": "embedded",
         "unit_terms": [
           "startup eligibility",
@@ -6445,7 +6445,7 @@
         "heading": "Original worked design: one connection is not one unit of work",
         "anchor": "original-worked-design-one-connection-is-not-one-unit-of-work",
         "level": 2,
-        "line": 105,
+        "line": 117,
         "unit_kind": "embedded",
         "unit_terms": [
           "one connection is not one unit of work",
@@ -8948,7 +8948,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 0,
-      "bounded_entries": 4,
+      "bounded_entries": 6,
       "decision": "split",
       "rationale": "Six patterns cover discovery, load balancing, gateway routing and health monitoring; these are different request-path mechanisms whose future split into a discovery page and a routing page is warranted."
     },
@@ -9037,12 +9037,12 @@
     "owner_units": 119,
     "dedicated_units": 64,
     "embedded_units": 55,
-    "mechanism_supported": 122,
+    "mechanism_supported": 124,
     "invariant_supported": 132,
-    "failure_recovery_supported": 109,
-    "alternative_supported": 103,
-    "technical_partial_bounded": 120,
-    "technical_partial": 25,
+    "failure_recovery_supported": 110,
+    "alternative_supported": 107,
+    "technical_partial_bounded": 122,
+    "technical_partial": 23,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
