@@ -21,7 +21,7 @@ import route_index
 import section_fts_index
 
 ROOT = Path(__file__).resolve().parents[1]
-RANKER_VERSION = "tycho-section-fts5-bm25-v2"
+RANKER_VERSION = "tycho-section-fts5-bm25-v3"
 CITATION_SCHEME = "tycho.section-key.v2"
 TOKEN = section_fts_index.TOKEN
 
@@ -54,9 +54,8 @@ def normalize_terms(query):
     return terms
 
 
-def match_expression(terms, mode):
-    joiner = " AND " if mode == "all-terms" else " OR "
-    return joiner.join('"' + term + '"' for term in terms)
+def match_expression(terms):
+    return " OR ".join('"' + term + '"' for term in terms)
 
 
 def open_snapshot(root, index_path=None):
@@ -131,10 +130,11 @@ def excerpt(content, terms, budget=240):
 
 
 def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
-           path_prefix=None, index_path=None):
+           path_prefix=None, index_path=None, all_sections=False):
     terms = normalize_terms(query)
     _require(isinstance(limit, int) and 1 <= limit <= 20,
              "limit must be an integer in 1..20")
+    _require(isinstance(all_sections, bool), "all_sections must be boolean")
     for name, value in (("kind", kind), ("topic", topic),
                         ("evidence_status", evidence_status)):
         _require(value is None or (isinstance(value, str) and value),
@@ -164,15 +164,27 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
         if filters:
             sql += " AND " + " AND ".join(filters)
         sql += " ORDER BY rank ASC, s.section_key ASC LIMIT ?"
-        mode = "all-terms"
-        rows = db.execute(sql, [match_expression(terms, mode)] + params + [limit + 1]).fetchall()
-        broadened = False
-        if not rows and len(terms) > 1:
-            mode = "any-terms"
-            broadened = True
-            rows = db.execute(sql, [match_expression(terms, mode)] + params + [limit + 1]).fetchall()
+        mode = "any-terms"
+        fetch = limit + 1 if all_sections else min(max(limit * 10, 50), 200)
+        rows = db.execute(
+            sql, [match_expression(terms)] + params + [fetch]).fetchall()
+        if all_sections:
+            selected = rows[:limit]
+            truncated = len(rows) > limit
+        else:
+            selected = []
+            seen = set()
+            for row in rows:
+                if row["document_id"] in seen:
+                    continue
+                seen.add(row["document_id"])
+                selected.append(row)
+                if len(selected) == limit + 1:
+                    break
+            truncated = len(selected) > limit
+            selected = selected[:limit]
         results = []
-        for row in rows[:limit]:
+        for row in selected:
             content = row["content"]
             folded = content.casefold()
             body = content
@@ -206,14 +218,15 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             "unannotated": len(manifest["unannotated_paths"]),
             "query": query,
             "match_mode": mode,
-            "broadened": broadened,
             "ranker_version": RANKER_VERSION,
             "citation_scheme": CITATION_SCHEME,
+            "result_scope": ("all-sections" if all_sections
+                             else "best-section-per-document"),
             "filters": {"kind": kind, "topic": topic,
                         "evidence_status": evidence_status,
                         "path_prefix": path_prefix},
             "returned": len(results),
-            "truncated": len(rows) > limit,
+            "truncated": truncated,
             "results": results,
         }
     finally:
@@ -286,6 +299,8 @@ def main(argv=None):
     ap.add_argument("--index", type=Path)
     ap.add_argument("--query")
     ap.add_argument("--limit", type=int, default=5)
+    ap.add_argument("--all-sections", action="store_true",
+                    help="Return every matching section instead of the best per page")
     ap.add_argument("--kind")
     ap.add_argument("--topic")
     ap.add_argument("--evidence-status")
@@ -299,7 +314,8 @@ def main(argv=None):
             payload = search(
                 args.root, args.query or "", limit=args.limit, kind=args.kind,
                 topic=args.topic, evidence_status=args.evidence_status,
-                path_prefix=args.path_prefix, index_path=args.index)
+                path_prefix=args.path_prefix, index_path=args.index,
+                all_sections=args.all_sections)
         else:
             payload = read(
                 args.root, args.id or "", offset=args.offset,

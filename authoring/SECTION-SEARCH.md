@@ -2,8 +2,8 @@
 
 > Issue [#50](https://github.com/rouslanbaranov/tycho/issues/50), M4. **Status 2026-10-22:**
 > local implementation over the #49 section snapshot; not merged, not independently
-> reviewed, not an MCP or production service. Search quality on the full corpus is not
-> evaluated here.
+> reviewed, not an MCP or production service. No held-out relevance evaluation exists;
+> the in-sample smoke below is a diagnostic.
 
 ## Scope and authority
 
@@ -23,7 +23,7 @@ It is lexical retrieval only: semantic/hybrid retrieval (#52–#55), evidence re
 
 Every search and read call:
 
-1. opens `generated/sections-fts-v2.sqlite` in read-only mode;
+1. opens `generated/sections-fts-v3.sqlite` in read-only mode;
 2. runs `PRAGMA quick_check`, validates the manifest and compares stored section and FTS
    row counts with the manifest;
 3. recomputes `route_index.canonical_scan` and compares its snapshot SHA with the
@@ -43,20 +43,25 @@ incompatible index raises `not-available`; unknown section IDs raise `not-found`
 ~~~sh
 python3 scripts/section_fts_index.py build
 python3 scripts/section_search.py search --query "idempotent consumer duplicate" --limit 5
+python3 scripts/section_search.py search --query "retry" --all-sections
 python3 scripts/section_search.py search --query "retry budget" --kind page
 python3 scripts/section_search.py search --query "rollback" --topic deployment
 python3 scripts/section_search.py search --query "retry" --path-prefix book/volumes/v04
 ~~~
 
 Inputs are tokenized to Unicode words and every token is quoted before it reaches FTS5, so
-query operators such as `OR`, `*` and `-` are treated as text, not syntax. Search first
-requires all terms in one section. If that returns nothing for a multi-term query, it
-retries any term and reports `match_mode: any-terms` with `broadened: true`. A broadened
-result is a recall fallback, not evidence that every term was relevant.
+query operators such as `OR`, `*` and `-` are treated as text, not syntax. A multi-term query
+is an any-term OR query: BM25 decides which section explains the most terms, and
+`match_mode` is always `any-terms`. This is recall-oriented; it does not prove that every
+term was relevant.
+
+By default the adapter returns the best section per document so the first page lists
+distinct candidate pages. `all_sections=true`, or `--all-sections` on the CLI, returns every
+matching section instead; `result_scope` reports which mode produced the page.
 
 Ranking uses FTS5 BM25 with field weights title 4, heading 3 and body 1. The reported
 `score` is the negated BM25 value, so a higher score means a better match. Ties break by
-`section_key`. The ranker version is `tycho-section-fts5-bm25-v2`; scores from other
+`section_key`. The ranker version is `tycho-section-fts5-bm25-v3`; scores from other
 rankers or snapshots are not comparable.
 
 Supported filters are `kind`, `topic`, `evidence_status` and `path_prefix`. A path prefix
@@ -120,11 +125,12 @@ complete by this document.
 | Observation | Value |
 |---|---|
 | Indexed documents and sections | 423 and 2,753 |
-| Index snapshot | `ebd7cae56659889b81d387b36d9337c0620710ef1a78fdc20cc567e6f8e91739` |
-| CLI search, warm local run | about 1.16 s end to end |
-| CLI read, warm local run | about 1.06 s end to end |
+| Index snapshot | `448b35fef9e7bcea60d59c775c6390e74f1271ffa4f89363dd834f716c86bbaf` |
+| CLI search, warm local run | about 1.11 s end to end |
+| CLI read, warm local run | about 1.12 s end to end |
 | Dominant cost | route-snapshot revalidation, not FTS5 matching |
-| Unit tests | 10 offline search/read tests |
+| Unit tests | 11 offline search/read tests |
+| Pilot navigation smoke | hit@1 5/25, hit@3 11/25, hit@5 17/25 (in-sample) |
 | Runtime | Python 3.9.6, SQLite 3.54.0 |
 
 The timings are single-machine observations including interpreter startup and metadata
@@ -133,10 +139,11 @@ validation. They are not a benchmark, a latency SLO or a capacity forecast.
 ## Verification boundary
 
 The tests use synthetic two-page snapshots and mocked route scans. They cover ranking,
-filters, broadening, validation, stale refusal, tampered row counts, bounded reads and
-offset continuation. They do not prove relevance on the 423-page corpus, answer quality,
-citation correctness, concurrency behavior or performance under load. No independent
-review, gold relevance set or CI result is claimed.
+any-term matching, per-document dedupe, filters, validation, stale refusal, tampered row
+counts, bounded reads and offset continuation. They do not prove relevance on the 423-page
+corpus, answer quality, citation correctness, concurrency behavior or performance under
+load. The 25-question smoke is in-sample against author-created labels, not a held-out
+benchmark or qrels set. No independent review, gold relevance set or CI result is claimed.
 
 Next gates: build a corpus-level qrels set and ranking baseline before claiming search
 quality; add evidence resolution (#51); then MCP envelopes (#57–#60).

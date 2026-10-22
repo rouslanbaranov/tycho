@@ -98,11 +98,22 @@ class SearchTests(unittest.TestCase):
 
     def test_limit_truncation_and_empty_result(self):
         self.build()
-        result = self.search("retry", limit=1)
+        result = self.search("overview", limit=1)
         self.assertEqual(result["returned"], 1)
         self.assertTrue(result["truncated"])
         self.assertEqual(self.search("nothingmatches")["status"], "no-results")
         self.assertEqual(self.search("nothingmatches")["returned"], 0)
+
+    def test_default_returns_best_section_per_document(self):
+        self.build()
+        deduped = self.search("retry")
+        self.assertEqual(deduped["returned"], 1)
+        self.assertEqual(deduped["result_scope"],
+                         "best-section-per-document")
+        self.assertFalse(deduped["truncated"])
+        sections = self.search("retry", all_sections=True)
+        self.assertEqual(sections["returned"], 2)
+        self.assertEqual(sections["result_scope"], "all-sections")
 
     def test_kind_topic_evidence_and_path_filters(self):
         self.build()
@@ -123,12 +134,12 @@ class SearchTests(unittest.TestCase):
             self.search("rollback", path_prefix="book/a")["status"],
             "no-results")
 
-    def test_broadened_fallback_is_explicit(self):
+    def test_multi_term_query_uses_any_term_ranking(self):
         self.build()
         result = self.search("zebra rollback")
         self.assertEqual(result["status"], "ok")
-        self.assertTrue(result["broadened"])
         self.assertEqual(result["match_mode"], "any-terms")
+        self.assertNotIn("broadened", result)
         paths = {item["path"] for item in result["results"]}
         self.assertEqual(paths, {"book/a.md", "book/b.md"})
 
