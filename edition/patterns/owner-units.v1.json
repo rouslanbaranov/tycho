@@ -209,31 +209,31 @@
         "line": 108,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "published capabilities",
-          "single authoritative owner",
-          "distributed monolith",
-          "modular monolith"
+          "governed service contracts",
+          "mediation layer",
+          "centralized bus",
+          "Microservices"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "SOA emphasizes published capabilities, explicit contracts and governed interaction across independent owners.",
+          "quote": "SOA publishes capabilities as governed service contracts and routes consumers through a mediation layer.",
           "reason": "Defines the mechanism."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Each capability needs a single authoritative owner for its data and invariant, and independent deployment must be real rather than a container label.",
+          "quote": "A service contract must declare its capability, message semantics, version and consumer obligations.",
           "reason": "States the invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Shared databases, synchronized releases and chatty remote calls can recreate a distributed monolith; retries, version skew and partial failure are common.",
+          "quote": "a centralized bus is a shared bottleneck and single point that must be sized and failed over.",
           "reason": "Names failure and recovery."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A modular monolith or layered application may be preferable when independent deployment and failure containment are not measured requirements.",
+          "quote": "Microservices, an API gateway or a modular monolith may be preferable when capabilities are few or the governance layer adds more operational surface than autonomy.",
           "reason": "Names the alternative and reversal."
         }
       },
@@ -4700,31 +4700,31 @@
         "line": 102,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "secondary index",
-          "Every index entry",
-          "Bloat",
-          "sequential scan"
+          "application-owned lookup table",
+          "current base row",
+          "Dual-write ambiguity",
+          "native secondary index"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A secondary index maps a search key to a row locator and is maintained on base-table writes; the planner chooses it when estimated selectivity and cost favor it.",
+          "quote": "An index table is an application-owned lookup table that maps a query key to a primary key or row locator.",
           "reason": "Defines the mechanism."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Every index entry must remain consistent with the base row, and its write/backup/maintenance cost belongs to the workload budget.",
+          "quote": "Every lookup row must resolve to the current base row",
           "reason": "States the invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Bloat, failed concurrent builds, stale statistics and write amplification are common; rebuild or repair explicitly and compare end-to-end cost.",
+          "quote": "Dual-write ambiguity, partial backfill, duplicate lookup keys and stale rows are common.",
           "reason": "Names failure and recovery."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A sequential scan, covering index, partition pruning or materialized view may be preferable when the index would cost more writes than it saves.",
+          "quote": "A native secondary index, a materialized view or a query-time join may be preferable when the primary store already serves the access path.",
           "reason": "Names the alternative and reversal."
         }
       },
@@ -5714,26 +5714,26 @@
         "line": 179,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Fairness and priority",
-          "Criticality must be authenticated",
-          "starve ordinary work",
+          "priority queue orders",
+          "does not preempt",
+          "starvation",
           "FIFO with admission"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "**Fairness and priority:** reserving some capacity for critical operations can preserve essential user journeys, but naive priority queues can starve ordinary work forever. Define which classes may overtake, maximum wait, starvation policy and tenant isolation.",
+          "quote": "A priority queue orders ready work by a declared class before it is dispatched",
           "reason": "Explains capacity reservation, class overtaking and the starvation risk a priority queue creates."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Criticality must be authenticated and propagated. A class visible only at the edge cannot protect a downstream dependency: the dependency sees an ordinary caller and may shed the high-criticality work first.",
+          "quote": "Criticality must be authenticated and propagated",
           "reason": "States that criticality must be authenticated and propagated to each downstream hop."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "but naive priority queues can starve ordinary work forever. Define which classes may overtake, maximum wait, starvation policy and tenant isolation.",
+          "quote": "A naive priority queue can starve ordinary work forever",
           "reason": "Names starvation and requires max-wait, starvation and isolation rules to contain it."
         },
         "alternative": {

@@ -178,18 +178,20 @@ Proposed tests: route one tenant across all replicas, change replica count, part
 
 ### Priority Queue
 
-**Fairness and priority:** reserving some capacity for critical operations can preserve essential user
-journeys, but naive priority queues can starve ordinary work forever. Define which classes may
-overtake, maximum wait, starvation policy and tenant isolation.
+A priority queue orders ready work by a declared class before it is dispatched; it changes the
+order of waiting work, not the execution of work already running. A high-priority message does not
+preempt an in-flight low-priority handler, so the handler's latency remains part of the critical
+path.
 
-Criticality must be authenticated and propagated. A class visible only at the edge cannot protect a
-downstream dependency: the dependency sees an ordinary caller and may shed the high-criticality work
-first. Encode the class in the authenticated request context, enforce the same policy at each queue
-and cap the share a priority class can consume.
+The broker must support the priority field and the queue must define its levels and per-level
+capacity. Criticality must be authenticated and propagated: a class visible only at the edge cannot
+protect a downstream dependency, which sees an ordinary caller. A naive priority queue can starve
+ordinary work forever, so define maximum wait, aging or reserved capacity and the action when a low
+class exceeds its wait bound.
 
-FIFO with admission control, separate lanes per class, or a shared queue with reserved capacity may be
-preferable when priority cannot be authenticated or starvation is unacceptable. A priority queue is a
-fit when classes are real, authenticated and bounded by max-wait.
+FIFO with admission control, separate lanes per class, or a shared queue with reserved capacity may
+be preferable when priority cannot be authenticated or starvation is unacceptable. A priority queue
+is a fit when classes are real, the broker supports priorities and a starvation bound is enforced.
 
 ## Navigation, prerequisites and source scope
 

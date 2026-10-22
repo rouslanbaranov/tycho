@@ -914,3 +914,28 @@ Verdict: **pass-with-findings**. Findings: 2.
 
 - Card alternative is single store with derived projections/query-time joins; owner names only single store with secondary indexes, so alternatives are not compared.
 - Card names dual-write ambiguity and partial migration; owner requires write owner/schema migration but does not describe those failure modes or recovery.
+
+## Re-review after remediation
+
+Three prior rejects were rewritten and re-reviewed. Verdicts are now pass-with-findings, not pass.
+
+### tycho.pattern.priority-queue
+
+Verdict: **pass-with-findings**. Findings: 2.
+
+- Card requires tenant isolation and per-hop class verification; note covers propagation but not tenant isolation.
+- Closing alternative is verbatim from section 3; authentication sentence is a near-verbatim paraphrase.
+
+### tycho.pattern.index-table
+
+Verdict: **pass-with-findings**. Findings: 2.
+
+- Fit condition says must be shared across stores, contradicting query-shape/sort-order cases; lines 108 and 113 exceed 100 chars.
+- Only cited source is PostgreSQL native indexes, not the application-owned lookup table; dual-write/stale-row claims lack cited public support.
+
+### tycho.pattern.service-oriented-architecture-soa
+
+Verdict: **pass-with-findings**. Findings: 1.
+
+- Alternative groups microservices, API gateway and modular monolith under capabilities are few and adds a component the card does not list; card maps microservices to independent product capabilities and modular monolith to one ownership boundary.
+

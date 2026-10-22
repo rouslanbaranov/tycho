@@ -107,18 +107,18 @@ independent release cadence and failure isolation justify the remote-call and da
 
 ### Service-Oriented Architecture (SOA)
 
-SOA emphasizes published capabilities, explicit contracts and governed interaction across
-independent owners. The governance model and contract lifecycle are the mechanism; a service bus or
-registry alone does not create ownership.
+SOA publishes capabilities as governed service contracts and routes consumers through a mediation
+layer. The service registry, contract version and consumer inventory are the control plane; a
+service bus is an implementation of mediation, not the source of ownership.
 
-Each capability needs a single authoritative owner for its data and invariant, and independent
-deployment must be real rather than a container label. Shared databases, synchronized releases and
-chatty remote calls can recreate a distributed monolith; retries, version skew and partial failure
-are common. A published contract needs a version, a consumer inventory and a deprecation path.
+A service contract must declare its capability, message semantics, version and consumer obligations.
+Mediation can translate, route and meter, but it must not become a hidden domain authority.
+Governance needs a contract owner, a deprecation window and an observability path for mediated
+calls; a centralized bus is a shared bottleneck and single point that must be sized and failed over.
 
-A modular monolith or layered application may be preferable when independent deployment and failure
-containment are not measured requirements. SOA is a fit when many owners must integrate through
-stable contracts and the governance cost buys real autonomy.
+Microservices, an API gateway or a modular monolith may be preferable when capabilities are few or
+the governance layer adds more operational surface than autonomy. SOA is a fit when many independent
+owners must integrate through stable contracts and mediation is a real, owned capability.
 
 ## Integrated decision and reading route
 

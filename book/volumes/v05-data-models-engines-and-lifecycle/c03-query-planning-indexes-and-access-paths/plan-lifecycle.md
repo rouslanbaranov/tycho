@@ -101,18 +101,18 @@ materialized view may be preferable when the index would cost more writes than i
 
 ### Index Table
 
-A secondary index maps a search key to a row locator and is maintained on base-table writes; the
-planner chooses it when estimated selectivity and cost favor it. The index is derived data with its
-own write and storage cost.
+An index table is an application-owned lookup table that maps a query key to a primary key or row
+locator. The application maintains it on the write path, separately from any native database index,
+because the query shape, sort order or cross-store join is not served by the primary store.
 
-Every index entry must remain consistent with the base row, and its write/backup/maintenance cost
-belongs to the workload budget. Bloat, failed concurrent builds, stale statistics and write
-amplification are common; rebuild or repair explicitly and compare end-to-end cost. An index that
-serves one query but slows every write can be a net loss.
+Every lookup row must resolve to the current base row; the mapping and the base write should commit in
+one local transaction, or the write path must publish a durable repair intent. Dual-write ambiguity,
+partial backfill, duplicate lookup keys and stale rows are common. Reconcile with a repair job, keep
+the lookup key immutable and bound rebuild time.
 
-A sequential scan, covering index, partition pruning or materialized view may be preferable when the
-index would cost more writes than it saves. An index table is a fit when the read path and
-selectivity justify the maintenance cost.
+A native secondary index, a materialized view or a query-time join may be preferable when the primary
+store already serves the access path. An index table is a fit when the lookup must be shared across
+stores and the write path can own its repair.
 
 ## Navigation, prerequisites and source scope
 
