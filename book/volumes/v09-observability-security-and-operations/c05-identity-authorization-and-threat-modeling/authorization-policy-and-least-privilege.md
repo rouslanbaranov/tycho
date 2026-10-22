@@ -97,6 +97,10 @@ incident; review grants on a schedule and prefer short-lived scoped credentials.
 are simpler to administer for small stable systems; narrow them once measured access reviews
 or incident impact justify the overhead.
 
+**Limits.** Permission reviews, role granularity and revocation propagation are ongoing costs;
+least privilege without an owner becomes stale entitlement. Emergency access needs a time-boxed,
+audited path with revocation tests and logging rather than a permanent broad role.
+
 ## RBAC / ABAC
 
 Role-based access control maps roles to permissions, while attribute-based control evaluates
@@ -108,6 +112,10 @@ Role explosion or stale attributes grants unintended access; test policy changes
 denied and allowed cases and record policy provenance. Explicit object access lists are
 transparent at small scale; move to roles or attributes when the number of objects and
 principals makes per-object grants unmaintainable.
+
+**Limits.** Policy/attribute freshness and decision logging are costs; an unexplainable deny or
+allow is a production incident, not a policy detail. Attribute sources need freshness SLAs; a
+stale attribute is an authorization failure, not a cache miss.
 
 ## Navigation
 

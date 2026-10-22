@@ -99,6 +99,10 @@ deliberately and test rejection of an unexpected audience. Local accounts avoid 
 duplicate identity lifecycle; federate when many services or partners need one governed identity
 source.
 
+**Limits.** Federation concentrates trust in the issuer and metadata; key rotation, audience
+restriction and issuer compromise are ongoing costs, not one-time setup. Metadata caching and
+issuer discovery need their own availability, rollback plan, audit evidence and an owner.
+
 ### Workload Identity / mTLS
 
 Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates
@@ -110,6 +114,10 @@ Expired or shared credentials break authentication or erase the distinction betw
 rotate, revoke and test an unauthorized peer. Network policy with shared secrets is easier when PKI
 operations are unavailable; choose workload identity when lateral movement and credential reuse are
 the dominant risk.
+
+**Limits.** PKI, certificate rotation and revocation are operational costs; a valid certificate
+authenticates the workload, not every operation it requests. Certificate issuance availability
+is part of the request path; a failed rotation is an outage.
 
 ## Navigation
 

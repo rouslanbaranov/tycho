@@ -536,8 +536,8 @@ because a shared dependency is down, or when one probe is used for every failure
 the choice when probe complexity causes false restarts.
 
 **Failure and recovery.** Shared-dependency failures can fail every probe and cause mass
-restart/ejection; cached health can keep routing to a draining instance. Bound probe
-frequency and drain before removal.
+restart/ejection; cached or missing health can keep routing to a draining instance. Define
+no-response behavior, keep probes on an independent path, and bound frequency/exposure.
 
 **Technical owner.** [Request routing and health signals](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#health-endpoint-monitoring) — readiness/health is bounded, not a full monitoring product.
 

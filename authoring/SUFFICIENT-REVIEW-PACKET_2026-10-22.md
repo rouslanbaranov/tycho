@@ -56,8 +56,8 @@ Do not edit the repository. Do not treat this packet as approval.
 
 9. **Health Endpoint Monitoring** — `tycho.pattern.health-endpoint-monitoring`
    - File: `routing-and-health.md`
-   - Heading: `Health endpoint monitoring`; 149 words
-   - SHA-256: `341d8ed566b3b6cd5d930e2a6fec6cef8af250fb69e1d43e555df017a0754911`
+   - Heading: `Health endpoint monitoring`; 236 words
+   - SHA-256: `421498d62ce164a2c617ccb9ef8724f38b2da01b97f986a68426d544fd69c451`
 
 10. **Leader Election** — `tycho.pattern.leader-election`
    - File: `leader-recovery.md`
@@ -184,3 +184,33 @@ the validators still require a separate policy change.
     - File: `gitops-canary-and-progressive-rollout.md`
     - Heading: `Dark Launching / Shadow Traffic`; 124 words
     - SHA-256: `52a62dbd6570cb269e4f98088f5581b8ee1982f03a9d1b797241d28ed949285a`
+
+34. **Federated Identity** — `tycho.pattern.federated-identity`
+    - File: `identity-authorization-and-isolation.md`
+    - Heading: `Federated Identity`; 121 words
+    - SHA-256: `8a7c087d993960c00c97ec2a9df4d4d1cfaff88ff0f69726f7b538e6a142b0d8`
+
+35. **Workload Identity / mTLS** — `tycho.pattern.workload-identity-mtls`
+    - File: `identity-authorization-and-isolation.md`
+    - Heading: `Workload Identity / mTLS`; 127 words
+    - SHA-256: `8a7c087d993960c00c97ec2a9df4d4d1cfaff88ff0f69726f7b538e6a142b0d8`
+
+36. **Least Privilege** — `tycho.pattern.least-privilege`
+    - File: `authorization-policy-and-least-privilege.md`
+    - Heading: `Least Privilege`; 121 words
+    - SHA-256: `751a5f1e0990a1ae9c9b1c9d0df42f3c6c6ece159fd59a5c60ca191886ae41a1`
+
+37. **RBAC / ABAC** — `tycho.pattern.rbac-abac`
+    - File: `authorization-policy-and-least-privilege.md`
+    - Heading: `RBAC / ABAC`; 122 words
+    - SHA-256: `751a5f1e0990a1ae9c9b1c9d0df42f3c6c6ece159fd59a5c60ca191886ae41a1`
+
+38. **Tenant-Based Resource Isolation** — `tycho.pattern.tenant-based-resource-isolation`
+    - File: `multitenant-isolation.md`
+    - Heading: `Tenant-Based Resource Isolation`; 121 words
+    - SHA-256: `5409f130f7bf8b35f046487848bb6089bce31ca2d3bd58b60fcca2431f989295`
+
+39. **Multitenant Isolation** — `tycho.pattern.multitenant-isolation`
+    - File: `multitenant-isolation.md`
+    - Heading: `Multitenant Isolation`; 120 words
+    - SHA-256: `5409f130f7bf8b35f046487848bb6089bce31ca2d3bd58b60fcca2431f989295`

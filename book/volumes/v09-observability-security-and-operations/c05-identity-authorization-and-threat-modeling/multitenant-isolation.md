@@ -79,6 +79,10 @@ scope keys by tenant and test indirect paths with a foreign identifier. A shared
 tenant-scoped predicates is cheaper at low scale; choose dedicated resources when
 noisy-neighbour or compliance risk dominates.
 
+**Limits.** Per-tenant quotas, noisy-neighbour isolation and cross-tenant test paths are costs;
+a shared pool needs explicit fairness and escape hatches. A dedicated pool is justified only
+when measured noisy-neighbour cost exceeds its operational cost.
+
 ## Multitenant Isolation
 
 Multitenant isolation keeps tenant data and effects separate inside a shared application by
@@ -90,6 +94,10 @@ A missing tenant predicate in a query, cache or background task exposes another 
 records; test indirect paths and enforce the predicate centrally. A tenant-per-deployment
 boundary removes shared-code risk at higher cost; share a deployment only when scoping is
 enforced consistently across every path.
+
+**Limits.** Central tenant predicates add coupling and migration cost; a missing predicate in one
+background path defeats the shared-deployment saving. Per-tenant encryption, backup and deletion are part of
+the isolation contract, not only query predicates.
 
 ## Navigation
 

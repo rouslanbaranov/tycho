@@ -57,7 +57,13 @@ Remediation applied after the review:
 - The Event Sourcing card now names the stale-version rejection, idempotent projectors and
   versioned handlers/rebuild plan.
 
-Not re-reviewed. Verdict remains **pass-with-findings**.
+## Event Sourcing re-review
+
+Second read-only review returned **pass** with no findings. It verified the conditional
+append, re-read/reject path, operation identity, card recovery actions, anchors and hashes.
+The current verdict is **pass**.
+
+Not re-reviewed again.
 ## Cache-Aside — pass-with-findings
 
 Reviewer verdict: **pass-with-findings**. Two findings:
@@ -106,3 +112,21 @@ Remediation: the section now distinguishes atomic and non-atomic fill, requires 
 intent in the same local transaction as the write, and states the no-TTL unbounded case.
 
 Not re-reviewed again. Verdict remains **pass-with-findings**.
+## Health Endpoint Monitoring — pass-with-findings
+
+Reviewer verdict: **pass-with-findings**. Two findings:
+
+1. No rule for absent/unknown probe data or probe-path independence; a monitoring outage
+could look like health.
+2. No statement of endpoint exposure, authorization or what the response discloses.
+
+Remediation: added fail-open/fail-closed per dependency, independent probe path and missing-
+data alerting; added caller authorization, disclosure and load-amplification limits. The card
+now names missing health and bounded exposure.
+
+Not re-reviewed. Verdict remains **pass-with-findings**.
+## Negative Caching re-review
+
+Second read-only review returned **pass** with no findings. It verified the Google CDN
+citation and ledger row, tenant/principal/operation keying, delete-or-version on change,
+tombstone distinction and the card recovery actions. The current verdict is **pass**.

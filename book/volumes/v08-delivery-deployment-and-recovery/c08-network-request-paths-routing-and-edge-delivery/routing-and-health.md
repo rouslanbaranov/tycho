@@ -109,6 +109,15 @@ drain before removal. Synthetic checks or SLO-based external monitoring may be p
 when the runtime probe cannot observe the user journey. Exact probe behavior belongs to the
 chosen runtime/version.
 
+**Unknown probe data and path independence.** No response is not evidence of health.
+Define fail-open or fail-closed per dependency and privilege, run probes on a path that does
+not depend on the ingress, DNS or control plane they observe, and alert when probe data is
+missing rather than treating silence as a pass.
+
+**Exposure and authorization.** State who may call each probe, what version or dependency
+topology its response discloses, and whether an unauthenticated dependency check amplifies
+load. Keep liveness/readiness cheap and internal; protect detailed diagnostics separately.
+
 ## Failure and recovery
 
 | Failure | Design consequence | Discriminating observation |
