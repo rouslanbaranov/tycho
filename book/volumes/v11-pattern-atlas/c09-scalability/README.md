@@ -36,6 +36,7 @@ evidence_scope:
     - "src.keda"
     - "src.microsoft-cloud-patterns"
     - "src.cortex-shuffle-sharding"
+    - "src.cell-boundaries"
     - "src.microsoft-multitenant"
   claim_ids: []
   status: "source-linked"
@@ -46,7 +47,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
+updated_at: "2026-10-22"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -224,10 +225,10 @@ boundaries in the owner section.
 **Technical owner.** [Cell-Based Architecture](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#cell-based-architecture) — cell placement is bounded, not a universal stamp deployment recipe.
 
 **Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-deployment-stamps.2026-10-21: sections "Deployment Stamps
-pattern", "Context and problem", "Solution". The source is a public pattern/documentation
-unit, not a benchmark.
+[src.cell-boundaries](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch7-cell-boundaries.2026-10-22: sections "What is a cell-based
+architecture?", "A typical workload", "A workload with cell-based architecture". The
+Deployment Stamps page remains a comparison only, not the cell source.
 
 **Decision state.** applicable-under-conditions.
 
