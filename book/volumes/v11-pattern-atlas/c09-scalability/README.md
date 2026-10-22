@@ -94,7 +94,7 @@ when balancing complexity and stale membership exceed availability benefit.
 **Failure and recovery.** Stale membership and fast-error attraction are common; verify
 selection in the owner section.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#original-worked-design-one-connection-is-not-one-unit-of-work) — load balancing is bounded, not a product-specific algorithm survey.
+**Technical owner.** [Load Balancing](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#load-balancing) — load balancing is bounded, not a product-specific algorithm survey.
 
 **Sources.**
 [src.sre-frontend-enrichment](../../../../edition/patterns/reading-ledger.v1.json)

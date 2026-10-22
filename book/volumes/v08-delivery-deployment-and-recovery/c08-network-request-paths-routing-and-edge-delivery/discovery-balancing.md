@@ -207,6 +207,66 @@ Sources: [Load Balancing at the Frontend](https://sre.google/sre-book/load-balan
 2026-10-21. Algorithm comparisons and the failure matrix are original design
 reasoning.
 
+## Bounded pattern ownership notes
+
+### Service Discovery
+
+Service discovery may publish addresses plus eligibility metadata to a proxy or client. The
+registry is a control-plane view; it does not prove that an address is currently writable or that a
+caller may commit an effect there.
+
+If membership is stale, continued reachability still cannot establish write authority. Document who
+observes updates and how stale membership is detected. Distinguish the discovery control path from
+data-plane requests that can continue against a last-known usable set. The freshness bound belongs
+to the caller's contract, not to the registry's update interval.
+
+Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
+are rare. Discovery is justified when membership changes faster than configuration can be
+republished and the consumer can act on eligibility metadata.
+
+### Client-Side Discovery
+
+The caller obtains the membership view from a registry/control plane, caches it and selects a
+backend. The client is now part of the routing authority, so its cache age and selection policy are
+production concerns. It also needs a refresh budget and a stale-cache alarm.
+
+If membership is stale, continued reachability still cannot establish write authority. Document who
+observes updates and how stale membership is detected. Distinguish the discovery control path from
+data-plane requests that can continue against a last-known usable set. A client that never refreshes
+its view can keep sending traffic to a removed instance.
+
+Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
+are rare. Client-side discovery trades a central proxy for per-client complexity and policy drift.
+
+### Server-Side Discovery
+
+A proxy, gateway or platform keeps the membership view and selects a backend for a stable virtual
+name. The client sees one name; the proxy owns the update, health and selection logic.
+
+If membership is stale, continued reachability still cannot establish write authority. Document who
+observes updates and how stale membership is detected. Distinguish the discovery control path from
+data-plane requests that can continue against a last-known usable set. The proxy itself becomes a
+failure domain and must not hide a stale view behind a green health check.
+
+Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
+are rare. Server-side discovery is a fit when clients should not carry routing policy and the proxy
+can be operated as a critical dependency.
+
+### Load Balancing
+
+A selector can count connections, active requests, completed work, errors or resource utilization.
+These signals answer different questions and fail in different ways.
+
+Cap request cost at the interface where one request can dominate a backend, and test the selector
+under the real cost distribution. A least-loaded or active-request selector assumes that a backend
+with spare capacity will do useful work. A seriously unhealthy backend can instead return an error in
+milliseconds, so its active-request count falls and the selector sends it more traffic. The backend
+becomes a sinkhole.
+
+Compare round-robin, random choice, least-active requests and affinity against request cost, stale
+load signals and state placement. Prefer a simple policy when the cost distribution is uniform;
+move to active signals only when the signal is fresh and its failure mode is understood.
+
 ## Navigation
 
 Parent: [network chapter](README.md). Next: [request routing and health](routing-and-health.md). Related: [failure domains](../c06-high-availability-and-failure-domain-placement/README.md), [overload admission](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md).

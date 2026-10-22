@@ -355,7 +355,7 @@ when discovery control-plane cost and stale-state risk exceed the change rate.
 are common. Recovery requires last-known-good policy and health checks; verify the
 routing contract in the owner section.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#dns-and-discovery-have-different-update-boundaries) — discovery and selection; not a full control-plane implementation.
+**Technical owner.** [Service Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#service-discovery) — discovery and selection; not a full control-plane implementation.
 
 **Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.envoy-service-discovery.2026-10-21: Service discovery, sections
@@ -391,7 +391,7 @@ resolution benefit.
 **Failure and recovery.** Registry outage, stale caches, divergent client policies and
 retry storms are common. Keep a last-known set for reads, detect staleness and bound retries.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#dns-and-discovery-have-different-update-boundaries) — discovery and selection; client-specific policy is not a dedicated section.
+**Technical owner.** [Client-Side Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#client-side-discovery) — discovery and selection; client-specific policy is not a dedicated section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -427,7 +427,7 @@ benefit.
 **Failure and recovery.** Proxy outage, stale membership, retry amplification and a shared
 proxy bottleneck are common. Health-check backends, expose a degraded path and bound retries.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#dns-and-discovery-have-different-update-boundaries) — discovery and selection; server-side specifics are not a dedicated section.
+**Technical owner.** [Server-Side Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#server-side-discovery) — discovery and selection; server-side specifics are not a dedicated section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)

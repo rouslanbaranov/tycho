@@ -449,3 +449,23 @@ the validators still require a separate policy change.
     - File: `overload-admission-control-and-graceful-degradation.md`
     - Heading: `Rate Limiting`; 120 words
     - SHA-256: `a80a884f7e2cc021ccd3acd1306a6ba369e97d59d7110b56afe7369d56976daf`
+
+87. **Service Discovery** — `tycho.pattern.service-discovery`
+    - File: `discovery-balancing.md`
+    - Heading: `Service Discovery`; 126 words
+    - SHA-256: `c3f98b92903fa89a593c849e5a93f9092d490a46ea3e52f0641043bcd72e269f`
+
+88. **Client-Side Discovery** — `tycho.pattern.client-side-discovery`
+    - File: `discovery-balancing.md`
+    - Heading: `Client-Side Discovery`; 126 words
+    - SHA-256: `c3f98b92903fa89a593c849e5a93f9092d490a46ea3e52f0641043bcd72e269f`
+
+89. **Server-Side Discovery** — `tycho.pattern.server-side-discovery`
+    - File: `discovery-balancing.md`
+    - Heading: `Server-Side Discovery`; 127 words
+    - SHA-256: `c3f98b92903fa89a593c849e5a93f9092d490a46ea3e52f0641043bcd72e269f`
+
+90. **Load Balancing** — `tycho.pattern.load-balancing`
+    - File: `discovery-balancing.md`
+    - Heading: `Load Balancing`; 132 words
+    - SHA-256: `c3f98b92903fa89a593c849e5a93f9092d490a46ea3e52f0641043bcd72e269f`

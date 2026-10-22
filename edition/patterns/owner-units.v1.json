@@ -1144,16 +1144,16 @@
       "owner": {
         "document_id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
         "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
-        "heading": "DNS and discovery have different update boundaries",
-        "anchor": "dns-and-discovery-have-different-update-boundaries",
-        "level": 2,
-        "line": 79,
-        "unit_kind": "embedded",
+        "heading": "Service Discovery",
+        "anchor": "service-discovery",
+        "level": 3,
+        "line": 212,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Service discovery may publish addresses",
+          "publish addresses",
           "stale membership",
-          "last-known usable set",
-          "update boundaries"
+          "control path",
+          "Static DNS"
         ]
       },
       "technical_evidence": {
@@ -1204,16 +1204,16 @@
       "owner": {
         "document_id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
         "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
-        "heading": "DNS and discovery have different update boundaries",
-        "anchor": "dns-and-discovery-have-different-update-boundaries",
-        "level": 2,
-        "line": 79,
-        "unit_kind": "embedded",
+        "heading": "Client-Side Discovery",
+        "anchor": "client-side-discovery",
+        "level": 3,
+        "line": 227,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "proxy or client",
-          "who observes updates",
+          "caller obtains",
+          "caches",
           "stale membership",
-          "last-known usable set"
+          "Client-side"
         ]
       },
       "technical_evidence": {
@@ -1264,16 +1264,16 @@
       "owner": {
         "document_id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
         "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
-        "heading": "DNS and discovery have different update boundaries",
-        "anchor": "dns-and-discovery-have-different-update-boundaries",
-        "level": 2,
-        "line": 79,
-        "unit_kind": "embedded",
+        "heading": "Server-Side Discovery",
+        "anchor": "server-side-discovery",
+        "level": 3,
+        "line": 241,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "proxy or client",
-          "discovery control path",
+          "proxy, gateway",
+          "stable virtual name",
           "stale membership",
-          "data-plane requests"
+          "Server-side"
         ]
       },
       "technical_evidence": {
@@ -6464,16 +6464,16 @@
       "owner": {
         "document_id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
         "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
-        "heading": "Original worked design: one connection is not one unit of work",
-        "anchor": "original-worked-design-one-connection-is-not-one-unit-of-work",
-        "level": 2,
-        "line": 99,
-        "unit_kind": "embedded",
+        "heading": "Load Balancing",
+        "anchor": "load-balancing",
+        "level": 3,
+        "line": 255,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "one connection is not one unit of work",
-          "Selection signals are not interchangeable",
-          "least-loaded or active-request selector",
-          "bounded subset"
+          "selector can count",
+          "request cost",
+          "sinkhole",
+          "Compare round-robin"
         ]
       },
       "technical_evidence": {
@@ -6493,7 +6493,7 @@
           "reason": "Describes fast-error attraction and the sinkhole failure it produces."
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Compare round-robin, random choice, least-active requests and affinity against request cost, stale load signals and state placement.",
           "reason": "Names competing selection policies but gives no condition that reverses the choice."
         }
@@ -8966,11 +8966,11 @@
         "tycho.pattern.server-side-discovery",
         "tycho.pattern.service-discovery"
       ],
-      "unit_count": 2,
-      "dedicated_units": 0,
+      "unit_count": 4,
+      "dedicated_units": 4,
       "bounded_entries": 4,
-      "decision": "keep",
-      "rationale": "Discovery, selection and load balancing remain on one page; gateway routing and health signals moved to the routing page."
+      "decision": "deepen",
+      "rationale": "Service discovery, client-side discovery, server-side discovery and load balancing now have four distinct dedicated units."
     },
     {
       "document_id": "tycho.page.3349b84b088ebcca496bb52fbdbbc565",
@@ -9092,13 +9092,13 @@
     "entries": 145,
     "owner_pages": 69,
     "shared_pages": 33,
-    "owner_units": 132,
-    "dedicated_units": 88,
-    "embedded_units": 44,
+    "owner_units": 134,
+    "dedicated_units": 92,
+    "embedded_units": 42,
     "mechanism_supported": 145,
     "invariant_supported": 145,
     "failure_recovery_supported": 128,
-    "alternative_supported": 127,
+    "alternative_supported": 128,
     "technical_partial_bounded": 145,
     "technical_partial": 0,
     "technical_name_only": 0,
@@ -9110,8 +9110,8 @@
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
-      "keep": 20,
-      "deepen": 13,
+      "keep": 19,
+      "deepen": 14,
       "split": 0
     },
     "split_deferred": 0
