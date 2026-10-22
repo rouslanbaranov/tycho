@@ -106,7 +106,12 @@ An idempotent receiver makes redelivery safe for one consumer's local effects. T
 describes recording processed message IDs under a consumer identity in the same database transaction
 as the business update, so redelivery cannot apply it twice under that local model.
 
-Atomic (consumer, event/effect ID) uniqueness with business update is the invariant. However,
+Atomic (consumer, event/effect ID) uniqueness with business update is the invariant. Derive the key
+from consumer identity, event identity and effect scope; validate that all three are present and
+well formed. A duplicate key with a different payload digest is a collision: reject or quarantine it
+rather than overwriting the marker. Retain the marker at least for the redelivery horizon, assign a
+cleanup owner, and after expiry reject or route the redelivery to reconciliation instead of applying
+it silently. However,
 marking an event processed **before** making a separate external effect can lose the effect if the
 process crashes; marking it processed **after** can duplicate that external effect. The consumer
 must reason about the external capability's own idempotency/reconciliation boundary.

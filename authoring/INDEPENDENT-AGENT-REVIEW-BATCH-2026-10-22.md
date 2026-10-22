@@ -1157,3 +1157,8 @@ Verdict: **pass**. Findings: 0. Quarantine retention/capacity/access/cleanup and
 
 Verdict: **pass**. Findings: 0. Stable effect key/dedup and stale-replay deadline are explicit and card-aligned.
 
+
+### Idempotent Receiver — latest re-review
+
+Verdict: **pass**. Findings: 0. Key derivation/validation/collision and marker lifetime/cleanup/post-expiry agree.
+
