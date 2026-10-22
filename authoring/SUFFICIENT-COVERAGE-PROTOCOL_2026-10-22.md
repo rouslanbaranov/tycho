@@ -3,8 +3,10 @@
 ## Status
 
 This is a protocol and candidate triage, not a sufficiency claim. All 145 pattern
-entries remain `partial-bounded`; 0 are `sufficient`. No independent per-page review
-is recorded for this protocol.
+entries remain `partial-bounded`; 0 are `sufficient`. All 145 have a non-human
+independent-agent section review record, but no human per-page review and no owner
+acceptance is recorded. Review findings remain unremediated unless a re-review record says
+otherwise.
 
 ## Contract criteria
 
@@ -36,16 +38,35 @@ Generated from `edition/patterns/sufficient-candidates.v1.json`:
 The 145 candidates are the only entries whose current owner unit is dedicated and at
 least 120 words. They still need a named independent review before any promotion.
 
+
+## Review status
+
+Non-human independent-agent reviews are recorded for all 145 candidates:
+
+| Verdict | Entries |
+|---|---:|
+| Pass | 11 |
+| Pass with findings | 126 |
+| Reject | 8 |
+| Unreviewed | 0 |
+
+Eight sections are rejected and require remediation before re-review:
+SOA, CDC, Materialized View, Priority Queue, Index Table, Cell-Based Architecture,
+Shuffle Sharding and Static Content Hosting. A pass-with-findings section is not
+promoted until its findings are remediated and re-reviewed. No record here is human
+review, owner acceptance, or a sufficient claim.
+
 ## Promotion sequence
 
-1. Deepen the 56 dedicated-but-short sections and create dedicated sections for the 75
-   embedded entries.
-2. Recompute the candidate matrix after each family.
-3. Send candidates to a reviewer independent of the authoring pass.
-4. Record the reviewer, reviewed page hash, verdict and findings.
-5. Only then change the validators that currently enforce zero `sufficient` entries,
+1. Create dedicated sections for all embedded/shared entries; this is complete
+   (145/145 dedicated units).
+2. Obtain an independent section review and record reviewer, verdict and findings.
+   All 145 now have a non-human independent-agent record.
+3. Remediate findings and obtain re-review; rejected sections cannot be promoted.
+4. Only then change the validators that currently enforce zero `sufficient` entries,
    and update owner units, registry, delivery evidence and the semantic audit in one
    reviewed change.
+5. Human per-page review and owner acceptance remain separate, external gates.
 
 ## Current policy blocker
 
