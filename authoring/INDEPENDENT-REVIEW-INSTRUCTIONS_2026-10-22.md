@@ -31,6 +31,21 @@ Record the actual HEAD in the report. The baseline observed when this document w
 The qrels baseline is page hit@5 0.758, chapter hit@5 0.884, nDCG@10 0.5577 over 95
 answerable items. These metrics are retrieval evidence, not content review.
 
+### Scope manifest
+
+The [scope manifest][scope-json] lists the 52 Phase A and 93 Phase B entries with current
+page hashes, owner/card bindings, prior verdicts/findings and read source units. It is an
+index snapshot at content commit `40cded2`, not a review.
+
+Check it read-only before starting:
+
+```bash
+.venv/bin/python scripts/build_rereview_scope.py --check
+```
+
+If the check reports drift, record the actual hand-off HEAD and recompute every page hash;
+do not edit the manifest. `--write` is prohibited for the auditor.
+
 ## 3. Scope
 
 Phase A is mandatory: all 52 previously audited entries at the handed-off HEAD. This
@@ -91,6 +106,7 @@ git status --short
 .venv/bin/python scripts/validate_corpus_qrels.py
 .venv/bin/python scripts/route_index.py check
 .venv/bin/python scripts/section_fts_index.py check
+.venv/bin/python scripts/build_rereview_scope.py --check
 ```
 
 Do **not** run `reconcile_sufficient_reviews.py`, `build_rereview_packets.py`,
@@ -206,6 +222,7 @@ The report is an audit record. It does not update the canonical records.
 ## 11. Known traps
 
 - Old page hashes are from `7be12e0`; current owner pages have changed.
+- The scope manifest is a snapshot; verify its hashes at the actual HEAD.
 - 16 PWF and 3 reject entries are still unpromoted; do not copy their old verdict as proof.
 - The 4 initial passes and the 83/6 backlog were not in the 52-packet audit.
 - The semantic audit and validators are self-checked structural evidence, not independent
@@ -224,3 +241,5 @@ The report is an audit record. It does not update the canonical records.
 - [ ] Write the Markdown and JSON reports.
 - [ ] State limits and nonclaims.
 - [ ] Deliver to the owner; do not edit canonical records.
+
+[scope-json]: ../edition/patterns/independent-rereview-scope-2026-10-22.v2.json
