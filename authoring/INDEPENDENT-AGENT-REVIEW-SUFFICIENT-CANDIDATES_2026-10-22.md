@@ -124,9 +124,35 @@ states the storage/membership durability contingency and links §5 reconfigurati
 
 Not re-reviewed. Verdict remains **pass-with-findings**.
 
+## Command-Side Replica — pass-with-findings
+
+Reviewer verdict: **pass-with-findings**. Two findings:
+
+1. The section covered a replica of the service's own command store, not remote facts owned
+   by other services, their refresh/invalidation or reconciliation.
+2. Command-decision safety under divergence and the "never a second writer" rule were not
+   stated or tested.
+
+Remediation: added remote-fact ownership, source version, refresh/reconciliation; decision
+staleness bound, authority/lease read for linearizable decisions, fencing/version single-
+writer and a divergent-replica test.
+
+Not re-reviewed. Verdict remains **pass-with-findings**.
+
+## Transactional Inbox — pass-with-findings
+
+Reviewer verdict: **pass-with-findings**. One finding: the card required identity retention
+covering redelivery, but the owner section treated retention only as a cost and did not state
+marker lifetime, cleanup ownership or post-expiry behavior.
+
+Remediation: added the redelivery/DLQ/replay horizon, cleanup owner, retained evidence and
+reconcile-or-reject post-expiry behavior.
+
+Not re-reviewed. Verdict remains **pass-with-findings**.
+
 ## Limits
 
-- Eight sections, not 145 entries or 423 pages.
+- Ten sections, not 145 entries or 423 pages.
 - Non-human review; no independent human sign-off.
 - No `sufficient` promotion; validators still require a complete review record and policy
   change.

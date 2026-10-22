@@ -257,3 +257,14 @@ Replication delay or failover can serve an older position, so the client must ch
 position or wait for the required one before treating a read as current. Serve the same read from
 the authoritative command store or block until the projection catches up; reverse the choice when
 replica lag is bounded and read load would otherwise overload the authority.
+
+**Remote facts.** When a command needs facts owned by another service, a local replica is a
+cache of that owner's state, not a second authority. Give it an owner, a source version,
+refresh/invalidation and reconciliation when the owner changes; the local copy must never
+become the decision-time writer.
+
+**Decision safety.** A replica may inform a decision only while its staleness bound is
+acceptable for that operation. If the decision needs linearizable remote state, read the
+authority or a lease-confirmed value. Enforce single-writer with fencing or a version check,
+and test the divergent-replica case: a stale copy must reject the command, not overwrite the
+owner.

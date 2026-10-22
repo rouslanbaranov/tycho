@@ -170,7 +170,8 @@ A claim check stores a large or sensitive payload outside the message and sends 
 token instead. It needs payload lifecycle, authorization, expiry, integrity and a cleanup
 rule for abandoned claims. Use it when message size, retention or access boundaries make
 an inline payload unsafe. Do not use it when the payload is small enough to inline or when
-an external store would create an unacceptable consistency dependency.
+an external store would create an unacceptable consistency dependency. An untracked claim store becomes
+a data-retention liability.
 
 The failure path is an orphaned payload or a token that outlives its authorization; expire
 and garbage-collect claims, and make the consumer fail closed when the claim cannot be
@@ -189,6 +190,9 @@ The failure path is a lost or duplicated identifier; carry it in the message con
 record it at every boundary. A transport-native message identity is the alternative when
 the broker guarantees the needed scope and lifetime.
 
+**Limits.** Correlation is not deduplication: it groups messages but does not prove one effect;
+identifier retention and trust boundaries need an owner.
+
 ### Request-Reply Messaging
 
 A requester sends a message with a reply address and a correlation value, and the responder returns
@@ -199,3 +203,6 @@ A lost request or reply leaves an unresolved operation; expose the outstanding r
 a reply deadline and reconcile before retrying. Synchronous RPC with a deadline is simpler when the
 responder is reachable and the work fits the request budget; choose messaging when availability or
 latency requires decoupling.
+
+**Limits.** Reply queues, correlation state and orphaned replies are operational costs; a lost
+reply must be distinguishable from a slow one, and the requester needs idempotent effects.

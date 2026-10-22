@@ -27,17 +27,17 @@ Do not edit the repository. Do not treat this packet as approval.
 3. **Event Sourcing** — `tycho.pattern.event-sourcing`
    - File: `cqrs-event-sourcing-and-projections.md`
    - Heading: `2. Event sourcing: what becomes authoritative?`; 427 words
-   - SHA-256: `0495116d0843d72e77935121472ce57ea679e92e233c586eca39178ebf7a7a9a`
+   - SHA-256: `d09b5f54492c4941423acd90f0c8b14bf2bef1ab7758299571b24b7f854002ed`
 
 4. **Transactional Inbox** — `tycho.pattern.transactional-inbox`
    - File: `inbox-atomicity.md`
-   - Heading: `3. Inbox and consumer-local atomicity`; 188 words
-   - SHA-256: `4698ca5ad5a22eaeb2af4a5734dfc957a6dec8bed11411b3ee51acdc53c640e8`
+   - Heading: `3. Inbox and consumer-local atomicity`; 249 words
+   - SHA-256: `2a3f563de1388cc8005664126c90253133003af2b1861738625bd91c7d7a719f`
 
 5. **Command-Side Replica** — `tycho.pattern.command-side-replica`
    - File: `cqrs-event-sourcing-and-projections.md`
-   - Heading: `Command-Side Replica`; 123 words
-   - SHA-256: `f2c212b1f0ce485087c78626408429218445f9062397438f332d29cc18e7a042`
+   - Heading: `Command-Side Replica`; 227 words
+   - SHA-256: `d09b5f54492c4941423acd90f0c8b14bf2bef1ab7758299571b24b7f854002ed`
 
 6. **Cache-Aside / Lazy Loading** — `tycho.pattern.cache-aside-lazy-loading`
    - File: `refresh-semantics.md`
@@ -244,3 +244,18 @@ the validators still require a separate policy change.
     - File: `messaging-families-and-durable-workflows.md`
     - Heading: `Scatter-Gather`; 127 words
     - SHA-256: `e726b57f97234a532aedb59a88eec1a63400cf64d3c1d16e2784b50842e7a8b2`
+
+46. **Claim Check** — `tycho.pattern.claim-check`
+    - File: `workflow-failure.md`
+    - Heading: `Claim Check`; 125 words
+    - SHA-256: `83ba024a26e804455062b61a2049ac88200ea3b4567b5583a3ebab18f37f5fc5`
+
+47. **Correlation Identifier** — `tycho.pattern.correlation-identifier`
+    - File: `workflow-failure.md`
+    - Heading: `Correlation Identifier`; 120 words
+    - SHA-256: `83ba024a26e804455062b61a2049ac88200ea3b4567b5583a3ebab18f37f5fc5`
+
+48. **Request-Reply Messaging** — `tycho.pattern.request-reply-messaging`
+    - File: `workflow-failure.md`
+    - Heading: `Request-Reply Messaging`; 124 words
+    - SHA-256: `83ba024a26e804455062b61a2049ac88200ea3b4567b5583a3ebab18f37f5fc5`
