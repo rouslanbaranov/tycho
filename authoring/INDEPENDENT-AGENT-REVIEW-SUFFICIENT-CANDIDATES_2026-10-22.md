@@ -91,10 +91,10 @@ The section must say the CAS compares a cached revision/tombstone, with absence 
 a failed compare.
 
 A third review found that treating absence as a failed compare unconditionally blocks the
-first fill of a cold key. This is now remediated: absence fails only for a fill based on a
+first fill of a cold key. This was remediated: absence fails only for a fill based on a
 previously observed revision, and a cold fill is distinguished from a post-delete tombstone
-by a durable tombstone/version record. It is **not re-reviewed**. Verdict remains
-**pass-with-findings**.
+by a durable tombstone/version record. A further re-review returned **pass** with no findings.
+The current verdict is **pass**.
 
 ## Cache Invalidation — pass-with-findings
 
