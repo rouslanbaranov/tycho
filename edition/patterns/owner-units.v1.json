@@ -3534,15 +3534,15 @@
         "unit_kind": "dedicated",
         "unit_terms": [
           "Cache-aside is a sequence, not a consistency theorem",
-          "reading cache first",
-          "setting a TTL-bound value",
+          "reads the cache first",
+          "writes a TTL-bound value",
           "a read can reuse a local value"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "The [Redis cache-aside use-case](https://redis.io/docs/latest/develop/use-cases/cache-aside/) describes reading cache first, fetching an origin on miss, setting a TTL-bound value and invalidating on writes.",
+          "quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a TTL-bound value and invalidates on writes; stampede hazards follow from that sequence.",
           "reason": "Gives the canonical read-miss-fill-invalidate sequence."
         },
         "invariant": {
@@ -3878,7 +3878,7 @@
         "heading": "TTL-Based Expiration",
         "anchor": "ttl-based-expiration",
         "level": 3,
-        "line": 126,
+        "line": 127,
         "unit_kind": "dedicated",
         "unit_terms": [
           "expire-after-write",
