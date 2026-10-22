@@ -2633,7 +2633,7 @@
         "heading": "Command Query Responsibility Segregation (CQRS)",
         "anchor": "command-query-responsibility-segregation-cqrs",
         "level": 3,
-        "line": 303,
+        "line": 302,
         "unit_kind": "dedicated",
         "unit_terms": [
           "separates update and read",
@@ -2756,31 +2756,31 @@
         "line": 273,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "past-tense business fact",
-          "producer-unique identity",
-          "deduplicate by event identity",
-          "synchronous call"
+          "committed business fact",
+          "command in disguise",
+          "shared transaction",
+          "unknown/repair state"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A domain event is a past-tense business fact published by the aggregate owner.",
+          "quote": "A domain event publishes a committed business fact to other owners.",
           "reason": "Defines the mechanism."
         },
         "invariant": {
           "state": "supported",
-          "quote": "The event needs a producer-unique identity, aggregate identity, causation and correlation",
+          "quote": "Use it when the fact has identity, version and causation",
           "reason": "States the invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "When publication is not atomic with the state commit, the producer needs an outbox or an explicit unknown/repair state.",
+          "quote": "Duplicate, late, out-of-order and schema-evolved events are normal.",
           "reason": "Names failure and recovery."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A synchronous call or command message may be preferable when the caller needs an immediate answer and fan-out is unnecessary.",
+          "quote": "A synchronous call or command message is preferable when event fan-out and eventual consistency exceed the decoupling benefit.",
           "reason": "Names the alternative and reversal."
         }
       },
@@ -3293,7 +3293,7 @@
         "heading": "Materialized View",
         "anchor": "materialized-view",
         "level": 3,
-        "line": 288,
+        "line": 287,
         "unit_kind": "dedicated",
         "unit_terms": [
           "materialized view stores",
@@ -4757,7 +4757,7 @@
         "heading": "CQRS Read Projections",
         "anchor": "cqrs-read-projections",
         "level": 3,
-        "line": 318,
+        "line": 317,
         "unit_kind": "dedicated",
         "unit_terms": [
           "separate query view",

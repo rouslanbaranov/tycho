@@ -1027,3 +1027,13 @@ Verdict: **pass**. Findings: 0. Both coordinator and routing-slip variants are d
 
 Verdict: **pass**. Findings: 0. Synthetic disclosure present, native-index text scoped as the alternative, line lengths under 100 and the card owner anchor resolves.
 
+
+### Transactional Outbox — latest re-review
+
+Verdict: **pass**. Findings: 0. Card and section agree on conditions, contraindications, alternative and recovery; the exact technical-owner link qualifies for the repository link exception.
+
+
+### Domain Events — latest re-review
+
+Verdict: **pass**. Findings: 0. Card contraindications and the synchronous-call/command alternative agree, including the reversal condition.
+

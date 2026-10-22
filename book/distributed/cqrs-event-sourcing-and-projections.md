@@ -272,19 +272,18 @@ owner.
 
 ### Domain Events
 
-A domain event is a past-tense business fact published by the aggregate owner. It is not the
-internal event store and not a command: publication is a deliberate external contract with its own
-schema, version and compatibility promise.
+A domain event publishes a committed business fact to other owners. It is not a command in
+disguise and not a substitute for a shared transaction; if consumers need either, keep the
+interaction synchronous or local. The event is not permission to repeat an effect.
 
-The event needs a producer-unique identity, aggregate identity, causation and correlation, but none
-of those grants permission to repeat an effect. Consumers must deduplicate by event identity,
-preserve per-aggregate order and handle schema versions. When publication is not atomic with the
-state commit, the producer needs an outbox or an explicit unknown/repair state.
+Use it when the fact has identity, version and causation, consumers own their reactions, and
+publication reliability and ordering are explicit. The producer owns the event contract; each
+consumer owns interpretation and deduplication.
 
-A synchronous call or command message may be preferable when the caller needs an immediate answer
-and fan-out is unnecessary. Domain events are a fit when independent consumers need the fact and
-its order under eventual consistency, not only the latest value.
-
+Duplicate, late, out-of-order and schema-evolved events are normal. Deduplicate by identity,
+preserve aggregate order and keep an unknown/repair state when publication is not atomic with the
+state change. A synchronous call or command message is preferable when event fan-out and eventual
+consistency exceed the decoupling benefit.
 ### Materialized View
 
 A materialized view stores the result of a query so repeated reads avoid recomputing it. It is
