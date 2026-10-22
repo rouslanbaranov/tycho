@@ -8,11 +8,12 @@ independent-agent section review record, but no human per-page review and no own
 acceptance is recorded. Review findings remain unremediated unless a re-review record says
 otherwise.
 
-> **Reconciliation note — 2026-10-22 (#302):** the counts in "Review status" below are a
-> pre-promotion snapshot. The machine-readable records currently show 51 pass and 94
-> pass-with-findings, but 47 current verdicts are not supported by the cited reports and
-> 52 re-reviews have no separate report path. Do not promote until the reconciliation
-> report is resolved. See [the reconciliation](SUFFICIENT-REVIEW-RECONCILIATION_2026-10-22.md).
+> **Independent agent re-review — 2026-10-22:** the 52 packets were audited: 33 pass,
+> 16 pass-with-findings and 3 reject. Records now show 37 pass / 105 pass-with-findings /
+> 3 reject overall; all 52 re-reviews have a separate report. Human per-page review and
+> owner acceptance remain open. Do not promote. See
+> [the audit](INDEPENDENT-AGENT-REREVIEW-2026-10-22.md) and
+> [integration](SUFFICIENT-REVIEW-INTEGRATION_2026-10-22.md).
 
 ## Contract criteria
 

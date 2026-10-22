@@ -110,15 +110,17 @@ def build_packet(candidate, record, recon_row, sections, route_docs):
         if path.is_file():
             disk_sha = digest(path)
     section, _ = find_section(candidate["catalog_name"], sections)
+    re_review = record.get("re_review") or {}
     if page is None:
         status = "owner-page-missing"
     elif disk_sha is None or disk_sha != page_sha:
         status = "hash-mismatch"
     elif section is None:
         status = "report-section-missing"
+    elif re_review.get("report_path"):
+        status = "reviewed-by-independent-agent"
     else:
         status = "ready-for-independent-rereview"
-    re_review = record.get("re_review") or {}
     return {
         "pattern_id": candidate["pattern_id"],
         "catalog_name": candidate["catalog_name"],
@@ -182,6 +184,9 @@ def build_packets():
         "unique_owner_pages": len({p["owner_path"] for p in packets}),
         "packet_statuses": dict(sorted(status_counts.items())),
         "ready": status_counts.get("ready-for-independent-rereview", 0),
+        "reviewed": status_counts.get("reviewed-by-independent-agent", 0),
+        "rejected": sum(1 for p in packets
+                        if p["derived_state"] == "rejected-after-review"),
     }
     sources = [
         {"path": path.relative_to(ROOT).as_posix(), "sha256": digest(path)}
@@ -199,7 +204,8 @@ def render_markdown(payload):
         "# Independent re-review packets — 2026-10-22",
         "",
         "> Issue [#304](https://github.com/rouslanbaranov/tycho/issues/304), child of #228.",
-        "> These are evidence packets, not reviews. No reviewer or verdict is filled.",
+        "> These packets were the evidence input to the independent agent re-review. Their",
+        "> verdict templates remain blank; verdicts live in the separate re-review report.",
         "",
         "## Summary",
         "",
@@ -210,6 +216,8 @@ def render_markdown(payload):
         "| Residual findings after re-review | " + str(summary["residual"]) + " |",
         "| Unique owner pages | " + str(summary["unique_owner_pages"]) + " |",
         "| Ready for independent re-review | " + str(summary["ready"]) + " |",
+        "| Reviewed by independent agent | " + str(summary.get("reviewed", 0)) + " |",
+        "| Rejected after review | " + str(summary.get("rejected", 0)) + " |",
         "",
         "Packet statuses: " + json.dumps(summary["packet_statuses"], sort_keys=True) + ".",
         "",

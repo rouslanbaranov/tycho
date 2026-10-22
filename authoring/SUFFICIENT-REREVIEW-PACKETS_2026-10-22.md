@@ -1,19 +1,22 @@
 # Independent re-review packets — 2026-10-22
 
 > Issue [#304](https://github.com/rouslanbaranov/tycho/issues/304), child of #228.
-> These are evidence packets, not reviews. No reviewer or verdict is filled.
+> These packets were the evidence input to the independent agent re-review. Their
+> verdict templates remain blank; verdicts live in the separate re-review report.
 
 ## Summary
 
 | Measure | Value |
 |---|---:|
 | Packets | 52 |
-| Promoted after remediation | 47 |
-| Residual findings after re-review | 5 |
+| Promoted after remediation | 33 |
+| Residual findings after re-review | 16 |
 | Unique owner pages | 32 |
-| Ready for independent re-review | 52 |
+| Ready for independent re-review | 0 |
+| Reviewed by independent agent | 52 |
+| Rejected after review | 3 |
 
-Packet statuses: {"ready-for-independent-rereview": 52}.
+Packet statuses: {"reviewed-by-independent-agent": 52}.
 
 ## Review procedure
 
@@ -31,211 +34,211 @@ blank verdict template in the machine-readable file.
 
 - **Anti-Corruption Layer**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **API Gateway**
   Current: pass; re-review: pass; report: pass.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Blue/Green Deployment**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Bulkhead**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Cache Invalidation**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Cache-Aside / Lazy Loading**
-  Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Canonical Data Model**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Causal Ordering**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Cell-Based Architecture**
-  Current: pass-with-findings; re-review: pass-with-findings; report: reject.
-  Status: ready-for-independent-rereview.
+  Current: reject; re-review: reject; report: reject.
+  Status: reviewed-by-independent-agent.
 
 - **Change Data Capture (CDC)**
-  Current: pass-with-findings; re-review: pass-with-findings; report: reject.
-  Status: ready-for-independent-rereview.
+  Current: reject; re-review: reject; report: reject.
+  Status: reviewed-by-independent-agent.
 
 - **Circuit Breaker**
-  Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Claim Check**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Content-Based Router**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Correlation Identifier**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Dead Letter Channel / DLQ**
-  Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Deadline Propagation**
-  Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Deployment Stamps**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Domain Events**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Durable Subscriber**
-  Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Event Sourcing**
-  Current: pass; re-review: pass; report: pass.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass.
+  Status: reviewed-by-independent-agent.
 
 - **Event-Driven Consumer**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Expand-and-Contract Schema**
-  Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Feature Flags / Feature Toggles**
-  Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Fencing Tokens**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Gateway Aggregation**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Gateway Offloading**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **GitOps**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Graceful Degradation**
-  Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Health Endpoint Monitoring**
   Current: pass; re-review: pass; report: pass.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Hedged Requests**
   Current: pass; re-review: pass; report: pass.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Idempotent Receiver**
-  Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Immutable Infrastructure**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Index Table**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Lease-Based Ownership**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Materialized View**
-  Current: pass-with-findings; re-review: pass-with-findings; report: reject.
-  Status: ready-for-independent-rereview.
+  Current: reject; re-review: reject; report: reject.
+  Status: reviewed-by-independent-agent.
 
 - **Message Filter**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Negative Caching**
-  Current: pass; re-review: pass; report: pass.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass.
+  Status: reviewed-by-independent-agent.
 
 - **Pipes and Filters**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Priority Queue**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Process Manager / Routing Slip**
-  Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Read Replicas**
-  Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Request-Reply Messaging**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Resequencer**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Saga**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Saga Choreography**
-  Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Service-Oriented Architecture (SOA)**
   Current: pass; re-review: pass; report: reject.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Shuffle Sharding**
   Current: pass-with-findings; re-review: pass-with-findings; report: reject.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Sidecar**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Static Content Hosting**
   Current: pass-with-findings; re-review: pass-with-findings; report: reject.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Transactional Inbox**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Transactional Outbox**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 - **Valet Key**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: ready-for-independent-rereview.
+  Status: reviewed-by-independent-agent.
 
 ## Limits
 

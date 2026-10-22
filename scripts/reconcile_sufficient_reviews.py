@@ -84,6 +84,10 @@ def derive_state(record):
     remediated = record.get("remediated", False)
     re_reviewed = record.get("re_reviewed", False)
     re_review = record.get("re_review") or {}
+    if verdict == "reject":
+        if re_reviewed and re_review.get("report_path"):
+            return "rejected-after-review"
+        return "rejected-without-report"
     if verdict == "pass":
         if record.get("findings", 0) == 0 and not remediated and not re_reviewed:
             return "initial-pass-no-findings"
@@ -144,6 +148,8 @@ def reconcile(candidates, records, batch_text, sufficient_text, protocol_text):
             "re_reviewed": record.get("re_reviewed", False),
             "re_review_verdict": re_review.get("verdict"),
             "re_review_findings": re_review.get("findings"),
+            "re_review_report_path": re_review.get("report_path"),
+            "re_review_page_sha256": re_review.get("page_sha256"),
             "report_path": record["report_path"],
             "report_verdict": report_verdict,
             "report_name_match": match_kind,
@@ -175,14 +181,17 @@ def reconcile(candidates, records, batch_text, sufficient_text, protocol_text):
         "promoted_from_findings": promoted_from_findings,
         "report_reject_conflicts": len(reject_conflicts),
         "re_reviewed": len(re_reviewed),
+        "re_review_with_separate_report": sum(
+            1 for row in re_reviewed if row["re_review_report_path"]),
         "re_review_without_separate_report": sum(
-            1 for row in re_reviewed if "re-review-without-report" in row["issues"]),
+            1 for row in re_reviewed if not row["re_review_report_path"]),
         "protocol_counts": dict(sorted(protocol.items())),
         "protocol_divergence": {
             "pass_delta": current.get("pass", 0) - protocol.get("pass", 0),
             "pass_with_findings_delta": (
                 current.get("pass-with-findings", 0)
                 - protocol.get("pass_with_findings", 0)),
+            "reject_delta": current.get("reject", 0) - protocol.get("reject", 0),
         },
     }
     return {"summary": summary, "rows": rows}
