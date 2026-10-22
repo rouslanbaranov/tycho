@@ -69,7 +69,8 @@ The installed Caffeine version and precise loader/executor policy must be checke
 <!-- tycho-question-source:tycho.page.33742c54f667446cbf57cb9f3696a533:4 -->
 ## 4. Cache-aside is a sequence, not a consistency theorem
 
-The [Redis cache-aside use-case](https://redis.io/docs/latest/develop/use-cases/cache-aside/) describes reading cache first, fetching an origin on miss, setting a TTL-bound value and invalidating on writes. It also identifies stampede hazards.
+A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a
+TTL-bound value and invalidates on writes; stampede hazards follow from that sequence.
 
 ```mermaid
 flowchart TD
@@ -106,7 +107,7 @@ retried; recording only after a failed delete can lose the intent in a crash. Wi
 lost invalidation is unbounded. Alert on repeated failures. Concurrent misses need
 single-flight or a lease; a fallback authoritative read must stay bounded.
 
-Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or require strict verification for revocation-sensitive operations. Data authorization must be performed at an enforced boundary; a copied permission bit is not its own authority.
+Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or require strict verification for revocation-sensitive operations. Data authorization must be performed at an enforced boundary; a copied permission bit is not its own authority. Fill and invalidation must share a version authority; a cache that cannot identify the source revision cannot prove which value is newer.
 
 <!-- /tycho-question-source -->
 
