@@ -26,8 +26,8 @@ Do not edit the repository. Do not treat this packet as approval.
 
 3. **Event Sourcing** — `tycho.pattern.event-sourcing`
    - File: `cqrs-event-sourcing-and-projections.md`
-   - Heading: `2. Event sourcing: what becomes authoritative?`; 385 words
-   - SHA-256: `f2c212b1f0ce485087c78626408429218445f9062397438f332d29cc18e7a042`
+   - Heading: `2. Event sourcing: what becomes authoritative?`; 427 words
+   - SHA-256: `0495116d0843d72e77935121472ce57ea679e92e233c586eca39178ebf7a7a9a`
 
 4. **Transactional Inbox** — `tycho.pattern.transactional-inbox`
    - File: `inbox-atomicity.md`
@@ -144,3 +144,18 @@ the validators still require a separate policy change.
     - File: `replication-consensus-and-leader-change.md`
     - Heading: `Read Replicas`; 125 words
     - SHA-256: `1b68e603c024182de4316235360a70ef4456cf720ac17c201b04a926c151c9a3`
+
+26. **Partitioning** — `tycho.pattern.partitioning`
+    - File: `shard-keys-hotspots-and-resharding.md`
+    - Heading: `Partitioning`; 126 words
+    - SHA-256: `0ec1c84e22e1374dec45bd765ce3606519e82f7f6875d028432f6a5cdc21a933`
+
+27. **Consistent Hashing** — `tycho.pattern.consistent-hashing`
+    - File: `resharding-transition.md`
+    - Heading: `Consistent Hashing`; 122 words
+    - SHA-256: `093cc20efcbb43ba501273959614291f9b787b1e58df096025aeb6e906b89581`
+
+28. **Backup, PITR and Restore** — `tycho.pattern.backup-pitr-and-restore`
+    - File: `backup-restore-pitr-and-recovery-drills.md`
+    - Heading: `Backup, PITR and Restore`; 127 words
+    - SHA-256: `d6e6ffece4259cbc5472dc3c5c92eed7a5ed14abf518cb58bc2760cd48b9eaee`

@@ -111,3 +111,7 @@ query must name a partition key so pruning is possible.
 A query without the partition key fans out across every partition; inspect plans and measure fan-out
 when access paths or keys change. Keep one table and add an index when the main query already
 prunes; partition only when the data volume, retention or maintenance benefit is measured.
+
+**Limits.** Partition count, key skew and cross-partition queries are costs; too many small
+partitions raise planning and maintenance overhead, and a key that changes forces row movement.
+Plan for detach/attach maintenance, not only query pruning.

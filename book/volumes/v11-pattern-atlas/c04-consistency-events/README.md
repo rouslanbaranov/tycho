@@ -124,8 +124,9 @@ cannot evolve, or when replay side effects cannot be controlled.
 Reverse when full replay is unnecessary, schema ownership is absent or external side effects
 cannot be isolated.
 
-**Failure and recovery.** Replay duplication and schema drift are common; verify event
-authority in the owner section.
+**Failure and recovery.** A stale expected version rejects the append; re-read and retry with
+the same operation identity. Replay duplication needs idempotent projectors, and schema drift
+needs versioned handlers and a rebuild plan.
 
 **Technical owner.** [Event sourcing: what becomes authoritative?](../../../distributed/cqrs-event-sourcing-and-projections.md#2-event-sourcing-what-becomes-authoritative) — event authority is the bounded owner, not a complete event-store design.
 

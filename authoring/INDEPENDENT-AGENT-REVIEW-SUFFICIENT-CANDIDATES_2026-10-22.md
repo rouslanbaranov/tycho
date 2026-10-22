@@ -41,3 +41,20 @@ The original verdict was **pass-with-findings**; the current verdict is **pass**
 - One section, not 145 entries or 423 pages.
 - Non-human review; no independent human sign-off.
 - No `sufficient` promotion; validators still require a review record and policy change.
+## Event Sourcing — pass-with-findings
+
+Reviewer verdict: **pass-with-findings**. Two findings:
+
+1. **Failure.** The card named replay duplication and schema drift but gave no recovery
+action; the owner link anchored at §2 did not discuss either.
+2. **Invariant.** §2 did not state the write-side conditional-append invariant, the
+racing-command rejection path or retry double-append risk.
+
+Remediation applied after the review:
+
+- §2 now states the expected-version conditional append, re-read/reject on conflict and
+  operation identity for retries.
+- The Event Sourcing card now names the stale-version rejection, idempotent projectors and
+  versioned handlers/rebuild plan.
+
+Not re-reviewed. Verdict remains **pass-with-findings**.

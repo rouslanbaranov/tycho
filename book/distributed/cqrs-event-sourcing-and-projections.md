@@ -108,6 +108,11 @@ Start with no confirmed bookings. Apply, in the intended aggregate order:
 
 The projection `confirmed_count` is calculated as `+1, +1, -1`, yielding **1**. This is **synthetic arithmetic**, not a tested business database. Replaying a historical event sequence under different event semantics may not produce the same result; versioned event handlers and invariant rules must be specified.
 
+**Invariant.** A command appends only when its expected stream version matches the current
+version; a racing command is rejected and the caller re-reads before deciding. Retrying an
+already-appended command needs the same operation identity, or a write-side retry can
+double-append the event.
+
 A snapshot can accelerate replay by recording a state at a known stream offset/version, followed by applying later events. However, a snapshot is a **derivative cache** unless declared and validated as the authority. Rebuilds must check offset continuity and event schema compatibility. "Append-only" alone is not a security-compliant audit log: deletion policies, integrity protection, identity, corruption, retention and privileged access still matter.
 
 **Alternative.** State-stored CRUD with an audit log, CDC/outbox or event notification may
