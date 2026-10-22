@@ -8,6 +8,12 @@ independent-agent section review record, but no human per-page review and no own
 acceptance is recorded. Review findings remain unremediated unless a re-review record says
 otherwise.
 
+> **Reconciliation note — 2026-10-22 (#302):** the counts in "Review status" below are a
+> pre-promotion snapshot. The machine-readable records currently show 51 pass and 94
+> pass-with-findings, but 47 current verdicts are not supported by the cited reports and
+> 52 re-reviews have no separate report path. Do not promote until the reconciliation
+> report is resolved. See [the reconciliation](SUFFICIENT-REVIEW-RECONCILIATION_2026-10-22.md).
+
 ## Contract criteria
 
 The pattern-atlas contract defines `sufficient` as a dedicated deep explanation plus
