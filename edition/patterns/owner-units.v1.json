@@ -728,13 +728,13 @@
       "catalog_name": "API Gateway",
       "family": "api-and-service-communication",
       "owner": {
-        "document_id": "tycho.page.37a28a568f7e987941749e198c03439a",
-        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",
-        "heading": "Original fictional boundary contract",
-        "anchor": "original-fictional-boundary-contract",
+        "document_id": "tycho.page.99c509e133d9494fbb3080b6212b7ba7",
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
+        "heading": "API Gateway",
+        "anchor": "api-gateway",
         "level": 2,
-        "line": 93,
-        "unit_kind": "embedded",
+        "line": 73,
+        "unit_kind": "dedicated",
         "unit_terms": [
           "centralize routing, quotas and common policy",
           "privileged bypass path",
@@ -848,12 +848,12 @@
       "catalog_name": "Gateway Aggregation",
       "family": "api-and-service-communication",
       "owner": {
-        "document_id": "tycho.page.37a28a568f7e987941749e198c03439a",
-        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",
+        "document_id": "tycho.page.99c509e133d9494fbb3080b6212b7ba7",
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
         "heading": "Gateway Aggregation",
         "anchor": "gateway-aggregation",
-        "level": 3,
-        "line": 139,
+        "level": 2,
+        "line": 86,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Gateway Aggregation"
@@ -905,18 +905,18 @@
       "catalog_name": "Gateway Offloading",
       "family": "api-and-service-communication",
       "owner": {
-        "document_id": "tycho.page.37a28a568f7e987941749e198c03439a",
-        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",
-        "heading": "The trust question",
-        "anchor": "the-trust-question",
+        "document_id": "tycho.page.99c509e133d9494fbb3080b6212b7ba7",
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
+        "heading": "Gateway Offloading",
+        "anchor": "gateway-offloading",
         "level": 2,
-        "line": 73,
-        "unit_kind": "embedded",
+        "line": 97,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "encryption terminates at a proxy",
-          "declared protection",
-          "authenticated peer",
-          "TLS endpoint it contacted"
+          "terminate TLS",
+          "validate tokens",
+          "confused-deputy",
+          "resource authorization"
         ]
       },
       "technical_evidence": {
@@ -927,7 +927,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "It does not by itself authenticate the final application process or authorize a particular object.",
+          "quote": "Offloading changes the trust boundary: downstream must receive an authenticated identity from a trusted intermediary and still enforce resource authorization.",
           "reason": "Bounds what the offloaded TLS endpoint identity proves."
         },
         "failure_recovery": {
@@ -1082,18 +1082,18 @@
       "catalog_name": "Reverse Proxy",
       "family": "api-and-service-communication",
       "owner": {
-        "document_id": "tycho.page.37a28a568f7e987941749e198c03439a",
-        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",
-        "heading": "The trust question",
-        "anchor": "the-trust-question",
+        "document_id": "tycho.page.99c509e133d9494fbb3080b6212b7ba7",
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
+        "heading": "Reverse Proxy",
+        "anchor": "reverse-proxy",
         "level": 2,
-        "line": 73,
-        "unit_kind": "embedded",
+        "line": 106,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "client → edge → gateway → application",
-          "certificate seen by the client",
-          "encryption terminates at a proxy",
-          "authenticated peer"
+          "accepts client connections",
+          "forwards them to a selected backend",
+          "forwarded-header policy",
+          "proxy bypass"
         ]
       },
       "technical_evidence": {
@@ -1104,7 +1104,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "It does not by itself authenticate the final application process or authorize a particular object.",
+          "quote": "It must define route identity, peer authentication, forwarded-header policy and backend failure behavior.",
           "reason": "Bounds what the proxy-terminated client identity establishes."
         },
         "failure_recovery": {
@@ -8965,22 +8965,6 @@
       "rationale": "Edge caching and static content hosting now have bounded evidence in the shared page; retain the unit unless a dedicated hosting page is needed."
     },
     {
-      "document_id": "tycho.page.37a28a568f7e987941749e198c03439a",
-      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",
-      "pattern_count": 4,
-      "pattern_ids": [
-        "tycho.pattern.api-gateway",
-        "tycho.pattern.gateway-aggregation",
-        "tycho.pattern.gateway-offloading",
-        "tycho.pattern.reverse-proxy"
-      ],
-      "unit_count": 3,
-      "dedicated_units": 1,
-      "bounded_entries": 4,
-      "decision": "split",
-      "rationale": "Four gateway patterns sit on a TLS trust page; aggregation, offloading and reverse proxying are gateway responsibilities that warrant a dedicated gateway page rather than continued trust-page ownership."
-    },
-    {
       "document_id": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c",
       "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md",
       "pattern_count": 2,
@@ -9040,15 +9024,31 @@
       "bounded_entries": 2,
       "decision": "keep",
       "rationale": "Gateway routing and health signals have distinct bounded units on the new routing page."
+    },
+    {
+      "document_id": "tycho.page.99c509e133d9494fbb3080b6212b7ba7",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
+      "pattern_count": 4,
+      "pattern_ids": [
+        "tycho.pattern.api-gateway",
+        "tycho.pattern.gateway-aggregation",
+        "tycho.pattern.gateway-offloading",
+        "tycho.pattern.reverse-proxy"
+      ],
+      "unit_count": 4,
+      "dedicated_units": 4,
+      "bounded_entries": 4,
+      "decision": "keep",
+      "rationale": "Four gateway functions have dedicated bounded units on the new gateway page."
     }
   ],
   "summary": {
     "entries": 145,
     "owner_pages": 67,
     "shared_pages": 31,
-    "owner_units": 119,
-    "dedicated_units": 65,
-    "embedded_units": 54,
+    "owner_units": 120,
+    "dedicated_units": 68,
+    "embedded_units": 52,
     "mechanism_supported": 145,
     "invariant_supported": 145,
     "failure_recovery_supported": 128,
@@ -9064,26 +9064,13 @@
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
-      "keep": 16,
+      "keep": 17,
       "deepen": 13,
-      "split": 2
+      "split": 1
     },
-    "split_deferred": 2
+    "split_deferred": 1
   },
   "split_deferrals": [
-    {
-      "document_id": "tycho.page.37a28a568f7e987941749e198c03439a",
-      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",
-      "pattern_ids": [
-        "tycho.pattern.api-gateway",
-        "tycho.pattern.gateway-aggregation",
-        "tycho.pattern.gateway-offloading",
-        "tycho.pattern.reverse-proxy"
-      ],
-      "decision": "deferred",
-      "rationale": "Four gateway patterns sit on a TLS trust page; aggregation, offloading and reverse proxying are gateway responsibilities that warrant a dedicated gateway page rather than continued trust-page ownership.",
-      "gate": "Deferred until a documented page migration separates TLS trust ownership from gateway responsibilities with stable identities."
-    },
     {
       "document_id": "tycho.page.dde63373c50f4f4a80e727b6e160def5",
       "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",

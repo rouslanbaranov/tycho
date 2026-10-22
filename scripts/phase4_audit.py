@@ -90,7 +90,7 @@ def build(root=ROOT):
     coverage = load(root, COVERAGE)
     manifest = load(root, MANIFEST)
     documents = route["documents"]
-    if len(documents) != 420:
+    if len(documents) != 421:
         raise ValueError("phase4-page-count")
     chapters = {chapter["code"]: chapter for chapter in manifest["chapters"]}
     records = {record["id"]: record for record in ledger["records"]}

@@ -96,7 +96,7 @@ and outage blast radius exceed the shared edge benefit.
 authentication and an outage blocking every backend are common. Keep backend authorization,
 test the bypass path and version gateway policy.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#original-fictional-boundary-contract) — edge identity and gateway boundary; not a full API management specification.
+**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#api-gateway) — edge identity and gateway boundary; not a full API management specification.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -173,7 +173,7 @@ client simplification benefit.
 common. Recovery requires per-dependency deadlines and explicit partial results;
 verify the gateway boundary and aggregation mechanics in the owner section.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#gateway-aggregation) — bounded edge boundary and aggregation mechanics.
+**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#gateway-aggregation) — bounded edge boundary and aggregation mechanics.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -210,7 +210,7 @@ benefit.
 becomes the only authorization point are common. Recovery requires configuration tests and
 an explicit trust boundary with downstream authorization.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#the-trust-question) — edge functions and trusted identity; not a complete offloading catalogue.
+**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#gateway-offloading) — edge functions and trusted identity; not a complete offloading catalogue.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -320,7 +320,7 @@ benefit.
 are common. Recovery requires connection lifecycle tests and explicit forwarded-header and
 draining policy.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#the-trust-question) — proxy and gateway boundary; not a full Envoy operations guide.
+**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#reverse-proxy) — proxy and gateway boundary; not a full Envoy operations guide.
 
 **Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.envoy-http-connection.2026-10-21: HTTP connection management, sections

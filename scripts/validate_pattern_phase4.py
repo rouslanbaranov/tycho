@@ -43,9 +43,9 @@ def validate_data(data, root=ROOT):
     registry = load(root / REGISTRY)
     ids = {item["id"] for item in registry["patterns"]}
     pages = data["page_dispositions"]
-    require(len(pages) == 420, "phase4-page-count")
-    require(len({p["path"] for p in pages}) == 420, "phase4-page-duplicate")
-    require(len({p["document_id"] for p in pages}) == 420, "phase4-page-id-duplicate")
+    require(len(pages) == 421, "phase4-page-count")
+    require(len({p["path"] for p in pages}) == 421, "phase4-page-duplicate")
+    require(len({p["document_id"] for p in pages}) == 421, "phase4-page-id-duplicate")
     audit = data["entry_audit"]
     require(len(audit) == 145, "phase4-entry-count")
     require(len({item["pattern_id"] for item in audit}) == 145, "phase4-entry-duplicate")

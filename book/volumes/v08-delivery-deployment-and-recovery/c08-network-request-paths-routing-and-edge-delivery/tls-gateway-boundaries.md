@@ -64,31 +64,11 @@
 **Owning question:** Which identity and confidentiality boundary does each proxy hop establish?
 
 
-> **Pattern atlas:**
-> [API Gateway](../../v11-pattern-atlas/c02-api-communication/README.md#api-gateway) — decision conditions and contraindications.
-> [Gateway Aggregation](../../v11-pattern-atlas/c02-api-communication/README.md#gateway-aggregation) — decision conditions and contraindications.
-> [Gateway Offloading](../../v11-pattern-atlas/c02-api-communication/README.md#gateway-offloading) — decision conditions and contraindications.
-> [Reverse Proxy](../../v11-pattern-atlas/c02-api-communication/README.md#reverse-proxy) — decision conditions and contraindications.
-
 ## The trust question
 
 Draw each hop and name its authenticated peer. In a client → edge → gateway → application path, the certificate seen by the client normally identifies the TLS endpoint it contacted. It does not by itself authenticate the final application process or authorize a particular object. If encryption terminates at a proxy, the next connection needs its own declared protection.
 
 RFC 9110 section 4.3.4 describes certificate verification for HTTPS. OWASP's REST guidance calls for HTTPS, endpoint access control and validated token claims. Neither source certifies an arbitrary proxy configuration.
-
-**Offloading mechanism.** An edge can terminate TLS, validate tokens, compress, cache or
-enforce quotas before forwarding. Offloading changes the trust boundary: downstream must
-receive an authenticated identity from a trusted intermediary and still enforce resource
-authorization. Header spoofing, confused-deputy paths and a proxy that becomes the only
-authorization point are common failures. A service-mesh sidecar, application-level
-authorization or direct pass-through may be preferable when the edge cannot attest identity.
-
-**Reverse-proxy mechanism.** A reverse proxy accepts client connections and forwards them to
-a selected backend, hiding topology and optionally terminating TLS. It must define route
-identity, peer authentication, forwarded-header policy and backend failure behavior.
-Proxy bypass, stale routes and trusting a client-supplied identity header are common.
-Direct service discovery, a gateway/BFF or a mesh sidecar may be preferable when the proxy
-adds a shared bottleneck without a required policy function.
 
 ## Original fictional boundary contract
 
@@ -100,12 +80,6 @@ A private image catalogue uses a public edge and an internal service. Its contra
 | Edge to gateway | Deliberate peer authentication and allowed ingress | Trust a caller-supplied identity header |
 | Gateway to application | Integrity-protected principal/context or independently validated token | Treat network location as object permission |
 | Application to data | Resource-level decision with tenant and action | Use a storage key as proof of authorization |
-
-**API-gateway failure and alternative.** Gateway bypass, configuration drift, a stale route
-and an outage that blocks every backend are common. Keep backend authorization, test the
-network path that excludes the gateway and version gateway policy. A BFF, a service-mesh
-sidecar or direct backend exposure with an explicit identity contract may be preferable when
-the gateway adds a shared bottleneck without a required central policy.
 | Administrative policy path | Separate authority and controlled changes | Let ordinary request data alter trusted routes |
 
 A gateway can centralize routing, quotas and common policy. Keep resource authorization at the boundary owning the resource, with documented delegation if a central decision service is used. Removing every backend check creates a privileged bypass path unless network and identity contracts actually exclude it.
@@ -128,21 +102,4 @@ Choose a simpler reverse proxy when it meets these contracts. Adopt service-mesh
 
 Selected public passages inspected 2026-10-20: [HTTPS authority](https://www.rfc-editor.org/rfc/rfc9110.html#section-4.3.4) and [OWASP HTTPS, access control and JWT sections](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html). The table and counterexample are original unexecuted design analysis.
 
-Parent: [network chapter](README.md). Previous: [connection fate](connections-draining.md). Next: [edge caching](edge-cache-origin.md). Related: [threat identity](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md).
-
-## Bounded pattern ownership notes
-
-These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
-this page. They are synthetic design guidance, not measured evidence, and they do not create a new
-source claim.
-
-### Gateway Aggregation
-
-A gateway aggregation layer calls several downstream services for one client request and returns a
-single composed response. Each downstream call must carry its own deadline, and a partial failure
-must be represented explicitly in the aggregate response.
-
-One slow participant delays the whole response, and a silent omission hides incomplete data; fan out
-in parallel with per-call budgets and mark missing parts. Client-side composition or a backend for
-frontend keeps aggregation closer to the client; use gateway aggregation when the composition is
-shared and the gateway is already the trust boundary.
+Parent: [network chapter](README.md). Previous: [connection fate](connections-draining.md). Next: [gateway boundaries](gateway-boundaries-and-offloading.md). Related: [threat identity](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md).

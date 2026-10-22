@@ -386,7 +386,7 @@ def validate_data(data, root=ROOT):
 
     deferrals = data["split_deferrals"]
     split_pages = {page["path"]: page for page in shared if page["decision"] == "split"}
-    require(len(deferrals) == len(split_pages) == 2, "owner-units-split-deferral-count")
+    require(len(deferrals) == len(split_pages) == 1, "owner-units-split-deferral-count")
     seen_deferrals = set()
     for item in deferrals:
         path = item["path"]
