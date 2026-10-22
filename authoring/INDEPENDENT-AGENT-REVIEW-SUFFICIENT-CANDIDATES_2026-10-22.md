@@ -1,7 +1,8 @@
 # Independent agent review — sufficient candidates — 2026-10-22
 
-Status: one section reviewed by an independent non-human agent. This is not human
-review, owner acceptance, per-page review of the corpus or a sufficient-coverage claim.
+Status: one section reviewed and re-reviewed by an independent non-human agent. This is
+not human review, owner acceptance, per-page review of the corpus or a sufficient-coverage
+claim.
 
 - Reviewer: independent review agent (separate from the authoring pass)
 - Scope: the **API Gateway** owner section and its atlas card only
@@ -26,7 +27,14 @@ review, owner acceptance, per-page review of the corpus or a sufficient-coverage
 - Extended **Limits**: quota-state ownership, per-tenant fairness, counter-store outage,
   and stale route as a routing failure rather than a quota decision.
 
-These edits are **not re-reviewed**. The verdict remains pass-with-findings.
+## Re-review
+
+A second read-only independent-agent review examined the remediation and returned
+**pass** with no findings. It confirmed the enforcement order, trusted-context binding,
+fail-closed/break-glass behavior and the quota/routing limits.
+
+The original verdict was **pass-with-findings**; the current verdict is **pass**.
+
 
 ## Limits
 

@@ -136,6 +136,10 @@ record the conflicting versions and expose a deterministic resolution path. Sing
 replication avoids write conflicts at the cost of write availability across regions; choose
 multi-leader only when accepting local writes outweighs the conflict contract.
 
+**Limits.** Conflict metadata, per-key convergence and operator reconciliation are costs; a
+multi-leader topology does not remove the need for one authoritative outcome. The conflict
+contract must name the resolver and its audit trail.
+
 ### Read Replicas
 
 Read replicas serve read-only traffic from followers, reducing load on the leader while accepting
@@ -147,3 +151,6 @@ A lag spike serves stale data even though replication is healthy; monitor applie
 and route freshness-critical reads away from a lagging replica. Read from the leader or use a quorum
 read when freshness dominates; add replicas when read volume and tolerance for bounded staleness
 justify the extra copies.
+
+**Limits.** Replica count and lag budgets must be owned; a failover to a stale replica can
+violate read-your-writes even when the replication stream is healthy.

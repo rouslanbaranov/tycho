@@ -134,3 +134,13 @@ the validators still require a separate policy change.
     - File: `message-selection.md`
     - Heading: `Canonical Data Model`; 125 words
     - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`
+
+24. **Multi-Leader Replication** — `tycho.pattern.multi-leader-replication`
+    - File: `replication-consensus-and-leader-change.md`
+    - Heading: `Multi-Leader Replication`; 130 words
+    - SHA-256: `1b68e603c024182de4316235360a70ef4456cf720ac17c201b04a926c151c9a3`
+
+25. **Read Replicas** — `tycho.pattern.read-replicas`
+    - File: `replication-consensus-and-leader-change.md`
+    - Heading: `Read Replicas`; 125 words
+    - SHA-256: `1b68e603c024182de4316235360a70ef4456cf720ac17c201b04a926c151c9a3`
