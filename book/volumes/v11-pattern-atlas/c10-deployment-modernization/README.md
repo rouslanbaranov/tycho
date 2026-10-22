@@ -253,7 +253,7 @@ choice when replacement cost exceeds drift/recovery benefit.
 **Failure and recovery.** Orphaned state and image drift are common; verify lifecycle in
 the owner section.
 
-**Technical owner.** [Infrastructure as code and drift](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#immutable-infrastructure) — immutable infrastructure is bounded to replacement/drift, not a cloud product.
+**Technical owner.** [Immutable Infrastructure](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#immutable-infrastructure) — immutable replacement and drift are bounded, not a cloud product.
 
 **Sources.**
 [src.ibm-immutable-infrastructure](../../../../edition/patterns/reading-ledger.v1.json)

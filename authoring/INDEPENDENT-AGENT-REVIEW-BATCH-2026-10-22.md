@@ -1057,3 +1057,18 @@ Verdict: **pass**. Findings: 0. The corrected technical-owner label describes th
 
 Verdict: **pass**. Findings: 0. The label now names independent deployment units, routing keys and upgrade ownership, all supported by the owner section.
 
+
+### Sidecar — latest re-review
+
+Verdict: **pass**. Findings: 0. Card label, owner anchor and lifecycle/fit conditions agree.
+
+
+### Immutable Infrastructure — latest re-review
+
+Verdict: **pass**. Findings: 0. Card label, owner anchor and lifecycle/fit conditions agree.
+
+
+### Valet Key — latest re-review
+
+Verdict: **pass**. Findings: 0. Issuance by resource or separate authority and enforcement by the resource cohere; the exact owner link qualifies for the repository link exception.
+

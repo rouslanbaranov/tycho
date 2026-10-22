@@ -443,7 +443,7 @@ Reverse the choice when sidecar overhead and operational complexity exceed reuse
 common. Recovery requires health checks and explicit lifecycle ownership; the technical
 owner section states the remaining limits.
 
-**Technical owner.** [Service mesh and traffic intermediaries](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#sidecar) — The section owns proxies and sidecar data planes, not a dedicated sidecar lifecycle page.
+**Technical owner.** [Sidecar](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#sidecar) — sidecar lifecycle, proxy data plane and coupling are bounded, not a service-mesh guide.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -478,7 +478,7 @@ the choice when the proxy adds a hop without providing a needed capability.
 common. Recovery requires health checks and bounded retries; the bounded owner section
 covers traffic intermediaries, not a dedicated ambassador lifecycle page.
 
-**Technical owner.** [Service mesh and traffic intermediaries](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — The section owns traffic intermediaries, not a dedicated ambassador lifecycle page.
+**Technical owner.** [Ambassador](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — per-client egress proxy ownership is bounded, not a shared ingress gateway.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)

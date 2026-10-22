@@ -246,8 +246,8 @@ security-pattern; priority advanced.
 **Decision question.** Should a client receive a scoped, time-limited credential for
 direct resource access?
 
-**Good-fit conditions.** The resource can issue scoped tokens; expiry/revocation are
-enforced; the client cannot escalate scope.
+**Good-fit conditions.** The resource or a separate authority can issue scoped tokens; the
+resource enforces scope; expiry/revocation are enforced; the client cannot escalate scope.
 
 **Hard contraindications.** Reject when every access must be mediated, when the resource
 cannot enforce scope, or when token leakage would be catastrophic.
@@ -258,7 +258,7 @@ choice when direct access offload is not worth credential risk.
 **Failure and recovery.** Token leakage and scope confusion are common; verify boundaries
 in the owner section.
 
-**Technical owner.** [Token and credential boundaries](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md#valet-key) — object credentials are bounded, not a complete key-management guide.
+**Technical owner.** [Valet Key](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md#valet-key) — scoped credential issuance, enforcement and revocation are bounded, not a key-management guide.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
