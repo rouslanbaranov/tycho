@@ -184,12 +184,15 @@ transport can carry it safely.
 
 A correlation identifier ties together messages that belong to one request, workflow or
 conversation. It needs a generation rule, propagation across asynchronous boundaries, a
-retention window and a collision check. Use it when independent messages must be joined
-for diagnosis, deduplication or reply routing. Do not use it as an authorization token or
+retention window and a collision check. Uniqueness is scoped to the operation, not global; a
+value reused across operations is a collision, and generation must verify that scope. Use it
+when independent messages must be joined for diagnosis, deduplication or reply routing. Do not use it as an authorization token or
 when the transport already provides an equivalent identity.
 
 The failure path is a lost or duplicated identifier; carry it in the message contract and
-record it at every boundary. A transport-native message identity is the alternative when
+record it at every boundary. Ambiguous matching or an expired identifier needs a disposition:
+quarantine unmatched messages, resolve by a secondary key, or reissue; an expired identifier
+maps to a dead-letter or audit record with an owner. A transport-native message identity is the alternative when
 the broker guarantees the needed scope and lifetime.
 
 **Limits.** Correlation is not deduplication: it groups messages but does not prove one effect;

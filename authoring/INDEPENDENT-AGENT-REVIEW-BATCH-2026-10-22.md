@@ -1137,3 +1137,8 @@ Verdict: **pass**. Findings: 0. Relative-duration propagation, monotonic clocks,
 
 Verdict: **pass**. Findings: 0. Recovery hysteresis, normal resumption, essential-path retest and non-duplicated closing text.
 
+
+### Correlation Identifier — latest re-review
+
+Verdict: **pass**. Findings: 0. Operation-scoped uniqueness, collision check and ambiguous/expired recovery agree.
+
