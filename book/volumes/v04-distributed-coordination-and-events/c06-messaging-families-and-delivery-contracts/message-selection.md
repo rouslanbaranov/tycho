@@ -211,13 +211,16 @@ become a throughput bottleneck.
 ### Content-Based Router
 
 A content-based router chooses a destination from message content. It needs a versioned
-predicate set, a default or dead-letter path and an owner for rule changes. Use it when
-routing depends on message attributes and destinations have different contracts. Do not
+predicate set, a default or dead-letter path and an owner for rule changes. Predicate
+fields must be authenticated or validated; routing on an untrusted field lets the producer
+choose a destination. Use it when routing depends on message attributes and destinations
+have different contracts. Do not
 use it when routing rules are unstable, unowned or unable to classify every message.
 
 The failure path is an unmatched or misrouted message; route to a declared fallback and
-record the predicate version. A static topic or queue per producer is the alternative when
-routing is known at publish time.
+record the predicate version. A workflow/orchestrator is the alternative when routing needs
+multiple steps or compensations; do not hide a process engine inside the router. A static
+topic or queue per producer fits when routing is known at publish time.
 
 **Limits.** The predicate set is a policy surface: test unmatched, multi-match and rule
 rollout, because a misroute is not repaired by retry. Rule changes need a canary and a
@@ -227,8 +230,10 @@ rollback path.
 
 Pipes and filters decompose processing into ordered, replaceable stages connected by a
 message contract. Each stage needs its own failure and retry policy, and the pipeline
-needs backpressure and a rule for partial completion. Use it when stages can be developed,
-scaled or replaced independently. Do not use it when the work must be one atomic
+needs backpressure, a rule for partial completion and a declared ordering scope. Each stage
+needs an effect identity for deduplication and its own lag or queue-depth signal, not only an
+end-to-end completion metric. Use it when stages can be developed, scaled or replaced
+independently. Do not use it when the work must be one atomic
 transaction or when per-stage latency would exceed the budget.
 
 The failure path is a failed middle stage with earlier effects already applied; record
@@ -261,9 +266,10 @@ the rest by policy. Every discarded message must be an intentional drop under a 
 not an unobserved loss.
 
 Predicate drift or a missing default path silently removes traffic; monitor filter rates and keep a
-declared fallback for unmatched messages. A content-based router sends different subsets to
-different destinations; prefer filtering when the destination is the same and only selection
-changes.
+declared fallback for unmatched messages. A rejected message needs a declared disposition:
+discard with audit, fallback, or dead-letter queue, each with a retention owner. A
+content-based router sends different subsets to different destinations; prefer filtering when
+the destination is the same and only selection changes.
 
 **Limits.** Silent drops are data loss; count filter rates, version the predicate and keep a
 declared fallback. A filter that silently drops unmatched traffic is a data-loss path; count

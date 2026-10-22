@@ -291,7 +291,7 @@ when content rules become a hidden process engine.
 **Failure and recovery.** Rule drift and unmatched messages are common; verify rule
 ownership and fallback in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#content-based-router) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Content-Based Router](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#content-based-router) — predicate ownership, fallback and rule versioning are bounded, not every EIP mechanism.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -323,7 +323,7 @@ choice when downstream cost dominates and rejection is safe.
 **Failure and recovery.** Silent loss is the main risk; verify rejected-message policy in
 the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-filter) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Message Filter](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-filter) — predicate scope and rejected-message disposition are bounded, not every EIP mechanism.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -358,7 +358,7 @@ choice when stage isolation and reuse no longer justify message hops.
 **Failure and recovery.** Partial failure and duplicate processing grow with stages;
 verify stage contracts in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#pipes-and-filters) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Pipes and Filters](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#pipes-and-filters) — stage contracts, ordering and observability are bounded, not every EIP mechanism.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)

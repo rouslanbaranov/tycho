@@ -1077,3 +1077,18 @@ Verdict: **pass**. Findings: 0. Issuance by resource or separate authority and e
 
 Verdict: **pass**. Findings: 0. Label, per-key alternative, buffer-cap action and late-message disposition agree.
 
+
+### Content-Based Router — latest re-review
+
+Verdict: **pass**. Findings: 0. Label/anchor, predicate-trust, rejected-disposition or stage-contract text agree.
+
+
+### Message Filter — latest re-review
+
+Verdict: **pass**. Findings: 0. Label/anchor, predicate-trust, rejected-disposition or stage-contract text agree.
+
+
+### Pipes and Filters — latest re-review
+
+Verdict: **pass**. Findings: 0. Label/anchor, predicate-trust, rejected-disposition or stage-contract text agree.
+
