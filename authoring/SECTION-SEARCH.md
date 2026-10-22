@@ -84,7 +84,9 @@ URL anchor. Consumers must keep the snapshot ID with the citation.
 ~~~sh
 python3 scripts/section_search.py read \
   --id "tycho.page.0123456789abcdef0123456789abcdef#overview" \
-  --offset 0 --budget-chars 2000
+  --offset 0 --budget-chars 2000 --include-evidence
+python3 scripts/section_search.py evidence --claim claim.same-intent-retry
+python3 scripts/section_search.py evidence --document <document_id>
 ~~~
 
 A read validates the section key, offset and budget, rechecks the snapshot and the
@@ -97,6 +99,18 @@ newer file with an older offset.
 Limits: `limit` 1–20, `budget_chars` 1–5,000, excerpt at most 240 characters, and no full
 document is returned by search. Offsets are Unicode codepoint offsets, not UTF-8 bytes.
 
+## Evidence
+
+`evidence` accepts exactly one of `--document`, `--claim` or `--source`, rechecks the
+section index, resolves the record through [section_evidence.py](../scripts/section_evidence.py)
+and adds `search_snapshot` and `search_route_snapshot` to the evidence result. The separate
+evidence snapshot still guards the claim ledger, register and lock; pass
+`--expected-evidence-snapshot` to refuse a changed record. `read --include-evidence` embeds
+the document-level evidence block in a read response.
+
+The resolver returns registered metadata, relations, contradictions and unavailable-source
+outcomes only. It does not return source text, permitted excerpts or an answer verdict.
+
 ## Response statuses
 
 | Status | Meaning |
@@ -104,8 +118,8 @@ document is returned by search. Offsets are Unicode codepoint offsets, not UTF-8
 | `ok` | At least one section matched and every consistency check passed. |
 | `no-results` | The query is valid but no section matched under the filters. |
 | `invalid-request` | Bad query, limit, offset, budget, filter or path prefix. |
-| `not-found` | The requested section key is absent from this snapshot. |
-| `not-available` | The index is missing, unreadable, corrupt or format-incompatible. |
+| `not-found` | The requested section or evidence ID is absent from this snapshot. |
+| `not-available` | The index or evidence components are missing, unreadable or incompatible. |
 | `snapshot-mismatch` | The book or metadata changed after the index was published. |
 
 A `no-results` answer is not proof that the corpus lacks the concept; it only reports this
@@ -116,9 +130,9 @@ snapshot, index and filter scope.
 The implementation currently provides the contract's search identifier, path, heading,
 bounded excerpt, score kind, ranker version, filters, truncation and snapshot identity, and
 the read offsets, hash check, truncation and next offset. Not implemented yet: opaque
-cursors, estimated totals, the evidence operation (#51), vector or hybrid ranking,
-per-result semantic confidence and MCP envelopes (#57–#60). These gaps are not implied to be
-complete by this document.
+cursors, estimated totals, permitted excerpts, lexical-plus-evidence quality measurement,
+vector or hybrid ranking, per-result semantic confidence and MCP envelopes (#57–#60). The
+bounded evidence operation exists; these remaining gaps are not implied to be complete.
 
 ## Measured local evidence — 2026-10-22
 

@@ -8,11 +8,12 @@ import sqlite3
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 import route_index  # noqa: E402
+import section_evidence  # noqa: E402
 import section_fts_index  # noqa: E402
 import section_search  # noqa: E402
 
@@ -211,6 +212,38 @@ class SearchTests(unittest.TestCase):
                 self.read(key, offset, budget)
         with self.assertRaises(section_search.SearchError):
             self.read(key, 100000, 10)
+
+    def test_read_includes_evidence_only_when_requested(self):
+        self.build()
+        key = "tycho.page.alpha#retry-budget"
+        with patch.object(section_evidence, "build_store",
+                          return_value={"fake": True}), \
+             patch.object(section_evidence, "resolve_document",
+                          return_value={"status": "ok",
+                                        "document": {"document_id": "x"}}):
+            result = self.read(key, 0, 20, include_evidence=True)
+        self.assertEqual(result["evidence"]["status"], "ok")
+        plain = self.read(key, 0, 20)
+        self.assertNotIn("evidence", plain)
+
+    def test_evidence_action_binds_search_snapshot(self):
+        manifest = {"snapshot_id": "s" * 64,
+                    "route_snapshot_sha256": "r" * 64}
+        with patch.object(section_search, "open_snapshot",
+                          return_value=(MagicMock(), manifest)), \
+             patch.object(section_evidence, "build_store",
+                          return_value={"fake": True}), \
+             patch.object(section_evidence, "resolve_claim",
+                          return_value={"status": "ok"}):
+            result = section_search.evidence(self.root, claim_id="claim.x")
+        self.assertEqual(result["search_snapshot"], "s" * 64)
+        self.assertEqual(result["search_route_snapshot"], "r" * 64)
+
+    def test_evidence_requires_one_identifier(self):
+        with self.assertRaises(section_search.SearchError):
+            section_search.evidence(self.root)
+        with self.assertRaises(section_search.SearchError):
+            section_search.evidence(self.root, document_id="a", claim_id="b")
 
 
 if __name__ == "__main__":

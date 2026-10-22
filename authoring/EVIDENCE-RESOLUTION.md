@@ -1,8 +1,8 @@
 # Bounded evidence and decision-reference resolution
 
 > Issue [#51](https://github.com/rouslanbaranov/tycho/issues/51), M4. **Status 2026-10-22:**
-> read-only resolver over the existing claim ledger and source register. It is not yet wired
-> into the search response or MCP adapter, and it is not a knowledge graph.
+> read-only resolver over the claim ledger and source register, wired into the section-search
+> CLI and read flow. MCP exposure and quality measurement remain open; it is not a graph.
 
 ## Scope and inputs
 
@@ -94,21 +94,35 @@ The resolver exposes, without changing the records:
 
 [Nine offline tests](../tests/test_tycho_evidence.py) cover supported, contested and
 unavailable claims, source relations, document/frontmatter mismatch, decision references,
-snapshot refusal, unknown IDs, wrong kind and an invalid ledger. They do not verify URL
+snapshot refusal, unknown IDs, wrong kind and an invalid ledger. Three integration cases in
+the [search tests](../tests/test_tycho_section_search.py) cover the evidence action, the
+embedded read block and identifier validation. They do not verify URL
 reachability, source text, claim truth, reviewer approval or legal reuse rights. They do not
 prove that a returned source actually supports the claim; the claim ledger records that
 judgement separately.
 
-The resolver is document-level. Section-level evidence lookup requires the section index and
-is a later integration step. Only three claims are registered today, so coverage is
+The resolver is document-level: it accepts a document ID, not a section ID. Section-level
+evidence lookup remains a later step. Only three claims are registered today, so coverage is
 deliberately small.
 
-## Integration and next gates
+## Integration with search and read
 
-The retrieval contract's `evidence` operation can use these functions directly. Wiring it
-into the search/API response should happen after #50 lands, and the MCP adapter (#57+)
-should expose the same bounded fields rather than a new graph method. Next steps:
+The retrieval contract's `evidence` operation is wired into `section_search.py`:
 
-1. Wire `evidence` into the search/read flow with the same snapshot check.
-2. Add section-level document/section evidence resolution when the section index is present.
-3. Expand the claim ledger only through the existing admission and validation workflow.
+~~~sh
+python3 scripts/section_search.py evidence --claim claim.same-intent-retry
+python3 scripts/section_search.py evidence --document <document_id>
+python3 scripts/section_search.py read --id <section_key> --include-evidence
+~~~
+
+The evidence action rechecks the section index and adds `search_snapshot` and
+`search_route_snapshot` to the result. `read --include-evidence` embeds the document block.
+The separate evidence snapshot still guards the ledger, register and lock. The MCP adapter
+(#57+) should expose the same bounded fields rather than a new graph method.
+
+## Next gates
+
+1. Add section-level evidence resolution when a section ID is supplied.
+2. Return permitted excerpts only after a licensing and review decision.
+3. Measure lexical-plus-evidence retrieval quality on the qrels set.
+4. Expand the claim ledger only through the existing admission and validation workflow.
