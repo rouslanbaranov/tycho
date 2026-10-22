@@ -105,16 +105,17 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ### Anti-Corruption Layer
 
-An anti-corruption layer translates between an external model and the local domain without letting
-the external vocabulary become the local authority. It owns mapping, validation and the explicit
-rejection of meanings that do not translate.
+An anti-corruption layer is a translation boundary that keeps an external or legacy model from
+becoming the local authority. It owns mapping, validation and the explicit rejection of meanings
+that do not translate.
 
-Mapping ACTIVE directly to AVAILABLE implies stock and allocation guarantees the old system never
-made. The anti-corruption adapter must preserve or explicitly reject that uncertainty. The adapter
-cannot unilaterally roll back R7, nor should it hide the ambiguous outcome behind repeated writes. It
-must retain the cross-system correlation and resolve the result from authority before answering with
-success or a classified pending/unknown status.
+Every mapping needs version pinning and contract tests for lossy fields, plus a rejection path for
+values with no local meaning. A dual write or an unknown external outcome retains the correlation
+identifier and resolves against the authority before reporting success; it does not hide the
+ambiguity behind retries. A synthetic example makes the risk concrete: an external ACTIVE status
+does not imply local AVAILABLE stock or allocation, so the mapping must preserve that uncertainty
+or reject it.
 
-A direct adapter or a shared contract may be preferable when the semantics are genuinely identical
-and the external model is stable. An ACL is a fit when the external model is lossy or changes on a
-different cadence; otherwise it adds a translation layer without protecting a real invariant.
+A direct adapter or shared contract is preferable only when semantics are genuinely identical and
+stable. An ACL fits when the external model is lossy, changes on a different cadence or carries
+vocabulary the local domain must not inherit.

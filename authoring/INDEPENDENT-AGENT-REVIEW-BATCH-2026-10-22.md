@@ -1107,3 +1107,8 @@ Verdict: **pass**. Findings: 0. Label, timeout policy, versioned contract and ce
 
 Verdict: **pass**. Findings: 0. Inclusion boundary/contraindications align; the exact owner link qualifies for the repository link exception.
 
+
+### Anti-Corruption Layer — latest re-review
+
+Verdict: **pass**. Findings: 0. Undefined R7 removed, synthetic example labelled, contract tests/versioned mappings and line lengths fixed.
+
