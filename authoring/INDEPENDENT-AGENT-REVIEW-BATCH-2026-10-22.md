@@ -1172,3 +1172,8 @@ Verdict: **pass**. Findings: 0. Prefetch/in-flight/ack bounds, pause-or-scale ov
 
 Verdict: **pass**. Findings: 0. Heading/anchor normalized; card fit matches externalized-or-dual-readable state and in-flight drain/route.
 
+
+### Feature Flags / Feature Toggles — latest re-review
+
+Verdict: **pass**. Findings: 0. Normalized heading/anchor, fail-safe default, observable evaluation, snapshot-age recovery and corrected atlas link.
+

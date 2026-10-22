@@ -170,7 +170,7 @@ unit, not a benchmark.
 
 **Related entries.** Blue/Green; Rolling Deployment; Feature Flags; Dark Launching.
 
-### Feature Flags / Feature Toggles
+### Feature Flags-Feature Toggles
 
 **Identity.** Feature Flags / Feature Toggles; family Deployment and legacy modernization;
 kind deployment-pattern; priority core.

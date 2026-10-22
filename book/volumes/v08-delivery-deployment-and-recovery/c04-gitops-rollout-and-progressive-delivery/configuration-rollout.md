@@ -146,7 +146,7 @@ Exercise a stale process, a missing telemetry stream, a duplicate publication, a
 
 - Parent chapter: [GitOps, rollout and progressive delivery](README.md).
 - Related decision: [Safe rollout and recovery](../../../delivery/safe-rollout-and-recovery.md).
-- Pattern atlas: [Feature Toggles](../../v11-pattern-atlas/c12-delivery-and-operations/README.md).
+- Pattern atlas: [Feature Toggles](../../v11-pattern-atlas/c10-deployment-modernization/README.md#feature-flags-feature-toggles).
 
 ## Bounded pattern ownership notes
 
@@ -156,9 +156,11 @@ A flag decouples deployment from exposure by evaluating a versioned value at req
 tenant, user or cohort, with a documented default and kill switch. The flag is runtime policy, not a
 replacement for a release gate.
 
-A flag is also not a substitute for an authorization check. Stale snapshots, flag interactions,
-permanent flags and unauthorized overrides are common. Define the default on evaluation failure,
-audit every override, cap the flag's lifetime and remove it after the rollout.
+A flag is also not a substitute for an authorization check. Each evaluation needs the flag version,
+scope and default; on evaluation failure the default must be the safe branch, not a silent enable.
+Expose the decision and snapshot age so stale exposure is visible; bound snapshot age, alert on
+staleness and fall back to last-known-good or the safe default. Audit every override, cap the flag's
+lifetime and remove it after the rollout.
 
 A canary or branch-by-abstraction may be preferable when the flag would become a permanent
 configuration surface. A flag is a fit when exposure must be separable from deployment and the
