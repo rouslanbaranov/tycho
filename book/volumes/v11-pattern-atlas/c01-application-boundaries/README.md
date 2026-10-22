@@ -181,7 +181,7 @@ owned independently.
 consistency are normal; recovery requires timeouts, idempotency and observability.
 The linked owner section states the remaining limits.
 
-**Technical owner.** [Service orientation, microservices and distributed boundaries](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#purpose-and-mission) — The section explicitly owns SOA and microservice boundary choices.
+**Technical owner.** [Microservices Architecture](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#microservices-architecture) — The section explicitly owns SOA and microservice boundary choices.
 
 **Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-article.2026-10-21: Microservices, sections
@@ -219,7 +219,7 @@ mediation overhead exceeds the integration benefit.
 mismatch are common. Recovery requires contract ownership and mediation observability;
 the linked owner section states the remaining limits.
 
-**Technical owner.** [Service orientation, microservices and distributed boundaries](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#purpose-and-mission) — The section explicitly owns SOA and microservice boundary choices.
+**Technical owner.** [Service-Oriented Architecture (SOA)](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#service-oriented-architecture-soa) — The section explicitly owns SOA and microservice boundary choices.
 
 **Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-article.2026-10-21: Microservices, section

@@ -494,3 +494,13 @@ the validators still require a separate policy change.
     - File: `autoscaling-lag-and-capacity-limits.md`
     - Heading: `Autoscaling`; 120 words
     - SHA-256: `578fd03227719a52272b97089cbec74a1ee7d6135d2e9fe5a0549f48b58e52ce`
+
+96. **Microservices Architecture** — `tycho.pattern.microservices-architecture`
+    - File: `service-orientation-microservices-and-distribution.md`
+    - Heading: `Microservices Architecture`; 125 words
+    - SHA-256: `ebb099cba82b979816a5321d263646321b92e4996da170488812fa86d9a4c419`
+
+97. **Service-Oriented Architecture (SOA)** — `tycho.pattern.service-oriented-architecture-soa`
+    - File: `service-orientation-microservices-and-distribution.md`
+    - Heading: `Service-Oriented Architecture (SOA)`; 126 words
+    - SHA-256: `ebb099cba82b979816a5321d263646321b92e4996da170488812fa86d9a4c419`

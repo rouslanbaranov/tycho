@@ -87,6 +87,39 @@ are not measured requirements.
 
 <!-- /tycho-question-source -->
 
+## Bounded pattern ownership notes
+
+### Microservices Architecture
+
+Microservices emphasize independently deployable capabilities with their own data and lifecycle.
+The unit of independence is the deployable service plus its data ownership, not the number of
+repositories.
+
+Each capability needs a single authoritative owner for its data and invariant, and independent
+deployment must be real rather than a container label. Shared databases, synchronized releases and
+chatty remote calls can recreate a distributed monolith; retries, version skew and partial failure
+are common. Define the contract, the failure budget and the local transaction boundary before
+splitting the deployment.
+
+A modular monolith or layered application may be preferable when independent deployment and failure
+containment are not measured requirements. Microservices are a fit when separate ownership,
+independent release cadence and failure isolation justify the remote-call and data-consistency cost.
+
+### Service-Oriented Architecture (SOA)
+
+SOA emphasizes published capabilities, explicit contracts and governed interaction across
+independent owners. The governance model and contract lifecycle are the mechanism; a service bus or
+registry alone does not create ownership.
+
+Each capability needs a single authoritative owner for its data and invariant, and independent
+deployment must be real rather than a container label. Shared databases, synchronized releases and
+chatty remote calls can recreate a distributed monolith; retries, version skew and partial failure
+are common. A published contract needs a version, a consumer inventory and a deprecation path.
+
+A modular monolith or layered application may be preferable when independent deployment and failure
+containment are not measured requirements. SOA is a fit when many owners must integrate through
+stable contracts and the governance cost buys real autonomy.
+
 ## Integrated decision and reading route
 
 Justify a remote boundary through independent ownership or deployment needs while accounting for communication and recovery costs.
