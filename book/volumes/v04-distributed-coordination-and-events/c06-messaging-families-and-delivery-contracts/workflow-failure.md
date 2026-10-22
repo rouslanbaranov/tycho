@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-21"
+updated_at: "2026-10-22"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -76,7 +76,7 @@ Use the [saga/isolation research](../c03-consistency-and-distributed-transaction
 > [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/README.md#request-reply-messaging) — decision conditions and contraindications.
 > [Correlation Identifier](../../v11-pattern-atlas/c03-messaging-integration/README.md#correlation-identifier) — decision conditions and contraindications.
 > [Claim Check](../../v11-pattern-atlas/c03-messaging-integration/README.md#claim-check) — decision conditions and contraindications.
-> [Dead Letter Channel / DLQ](../../v11-pattern-atlas/c03-messaging-integration/README.md#dead-letter-channel-dlq) — decision conditions and contraindications.
+> [Dead Letter Channel / DLQ](../../v11-pattern-atlas/c03-messaging-integration/README.md#dead-letter-channel--dlq) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.98616bdc3c514ea997b2cfe30ad7c070:4 -->
 ## 4. Failure and applicability gates
@@ -170,8 +170,8 @@ A claim check stores a large or sensitive payload outside the message and sends 
 token instead. It needs payload lifecycle, authorization, expiry, integrity and a cleanup
 rule for abandoned claims. Use it when message size, retention or access boundaries make
 an inline payload unsafe. Do not use it when the payload is small enough to inline or when
-an external store would create an unacceptable consistency dependency. An untracked claim store becomes
-a data-retention liability. Bind the claim token to the message and tenant and to a payload
+an external store would create an unacceptable consistency dependency. An untracked
+claim store becomes a data-retention liability. Bind the claim token to the message and tenant and to a payload
 digest; a token must not resolve to another payload. The retrieval hop needs a latency budget
 and bounded retries.
 
@@ -186,14 +186,16 @@ A correlation identifier ties together messages that belong to one request, work
 conversation. It needs a generation rule, propagation across asynchronous boundaries, a
 retention window and a collision check. Uniqueness is scoped to the operation, not global; a
 value reused across operations is a collision, and generation must verify that scope. Use it
-when independent messages must be joined for diagnosis, deduplication or reply routing. Do not use it as an authorization token or
-when the transport already provides an equivalent identity.
+when independent messages must be joined for diagnosis, deduplication or reply
+routing. Do not use it as an authorization token or when the transport already
+provides an equivalent identity.
 
 The failure path is a lost or duplicated identifier; carry it in the message contract and
 record it at every boundary. Ambiguous matching or an expired identifier needs a disposition:
 quarantine unmatched messages, resolve by a secondary key, or reissue; an expired identifier
-maps to a dead-letter or audit record with an owner. A transport-native message identity is the alternative when
-the broker guarantees the needed scope and lifetime.
+maps to a dead-letter or audit record with an owner. A transport-native message
+identity is the alternative when the broker guarantees the needed scope and
+lifetime.
 
 **Limits.** Correlation is not deduplication: it groups messages but does not prove one effect;
 identifier retention and trust boundaries need an owner.

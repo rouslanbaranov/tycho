@@ -61,6 +61,9 @@ Resolved metadata findings:
 - **F-006:** the protocol now records three reject-level entries instead of claiming zero.
 - **F-008/F-017/F-019 (card hygiene):** the Read Replicas limit and the Correlation,
   Request-Reply and Deadline labels are corrected in the V11 cards; owner pages are unchanged.
+- **F-016/F-018 (owner-page hygiene):** five slash-heading backlinks use the correct
+  double-hyphen anchors and the three cited workflow-failure lines are wrapped; four owner
+  pages changed and 21 owner-linked records carry a remediation note.
 
 Open findings:
 
@@ -68,7 +71,7 @@ Open findings:
   any verdict change.
 - **Major:** F-009 Expand-and-Contract, F-010 Event Sourcing, F-011 Cache-Aside,
   F-012 Negative Caching, F-013 Process Manager, F-015 duplication.
-- **Minor:** F-014, F-016, F-018, F-020–F-022.
+- **Minor:** F-014, F-020–F-022.
 
 No page, card or `sufficient` state was changed by this integration. The delivery-evidence
 artifact and validator were updated for F-007; owner page bytes remain at the audit head.

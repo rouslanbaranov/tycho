@@ -66,7 +66,7 @@
 
 
 > **Pattern atlas:**
-> [CDN / Edge Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cdn-edge-caching) — decision conditions and contraindications.
+> [CDN / Edge Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cdn--edge-caching) — decision conditions and contraindications.
 
 
 > **Pattern atlas:**
