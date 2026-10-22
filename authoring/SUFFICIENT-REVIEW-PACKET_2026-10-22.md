@@ -584,3 +584,23 @@ the validators still require a separate policy change.
     - File: `stampede-protection.md`
     - Heading: `Single Flight / Request Coalescing`; 135 words
     - SHA-256: `fb59dca0cad703df369987fef4240393fe2254f5652ebc0c6922da8731bdfedb`
+
+114. **Transactional Outbox** — `tycho.pattern.transactional-outbox`
+    - File: `outbox-inbox-sagas-and-durable-workflows.md`
+    - Heading: `Transactional Outbox`; 133 words
+    - SHA-256: `70b13dee3bad23d6b63da787cf8af5f523c47e061f134fc16583f1bde551f86c`
+
+115. **Distributed Workflow Orchestration** — `tycho.pattern.distributed-workflow-orchestration`
+    - File: `outbox-inbox-sagas-and-durable-workflows.md`
+    - Heading: `Distributed Workflow Orchestration`; 120 words
+    - SHA-256: `70b13dee3bad23d6b63da787cf8af5f523c47e061f134fc16583f1bde551f86c`
+
+116. **Leader-Follower Replication** — `tycho.pattern.leader-follower-replication`
+    - File: `replication-consensus-and-leader-change.md`
+    - Heading: `Leader-Follower Replication`; 136 words
+    - SHA-256: `55ff8e5a0e47f1136f5f7d32a76f34d941e6991407643a58f752dba5d374db98`
+
+117. **Consensus** — `tycho.pattern.consensus`
+    - File: `replication-consensus-and-leader-change.md`
+    - Heading: `Consensus`; 150 words
+    - SHA-256: `55ff8e5a0e47f1136f5f7d32a76f34d941e6991407643a58f752dba5d374db98`

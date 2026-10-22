@@ -329,7 +329,7 @@ choice when lost/duplicate publication risk exceeds relay complexity.
 commit/before publish retries; a poison row can block progress. Bound attempts/age and keep
 repair evidence.
 
-**Technical owner.** [Outbox, inbox, sagas and durable workflow coordination](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#purpose-and-decision-question) — outbox coordination is bounded, not a connector manual.
+**Technical owner.** [Transactional Outbox](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#transactional-outbox) — outbox coordination is bounded, not a connector manual.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)

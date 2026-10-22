@@ -3044,14 +3044,16 @@
       "owner": {
         "document_id": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9",
         "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
-        "heading": "Purpose and decision question",
-        "anchor": "purpose-and-decision-question",
-        "level": 2,
-        "line": 69,
-        "unit_kind": "embedded",
+        "heading": "Transactional Outbox",
+        "anchor": "transactional-outbox",
+        "level": 3,
+        "line": 127,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Transactional outbox",
-          "durable intent to publish"
+          "Commit the authoritative",
+          "outbox gives durable intent",
+          "relay can crash",
+          "Snapshot/log-based CDC"
         ]
       },
       "technical_evidence": {
@@ -4446,16 +4448,16 @@
       "owner": {
         "document_id": "tycho.page.1b2657011d454460856103419095031b",
         "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
-        "heading": "Engineering walkthrough — New leader, old client and a lost acknowledgment",
-        "anchor": "engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment",
-        "level": 2,
-        "line": 81,
-        "unit_kind": "embedded",
+        "heading": "Leader-Follower Replication",
+        "anchor": "leader-follower-replication",
+        "level": 3,
+        "line": 158,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "three-node quorum illustration",
-          "A was leader",
+          "One leader accepts writes",
+          "valid quorum/term",
           "stale leader",
-          "new leader"
+          "Quorum-replicated"
         ]
       },
       "technical_evidence": {
@@ -4471,7 +4473,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Old A reappears with stale state | Reject stale leader commands, catch up log",
+          "quote": "A stale leader that reappears must be rejected, and the follower log must catch up before it serves authoritative reads.",
           "reason": "Covers isolation, new-leader election and stale-leader rejection with log catch-up."
         },
         "alternative": {
@@ -5990,16 +5992,16 @@
       "owner": {
         "document_id": "tycho.page.1b2657011d454460856103419095031b",
         "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
-        "heading": "Engineering walkthrough — New leader, old client and a lost acknowledgment",
-        "anchor": "engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment",
-        "level": 2,
-        "line": 81,
-        "unit_kind": "embedded",
+        "heading": "Consensus",
+        "anchor": "consensus",
+        "level": 3,
+        "line": 174,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "quorum/term",
-          "committed log entries",
-          "new leader",
-          "stale leader"
+          "nodes A, B and C",
+          "valid quorum/term",
+          "catch up the log",
+          "asynchronous replicas"
         ]
       },
       "technical_evidence": {
@@ -6014,9 +6016,9 @@
           "reason": "Requires a valid quorum/term contract before authoritative writes."
         },
         "failure_recovery": {
-          "state": "supported",
-          "quote": "Old A reappears with stale state | Reject stale leader commands, catch up log",
-          "reason": "Lists partition, stale-leader rejection and log catch-up as recovery steps."
+          "state": "partial",
+          "quote": "",
+          "reason": "Dedicated section names stale-leader rejection and log catch-up but not a full recovery procedure."
         },
         "alternative": {
           "state": "supported",
@@ -6409,14 +6411,16 @@
       "owner": {
         "document_id": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9",
         "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
-        "heading": "Purpose and decision question",
-        "anchor": "purpose-and-decision-question",
-        "level": 2,
-        "line": 69,
-        "unit_kind": "embedded",
+        "heading": "Distributed Workflow Orchestration",
+        "anchor": "distributed-workflow-orchestration",
+        "level": 3,
+        "line": 142,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Durable workflow",
-          "coordinator record its progress"
+          "persistent state machine",
+          "Recovery needs replay",
+          "Do not infer success",
+          "Saga choreography"
         ]
       },
       "technical_evidence": {
@@ -8703,11 +8707,11 @@
         "tycho.pattern.multi-leader-replication",
         "tycho.pattern.read-replicas"
       ],
-      "unit_count": 3,
-      "dedicated_units": 2,
+      "unit_count": 4,
+      "dedicated_units": 4,
       "bounded_entries": 4,
       "decision": "deepen",
-      "rationale": "Four replication patterns share a page whose leader-follower unit is embedded and whose multi-leader and read-replica units are bounded notes; deeper sections are still required."
+      "rationale": "Replication, consensus, multi-leader and read-replica patterns now have five dedicated units."
     },
     {
       "document_id": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9",
@@ -8717,11 +8721,11 @@
         "tycho.pattern.distributed-workflow-orchestration",
         "tycho.pattern.transactional-outbox"
       ],
-      "unit_count": 1,
-      "dedicated_units": 0,
+      "unit_count": 2,
+      "dedicated_units": 2,
       "bounded_entries": 2,
       "decision": "deepen",
-      "rationale": "Distributed workflow now has bounded evidence; the outbox still needs its own bounded unit rather than a shared question bullet."
+      "rationale": "Transactional outbox and durable workflow orchestration now have two distinct dedicated units."
     },
     {
       "document_id": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd",
@@ -9096,12 +9100,12 @@
     "entries": 145,
     "owner_pages": 69,
     "shared_pages": 33,
-    "owner_units": 138,
-    "dedicated_units": 115,
-    "embedded_units": 23,
+    "owner_units": 140,
+    "dedicated_units": 119,
+    "embedded_units": 21,
     "mechanism_supported": 145,
     "invariant_supported": 145,
-    "failure_recovery_supported": 137,
+    "failure_recovery_supported": 136,
     "alternative_supported": 138,
     "technical_partial_bounded": 145,
     "technical_partial": 0,

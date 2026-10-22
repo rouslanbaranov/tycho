@@ -121,3 +121,35 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Sagas, workflow recovery and compensation](saga-workflows.md) — What business recovery contract replaces a nonexistent global rollback?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+### Transactional Outbox
+
+An outbox records publication intent in the same local transaction as the business state change.
+Commit the authoritative state change and a publication-intent row in one local transaction. A
+separate relay publishes the row and checkpoints its progress.
+
+The outbox gives durable intent, not atomicity with the broker or exactly-once delivery. A relay can
+crash after publish but before checkpoint, causing a duplicate; after commit but before publish,
+causing a retry; a poison row can block progress. Consumers still need effect identity, and the relay
+needs ordering, retention and dead-letter handling.
+
+Snapshot/log-based CDC, transactional messaging, or direct publish with reconciliation may be
+preferable when the outbox table or relay is not operationally justified. An outbox is a fit when the
+local transaction must carry publication intent and the team can operate the relay.
+
+### Distributed Workflow Orchestration
+
+A durable workflow is a persistent state machine: steps, timers, retries, versions, compensation and
+human tasks survive process loss. The workflow history is the authority for progress, not an
+in-memory coroutine.
+
+Recovery needs replay from durable history, idempotent activities, explicit retry/cancel/compensation,
+and a repair state for unknown external effects. Do not infer success from a completed workflow flag
+when an external effect is uncertain. Upgrade workflow code with versioning so a replayed history
+does not change meaning.
+
+Saga choreography, a database-backed job table, or a simple queue pipeline may be simpler when steps
+are few, no long timers are needed, or the team cannot operate an engine. Orchestration is a fit when
+long waits, visibility and compensation justify the engine.

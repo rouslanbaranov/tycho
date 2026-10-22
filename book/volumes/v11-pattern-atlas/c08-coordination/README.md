@@ -125,7 +125,7 @@ choice when consensus latency/availability cost exceeds agreement benefit.
 **Failure and recovery.** Quorum loss and leader churn are common; verify safety/progress
 in the owner section.
 
-**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment) — consensus is bounded to safety/progress discussion.
+**Technical owner.** [Consensus](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#consensus) — consensus is bounded to safety/progress discussion.
 
 **Sources.** [src.raft](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-raft.2026-10-21: sections "Raft Consensus Algorithm", "Safety".
@@ -361,7 +361,7 @@ choice when central workflow state and engine operations exceed coordination ben
 nondeterministic replay and version conflicts are common. Replay from durable history,
 keep activities idempotent and use a repair state for unknown external effects.
 
-**Technical owner.** [Outbox, inbox, sagas and durable workflow coordination](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#purpose-and-decision-question) — durable workflow coordination is bounded, not a Temporal product guide.
+**Technical owner.** [Distributed Workflow Orchestration](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#distributed-workflow-orchestration) — durable workflow coordination is bounded, not a Temporal product guide.
 
 **Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-temporal-workflows.2026-10-21: sections "Workflows", "Workflow

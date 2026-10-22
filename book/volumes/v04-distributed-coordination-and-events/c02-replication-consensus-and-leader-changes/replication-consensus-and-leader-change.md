@@ -154,3 +154,35 @@ justify the extra copies.
 
 **Limits.** Replica count and lag budgets must be owned; a failover to a stale replica can
 violate read-your-writes even when the replication stream is healthy.
+
+### Leader-Follower Replication
+
+One leader accepts writes and appends a replicated log; followers apply it in order. The leader is
+the write authority for its term, and followers serve reads only under the freshness rule their
+contract declares.
+
+A can remain reachable to some clients, but must not be allowed to commit new authoritative writes
+without a valid quorum/term contract. A stale leader that reappears must be rejected, and the
+follower log must catch up before it serves authoritative reads. Track the commit position and the
+lag of each follower; a healthy connection is not proof of current data.
+
+Quorum-replicated consensus, multi-leader replication or asynchronous read replicas may be
+preferable depending on the required write availability, read freshness and conflict model.
+Leader-follower is a fit when one writer per partition is acceptable and failover can fence the old
+leader.
+
+### Consensus
+
+Consensus gives a group of nodes one ordered decision history despite crashes and partitions. In the
+worked scenario, nodes A, B and C replicate one state machine. A was leader. A's network connection
+to B and C fails; B and C may form a quorum and eventually select a new leader.
+
+A can remain reachable to some clients, but must not be allowed to commit new authoritative writes
+without a valid quorum/term contract. Old A reappears with stale state; reject stale leader commands
+and catch up the log. The commit rule needs a durable term/vote record and stable membership, not
+only a heartbeat.
+
+For read-mostly telemetry where temporary staleness is acceptable, simpler asynchronous replicas may
+avoid quorum overhead; if single-key linearizable authority is mandatory, that alternative may fail
+the requirement. Consensus is a fit when the decision history must survive minority failure and the
+operator can run the quorum safely.
