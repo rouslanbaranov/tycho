@@ -54,9 +54,10 @@ of the seven findings is pending; Phase B remains un-reviewed.
 
 Owner decision B applied. Phase A is 46 pass / 6 PWF / 0 reject; overall 50 pass /
 95 PWF / 0 reject. Cell-Based, CDC and Materialized View are promoted from reject. The six
-PWF are page-unverified verification gaps, not open findings. Phase B remains un-reviewed;
-sufficient stays 0; human/owner gates remain open. See
-[the acceptance](PHASE-A-ACCEPTANCE_2026-10-22.md).
+PWF were page-unverified verification gaps; the follow-up gap review closed them, so the
+final Phase A is 52 pass / 0 PWF / 0 reject and overall 56/89/0. Phase B remains
+un-reviewed; sufficient stays 0; human/owner gates remain open. See
+[the gap acceptance](PHASE-A-GAP-ACCEPTANCE_2026-10-23.md).
 
 ## What is resolved and what remains
 

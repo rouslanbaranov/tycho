@@ -9,7 +9,7 @@
 | Measure | Value |
 |---|---:|
 | Packets | 52 |
-| Promoted after remediation | 46 |
+| Promoted after remediation | 52 |
 | Residual findings after re-review | 0 |
 | Unique owner pages | 32 |
 | Ready for independent re-review | 0 |
@@ -53,7 +53,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Cache-Aside / Lazy Loading**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Canonical Data Model**
@@ -161,7 +161,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Index Table**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Lease-Based Ownership**
@@ -185,7 +185,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Priority Queue**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Process Manager / Routing Slip**
@@ -221,15 +221,15 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Sidecar**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Static Content Hosting**
-  Current: pass-with-findings; re-review: pass-with-findings; report: reject.
+  Current: pass; re-review: pass; report: reject.
   Status: reviewed-by-independent-agent.
 
 - **Transactional Inbox**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Transactional Outbox**
