@@ -104,7 +104,7 @@ anemic domain models are common. Recovery starts with dependency checks, explici
 contracts and a review of the change boundary; the linked owner section states the
 remaining limits.
 
-**Technical owner.** [Layered, hexagonal and ports-and-adapters architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#purpose-and-decision-question) — The section owns layering and dependency direction; it is not a dedicated layering manuscript.
+**Technical owner.** [Layered Architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#layered-architecture) — The section owns layering and dependency direction; it is not a dedicated layering manuscript.
 
 **Sources.** [src.fowler-layering](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-layering.2026-10-21: Presentation Domain Data Layering,
@@ -256,7 +256,7 @@ abstraction cost exceeds the isolation benefit.
 inconsistently, and mapping layers can hide latency. Recovery requires contract tests,
 explicit error translation and a review of the adapter boundary in the technical owner.
 
-**Technical owner.** [Layered, hexagonal and ports-and-adapters architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures).
+**Technical owner.** [Hexagonal Architecture / Ports and Adapters](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#hexagonal-architecture-ports-and-adapters).
 
 **Sources.** [src.aws-hexagonal](../../../../edition/patterns/reading-ledger.v1.json)
 read record `read.aws-hexagonal.2026-10-21`: AWS Prescriptive Guidance, sections

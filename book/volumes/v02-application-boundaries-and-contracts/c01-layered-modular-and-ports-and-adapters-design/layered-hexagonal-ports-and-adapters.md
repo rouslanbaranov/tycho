@@ -135,6 +135,36 @@ These notes define the decision boundary for atlas cards whose mechanism is not 
 this page. They are synthetic design guidance, not measured evidence, and they do not create a new
 source claim.
 
+### Layered Architecture
+
+Layering groups responsibilities by abstraction and restricts source dependencies to an allowed
+direction. The inner domain must not depend on a UI, database or transport adapter.
+
+Dependency bypass, cyclic imports and a layer that becomes a pass-through are common; detect them in
+the build and fail the change. A layer that only forwards calls adds indirection without a policy.
+Name the allowed direction, the owner of each layer and the test that catches a violation; a diagram
+alone is not enforcement.
+
+Hexagonal/clean architecture or a modular monolith may be preferable when explicit ports or module
+ownership add more value than layer count. Layering is a fit when the team needs a simple dependency
+rule and the domain can stay independent of delivery technology.
+
+### Hexagonal Architecture / Ports and Adapters
+
+The application defines an InventoryPort.reserve(unitId, interval, operationId) capability. One
+JDBC adapter implements the port with a database transaction. An HTTP adapter might instead talk to
+a remote inventory service.
+
+Neither implementation changes the *domain invariant*: a confirmed reservation must have one
+authoritative result for its logical operation. When a unique constraint rejects a competing
+booking, the adapter must translate the database exception into an explicit domain conflict, not a
+generic retry. Port tests should run against both adapters and assert the same contract, including
+timeout and conflict behavior.
+
+If the application will always have one simple persistence choice, avoid a hierarchy of adapters
+that adds indirection without needed substitution. Ports are justified by a real substitution or
+test boundary, not by the number of rings.
+
 ### Clean / Onion Architecture
 
 Clean and onion styles place domain rules at the centre and let source dependencies point inward

@@ -23,15 +23,16 @@
       "owner": {
         "document_id": "tycho.page.77b512c4e2e946bd92d70b4a714600c8",
         "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
-        "heading": "Purpose and decision question",
-        "anchor": "purpose-and-decision-question",
-        "level": 2,
-        "line": 74,
-        "unit_kind": "embedded",
+        "heading": "Layered Architecture",
+        "anchor": "layered-architecture",
+        "level": 3,
+        "line": 138,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Layering",
-          "allowed call direction",
-          "responsibilities by abstraction"
+          "Layering groups",
+          "inner domain",
+          "Dependency bypass",
+          "Hexagonal/clean"
         ]
       },
       "technical_evidence": {
@@ -262,22 +263,22 @@
       "owner": {
         "document_id": "tycho.page.77b512c4e2e946bd92d70b4a714600c8",
         "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
-        "heading": "Engineering walkthrough — The same adapter error in local and remote architectures",
-        "anchor": "engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures",
-        "level": 2,
-        "line": 95,
-        "unit_kind": "embedded",
+        "heading": "Hexagonal Architecture / Ports and Adapters",
+        "anchor": "hexagonal-architecture-ports-and-adapters",
+        "level": 3,
+        "line": 152,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "InventoryPort.reserve(unitId, interval, operationId)",
-          "source dependency direction and semantic contract",
-          "Composition root",
-          "JDBC adapter"
+          "InventoryPort",
+          "domain invariant",
+          "unique constraint",
+          "one simple persistence"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "The application defines an `InventoryPort.reserve(unitId, interval, operationId)` capability. One JDBC adapter implements the port with a database transaction. An HTTP adapter might instead talk to a remote inventory service.",
+          "quote": "The application defines an InventoryPort.reserve(unitId, interval, operationId) capability.",
           "reason": "Shows the port contract with two interchangeable adapters."
         },
         "invariant": {
@@ -325,7 +326,7 @@
         "heading": "Clean / Onion Architecture",
         "anchor": "clean-onion-architecture",
         "level": 3,
-        "line": 138,
+        "line": 168,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Clean / Onion Architecture"
@@ -8610,10 +8611,10 @@
         "tycho.pattern.layered-architecture"
       ],
       "unit_count": 3,
-      "dedicated_units": 1,
+      "dedicated_units": 3,
       "bounded_entries": 3,
-      "decision": "keep",
-      "rationale": "Three architecture styles share one coherent structural page with three distinct units and no split pressure."
+      "decision": "deepen",
+      "rationale": "Layered, hexagonal and clean/onion styles now have three distinct dedicated units with separate dependency mechanisms."
     },
     {
       "document_id": "tycho.page.acb452608a8b42898aae7482c27f5f04",
@@ -9093,8 +9094,8 @@
     "owner_pages": 69,
     "shared_pages": 33,
     "owner_units": 134,
-    "dedicated_units": 92,
-    "embedded_units": 42,
+    "dedicated_units": 94,
+    "embedded_units": 40,
     "mechanism_supported": 145,
     "invariant_supported": 145,
     "failure_recovery_supported": 128,
@@ -9110,8 +9111,8 @@
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
-      "keep": 19,
-      "deepen": 14,
+      "keep": 18,
+      "deepen": 15,
       "split": 0
     },
     "split_deferred": 0
