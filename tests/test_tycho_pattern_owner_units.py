@@ -25,8 +25,8 @@ class PatternOwnerUnitTests(unittest.TestCase):
     def test_every_card_has_one_owner_unit(self):
         result = validate_data(self.data, ROOT)
         self.assertEqual(result["entries"], 145)
-        self.assertEqual(result["owner_pages"], 67)
-        self.assertEqual(result["shared_pages"], 31)
+        self.assertEqual(result["owner_pages"], 69)
+        self.assertEqual(result["shared_pages"], 33)
         self.assertEqual(result["bounded"] + result["partial"], 145)
         self.assertGreater(result["units"], 30)
 
@@ -116,15 +116,9 @@ class PatternOwnerUnitTests(unittest.TestCase):
         data["shared_pages"].pop()
         self.check_error(data, "owner-units-schema")
 
-    def test_unknown_split_deferral_page_is_rejected(self):
-        data = self.copy()
-        data["split_deferrals"][0]["path"] = "book/README.md"
-        self.check_error(data, "owner-units-split-deferral-page")
-
-    def test_split_deferral_gate_is_required(self):
-        data = self.copy()
-        data["split_deferrals"][0]["gate"] = "short"
-        self.check_error(data, "owner-units-schema")
+    def test_split_deferrals_are_empty(self):
+        self.assertEqual(self.data["split_deferrals"], [])
+        self.assertEqual(self.data["summary"]["split_deferred"], 0)
 
 
 if __name__ == "__main__":

@@ -382,7 +382,7 @@ when isolation cost exceeds noisy-neighbor risk.
 **Failure and recovery.** Quota bypass and cross-tenant leakage are common; verify
 isolation in the owner section.
 
-**Technical owner.** [Threat boundaries, identity, authorization and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#tenant-based-resource-isolation) — tenant isolation is bounded, not a full control catalogue.
+**Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#tenant-based-resource-isolation) — tenant isolation is bounded, not a full control catalogue.
 
 **Sources.**
 [src.microsoft-multitenant](../../../../edition/patterns/reading-ledger.v1.json)

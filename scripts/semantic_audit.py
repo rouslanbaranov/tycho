@@ -156,12 +156,6 @@ def build(root, reviews_dir, out):
             "description": "The owner has not accepted the Pattern Atlas or the semantic-audit record.",
             "action": "Record owner acceptance only after the independent review gates are closed.",
         },
-        {
-            "id": "split-identity-authorization",
-            "status": "open",
-            "description": "The identity and authorization page has a recorded split decision that is deferred.",
-            "action": "Perform the split only through a documented page migration with stable identities.",
-        },
     ]
     data = {
         "schema_version": 1,
@@ -170,7 +164,7 @@ def build(root, reviews_dir, out):
         "source_commit": source_commit(root),
         "source_commit_note": "The source_commit is the branch base before the audit changes. "
                               "Each page SHA-256 binds the record to the reviewed content.",
-        "scope": "One self-checked semantic disposition for each of the 421 canonical pages, "
+        "scope": "One self-checked semantic disposition for each of the 423 canonical pages, "
                  "including technical, decision, navigation and atlas pages; not independent review.",
         "method": "Every page was read as a bounded page, its identity and links were checked, "
                   "and findings were recorded against section headings. The review does not "
@@ -222,7 +216,7 @@ def build(root, reviews_dir, out):
             "The audit records a bounded page reading and does not source-verify every sentence.",
             "The 69 owner-accepted manuscripts retain their acceptance; findings are bounded remediation items.",
             "No release, deployment, hosted retrieval, benchmark or CI result is claimed.",
-            "The discovery/routing and TLS/gateway splits were performed with new stable page IDs; one deferred split remains.",
+            "The discovery/routing, TLS/gateway and identity/authorization/isolation splits were performed with new stable page IDs.",
         ],
     }
     data["summary"] = compute_summary(pages, gates, data["review_events"])

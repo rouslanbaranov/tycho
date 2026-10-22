@@ -351,9 +351,9 @@ def validate_data(data, root=ROOT):
 
     expected_shared = {path: sorted(item["pattern_id"] for item in items)
                        for path, items in by_page.items() if len(items) > 1}
-    require(len(expected_shared) == 31, "owner-units-shared-page-count")
+    require(len(expected_shared) == 33, "owner-units-shared-page-count")
     shared = data["shared_pages"]
-    require(len(shared) == 31, "owner-units-shared-list")
+    require(len(shared) == 33, "owner-units-shared-list")
     seen_pages = set()
     decisions = {"keep": 0, "deepen": 0, "split": 0}
     for page in shared:
@@ -386,7 +386,7 @@ def validate_data(data, root=ROOT):
 
     deferrals = data["split_deferrals"]
     split_pages = {page["path"]: page for page in shared if page["decision"] == "split"}
-    require(len(deferrals) == len(split_pages) == 1, "owner-units-split-deferral-count")
+    require(len(deferrals) == len(split_pages) == 0, "owner-units-split-deferral-count")
     seen_deferrals = set()
     for item in deferrals:
         path = item["path"]

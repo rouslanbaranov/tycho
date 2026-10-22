@@ -28,7 +28,7 @@ class PatternCoverageTests(unittest.TestCase):
     def test_complete_candidate_map(self):
         result = validate_data(self.coverage, self.reverse, ROOT)
         self.assertEqual(result["entries"], 145)
-        self.assertEqual(result["reverse_documents"], 66)
+        self.assertEqual(result["reverse_documents"], 68)
 
     def test_missing_entry_is_rejected(self):
         coverage, reverse = self.copy()
