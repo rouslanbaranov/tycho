@@ -9,12 +9,12 @@
 | Measure | Value |
 |---|---:|
 | Packets | 52 |
-| Promoted after remediation | 33 |
-| Residual findings after re-review | 16 |
+| Promoted after remediation | 46 |
+| Residual findings after re-review | 0 |
 | Unique owner pages | 32 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 52 |
-| Rejected after review | 3 |
+| Rejected after review | 0 |
 
 Packet statuses: {"reviewed-by-independent-agent": 52}.
 
@@ -65,15 +65,15 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Cell-Based Architecture**
-  Current: reject; re-review: reject; report: reject.
+  Current: pass; re-review: pass; report: reject.
   Status: reviewed-by-independent-agent.
 
 - **Change Data Capture (CDC)**
-  Current: reject; re-review: reject; report: reject.
+  Current: pass; re-review: pass; report: reject.
   Status: reviewed-by-independent-agent.
 
 - **Circuit Breaker**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Claim Check**
@@ -89,11 +89,11 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Dead Letter Channel / DLQ**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Deadline Propagation**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Deployment Stamps**
@@ -105,11 +105,11 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Durable Subscriber**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Event Sourcing**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass.
+  Current: pass; re-review: pass; report: pass.
   Status: reviewed-by-independent-agent.
 
 - **Event-Driven Consumer**
@@ -117,11 +117,11 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Expand-and-Contract Schema**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Feature Flags / Feature Toggles**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Fencing Tokens**
@@ -141,7 +141,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Graceful Degradation**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Health Endpoint Monitoring**
@@ -153,7 +153,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Idempotent Receiver**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Immutable Infrastructure**
@@ -161,7 +161,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Index Table**
-  Current: pass; re-review: pass; report: pass-with-findings.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Lease-Based Ownership**
@@ -169,7 +169,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Materialized View**
-  Current: reject; re-review: reject; report: reject.
+  Current: pass; re-review: pass; report: reject.
   Status: reviewed-by-independent-agent.
 
 - **Message Filter**
@@ -177,7 +177,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Negative Caching**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass.
+  Current: pass; re-review: pass; report: pass.
   Status: reviewed-by-independent-agent.
 
 - **Pipes and Filters**
@@ -185,15 +185,15 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Priority Queue**
-  Current: pass; re-review: pass; report: pass-with-findings.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Process Manager / Routing Slip**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Read Replicas**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Request-Reply Messaging**
@@ -209,7 +209,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Saga Choreography**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Service-Oriented Architecture (SOA)**
@@ -217,11 +217,11 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Shuffle Sharding**
-  Current: pass-with-findings; re-review: pass-with-findings; report: reject.
+  Current: pass; re-review: pass; report: reject.
   Status: reviewed-by-independent-agent.
 
 - **Sidecar**
-  Current: pass; re-review: pass; report: pass-with-findings.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Static Content Hosting**
@@ -229,7 +229,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Transactional Inbox**
-  Current: pass; re-review: pass; report: pass-with-findings.
+  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Transactional Outbox**

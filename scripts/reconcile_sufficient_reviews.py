@@ -94,6 +94,8 @@ def derive_state(record):
         if re_reviewed and re_review.get("verdict") == "pass":
             return "promoted-after-remediation"
         return "pass-without-review-evidence"
+    if re_reviewed and re_review.get("verification_gap"):
+        return "page-unverified-after-delta"
     if re_reviewed and re_review.get("verdict") == "pass-with-findings":
         return "residual-findings-after-re-review"
     if remediated and not re_reviewed:

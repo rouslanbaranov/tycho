@@ -181,6 +181,8 @@ def build_packets():
                         if p["derived_state"] == "promoted-after-remediation"),
         "residual": sum(1 for p in packets
                         if p["derived_state"] == "residual-findings-after-re-review"),
+        "page_unverified": sum(1 for p in packets
+                               if p["derived_state"] == "page-unverified-after-delta"),
         "unique_owner_pages": len({p["owner_path"] for p in packets}),
         "packet_statuses": dict(sorted(status_counts.items())),
         "ready": status_counts.get("ready-for-independent-rereview", 0),
