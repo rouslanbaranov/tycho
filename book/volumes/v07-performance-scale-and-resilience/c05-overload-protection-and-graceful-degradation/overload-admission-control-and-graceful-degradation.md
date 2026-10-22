@@ -155,3 +155,75 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Recovery hysteresis and overload experiments](overload-recovery.md) — What prevents a recovering dependency from being overwhelmed immediately?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+## Bounded pattern ownership notes
+
+### Fallback
+
+A fallback returns a declared alternate result or dependency when the primary is unavailable. It
+must preserve the same correctness contract: a cached, fabricated or partial value is not a
+successful authoritative result.
+
+Name the fallback's freshness, authority and user-visible label; fail explicitly if none is valid.
+The fallback needs an owner, a trigger distinct from ordinary load and a test that proves the
+alternate path is safe for the operation's effect. A fallback that writes cannot be treated as a
+read-only substitution.
+
+An explicit failure or a queued retry may be safer than a plausible but wrong fallback. Use a
+fallback only when the degraded answer is still a valid business outcome and the caller can
+recognize it. Record the fallback in the response.
+
+### Graceful Degradation
+
+Degradation removes optional features or reduces quality to protect an essential outcome under
+overload. Declare which outcomes remain mandatory, which become unavailable, and how callers observe
+the reduced state.
+
+Hidden degradation that silently drops correctness is worse than an explicit failure. Each degraded
+mode needs an entry condition, a recovery condition and a visible status; otherwise clients cannot
+distinguish reduced service from a bug. The essential path must be tested under the same load that
+triggers the mode.
+
+A complete but explicit outage or horizontal capacity increase may be preferable when no safe
+degraded mode exists. Degradation is a product decision, not only an infrastructure switch. Each degraded mode needs an
+owner, a recovery test and a user-visible status now.
+
+### Load Shedding
+
+Shedding rejects or drops work before a scarce resource is exhausted so accepted work can meet its
+deadline. It needs a bottleneck-specific signal, fair principal policy and retry guidance.
+
+A rejection without a retry hint can create a synchronized retry storm; shedding one tenant's
+traffic can be unfair if the policy does not declare quotas. Return a typed rejection with a retry
+class and measure shed versus accepted work; a shed counter without an outcome label hides whether
+the right work was rejected.
+
+Queueing/backpressure, admission control or provisioning may be preferable when the work is
+deferrable or the bottleneck can be expanded. Shedding is a fit when rejecting early is cheaper and
+safer than queueing. Record the rejected class now.
+
+### Throttling
+
+Throttling paces or slows admitted work below offered load to protect a dependency. It needs a
+measurable bottleneck, a bounded queue and propagation of backpressure.
+
+Throttling can hide capacity loss, add latency to essential classes or turn a transient spike into a
+long tail; measure accepted work, queue age and per-class latency. The throttle must state whether it
+delays work or rejects it, and which class gets priority when the dependency is saturated.
+
+Admission control, queueing or provisioning may be preferable when work is deferrable or capacity
+can expand. Throttling is a fit when the dependency needs a sustained lower rate, not merely a
+shorter queue. The throttle owner must review queue age during every incident and in real time.
+
+### Rate Limiting
+
+Rate limiting bounds requests per principal, key or window; it must define the identity, window,
+burst allowance and rejection response. The identity is the hard part: a shared key can let one
+caller exhaust another's budget.
+
+Unfair limits and synchronized retries are common failure modes. Publish the limit, return a retry
+hint and keep a separate safety limit for abusive traffic. A limiter on one instance is not a global
+quota unless the shared state makes it global.
+
+Global admission or per-tenant quotas may be preferable when the scarce resource is shared across
+principals. Rate limiting is a fit when fairness and abuse control matter more than exact capacity
+utilization. A global quota needs shared state and a clock-skew test.

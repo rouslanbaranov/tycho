@@ -424,3 +424,28 @@ the validators still require a separate policy change.
     - File: `message-selection.md`
     - Heading: `Message Broker / Messaging Bridge`; 124 words
     - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+
+82. **Fallback** — `tycho.pattern.fallback`
+    - File: `overload-admission-control-and-graceful-degradation.md`
+    - Heading: `Fallback`; 125 words
+    - SHA-256: `a80a884f7e2cc021ccd3acd1306a6ba369e97d59d7110b56afe7369d56976daf`
+
+83. **Graceful Degradation** — `tycho.pattern.graceful-degradation`
+    - File: `overload-admission-control-and-graceful-degradation.md`
+    - Heading: `Graceful Degradation`; 120 words
+    - SHA-256: `a80a884f7e2cc021ccd3acd1306a6ba369e97d59d7110b56afe7369d56976daf`
+
+84. **Load Shedding** — `tycho.pattern.load-shedding`
+    - File: `overload-admission-control-and-graceful-degradation.md`
+    - Heading: `Load Shedding`; 120 words
+    - SHA-256: `a80a884f7e2cc021ccd3acd1306a6ba369e97d59d7110b56afe7369d56976daf`
+
+85. **Throttling** — `tycho.pattern.throttling`
+    - File: `overload-admission-control-and-graceful-degradation.md`
+    - Heading: `Throttling`; 120 words
+    - SHA-256: `a80a884f7e2cc021ccd3acd1306a6ba369e97d59d7110b56afe7369d56976daf`
+
+86. **Rate Limiting** — `tycho.pattern.rate-limiting`
+    - File: `overload-admission-control-and-graceful-degradation.md`
+    - Heading: `Rate Limiting`; 120 words
+    - SHA-256: `a80a884f7e2cc021ccd3acd1306a6ba369e97d59d7110b56afe7369d56976daf`
