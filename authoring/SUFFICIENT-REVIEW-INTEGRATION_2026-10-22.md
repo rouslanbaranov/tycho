@@ -44,24 +44,28 @@ Resolved metadata findings:
 - **F-001:** every one of the 52 records now has a separate re-review report path, page hash,
   reviewer and findings.
 - **F-002:** original findings counts are derived from the cited report section.
+- **F-007:** delivery evidence rebuilt from the current HEAD; counts 145 cards / 145 units /
+  69 owner pages / 33 shared pages; one blocked DDIA unit; owner-confirmed review separated
+  from independent editorial review. The validator now rejects a claimed independent review
+  and requires the owner-confirmed record.
 
 Open findings:
 
 - **Blocking:** F-003 Cell-Based source, F-004 general CDC scope, F-005 Materialized View
   card/source.
-- **Major:** F-006 protocol wording, F-007 delivery evidence, F-009 Expand-and-Contract,
-  F-010 Event Sourcing, F-011 Cache-Aside, F-012 Negative Caching, F-013 Process Manager,
-  F-015 duplication.
+- **Major:** F-006 protocol wording, F-009 Expand-and-Contract, F-010 Event Sourcing,
+  F-011 Cache-Aside, F-012 Negative Caching, F-013 Process Manager, F-015 duplication.
 - **Minor:** F-008, F-014, F-016–F-022.
 
-No page, card, validator or `sufficient` state was changed by this integration.
+No page, card or `sufficient` state was changed by this integration. The delivery-evidence
+artifact and validator were updated for F-007; owner page bytes remain at the audit head.
 
 ## Next actions
 
 1. Remediate or explicitly retain the three reject-level entries.
 2. Remediate the 16 audited pass-with-findings entries and re-review them.
 3. Work through the 83 untouched and 6 remediated-but-unreviewed records.
-4. Resolve F-007 delivery evidence and the F-008–F-022 hygiene findings.
+4. Resolve the F-008–F-022 hygiene findings; F-007 is resolved.
 5. Obtain human per-page review and owner acceptance; keep `sufficient` at zero until then.
 
 ## Nonclaims

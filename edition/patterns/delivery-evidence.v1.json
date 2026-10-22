@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "status": "delivery-evidence-recorded",
-  "source_commit": "300c63b8515d2f48535957a6c76fba90d285bcc7",
+  "source_commit": "c3c9615eb03d000c35c3f43ed17339715603d2d3",
   "generated_at": "2026-10-22",
   "scope": "structural delivery evidence, section-level owner units, semantic page audit, independent agent review and explicit human review gaps; not human acceptance",
   "summary": {
@@ -41,12 +41,12 @@
     {
       "name": "premerge",
       "status": "pass",
-      "evidence": "Local premerge passed on the #294 branch; 348 tests OK"
+      "evidence": "Local premerge passed on the #306 branch; 410 tests OK"
     },
     {
       "name": "full-tests",
       "status": "pass",
-      "evidence": "348 tests, OK"
+      "evidence": "410 tests, OK"
     },
     {
       "name": "pattern-atlas",
@@ -56,7 +56,7 @@
     {
       "name": "pattern-sources",
       "status": "pass",
-      "evidence": "145 entries, 145 read, 0 blocked, 116 ledger records, 3 catalog-index reads intentionally unused"
+      "evidence": "145 entries, 145 read, 1 blocked DDIA unit, 116 ledger records, 3 catalog-index reads intentionally unused"
     },
     {
       "name": "pattern-cards",
@@ -66,17 +66,17 @@
     {
       "name": "owner-units",
       "status": "pass",
-      "evidence": "145 entries, 119 owner units, 30 shared pages, 0 name-only"
+      "evidence": "145 entries, 145 owner units, 69 owner pages, 33 shared pages, 0 name-only"
     },
     {
       "name": "phase4-audit",
       "status": "pass",
-      "evidence": "419 page dispositions, 145 entries x 14 dimensions, 540 routes, 40 non-routes"
+      "evidence": "423 page dispositions, 145 entries x 14 dimensions, 540 routes, 40 non-routes"
     },
     {
       "name": "strict-knowledge",
       "status": "pass",
-      "evidence": "book metadata and 419-page navigation clean"
+      "evidence": "book metadata and 423-page navigation clean"
     },
     {
       "name": "github-actions",
@@ -86,17 +86,17 @@
     {
       "name": "semantic-audit",
       "status": "pass",
-      "evidence": "419 page dispositions, 0 findings, 4 open gates; self-checked"
+      "evidence": "423 page dispositions, 0 findings, 1 open gate; self-checked"
     },
     {
       "name": "independent-agent-review",
       "status": "pass",
-      "evidence": "Reviewer, 2026-10-21, ACCEPT-WITH-FINDINGS; 17 findings and 7 re-review residuals addressed; non-human review"
+      "evidence": "2026-10-21 ACCEPT-WITH-FINDINGS; 2026-10-22 52-packet re-review: 33 pass, 16 pass-with-findings, 3 reject; non-human"
     },
     {
-      "name": "independent-human-review",
+      "name": "owner-confirmed-human-review",
       "status": "pass",
-      "evidence": "Owner-confirmed human review passed 2026-10-21; no per-page reviewer record supplied"
+      "evidence": "Owner-confirmed human review 2026-10-21; not independent and no per-page reviewer record supplied"
     }
   ],
   "dod": [
@@ -108,42 +108,42 @@
     {
       "id": "card-components",
       "status": "met",
-      "evidence": "144 cards contain the ten contract components"
+      "evidence": "145 cards contain the ten contract components"
     },
     {
       "id": "reciprocal-backlinks",
-      "status": "met",
-      "evidence": "144 owner pages contain exact reciprocal atlas links"
+      "status": "partial",
+      "evidence": "145 cards link to owner sections; 69 unique owner pages carry reciprocal links; one DLQ anchor defect remains (F-016)"
     },
     {
       "id": "owner-unit-evidence",
       "status": "met",
-      "evidence": "144 entries map to 118 section-level units on 65 pages; 0 name-only; 30 shared pages keep=14, deepen=13, split=3"
+      "evidence": "145 entries map to 145 section-level units on 69 owner pages; 33 shared pages; 0 name-only"
     },
     {
       "id": "page-census-and-audit",
       "status": "met",
-      "evidence": "423/423 pages have a self-checked semantic disposition; 0 findings remain; independent human review is recorded"
+      "evidence": "423/423 pages have a self-checked semantic disposition; 0 findings; owner-confirmed human review is not independent"
     },
     {
       "id": "source-reading",
-      "status": "met",
-      "evidence": "144 of 145 entries have read units; one explicit blocked source"
+      "status": "partial",
+      "evidence": "145 entries have read units; one blocked DDIA unit (Polyglot Persistence); 116 ledger records"
     },
     {
       "id": "technical-sufficiency",
       "status": "not-met",
-      "evidence": "145 entries are partial-bounded and 0 partial; 0 sufficient; human review does not promote partial coverage"
+      "evidence": "145 entries are partial-bounded and 0 are sufficient; human review does not promote partial coverage"
     },
     {
       "id": "decision-sufficiency",
       "status": "not-met",
-      "evidence": "144 cards are partial-bounded; 0 sufficient; human review does not promote partial coverage"
+      "evidence": "145 cards are partial-bounded and 0 are sufficient"
     },
     {
       "id": "independent-editorial-review",
-      "status": "met",
-      "evidence": "Owner-confirmed human review passed 2026-10-21; no per-page reviewer record or line-level editorial notes supplied"
+      "status": "not-met",
+      "evidence": "No independent editorial review is recorded; owner-confirmed review is not independent"
     },
     {
       "id": "owner-acceptance",
@@ -152,13 +152,18 @@
     },
     {
       "id": "delivery-checks",
-      "status": "met",
-      "evidence": "Local premerge, 348 tests, owner-unit, semantic-audit, atlas/source/card/Phase 4 and V11 line checks passed"
+      "status": "partial",
+      "evidence": "410 tests, structural validators and atlas/source/card checks pass; source and V11 line-length scope gaps remain"
     },
     {
       "id": "release-or-deployment",
       "status": "not-met",
       "evidence": "No release, deployment, hosted retrieval or CI result is claimed"
+    },
+    {
+      "id": "owner-confirmed-human-review",
+      "status": "met",
+      "evidence": "Owner-confirmed human review 2026-10-21; not independent and no per-page reviewer record supplied"
     }
   ],
   "open_gaps": [
@@ -176,22 +181,28 @@
       "id": "owner-acceptance",
       "count": 1,
       "action": "record owner acceptance only after review"
+    },
+    {
+      "id": "reject-level-entries",
+      "count": 3,
+      "action": "remediate or explicitly retain Cell-Based Architecture, CDC and Materialized View rejects"
     }
   ],
   "limits": [
     "This artifact is self-checked structural evidence, not independent review.",
-    "Partial coverage is not sufficient coverage; 48 entries carry only partial mechanism evidence.",
+    "All 145 entries are partial-bounded; 0 are sufficient. Three entries remain reject-level after the 2026-10-22 agent re-review.",
     "The 40 related labels are recorded as deliberate non-routes; no unresolved related label remains.",
     "Polyglot Persistence is carded with a public article and bounded owner; its DDIA unit remains blocked and uncited.",
-    "Thirty owner pages are shared; 14 keep, 13 deepen and 3 split were recorded without performing a split.",
+    "Thirty-three owner pages are shared; the 14 keep, 13 deepen and 3 split decisions were recorded and the splits were performed.",
     "Owner units are section-level references validated against page text; they do not add independent human technical review.",
     "Page dispositions are structural categories; the semantic audit is self-checked and is not independent review.",
     "145 exact owner-link lines exceed 100 characters because canonical paths cannot be split; all prose is <=100.",
     "No CI, release, deployment or benchmark result is claimed.",
     "The semantic page audit is self-checked agent evidence; its findings are remediation items, not independent review or owner acceptance.",
     "Reviewer is an independent agent reviewer, not a human expert or owner; owner acceptance remains open; human review is recorded.",
-    "Owner-confirmed human review passed on 2026-10-21; no per-page reviewer record or line-level notes were supplied.",
-    "The low-severity cleanup closed all 100 findings; no semantic finding remains."
+    "Owner-confirmed human review passed on 2026-10-21; it is not independent and no per-page reviewer record was supplied.",
+    "The low-severity cleanup closed all 100 findings; no semantic finding remains.",
+    "Independent agent re-review 2026-10-22: 33 pass, 16 pass-with-findings, 3 reject; not human review or owner acceptance."
   ],
-  "source_commit_note": "The source_commit is the branch base before the audit changes; page and artifact hashes bind the reviewed content."
+  "source_commit_note": "Current delivery HEAD after the #306 audit integration. Owner-page bytes are unchanged from the audit head; no page content was edited by this rebuild."
 }
