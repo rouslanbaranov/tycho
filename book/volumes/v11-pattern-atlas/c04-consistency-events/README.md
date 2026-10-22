@@ -126,8 +126,8 @@ Reverse when full replay is unnecessary, schema ownership is absent or external 
 cannot be isolated.
 
 **Failure and recovery.** A stale expected version rejects the append; re-read and retry with
-the same operation identity. Replay duplication needs idempotent projectors, and schema drift
-needs versioned handlers and a rebuild plan.
+the same operation identity. Replay needs versioned handlers and a rebuild plan; external
+effects and duplicate delivery need an explicit boundary, not an assumed idempotent projector.
 
 **Technical owner.** [Event sourcing: what becomes authoritative?](../../../distributed/cqrs-event-sourcing-and-projections.md#2-event-sourcing-what-becomes-authoritative) — event authority is the bounded owner, not a complete event-store design.
 

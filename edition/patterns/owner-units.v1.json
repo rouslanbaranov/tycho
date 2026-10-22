@@ -3556,15 +3556,15 @@
           "reason": "Names stale-authorization exposure and a bypass/verify mitigation, but no detection or recovery procedure."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing mechanism or reversing condition is named in this section."
+          "state": "supported",
+          "quote": "When the read budget allows, serving from the source or a shorter TTL with retried invalidation is the alternative",
+          "reason": "Names the source read and shorter-TTL path as the alternative."
         }
       },
       "decision_evidence": {
         "atlas_section": "cache-aside-lazy-loading",
         "question": "Should the application populate the cache after a miss instead of routing every read through the cache layer?",
-        "competing_alternative": "Read-through cache or no cache. Reverse the choice when application fill logic becomes duplicated and inconsistent.",
+        "competing_alternative": "A shorter TTL with retried invalidation, or serving the read from the source when its latency budget allows. Reverse when fill and invalidation logic becomes duplicated and inconsistent.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -3878,7 +3878,7 @@
         "heading": "TTL-Based Expiration",
         "anchor": "ttl-based-expiration",
         "level": 3,
-        "line": 123,
+        "line": 126,
         "unit_kind": "dedicated",
         "unit_terms": [
           "expire-after-write",
@@ -4848,13 +4848,13 @@
         "alternative": {
           "state": "supported",
           "quote": "A smaller change may keep the schema and add a mapping layer instead of moving authority.",
-          "reason": "Names a mapping layer instead of authority migration and the smaller-change condition that favors it."
+          "reason": "Names the mapping-layer/smaller-change alternative."
         }
       },
       "decision_evidence": {
         "atlas_section": "expand-and-contract-schema",
         "question": "Should a schema change be deployed in expand, migrate and contract stages?",
-        "competing_alternative": "Direct migration or a versioned API boundary. Reverse the choice when staged migration cost exceeds rollout risk.",
+        "competing_alternative": "Keep the schema and add a mapping layer, or use a smaller change when authority need not move. Reverse when staged migration cost exceeds rollout risk.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -9140,7 +9140,7 @@
     "mechanism_supported": 145,
     "invariant_supported": 145,
     "failure_recovery_supported": 141,
-    "alternative_supported": 143,
+    "alternative_supported": 144,
     "technical_partial_bounded": 145,
     "technical_partial": 0,
     "technical_name_only": 0,

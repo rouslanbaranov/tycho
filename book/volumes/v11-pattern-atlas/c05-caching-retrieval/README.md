@@ -45,7 +45,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
+updated_at: "2026-10-22"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -119,8 +119,9 @@ acceptable; duplicate fills are controlled; the source remains authoritative.
 **Hard contraindications.** Reject when every read must be served from cache, when fill
 races cannot be controlled, or when invalidation has no owner.
 
-**Competing alternative.** Read-through cache or no cache. Reverse the choice when
-application fill logic becomes duplicated and inconsistent.
+**Competing alternative.** A shorter TTL with retried invalidation, or serving the read from
+the source when its latency budget allows. Reverse when fill and invalidation logic becomes
+duplicated and inconsistent.
 
 **Failure and recovery.** Stale fills and concurrent misses are common; gate fills by cached
 revision, distinguish a cold fill from a post-delete tombstone, retry failed invalidation and
