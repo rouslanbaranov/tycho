@@ -2816,31 +2816,31 @@
         "line": 190,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "local transactions",
-          "compensating actions",
-          "manual reconciliation",
-          "unknown state"
+          "long-running business protocol",
+          "local commit",
+          "compensation",
+          "unknown outcome"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "coordinates a sequence of **local transactions**, with compensating actions when a business step cannot complete.",
+          "quote": "A saga is a long-running business protocol across independent owners.",
           "reason": ""
         },
         "invariant": {
           "state": "supported",
-          "quote": "The domain must determine which actions are reversible and which require manual reconciliation.",
+          "quote": "The invariant is one authority and one effect identity per step; the saga never claims atomicity or rollback.",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Losing an acknowledgment creates an explicit unknown state requiring reconciliation; compensations can themselves remain incomplete.",
+          "quote": "A lost acknowledgment is an unknown outcome, not a failure, and a failed compensation remains a repair item.",
           "reason": ""
         },
         "alternative": {
           "state": "supported",
-          "quote": "Use one local transaction, a two-phase commit or an orchestrated workflow when the steps do not genuinely cross independent owners, or when compensation is unsafe.",
+          "quote": "Use one local transaction when all effects fit one owner, or two-phase commit when participants can hold prepared state and atomic visibility is mandatory.",
           "reason": "Names the alternative and reversal."
         }
       },
@@ -2873,7 +2873,7 @@
         "heading": "Saga Choreography",
         "anchor": "saga-choreography",
         "level": 3,
-        "line": 205,
+        "line": 207,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Each owner subscribes",
@@ -2933,7 +2933,7 @@
         "heading": "Saga Orchestration",
         "anchor": "saga-orchestration",
         "level": 3,
-        "line": 220,
+        "line": 222,
         "unit_kind": "dedicated",
         "unit_terms": [
           "coordinator persists",
@@ -2993,7 +2993,7 @@
         "heading": "Compensating Transaction",
         "anchor": "compensating-transaction",
         "level": 3,
-        "line": 236,
+        "line": 238,
         "unit_kind": "dedicated",
         "unit_terms": [
           "new business action",

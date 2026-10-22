@@ -189,18 +189,20 @@ when steps need explicit compensation, timers or visibility.
 
 ### Saga
 
-A saga coordinates a sequence of **local transactions**, with compensating actions when a business
-step cannot complete. Each step commits inside one owner; the saga is the business protocol across
-those commits, not a distributed transaction that can roll them back.
+A saga is a long-running business protocol across independent owners. Each step is a local commit;
+there is no global lock and no hidden intermediate state, so other readers can observe a partially
+completed business outcome.
 
-The domain must determine which actions are reversible and which require manual reconciliation.
-Losing an acknowledgment creates an explicit unknown state requiring reconciliation; compensations
-can themselves remain incomplete. Record workflow identity, step state and the accepted terminal
-outcomes before dispatching the next action.
+Before dispatching a step, record the workflow identity, step identity and expected outcome; after
+it, record committed, failed or unknown. A compensation is a new business action with its own
+authorization, evidence and failure mode, and its ordering is declared rather than assumed to be the
+reverse of the forward path.
 
-Use one local transaction, a two-phase commit or an orchestrated workflow when the steps do not
-genuinely cross independent owners, or when compensation is unsafe. A saga is justified when
-independent ownership and availability matter more than atomic visibility.
+The invariant is one authority and one effect identity per step; the saga never claims atomicity or
+rollback. A lost acknowledgment is an unknown outcome, not a failure, and a failed
+compensation remains a repair item. Use one local transaction when all effects fit one
+owner, or two-phase commit when participants can hold prepared state and atomic
+visibility is mandatory.
 
 ### Saga Choreography
 
