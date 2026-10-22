@@ -399,11 +399,12 @@ stages?
 **Good-fit conditions.** Old and new code coexist during rollout; a compatibility window
 is owned; backfill and validation are explicit.
 
-**Hard contraindications.** Reject when downtime is acceptable and a direct migration is
-simpler, when no compatibility window exists, or when rollback is impossible.
+**Hard contraindications.** Reject when old and new readers cannot coexist, when no
+compatibility window or contract owner exists, or when the mapping cannot preserve identity
+and references.
 
-**Competing alternative.** Direct migration or a versioned API boundary. Reverse the
-choice when staged migration cost exceeds rollout risk.
+**Competing alternative.** Keep the schema and add a mapping layer, or use a smaller change
+when authority need not move. Reverse when staged migration cost exceeds rollout risk.
 
 **Failure and recovery.** Partial backfills and old readers are common; verify gates in
 the owner section.

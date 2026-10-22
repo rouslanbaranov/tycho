@@ -67,13 +67,15 @@ Resolved metadata findings:
 - **F-014/F-020/F-021/F-022 (content hygiene):** Circuit Breaker fallback, Static Content
   Hosting cost/version authority, Shuffle Sharding containment/recovery and the 11 empty
   evidence-scope blocks are now recorded; 14 owner pages changed.
+- **F-009/F-010/F-011 (PWF card alignment):** Expand-and-Contract, Event Sourcing and
+  Cache-Aside cards now use only owner-supported contraindications, alternatives and failure
+  conditions; verdicts stay `pass-with-findings` pending re-review.
 
 Open findings:
 
 - **Blocking:** none open. F-003–F-005 are remediated but still require re-review before
   any verdict change.
-- **Major:** F-009 Expand-and-Contract, F-010 Event Sourcing, F-011 Cache-Aside,
-  F-012 Negative Caching, F-013 Process Manager, F-015 duplication.
+- **Major:** F-012 Negative Caching, F-013 Process Manager, F-015 duplication.
 - **Minor:** none open; F-008, F-014 and F-016–F-022 are resolved or remediated.
 
 No page, card or `sufficient` state was changed by this integration. The delivery-evidence

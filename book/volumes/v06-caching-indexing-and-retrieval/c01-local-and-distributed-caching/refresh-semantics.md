@@ -97,6 +97,9 @@ leaves the window open.
 A short TTL plus retried invalidation bounds the damage; neither proves freshness when the
 invalidation itself can be lost.
 
+When the read budget allows, serving from the source or a shorter TTL with retried
+invalidation is the alternative; reverse when fill and invalidation logic duplicates.
+
 **Failure and recovery.** A write can commit while its delete fails. The invalidation intent
 must be durable at commit time — an outbox row in the same local transaction — and then
 retried; recording only after a failed delete can lose the intent in a crash. Without a TTL, a
