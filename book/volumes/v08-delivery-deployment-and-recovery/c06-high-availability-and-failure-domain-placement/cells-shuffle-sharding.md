@@ -155,6 +155,9 @@ deployment meets the objective or when stamps still share an unowned global depe
 The failure path is configuration drift or split state across stamps; version the stamp
 definition, route by an explicit key and reconcile state at the authority. A cell-based
 deployment is the alternative when isolation is the main goal and scale is secondary.
+
+**Limits.** Stamp duplication, routing-key changes and global dependencies are costs; a stamp
+without a data authority or upgrade owner becomes a snowflake.
 ## Navigation
 
 - Parent chapter: [High availability and failure-domain placement](README.md).

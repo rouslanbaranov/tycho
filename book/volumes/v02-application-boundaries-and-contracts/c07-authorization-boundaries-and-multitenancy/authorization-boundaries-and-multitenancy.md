@@ -129,3 +129,6 @@ A stale policy or an undeclared direct path defeats the check while dashboards r
 network policy, denial logs and a bypass test in the acceptance evidence. Enforce authorization
 inside the service at each effect boundary; use a gatekeeper when it centralizes a policy that every
 route must apply and the bypass surface is closed.
+
+**Limits.** Gatekeeper availability, policy freshness and bypass routes are costs; a gatekeeper
+that only authenticates without resource authorization shifts the decision.

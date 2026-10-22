@@ -182,3 +182,6 @@ A lost dispatch or duplicate step leaves the workflow stuck or with a duplicated
 steps, a recorded state and a reconciliation query are required. Event choreography removes the
 central coordinator but hides the overall protocol; prefer a process manager when steps need
 explicit compensation and visibility.
+
+**Limits.** The coordinator durable store, dispatch outbox and versioning are costs; a crash
+between state update and dispatch needs a recorded intent, not a second scheduler.

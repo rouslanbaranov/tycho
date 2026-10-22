@@ -304,3 +304,28 @@ the validators still require a separate policy change.
     - File: `asynchronous-apis-streaming-and-cancellation.md`
     - Heading: `Asynchronous Request-Reply`; 123 words
     - SHA-256: `fd79ee55e9a8888d1562ccd5050adabc1c704470066b75e7dc83d53ec0888a8f`
+
+58. **Gatekeeper** — `tycho.pattern.gatekeeper`
+    - File: `authorization-boundaries-and-multitenancy.md`
+    - Heading: `Gatekeeper`; 125 words
+    - SHA-256: `a3ead39a7b313e4a44eb79d61b32ee3ea2029b1a5914e587d50cd678f3ed486b`
+
+59. **Process Manager / Routing Slip** — `tycho.pattern.process-manager-routing-slip`
+    - File: `saga-workflows.md`
+    - Heading: `Process Manager / Routing Slip`; 121 words
+    - SHA-256: `1e72f5d24bc04f50a490ff59302560d30a1ae28fa502bf28f7afbabdb675052b`
+
+60. **Two-Phase Commit (2PC)** — `tycho.pattern.two-phase-commit-2pc`
+    - File: `invariants-isolation.md`
+    - Heading: `Two-Phase Commit (2PC)`; 126 words
+    - SHA-256: `04bcf79cb71c11d28648b152be72d82a95fbbf34085c9c7237be9bf19558572f`
+
+61. **Deployment Stamps** — `tycho.pattern.deployment-stamps`
+    - File: `cells-shuffle-sharding.md`
+    - Heading: `Deployment Stamps`; 134 words
+    - SHA-256: `bcbb98e5269bba6169ea141180337868a822203f0d87089ed18e95a245296692`
+
+62. **Parallel Run** — `tycho.pattern.parallel-run`
+    - File: `authority-states.md`
+    - Heading: `Parallel Run`; 129 words
+    - SHA-256: `74eb15e131607021bcfddebbbe0893934c10eb42363f0227f79cf6c25737cf5a`
