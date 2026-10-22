@@ -247,15 +247,16 @@ downstream calls?
 **Good-fit conditions.** The full request path can carry a deadline; each hop can shorten
 it; expiration is observable.
 
-**Hard contraindications.** Reject when downstream work is deliberately asynchronous
-beyond the caller, when clocks cannot be compared, or when every hop invents its own
-timeout.
+**Hard contraindications.** Reject when downstream work must outlive the caller request,
+when only absolute wall-clock deadlines are available across hosts with unbounded skew,
+or when no hop enforces expiry.
 
 **Competing alternative.** Independent per-hop timeouts with a parent budget. Reverse the
 choice when propagation complexity exceeds the benefit of end-to-end bounds.
 
-**Failure and recovery.** Clock skew, lost deadlines and independent per-hop timeouts are
-common; use the remaining budget at each hop and keep an explicit cleanup path.
+**Failure and recovery.** Clock skew, lost deadlines and divergent per-hop timeouts are
+common; transmit remaining duration where possible, enforce expiry at each hop and keep an
+explicit cleanup path.
 
 **Technical owner.** [Deadline Propagation](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadline-propagation) — deadlines/retries are bounded, not a complete timeout policy.
 

@@ -203,13 +203,15 @@ silently becomes a retry can multiply load. The timeout value must be observable
 
 ### Deadline Propagation
 
-**Deadline propagation.** Propagation between calls can subtract elapsed time and thereby limit
-an internal call to the remaining budget. At each hop the effective budget is at most the remaining time, subject to
-clock and propagation behavior.
+Deadline propagation carries the caller's remaining budget as a relative duration. Each hop
+subtracts its own elapsed time, so hosts need monotonic clocks rather than synchronized wall
+clocks; an absolute timestamp requires bounded skew instead.
 
-Propagate a deadline when the caller has a real end-to-end budget; use independent timeouts only
-when each hop is genuinely independent. Critical cleanup and reconciliation may need to continue after the synchronous response budget
-expires, using an explicitly durable workflow rather than an unbounded request task.
+The ingress sets the budget and each hop checks expiry before starting work. A propagated value
+without an enforcement point is only a hint. Detached asynchronous work gets its own durable
+deadline rather than inheriting the request's remaining time.
 
-Record the deadline source, clock assumptions and the behavior at expiry; a propagated value
-without an enforcement point is only a hint. Every propagation point needs a clock-skew case, an expiry test, source ownership and an owner.
+Clock skew, a lost header and a hop that ignores expiry are the common failures. On expiry,
+cancel the work and record the outcome; cleanup or reconciliation runs in an explicitly durable
+workflow, not an unbounded request task. Use propagation when the caller has a real end-to-end
+budget; independent per-hop timeouts fit only when the hops are genuinely independent.

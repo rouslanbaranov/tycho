@@ -1127,3 +1127,8 @@ Verdict: **pass**. Findings: 0. Distinct state-machine note with thresholds, bou
 
 Verdict: **pass**. Findings: 0. Skew/pause bounds, stop-write deadline and lease/renewal cost are stated.
 
+
+### Deadline Propagation — latest re-review
+
+Verdict: **pass**. Findings: 0. Relative-duration propagation, monotonic clocks, corrected card contraindications and lines <=100.
+

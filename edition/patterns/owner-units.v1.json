@@ -5294,31 +5294,31 @@
         "line": 204,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Propagation between calls",
-          "remaining budget",
-          "durable workflow",
-          "clock assumptions"
+          "relative duration",
+          "monotonic clocks",
+          "enforcement point",
+          "bounded skew"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "propagation between calls can subtract elapsed time and thereby limit an internal call to the remaining budget.",
+          "quote": "Deadline propagation carries the caller's remaining budget as a relative duration.",
           "reason": "Explains how elapsed time is subtracted and the remaining budget propagated."
         },
         "invariant": {
           "state": "supported",
-          "quote": "At each hop the effective budget is at most the remaining time, subject to clock and propagation behavior.",
+          "quote": "The ingress sets the budget and each hop checks expiry before starting work.",
           "reason": "States the per-hop budget bound that must hold."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Critical cleanup and reconciliation may need to continue after the synchronous response budget expires, using an explicitly durable workflow rather than an unbounded request task.",
+          "quote": "Clock skew, a lost header and a hop that ignores expiry are the common failures.",
           "reason": "Describes post-deadline cleanup and reconciliation via a durable workflow."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Propagate a deadline when the caller has a real end-to-end budget; use independent timeouts only when each hop is genuinely independent.",
+          "quote": "independent per-hop timeouts fit only when the hops are genuinely independent.",
           "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
