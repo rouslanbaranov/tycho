@@ -1,9 +1,10 @@
 # Corpus-level relevance judgments and lexical evaluation
 
 > Issue [#298](https://github.com/rouslanbaranov/tycho/issues/298), M4. Capabilities K18 and
-> K28. **Status 2026-10-22:** bootstrap author-labelled set with 24 items, a 12/12
-> development/held-out split and 48 accepted answers. Target is 50–100 items. This is not
-> independent ground truth and does not establish search quality.
+> K28. **Status 2026-10-22:** bootstrap author-labelled set with 50 items, a 25/25
+> development/held-out split and 110 accepted answers. This is the 50-item minimum of the
+> 50–100 target; independent review and expansion to 100 remain. This is not independent
+> ground truth and does not establish search quality.
 
 ## Why this set exists
 
@@ -52,21 +53,21 @@ That requires a separate answer-level evaluation.
 
 | Category | Items |
 |---|---:|
-| fact | 7 |
-| failure | 6 |
-| synthesis | 4 |
-| trade-off | 4 |
-| change impact | 1 |
-| contradiction | 1 |
+| fact | 12 |
+| failure | 10 |
+| synthesis | 8 |
+| trade-off | 8 |
+| change impact | 6 |
+| contradiction | 5 |
 | unanswerable | 1 |
-| **Total** | **24** |
+| **Total** | **50** |
 
-Split: 12 development and 12 held-out. The held-out items are not used for tuning, query
+Split: 25 development and 25 held-out. The held-out items are not used for tuning, query
 expansion, threshold selection or ranker comparison. No tuning has been performed yet.
 
-Known gaps: only one change-impact and one contradiction item, no answer-quality labels,
-and no independent adjudication. Expansion to 50 items should add those categories and at
-least one section-level label per volume.
+Known gaps: the bootstrap still uses page-level labels only, has one unanswerable item, no
+answer-quality labels and no independent adjudication. Expansion to 100 should add those
+and at least one section-level label per volume.
 
 ## Metrics
 
@@ -82,23 +83,6 @@ rank and nDCG@10 for each split, category and the full set.
 A no-result answer is not treated as a miss for answerable items; it is reported separately.
 The evaluator uses limit 10 by default and refuses a run when the search snapshot changes
 between questions.
-
-## Local diagnostic baseline — 2026-10-22
-
-The set was run once on the #50 search branch against index snapshot
-`448b35fef9e7bcea60d59c775c6390e74f1271ffa4f89363dd834f716c86bbaf`. The #298 branch
-alone cannot reproduce this until #50 merges.
-
-| Scope | hit@1 | hit@3 | hit@5 | MRR |
-|---|---:|---:|---:|---:|
-| page | 0.304 | 0.652 | 0.739 | 0.482 |
-| chapter | 0.435 | 0.783 | 0.870 | 0.625 |
-| section | 0.304 | 0.652 | 0.739 | 0.482 |
-
-nDCG@10 was 0.473 over 23 answerable items. The single unanswerable item returned
-results, so its no-result rate was 0/1 and refusal quality is not measured. This is a
-diagnostic on a small bootstrap set, not a threshold, acceptance result or confidence
-claim. Split-level output exists in the evaluator but was not used to tune the ranker.
 
 ## Operation
 
@@ -124,7 +108,7 @@ metric tests proves only structure and arithmetic, not relevance.
 
 ## Next gates
 
-1. Expand to 50 items, then 100, with more change-impact and contradiction cases.
+1. Expand to 100 items, with more unanswerable and refusal cases.
 2. Add section-level labels and a second reviewer for a sample.
 3. Record the first real baseline on the #50 snapshot and set thresholds before tuning.
 4. Compare lexical, hybrid and future rankers on the same held-out split.

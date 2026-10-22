@@ -564,6 +564,674 @@
       "question": "What exact instance type and p99 latency should we choose for 100,000 registered users?",
       "accepted": [],
       "notes": "Unanswerable without workload shape, SLO, environment and measurements. Expected behaviour is an explicit insufficient-evidence response, not a page."
+    },
+    {
+      "id": "Q025",
+      "split": "dev",
+      "category": "change_impact",
+      "question": "A cache TTL is shortened to reduce staleness. Which load, origin-protection and correctness checks must be rerun?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.765a54f5d9944577908b40b3fc6cb7ef",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-authority.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines authority and freshness before changing cache lifetime."
+        },
+        {
+          "document_id": "tycho.page.f39fa61013ca41abbfba82ef48250f8f",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-acceptance.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Frames origin protection and the cost of serving stale or uncached data."
+        },
+        {
+          "document_id": "tycho.page.e0f0d5b68f834acbae94cc6714895dd3",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains the stampede and load consequence of more frequent misses."
+        }
+      ],
+      "notes": "Change-impact case: the TTL change alters both freshness and origin load."
+    },
+    {
+      "id": "Q026",
+      "split": "heldout",
+      "category": "change_impact",
+      "question": "A shared serialization library is upgraded across services. Which caller and server compatibility evidence is required before rollout?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.de9c5bc478ba44718fcb731e69109dce",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines which old and new caller/server combinations must remain valid."
+        },
+        {
+          "document_id": "tycho.page.1e89567050974052b13ba62b3b44484f",
+          "path": "book/delivery/safe-rollout-and-recovery.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Places compatibility evidence inside a bounded rollout and recovery decision."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q027",
+      "split": "dev",
+      "category": "change_impact",
+      "question": "An SLO target is tightened. What alerts, budget actions and operational expectations must change with it?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.c987c475cc5340bcb967f4b6f963b295",
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Connects indicators, objectives and alerting thresholds."
+        },
+        {
+          "document_id": "tycho.page.8c596999929c47e48af6a7a2896bb9b9",
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/budget-actions.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Defines the action a changed budget should trigger."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q028",
+      "split": "heldout",
+      "category": "change_impact",
+      "question": "A primary-key type changes on a large table. Which compatibility, backfill and replication checks are affected?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.d00c6081ca664f619308712e245ef523",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/semantic-compatibility.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Separates shape compatibility from preserved domain meaning."
+        },
+        {
+          "document_id": "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains mixed-version reads, writes and online DDL coexistence."
+        },
+        {
+          "document_id": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Adds replication and restore boundaries affected by the key change."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q029",
+      "split": "dev",
+      "category": "change_impact",
+      "question": "A service moves from VMs to containers. Which placement, runtime and observability assumptions must be revalidated?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.5d5dd1d008b848a39dfae29a147da6d0",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/compute-models.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Compares compute models and their operating constraints."
+        },
+        {
+          "document_id": "tycho.page.ea94649bfd8c4be183f9114618d7ccaa",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Covers placement and control-plane independence."
+        },
+        {
+          "document_id": "tycho.page.b7913b53d5ea439697bc5236f902d76e",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Adds control-plane, placement and reversibility limits."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q030",
+      "split": "heldout",
+      "category": "contradiction",
+      "question": "One page treats replicas as extra read capacity; another shows that more replicas can increase contention. When is each claim true?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.7ad835c06d5a4e3aabf6b14632f92c86",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-saturation-and-scaling-laws.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains when additional replicas stop adding useful capacity because of contention."
+        },
+        {
+          "document_id": "tycho.page.1b2657011d454460856103419095031b",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains replication roles, quorum work and leader-change cost."
+        }
+      ],
+      "notes": "The two claims are compatible under different workload and coordination conditions."
+    },
+    {
+      "id": "Q031",
+      "split": "dev",
+      "category": "contradiction",
+      "question": "A cache is described as a scalability layer and as a consistency risk. How should both claims be scoped?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.765a54f5d9944577908b40b3fc6cb7ef",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-authority.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines which state remains authoritative and how freshness is bounded."
+        },
+        {
+          "document_id": "tycho.page.f39fa61013ca41abbfba82ef48250f8f",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-acceptance.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains when stale service, origin protection or no cache is preferable."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q032",
+      "split": "heldout",
+      "category": "contradiction",
+      "question": "Autoscaling is presented as overload protection and as a source of instability. What determines which effect dominates?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.49d9df04c0b4488e936b02e580a62271",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains detection, startup and warm-up lag and resource ceilings."
+        },
+        {
+          "document_id": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Places autoscaling beside admission control and degradation."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q033",
+      "split": "dev",
+      "category": "contradiction",
+      "question": "Strong quorum consistency is said to cost availability and to prevent divergent authority. Which failure envelope makes both statements compatible?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines which partitions can make progress without divergent authority."
+        },
+        {
+          "document_id": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Adds fencing and failback authority after a failure."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q034",
+      "split": "dev",
+      "category": "failure",
+      "question": "Retries use jitter, yet clients still arrive in synchronized bursts. What else must the retry policy control?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.33399db8d1574330951d9954801d6e71",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Covers retry budgets, retention and adversarial retry tests."
+        },
+        {
+          "document_id": "tycho.page.cccbd188936543a2aaf904f4002236d8",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains deadline and retry safety in HTTP/RPC contracts."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q035",
+      "split": "heldout",
+      "category": "failure",
+      "question": "A leader election finishes, but two nodes briefly accept writes. Which safety mechanism failed?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines quorum authority and the failure envelope that prevents divergence."
+        },
+        {
+          "document_id": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains fencing and failback authority."
+        },
+        {
+          "document_id": "tycho.page.4961bb03a6534242a0977db265b68d95",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Covers reconfiguration and restoration after leader change."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q036",
+      "split": "dev",
+      "category": "failure",
+      "question": "A canary shows healthy host metrics while users report errors. Which acceptance boundary was wrong?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.21388c50717d4fa89384bedadcb0d3bd",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/canary-compatibility.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains canary acceptance and shared-state damage beyond host metrics."
+        },
+        {
+          "document_id": "tycho.page.c987c475cc5340bcb967f4b6f963b295",
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Defines user-visible indicators and objectives for acceptance."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q037",
+      "split": "heldout",
+      "category": "failure",
+      "question": "A failover loses recent writes even though replication was configured as synchronous. What must be verified about acknowledgement scope?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.ddeff7f1556f44f18c67659b73e6e15f",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains WAL durability, physical/logical replication and failover acknowledgement scope."
+        },
+        {
+          "document_id": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Adds replication and restore boundaries around the acknowledgement."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q038",
+      "split": "heldout",
+      "category": "tradeoff",
+      "question": "When is a strongly consistent quorum worth its latency and availability cost?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "States the safety and progress conditions a quorum buys."
+        },
+        {
+          "document_id": "tycho.page.3c78e2b17ac74973b2ae658977843c2a",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/transaction-isolation-and-sagas.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Compares transaction isolation and saga coordination across boundaries."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q039",
+      "split": "dev",
+      "category": "tradeoff",
+      "question": "When is a shared database between two services an acceptable boundary, and what must be made explicit?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines domain semantics and authoritative ownership."
+        },
+        {
+          "document_id": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/ownership-isolation.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains authorization, isolation and invariant tests for a boundary."
+        },
+        {
+          "document_id": "tycho.page.4e0e4db7547b45469f36915886473750",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "States the cost of independent deployment and data ownership."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q040",
+      "split": "heldout",
+      "category": "tradeoff",
+      "question": "When is a serverless compute model a poor fit for a latency-sensitive service?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.5d5dd1d008b848a39dfae29a147da6d0",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/compute-models.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Compares compute models and their operating constraints."
+        },
+        {
+          "document_id": "tycho.page.59682af71a9f435680917ae5ece63088",
+          "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/workload-contract.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Defines the workload evidence needed before a compute choice."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q041",
+      "split": "dev",
+      "category": "tradeoff",
+      "question": "When is denormalization justified in a read-heavy system, and what consistency cost must be accepted?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af",
+          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains read projections and the reliability cost of duplicated read models."
+        },
+        {
+          "document_id": "tycho.page.c75a11f9786442a5b5456f11c2412df4",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Compares storage models against workload and consistency needs."
+        },
+        {
+          "document_id": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Adds synchronization cost across multiple stores."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q042",
+      "split": "dev",
+      "category": "synthesis",
+      "question": "How do idempotency, an outbox and consumer offsets combine into one end-to-end duplicate-safe workflow?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.9daa9ce90a5047fa849c637f24b063f7",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains the local atomic record and outbox relay."
+        },
+        {
+          "document_id": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/offsets-effects.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Separates committed effects from consumer offsets."
+        },
+        {
+          "document_id": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Generalizes ambiguous effects and idempotent handling."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q043",
+      "split": "heldout",
+      "category": "synthesis",
+      "question": "How do SLOs, load-test evidence and capacity models combine into a launch gate?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines defensible load-test evidence and invalidating conditions."
+        },
+        {
+          "document_id": "tycho.page.32a5de3daa2d4f74b879165a4119f63a",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Places capacity envelopes and lifecycle cost beside the test evidence."
+        },
+        {
+          "document_id": "tycho.page.c987c475cc5340bcb967f4b6f963b295",
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Defines the user-visible objective a launch gate must protect."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q044",
+      "split": "dev",
+      "category": "synthesis",
+      "question": "How do schema evolution and rolling deployment constrain each other during a semantic change?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.d00c6081ca664f619308712e245ef523",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/semantic-compatibility.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Separates representation compatibility from preserved meaning."
+        },
+        {
+          "document_id": "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains mixed-version reads, writes and online DDL."
+        },
+        {
+          "document_id": "tycho.page.81add4a0d86b4053ae77f9301fd2281d",
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Connects progressive delivery with schema evolution."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q045",
+      "split": "heldout",
+      "category": "synthesis",
+      "question": "How do tenancy, authorization and caching interact on a multi-tenant read path?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines tenant isolation and authorization boundaries."
+        },
+        {
+          "document_id": "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/tenant-effects.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains tenant-scoped effects and migration paths."
+        },
+        {
+          "document_id": "tycho.page.765a54f5d9944577908b40b3fc6cb7ef",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-authority.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains cache authority and freshness across shared infrastructure."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q046",
+      "split": "heldout",
+      "category": "fact",
+      "question": "What does a fencing token prevent after a lease or leadership change?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains fencing and failback authority."
+        },
+        {
+          "document_id": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Defines quorum authority and divergent-progress boundaries."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q047",
+      "split": "dev",
+      "category": "fact",
+      "question": "What is the difference between RTO and RPO, and what evidence turns each into a measured objective?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines measured RTO, RPO, fencing and state reconciliation."
+        },
+        {
+          "document_id": "tycho.page.4b654b81026f4d8b8909563bcffc01e4",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/objectives-strategies.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains recovery clocks, historical state and alternatives."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q048",
+      "split": "heldout",
+      "category": "fact",
+      "question": "What does a circuit breaker add beyond a per-request timeout?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.80ab784dafed47a7baf31722fce5eabc",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains bulkheads, retries and optional-dependency isolation."
+        },
+        {
+          "document_id": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Connects scarce resources, admission and queue control."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q049",
+      "split": "dev",
+      "category": "fact",
+      "question": "What does a watermark mean in event-time stream processing, and what does it not guarantee?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.205058a4a2da4523842395cc7864c8f0",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/checkpoints-time.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains watermarks, late data and checkpoint timing."
+        },
+        {
+          "document_id": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Places watermarks inside stateful stream processing and CDC."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q050",
+      "split": "heldout",
+      "category": "fact",
+      "question": "What does a bulkhead isolate, and which failure does it fail to prevent?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.80ab784dafed47a7baf31722fce5eabc",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains bulkheads and optional-dependency isolation."
+        },
+        {
+          "document_id": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Places bulkheads in the overload and degradation decision."
+        }
+      ],
+      "notes": ""
     }
   ]
 }
