@@ -124,15 +124,16 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ### GitOps
 
-Desired state is stored in a versioned repository; a reconciler pulls it, compares the live state
-and applies the difference. The repository is the reviewed intent, not a build log or a credentials
-store.
+GitOps treats a versioned desired-state repository as reviewed intent. The reconciler pulls a
+commit, applies the difference and records the observed revision; the repository is neither a build
+log nor a credentials store.
 
-The reconciled commit must be the reviewed desired state; drift is detected rather than silently
-overwritten, and the controller has least-privilege access. Controller outage, drift, a compromised
-repository and stale artifact references are common. Pin artifact digests, sign or verify the
-commit, and alert on reconciliation failure rather than assuming convergence.
+Rollback is a revert commit, which needs a linear, reviewable history and an immutable artifact
+reference. Pin image digests and verify the commit signature. Secrets stay out of plaintext: use an
+external secret reference or sealed value that the controller can resolve with least privilege.
+Controller outage, drift, repository compromise and stale artifact references are common; alert on
+reconciliation failure rather than assuming convergence, and name a drift owner.
 
-Direct push/CD or an imperative platform operator may be preferable when a separate pull controller
-adds more operational surface than it removes. GitOps is a fit when the environment can be
-reconciled from a reviewable repository and drift has an owner.
+A pipeline-driven deployment, manual release or imperative operator may be preferable when
+imperative one-off changes dominate or no reconciler owner exists. GitOps fits when the environment
+can be reconciled from a reviewable repository.

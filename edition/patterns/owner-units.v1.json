@@ -7327,31 +7327,31 @@
         "line": 125,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Desired state",
-          "reviewed desired state",
-          "Controller outage",
-          "Direct push/CD"
+          "revert commit",
+          "reviewable history",
+          "external secret reference",
+          "drift owner"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Desired state is stored in a versioned repository; a reconciler pulls it, compares the live state and applies the difference.",
+          "quote": "GitOps treats a versioned desired-state repository as reviewed intent.",
           "reason": "Defines the mechanism."
         },
         "invariant": {
           "state": "supported",
-          "quote": "The reconciled commit must be the reviewed desired state; drift is detected rather than silently overwritten, and the controller has least-privilege access.",
+          "quote": "Rollback is a revert commit, which needs a linear, reviewable history and an immutable artifact reference.",
           "reason": "States the invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Controller outage, drift, a compromised repository and stale artifact references are common.",
+          "quote": "Controller outage, drift, repository compromise and stale artifact references are common",
           "reason": "Names failure and recovery."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Direct push/CD or an imperative platform operator may be preferable when a separate pull controller adds more operational surface than it removes.",
+          "quote": "A pipeline-driven deployment, manual release or imperative operator may be preferable when imperative one-off changes dominate or no reconciler owner exists.",
           "reason": "Names the alternative and reversal."
         }
       },

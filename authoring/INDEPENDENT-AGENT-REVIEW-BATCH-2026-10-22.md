@@ -1177,3 +1177,8 @@ Verdict: **pass**. Findings: 0. Heading/anchor normalized; card fit matches exte
 
 Verdict: **pass**. Findings: 0. Normalized heading/anchor, fail-safe default, observable evaluation, snapshot-age recovery and corrected atlas link.
 
+
+### GitOps — latest re-review
+
+Verdict: **pass**. Findings: 0. Revert-commit rollback, external secret handling, manual-release alternative and distinct depth.
+
