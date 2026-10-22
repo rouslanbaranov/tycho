@@ -91,6 +91,19 @@ PY
   them to the repository, use a separate issue-specific branch and do not touch canonical
   artifacts.
 
+### Read-only access
+
+Read-only repository access is sufficient; no canonical write access is required.
+
+- A fresh clone does not contain `.venv`. Use a prepared environment or install the
+  validation dependencies; do not write into the checkout.
+- `generated/sections-fts-v3.sqlite` is git-ignored. `section_fts_index.py check` and
+  `section_search.py` need it; if absent, skip the check and record that limitation.
+- Set `PYTHONDONTWRITEBYTECODE=1` and use a writable scratch directory outside the checkout.
+- Deliver the report files to the owner. The `authoring/...` names are delivery conventions;
+  the owner commits them. If you need to open a PR, use your own fork; upstream can stay
+  read-only.
+
 ## 5. Read-only checks
 
 Run from the repository root with the project virtual environment:
@@ -113,6 +126,9 @@ Do **not** run `reconcile_sufficient_reviews.py`, `build_rereview_packets.py`,
 `sufficient_candidates.py --write`, `phase4_audit.py`, `pattern_census.py --write`,
 `route_index.py build`, `section_fts_index.py build` or any command that rewrites tracked
 artifacts. A validator pass is structural evidence only.
+
+`section_fts_index.py check` requires the git-ignored generated index. If it is absent,
+skip it and record the limitation; it is not required for content review.
 
 ## 6. Per-entry procedure
 
@@ -202,6 +218,9 @@ Deliver:
 
 - `authoring/INDEPENDENT-AGENT-REREVIEW-<YYYY-MM-DD>-v2.md` (English, at most 100 chars/line);
 - `authoring/INDEPENDENT-AGENT-REREVIEW-<YYYY-MM-DD>-v2.json` (machine-readable).
+
+With read-only access, send the two files to the owner; the owner commits them. The paths
+are delivery conventions, not write permission.
 
 The Markdown must contain: reviewer identity and relationship, review date, actual HEAD,
 scope (Phase A and whether Phase B), summary counts, one row per entry, findings, limits and
