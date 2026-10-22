@@ -52,16 +52,24 @@ class PacketTests(unittest.TestCase):
         self.sha = packets.digest(ROOT / self.candidate["owner_path"])
         self.route = {self.candidate["owner_path"]: {"sha256": self.sha}}
 
-    def test_ready_packet_has_no_filled_verdict(self):
+    def test_reviewed_packet_has_no_filled_verdict(self):
         packet = packets.build_packet(
             self.candidate, self.record, self.recon, self.sections, self.route)
-        self.assertEqual(packet["packet_status"], "ready-for-independent-rereview")
+        self.assertEqual(packet["packet_status"], "reviewed-by-independent-agent")
         self.assertEqual(packet["page_sha256"], self.sha)
         template = packet["verdict_template"]
         self.assertIsNone(template["reviewer"])
         self.assertIsNone(template["verdict"])
         self.assertEqual(template["findings"], [])
         self.assertTrue(all(value is None for value in template["checks"].values()))
+
+    def test_unreviewed_record_stays_ready(self):
+        unreviewed = dict(self.record)
+        unreviewed["re_review"] = {"verdict": "pass", "findings": 0}
+        packet = packets.build_packet(
+            self.candidate, unreviewed, self.recon, self.sections, self.route)
+        self.assertEqual(packet["packet_status"],
+                         "ready-for-independent-rereview")
 
     def test_hash_mismatch_and_missing_page(self):
         bad = {self.candidate["owner_path"]: {"sha256": "0" * 64}}
@@ -88,12 +96,14 @@ class CommittedPacketTests(unittest.TestCase):
     def test_committed_counts(self):
         summary = self.payload["summary"]
         self.assertEqual(summary["packets"], 52)
-        self.assertEqual(summary["promoted"], 47)
-        self.assertEqual(summary["residual"], 5)
+        self.assertEqual(summary["promoted"], 33)
+        self.assertEqual(summary["residual"], 16)
+        self.assertEqual(summary["rejected"], 3)
         self.assertEqual(summary["unique_owner_pages"], 32)
-        self.assertEqual(summary["ready"], 52)
+        self.assertEqual(summary["ready"], 0)
+        self.assertEqual(summary["reviewed"], 52)
         self.assertEqual(summary["packet_statuses"],
-                         {"ready-for-independent-rereview": 52})
+                         {"reviewed-by-independent-agent": 52})
 
     def test_no_packet_contains_a_verdict(self):
         for packet in self.payload["packets"]:

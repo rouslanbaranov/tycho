@@ -1,5 +1,9 @@
 # Sufficient-candidate review reconciliation — 2026-10-22
 
+> **Superseded by the independent agent re-review of 2026-10-22.** The counts below are the
+> pre-audit state. Post-audit integration:
+> [SUFFICIENT-REVIEW-INTEGRATION_2026-10-22.md](SUFFICIENT-REVIEW-INTEGRATION_2026-10-22.md).
+
 > Issue [#302](https://github.com/rouslanbaranov/tycho/issues/302), child of #228. This is a
 > read-only reconciliation of existing records against their cited reports. It is **not** a
 > new review, a sufficiency claim, a promotion, human review or owner acceptance.
@@ -16,8 +20,7 @@ The reconciliation reads:
 
 [reconcile_sufficient_reviews.py](../scripts/reconcile_sufficient_reviews.py) parses report
 headings and verdicts, matches catalog names exactly or by a unique prefix alias, derives a
-remediation state and writes the per-record ledger to
-[sufficient-review-reconciliation.v1.json](../edition/patterns/sufficient-review-reconciliation.v1.json).
+remediation state and writes the per-record ledger to [the ledger][recon-json].
 Input SHA-256 values are stored in the ledger. No record is edited.
 
 ## Headline counts
@@ -47,7 +50,7 @@ current passes are supported by a cited `pass`.
 
 ## Report support
 
-| Current verdict | Cited report `pass` | Cited report `pass-with-findings` | Cited report `reject` |
+| Verdict | report pass | report findings | report reject |
 |---|---:|---:|---:|
 | `pass` | 9 | 41 | 1 |
 | `pass-with-findings` | 0 | 89 | 5 |
@@ -117,3 +120,5 @@ therefore unverified until a re-review report exists.
 
 This document does not promote, reject, rewrite or approve any pattern entry. It records what
 the existing files say and where they disagree. A passing script run is not a review event.
+
+[recon-json]: ../edition/patterns/sufficient-review-reconciliation.v1.json
