@@ -107,7 +107,11 @@ retried; recording only after a failed delete can lose the intent in a crash. Wi
 lost invalidation is unbounded. Alert on repeated failures. Concurrent misses need
 single-flight or a lease; a fallback authoritative read must stay bounded.
 
-Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or require strict verification for revocation-sensitive operations. Data authorization must be performed at an enforced boundary; a copied permission bit is not its own authority. Fill and invalidation must share a version authority; a cache that cannot identify the source revision cannot prove which value is newer.
+Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or
+require strict verification for revocation-sensitive operations. Data authorization must be
+performed at an enforced boundary; a copied permission bit is not its own authority. Fill and
+invalidation must share a version authority; a cache that cannot identify the source revision
+cannot prove which value is newer.
 
 <!-- /tycho-question-source -->
 
