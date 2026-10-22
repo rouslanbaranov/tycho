@@ -85,13 +85,15 @@ flowchart TD
 **The stale-fill race.** Reader R misses and reads V1; writer W commits V2 and invalidates
 the key; R then writes V1 back with a fresh TTL, resurrecting stale data. A version gate on
 fill — write only if the source revision still equals the revision R read — narrows the
-window, but a race remains between the version check and the write. A short TTL plus retried
-invalidation bounds the damage; neither proves freshness.
+window. An atomic compare-and-set or conditional write at the key closes the check/write gap;
+a non-atomic check-then-write leaves it open. A short TTL plus retried invalidation bounds the
+damage; neither proves freshness when the invalidation itself can be lost.
 
-**Failure and recovery.** A write can commit while its delete fails, leaving stale data until
-TTL. Record invalidation attempts, retry through an outbox or durable queue, and alert on
-repeated failure. Concurrent misses need single-flight or a lease; a fallback authoritative
-read must stay bounded.
+**Failure and recovery.** A write can commit while its delete fails. The invalidation intent
+must be durable at commit time — an outbox row in the same local transaction — and then
+retried; recording only after a failed delete can lose the intent in a crash. Without a TTL, a
+lost invalidation is unbounded. Alert on repeated failures. Concurrent misses need
+single-flight or a lease; a fallback authoritative read must stay bounded.
 
 Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or require strict verification for revocation-sensitive operations. Data authorization must be performed at an enforced boundary; a copied permission bit is not its own authority.
 

@@ -93,3 +93,16 @@ Remediation applied after the review:
 - Replaced the card's status/TTL deferral with scope, delete/version, TTL and revocation tests.
 
 Not re-reviewed. Verdict remains **pass-with-findings**.
+## Cache-Aside re-review — pass-with-findings
+
+Second read-only review confirmed the stale-fill and recovery text is present, but found:
+
+1. The claim that a race always remains is too strong; an atomic compare-and-set closes
+   the check/write gap, as the sibling stale-fill owner states.
+2. Recording invalidation only after a failed delete can lose the intent; the intent must
+   be durable at commit time, and a missing TTL makes a lost invalidation unbounded.
+
+Remediation: the section now distinguishes atomic and non-atomic fill, requires an outbox
+intent in the same local transaction as the write, and states the no-TTL unbounded case.
+
+Not re-reviewed again. Verdict remains **pass-with-findings**.

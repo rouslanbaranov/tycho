@@ -41,8 +41,8 @@ Do not edit the repository. Do not treat this packet as approval.
 
 6. **Cache-Aside / Lazy Loading** — `tycho.pattern.cache-aside-lazy-loading`
    - File: `refresh-semantics.md`
-   - Heading: `4. Cache-aside is a sequence, not a consistency theorem`; 287 words
-   - SHA-256: `d40326a0365f0fa5da7e8194cb7d0c2a30f5acb448cc2d2b85279343499a2867`
+   - Heading: `4. Cache-aside is a sequence, not a consistency theorem`; 329 words
+   - SHA-256: `44af84dceae81d193c797dfd9d46aece50498baabd3b6081cfb3638e3e636947`
 
 7. **Negative Caching** — `tycho.pattern.negative-caching`
    - File: `negative-cache.md`
@@ -169,3 +169,18 @@ the validators still require a separate policy change.
     - File: `stale-fill.md`
     - Heading: `Stale-While-Revalidate`; 123 words
     - SHA-256: `fc8ec7d736a980edf25d9cedaca087e1cc5fea9f9a8bdab1b24cefb477d1dfe8`
+
+31. **Rolling Deployment** — `tycho.pattern.rolling-deployment`
+    - File: `gitops-canary-and-progressive-rollout.md`
+    - Heading: `Rolling Deployment`; 124 words
+    - SHA-256: `52a62dbd6570cb269e4f98088f5581b8ee1982f03a9d1b797241d28ed949285a`
+
+32. **Blue/Green Deployment** — `tycho.pattern.blue-green-deployment`
+    - File: `gitops-canary-and-progressive-rollout.md`
+    - Heading: `Blue/Green Deployment`; 126 words
+    - SHA-256: `52a62dbd6570cb269e4f98088f5581b8ee1982f03a9d1b797241d28ed949285a`
+
+33. **Dark Launching / Shadow Traffic** — `tycho.pattern.dark-launching-shadow-traffic`
+    - File: `gitops-canary-and-progressive-rollout.md`
+    - Heading: `Dark Launching / Shadow Traffic`; 124 words
+    - SHA-256: `52a62dbd6570cb269e4f98088f5581b8ee1982f03a9d1b797241d28ed949285a`

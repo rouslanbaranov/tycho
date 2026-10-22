@@ -119,6 +119,9 @@ the shadow path and stop it when the comparison or capacity contract fails. A ca
 receives a small real share is the alternative when shadow traffic cannot be made
 side-effect free.
 
+**Limits.** Shadow traffic is not a user-behavior sample; comparison coverage and data
+sensitivity bound what it can prove.
+
 ### Rolling Deployment
 
 A rolling deployment replaces instances in batches, so old and new versions serve traffic together
@@ -128,6 +131,10 @@ whole overlap, or the rollout must stop before an incompatible state is written.
 Mixed versions expose an incompatibility that a single-version test missed; gate each batch on
 readiness and error signals and keep a tested stop condition. Blue/green switches a complete
 environment at once; choose rolling when the extra capacity for a second environment is unavailable.
+
+**Limits.** Batch size, drain time and mixed-version compatibility are costs; a rolling rollout
+cannot prove a new-only write is reversible. Capacity during the overlap must be budgeted,
+and a canary analysis does not replace this overlap check.
 
 ### Blue/Green Deployment
 
@@ -139,3 +146,7 @@ A half-switched route or a new-only write makes reversal unsafe; verify routing 
 data compatibility before declaring the cutover. A rolling or canary rollout uses less spare
 capacity; choose blue/green when a fast, complete reversal and a clean environment comparison
 justify the double capacity.
+
+**Limits.** Double capacity, data compatibility and switch atomicity are costs; a routing switch
+does not roll back persisted effects. Test the reverse switch under load, give the old
+environment an owner and expiry, and treat a rehearsed reverse switch as acceptance evidence.
