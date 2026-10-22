@@ -1012,3 +1012,8 @@ Verdict: **pass-with-findings**. Latest review flagged a native-index paragraph 
 
 Verdict: **pass**. Findings: 0. Broker ordering, non-preemption, per-hop class authentication, tenant caps, aging/max-wait and admission-controlled FIFO align with the card.
 
+
+### Saga — latest re-review
+
+Verdict: **pass**. Findings: 0. Card and §4 now name only one local transaction or two-phase commit; the #saga owner anchor resolves.
+
