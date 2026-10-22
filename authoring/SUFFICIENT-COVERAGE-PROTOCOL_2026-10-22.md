@@ -57,11 +57,11 @@ Non-human independent-agent reviews are recorded for all 145 candidates:
 | Reject | 0 |
 | Unreviewed | 0 |
 
-All eight originally rejected sections — SOA, CDC, Materialized View, Priority Queue,
-Index Table, Cell-Based Architecture, Shuffle Sharding and Static Content Hosting —
-were rewritten and independently re-reviewed to pass-with-findings. Zero rejects remain.
-A pass-with-findings section is not promoted until its findings are remediated and
-re-reviewed. No record here is human
+All eight originally rejected sections were rewritten. The 2026-10-22 independent agent
+re-review found five no longer reject-level: SOA, Priority Queue, Index Table, Shuffle
+Sharding and Static Content Hosting. Three remain reject-level: Cell-Based Architecture,
+Change Data Capture and Materialized View. A pass-with-findings or reject section is not
+promoted until its findings are remediated and re-reviewed. No record here is human
 review, owner acceptance, or a sufficient claim.
 
 ## Promotion sequence
