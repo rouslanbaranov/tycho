@@ -27,10 +27,13 @@ route_hints:
     - "read"
     - "projections"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.fowler-cqrs"
+    - "src.microservices-patterns"
+    - "src.postgresql"
   claim_ids: []
-  status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  status: "source-linked"
+  notes: "Read source-plan units; page-level, not claim-mapped."
 content_review:
   status: "draft"
   reviewed_at: null

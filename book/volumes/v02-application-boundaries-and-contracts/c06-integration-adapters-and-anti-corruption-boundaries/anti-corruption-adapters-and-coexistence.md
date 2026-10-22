@@ -35,17 +35,18 @@ route_hints:
     - "safe"
     - "coexistence"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.microsoft-cloud-patterns"
   claim_ids: []
-  status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  status: "source-linked"
+  notes: "Read source-plan units; page-level, not claim-mapped."
 content_review:
   status: "draft"
   reviewed_at: null
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
+updated_at: "2026-10-22"
 source_inspection_date: null
 content_verified_at: null
 ---

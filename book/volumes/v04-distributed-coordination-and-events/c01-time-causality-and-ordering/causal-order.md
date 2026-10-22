@@ -25,10 +25,11 @@ route_hints:
     - "causal"
     - "order"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.jepsen-consistency"
   claim_ids: []
-  status: "unknown"
-  notes: "Bounded question from tycho.page.d4822cc1e71c4f73896b7f6509f6daae; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
+  status: "source-linked"
+  notes: "Read source-plan units; page-level, not claim-mapped."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-20"

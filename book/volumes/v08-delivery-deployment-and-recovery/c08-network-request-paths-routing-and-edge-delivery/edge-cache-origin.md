@@ -153,6 +153,9 @@ window; a deleted object needs a tombstone or purge proof. The cache key, TTL an
 boundary must agree, especially for private assets signed at the edge. Cold-cache miss storms and
 incomplete purges are common; exercise origin failover and a known purge.
 
+Retained versions and edge copies carry storage, egress and purge cost; a second origin or
+duplicated manifest needs one version authority, or the rollback path becomes ambiguous.
+
 A dynamic origin or edge compute may be preferable when content changes per request or publication
 cannot be governed. Static hosting is a fit when assets are immutable, versioned and the publisher
 can prove upload, prewarm and purge.

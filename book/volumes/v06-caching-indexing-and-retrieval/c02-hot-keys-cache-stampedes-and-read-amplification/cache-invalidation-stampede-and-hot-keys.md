@@ -35,10 +35,11 @@ route_hints:
     - "failure"
     - "modes"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.microsoft-caching-guidance"
   claim_ids: []
-  status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  status: "source-linked"
+  notes: "Read source-plan units; page-level, not claim-mapped."
 content_review:
   status: "draft"
   reviewed_at: null
