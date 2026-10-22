@@ -1097,3 +1097,8 @@ Verdict: **pass**. Findings: 0. Label/anchor, predicate-trust, rejected-disposit
 
 Verdict: **pass**. Findings: 0. Token binding, payload digest, retrieval latency and label/anchor agree.
 
+
+### Saga Choreography — latest re-review
+
+Verdict: **pass**. Findings: 0. Label, timeout policy, versioned contract and central-ordering alternative agree.
+

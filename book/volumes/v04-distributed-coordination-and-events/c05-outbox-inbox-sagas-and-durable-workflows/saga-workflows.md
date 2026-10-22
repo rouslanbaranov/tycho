@@ -207,15 +207,17 @@ visibility is mandatory.
 
 Each owner subscribes to events and emits the next business step; progress lives in the event
 contracts rather than a central coordinator. It needs correlation identity, deduplication,
-dead-letter handling and an observable workflow state.
+dead-letter handling, versioned event contracts and a per-step timeout policy; a timeout must
+advance, retry or flag the chain, not wait forever. The overall protocol needs an observable
+terminal-state query.
 
 Unbounded chains, hidden coupling and conflicting compensations are common; a trace can show
 correlation without proving durable business truth. Each participant needs an idempotent effect
 identity, a terminal-state query and an owner for a stuck chain. The event contract must carry the
-workflow identity, not only a local message identity.
+workflow identity and a compatibility window, not only a local message identity.
 
-Orchestration or a single local transaction may be preferable when steps need central visibility or
-when compensations cannot be made safe. Choreography is a fit when owners can evolve independently
+Orchestration or a single local transaction may be preferable when steps need central visibility,
+when compensation ordering must be centrally enforced, or when compensations cannot be made safe. Choreography is a fit when owners can evolve independently
 and the emitted events are the real business protocol.
 
 ### Saga Orchestration
@@ -245,6 +247,7 @@ release itself can fail; a delivered message cannot be un-delivered; the kit may
 handed to a participant. Compensation therefore needs its own authorization, evidence and
 terminal-state check.
 
-Orchestration or a single local transaction may be preferable when steps need central visibility or
-when compensations cannot be made safe. Do not model compensation as an undo button; model it as a
-second business decision with its own failure semantics.
+Orchestration or a single local transaction may be preferable when steps need central visibility,
+when compensation ordering must be centrally enforced, or when compensations cannot be made
+safe. Do not model compensation as an undo button; model it as a second business decision with
+its own failure semantics.

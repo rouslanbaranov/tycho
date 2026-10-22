@@ -230,7 +230,7 @@ when event chains become hard to trace and recover.
 **Failure and recovery.** Hidden coupling, unbounded event chains and conflicting
 compensations are common; traces show correlation, not durable business truth.
 
-**Technical owner.** [Saga Choreography](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga-choreography) — compensation/branching is bounded, not a complete orchestration product guide.
+**Technical owner.** [Saga Choreography](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga-choreography) — event-driven saga coordination is bounded, not a complete orchestration product guide.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
