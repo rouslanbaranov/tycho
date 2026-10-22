@@ -158,6 +158,36 @@ deployment is the alternative when isolation is the main goal and scale is secon
 
 **Limits.** Stamp duplication, routing-key changes and global dependencies are costs; a stamp
 without a data authority or upgrade owner becomes a snowflake.
+## Bounded pattern ownership notes
+
+### Cell-Based Architecture
+
+A cell serves a bounded population with its own capacity and failure domain. The boundary is a
+placement and dependency decision, not a deployment label.
+
+Merely naming a group of stateless workers a cell does not isolate a shared database, queue, cache or
+configuration publisher. Trace every dependency that a tenant can exhaust, corrupt or stall, and
+state which failures cross the boundary. A shared control plane can still take every cell down at
+once; test the blast radius, not only the happy-path routing.
+
+A single deployment with failure-domain isolation may be preferable when the population is small and
+a cell's duplicated operations cannot be justified. Cells are a fit when tenant isolation and
+bounded blast radius matter enough to pay the placement and routing cost.
+
+### Shuffle Sharding
+
+A shuffle shard selects a small subset from a worker pool, so different tenants overlap in only some
+of their eligible workers. A single unhealthy worker affects fewer tenants than a shared queue or a
+fixed shard would.
+
+Do not assume assignments are statistically independent just because they use a hash. If all workers
+await one shared database pool, the endpoint assignment proves little. Test the actual dependency
+graph, the assignment stability across restarts and the tenant overlap under pool changes.
+
+A fixed cell gives a tenant a durable home and a clear population boundary. Shuffle sharding is
+preferable when many tenants share a pool and the goal is to reduce correlated failure without
+dedicating a cell to each one.
+
 ## Navigation
 
 - Parent chapter: [High availability and failure-domain placement](README.md).

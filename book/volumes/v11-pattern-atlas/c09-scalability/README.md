@@ -221,7 +221,7 @@ blast-radius benefit.
 **Failure and recovery.** Cell routing and cross-cell dependencies are common; verify
 boundaries in the owner section.
 
-**Technical owner.** [Cells and shuffle sharding](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#a-cell-is-a-boundary-in-the-dependency-graph) — cell placement is bounded, not a universal stamp deployment recipe.
+**Technical owner.** [Cell-Based Architecture](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#cell-based-architecture) — cell placement is bounded, not a universal stamp deployment recipe.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -253,7 +253,7 @@ when overlap reduction does not justify assignment complexity.
 **Failure and recovery.** Hot tenants and uneven overlap are common; verify assignment in
 the owner section.
 
-**Technical owner.** [Cells and shuffle shards solve different placement questions](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#cells-and-shuffle-shards-solve-different-placement-questions) — shuffle sharding is bounded, not a hashing implementation guide.
+**Technical owner.** [Shuffle Sharding](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#shuffle-sharding) — shuffle sharding is bounded, not a hashing implementation guide.
 
 **Sources.**
 [src.cortex-shuffle-sharding](../../../../edition/patterns/reading-ledger.v1.json)

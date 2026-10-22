@@ -192,3 +192,35 @@ Selected evidence inspected 2026-10-20: [Data deletion](https://docs.cloud.googl
 | Integrated question | [Original scenario and limits](schema-lifecycle-and-semantic-migration.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### Expand-and-Contract Schema
+
+Expand-and-contract changes a schema in compatible phases: add the new representation, migrate
+readers and writers, then remove the old one. The compatibility window is the safety mechanism, not
+a delay to be skipped.
+
+Begin with versioned authoritative identities, expand without removing old contract, resolve semantic
+mappings, backfill in resumable batches and reconcile *meaning* and references. Retire old data only
+after readers/replay paths are proved gone. Route reads back while source remains compatible;
+otherwise hold and forward-repair. A contract step without a reader inventory is a breaking change.
+
+Smaller changes may retain the existing schema and add an explicit mapping layer instead of migrating
+authority. Expand-and-contract is a fit when the data must move and old and new readers coexist during
+the transition.
+
+### Online Data Migration
+
+An online migration copies or transforms data while the source continues serving writes. If backfill
+takes hours, it may read records while new writes occur. A design needs an authoritative writer and a
+change-capture/reconciliation plan.
+
+Two independent writers are not automatically atomic just because the schema includes both fields.
+A crash can leave a checkpoint behind the last committed row; a changed mapping can strand a subset.
+Record a resumable checkpoint, detect rows changed after the snapshot and reconcile them before
+declaring the backfill complete.
+
+A stop-the-world migration or a dual-write with reconciliation may be preferable when the write rate
+is low or the changed-row set is small. Online migration is a fit when downtime is unacceptable and
+the team can operate capture, checkpoint and reconciliation.

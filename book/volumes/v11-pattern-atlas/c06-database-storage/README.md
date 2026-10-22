@@ -408,7 +408,7 @@ choice when staged migration cost exceeds rollout risk.
 **Failure and recovery.** Partial backfills and old readers are common; verify gates in
 the owner section.
 
-**Technical owner.** [Expand, migrate, contract as a gated lifecycle](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#3-expand-migrate-contract-as-gated-lifecycle) — expand/contract is bounded, not a complete migration runbook.
+**Technical owner.** [Expand-and-Contract Schema](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#expand-and-contract-schema) — expand/contract is bounded, not a complete migration runbook.
 
 **Sources.** [src.flyway](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-flyway.2026-10-21: sections "Migrations", "Versioned Migrations",
@@ -440,7 +440,7 @@ when online complexity exceeds downtime cost.
 **Failure and recovery.** Stale backfills and cutover ambiguity are common; verify
 acceptance in the owner section.
 
-**Technical owner.** [Backfill acceptance is more than row totals](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#backfill-acceptance-is-more-than-row-totals) — backfill acceptance is bounded, not an online migration tool guide.
+**Technical owner.** [Online Data Migration](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#online-data-migration) — backfill acceptance is bounded, not an online migration tool guide.
 
 **Sources.** [src.gh-ost](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-gh-ost.2026-10-21: sections "How?", "Highlights", "Usage". The

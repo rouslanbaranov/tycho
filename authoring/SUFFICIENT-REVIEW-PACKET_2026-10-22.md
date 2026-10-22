@@ -323,7 +323,7 @@ the validators still require a separate policy change.
 61. **Deployment Stamps** — `tycho.pattern.deployment-stamps`
     - File: `cells-shuffle-sharding.md`
     - Heading: `Deployment Stamps`; 134 words
-    - SHA-256: `bcbb98e5269bba6169ea141180337868a822203f0d87089ed18e95a245296692`
+    - SHA-256: `35346976f4b654f24e5beb6881cb26495339b3d3a131939a45f5538782d3c209`
 
 62. **Parallel Run** — `tycho.pattern.parallel-run`
     - File: `authority-states.md`
@@ -604,3 +604,23 @@ the validators still require a separate policy change.
     - File: `replication-consensus-and-leader-change.md`
     - Heading: `Consensus`; 150 words
     - SHA-256: `55ff8e5a0e47f1136f5f7d32a76f34d941e6991407643a58f752dba5d374db98`
+
+118. **Expand-and-Contract Schema** — `tycho.pattern.expand-and-contract-schema`
+    - File: `migration-retirement.md`
+    - Heading: `Expand-and-Contract Schema`; 122 words
+    - SHA-256: `93e6128408bd4a0e2e53b5a79956fe8803e6e7b90f33328a381896fb6980de9b`
+
+119. **Online Data Migration** — `tycho.pattern.online-data-migration`
+    - File: `migration-retirement.md`
+    - Heading: `Online Data Migration`; 126 words
+    - SHA-256: `93e6128408bd4a0e2e53b5a79956fe8803e6e7b90f33328a381896fb6980de9b`
+
+120. **Cell-Based Architecture** — `tycho.pattern.cell-based-architecture`
+    - File: `cells-shuffle-sharding.md`
+    - Heading: `Cell-Based Architecture`; 126 words
+    - SHA-256: `35346976f4b654f24e5beb6881cb26495339b3d3a131939a45f5538782d3c209`
+
+121. **Shuffle Sharding** — `tycho.pattern.shuffle-sharding`
+    - File: `cells-shuffle-sharding.md`
+    - Heading: `Shuffle Sharding`; 120 words
+    - SHA-256: `35346976f4b654f24e5beb6881cb26495339b3d3a131939a45f5538782d3c209`

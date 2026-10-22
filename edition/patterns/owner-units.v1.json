@@ -4801,16 +4801,16 @@
       "owner": {
         "document_id": "tycho.page.7e927696162f48beaa33fc834b36ee76",
         "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
-        "heading": "3. Expand, migrate, contract as gated lifecycle",
-        "anchor": "3-expand-migrate-contract-as-gated-lifecycle",
-        "level": 2,
-        "line": 48,
-        "unit_kind": "embedded",
+        "heading": "Expand-and-Contract Schema",
+        "anchor": "expand-and-contract-schema",
+        "level": 3,
+        "line": 198,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "expand/migrate/contract approach",
-          "expand without removing old contract",
-          "A fenced cutover authorizes precisely one writer",
-          "versioned authoritative identities"
+          "versioned authoritative identities",
+          "Retire old data",
+          "Route reads back",
+          "smaller changes"
         ]
       },
       "technical_evidence": {
@@ -4861,16 +4861,16 @@
       "owner": {
         "document_id": "tycho.page.7e927696162f48beaa33fc834b36ee76",
         "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
-        "heading": "Backfill acceptance is more than row totals",
-        "anchor": "backfill-acceptance-is-more-than-row-totals",
+        "heading": "Online Data Migration",
+        "anchor": "online-data-migration",
         "level": 3,
-        "line": 67,
-        "unit_kind": "embedded",
+        "line": 213,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Backfill acceptance is more than row totals",
-          "checkpoint durability on crash/retry",
-          "event/CDC offset and replay horizon",
-          "change-capture/reconciliation plan"
+          "If backfill takes hours",
+          "Two independent writers",
+          "resumable checkpoint",
+          "stop-the-world migration"
         ]
       },
       "technical_evidence": {
@@ -4885,14 +4885,14 @@
           "reason": "States the single-writer constraint that must hold during backfill."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "",
-          "reason": "Lists crash/retry checkpoint durability and unknown mappings as checks, but gives no detection or recovery procedure."
+          "state": "supported",
+          "quote": "A crash can leave a checkpoint behind the last committed row; a changed mapping can strand a subset.",
+          "reason": "Names checkpoint and mapping failure and the reconciliation response."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing migration mechanism or reversing condition appears in this subsection."
+          "state": "supported",
+          "quote": "A stop-the-world migration or a dual-write with reconciliation may be preferable when the write rate is low or the changed-row set is small.",
+          "reason": "Names stop-the-world/dual-write and the reversal."
         }
       },
       "decision_evidence": {
@@ -6711,16 +6711,16 @@
       "owner": {
         "document_id": "tycho.page.1849584c8a3fadc9e06c8d2edead5789",
         "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
-        "heading": "A cell is a boundary in the dependency graph",
-        "anchor": "a-cell-is-a-boundary-in-the-dependency-graph",
-        "level": 2,
-        "line": 76,
-        "unit_kind": "embedded",
+        "heading": "Cell-Based Architecture",
+        "anchor": "cell-based-architecture",
+        "level": 3,
+        "line": 163,
+        "unit_kind": "dedicated",
         "unit_terms": [
           "bounded population",
-          "failure domain",
-          "shared database",
-          "configuration publisher"
+          "Merely naming",
+          "shared control plane",
+          "single deployment"
         ]
       },
       "technical_evidence": {
@@ -6735,14 +6735,14 @@
           "reason": "States that shared dependencies defeat a nominal cell boundary."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Trace every dependency that a tenant can exhaust, corrupt or stall, and state which failures cross the boundary.",
-          "reason": "Requires mapping escape paths but gives no detection, containment or recovery procedure."
+          "state": "supported",
+          "quote": "A shared control plane can still take every cell down at once; test the blast radius, not only the happy-path routing.",
+          "reason": "Names shared-control-plane blast radius and the required test."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing mechanism or reversal condition is named in this section."
+          "state": "supported",
+          "quote": "A single deployment with failure-domain isolation may be preferable when the population is small and a cell's duplicated operations cannot be justified.",
+          "reason": "Names single deployment with failure-domain isolation."
         }
       },
       "decision_evidence": {
@@ -6771,16 +6771,16 @@
       "owner": {
         "document_id": "tycho.page.1849584c8a3fadc9e06c8d2edead5789",
         "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
-        "heading": "Cells and shuffle shards solve different placement questions",
-        "anchor": "cells-and-shuffle-shards-solve-different-placement-questions",
-        "level": 2,
-        "line": 92,
-        "unit_kind": "embedded",
+        "heading": "Shuffle Sharding",
+        "anchor": "shuffle-sharding",
+        "level": 3,
+        "line": 177,
+        "unit_kind": "dedicated",
         "unit_terms": [
           "small subset",
-          "worker pool",
-          "eligible workers",
-          "endpoint assignment"
+          "statistically independent",
+          "dependency graph",
+          "fixed cell"
         ]
       },
       "technical_evidence": {
@@ -6795,14 +6795,14 @@
           "reason": "Safety rule against assuming hash-based independence."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "If all workers await one shared database pool, the endpoint assignment proves little.",
-          "reason": "Names shared-bottleneck defeat but no detection or recovery."
+          "state": "supported",
+          "quote": "Test the actual dependency graph, the assignment stability across restarts and the tenant overlap under pool changes.",
+          "reason": "Names shared-dependency and assignment-stability tests."
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A fixed cell gives a tenant a durable home and a clear population boundary.",
-          "reason": "Contrasts a fixed cell but gives no condition that reverses the shuffle-shard choice."
+          "reason": "Contrasts fixed cells and the dedicated-home condition."
         }
       },
       "decision_evidence": {
@@ -8821,10 +8821,10 @@
         "tycho.pattern.online-data-migration"
       ],
       "unit_count": 2,
-      "dedicated_units": 0,
+      "dedicated_units": 2,
       "bounded_entries": 2,
-      "decision": "keep",
-      "rationale": "Expand/contract and online migration have two distinct units and a coherent lifecycle page."
+      "decision": "deepen",
+      "rationale": "Expand-and-contract and online migration now have two distinct dedicated units."
     },
     {
       "document_id": "tycho.page.33742c54f667446cbf57cb9f3696a533",
@@ -8959,10 +8959,10 @@
         "tycho.pattern.shuffle-sharding"
       ],
       "unit_count": 3,
-      "dedicated_units": 1,
+      "dedicated_units": 3,
       "bounded_entries": 3,
-      "decision": "keep",
-      "rationale": "Three placement patterns have three distinct units and a coherent failure-domain story, so no split is justified."
+      "decision": "deepen",
+      "rationale": "Cells, shuffle sharding and deployment stamps now have three distinct dedicated units."
     },
     {
       "document_id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
@@ -9101,12 +9101,12 @@
     "owner_pages": 69,
     "shared_pages": 33,
     "owner_units": 140,
-    "dedicated_units": 119,
-    "embedded_units": 21,
+    "dedicated_units": 123,
+    "embedded_units": 17,
     "mechanism_supported": 145,
     "invariant_supported": 145,
-    "failure_recovery_supported": 136,
-    "alternative_supported": 138,
+    "failure_recovery_supported": 139,
+    "alternative_supported": 141,
     "technical_partial_bounded": 145,
     "technical_partial": 0,
     "technical_name_only": 0,
@@ -9118,8 +9118,8 @@
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
-      "keep": 12,
-      "deepen": 21,
+      "keep": 10,
+      "deepen": 23,
       "split": 0
     },
     "split_deferred": 0
