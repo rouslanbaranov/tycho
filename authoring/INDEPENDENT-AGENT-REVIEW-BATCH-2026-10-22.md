@@ -1167,3 +1167,8 @@ Verdict: **pass**. Findings: 0. Key derivation/validation/collision and marker l
 
 Verdict: **pass**. Findings: 0. Prefetch/in-flight/ack bounds, pause-or-scale overload action and polling/scheduled-batch reversal agree.
 
+
+### Blue-Green Deployment — latest re-review
+
+Verdict: **pass**. Findings: 0. Heading/anchor normalized; card fit matches externalized-or-dual-readable state and in-flight drain/route.
+

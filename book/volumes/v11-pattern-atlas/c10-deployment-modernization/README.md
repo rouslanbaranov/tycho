@@ -106,7 +106,7 @@ unit, not a benchmark.
 **Related entries.** Blue/Green Deployment; Canary Release; Feature Flags; Readiness
 Probes.
 
-### Blue / Green Deployment
+### Blue-Green Deployment
 
 **Identity.** Blue/Green Deployment; family Deployment and legacy modernization; kind
 deployment-pattern; priority core.
@@ -114,8 +114,9 @@ deployment-pattern; priority core.
 **Decision question.** Should traffic switch between two complete environments rather than
 replace in place?
 
-**Good-fit conditions.** Two environments fit the cost; state is externalized;
-switch/rollback is quick; data compatibility is explicit.
+**Good-fit conditions.** Two environments fit the cost; state is externalized or readable by
+both versions; in-flight work can drain or route to both; switch/rollback is quick; data
+compatibility is explicit.
 
 **Hard contraindications.** Reject when duplicate capacity is prohibitive, when state
 cannot be shared, or when a switch would lose in-flight work.

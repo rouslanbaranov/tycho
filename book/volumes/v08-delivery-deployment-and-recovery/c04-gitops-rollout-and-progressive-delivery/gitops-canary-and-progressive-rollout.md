@@ -143,7 +143,9 @@ previous environment available for a short reversal. The switch must remain reve
 version's persisted effects are proven compatible with the old version.
 
 A half-switched route or a new-only write makes reversal unsafe; verify routing completeness and
-data compatibility before declaring the cutover. A rolling or canary rollout uses less spare
+data compatibility before declaring the cutover. State must be externalized or readable by both
+versions, and in-flight work must drain or route to both; a switch that drops in-flight work is not
+reversible. A rolling or canary rollout uses less spare
 capacity; choose blue/green when a fast, complete reversal and a clean environment comparison
 justify the double capacity.
 
