@@ -126,18 +126,17 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ### Transactional Outbox
 
-An outbox commits the authoritative state change and a publication-intent row in one local
-transaction. A separate relay publishes rows and checkpoints progress; the row is the durable
-intent, not the broker's acknowledgement.
+An outbox is a durable publication queue inside the state store. The business row and an intent row
+commit together; a relay leases rows, publishes them and records completion. The broker sees
+at-least-once attempts, not a distributed transaction.
 
-The outbox gives durable intent, not atomicity with the broker or exactly-once delivery. A relay can
-crash after publish but before checkpoint, causing a duplicate; after commit but before publish,
-causing a retry; a poison row can block progress. Consumers still need effect identity. Bound relay
-attempts and age, retain the repair evidence for the declared window and give a poison
-row a terminal quarantine decision.
+The relay needs bounded attempts and age, a publication key, per-aggregate ordering and a terminal
+quarantine for poison rows. A crash after publish before completion duplicates; after commit before
+publish retries. A consumer still deduplicates by effect identity, and a repair operator needs the
+row, payload digest and attempt history retained for the declared window.
 
-Use an outbox when the lost/duplicate publication risk justifies relay complexity. Reverse to direct
-publish with reconciliation only when relay complexity exceeds the risk it removes; CDC or
+Use an outbox when the lost/duplicate publication risk justifies relay complexity. Reverse to
+direct publish with reconciliation only when relay complexity exceeds the risk it removes; CDC or
 transactional messaging may fit when the log is accessible.
 
 ### Distributed Workflow Orchestration

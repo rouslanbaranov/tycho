@@ -178,21 +178,18 @@ Proposed tests: route one tenant across all replicas, change replica count, part
 
 ### Priority Queue
 
-A priority queue orders ready work by a declared class before it is dispatched; it changes the
-order of waiting work, not the execution of work already running. A high-priority message does not
-preempt an in-flight low-priority handler, so the handler's latency remains part of the critical
-path.
+A priority queue is a broker-side ordering policy: ready messages carry a class and the queue
+dispatches higher classes first. It does not preempt a running handler, so a high-class message can
+still wait behind a slow low-class execution.
 
-The broker must support the priority field and the queue must define its levels and per-level
-capacity. Criticality must be authenticated and verified at every hop: a class visible only at the
-edge cannot protect a downstream dependency, which sees an ordinary caller. A global class also
-needs a per-tenant cap, or one tenant can consume the high-priority share.
-A naive priority queue can starve ordinary work forever, so define maximum wait,
-aging or reserved capacity and the action when a low class exceeds its wait bound.
+The queue must define class levels, per-level capacity and the broker's actual priority support.
+Authenticate the class at each hop and cap each tenant's share, or one tenant can occupy the
+high-class lane. Add aging or a maximum-wait rule so low classes make progress; without a wait bound
+the policy is starvation.
 
-A FIFO queue with admission control, separate lanes per class, or reserved capacity is preferable
-when priority cannot be authenticated or starvation is unacceptable. A priority queue is a fit when
-classes are real, the broker supports priorities and a starvation bound is enforced.
+An admission-controlled FIFO or separate lanes per class avoids starvation when priority is
+unverifiable. A priority queue is a fit when classes are authenticated, the broker supports
+priorities and a wait bound is enforced.
 
 ## Navigation, prerequisites and source scope
 

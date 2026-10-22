@@ -3056,26 +3056,26 @@
         "line": 127,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "publication-intent row",
-          "durable intent",
-          "relay attempts",
-          "terminal quarantine"
+          "publication queue",
+          "intent row",
+          "poison rows",
+          "quarantine"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "An outbox commits the authoritative state change and a publication-intent row in one local transaction.",
+          "quote": "An outbox is a durable publication queue inside the state store.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
-          "quote": "The outbox gives durable intent, not atomicity with the broker or exactly-once delivery.",
+          "quote": "The business row and an intent row commit together",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A relay can crash after publish but before checkpoint, causing a duplicate",
+          "quote": "A crash after publish before completion duplicates",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
@@ -5714,31 +5714,31 @@
         "line": 179,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "priority queue orders",
+          "broker-side ordering",
           "does not preempt",
-          "starvation",
-          "FIFO queue with admission"
+          "maximum-wait",
+          "separate lanes"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A priority queue orders ready work by a declared class before it is dispatched",
+          "quote": "A priority queue is a broker-side ordering policy",
           "reason": "Explains capacity reservation, class overtaking and the starvation risk a priority queue creates."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Criticality must be authenticated and verified at every hop",
+          "quote": "The queue must define class levels, per-level capacity and the broker's actual priority support.",
           "reason": "States that criticality must be authenticated and propagated to each downstream hop."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A naive priority queue can starve ordinary work forever",
+          "quote": "Add aging or a maximum-wait rule so low classes make progress",
           "reason": "Names starvation and requires max-wait, starvation and isolation rules to contain it."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A FIFO queue with admission control, separate lanes per class, or reserved capacity is preferable when priority cannot be authenticated or starvation is unacceptable.",
+          "quote": "An admission-controlled FIFO or separate lanes per class avoids starvation when priority is unverifiable.",
           "reason": "Names the competing queue policies and reversal condition."
         }
       },
@@ -6430,7 +6430,7 @@
         "heading": "Distributed Workflow Orchestration",
         "anchor": "distributed-workflow-orchestration",
         "level": 3,
-        "line": 143,
+        "line": 142,
         "unit_kind": "dedicated",
         "unit_terms": [
           "persistent state machine",
