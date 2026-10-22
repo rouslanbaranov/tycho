@@ -108,32 +108,32 @@ the validators still require a separate policy change.
 18. **Competing Consumers** — `tycho.pattern.competing-consumers`
     - File: `message-selection.md`
     - Heading: `Competing Consumers`; 124 words
-    - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`
+    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
 
 19. **Content-Based Router** — `tycho.pattern.content-based-router`
     - File: `message-selection.md`
     - Heading: `Content-Based Router`; 122 words
-    - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`
+    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
 
 20. **Message Filter** — `tycho.pattern.message-filter`
     - File: `message-selection.md`
     - Heading: `Message Filter`; 120 words
-    - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`
+    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
 
 21. **Pipes and Filters** — `tycho.pattern.pipes-and-filters`
     - File: `message-selection.md`
     - Heading: `Pipes and Filters`; 122 words
-    - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`
+    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
 
 22. **Resequencer** — `tycho.pattern.resequencer`
     - File: `message-selection.md`
     - Heading: `Resequencer`; 123 words
-    - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`
+    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
 
 23. **Canonical Data Model** — `tycho.pattern.canonical-data-model`
     - File: `message-selection.md`
     - Heading: `Canonical Data Model`; 125 words
-    - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`
+    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
 
 24. **Multi-Leader Replication** — `tycho.pattern.multi-leader-replication`
     - File: `replication-consensus-and-leader-change.md`
@@ -399,3 +399,28 @@ the validators still require a separate policy change.
     - File: `saga-workflows.md`
     - Heading: `Compensating Transaction`; 124 words
     - SHA-256: `76c6c37fb8d5f7d6ba42d44c5c2f7fca8b22e1bbc819125da09e349df3797d66`
+
+77. **Publish/Subscribe** — `tycho.pattern.publish-subscribe`
+    - File: `message-selection.md`
+    - Heading: `Publish / Subscribe`; 149 words
+    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+
+78. **Point-to-Point Queue** — `tycho.pattern.point-to-point-queue`
+    - File: `message-selection.md`
+    - Heading: `Point-to-Point Queue`; 126 words
+    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+
+79. **Event-Driven Consumer** — `tycho.pattern.event-driven-consumer`
+    - File: `message-selection.md`
+    - Heading: `Event-Driven Consumer`; 120 words
+    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+
+80. **Durable Subscriber** — `tycho.pattern.durable-subscriber`
+    - File: `message-selection.md`
+    - Heading: `Durable Subscriber`; 134 words
+    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+
+81. **Message Broker / Messaging Bridge** — `tycho.pattern.message-broker-messaging-bridge`
+    - File: `message-selection.md`
+    - Heading: `Message Broker / Messaging Bridge`; 124 words
+    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`

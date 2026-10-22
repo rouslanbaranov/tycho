@@ -90,7 +90,7 @@ when every subscriber needs the same durable work, not an independent copy.
 **Failure and recovery.** Fan-out amplifies load and duplicate effects; verify retention
 and acknowledgement semantics in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#nats-core-and-jetstream) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Publish / Subscribe](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#publish-subscribe) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -124,7 +124,7 @@ subscribers need the same event rather than one shared work item.
 **Failure and recovery.** Duplicate delivery and poison messages are normal; verify
 acknowledgement and redelivery semantics in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#rabbitmq-quorum-queues-and-publisher-confirms) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Point-to-Point Queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#point-to-point-queue) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -191,7 +191,7 @@ when event volume and concurrency overwhelm the consumer.
 **Failure and recovery.** Push delivery can outrun processing; verify backpressure and
 acknowledgement in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#nats-core-and-jetstream) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Event-Driven Consumer](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#event-driven-consumer) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -518,7 +518,7 @@ the choice when replay cost and retention exceed the continuity benefit.
 **Failure and recovery.** Retention growth and stale replay are common; verify retention
 and acknowledgement in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#nats-core-and-jetstream) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Durable Subscriber](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#durable-subscriber) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -648,7 +648,7 @@ broker complexity and operational cost exceed decoupling benefit.
 **Failure and recovery.** Broker outage and bridge semantic drift are common; verify
 bridge contracts in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#rabbitmq-quorum-queues-and-publisher-confirms) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Message Broker / Messaging Bridge](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-broker-messaging-bridge) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)

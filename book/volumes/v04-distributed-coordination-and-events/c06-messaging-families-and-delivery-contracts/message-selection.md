@@ -281,3 +281,80 @@ differ.
 **Limits.** A shared schema centralizes governance and can become a bottleneck; translation
 still needs semantic tests and an owner. Schema ownership needs a review path and a
 deprecation window; point-to-point translation is cheaper for a few stable pairs.
+
+### Publish / Subscribe
+
+A topic fans each publication out to every current matching subscriber; ephemeral subscribers lose
+messages published while they are absent. Topic design, subscriber registration and per-subscriber
+cursors are part of the delivery contract. A crash after the effect but before acknowledgement
+causes redelivery, while acknowledging before the effect can lose work.
+
+The page describes Core as at-most-once and JetStream's ordinary redelivery as at-least-once, under
+their respective configurations. A subscription name is not a durable business identity: each
+consumer still needs an effect key, a deduplication rule and an acknowledgement policy.
+
+A fictional notification can use ephemeral pub/sub if losing a signal when no subscriber is
+listening is acceptable. A durable business task should not casually use Core alone if clients
+require recoverable delivery; a JetStream durable consumer or another persisted queue may better
+match that requirement. Record whether the subscription is ephemeral or durable before claiming a
+delivery guarantee.
+
+### Point-to-Point Queue
+
+A queue dispatches each message to one eligible consumer; competing consumers share the work, and a
+consumer acknowledgement retires the message (after any configured redelivery policy). These are
+independent; publisher confirm does **not** mean the consumer performed a business transaction.
+
+If the worker crashes after local effect but before acknowledgement, task redelivery may occur.
+Consumer-side deduplication is necessary for nonrepeatable effects. A worker pool therefore needs a
+stable effect identity, a visible in-flight count and a redelivery limit, not only a higher
+prefetch.
+
+Direct request/response, pub/sub fan-out or a shared log may be preferable when one consumer owns
+each task or when brokered indirection adds no routing/reliability value. A queue is a fit when each
+task needs exactly one owner and the consumer can absorb redelivery.
+
+### Event-Driven Consumer
+
+The consumer reacts to a delivered message rather than polling a queue. It must own effect identity,
+deduplication and acknowledgement ordering.
+
+A crash after the effect but before acknowledgement causes redelivery, while acknowledging before
+the effect can lose work. The handler must commit the business effect and the dedup marker in one
+local transaction when possible; otherwise it needs a reconciliation path for the unknown state.
+Concurrency and ordering requirements belong to the subscription contract, not to the framework
+default.
+
+Polling a queue or a direct request may be preferable when delivery volume is low or the consumer
+cannot own a cursor. Event-driven consumption is justified when latency and fan-out matter more than
+the operational cost of a push subscription.
+
+### Durable Subscriber
+
+A durable subscriber keeps a server-side cursor and retained messages for an offline consumer, so
+delivery can resume after disconnect. Retention, acknowledgement timeout and replay policy determine
+whether that resume is bounded.
+
+The page describes Core as at-most-once and JetStream's ordinary redelivery as at-least-once, under
+their respective configurations. A durable cursor is not a backup of the consumer's business state;
+if the consumer's database is lost, replaying the stream may not reconstruct the effect. Define
+retention, max redelivery and the action when the cursor is too far behind.
+
+A fictional notification can use ephemeral pub/sub if losing a signal when no subscriber is
+listening is acceptable. A durable business task should not casually use Core alone if clients
+require recoverable delivery; a JetStream durable consumer or another persisted queue may better
+match that requirement.
+
+### Message Broker / Messaging Bridge
+
+A broker routes, stores and delivers messages between producers and consumers. A bridge forwards or
+translates between brokers/protocols, adding another hop, retention policy and failure domain.
+
+These are independent; publisher confirm does **not** mean the consumer performed a business
+transaction. If the worker crashes after local effect but before acknowledgement, task redelivery may
+occur. The bridge needs its own delivery contract, identity mapping and dead-letter path; a message
+that crosses two brokers can be duplicated or delayed at either boundary.
+
+Direct request/response, pub/sub fan-out or a shared log may be preferable when one consumer owns
+each task or when brokered indirection adds no routing/reliability value. A bridge is justified when
+protocol or organizational boundaries cannot be removed, and its extra failure domain is owned.
