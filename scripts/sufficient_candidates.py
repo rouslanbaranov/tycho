@@ -24,6 +24,11 @@ def build(root=ROOT):
     cards = load("edition/patterns/card-batches.v1.json")
     ledger = load("edition/patterns/reading-ledger.v1.json")
     records = {record["id"]: record for record in ledger["records"]}
+    reviews_path = ROOT / "edition/patterns/sufficient-review-records.v1.json"
+    reviews = {}
+    if reviews_path.is_file():
+        reviews = {item["pattern_id"]: item
+                   for item in json.loads(reviews_path.read_text(encoding="utf-8"))["records"]}
     cardmap = {entry["pattern_id"]: entry
                for batch in cards["batches"] for entry in batch["entries"]}
     unit_counts = Counter((item["owner"]["path"], item["owner"]["anchor"])
@@ -63,6 +68,7 @@ def build(root=ROOT):
             "technical_coverage": item["technical_coverage"],
             "decision_coverage": item["decision_coverage"],
             "status": status,
+            "review": reviews.get(item["pattern_id"]),
             "blockers": ([] if status == "candidate-for-independent-review" else [status])
                         + ["independent-review"],
         })

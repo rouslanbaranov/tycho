@@ -21,8 +21,8 @@ Do not edit the repository. Do not treat this packet as approval.
 
 2. **API Gateway** — `tycho.pattern.api-gateway`
    - File: `gateway-boundaries-and-offloading.md`
-   - Heading: `API Gateway`; 120 words
-   - SHA-256: `941beddfff959af3cc8d6c8097da1f6bae24563212948896dcf114689a8baafa`
+   - Heading: `API Gateway`; 260 words
+   - SHA-256: `589dfb82c569eb0d7238c72a33a6bb741229b09fa5f85fc3d42aba446cbd9535`
 
 3. **Event Sourcing** — `tycho.pattern.event-sourcing`
    - File: `cqrs-event-sourcing-and-projections.md`
@@ -104,3 +104,33 @@ the validators still require a separate policy change.
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Multi-Level Caching`; 123 words
     - SHA-256: `b2e81e19b4939b9396a7d1a6dee0a59ed478bd2519bd26bc5192138e71e66aba`
+
+18. **Competing Consumers** — `tycho.pattern.competing-consumers`
+    - File: `message-selection.md`
+    - Heading: `Competing Consumers`; 124 words
+    - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`
+
+19. **Content-Based Router** — `tycho.pattern.content-based-router`
+    - File: `message-selection.md`
+    - Heading: `Content-Based Router`; 122 words
+    - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`
+
+20. **Message Filter** — `tycho.pattern.message-filter`
+    - File: `message-selection.md`
+    - Heading: `Message Filter`; 120 words
+    - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`
+
+21. **Pipes and Filters** — `tycho.pattern.pipes-and-filters`
+    - File: `message-selection.md`
+    - Heading: `Pipes and Filters`; 122 words
+    - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`
+
+22. **Resequencer** — `tycho.pattern.resequencer`
+    - File: `message-selection.md`
+    - Heading: `Resequencer`; 123 words
+    - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`
+
+23. **Canonical Data Model** — `tycho.pattern.canonical-data-model`
+    - File: `message-selection.md`
+    - Heading: `Canonical Data Model`; 125 words
+    - SHA-256: `d55dc86bc4b837132e8a7208181b2375bb3b8894e632586dbcfb1a954286d80b`

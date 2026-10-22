@@ -84,10 +84,19 @@ excludes the gateway and version gateway policy. A BFF, a service-mesh sidecar o
 backend exposure with an explicit identity contract may be preferable when the gateway adds a
 shared bottleneck without a required central policy.
 
+**Enforcement.** The gateway authenticates the caller or verifies a signed token from a
+trusted issuer, forwards an integrity-protected principal/context, and binds a central
+decision to the request's audience, action, resource and tenant. The order is authenticate,
+apply quota, then authorize at the resource-owning boundary. If the policy plane is
+unavailable, fail closed unless a bounded, audited break-glass path exists.
+
 **Limits.** A gateway cannot certify object ownership or replace backend authorization.
 A bypass path, a compromised policy plane or an unversioned configuration can defeat the
-edge. Keep gateway policy versioned, tested and observable, and treat a gateway outage as
-its own failure domain rather than assuming every backend remains reachable.
+edge. Quota state is shared: counters need an owner, per-tenant fairness and a defined
+behavior when the counter store is unavailable. A stale route remains a routing failure,
+not a quota decision. Keep gateway policy versioned, tested and observable, and treat a
+gateway outage as its own failure domain rather than assuming every backend remains
+reachable.
 
 ## Gateway Aggregation
 

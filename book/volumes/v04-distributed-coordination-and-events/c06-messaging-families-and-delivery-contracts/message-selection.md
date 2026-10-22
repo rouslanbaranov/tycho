@@ -202,6 +202,9 @@ The failure path is a missing sequence that blocks later messages; release the b
 after a declared timeout or fail the affected partition. A partitioned consumer that
 preserves order within a key is the alternative when global order is unnecessary.
 
+**Limits.** Buffer memory, gap timeout and ordering scope are costs; a global resequencer can
+become a throughput bottleneck.
+
 ### Content-Based Router
 
 A content-based router chooses a destination from message content. It needs a versioned
@@ -212,6 +215,10 @@ use it when routing rules are unstable, unowned or unable to classify every mess
 The failure path is an unmatched or misrouted message; route to a declared fallback and
 record the predicate version. A static topic or queue per producer is the alternative when
 routing is known at publish time.
+
+**Limits.** The predicate set is a policy surface: test unmatched, multi-match and rule
+rollout, because a misroute is not repaired by retry. Rule changes need a canary and a
+rollback path.
 
 ### Pipes and Filters
 
@@ -226,6 +233,9 @@ stage identity and compensate or replay from a declared checkpoint. A single in-
 transformation is the alternative when the stages are small and cannot be operated
 independently.
 
+**Limits.** Distributed stages add message contracts and partial-failure states; an in-process
+pipeline cannot be scaled independently.
+
 ### Competing Consumers
 
 Several consumers read from one queue, and each message is delivered to one of them so the work is
@@ -236,6 +246,10 @@ A slow or poisoned message blocks progress through visibility timeouts and repea
 bound attempts and route permanently failing work to a declared terminal path. Partitioned consumers
 own a stable key range and preserve per-key order; prefer competing consumers when order is not
 required and pool parallelism is the goal.
+
+**Limits.** Pool parallelism removes per-key order unless partition assignment is explicit;
+a poison message needs a terminal path, not infinite visibility timeouts. A per-key worker
+pool preserves order only when partition assignment is stable.
 
 ### Message Filter
 
@@ -248,6 +262,10 @@ declared fallback for unmatched messages. A content-based router sends different
 different destinations; prefer filtering when the destination is the same and only selection
 changes.
 
+**Limits.** Silent drops are data loss; count filter rates, version the predicate and keep a
+declared fallback. A filter that silently drops unmatched traffic is a data-loss path; count
+drops, alert on rate changes and test the fallback with a representative unmatched message.
+
 ### Canonical Data Model
 
 A canonical data model gives producers and consumers one versioned shared representation, with
@@ -259,3 +277,7 @@ A translation can preserve syntax while losing domain meaning; contract tests wi
 payloads and an owner for schema changes are required. Point-to-point translation or an
 anti-corruption layer avoids a central schema when integrations are few or their models genuinely
 differ.
+
+**Limits.** A shared schema centralizes governance and can become a bottleneck; translation
+still needs semantic tests and an owner. Schema ownership needs a review path and a
+deprecation window; point-to-point translation is cheaper for a few stable pairs.

@@ -20,10 +20,14 @@ class SufficientCandidateTests(unittest.TestCase):
             (ROOT / "edition/patterns/sufficient-candidates.v1.json").read_text()
         )
         self.assertEqual(data["summary"]["entries"], 145)
-        self.assertEqual(data["summary"]["candidates"], 17)
+        self.assertEqual(data["summary"]["candidates"], 23)
         self.assertEqual(sum(data["summary"]["by_status"].values()), 145)
         self.assertTrue(all(row["technical_coverage"] == "partial-bounded"
                             for row in data["entries"]))
+        gateway = next(row for row in data["entries"]
+                       if row["pattern_id"] == "tycho.pattern.api-gateway")
+        self.assertEqual(gateway["review"]["verdict"], "pass-with-findings")
+        self.assertFalse(gateway["review"]["re_reviewed"])
 
 
 if __name__ == "__main__":
