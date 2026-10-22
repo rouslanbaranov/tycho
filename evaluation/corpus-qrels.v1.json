@@ -1,0 +1,569 @@
+{
+  "schema_version": 1,
+  "status": "bootstrap-author-labelled",
+  "created": "2026-10-22",
+  "snapshot": {
+    "route_index_snapshot": "6684db8339ef674b6270b697872deb4f466c629882f06508028d20917e232bb9",
+    "document_count": 423
+  },
+  "target_item_count": 50,
+  "provenance": {
+    "labels": "author-labelled",
+    "method": "Questions were written from domain questions rather than copied page titles. Accepted pages were selected by reading page summaries and section structure; search output was used only to discover candidates, not as acceptance evidence.",
+    "independent_review": false,
+    "review_note": "No independent adjudication exists. Treat hit rates as author-labelled diagnostics until a separate reviewer adjudicates the set."
+  },
+  "items": [
+    {
+      "id": "Q001",
+      "split": "dev",
+      "category": "fact",
+      "question": "Registered users are numerous, but the service sees only a modest request rate. What must a capacity estimate include besides user count?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.2a3a20bc92314c7597b1792b8607c9d5",
+          "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/arrivals-population.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Separates population, arrival process and admission from the number of registered users."
+        },
+        {
+          "document_id": "tycho.page.f66686aeabca4f5b8f550696bf37e557",
+          "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/demand-skew.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains operation mix, bursts and hot keys hidden by an aggregate demand estimate."
+        }
+      ],
+      "notes": "Two pages are accepted because they answer different parts: arrival arithmetic and demand skew."
+    },
+    {
+      "id": "Q002",
+      "split": "dev",
+      "category": "tradeoff",
+      "question": "A team says the system must be both fast and durable. How should that preference become a testable quality requirement?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.3c865baa588744ecbaac307c81c4b25c",
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/quality-scenarios.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Converts quality preferences into measurable acceptance scenarios and hard gates."
+        }
+      ],
+      "notes": "Single accepted page is intentional: the page owns the conversion method."
+    },
+    {
+      "id": "Q003",
+      "split": "dev",
+      "category": "failure",
+      "question": "A client times out after sending a write and retries. The server cannot tell whether the first attempt committed. How can it avoid applying the effect twice?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains ambiguous outcomes and idempotent effect handling for retries."
+        },
+        {
+          "document_id": "tycho.page.ace968ab1de8409383c6a9b22a00d006",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Connects local transaction, outbox publication and duplicate side effects."
+        }
+      ],
+      "notes": "Both pages cover ambiguous writes; grades separate primary mechanism from supporting treatment."
+    },
+    {
+      "id": "Q004",
+      "split": "dev",
+      "category": "synthesis",
+      "question": "When should a business capability stay a module inside one deployable instead of becoming its own service?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.4365dbae044244c1b82751a39704e292",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/module-enforcement.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Compares module boundaries with deployment boundaries and their enforcement."
+        },
+        {
+          "document_id": "tycho.page.4e0e4db7547b45469f36915886473750",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "States the costs and obligations of independent deployment."
+        }
+      ],
+      "notes": "Requires combining boundary ownership with deployment cost."
+    },
+    {
+      "id": "Q005",
+      "split": "dev",
+      "category": "failure",
+      "question": "Adding worker threads made tail latency worse instead of raising throughput. What saturation effect should be investigated first?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.eb130a7f820544a2ba0e0883c0ce587b",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-latency-fanout-and-deadline-budgets.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains queueing and end-to-end tail behavior under fan-out and deadlines."
+        },
+        {
+          "document_id": "tycho.page.345b19b2f5c1498187048b755b74d876",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/fleet-budgets.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Connects pool and fleet budgets to queueing and resource ownership."
+        }
+      ],
+      "notes": "Two accepted pages: tail-latency mechanism plus pool-budget consequence."
+    },
+    {
+      "id": "Q006",
+      "split": "dev",
+      "category": "fact",
+      "question": "What actually limits a producer when a consumer applies backpressure, and where can blocking still escape that limit?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.83e414ec3d1b4b07a443de2c96ce2c4e",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/demand-blocking.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines the demand boundary and the places where blocking escapes it."
+        },
+        {
+          "document_id": "tycho.page.114da51171c2474ebd56ee3bebad3bcb",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/reactor-webflux-r2dbc-and-backpressure.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Applies demand and backpressure to reactive database access."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q007",
+      "split": "dev",
+      "category": "failure",
+      "question": "A service commits a database change and then publishes to a broker. How can it avoid losing the event if the process dies between those operations?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.9daa9ce90a5047fa849c637f24b063f7",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains the local atomic record and outbox relay that close the dual-write loss window."
+        },
+        {
+          "document_id": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Places outbox publication in a broader durable-workflow contract."
+        },
+        {
+          "document_id": "tycho.page.ace968ab1de8409383c6a9b22a00d006",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Provides the end-to-end outbox and duplicate-effect treatment."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q008",
+      "split": "dev",
+      "category": "failure",
+      "question": "A consumer commits an offset and then crashes after performing an external side effect. Why can the side effect still repeat?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/offsets-effects.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Separates the committed effect from the consumer offset and identifies the crash window."
+        },
+        {
+          "document_id": "tycho.page.ace968ab1de8409383c6a9b22a00d006",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains duplicate side effects and idempotent handling beyond the offset."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q009",
+      "split": "dev",
+      "category": "synthesis",
+      "question": "Two transactions each read a consistent snapshot, yet together they violate a business rule. What anomaly is this, and where should the fix live?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.8d8150a14bc04b989fc34432ab7c99e1",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-invariants.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Distinguishes invariant enforcement from snapshot visibility and names the permitted anomaly."
+        },
+        {
+          "document_id": "tycho.page.6b42723bd575413bb0d1b94d3e179b6a",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-modeling-and-transaction-isolation.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Places relational constraints and isolation in one decision frame."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q010",
+      "split": "dev",
+      "category": "tradeoff",
+      "question": "An index speeds up one query but slows another. What evidence should be collected before keeping or removing it?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.7a136445bbfe4a8194c2c4db8a8818ee",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains planner statistics, access paths and write-side index cost."
+        },
+        {
+          "document_id": "tycho.page.045713bc4f054663b676e4e1b6fe9725",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/query-counterexamples.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Shows workload changes that reverse an apparently successful index decision."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q011",
+      "split": "dev",
+      "category": "failure",
+      "question": "A hot tenant must move to a new shard while writes continue. What can go wrong, and what must the migration prove before cutover?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.94165346d83c4ff79634d4400f4a9ba7",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains dual ownership, write fencing and transition evidence during resharding."
+        },
+        {
+          "document_id": "tycho.page.0d34dd26886340b89fd4f1499d790a81",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Connects hot keys and key choice to safe resharding."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q012",
+      "split": "dev",
+      "category": "fact",
+      "question": "A popular cache entry expires and many clients miss at once. What mechanism prevents every request from rebuilding the same value?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.e0f0d5b68f834acbae94cc6714895dd3",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Names stampede, coalescing and hot-key failure modes with their safeguards."
+        },
+        {
+          "document_id": "tycho.page.f39fa61013ca41abbfba82ef48250f8f",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-acceptance.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Frames origin protection and the decision to serve stale or not cache."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q013",
+      "split": "heldout",
+      "category": "tradeoff",
+      "question": "When should retrieval prefer a lexical ranker over embeddings for exact API names, error codes and version strings?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.39a694d604d646a996bf90c3357c3b27",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains exact-token evidence and lexical ranking behavior."
+        },
+        {
+          "document_id": "tycho.page.359813d554c84da794a353d4416b8047",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Compares lexical and semantic signals and their evaluation."
+        }
+      ],
+      "notes": "Held out from tuning; use only after the dev split is fixed."
+    },
+    {
+      "id": "Q014",
+      "split": "heldout",
+      "category": "tradeoff",
+      "question": "Why can an approximate nearest-neighbor index return a different top-k after a rebuild, and what should be measured before trusting it?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.66d2977575264168a8616e09d0900af6",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/exact-ann.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines exact reference, recall and workload conditions for ANN acceptance."
+        },
+        {
+          "document_id": "tycho.page.d79b0a48b30f4995a9bc110dbe691e52",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Adds index version, freshness and evaluation lifecycle."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q015",
+      "split": "heldout",
+      "category": "fact",
+      "question": "Throughput is stable but backlog grows. What does Little’s Law imply about residence time, and which boundary must be measured?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.335682a8957c46d294535b5912762e91",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/measurement-boundary.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines the population boundary that makes occupancy, throughput and residence time comparable."
+        },
+        {
+          "document_id": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "States Little’s Law and its measurement assumptions."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q016",
+      "split": "heldout",
+      "category": "synthesis",
+      "question": "Why can automatic retries during overload delay recovery instead of helping it?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.a648fc495dab474489d17d01e2c5dd92",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains admission, exit policy and observable recovery under overload."
+        },
+        {
+          "document_id": "tycho.page.80ab784dafed47a7baf31722fce5eabc",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Connects retries, bulkheads and optional dependencies to amplification."
+        },
+        {
+          "document_id": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Places retry amplification in the admission-control decision."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q017",
+      "split": "heldout",
+      "category": "change_impact",
+      "question": "A column changes meaning while old and new application versions run. What must the migration prove before the old version is removed?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.d00c6081ca664f619308712e245ef523",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/semantic-compatibility.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Separates representational compatibility from preserved domain meaning."
+        },
+        {
+          "document_id": "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains mixed-version reads, writes and online DDL coexistence."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q018",
+      "split": "heldout",
+      "category": "failure",
+      "question": "After a regional failover, two sites have accepted writes. How should the team reconcile them without silently choosing a winner?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Frames measured RTO, RPO, fencing and state reconciliation after failover."
+        },
+        {
+          "document_id": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Defines recovery state machines, fencing and failback authority."
+        },
+        {
+          "document_id": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains which partitions can progress without divergent authority."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q019",
+      "split": "heldout",
+      "category": "fact",
+      "question": "How does trace context cross an asynchronous message boundary, and what can a missing span fail to prove?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.f921597aae854c6996459fc025a9bca3",
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains context propagation, sampling and causal limits across hops."
+        },
+        {
+          "document_id": "tycho.page.bc30179a9cda4c12b9deb383e8751d47",
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/sampling-trust.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Explains what missing or forged context prevents a trace from proving."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q020",
+      "split": "heldout",
+      "category": "fact",
+      "question": "What is the difference between an SLO and an error budget, and what should a budget breach trigger?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.c987c475cc5340bcb967f4b6f963b295",
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Defines user-visible indicators, objectives and budget decisions."
+        },
+        {
+          "document_id": "tycho.page.8c596999929c47e48af6a7a2896bb9b9",
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/budget-actions.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Specifies the action a budget breach should trigger and when to revise the objective."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q021",
+      "split": "heldout",
+      "category": "synthesis",
+      "question": "When is an incremental transition safer than a big-bang replacement, and what must the transition state own?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Separates target and transition states, coexistence and reversibility."
+        },
+        {
+          "document_id": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Defines migration mechanisms and no-return cutover gates."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q022",
+      "split": "heldout",
+      "category": "fact",
+      "question": "Which mechanism makes a receiver safe when the broker can deliver the same message more than once?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.ace968ab1de8409383c6a9b22a00d006",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Explains consumer-local deduplication and idempotent effects."
+        },
+        {
+          "document_id": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "Generalizes ambiguous effects and idempotency beyond one broker."
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": "Q023",
+      "split": "heldout",
+      "category": "contradiction",
+      "question": "One description says Kafka transactions make an end-to-end workflow exactly-once; another says they only cover Kafka reads and writes. Which claim is defensible, and what remains outside the guarantee?",
+      "accepted": [
+        {
+          "document_id": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/offsets-effects.md",
+          "section_id": null,
+          "grade": 2,
+          "rationale": "Separates Kafka transaction scope from application effects and offsets."
+        },
+        {
+          "document_id": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+          "section_id": null,
+          "grade": 1,
+          "rationale": "States what each messaging family and durable workflow actually guarantees."
+        }
+      ],
+      "notes": "The question deliberately presents two claims; acceptance requires scoping the guarantee, not choosing a slogan."
+    },
+    {
+      "id": "Q024",
+      "split": "heldout",
+      "category": "unanswerable",
+      "question": "What exact instance type and p99 latency should we choose for 100,000 registered users?",
+      "accepted": [],
+      "notes": "Unanswerable without workload shape, SLO, environment and measurements. Expected behaviour is an explicit insufficient-evidence response, not a page."
+    }
+  ]
+}
