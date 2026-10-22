@@ -479,3 +479,18 @@ the validators still require a separate policy change.
     - File: `layered-hexagonal-ports-and-adapters.md`
     - Heading: `Hexagonal Architecture / Ports and Adapters`; 125 words
     - SHA-256: `76a5dc742c37f26888c6697f8e26f5b2a99c5c4fd4706a6bd5215c1d1c158d57`
+
+93. **Horizontal Scaling** — `tycho.pattern.horizontal-scaling`
+    - File: `autoscaling-lag-and-capacity-limits.md`
+    - Heading: `Horizontal Scaling`; 136 words
+    - SHA-256: `578fd03227719a52272b97089cbec74a1ee7d6135d2e9fe5a0549f48b58e52ce`
+
+94. **Vertical Scaling** — `tycho.pattern.vertical-scaling`
+    - File: `autoscaling-lag-and-capacity-limits.md`
+    - Heading: `Vertical Scaling`; 130 words
+    - SHA-256: `578fd03227719a52272b97089cbec74a1ee7d6135d2e9fe5a0549f48b58e52ce`
+
+95. **Autoscaling** — `tycho.pattern.autoscaling`
+    - File: `autoscaling-lag-and-capacity-limits.md`
+    - Heading: `Autoscaling`; 120 words
+    - SHA-256: `578fd03227719a52272b97089cbec74a1ee7d6135d2e9fe5a0549f48b58e52ce`

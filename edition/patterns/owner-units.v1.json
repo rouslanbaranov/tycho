@@ -6525,16 +6525,16 @@
       "owner": {
         "document_id": "tycho.page.49d9df04c0b4488e936b02e580a62271",
         "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
-        "heading": "Purpose and mission",
-        "anchor": "purpose-and-mission",
-        "level": 2,
-        "line": 76,
-        "unit_kind": "embedded",
+        "heading": "Horizontal Scaling",
+        "anchor": "horizontal-scaling",
+        "level": 3,
+        "line": 103,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Horizontal scaling",
           "multiplies processing replicas",
-          "processing replicas",
-          "externally fixed bottleneck"
+          "serial or externally fixed",
+          "start cold",
+          "Vertical scaling"
         ]
       },
       "technical_evidence": {
@@ -6549,14 +6549,14 @@
           "reason": "States the capacity ceiling that scaling cannot exceed."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The Purpose section states no failure behavior for horizontal scaling."
+          "state": "supported",
+          "quote": "A new replica may start cold, contend on a shared dependency or amplify connection churn; test scale-out under a burst and bound the work each replica can claim.",
+          "reason": "Names scale-out failure modes and the required test/bound."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing mechanism or reversal condition is named in this section."
+          "state": "supported",
+          "quote": "Vertical scaling or a queue/backpressure policy may be preferable when the bottleneck is per-replica resource or the workload cannot partition.",
+          "reason": "Names vertical scaling/backpressure and the reversal."
         }
       },
       "decision_evidence": {
@@ -6585,16 +6585,16 @@
       "owner": {
         "document_id": "tycho.page.49d9df04c0b4488e936b02e580a62271",
         "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
-        "heading": "Purpose and mission",
-        "anchor": "purpose-and-mission",
-        "level": 2,
-        "line": 76,
-        "unit_kind": "embedded",
+        "heading": "Vertical Scaling",
+        "anchor": "vertical-scaling",
+        "level": 3,
+        "line": 118,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "vertical scaling",
           "changes resources",
-          "existing replicas",
-          "externally fixed bottleneck"
+          "serial or externally fixed",
+          "restart or migration",
+          "Horizontal scaling"
         ]
       },
       "technical_evidence": {
@@ -6609,14 +6609,14 @@
           "reason": "States the capacity ceiling that vertical scaling cannot exceed."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The Purpose section states no failure behavior for vertical scaling."
+          "state": "supported",
+          "quote": "A resize usually needs a restart or migration, so the old capacity is unavailable during the change; bound the maintenance window and keep a fallback.",
+          "reason": "Names resize unavailability and the required fallback."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing mechanism or reversal condition is named in this section."
+          "state": "supported",
+          "quote": "Horizontal scaling or sharding may be preferable when the workload partitions and a single node is an unacceptable failure domain.",
+          "reason": "Names horizontal/sharding and the reversal."
         }
       },
       "decision_evidence": {
@@ -6645,16 +6645,16 @@
       "owner": {
         "document_id": "tycho.page.49d9df04c0b4488e936b02e580a62271",
         "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
-        "heading": "Purpose and mission",
-        "anchor": "purpose-and-mission",
-        "level": 2,
-        "line": 76,
-        "unit_kind": "embedded",
+        "heading": "Autoscaling",
+        "anchor": "autoscaling",
+        "level": 3,
+        "line": 133,
+        "unit_kind": "dedicated",
         "unit_terms": [
           "feedback-control mechanism",
-          "immediate extra capacity",
-          "resource provisioning",
-          "application readiness"
+          "collected, interpreted",
+          "During that delay",
+          "Scheduled capacity"
         ]
       },
       "technical_evidence": {
@@ -6674,9 +6674,9 @@
           "reason": "Names the lag exposure but no detection, containment or recovery."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing mechanism or reversal condition is named in this section."
+          "state": "supported",
+          "quote": "Scheduled capacity or static headroom may be simpler when demand is predictable or the scale-out path is slower than the burst.",
+          "reason": "Names scheduled/static capacity and the reversal."
         }
       },
       "decision_evidence": {
@@ -8905,11 +8905,11 @@
         "tycho.pattern.horizontal-scaling",
         "tycho.pattern.vertical-scaling"
       ],
-      "unit_count": 1,
-      "dedicated_units": 0,
+      "unit_count": 3,
+      "dedicated_units": 3,
       "bounded_entries": 3,
       "decision": "deepen",
-      "rationale": "Horizontal scaling, vertical scaling and autoscaling share a single purpose unit; each mechanism needs its own bounded unit before the page can be assessed further."
+      "rationale": "Horizontal, vertical and autoscaling now have distinct dedicated units with separate lag and failure behavior."
     },
     {
       "document_id": "tycho.page.b7913b53d5ea439697bc5236f902d76e",
@@ -9093,13 +9093,13 @@
     "entries": 145,
     "owner_pages": 69,
     "shared_pages": 33,
-    "owner_units": 134,
-    "dedicated_units": 94,
-    "embedded_units": 40,
+    "owner_units": 136,
+    "dedicated_units": 97,
+    "embedded_units": 39,
     "mechanism_supported": 145,
     "invariant_supported": 145,
-    "failure_recovery_supported": 128,
-    "alternative_supported": 128,
+    "failure_recovery_supported": 130,
+    "alternative_supported": 131,
     "technical_partial_bounded": 145,
     "technical_partial": 0,
     "technical_name_only": 0,

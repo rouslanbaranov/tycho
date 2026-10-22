@@ -98,6 +98,52 @@ This chapter answers when automatic capacity changes can help, how warm-up and s
 
 <!-- /tycho-question-source -->
 
+## Bounded pattern ownership notes
+
+### Horizontal Scaling
+
+Horizontal scaling multiplies processing replicas; vertical scaling changes resources available to
+existing replicas. Adding replicas is not useful unless the work can be partitioned and the new
+replica becomes ready inside the demand window.
+
+Neither can increase throughput past a serial or externally fixed bottleneck. A new replica may
+start cold, contend on a shared dependency or amplify connection churn; test scale-out under a burst
+and bound the work each replica can claim. Keep a per-replica concurrency limit and a readiness gate
+so traffic does not reach a process before its caches and pools are usable.
+
+Vertical scaling or a queue/backpressure policy may be preferable when the bottleneck is per-replica
+resource or the workload cannot partition. Horizontal scaling is a fit when the work is
+partitionable and the coordination cost is lower than the capacity gain.
+
+### Vertical Scaling
+
+Vertical scaling changes resources available to existing replicas. It can raise per-replica
+throughput without adding partition or routing complexity, but it changes the failure domain: one
+larger node is still one node.
+
+Neither can increase throughput past a serial or externally fixed bottleneck. A resize usually
+needs a restart or migration, so the old capacity is unavailable during the change; bound the
+maintenance window and keep a fallback. Measure the resource that actually saturates, not only CPU,
+and verify that the operating system, runtime and dependency can use the larger allocation.
+
+Horizontal scaling or sharding may be preferable when the workload partitions and a single node is
+an unacceptable failure domain. Vertical scaling is a fit when the workload is hard to partition and
+the resize can be staged safely.
+
+### Autoscaling
+
+Autoscaling is a **feedback-control mechanism**, not a promise of immediate extra capacity. A signal
+must be collected, interpreted, acted on, and followed by resource provisioning, application
+readiness and dependent-service capacity.
+
+During that delay, new demand still reaches the old infrastructure. Pre-provision headroom for the
+measured lag, add queueing or admission control for the gap and alert when the controller cannot
+converge. A scale-in needs a stabilization window and a check that in-flight work has drained.
+
+Scheduled capacity or static headroom may be simpler when demand is predictable or the scale-out
+path is slower than the burst. Autoscaling is a fit when demand varies enough to justify the control
+loop and the dependency chain can absorb the change under real load.
+
 ## Integrated decision and reading route
 
 Compare demand timescale with detection, provisioning, readiness and warm-up delay before relying on autoscaling.
