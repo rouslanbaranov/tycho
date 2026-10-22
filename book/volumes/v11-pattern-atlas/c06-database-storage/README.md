@@ -247,7 +247,7 @@ replica lag and routing complexity exceed read-scale benefit.
 **Failure and recovery.** Stale reads and replica lag are common; verify read routing in
 the owner section.
 
-**Technical owner.** [Read Replicas](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#read-replicas) — read-replica scaling and staleness are bounded, not a complete multi-leader protocol.
+**Technical owner.** [Read Replicas](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#read-replicas) — read-replica scaling is bounded by replica lag, read routing and staleness.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",

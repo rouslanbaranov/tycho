@@ -40,7 +40,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
+updated_at: "2026-10-22"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -224,7 +224,7 @@ choice when asynchronous coordination adds more failure modes than latency benef
 **Failure and recovery.** Lost replies and duplicate requests are normal; verify
 correlation and timeout handling in the owner section.
 
-**Technical owner.** [A durable workflow is more than a queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#request-reply-messaging) — workflow failure gates are bounded, not a complete request-reply contract.
+**Technical owner.** [Request-reply messaging and workflow failure gates](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#request-reply-messaging) — workflow failure gates are bounded, not a complete request-reply contract.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -258,7 +258,7 @@ Reverse the choice when correlation state and retention cost exceed the routing 
 **Failure and recovery.** Identifier collisions or premature expiry break matching; verify
 scope and retention in the owner section.
 
-**Technical owner.** [A durable workflow is more than a queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#correlation-identifier) — workflow failure gates are bounded, not a complete request-reply contract.
+**Technical owner.** [Correlation identifiers and workflow failure gates](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#correlation-identifier) — workflow failure gates are bounded, not a complete request-reply contract.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)

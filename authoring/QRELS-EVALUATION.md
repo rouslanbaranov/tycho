@@ -30,8 +30,8 @@ This set introduces three missing properties:
 | [test_tycho_qrels.py](../tests/test_tycho_qrels.py) | Offline validation and metric tests. |
 
 The dataset is pinned to route snapshot
-`8934ade219eb0f47965089aa6f4163a7d8efebbf2f9fca47898c4f074cddd206` (423 documents).
-Earlier pins were replaced after the Cell, CDC and Materialized View card source
+`9ce26309d5864374d2284a43a1fe05ee3699111c7fe88c7ba0beee1cadf770b3` (423 documents).
+Earlier pins were replaced after the Cell, CDC, Materialized View and V11 label
 corrections; no accepted answer pointed at a V11 page.
 
 ## How labels were constructed
@@ -103,9 +103,10 @@ nDCG@10 was 0.558 over 95 answerable items. Dev page hit@5 was 0.740 and chapter
 failure 0.800, fact 0.900, change impact 0.857, synthesis 0.667, contradiction 0.600,
 trade-off 0.556. All five unanswerable items returned results, so refusal is not measured.
 
-Re-pin 2026-10-22: the Cell, CDC and Materialized View card source corrections changed
-the route snapshot to `8934ade219eb0f47965089aa6f4163a7d8efebbf2f9fca47898c4f074cddd206`
-and the section snapshot to `9713baeca7b7…`; the 100-item metrics above are unchanged.
+Re-pin 2026-10-22: the Cell, CDC and Materialized View source corrections and the V11
+label fixes changed the route snapshot to
+`9ce26309d5864374d2284a43a1fe05ee3699111c7fe88c7ba0beee1cadf770b3` and the section
+snapshot to `786abbfdccfa…`; the 100-item metrics above are unchanged.
 
 ## Provisional acceptance thresholds
 

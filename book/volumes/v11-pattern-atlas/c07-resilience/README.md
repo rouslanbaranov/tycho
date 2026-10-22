@@ -46,7 +46,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
+updated_at: "2026-10-22"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -262,7 +262,7 @@ explicit cleanup path.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: sections "Timeouts and deadlines",
-"Cascading failures". The source is a public pattern/documentation
+"Addressing Cascading Failures". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
