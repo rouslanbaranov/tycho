@@ -84,3 +84,32 @@ tool invocation that retrieves sources, or change.
     prose and list text at word boundaries; redesign tables or other constructs that
     cannot fit. Apply this rule to new and edited Markdown from 2026-10-21 onward; do not
     reformat unrelated files in the same change.
+
+## Independent audit and review via Reviewer (DeepSeek Harness)
+
+17. **Use the Reviewer preset for delegated independent audit.** When the session runs in
+    DeepSeek Harness and the `subagent` tool exposes `agent_preset`, delegate an independent
+    audit, review or challenge to a fresh child with `agent_preset: reviewer`. Do not
+    role-play Reviewer with a generic subagent when the preset is unavailable; record the
+    limitation and ask the owner to enable the preset or run a separate Reviewer session.
+18. **Keep the reviewer independent.** Start a fresh child with `subagent`, not
+    `subagent_fork`; do not pass the author's conversation, conclusions or desired verdict.
+    Give the child the repository path, exact HEAD and content commit, bounded scope,
+    artifact paths and hashes, required checks, report schema and explicit limits. For a
+    delta or re-review, pass the prior finding IDs and changed artifacts, not the outcome.
+    Require current counts to be derived from artifacts, not supplied as expected values.
+19. **One bounded batch per child.** For a large audit, split the scope into batches and
+    give each child one batch, one report path and one non-overlapping evidence set. The
+    Reviewer preset removes write and edit filesystem tools, but shell access remains:
+    instruct the child not to write to the repository, change configuration, commit, open
+    a pull request or use restricted material. Give it only public sources.
+20. **Treat the output as evidence, not acceptance.** Require a verdict, evidence, findings
+    by severity with exact paths, and limits. Preserve the raw report and verify its
+    metadata, HEAD, hashes and scope. A Reviewer pass is not human review, owner
+    acceptance, CI, sufficiency or permission to merge. The owner decides whether to apply
+    verdicts; records and acceptance documents change only after that decision.
+21. **Record the delegation.** State the reviewer preset (`reviewer`), child id or session,
+    review timestamp, HEAD, content commit, scope, report path and any prior involvement.
+    State `human_review: not-performed` and `sufficient: 0` unless separate evidence exists.
+    After the run, check `git status` and report hashes; if the reviewer wrote to the
+    repository, stop, quarantine the changes and treat the review as contaminated.
