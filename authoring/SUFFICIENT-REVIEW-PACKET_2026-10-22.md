@@ -42,7 +42,7 @@ Do not edit the repository. Do not treat this packet as approval.
 6. **Cache-Aside / Lazy Loading** — `tycho.pattern.cache-aside-lazy-loading`
    - File: `refresh-semantics.md`
    - Heading: `4. Cache-aside is a sequence, not a consistency theorem`; 398 words
-   - SHA-256: `67b947dedbbdc37241315de19eb7a60b0751ab4e7b981f6fad14bc67dc4f88fc`
+   - SHA-256: `eb4c8c6a4438899077ba74dd319fa2c7c56ced4e91c74fae6dff941d8675304e`
 
 7. **Negative Caching** — `tycho.pattern.negative-caching`
    - File: `negative-cache.md`
@@ -88,22 +88,22 @@ the validators still require a separate policy change.
 14. **Read-Through Cache** — `tycho.pattern.read-through-cache`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Read-Through Cache`; 129 words
-    - SHA-256: `0373109397b5d7fbaa9590aae58977b15b6d4e20c03465d48cbccaa8af93147a`
+    - SHA-256: `0a092ab1c69b079deff16172cf3a846d068155605ff6f080510c5580100b9a82`
 
 15. **Write-Through Cache** — `tycho.pattern.write-through-cache`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Write-Through Cache`; 122 words
-    - SHA-256: `0373109397b5d7fbaa9590aae58977b15b6d4e20c03465d48cbccaa8af93147a`
+    - SHA-256: `0a092ab1c69b079deff16172cf3a846d068155605ff6f080510c5580100b9a82`
 
 16. **Write-Around** — `tycho.pattern.write-around`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Write-Around`; 127 words
-    - SHA-256: `0373109397b5d7fbaa9590aae58977b15b6d4e20c03465d48cbccaa8af93147a`
+    - SHA-256: `0a092ab1c69b079deff16172cf3a846d068155605ff6f080510c5580100b9a82`
 
 17. **Multi-Level Caching** — `tycho.pattern.multi-level-caching`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Multi-Level Caching`; 123 words
-    - SHA-256: `0373109397b5d7fbaa9590aae58977b15b6d4e20c03465d48cbccaa8af93147a`
+    - SHA-256: `0a092ab1c69b079deff16172cf3a846d068155605ff6f080510c5580100b9a82`
 
 18. **Competing Consumers** — `tycho.pattern.competing-consumers`
     - File: `message-selection.md`
@@ -333,7 +333,7 @@ the validators still require a separate policy change.
 63. **Write-Behind / Write-Back** — `tycho.pattern.write-behind-write-back`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Write-Behind / Write-Back`; 123 words
-    - SHA-256: `0373109397b5d7fbaa9590aae58977b15b6d4e20c03465d48cbccaa8af93147a`
+    - SHA-256: `0a092ab1c69b079deff16172cf3a846d068155605ff6f080510c5580100b9a82`
 
 64. **Geode** — `tycho.pattern.geode`
     - File: `disaster-recovery-and-recovery-objectives.md`
@@ -564,3 +564,23 @@ the validators still require a separate policy change.
     - File: `cdc-state.md`
     - Heading: `Change Data Capture (CDC)`; 144 words
     - SHA-256: `147f4fd3c473ce49f03288915ea0de0ed58ca472f706fd7070b3e8ac5fabd213`
+
+110. **Distributed Cache** — `tycho.pattern.distributed-cache`
+    - File: `local-and-distributed-cache-design.md`
+    - Heading: `Distributed Cache`; 134 words
+    - SHA-256: `0a092ab1c69b079deff16172cf3a846d068155605ff6f080510c5580100b9a82`
+
+111. **TTL-Based Expiration** — `tycho.pattern.ttl-based-expiration`
+    - File: `refresh-semantics.md`
+    - Heading: `TTL-Based Expiration`; 137 words
+    - SHA-256: `eb4c8c6a4438899077ba74dd319fa2c7c56ced4e91c74fae6dff941d8675304e`
+
+112. **Cache Stampede Protection** — `tycho.pattern.cache-stampede-protection`
+    - File: `stampede-protection.md`
+    - Heading: `Cache Stampede Protection`; 139 words
+    - SHA-256: `fb59dca0cad703df369987fef4240393fe2254f5652ebc0c6922da8731bdfedb`
+
+113. **Single Flight / Request Coalescing** — `tycho.pattern.single-flight-request-coalescing`
+    - File: `stampede-protection.md`
+    - Heading: `Single Flight / Request Coalescing`; 135 words
+    - SHA-256: `fb59dca0cad703df369987fef4240393fe2254f5652ebc0c6922da8731bdfedb`

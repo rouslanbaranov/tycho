@@ -115,3 +115,20 @@ Even a cache with TTL may expose stale authorization or deleted content. Bypass 
 | Integrated question | [Original scenario and limits](local-and-distributed-cache-design.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### TTL-Based Expiration
+
+TTL-based expiration gives an entry a bounded valid lifetime. **expire-after-write:** after a defined
+lifetime, the entry can no longer be served as a normal valid hit. The cached copy is not refreshed
+merely because the clock passed; the next reader performs the load or waits for a refresh.
+
+The installed Caffeine version and precise loader/executor policy must be checked before promising
+behavior. Size/weight eviction bounds memory and may remove useful hot entries, creating origin read
+bursts. A TTL shorter than the source's change rate reduces staleness but increases load; a longer TTL
+does the opposite. Jitter the expiry across keys to avoid synchronized bursts.
+
+Explicit invalidation or versioned keys may be preferable when the source change must be visible
+immediately. TTL is a fit when bounded staleness is acceptable and the origin can absorb the refill
+rate.

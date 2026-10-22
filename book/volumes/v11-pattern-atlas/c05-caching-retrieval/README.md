@@ -93,7 +93,7 @@ distributed coordination cost exceeds cross-instance reuse.
 **Failure and recovery.** Network partitions, stale replicas and a shared failure domain are
 common; bound fallback so a cache outage does not overload the source.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Distributed Cache](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#distributed-cache) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-hazelcast-cache.2026-10-21: sections "Caching Data". The source is
@@ -323,7 +323,7 @@ when TTL expiry causes unacceptable misses or stale decisions.
 **Failure and recovery.** Synchronized expiry and stale reads are common; verify
 eviction/refresh in the owner section.
 
-**Technical owner.** [Local cache eviction and refresh are different actions](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#3-local-cache-eviction-and-refresh-are-different-actions) — eviction/refresh is bounded, not a universal TTL policy.
+**Technical owner.** [TTL-Based Expiration](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#ttl-based-expiration) — eviction/refresh is bounded, not a universal TTL policy.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -389,7 +389,7 @@ latency and failure outweigh source protection.
 **Failure and recovery.** Lease loss, retry storms and expired-lease double refresh are
 common; measure origin QPS, coalesce refreshes and cap source admission.
 
-**Technical owner.** [Stampedes and source protection](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#2-stampede-at-a-synchronized-expiry) — stampede protection is bounded, not a single-flight implementation.
+**Technical owner.** [Cache Stampede Protection](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#cache-stampede-protection) — stampede protection is bounded, not a single-flight implementation.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -423,7 +423,7 @@ Reverse the choice when shared latency/failure outweighs duplicate-call reductio
 **Failure and recovery.** One failure fans out to all waiters; verify scope and
 cancellation in the owner section.
 
-**Technical owner.** [Cache loss and source protection policy](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#2-stampede-at-a-synchronized-expiry) — source protection is bounded, not a request-coalescing library.
+**Technical owner.** [Single Flight / Request Coalescing](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#single-flight-request-coalescing) — source protection is bounded, not a request-coalescing library.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)

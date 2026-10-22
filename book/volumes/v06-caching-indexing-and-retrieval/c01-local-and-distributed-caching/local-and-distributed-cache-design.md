@@ -196,3 +196,18 @@ effort.
 **Limits.** Each added tier multiplies invalidation paths and failure modes; a tier without an
 owner becomes an unbounded stale copy. Test each tier during a rolling deploy and after a cold
 start.
+
+### Distributed Cache
+
+A distributed cache places the shared value outside any one application instance so replicas see
+one cached representation. API replicas A and B cache the same inventory availability record,
+authoritative database revision v17. The cache is a shared dependency with its own failure domain.
+
+Never treat cached tenant permissions or exclusive availability as harmlessly stale without the
+actual security/domain owner's approval. Blind bypass can turn a cache incident into an authoritative
+database overload. Define bounded concurrent fallback, explicit overload response and whether stale
+public descriptions may be served.
+
+Fail the cache strategy if user-visible freshness or pool budgets are breached; a direct
+authoritative query with better indexes may be the lower-risk alternative. A distributed cache is a
+fit when the shared hit rate and latency justify a network hop and the fallback is bounded.

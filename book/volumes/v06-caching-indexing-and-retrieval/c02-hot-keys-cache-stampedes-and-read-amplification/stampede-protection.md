@@ -128,6 +128,39 @@ A refresh mutex limits stampede work but **does not necessarily prevent stale in
 
 <!-- /tycho-question-source -->
 
+## Bounded pattern ownership notes
+
+### Cache Stampede Protection
+
+A cache stampede occurs when many concurrent readers miss or decide that a cached value needs
+refreshing, then issue many redundant expensive origin loads. The problem is synchronized work
+amplification, not merely a low hit ratio.
+
+A stampede policy must bound concurrent origin loads per key and total source work, and
+stale-while-revalidate is only valid when the operation accepts the stale value. An expired lease can
+release a second refresh while the first is still writing; jittered TTLs do not protect one extremely
+hot key. Add a per-key lock or lease, jitter the refresh time, and expose origin-load concurrency.
+
+Jittered TTL is a competing technique for simultaneous expiry of *different* keys; one extremely hot
+key can still stampede. A distributed refresh lease or request coalescing is preferable when one key
+dominates and stale data is acceptable for the operation.
+
+### Single Flight / Request Coalescing
+
+Single-flight may deduplicate only loads triggered inside one process. Caffeine's Refresh
+documentation describes eligible asynchronous refresh while an old value may remain available and a
+refresh operation may deduplicate concurrent refresh requests. It is a local optimization, not a
+global lock.
+
+That does not, by itself, provide global cross-replica coalescing or make the stale value safe for
+sensitive decisions. A coalesced call can fail after the leader has committed an external effect;
+the followers need the same outcome record, not a fresh retry. Bound the wait and surface a leader
+failure to every waiter.
+
+Single-flight within process is a fit for multiple concurrent source loads per key on one instance;
+many replicas still load in parallel. A distributed refresh lease is preferable when duplicate
+concurrent refreshes across instances matter, with its lease-expiry and fencing costs.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

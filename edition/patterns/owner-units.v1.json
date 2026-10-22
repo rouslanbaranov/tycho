@@ -3456,16 +3456,16 @@
       "owner": {
         "document_id": "tycho.page.33742c54f667446cbf57cb9f3696a533",
         "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
-        "heading": "Engineering walkthrough — Local cache update versus cross-instance freshness",
-        "anchor": "engineering-walkthrough-local-cache-update-versus-cross-instance-freshness",
-        "level": 2,
-        "line": 89,
-        "unit_kind": "embedded",
+        "heading": "Distributed Cache",
+        "anchor": "distributed-cache",
+        "level": 3,
+        "line": 200,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "cross-instance freshness",
-          "A successful local invalidation",
-          "distributed cache becomes unavailable",
-          "Shared cache or invalidation bus"
+          "distributed cache",
+          "Never treat cached tenant",
+          "Blind bypass",
+          "Fail the cache strategy"
         ]
       },
       "technical_evidence": {
@@ -3861,22 +3861,22 @@
       "owner": {
         "document_id": "tycho.page.76f6d792c80a448fa1a76001ca6699e1",
         "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
-        "heading": "3. Local cache eviction and refresh are different actions",
-        "anchor": "3-local-cache-eviction-and-refresh-are-different-actions",
-        "level": 2,
-        "line": 49,
-        "unit_kind": "embedded",
+        "heading": "TTL-Based Expiration",
+        "anchor": "ttl-based-expiration",
+        "level": 3,
+        "line": 121,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Local cache eviction and refresh are different actions",
           "expire-after-write",
-          "expire-after-access",
-          "size/weight eviction"
+          "installed Caffeine",
+          "Size/weight eviction",
+          "Explicit invalidation"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "**expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit;",
+          "quote": "**expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit.",
           "reason": "Defines lifetime-bounded invalidation, the TTL mechanism."
         },
         "invariant": {
@@ -3885,14 +3885,14 @@
           "reason": "States an implementation precondition for any freshness promise."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "**size/weight eviction:** bounds memory and may remove useful hot entries, creating origin read bursts.",
-          "reason": "Describes eviction-induced read bursts but gives no detection or recovery."
+          "state": "supported",
+          "quote": "Size/weight eviction bounds memory and may remove useful hot entries, creating origin read bursts.",
+          "reason": "Names eviction-induced read bursts and the required refresh bound."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "Contrasts expiration modes but names no competing mechanism with a reversing condition."
+          "state": "supported",
+          "quote": "Explicit invalidation or versioned keys may be preferable when the source change must be visible immediately.",
+          "reason": "Names explicit invalidation/versioned keys and the reversal."
         }
       },
       "decision_evidence": {
@@ -3981,15 +3981,15 @@
       "owner": {
         "document_id": "tycho.page.edc267f2fa954e66891e006ddfbfb15f",
         "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
-        "heading": "2. Stampede at a synchronized expiry",
-        "anchor": "2-stampede-at-a-synchronized-expiry",
-        "level": 2,
-        "line": 50,
-        "unit_kind": "embedded",
+        "heading": "Cache Stampede Protection",
+        "anchor": "cache-stampede-protection",
+        "level": 3,
+        "line": 133,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Stampede at a synchronized expiry",
-          "per-key coalescing",
-          "Single-flight within process",
+          "cache stampede",
+          "bound concurrent origin loads",
+          "expired lease",
           "Jittered TTL"
         ]
       },
@@ -4011,8 +4011,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "| Jittered TTL | Simultaneous expiry of *different* keys | One extremely hot key can still stampede |",
-          "reason": "Names a competing technique and the hot-key condition under which it fails."
+          "quote": "A distributed refresh lease or request coalescing is preferable when one key dominates and stale data is acceptable for the operation.",
+          "reason": "Names distributed lease/coalescing and the hot-key condition."
         }
       },
       "decision_evidence": {
@@ -4041,22 +4041,22 @@
       "owner": {
         "document_id": "tycho.page.edc267f2fa954e66891e006ddfbfb15f",
         "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
-        "heading": "2. Stampede at a synchronized expiry",
-        "anchor": "2-stampede-at-a-synchronized-expiry",
-        "level": 2,
-        "line": 50,
-        "unit_kind": "embedded",
+        "heading": "Single Flight / Request Coalescing",
+        "anchor": "single-flight-request-coalescing",
+        "level": 3,
+        "line": 148,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Single-flight within process",
-          "deduplicate concurrent refresh requests",
-          "global cross-replica coalescing",
-          "per-key coalescing"
+          "Single-flight",
+          "global cross-replica",
+          "coalesced call",
+          "distributed refresh lease"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Single-flight may deduplicate only loads triggered inside one process. Caffeine's [Refresh documentation](https://github.com/ben-manes/caffeine/wiki/Refresh) describes eligible asynchronous refresh while an old value may remain available and a refresh operation may deduplicate concurrent refresh requests.",
+          "quote": "Single-flight may deduplicate only loads triggered inside one process.",
           "reason": "Explains in-process deduplication of concurrent refresh requests and its scope limit."
         },
         "invariant": {
@@ -4065,14 +4065,14 @@
           "reason": "States the scope guarantee: no cross-replica coalescing and no safety for sensitive decisions."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No coalesced-call failure, detection or recovery is described in this section."
+          "state": "supported",
+          "quote": "A coalesced call can fail after the leader has committed an external effect; the followers need the same outcome record, not a fresh retry.",
+          "reason": "Names leader failure after effect and the required shared outcome."
         },
         "alternative": {
           "state": "supported",
-          "quote": "| Single-flight within process | Multiple concurrent source loads per key on one instance | Many replicas still load in parallel | | Distributed refresh lease | Duplicate concurrent refreshes across instances | Lease expiry/failure, fencing and stale writer concerns |",
-          "reason": "Names the distributed refresh lease and the multi-replica condition that reverses the in-process choice."
+          "quote": "A distributed refresh lease is preferable when duplicate concurrent refreshes across instances matter, with its lease-expiry and fencing costs.",
+          "reason": "Names the distributed lease and its costs."
         }
       },
       "decision_evidence": {
@@ -8835,10 +8835,10 @@
         "tycho.pattern.write-through-cache"
       ],
       "unit_count": 6,
-      "dedicated_units": 5,
+      "dedicated_units": 6,
       "bounded_entries": 6,
-      "decision": "keep",
-      "rationale": "Six cache-policy patterns have six distinct units, five of them dedicated notes, so the page remains a coherent policy catalogue."
+      "decision": "deepen",
+      "rationale": "Local and distributed cache patterns now have distinct dedicated units with authority, freshness and durability contracts."
     },
     {
       "document_id": "tycho.page.76f6d792c80a448fa1a76001ca6699e1",
@@ -8849,10 +8849,10 @@
         "tycho.pattern.ttl-based-expiration"
       ],
       "unit_count": 2,
-      "dedicated_units": 1,
+      "dedicated_units": 2,
       "bounded_entries": 2,
-      "decision": "keep",
-      "rationale": "Cache-aside and TTL expiration have two distinct units, one dedicated, on a coherent refresh page."
+      "decision": "deepen",
+      "rationale": "Cache-aside and TTL expiration now have separate dedicated units."
     },
     {
       "document_id": "tycho.page.edc267f2fa954e66891e006ddfbfb15f",
@@ -8862,11 +8862,11 @@
         "tycho.pattern.cache-stampede-protection",
         "tycho.pattern.single-flight-request-coalescing"
       ],
-      "unit_count": 1,
-      "dedicated_units": 0,
+      "unit_count": 2,
+      "dedicated_units": 2,
       "bounded_entries": 2,
-      "decision": "keep",
-      "rationale": "Stampede protection and single flight share one coherent stampede unit that explains both mechanisms."
+      "decision": "deepen",
+      "rationale": "Stampede protection and single-flight now have separate dedicated units with scope limits."
     },
     {
       "document_id": "tycho.page.80ab784dafed47a7baf31722fce5eabc",
@@ -9096,13 +9096,13 @@
     "entries": 145,
     "owner_pages": 69,
     "shared_pages": 33,
-    "owner_units": 137,
-    "dedicated_units": 111,
-    "embedded_units": 26,
+    "owner_units": 138,
+    "dedicated_units": 115,
+    "embedded_units": 23,
     "mechanism_supported": 145,
     "invariant_supported": 145,
-    "failure_recovery_supported": 135,
-    "alternative_supported": 137,
+    "failure_recovery_supported": 137,
+    "alternative_supported": 138,
     "technical_partial_bounded": 145,
     "technical_partial": 0,
     "technical_name_only": 0,
@@ -9114,8 +9114,8 @@
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
-      "keep": 15,
-      "deepen": 18,
+      "keep": 12,
+      "deepen": 21,
       "split": 0
     },
     "split_deferred": 0
