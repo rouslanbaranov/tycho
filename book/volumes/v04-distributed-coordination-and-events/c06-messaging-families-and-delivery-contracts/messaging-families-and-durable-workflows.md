@@ -122,6 +122,9 @@ participants can be queried independently. Do not use it when one participant is
 authoritative, when atomicity across participants is required, or when one slow
 participant would consume the caller complete budget.
 
+**Limits.** Per-participant state, duplicate responses and cancellation are costs; a partial
+result needs a versioned schema and a caller-visible completeness marker.
+
 The failure path is a stuck or missing participant; the aggregator must return a declared
 partial result, cancel remaining work or fail as a whole. Client-side composition is the
 alternative when the caller can tolerate multiple responses.
@@ -133,6 +136,9 @@ stable partition identity, per-part idempotency, a completion or compensation ru
 bounded fan-out. Use it when downstream steps can make progress independently and partial
 completion is meaningful. Do not use it when the whole input must succeed atomically or
 when downstream ordering cannot be reconstructed.
+
+**Limits.** Fan-out multiplies message volume, tracking state and partial-failure cleanup; a
+split with no completion marker leaks orphaned work and needs an owner.
 
 The failure path is a split that produces only some parts; record part identity and
 completion, then retry missing parts without duplicating completed effects. A single
@@ -150,3 +156,6 @@ not comparable, or when tail latency would exceed the caller budget.
 The failure path is a slow or missing participant; gather must return a bounded partial
 result or fail under a declared rule, and cancel outstanding work. A single authoritative
 call is the alternative when consistency matters more than coverage.
+
+**Limits.** Fan-out cost and tail latency grow with participants; a quorum result must name
+which participants answered and which did not.

@@ -108,9 +108,23 @@ fan-out/multi-cache limits with TTL-only and versioned-key alternatives.
 
 Not re-reviewed. Verdict remains **pass-with-findings**.
 
+## Leader Election — pass-with-findings
+
+Reviewer verdict: **pass-with-findings**. Two findings:
+
+1. The card did not separate stale follower reads from linearizable reads requiring
+   read-index/lease confirmation.
+2. Committed-entry durability was conditional on stable storage and membership behavior,
+   but the card mentioned only divergent uncommitted logs and linked only §4.
+
+Remediation: card now requires read-index/lease confirmation for linearizable reads,
+states the storage/membership durability contingency and links §5 reconfiguration.
+
+Not re-reviewed. Verdict remains **pass-with-findings**.
+
 ## Limits
 
-- Six sections, not 145 entries or 423 pages.
+- Seven sections, not 145 entries or 423 pages.
 - Non-human review; no independent human sign-off.
 - No `sufficient` promotion; validators still require a complete review record and policy
   change.

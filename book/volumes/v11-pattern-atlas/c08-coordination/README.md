@@ -89,8 +89,9 @@ election cannot be made safe, or when leader failover would block progress.
 the choice when election latency and split-brain risk exceed coordination benefit.
 
 **Failure and recovery.** Split votes, quorum loss, stale leaders and divergent uncommitted
-logs are common. Reconcile logs, stop authoritative writes without quorum and keep client
-retries idempotent; an election does not resolve an unknown outcome.
+logs are common. A follower read can miss committed state; require read-index or lease
+confirmation for linearizable reads. Stop authoritative writes without quorum, keep retries
+idempotent, and treat durability as contingent on stable storage and membership change.
 
 **Technical owner.** [Leader elections, logs and client observations](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#4-leader-elections-logs-and-client-observations) — leader election is bounded, not a complete Raft implementation.
 

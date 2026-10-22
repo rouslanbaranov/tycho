@@ -229,3 +229,18 @@ the validators still require a separate policy change.
     - File: `gateway-boundaries-and-offloading.md`
     - Heading: `Reverse Proxy`; 124 words
     - SHA-256: `1ccfdf1234e62e76bbeae7fa039634e953a48e31c455e1c4fe722984c3c365e7`
+
+43. **Aggregator** — `tycho.pattern.aggregator`
+    - File: `messaging-families-and-durable-workflows.md`
+    - Heading: `Aggregator`; 129 words
+    - SHA-256: `e726b57f97234a532aedb59a88eec1a63400cf64d3c1d16e2784b50842e7a8b2`
+
+44. **Splitter** — `tycho.pattern.splitter`
+    - File: `messaging-families-and-durable-workflows.md`
+    - Heading: `Splitter`; 123 words
+    - SHA-256: `e726b57f97234a532aedb59a88eec1a63400cf64d3c1d16e2784b50842e7a8b2`
+
+45. **Scatter-Gather** — `tycho.pattern.scatter-gather`
+    - File: `messaging-families-and-durable-workflows.md`
+    - Heading: `Scatter-Gather`; 127 words
+    - SHA-256: `e726b57f97234a532aedb59a88eec1a63400cf64d3c1d16e2784b50842e7a8b2`
