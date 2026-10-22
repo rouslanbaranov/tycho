@@ -704,3 +704,23 @@ the validators still require a separate policy change.
     - File: `target-and-transition-architecture-states.md`
     - Heading: `Strangler Fig`; 125 words
     - SHA-256: `27cab102d5a0ec386df0af53fd9edd3df509b77f980947e4caeee6eeddad8d19`
+
+138. **Causal Ordering** — `tycho.pattern.causal-ordering`
+    - File: `causal-order.md`
+    - Heading: `Causal Ordering`; 122 words
+    - SHA-256: `1391a9f2511b7ea7094a37d3dd918260bdbe0445a18d0010af67a050c0ec50f4`
+
+139. **Session Consistency** — `tycho.pattern.session-consistency`
+    - File: `session-consistency.md`
+    - Heading: `Session Consistency`; 128 words
+    - SHA-256: `f0385904e14d2bfa56c51c0a2a4b4435649632f8dbc43813a5106c55ef539b43`
+
+140. **Sharding** — `tycho.pattern.sharding`
+    - File: `shard-keys-hotspots-and-resharding.md`
+    - Heading: `Sharding`; 133 words
+    - SHA-256: `a4fe88bfaa03fe73c75d21396472a1e5567fbef1622b711e166bf141e6cffd35`
+
+141. **Index Table** — `tycho.pattern.index-table`
+    - File: `plan-lifecycle.md`
+    - Heading: `Index Table`; 132 words
+    - SHA-256: `087507728cf783e2f40e6d78069f6fab73d666d2554b84577ac7114c8cd9287f`

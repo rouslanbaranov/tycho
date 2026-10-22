@@ -147,3 +147,21 @@ Record invocation and completion, session identifier, operation identifier, obje
 - Volume: [V04 — distributed coordination and events](../../README.md).
 
 [integrated]: replication-consensus-and-leader-change.md
+
+## Bounded pattern ownership notes
+
+### Session Consistency
+
+Session consistency gives one client read-your-writes and monotonic reads by carrying a session token
+that records the positions it has observed. The token is client-visible state, not a global
+guarantee.
+
+A successful write returns partition and commit position. A read returns the position of the snapshot
+it actually read. The client retains the maximum required position for each partition it has observed
+or written. A stable log lineage or epoch-aware comparison must distinguish an established commit from
+a divergent suffix.
+
+If none can, return a retryable failure that preserves the token. Do not silently serve an older
+snapshot to keep a latency target. Linearizable reads require quorum or read-index and accept higher
+latency. Session consistency is a fit when one client needs continuity without a global linearizable
+read.

@@ -91,7 +91,7 @@ the choice when operational shard complexity exceeds scale benefit.
 **Failure and recovery.** Hotspots and resharding are common; verify routing/rebalancing
 in the owner section.
 
-**Technical owner.** [Sharding, partition keys, hotspots and safe resharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#purpose-and-mission) — sharding/partition keys are bounded, not a universal distribution recipe.
+**Technical owner.** [Sharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#sharding) — sharding/partition keys are bounded, not a universal distribution recipe.
 
 **Sources.** [src.citus](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-citus.2026-10-21: sections "Concepts". The source is a public
@@ -310,7 +310,7 @@ index maintenance and drift exceed lookup benefit.
 **Failure and recovery.** Stale index rows and write amplification are common; verify
 lifecycle in the owner section.
 
-**Technical owner.** [An index is a data lifecycle change](../../v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md#5-an-index-is-a-data-lifecycle-change) — index lifecycle is bounded, not a full access-path catalogue.
+**Technical owner.** [Index Table](../../v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md#index-table) — index lifecycle is bounded, not a full access-path catalogue.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-indexes.2026-10-21: sections "Indexes", "Index Types",

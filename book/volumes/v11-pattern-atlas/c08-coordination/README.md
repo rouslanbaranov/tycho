@@ -292,7 +292,7 @@ choice when causal metadata cost exceeds ordering benefit.
 can expose missing dependencies. Keep durable causal metadata, replay/deduplicate, and
 define a merge; if total order is mandatory, use consensus and accept its cost.
 
-**Technical owner.** [The happens-before relation describes causal knowledge](../../v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md#1-the-happens-before-relation-describes-causal-knowledge) — causal ordering is bounded, not a universal clock service.
+**Technical owner.** [Causal Ordering](../../v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md#causal-ordering) — causal ordering is bounded, not a universal clock service.
 
 **Sources.** [src.jepsen-consistency](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-causal.2026-10-21: sections "Causal Consistency", "Example",
@@ -326,7 +326,7 @@ experience benefit.
 common. Preserve the token across failover, bound waits, and return a retryable failure
 rather than serving an older snapshot.
 
-**Technical owner.** [Session-visible consistency](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md#an-explicit-session-token) — session consistency is bounded, not a complete client-session protocol.
+**Technical owner.** [Session Consistency](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md#session-consistency) — session consistency is bounded, not a complete client-session protocol.
 
 **Sources.** [src.jepsen-consistency](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-jepsen.2026-10-21: sections "Consistency Models", "Session

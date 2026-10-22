@@ -115,3 +115,19 @@ prunes; partition only when the data volume, retention or maintenance benefit is
 **Limits.** Partition count, key skew and cross-partition queries are costs; too many small
 partitions raise planning and maintenance overhead, and a key that changes forces row movement.
 Plan for detach/attach maintenance, not only query pruning.
+
+## Bounded pattern ownership notes
+
+### Sharding
+
+Partition rows by a shard key, route each request to its shard and maintain a versioned shard map.
+The shard key is a data-placement decision and a routing contract at once.
+
+One authoritative owner must exist per key, and a resharding move must fence writes or preserve a
+verifiable handoff. Hotspots, map drift, split brain and a failed migration are common; detect skew,
+throttle the hot key and dual-read/verify during movement. A key that changes often creates a move
+storm; a key with low cardinality creates one hot shard.
+
+Partitioning inside one database, read replicas or vertical scaling may be preferable when
+distribution would add cross-shard coordination without relieving the measured constraint. Sharding
+is a fit when one node cannot hold or serve the data and the key distributes the real access pattern.

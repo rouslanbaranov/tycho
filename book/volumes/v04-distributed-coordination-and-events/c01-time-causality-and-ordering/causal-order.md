@@ -161,3 +161,19 @@ Selected evidence inspected 2026-10-20: [Leader election in distributed systems]
 | Integrated question | [Original scenario and limits](causality-ordering-and-consensus.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### Causal Ordering
+
+Causal ordering preserves the happens-before relation: a message that depends on an earlier event
+cannot be delivered before it. The relation is about knowledge, not wall-clock time.
+
+An integer **Lamport logical clock** can be incremented for a local event, attached to messages, and
+advanced on reception so that causal predecessors have smaller timestamps. A causal system must
+deliver causally related operations in the same order to every process. Recovery needs durable causal
+metadata, replay/deduplication and an explicit merge for concurrent writes.
+
+If the business only needs every item to preserve its own update order, requiring global total order
+can introduce unnecessary coordination. Causal ordering is a fit when cross-item dependencies are
+real and the metadata cost is acceptable and an owner exists.

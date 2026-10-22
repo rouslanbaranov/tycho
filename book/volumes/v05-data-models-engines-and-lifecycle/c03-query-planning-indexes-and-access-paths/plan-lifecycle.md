@@ -97,6 +97,23 @@ materialized view may be preferable when the index would cost more writes than i
 
 <!-- /tycho-question-source -->
 
+## Bounded pattern ownership notes
+
+### Index Table
+
+A secondary index maps a search key to a row locator and is maintained on base-table writes; the
+planner chooses it when estimated selectivity and cost favor it. The index is derived data with its
+own write and storage cost.
+
+Every index entry must remain consistent with the base row, and its write/backup/maintenance cost
+belongs to the workload budget. Bloat, failed concurrent builds, stale statistics and write
+amplification are common; rebuild or repair explicitly and compare end-to-end cost. An index that
+serves one query but slows every write can be a net loss.
+
+A sequential scan, covering index, partition pruning or materialized view may be preferable when the
+index would cost more writes than it saves. An index table is a fit when the read path and
+selectivity justify the maintenance cost.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |
