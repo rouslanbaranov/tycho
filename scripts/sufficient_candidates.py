@@ -26,6 +26,8 @@ def build(root=ROOT):
     records = {record["id"]: record for record in ledger["records"]}
     cardmap = {entry["pattern_id"]: entry
                for batch in cards["batches"] for entry in batch["entries"]}
+    unit_counts = Counter((item["owner"]["path"], item["owner"]["anchor"])
+                          for item in owner["entries"])
     rows = []
     for item in owner["entries"]:
         path = item["owner"]["path"]
@@ -39,7 +41,10 @@ def build(root=ROOT):
         card = cardmap.get(item["pattern_id"])
         read = bool(card and records.get(card["ledger_record"], {}).get("status") == "read")
         dedicated = item["owner"]["unit_kind"] == "dedicated"
-        if not dedicated:
+        shared = unit_counts[(path, item["owner"]["anchor"])] > 1
+        if shared:
+            status = "needs-dedicated-section"
+        elif not dedicated:
             status = "needs-dedicated-section"
         elif words < WORD_FLOOR:
             status = "needs-deeper-section"
