@@ -149,7 +149,7 @@ Hexagonal/clean architecture or a modular monolith may be preferable when explic
 ownership add more value than layer count. Layering is a fit when the team needs a simple dependency
 rule and the domain can stay independent of delivery technology.
 
-### Hexagonal Architecture / Ports and Adapters
+### Hexagonal Architecture and Ports and Adapters
 
 The application defines an InventoryPort.reserve(unitId, interval, operationId) capability. One
 JDBC adapter implements the port with a database transaction. An HTTP adapter might instead talk to
@@ -165,7 +165,7 @@ If the application will always have one simple persistence choice, avoid a hiera
 that adds indirection without needed substitution. Ports are justified by a real substitution or
 test boundary, not by the number of rings.
 
-### Clean / Onion Architecture
+### Clean-Onion Architecture
 
 Clean and onion styles place domain rules at the centre and let source dependencies point inward
 only, with application services coordinating use cases and outer layers supplying technology

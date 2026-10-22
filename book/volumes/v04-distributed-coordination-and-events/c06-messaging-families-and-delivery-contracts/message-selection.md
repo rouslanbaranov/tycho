@@ -282,7 +282,7 @@ differ.
 still needs semantic tests and an owner. Schema ownership needs a review path and a
 deprecation window; point-to-point translation is cheaper for a few stable pairs.
 
-### Publish / Subscribe
+### Publish-Subscribe
 
 A topic fans each publication out to every current matching subscriber; ephemeral subscribers lose
 messages published while they are absent. Topic design, subscriber registration and per-subscriber
@@ -345,7 +345,7 @@ listening is acceptable. A durable business task should not casually use Core al
 require recoverable delivery; a JetStream durable consumer or another persisted queue may better
 match that requirement.
 
-### Message Broker / Messaging Bridge
+### Message Broker-Messaging Bridge
 
 A broker routes, stores and delivers messages between producers and consumers. A bridge forwards or
 translates between brokers/protocols, adding another hop, retention policy and failure domain.

@@ -153,7 +153,7 @@ write cost.
 without a shared transaction cannot promise atomicity. A version check must prevent a late retry
 from overwriting a newer write.
 
-### Write-Behind / Write-Back
+### Write-Behind-Write-Back
 
 A write-behind cache acknowledges the cached write and flushes it to durable storage asynchronously.
 An acknowledged write must survive the declared durability window, so the pending buffer needs its

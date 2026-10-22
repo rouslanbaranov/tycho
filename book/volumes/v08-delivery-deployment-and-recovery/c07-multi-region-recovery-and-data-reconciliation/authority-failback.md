@@ -154,7 +154,7 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ## Bounded pattern ownership notes
 
-### Failover / Failback
+### Failover-Failback
 
 Failover moves authority to a surviving region under an explicit decision; failback is a second
 migration, not the inverse operation. Returning traffic to A is a new migration, not the inverse of

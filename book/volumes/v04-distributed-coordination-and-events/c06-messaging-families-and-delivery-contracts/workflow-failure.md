@@ -207,7 +207,7 @@ latency requires decoupling.
 **Limits.** Reply queues, correlation state and orphaned replies are operational costs; a lost
 reply must be distinguishable from a slow one, and the requester needs idempotent effects.
 
-### Dead Letter Channel / DLQ
+### Dead Letter Channel-DLQ
 
 A dead-letter channel routes a message that exceeds its retry or age policy to a quarantine queue,
 preserving payload, headers and failure reason. The DLQ is a policy state, not a second work queue

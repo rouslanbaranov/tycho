@@ -161,7 +161,7 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ## Bounded pattern ownership notes
 
-### Quorum-Based Reads / Writes
+### Quorum-Based Reads-Writes
 
 A write is acknowledged by W voters and a read consults R voters; when R + W > N and membership is
 correctly configured, the sets intersect on the latest committed value. The arithmetic is a

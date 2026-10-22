@@ -256,7 +256,7 @@ abstraction cost exceeds the isolation benefit.
 inconsistently, and mapping layers can hide latency. Recovery requires contract tests,
 explicit error translation and a review of the adapter boundary in the technical owner.
 
-**Technical owner.** [Hexagonal Architecture / Ports and Adapters](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#hexagonal-architecture-ports-and-adapters).
+**Technical owner.** [Hexagonal Architecture / Ports and Adapters](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#hexagonal-architecture-and-ports-and-adapters).
 
 **Sources.** [src.aws-hexagonal](../../../../edition/patterns/reading-ledger.v1.json)
 read record `read.aws-hexagonal.2026-10-21`: AWS Prescriptive Guidance, sections
@@ -331,7 +331,7 @@ turning a context map into a mandatory graph, and drawing boundaries around team
 rather than business meaning. Recovery starts by revisiting model behavior, ownership
 and translation cost in the technical owner.
 
-**Technical owner.** [Domain-Driven Design / Bounded Context](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md#domain-driven-design-bounded-context).
+**Technical owner.** [Domain-Driven Design / Bounded Context](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md#domain-driven-design-and-bounded-context).
 
 **Sources.**
 [src.fowler-bounded-context](../../../../edition/patterns/reading-ledger.v1.json)

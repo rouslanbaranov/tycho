@@ -150,7 +150,7 @@ Exercise a stale process, a missing telemetry stream, a duplicate publication, a
 
 ## Bounded pattern ownership notes
 
-### Feature Flags / Feature Toggles
+### Feature Flags-Feature Toggles
 
 A flag decouples deployment from exposure by evaluating a versioned value at request time, scoped by
 tenant, user or cohort, with a documented default and kill switch. The flag is runtime policy, not a

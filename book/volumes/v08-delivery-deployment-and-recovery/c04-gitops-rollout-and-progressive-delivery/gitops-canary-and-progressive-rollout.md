@@ -106,7 +106,7 @@ These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. They are synthetic design guidance, not
 measured evidence, and they do not create a new source claim.
 
-### Dark Launching / Shadow Traffic
+### Dark Launching-Shadow Traffic
 
 Dark launching sends mirrored or synthetic traffic to new code while the old path remains
 authoritative. It needs side-effect suppression, a comparison method, a bounded load
@@ -136,7 +136,7 @@ environment at once; choose rolling when the extra capacity for a second environ
 cannot prove a new-only write is reversible. Capacity during the overlap must be budgeted,
 and a canary analysis does not replace this overlap check.
 
-### Blue/Green Deployment
+### Blue-Green Deployment
 
 Blue/green runs two complete environments and switches traffic at a routing boundary, leaving the
 previous environment available for a short reversal. The switch must remain reversible until the new

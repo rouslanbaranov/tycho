@@ -145,7 +145,7 @@ Jittered TTL is a competing technique for simultaneous expiry of *different* key
 key can still stampede. A distributed refresh lease or request coalescing is preferable when one key
 dominates and stale data is acceptable for the operation.
 
-### Single Flight / Request Coalescing
+### Single Flight-Request Coalescing
 
 Single-flight may deduplicate only loads triggered inside one process. Caffeine's Refresh
 documentation describes eligible asynchronous refresh while an old value may remain available and a

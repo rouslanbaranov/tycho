@@ -126,7 +126,7 @@ environment cost exceeds rollback benefit.
 **Failure and recovery.** Data compatibility and switch atomicity are common; verify state
 in the owner section.
 
-**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#bluegreen-deployment) — rollout mechanisms are bounded, not a product-specific controller guide.
+**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#blue-green-deployment) — rollout mechanisms are bounded, not a product-specific controller guide.
 
 **Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-argo-bluegreen.2026-10-21: sections "BlueGreen", "Overview",

@@ -16,8 +16,8 @@ Do not edit the repository. Do not treat this packet as approval.
 
 1. **Clean / Onion Architecture** — `tycho.pattern.clean-onion-architecture`
    - File: `layered-hexagonal-ports-and-adapters.md`
-   - Heading: `Clean / Onion Architecture`; 211 words
-   - SHA-256: `76a5dc742c37f26888c6697f8e26f5b2a99c5c4fd4706a6bd5215c1d1c158d57`
+   - Heading: `Clean-Onion Architecture`; 211 words
+    - SHA-256: `5d3d8e561cea65de83d86f4ed886a236f6d81acb86553b149ee15cc10d640f74`
 
 2. **API Gateway** — `tycho.pattern.api-gateway`
    - File: `gateway-boundaries-and-offloading.md`
@@ -88,52 +88,52 @@ the validators still require a separate policy change.
 14. **Read-Through Cache** — `tycho.pattern.read-through-cache`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Read-Through Cache`; 129 words
-    - SHA-256: `0a092ab1c69b079deff16172cf3a846d068155605ff6f080510c5580100b9a82`
+    - SHA-256: `b5dc4fc9092f26f9df518260b7c5f4d36b7cecc40a72e667178907b6f9e59fea`
 
 15. **Write-Through Cache** — `tycho.pattern.write-through-cache`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Write-Through Cache`; 122 words
-    - SHA-256: `0a092ab1c69b079deff16172cf3a846d068155605ff6f080510c5580100b9a82`
+    - SHA-256: `b5dc4fc9092f26f9df518260b7c5f4d36b7cecc40a72e667178907b6f9e59fea`
 
 16. **Write-Around** — `tycho.pattern.write-around`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Write-Around`; 127 words
-    - SHA-256: `0a092ab1c69b079deff16172cf3a846d068155605ff6f080510c5580100b9a82`
+    - SHA-256: `b5dc4fc9092f26f9df518260b7c5f4d36b7cecc40a72e667178907b6f9e59fea`
 
 17. **Multi-Level Caching** — `tycho.pattern.multi-level-caching`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Multi-Level Caching`; 123 words
-    - SHA-256: `0a092ab1c69b079deff16172cf3a846d068155605ff6f080510c5580100b9a82`
+    - SHA-256: `b5dc4fc9092f26f9df518260b7c5f4d36b7cecc40a72e667178907b6f9e59fea`
 
 18. **Competing Consumers** — `tycho.pattern.competing-consumers`
     - File: `message-selection.md`
     - Heading: `Competing Consumers`; 124 words
-    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+    - SHA-256: `926b986a0c691db6eef84ba574dc8c39570933c4354857419f3caba8d9ce9d42`
 
 19. **Content-Based Router** — `tycho.pattern.content-based-router`
     - File: `message-selection.md`
     - Heading: `Content-Based Router`; 122 words
-    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+    - SHA-256: `926b986a0c691db6eef84ba574dc8c39570933c4354857419f3caba8d9ce9d42`
 
 20. **Message Filter** — `tycho.pattern.message-filter`
     - File: `message-selection.md`
     - Heading: `Message Filter`; 120 words
-    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+    - SHA-256: `926b986a0c691db6eef84ba574dc8c39570933c4354857419f3caba8d9ce9d42`
 
 21. **Pipes and Filters** — `tycho.pattern.pipes-and-filters`
     - File: `message-selection.md`
     - Heading: `Pipes and Filters`; 122 words
-    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+    - SHA-256: `926b986a0c691db6eef84ba574dc8c39570933c4354857419f3caba8d9ce9d42`
 
 22. **Resequencer** — `tycho.pattern.resequencer`
     - File: `message-selection.md`
     - Heading: `Resequencer`; 123 words
-    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+    - SHA-256: `926b986a0c691db6eef84ba574dc8c39570933c4354857419f3caba8d9ce9d42`
 
 23. **Canonical Data Model** — `tycho.pattern.canonical-data-model`
     - File: `message-selection.md`
     - Heading: `Canonical Data Model`; 125 words
-    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+    - SHA-256: `926b986a0c691db6eef84ba574dc8c39570933c4354857419f3caba8d9ce9d42`
 
 24. **Multi-Leader Replication** — `tycho.pattern.multi-leader-replication`
     - File: `replication-consensus-and-leader-change.md`
@@ -173,37 +173,37 @@ the validators still require a separate policy change.
 31. **Rolling Deployment** — `tycho.pattern.rolling-deployment`
     - File: `gitops-canary-and-progressive-rollout.md`
     - Heading: `Rolling Deployment`; 124 words
-    - SHA-256: `52a62dbd6570cb269e4f98088f5581b8ee1982f03a9d1b797241d28ed949285a`
+    - SHA-256: `356cf158244424d9f5da2d774403000b2da3e6c4457a93d31b0c2b191ddd0906`
 
 32. **Blue/Green Deployment** — `tycho.pattern.blue-green-deployment`
     - File: `gitops-canary-and-progressive-rollout.md`
-    - Heading: `Blue/Green Deployment`; 126 words
-    - SHA-256: `52a62dbd6570cb269e4f98088f5581b8ee1982f03a9d1b797241d28ed949285a`
+    - Heading: `Blue-Green Deployment`; 126 words
+    - SHA-256: `356cf158244424d9f5da2d774403000b2da3e6c4457a93d31b0c2b191ddd0906`
 
 33. **Dark Launching / Shadow Traffic** — `tycho.pattern.dark-launching-shadow-traffic`
     - File: `gitops-canary-and-progressive-rollout.md`
-    - Heading: `Dark Launching / Shadow Traffic`; 124 words
-    - SHA-256: `52a62dbd6570cb269e4f98088f5581b8ee1982f03a9d1b797241d28ed949285a`
+    - Heading: `Dark Launching-Shadow Traffic`; 124 words
+    - SHA-256: `356cf158244424d9f5da2d774403000b2da3e6c4457a93d31b0c2b191ddd0906`
 
 34. **Federated Identity** — `tycho.pattern.federated-identity`
     - File: `identity-authorization-and-isolation.md`
     - Heading: `Federated Identity`; 121 words
-    - SHA-256: `8a7c087d993960c00c97ec2a9df4d4d1cfaff88ff0f69726f7b538e6a142b0d8`
+    - SHA-256: `12253f65045bb9af45fab16113db9ee0223129123b9e6b8139dd9967ad11f95d`
 
 35. **Workload Identity / mTLS** — `tycho.pattern.workload-identity-mtls`
     - File: `identity-authorization-and-isolation.md`
-    - Heading: `Workload Identity / mTLS`; 127 words
-    - SHA-256: `8a7c087d993960c00c97ec2a9df4d4d1cfaff88ff0f69726f7b538e6a142b0d8`
+    - Heading: `Workload Identity-mTLS`; 127 words
+    - SHA-256: `12253f65045bb9af45fab16113db9ee0223129123b9e6b8139dd9967ad11f95d`
 
 36. **Least Privilege** — `tycho.pattern.least-privilege`
     - File: `authorization-policy-and-least-privilege.md`
     - Heading: `Least Privilege`; 121 words
-    - SHA-256: `e8c480106a885bb691f9ae7d4289fbf5c0683e3bc46dd4b9f3899da63fa15e6b`
+    - SHA-256: `7f1bf7b5d23c3f9733b6cebcd498d622603229ac177a240529298b50abf587a2`
 
 37. **RBAC / ABAC** — `tycho.pattern.rbac-abac`
     - File: `authorization-policy-and-least-privilege.md`
-    - Heading: `RBAC / ABAC`; 122 words
-    - SHA-256: `e8c480106a885bb691f9ae7d4289fbf5c0683e3bc46dd4b9f3899da63fa15e6b`
+    - Heading: `RBAC-ABAC`; 122 words
+    - SHA-256: `7f1bf7b5d23c3f9733b6cebcd498d622603229ac177a240529298b50abf587a2`
 
 38. **Tenant-Based Resource Isolation** — `tycho.pattern.tenant-based-resource-isolation`
     - File: `multitenant-isolation.md`
@@ -248,17 +248,17 @@ the validators still require a separate policy change.
 46. **Claim Check** — `tycho.pattern.claim-check`
     - File: `workflow-failure.md`
     - Heading: `Claim Check`; 125 words
-    - SHA-256: `57d173f1846271dd9a8f84287158cb43ee36d6684e6e7988faf3202f93b30c3f`
+    - SHA-256: `e42dbb1a5b28c43dd44b180a2c4cfe99f5b1ff51621022c5024691b7ac92de7d`
 
 47. **Correlation Identifier** — `tycho.pattern.correlation-identifier`
     - File: `workflow-failure.md`
     - Heading: `Correlation Identifier`; 120 words
-    - SHA-256: `57d173f1846271dd9a8f84287158cb43ee36d6684e6e7988faf3202f93b30c3f`
+    - SHA-256: `e42dbb1a5b28c43dd44b180a2c4cfe99f5b1ff51621022c5024691b7ac92de7d`
 
 48. **Request-Reply Messaging** — `tycho.pattern.request-reply-messaging`
     - File: `workflow-failure.md`
     - Heading: `Request-Reply Messaging`; 124 words
-    - SHA-256: `57d173f1846271dd9a8f84287158cb43ee36d6684e6e7988faf3202f93b30c3f`
+    - SHA-256: `e42dbb1a5b28c43dd44b180a2c4cfe99f5b1ff51621022c5024691b7ac92de7d`
 
 49. **Backend for Frontend (BFF)** — `tycho.pattern.backend-for-frontend-bff`
     - File: `http-rpc-contracts-and-compatibility.md`
@@ -273,7 +273,7 @@ the validators still require a separate policy change.
 51. **Zero Trust Architecture** — `tycho.pattern.zero-trust-architecture`
     - File: `authorization-policy-and-least-privilege.md`
     - Heading: `Zero Trust Architecture`; 134 words
-    - SHA-256: `e8c480106a885bb691f9ae7d4289fbf5c0683e3bc46dd4b9f3899da63fa15e6b`
+    - SHA-256: `7f1bf7b5d23c3f9733b6cebcd498d622603229ac177a240529298b50abf587a2`
 
 52. **Valet Key** — `tycho.pattern.valet-key`
     - File: `object-credentials.md`
@@ -312,8 +312,8 @@ the validators still require a separate policy change.
 
 59. **Process Manager / Routing Slip** — `tycho.pattern.process-manager-routing-slip`
     - File: `saga-workflows.md`
-    - Heading: `Process Manager / Routing Slip`; 121 words
-    - SHA-256: `76c6c37fb8d5f7d6ba42d44c5c2f7fca8b22e1bbc819125da09e349df3797d66`
+    - Heading: `Process Manager-Routing Slip`; 121 words
+    - SHA-256: `a0be84a8526be77d5606314f43262ad8619f68bb8d30be4488d2836ff7a00494`
 
 60. **Two-Phase Commit (2PC)** — `tycho.pattern.two-phase-commit-2pc`
     - File: `invariants-isolation.md`
@@ -332,8 +332,8 @@ the validators still require a separate policy change.
 
 63. **Write-Behind / Write-Back** — `tycho.pattern.write-behind-write-back`
     - File: `local-and-distributed-cache-design.md`
-    - Heading: `Write-Behind / Write-Back`; 123 words
-    - SHA-256: `0a092ab1c69b079deff16172cf3a846d068155605ff6f080510c5580100b9a82`
+    - Heading: `Write-Behind-Write-Back`; 123 words
+    - SHA-256: `b5dc4fc9092f26f9df518260b7c5f4d36b7cecc40a72e667178907b6f9e59fea`
 
 64. **Geode** — `tycho.pattern.geode`
     - File: `disaster-recovery-and-recovery-objectives.md`
@@ -383,47 +383,47 @@ the validators still require a separate policy change.
 73. **Saga** — `tycho.pattern.saga`
     - File: `saga-workflows.md`
     - Heading: `Saga`; 123 words
-    - SHA-256: `76c6c37fb8d5f7d6ba42d44c5c2f7fca8b22e1bbc819125da09e349df3797d66`
+    - SHA-256: `a0be84a8526be77d5606314f43262ad8619f68bb8d30be4488d2836ff7a00494`
 
 74. **Saga Choreography** — `tycho.pattern.saga-choreography`
     - File: `saga-workflows.md`
     - Heading: `Saga Choreography`; 123 words
-    - SHA-256: `76c6c37fb8d5f7d6ba42d44c5c2f7fca8b22e1bbc819125da09e349df3797d66`
+    - SHA-256: `a0be84a8526be77d5606314f43262ad8619f68bb8d30be4488d2836ff7a00494`
 
 75. **Saga Orchestration** — `tycho.pattern.saga-orchestration`
     - File: `saga-workflows.md`
     - Heading: `Saga Orchestration`; 122 words
-    - SHA-256: `76c6c37fb8d5f7d6ba42d44c5c2f7fca8b22e1bbc819125da09e349df3797d66`
+    - SHA-256: `a0be84a8526be77d5606314f43262ad8619f68bb8d30be4488d2836ff7a00494`
 
 76. **Compensating Transaction** — `tycho.pattern.compensating-transaction`
     - File: `saga-workflows.md`
     - Heading: `Compensating Transaction`; 124 words
-    - SHA-256: `76c6c37fb8d5f7d6ba42d44c5c2f7fca8b22e1bbc819125da09e349df3797d66`
+    - SHA-256: `a0be84a8526be77d5606314f43262ad8619f68bb8d30be4488d2836ff7a00494`
 
 77. **Publish/Subscribe** — `tycho.pattern.publish-subscribe`
     - File: `message-selection.md`
-    - Heading: `Publish / Subscribe`; 149 words
-    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+    - Heading: `Publish-Subscribe`; 149 words
+    - SHA-256: `926b986a0c691db6eef84ba574dc8c39570933c4354857419f3caba8d9ce9d42`
 
 78. **Point-to-Point Queue** — `tycho.pattern.point-to-point-queue`
     - File: `message-selection.md`
     - Heading: `Point-to-Point Queue`; 126 words
-    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+    - SHA-256: `926b986a0c691db6eef84ba574dc8c39570933c4354857419f3caba8d9ce9d42`
 
 79. **Event-Driven Consumer** — `tycho.pattern.event-driven-consumer`
     - File: `message-selection.md`
     - Heading: `Event-Driven Consumer`; 120 words
-    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+    - SHA-256: `926b986a0c691db6eef84ba574dc8c39570933c4354857419f3caba8d9ce9d42`
 
 80. **Durable Subscriber** — `tycho.pattern.durable-subscriber`
     - File: `message-selection.md`
     - Heading: `Durable Subscriber`; 134 words
-    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+    - SHA-256: `926b986a0c691db6eef84ba574dc8c39570933c4354857419f3caba8d9ce9d42`
 
 81. **Message Broker / Messaging Bridge** — `tycho.pattern.message-broker-messaging-bridge`
     - File: `message-selection.md`
-    - Heading: `Message Broker / Messaging Bridge`; 124 words
-    - SHA-256: `3664e20f93d6b6ee6d6f994b43c0d158de391f67aa023ed1b8a8e5e57378e4e3`
+    - Heading: `Message Broker-Messaging Bridge`; 124 words
+    - SHA-256: `926b986a0c691db6eef84ba574dc8c39570933c4354857419f3caba8d9ce9d42`
 
 82. **Fallback** — `tycho.pattern.fallback`
     - File: `overload-admission-control-and-graceful-degradation.md`
@@ -473,12 +473,12 @@ the validators still require a separate policy change.
 91. **Layered Architecture** — `tycho.pattern.layered-architecture`
     - File: `layered-hexagonal-ports-and-adapters.md`
     - Heading: `Layered Architecture`; 123 words
-    - SHA-256: `76a5dc742c37f26888c6697f8e26f5b2a99c5c4fd4706a6bd5215c1d1c158d57`
+    - SHA-256: `5d3d8e561cea65de83d86f4ed886a236f6d81acb86553b149ee15cc10d640f74`
 
 92. **Hexagonal Architecture / Ports and Adapters** — `tycho.pattern.hexagonal-architecture-ports-and-adapters`
     - File: `layered-hexagonal-ports-and-adapters.md`
-    - Heading: `Hexagonal Architecture / Ports and Adapters`; 125 words
-    - SHA-256: `76a5dc742c37f26888c6697f8e26f5b2a99c5c4fd4706a6bd5215c1d1c158d57`
+    - Heading: `Hexagonal Architecture and Ports and Adapters`; 125 words
+    - SHA-256: `5d3d8e561cea65de83d86f4ed886a236f6d81acb86553b149ee15cc10d640f74`
 
 93. **Horizontal Scaling** — `tycho.pattern.horizontal-scaling`
     - File: `autoscaling-lag-and-capacity-limits.md`
@@ -517,8 +517,8 @@ the validators still require a separate policy change.
 
 100. **SLI/SLO and Error Budgets** — `tycho.pattern.sli-slo-and-error-budgets`
     - File: `service-level-indicators-objectives-and-alerts.md`
-    - Heading: `SLI / SLO and Error Budgets`; 187 words
-    - SHA-256: `277e08fee127ea19bf70757a77b773a2fc46818b7baae0cbaaf24088774efcce`
+    - Heading: `SLI-SLO and Error Budgets`; 187 words
+    - SHA-256: `d1868fe574bfe2675f3e7e9449dad9618f6f07c5771ba2edc2e262d963084f1e`
 
 101. **Polyglot Persistence** — `tycho.pattern.polyglot-persistence`
     - File: `multi-store-selection.md`
@@ -532,8 +532,8 @@ the validators still require a separate policy change.
 
 103. **Domain-Driven Design / Bounded Context** — `tycho.pattern.domain-driven-design-bounded-context`
     - File: `domain-authority.md`
-    - Heading: `Domain-Driven Design / Bounded Context`; 135 words
-    - SHA-256: `82d8aab2c7a84c41aa11a0495fc2efb3ef49dfdc2a2e5d6fc6b439b23b5972a8`
+    - Heading: `Domain-Driven Design and Bounded Context`; 135 words
+    - SHA-256: `fe9472f2bf651d2a0da75a83915d1125304bb4752c0d54d0aab9e9de315db1b3`
 
 104. **Anti-Corruption Layer** — `tycho.pattern.anti-corruption-layer`
     - File: `anti-corruption-adapters-and-coexistence.md`
@@ -547,8 +547,8 @@ the validators still require a separate policy change.
 
 106. **Dead Letter Channel / DLQ** — `tycho.pattern.dead-letter-channel-dlq`
     - File: `workflow-failure.md`
-    - Heading: `Dead Letter Channel / DLQ`; 139 words
-    - SHA-256: `57d173f1846271dd9a8f84287158cb43ee36d6684e6e7988faf3202f93b30c3f`
+    - Heading: `Dead Letter Channel-DLQ`; 139 words
+    - SHA-256: `e42dbb1a5b28c43dd44b180a2c4cfe99f5b1ff51621022c5024691b7ac92de7d`
 
 107. **Idempotent Receiver** — `tycho.pattern.idempotent-receiver`
     - File: `dedup-authority.md`
@@ -568,7 +568,7 @@ the validators still require a separate policy change.
 110. **Distributed Cache** — `tycho.pattern.distributed-cache`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Distributed Cache`; 134 words
-    - SHA-256: `0a092ab1c69b079deff16172cf3a846d068155605ff6f080510c5580100b9a82`
+    - SHA-256: `b5dc4fc9092f26f9df518260b7c5f4d36b7cecc40a72e667178907b6f9e59fea`
 
 111. **TTL-Based Expiration** — `tycho.pattern.ttl-based-expiration`
     - File: `refresh-semantics.md`
@@ -578,12 +578,12 @@ the validators still require a separate policy change.
 112. **Cache Stampede Protection** — `tycho.pattern.cache-stampede-protection`
     - File: `stampede-protection.md`
     - Heading: `Cache Stampede Protection`; 139 words
-    - SHA-256: `fb59dca0cad703df369987fef4240393fe2254f5652ebc0c6922da8731bdfedb`
+    - SHA-256: `ef5809e396ef56f0ab4dba1cc1be742c3b5c27d53ec53e26c0eb19ff8de3f208`
 
 113. **Single Flight / Request Coalescing** — `tycho.pattern.single-flight-request-coalescing`
     - File: `stampede-protection.md`
-    - Heading: `Single Flight / Request Coalescing`; 135 words
-    - SHA-256: `fb59dca0cad703df369987fef4240393fe2254f5652ebc0c6922da8731bdfedb`
+    - Heading: `Single Flight-Request Coalescing`; 135 words
+    - SHA-256: `ef5809e396ef56f0ab4dba1cc1be742c3b5c27d53ec53e26c0eb19ff8de3f208`
 
 114. **Transactional Outbox** — `tycho.pattern.transactional-outbox`
     - File: `outbox-inbox-sagas-and-durable-workflows.md`
@@ -667,23 +667,23 @@ the validators still require a separate policy change.
 
 130. **CDN / Edge Caching** — `tycho.pattern.cdn-edge-caching`
     - File: `edge-cache-origin.md`
-    - Heading: `CDN / Edge Caching`; 125 words
-    - SHA-256: `9f8863776c551e7d8afd2ed852b399b712218529ebdb24c4dbfb3bfba58cd29c`
+    - Heading: `CDN-Edge Caching`; 125 words
+    - SHA-256: `77d9c49d55c58e1f5dd69ceff8a0e59b385e81259b46dbe6cd6e6ae302323598`
 
 131. **Static Content Hosting** — `tycho.pattern.static-content-hosting`
     - File: `edge-cache-origin.md`
     - Heading: `Static Content Hosting`; 126 words
-    - SHA-256: `9f8863776c551e7d8afd2ed852b399b712218529ebdb24c4dbfb3bfba58cd29c`
+    - SHA-256: `77d9c49d55c58e1f5dd69ceff8a0e59b385e81259b46dbe6cd6e6ae302323598`
 
 132. **Quorum-Based Reads/Writes** — `tycho.pattern.quorum-based-reads-writes`
     - File: `quorum-envelope.md`
-    - Heading: `Quorum-Based Reads / Writes`; 133 words
-    - SHA-256: `88dc92f1a9d2593c45325751622fc91f6202d74dccd4edc7f348a974d3a965de`
+    - Heading: `Quorum-Based Reads-Writes`; 133 words
+    - SHA-256: `e1f715ab3da9cfe88c2955daa34f7f91e73a3368d5c31b8b07ff8ceaac8b9725`
 
 133. **Quorum Coordination** — `tycho.pattern.quorum-coordination`
     - File: `quorum-envelope.md`
     - Heading: `Quorum Coordination`; 134 words
-    - SHA-256: `88dc92f1a9d2593c45325751622fc91f6202d74dccd4edc7f348a974d3a965de`
+    - SHA-256: `e1f715ab3da9cfe88c2955daa34f7f91e73a3368d5c31b8b07ff8ceaac8b9725`
 
 134. **GitOps** — `tycho.pattern.gitops`
     - File: `ci-cd-provenance-and-gitops.md`
@@ -697,8 +697,8 @@ the validators still require a separate policy change.
 
 136. **Feature Flags / Feature Toggles** — `tycho.pattern.feature-flags-feature-toggles`
     - File: `configuration-rollout.md`
-    - Heading: `Feature Flags / Feature Toggles`; 124 words
-    - SHA-256: `d6281a81e9f0d8cc1f3fce8300e0f16befef969769ffd318df4869c920afe469`
+    - Heading: `Feature Flags-Feature Toggles`; 124 words
+    - SHA-256: `6160d922826807ddcb229903b108e9ccbda9e4dc84d6772beed39bf3c1c4a2cc`
 
 137. **Strangler Fig** — `tycho.pattern.strangler-fig`
     - File: `target-and-transition-architecture-states.md`
@@ -737,8 +737,8 @@ the validators still require a separate policy change.
 
 144. **Failover / Failback** — `tycho.pattern.failover-failback`
     - File: `authority-failback.md`
-    - Heading: `Failover / Failback`; 120 words
-    - SHA-256: `c5cdaea184ce794cddc307e5b6b9eef4eca3b854b6c628be9318d07b978cca2a`
+    - Heading: `Failover-Failback`; 120 words
+    - SHA-256: `a7778128b403810b3d83e40018414f45b33b95d768e71ce535e135cf2c4499a2`
 
 145. **Expand-and-Contract** — `tycho.pattern.expand-and-contract`
     - File: `reader-writer-matrix.md`

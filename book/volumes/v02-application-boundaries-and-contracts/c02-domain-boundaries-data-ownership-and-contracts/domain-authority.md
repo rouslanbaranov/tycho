@@ -123,7 +123,7 @@ A translation that cannot preserve a required semantic fact must reject or degra
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
 ## Bounded pattern ownership notes
 
-### Domain-Driven Design / Bounded Context
+### Domain-Driven Design and Bounded Context
 
 A bounded context is a boundary within which one model and its ubiquitous language stay
 consistent. A shared word "item" should not force a database schema shared by all four contexts.

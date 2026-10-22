@@ -172,7 +172,7 @@ These notes define the decision boundary for atlas cards whose mechanism is not 
 this page. They are synthetic design guidance, not measured evidence, and they do not create a new
 source claim.
 
-### Process Manager / Routing Slip
+### Process Manager-Routing Slip
 
 A process manager records workflow progress and decides which step runs next, while a routing slip
 carries the remaining itinerary with the message. The durable progress record must be updated before

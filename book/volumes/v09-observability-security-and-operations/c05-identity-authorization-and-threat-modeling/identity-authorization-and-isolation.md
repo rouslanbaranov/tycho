@@ -103,7 +103,7 @@ source.
 restriction and issuer compromise are ongoing costs, not one-time setup. Metadata caching and
 issuer discovery need their own availability, rollback plan, audit evidence and an owner.
 
-### Workload Identity / mTLS
+### Workload Identity-mTLS
 
 Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates
 both ends of a service connection with short-lived credentials. The identity must bind to the

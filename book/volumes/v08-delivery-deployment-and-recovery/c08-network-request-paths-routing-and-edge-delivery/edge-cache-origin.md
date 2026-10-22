@@ -127,7 +127,7 @@ Parent: [network chapter](README.md). Previous: [trust boundaries](tls-gateway-b
 
 ## Bounded pattern ownership notes
 
-### CDN / Edge Caching
+### CDN-Edge Caching
 
 An edge can reduce distance and origin work, but only for responses it may reuse. Cacheability is a
 content and authority contract, not a network location.

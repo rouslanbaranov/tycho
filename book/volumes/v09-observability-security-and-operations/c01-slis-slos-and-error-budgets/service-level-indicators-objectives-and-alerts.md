@@ -106,7 +106,7 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ## Bounded pattern ownership notes
 
-### SLI / SLO and Error Budgets
+### SLI-SLO and Error Budgets
 
 An SLI is a measured ratio of good events to valid events; an SLO is the target for that ratio over
 a window, and the error budget is the allowed failure quantity. The measurement contract precedes

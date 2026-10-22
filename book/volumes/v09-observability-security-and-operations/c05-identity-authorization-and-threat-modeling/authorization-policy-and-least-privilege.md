@@ -104,7 +104,7 @@ or incident impact justify the overhead.
 least privilege without an owner becomes stale entitlement. Emergency access needs a time-boxed,
 audited path with revocation tests and logging rather than a permanent broad role.
 
-## RBAC / ABAC
+## RBAC-ABAC
 
 Role-based access control maps roles to permissions, while attribute-based control evaluates
 principal, resource and context attributes to reach a decision. Policy evaluation must be
