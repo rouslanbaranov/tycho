@@ -165,7 +165,8 @@ prefer write-behind when write throughput dominates and a measured loss window i
 
 **Limits.** Flush ordering, retry and shutdown drain are part of the durability contract; an
 unbounded backlog silently breaks the declared loss window. Batch flushes must preserve per-key
-order, and a restart must replay the pending buffer before accepting new writes.
+order, and a restart must replay the pending buffer before accepting new writes. An owner must reconcile
+the backlog after a prolonged outage.
 
 ### Write-Around
 

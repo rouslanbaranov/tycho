@@ -88,22 +88,22 @@ the validators still require a separate policy change.
 14. **Read-Through Cache** — `tycho.pattern.read-through-cache`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Read-Through Cache`; 129 words
-    - SHA-256: `b2e81e19b4939b9396a7d1a6dee0a59ed478bd2519bd26bc5192138e71e66aba`
+    - SHA-256: `0373109397b5d7fbaa9590aae58977b15b6d4e20c03465d48cbccaa8af93147a`
 
 15. **Write-Through Cache** — `tycho.pattern.write-through-cache`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Write-Through Cache`; 122 words
-    - SHA-256: `b2e81e19b4939b9396a7d1a6dee0a59ed478bd2519bd26bc5192138e71e66aba`
+    - SHA-256: `0373109397b5d7fbaa9590aae58977b15b6d4e20c03465d48cbccaa8af93147a`
 
 16. **Write-Around** — `tycho.pattern.write-around`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Write-Around`; 127 words
-    - SHA-256: `b2e81e19b4939b9396a7d1a6dee0a59ed478bd2519bd26bc5192138e71e66aba`
+    - SHA-256: `0373109397b5d7fbaa9590aae58977b15b6d4e20c03465d48cbccaa8af93147a`
 
 17. **Multi-Level Caching** — `tycho.pattern.multi-level-caching`
     - File: `local-and-distributed-cache-design.md`
     - Heading: `Multi-Level Caching`; 123 words
-    - SHA-256: `b2e81e19b4939b9396a7d1a6dee0a59ed478bd2519bd26bc5192138e71e66aba`
+    - SHA-256: `0373109397b5d7fbaa9590aae58977b15b6d4e20c03465d48cbccaa8af93147a`
 
 18. **Competing Consumers** — `tycho.pattern.competing-consumers`
     - File: `message-selection.md`
@@ -329,3 +329,23 @@ the validators still require a separate policy change.
     - File: `authority-states.md`
     - Heading: `Parallel Run`; 129 words
     - SHA-256: `74eb15e131607021bcfddebbbe0893934c10eb42363f0227f79cf6c25737cf5a`
+
+63. **Write-Behind / Write-Back** — `tycho.pattern.write-behind-write-back`
+    - File: `local-and-distributed-cache-design.md`
+    - Heading: `Write-Behind / Write-Back`; 123 words
+    - SHA-256: `0373109397b5d7fbaa9590aae58977b15b6d4e20c03465d48cbccaa8af93147a`
+
+64. **Geode** — `tycho.pattern.geode`
+    - File: `disaster-recovery-and-recovery-objectives.md`
+    - Heading: `Geode`; 132 words
+    - SHA-256: `535ad5af4c37a316ef26023360018081682de8ab014a96f8d182d476edeb9583`
+
+65. **Synthetic Monitoring** — `tycho.pattern.synthetic-monitoring`
+    - File: `budget-actions.md`
+    - Heading: `Synthetic Monitoring`; 121 words
+    - SHA-256: `928c499937ffba9f15e5ea0e4cce4c743a0e0d8a2e6001fbe8aeca3d987a70f0`
+
+66. **Health, Readiness and Liveness Checks** — `tycho.pattern.health-readiness-and-liveness-checks`
+    - File: `incident-practice.md`
+    - Heading: `Health, Readiness and Liveness Checks`; 132 words
+    - SHA-256: `8eed0c2ebac5f448d2b245d73a3c60c959806c067ceb9181eef05fb857a2a336`
