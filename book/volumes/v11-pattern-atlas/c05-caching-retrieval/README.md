@@ -352,8 +352,8 @@ would hide recovery, or when negative entries leak existence or authorization.
 **Competing alternative.** No negative cache or short retry with backoff. Reverse the
 choice when repeated misses amplify origin load.
 
-**Failure and recovery.** Stale failures and information leakage are common; verify
-status/TTL policy in the owner section.
+**Failure and recovery.** A cached denial can outlive a create/grant or leak across principals;
+scope keys by tenant/principal, delete or version on change, bound TTL and test revocation.
 
 **Technical owner.** [Negative caching and discriminating experiments](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md#4-negative-caching-and-evicted-authorization) — negative-cache policy is bounded, not a universal error-cache rule.
 

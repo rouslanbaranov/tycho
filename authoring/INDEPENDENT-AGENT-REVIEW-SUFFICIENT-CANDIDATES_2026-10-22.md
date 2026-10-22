@@ -58,3 +58,38 @@ Remediation applied after the review:
   versioned handlers/rebuild plan.
 
 Not re-reviewed. Verdict remains **pass-with-findings**.
+## Cache-Aside — pass-with-findings
+
+Reviewer verdict: **pass-with-findings**. Two findings:
+
+1. **Mechanism.** The section promised the read/write interleaving that breaks a naive
+freshness promise but did not show the stale-fill race or define the version gate.
+2. **Failure/recovery.** The card deferred to the owner section, which did not sequence
+stale fills, concurrent misses or a failed/partial invalidation.
+
+Remediation applied after the review:
+
+- Added the stale-fill race (read V1, commit V2, refill V1), the version gate and its
+  remaining check/write window.
+- Added failed-invalidation retry/alert, TTL bound and single-flight recovery.
+- Replaced the card's deferral with concrete gate/retry/single-flight actions.
+
+Not re-reviewed. Verdict remains **pass-with-findings**.
+## Negative Caching — pass-with-findings
+
+Reviewer verdict: **pass-with-findings**. Two findings:
+
+1. **Source.** The section made status/TTL and error-caching statements without a citation,
+claim ID or ledger row; the card cited the Google CDN source.
+2. **Mechanism.** The heading promised "evicted authorization" but did not define key scoping,
+revocation invalidation or no-entry versus tombstone versus cached-negative.
+
+Remediation applied after the review:
+
+- Added tenant/principal/operation key scoping, delete-or-version on create/grant, tombstone
+  distinction and a global-visibility restriction.
+- Added the Google Cloud CDN negative-caching citation to the section, page source scope and
+  chapter source ledger.
+- Replaced the card's status/TTL deferral with scope, delete/version, TTL and revocation tests.
+
+Not re-reviewed. Verdict remains **pass-with-findings**.

@@ -24,9 +24,10 @@ route_hints:
     - "negative"
     - "cache"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.google-cdn-negative-caching"
   claim_ids: []
-  status: "unknown"
+  status: "source-linked"
   notes: "Bounded question from tycho.page.e0f0d5b68f834acbae94cc6714895dd3; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
 content_review:
   status: "self-checked"
@@ -57,6 +58,16 @@ Define:
 - tenant/key namespaces, malformed IDs and probe-driven resource attacks.
 
 A cached negative must never become a universal statement that an object does not exist for all authorized principals if visibility varies by principal or tenant.
+
+**Keying and invalidation.** A negative key must include the tenant, principal/scope and the
+checked operation; otherwise a denial leaks across principals. Creation or a permission
+grant must delete the key or advance its version. A tombstone is a positive fact, distinct
+from both "no entry" and a cached denial. Cache only a denial whose visibility is global for
+that key; otherwise use a short TTL, bypass, or a per-principal key.
+
+The [Google Cloud CDN negative-caching page](https://docs.cloud.google.com/cdn/docs/using-negative-caching?hl=en)
+documents per-status TTLs for errors and redirects and the origin-load trade-off; it does not
+establish this page's authorization keying or invalidation design.
 
 <!-- /tycho-question-source -->
 

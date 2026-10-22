@@ -82,6 +82,17 @@ flowchart TD
 
 **Text alternative:** a read can reuse a local value, then a shared value, then the source, *only* when each value satisfies the required freshness and authorization. A source result may fill a cache if a competing update has not made it obsolete. The figure is original hypothetical topology, not evidence a version gate was implemented.
 
+**The stale-fill race.** Reader R misses and reads V1; writer W commits V2 and invalidates
+the key; R then writes V1 back with a fresh TTL, resurrecting stale data. A version gate on
+fill — write only if the source revision still equals the revision R read — narrows the
+window, but a race remains between the version check and the write. A short TTL plus retried
+invalidation bounds the damage; neither proves freshness.
+
+**Failure and recovery.** A write can commit while its delete fails, leaving stale data until
+TTL. Record invalidation attempts, retry through an outbox or durable queue, and alert on
+repeated failure. Concurrent misses need single-flight or a lease; a fallback authoritative
+read must stay bounded.
+
 Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or require strict verification for revocation-sensitive operations. Data authorization must be performed at an enforced boundary; a copied permission bit is not its own authority.
 
 <!-- /tycho-question-source -->

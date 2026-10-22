@@ -99,3 +99,6 @@ A lost invalidation or an in-flight fill resurrects stale data; bound the TTL, c
 fill and record invalidations that failed. A short TTL accepts bounded staleness without a purge
 path; use explicit invalidation when the allowed staleness is shorter than the TTL that is
 affordable.
+
+**Limits.** Invalidation is not free: it needs a durable event, a retry path and a version
+check on fill; a purge that times out is an unverified revocation.

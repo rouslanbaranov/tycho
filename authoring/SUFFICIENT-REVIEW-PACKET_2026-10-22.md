@@ -41,13 +41,13 @@ Do not edit the repository. Do not treat this packet as approval.
 
 6. **Cache-Aside / Lazy Loading** — `tycho.pattern.cache-aside-lazy-loading`
    - File: `refresh-semantics.md`
-   - Heading: `4. Cache-aside is a sequence, not a consistency theorem`; 168 words
-   - SHA-256: `f34ead5843b37ba508ac876e3a88cd5c0d8498691a7c1411812a1db9921a8341`
+   - Heading: `4. Cache-aside is a sequence, not a consistency theorem`; 287 words
+   - SHA-256: `d40326a0365f0fa5da7e8194cb7d0c2a30f5acb448cc2d2b85279343499a2867`
 
 7. **Negative Caching** — `tycho.pattern.negative-caching`
    - File: `negative-cache.md`
-   - Heading: `4. Negative caching and evicted authorization`; 132 words
-   - SHA-256: `b6ab7ae43c581290ff65546dd27b43fd16dac0919b2b3b481b714b0686b71c3e`
+   - Heading: `4. Negative caching and evicted authorization`; 230 words
+   - SHA-256: `a62e595ed394e19b710023f52bf7cb91be0a34ea30d7c31ddac837a749d68471`
 
 8. **Hedged Requests** — `tycho.pattern.hedged-requests`
    - File: `deadline-hedging.md`
@@ -159,3 +159,13 @@ the validators still require a separate policy change.
     - File: `backup-restore-pitr-and-recovery-drills.md`
     - Heading: `Backup, PITR and Restore`; 127 words
     - SHA-256: `d6e6ffece4259cbc5472dc3c5c92eed7a5ed14abf518cb58bc2760cd48b9eaee`
+
+29. **Cache Invalidation** — `tycho.pattern.cache-invalidation`
+    - File: `cache-invalidation-stampede-and-hot-keys.md`
+    - Heading: `Cache Invalidation`; 121 words
+    - SHA-256: `305557dc5bcbb741d7d68976c86653e5d8c1f7eddc1e7010594ea7811598a1e8`
+
+30. **Stale-While-Revalidate** — `tycho.pattern.stale-while-revalidate`
+    - File: `stale-fill.md`
+    - Heading: `Stale-While-Revalidate`; 123 words
+    - SHA-256: `fc8ec7d736a980edf25d9cedaca087e1cc5fea9f9a8bdab1b24cefb477d1dfe8`
