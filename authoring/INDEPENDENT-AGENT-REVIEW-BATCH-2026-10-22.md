@@ -1192,3 +1192,8 @@ Verdict: **pass**. Findings: 0. Self-contained, token/epoch reuse failure and co
 
 Verdict: **pass**. Findings: 0. Vector-clock fit, Lamport concurrency caveat, partition/server-switch recovery and merge rule.
 
+
+### Gateway Aggregation — latest re-review
+
+Verdict: **pass**. Findings: 0. Read-mostly fit, hidden-workflow contraindication, retry amplification and API Composition boundary.
+

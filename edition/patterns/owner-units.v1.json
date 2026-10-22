@@ -860,28 +860,31 @@
         "line": 101,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Gateway Aggregation"
+          "read-mostly",
+          "own deadline",
+          "cap retries",
+          "API Composition"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A gateway aggregation layer calls several downstream services for one client request and returns a single composed response.",
+          "quote": "Gateway aggregation composes several owner responses into one client response at the edge.",
           "reason": ""
         },
         "invariant": {
           "state": "supported",
-          "quote": "Each downstream call must carry its own deadline, and a partial failure must be represented explicitly in the aggregate response.",
+          "quote": "Each downstream call carries its own deadline and authorization.",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "One slow participant delays the whole response, and a silent omission hides incomplete data; fan out in parallel with per-call budgets and mark missing parts.",
+          "quote": "a gateway retry must not multiply load across every participant",
           "reason": ""
         },
         "alternative": {
           "state": "supported",
-          "quote": "Client-side composition or a backend for frontend keeps aggregation closer to the client; use gateway aggregation when the composition is shared and the gateway is already the trust boundary.",
+          "quote": "Client-side composition, a backend for frontend or an API Composition layer with a narrow contract may be preferable",
           "reason": ""
         }
       },
@@ -914,7 +917,7 @@
         "heading": "Gateway Offloading",
         "anchor": "gateway-offloading",
         "level": 2,
-        "line": 116,
+        "line": 117,
         "unit_kind": "dedicated",
         "unit_terms": [
           "terminate TLS",
@@ -1091,7 +1094,7 @@
         "heading": "Reverse Proxy",
         "anchor": "reverse-proxy",
         "level": 2,
-        "line": 133,
+        "line": 134,
         "unit_kind": "dedicated",
         "unit_terms": [
           "accepts client connections",

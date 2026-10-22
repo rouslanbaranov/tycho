@@ -100,18 +100,19 @@ reachable.
 
 ## Gateway Aggregation
 
-A gateway aggregation layer calls several downstream services for one client request and
-returns a single composed response. Each downstream call must carry its own deadline, and a
-partial failure must be represented explicitly in the aggregate response.
+Gateway aggregation composes several owner responses into one client response at the edge. It fits
+a read-mostly view with a small, stable shape where the gateway is already the trust boundary.
 
-One slow participant delays the whole response, and a silent omission hides incomplete data;
-fan out in parallel with per-call budgets and mark missing parts. Client-side composition or a
-backend for frontend keeps aggregation closer to the client; use gateway aggregation when the
-composition is shared and the gateway is already the trust boundary.
+Each downstream call carries its own deadline and authorization. Fan out in parallel, cap retries
+per dependency and for the whole aggregate, and expose which dependency failed; a gateway retry
+must not multiply load across every participant. A partial response needs a versioned shape that
+marks missing parts rather than silently omitting them.
 
-**Limits.** Fan-out latency is set by the slowest participant; partial-response schema, timeout
-ownership and per-downstream authorization must be explicit, and one failing dependency can
-dominate the aggregate. A partial response needs a versioned shape.
+Do not aggregate when strong consistency across owners is required, one slow dependency exhausts the
+gateway, the composition is a hidden domain workflow, or partial results cannot be represented
+honestly. Client-side composition, a backend for frontend or an API Composition layer with a narrow
+contract may be preferable; API Composition owns the composition logic while the gateway remains the
+transport and trust boundary. Reverse when latency and coupling exceed the client benefit.
 
 ## Gateway Offloading
 
