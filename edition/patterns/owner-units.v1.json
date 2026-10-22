@@ -6193,38 +6193,38 @@
         "line": 213,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "monotonically increasing",
-          "destination checks",
-          "active epoch",
-          "serialize through"
+          "monotonic epoch",
+          "destination stores",
+          "epoch reuse",
+          "unresolved-safety boundary"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "It protects only where the destination checks and persists the token atomically",
+          "quote": "A fencing token is a monotonic epoch issued with ownership",
           "reason": "Explains destination-side token comparison that rejects stale epochs."
         },
         "invariant": {
           "state": "supported",
-          "quote": "If B has not yet established its newer epoch at the destination, comparing only against the last observed token does not prove A still owns the lease.",
+          "quote": "the destination stores the highest token it has accepted and rejects a lower one.",
           "reason": "Bounds what a token comparison proves before the new epoch is established at the destination."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "The destination atomically rejects a delayed write whose token is below its active epoch, so a paused former owner cannot commit.",
+          "quote": "Token or epoch reuse breaks monotonicity",
           "reason": "Shows atomic rejection of a delayed write carrying an old epoch."
         },
         "alternative": {
           "state": "supported",
-          "quote": "For an external API that cannot fence stale callers, serialize through an authoritative effect owner, use stable idempotent operation identities where supported, or retain an explicit unresolved-safety boundary.",
+          "quote": "Reverse to lease-only ownership or single-writer routing when destination enforcement cost exceeds the stale-write risk it removes",
           "reason": "Names effect ownership or idempotent identities when the destination cannot fence."
         }
       },
       "decision_evidence": {
         "atlas_section": "fencing-tokens",
         "question": "Should every write carry an epoch/token so the destination rejects a stale owner?",
-        "competing_alternative": "Lease-only ownership or single-writer routing. Reverse the choice when destination changes are cheaper than stale-write risk.",
+        "competing_alternative": "Lease-only ownership or single-writer routing. Reverse the choice when destination enforcement cost exceeds the stale-write risk it removes.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },

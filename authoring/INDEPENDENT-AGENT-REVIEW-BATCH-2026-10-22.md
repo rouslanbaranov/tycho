@@ -1182,3 +1182,8 @@ Verdict: **pass**. Findings: 0. Normalized heading/anchor, fail-safe default, ob
 
 Verdict: **pass**. Findings: 0. Revert-commit rollback, external secret handling, manual-release alternative and distinct depth.
 
+
+### Fencing Tokens — latest re-review
+
+Verdict: **pass**. Findings: 0. Self-contained, token/epoch reuse failure and corrected reversal condition.
+

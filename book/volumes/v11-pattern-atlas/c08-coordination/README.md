@@ -219,7 +219,7 @@ monotonically; stale owners may still run but cannot commit.
 can be reused, or when the lock is only an efficiency optimization.
 
 **Competing alternative.** Lease-only ownership or single-writer routing. Reverse the
-choice when destination changes are cheaper than stale-write risk.
+choice when destination enforcement cost exceeds the stale-write risk it removes.
 
 **Failure and recovery.** Token bypass and epoch reuse are common; verify destination
 enforcement in the owner section.

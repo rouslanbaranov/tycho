@@ -212,17 +212,18 @@ fences and clock skew is bounded.
 
 ### Fencing Tokens
 
-A fencing token is a monotonically increasing value issued with ownership. It protects only where
-the destination checks and persists the token atomically; a token carried in a request header but
-never compared is decoration.
+A fencing token is a monotonic epoch issued with ownership; the destination stores the highest
+token it has accepted and rejects a lower one. The token protects only where the destination
+checks and persists it atomically; a header that is never compared is decoration. A paused former
+owner is rejected when it resumes.
 
-If B has not yet established its newer epoch at the destination, comparing only against the last
-observed token does not prove A still owns the lease. The destination atomically rejects a delayed
-write whose token is below its active epoch, so a paused former owner cannot commit.
+Token or epoch reuse breaks monotonicity: never reuse a value after expiry, and reset the epoch
+only with a new authority. If the destination cannot enforce tokens, serialize through an
+authoritative effect owner or use a stable idempotent operation identity; do not claim mutual
+exclusion from a token the destination ignores.
 
-For an external API that cannot fence stale callers, serialize through an authoritative effect
-owner, use stable idempotent operation identities where supported, or retain an explicit
-unresolved-safety boundary. Do not claim mutual exclusion from a token the destination ignores.
+Reverse to lease-only ownership or single-writer routing when destination enforcement cost
+exceeds the stale-write risk it removes, or retain an explicit unresolved-safety boundary.
 
 ## Navigation, prerequisites and source scope
 
