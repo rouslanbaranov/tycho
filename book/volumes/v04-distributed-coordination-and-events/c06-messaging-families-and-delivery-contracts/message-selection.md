@@ -145,12 +145,12 @@ Text alternative: Pulsar brokers serve publishers/subscribers while separate man
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Publish / Subscribe](../../v11-pattern-atlas/c03-messaging-integration/README.md#publish-subscribe) — decision conditions and contraindications.
+> [Publish / Subscribe](../../v11-pattern-atlas/c03-messaging-integration/README.md#publish--subscribe) — decision conditions and contraindications.
 > [Point-to-Point Queue](../../v11-pattern-atlas/c03-messaging-integration/README.md#point-to-point-queue) — decision conditions and contraindications.
 > [Competing Consumers](../../v11-pattern-atlas/c03-messaging-integration/README.md#competing-consumers) — decision conditions and contraindications.
 > [Event-Driven Consumer](../../v11-pattern-atlas/c03-messaging-integration/README.md#event-driven-consumer) — decision conditions and contraindications.
 > [Durable Subscriber](../../v11-pattern-atlas/c03-messaging-integration/README.md#durable-subscriber) — decision conditions and contraindications.
-> [Message Broker / Messaging Bridge](../../v11-pattern-atlas/c03-messaging-integration/README.md#message-broker-messaging-bridge) — decision conditions and contraindications.
+> [Message Broker / Messaging Bridge](../../v11-pattern-atlas/c03-messaging-integration/README.md#message-broker--messaging-bridge) — decision conditions and contraindications.
 > [Content-Based Router](../../v11-pattern-atlas/c03-messaging-integration/README.md#content-based-router) — decision conditions and contraindications.
 > [Message Filter](../../v11-pattern-atlas/c03-messaging-integration/README.md#message-filter) — decision conditions and contraindications.
 > [Pipes and Filters](../../v11-pattern-atlas/c03-messaging-integration/README.md#pipes-and-filters) — decision conditions and contraindications.

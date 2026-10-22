@@ -47,7 +47,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
+updated_at: "2026-10-22"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -66,7 +66,7 @@ content_verified_at: null
 > [Rolling Deployment](../../v11-pattern-atlas/c10-deployment-modernization/README.md#rolling-deployment) — decision conditions and contraindications.
 > [Blue/Green Deployment](../../v11-pattern-atlas/c10-deployment-modernization/README.md#blue-green-deployment) — decision conditions and contraindications.
 > [Canary Release](../../v11-pattern-atlas/c10-deployment-modernization/README.md#canary-release) — decision conditions and contraindications.
-> [Dark Launching / Shadow Traffic](../../v11-pattern-atlas/c10-deployment-modernization/README.md#dark-launching-shadow-traffic) — decision conditions and contraindications.
+> [Dark Launching / Shadow Traffic](../../v11-pattern-atlas/c10-deployment-modernization/README.md#dark-launching--shadow-traffic) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.b938ff1a06264492a425f2eff555ae7d:0 -->
 ## Purpose and mission
