@@ -103,3 +103,24 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Error-budget decisions and revisions](budget-actions.md) — What action should a budget trigger and when should the objective be reconsidered?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+### SLI / SLO and Error Budgets
+
+An SLI is a measured ratio of good events to valid events; an SLO is the target for that ratio over
+a window, and the error budget is the allowed failure quantity. The measurement contract precedes
+the number, because a green indicator built on the wrong denominator is worse than no indicator.
+
+A hypothetical target SLO of 99.9% would allow at most 10 failures among 10,000 intents, while this
+window has 30, **consuming 300% of the target's error allowance**. Whether user cancellations,
+blocked abusive traffic, malformed requests and legitimate overload rejections count must be agreed
+before measurement; exclusion policy cannot change retrospectively to improve the score.
+
+An instrumentation design that counts only HTTP 2xx responses among requests **admitted into the
+service**, excluding 500 deliberate overload rejections before the handler, can report misleading
+health. Publish the denominator, the exclusions and the data source, and review the budget with the
+product owner.
+
+Metrics or a simpler availability check may be preferable when the user journey is not measurable.
+An SLO is a fit when the team can act on the budget and the indicator tracks a real user outcome.

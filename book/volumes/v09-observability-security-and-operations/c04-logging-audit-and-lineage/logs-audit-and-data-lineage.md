@@ -132,3 +132,19 @@ dual-write old and new versions, and keep queries working through the window.
 **Limits.** A field allowlist, retention policy and redaction owner are costs; structured fields
 can still encode sensitive values, and a schema without a migration path becomes query debt.
 Log volume is not free, and sampling must preserve security events.
+
+### Audit Trail
+
+A durable business audit records who attempted or authorized which object mutation and the resulting
+authoritative state, under a specified tamper and retention policy. It is a controlled business
+record, not a debug log with a longer retention setting.
+
+If legal obligations require atomic audit recording, architect the local commit or durable audit
+handoff explicitly; arbitrary asynchronous logs are insufficient. The booking state and required
+audit entry are committed under a chosen domain transaction/obligation, then telemetry export fails
+and lineage processing stalls. The correct user outcome may still be committed; a missing log is not
+proof that booking disappeared.
+
+If there is no mandatory forensic retention, costly immutable business audit infrastructure may be
+unnecessary for ordinary verbose debug logs. Audit is a fit when an external obligation defines the
+record, its retention and its access path; otherwise a normal log with a retention policy is cheaper.

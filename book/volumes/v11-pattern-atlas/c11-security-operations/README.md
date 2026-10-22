@@ -322,7 +322,7 @@ cross-service latency diagnosis justifies trace infrastructure.
 **Failure and recovery.** Broken context and sampling bias are common; verify propagation
 in the owner section.
 
-**Technical owner.** [Distributed tracing: context propagation, sampling and causal limits](../../v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md#purpose-and-mission) — tracing is bounded, not an SDK implementation.
+**Technical owner.** [Distributed Tracing](../../v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md#distributed-tracing) — tracing is bounded, not an SDK implementation.
 
 **Sources.** [src.otel](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-otel-traces.2026-10-21: sections "Traces", "Spans", "Context
@@ -384,7 +384,7 @@ Reverse the choice when audit completeness cannot be evidenced.
 **Failure and recovery.** Tampering and missing events are common; verify authority in the
 owner section.
 
-**Technical owner.** [Structured logging, authoritative audit and data lineage](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#engineering-walkthrough-one-approved-business-change-three-incompatible-records) — logging/audit is bounded, not a logging platform manual.
+**Technical owner.** [Audit Trail](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#audit-trail) — logging/audit is bounded, not a logging platform manual.
 
 **Sources.** [src.openlineage](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-openlineage.2026-10-21: sections "About OpenLineage", "Events",
@@ -415,7 +415,7 @@ the choice when measurement cost exceeds decision value.
 **Failure and recovery.** Gaming and window mismatch are common; verify decisions in the
 owner section.
 
-**Technical owner.** [User-visible service indicators, objectives and error-budget decisions](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations) — SLOs are bounded, not a complete measurement system.
+**Technical owner.** [SLI / SLO and Error Budgets](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md#sli-slo-and-error-budgets) — SLOs are bounded, not a complete measurement system.
 
 **Sources.** [src.sre](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-sre-slo.2026-10-21: sections "Service Level Objectives",

@@ -288,7 +288,7 @@ the validators still require a separate policy change.
 54. **Structured Logging** — `tycho.pattern.structured-logging`
     - File: `logs-audit-and-data-lineage.md`
     - Heading: `Structured Logging`; 203 words
-    - SHA-256: `41b30e5bae3d921c8b0fbf5b03c4d8ce6e74302e1c7b874d73e2f72bcf63e95f`
+    - SHA-256: `48a2bfd702316c1d1587e9883ca87ffcd1e427f1e29bee86861f036e7a84a331`
 
 55. **Database per Service** — `tycho.pattern.database-per-service`
     - File: `ownership-isolation.md`
@@ -504,3 +504,23 @@ the validators still require a separate policy change.
     - File: `service-orientation-microservices-and-distribution.md`
     - Heading: `Service-Oriented Architecture (SOA)`; 126 words
     - SHA-256: `ebb099cba82b979816a5321d263646321b92e4996da170488812fa86d9a4c419`
+
+98. **Distributed Tracing** — `tycho.pattern.distributed-tracing`
+    - File: `distributed-tracing-context-and-sampling.md`
+    - Heading: `Distributed Tracing`; 131 words
+    - SHA-256: `cbb5676f377228fbb1a3bc0a1e8ef6fb74c4ca4495ba34f39280cf76c09794e1`
+
+99. **Audit Trail** — `tycho.pattern.audit-trail`
+    - File: `logs-audit-and-data-lineage.md`
+    - Heading: `Audit Trail`; 146 words
+    - SHA-256: `48a2bfd702316c1d1587e9883ca87ffcd1e427f1e29bee86861f036e7a84a331`
+
+100. **SLI/SLO and Error Budgets** — `tycho.pattern.sli-slo-and-error-budgets`
+    - File: `service-level-indicators-objectives-and-alerts.md`
+    - Heading: `SLI / SLO and Error Budgets`; 187 words
+    - SHA-256: `277e08fee127ea19bf70757a77b773a2fc46818b7baae0cbaaf24088774efcce`
+
+101. **Polyglot Persistence** — `tycho.pattern.polyglot-persistence`
+    - File: `multi-store-selection.md`
+    - Heading: `Polyglot Persistence`; 139 words
+    - SHA-256: `f60030288c218bf6175c16a1238f54574ce6f1f40e0f9c51aae9dea2a7152c6e`

@@ -8172,16 +8172,16 @@
       "owner": {
         "document_id": "tycho.page.f921597aae854c6996459fc025a9bca3",
         "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md",
-        "heading": "Purpose and mission",
-        "anchor": "purpose-and-mission",
-        "level": 2,
-        "line": 68,
-        "unit_kind": "embedded",
+        "heading": "Distributed Tracing",
+        "anchor": "distributed-tracing",
+        "level": 3,
+        "line": 90,
+        "unit_kind": "dedicated",
         "unit_terms": [
           "selected execution story",
-          "correlation context",
+          "not an authoritative record",
           "missing span",
-          "not an authoritative record"
+          "metrics or structured logs"
         ]
       },
       "technical_evidence": {
@@ -8196,14 +8196,14 @@
           "reason": "States the limit on what a trace may be treated as proving."
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A missing span may mean no work occurred, the instrumentation failed, or the sampling policy intentionally discarded it.",
-          "reason": "Explains missing-span ambiguity but gives no detection or recovery method."
+          "reason": "Names missing-span ambiguity and the instrumentation check."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "Logging and metrics are described as separate evidence products, not as a competing mechanism with a reversal condition."
+          "state": "supported",
+          "quote": "For aggregate latency or a discrete business event, metrics or structured logs may be preferable; use tracing when the cross-component path itself is the question.",
+          "reason": "Names metrics/logs and the reversal."
         }
       },
       "decision_evidence": {
@@ -8289,22 +8289,22 @@
       "owner": {
         "document_id": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c",
         "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md",
-        "heading": "Engineering walkthrough — One approved business change, three incompatible records",
-        "anchor": "engineering-walkthrough-one-approved-business-change-three-incompatible-records",
-        "level": 2,
-        "line": 76,
-        "unit_kind": "embedded",
+        "heading": "Audit Trail",
+        "anchor": "audit-trail",
+        "level": 3,
+        "line": 136,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Durable business audit",
+          "durable business audit",
           "atomic audit recording",
-          "tamper/retention policy",
-          "missing log is not proof"
+          "correct user outcome",
+          "ordinary verbose debug logs"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Durable business audit | Who attempted/authorized which object mutation and resulting authoritative state, under a specified tamper/retention policy",
+          "quote": "A durable business audit records who attempted or authorized which object mutation and the resulting authoritative state, under a specified tamper and retention policy.",
           "reason": "Defines the audit record's content and its tamper/retention contract."
         },
         "invariant": {
@@ -8313,9 +8313,9 @@
           "reason": "States the atomicity precondition when audit recording is mandatory."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "the booking state and required audit entry are committed under a chosen domain transaction/obligation, then telemetry export fails and lineage processing stalls. The correct user outcome may still be committed; a missing log is not proof that booking disappeared.",
-          "reason": "Shows audit commit surviving telemetry loss and how to interpret a missing log, but gives no audit-specific recovery."
+          "state": "supported",
+          "quote": "The correct user outcome may still be committed; a missing log is not proof that booking disappeared.",
+          "reason": "Explains how to interpret audit/telemetry loss."
         },
         "alternative": {
           "state": "supported",
@@ -8349,16 +8349,16 @@
       "owner": {
         "document_id": "tycho.page.c987c475cc5340bcb967f4b6f963b295",
         "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
-        "heading": "Engineering walkthrough — What does a green SLO say about rejected business operations?",
-        "anchor": "engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
-        "level": 2,
-        "line": 75,
-        "unit_kind": "embedded",
+        "heading": "SLI / SLO and Error Budgets",
+        "anchor": "sli-slo-and-error-budgets",
+        "level": 3,
+        "line": 109,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "hypothetical target SLO of 99.9%",
-          "error allowance",
-          "exclusion policy",
-          "durable logical intents"
+          "good events",
+          "error budget",
+          "misleading health",
+          "Metrics or a simpler"
         ]
       },
       "technical_evidence": {
@@ -8373,14 +8373,14 @@
           "reason": "States the required exclusions agreement and the no-retrospective-change rule."
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "An instrumentation design that counts only HTTP 2xx responses among requests **admitted into the service**, excluding 500 deliberate overload rejections before the handler, can report misleading health.",
-          "reason": "Identifies a misleading-denominator failure but gives no production detection or recovery."
+          "reason": "Names the misleading denominator and required review."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing measurement mechanism and reversal condition are named in this section."
+          "state": "supported",
+          "quote": "Metrics or a simpler availability check may be preferable when the user journey is not measurable.",
+          "reason": "Names simpler measurement and the reversal."
         }
       },
       "decision_evidence": {
@@ -8529,15 +8529,16 @@
       "owner": {
         "document_id": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4",
         "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
-        "heading": "7. Multiple databases create a new synchronization problem",
-        "anchor": "7-multiple-databases-create-a-new-synchronization-problem",
-        "level": 2,
-        "line": 68,
-        "unit_kind": "embedded",
+        "heading": "Polyglot Persistence",
+        "anchor": "polyglot-persistence",
+        "level": 3,
+        "line": 110,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "data representations",
-          "derived views",
-          "freshness contract"
+          "single authoritative registration",
+          "two data representations",
+          "projection view may lag",
+          "single store"
         ]
       },
       "technical_evidence": {
@@ -8552,14 +8553,14 @@
           "reason": "States the required freshness, rebuild and recovery contract."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "View may lag, response needs a freshness contract",
-          "reason": "Names projection lag but not a full failure-recovery procedure."
+          "state": "supported",
+          "quote": "A projection view may lag; the response needs a freshness contract.",
+          "reason": "Names projection lag and the required freshness contract."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The section does not name a competing single-store alternative."
+          "state": "supported",
+          "quote": "A single store with secondary indexes may be preferable when one engine can meet the query shapes and the team cannot operate a second consistency contract.",
+          "reason": "Names the single-store alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -8996,10 +8997,10 @@
         "tycho.pattern.structured-logging"
       ],
       "unit_count": 2,
-      "dedicated_units": 1,
+      "dedicated_units": 2,
       "bounded_entries": 2,
-      "decision": "keep",
-      "rationale": "Structured logging and audit trail have two distinct units on a coherent evidence page."
+      "decision": "deepen",
+      "rationale": "Structured logging and audit trail now have separate dedicated units with distinct retention and atomicity contracts."
     },
     {
       "document_id": "tycho.page.dde63373c50f4f4a80e727b6e160def5",
@@ -9094,12 +9095,12 @@
     "owner_pages": 69,
     "shared_pages": 33,
     "owner_units": 137,
-    "dedicated_units": 99,
-    "embedded_units": 38,
+    "dedicated_units": 103,
+    "embedded_units": 34,
     "mechanism_supported": 145,
     "invariant_supported": 145,
-    "failure_recovery_supported": 130,
-    "alternative_supported": 131,
+    "failure_recovery_supported": 134,
+    "alternative_supported": 134,
     "technical_partial_bounded": 145,
     "technical_partial": 0,
     "technical_name_only": 0,
@@ -9111,8 +9112,8 @@
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
-      "keep": 18,
-      "deepen": 15,
+      "keep": 17,
+      "deepen": 16,
       "split": 0
     },
     "split_deferred": 0

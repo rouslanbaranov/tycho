@@ -85,3 +85,19 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Propagation, sampling and untrusted context](sampling-trust.md) — What does a missing span or forged context prevent a trace from proving?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+## Bounded pattern ownership notes
+
+### Distributed Tracing
+
+Distributed tracing reconstructs *a selected execution story*: a request enters a component, starts
+work, calls another component and may later complete asynchronously. The trace is assembled from
+propagated context and sampled spans, not from a complete transaction log.
+
+A trace can illuminate critical-path waiting, retries and failure propagation—but **it is not an
+authoritative record of every business effect**. A missing span may mean no work occurred, the
+instrumentation failed, or the sampling policy intentionally discarded it. Alert on instrumentation
+coverage and context rejection separately from product errors.
+
+For aggregate latency or a discrete business event, metrics or structured logs may be preferable;
+use tracing when the cross-component path itself is the question. Record the sampling policy and the
+propagation boundary so a trace is not read as proof of an effect.

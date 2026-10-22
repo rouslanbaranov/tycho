@@ -344,7 +344,7 @@ workload benefit.
 **Failure and recovery.** Stale projections, dual-write ambiguity and partial migration
 are common; verify freshness and rebuild in the owner section.
 
-**Technical owner.** [Multiple databases create a new synchronization problem](../../v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md#7-multiple-databases-create-a-new-synchronization-problem)
+**Technical owner.** [Polyglot Persistence](../../v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md#polyglot-persistence)
 — bounded selection criteria, not a complete multi-store design.
 
 **Sources.** [src.fowler-polyglot](../../../../edition/patterns/reading-ledger.v1.json)
