@@ -87,8 +87,10 @@ def validate_data(data, root=ROOT):
     require(data["summary"]["sufficient_technical"] == 0, "delivery-sufficient-technical")
     require(data["summary"]["sufficient_decision"] == 0, "delivery-sufficient-decision")
     dod = {item["id"]: item for item in data["dod"]}
-    require(dod.get("independent-editorial-review", {}).get("status") == "met",
-            "delivery-human-review-missing")
+    require(dod.get("independent-editorial-review", {}).get("status") == "not-met",
+            "delivery-independent-review-claim")
+    require(dod.get("owner-confirmed-human-review", {}).get("status") == "met",
+            "delivery-owner-confirmed-review-missing")
     require(dod.get("owner-acceptance", {}).get("status") != "met",
             "delivery-owner-acceptance-claim")
     require(dod.get("technical-sufficiency", {}).get("status") != "met",
