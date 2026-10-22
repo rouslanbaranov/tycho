@@ -134,6 +134,10 @@ concurrency, timeouts and error translation. Cache-aside with application-owned 
 policy visible; prefer read-through when the cache can call the source and the loading contract is
 uniform.
 
+**Limits.** The cache must implement the source protocol, authentication and backpressure;
+a bypass with different client semantics defeats the uniformity claim. A fill that hides source
+errors is a correctness defect, not a performance choice.
+
 ### Write-Through Cache
 
 A write-through path updates the cache and the authoritative store in one controlled sequence, so a
@@ -145,6 +149,10 @@ invalidate with an audit trail of the failed write. Write-behind or cache-aside 
 reduces write latency; choose write-through when read-after-write freshness outweighs the extra
 write cost.
 
+**Limits.** It doubles write cost and still needs retry/idempotency; a cache and store pair
+without a shared transaction cannot promise atomicity. A version check must prevent a late retry
+from overwriting a newer write.
+
 ### Write-Behind / Write-Back
 
 A write-behind cache acknowledges the cached write and flushes it to durable storage asynchronously.
@@ -154,6 +162,10 @@ own durable or replicated record.
 Cache loss before flush discards acknowledged writes; track the flush backlog and make the
 durability window explicit to callers. Write-through acknowledges only after both sides update;
 prefer write-behind when write throughput dominates and a measured loss window is acceptable.
+
+**Limits.** Flush ordering, retry and shutdown drain are part of the durability contract; an
+unbounded backlog silently breaks the declared loss window. Batch flushes must preserve per-key
+order, and a restart must replay the pending buffer before accepting new writes.
 
 ### Write-Around
 
@@ -166,6 +178,9 @@ or a bounded TTL and test a read immediately after a write. Write-through keeps 
 the cost of write amplification; choose write-around when write volume is high and later reads can
 tolerate a refill.
 
+**Limits.** It shifts cost to later reads and increases cold-miss load; latency-critical paths
+may need prewarming or a bounded fallback. Invalidation timing is part of the read contract.
+
 ### Multi-Level Caching
 
 A multi-level cache keeps a fast local tier in front of a shared tier, trading fewer remote reads
@@ -176,3 +191,7 @@ Tier divergence serves different values from different processes; version keys a
 propagation delay of each invalidation path. One shared cache keeps a single copy but pays remote
 latency; add a local tier when the measured remote-read cost exceeds the staleness and invalidation
 effort.
+
+**Limits.** Each added tier multiplies invalidation paths and failure modes; a tier without an
+owner becomes an unbounded stale copy. Test each tier during a rolling deploy and after a cold
+start.

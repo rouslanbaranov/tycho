@@ -84,3 +84,23 @@ the validators still require a separate policy change.
     - File: `static-stability.md`
     - Heading: `Immutable Infrastructure`; 131 words
     - SHA-256: `da0ec4a38b5b605c61261fecb745f4cad886a16ea992d5f5d896f0c6810bcc1c`
+
+14. **Read-Through Cache** — `tycho.pattern.read-through-cache`
+    - File: `local-and-distributed-cache-design.md`
+    - Heading: `Read-Through Cache`; 129 words
+    - SHA-256: `b2e81e19b4939b9396a7d1a6dee0a59ed478bd2519bd26bc5192138e71e66aba`
+
+15. **Write-Through Cache** — `tycho.pattern.write-through-cache`
+    - File: `local-and-distributed-cache-design.md`
+    - Heading: `Write-Through Cache`; 122 words
+    - SHA-256: `b2e81e19b4939b9396a7d1a6dee0a59ed478bd2519bd26bc5192138e71e66aba`
+
+16. **Write-Around** — `tycho.pattern.write-around`
+    - File: `local-and-distributed-cache-design.md`
+    - Heading: `Write-Around`; 127 words
+    - SHA-256: `b2e81e19b4939b9396a7d1a6dee0a59ed478bd2519bd26bc5192138e71e66aba`
+
+17. **Multi-Level Caching** — `tycho.pattern.multi-level-caching`
+    - File: `local-and-distributed-cache-design.md`
+    - Heading: `Multi-Level Caching`; 123 words
+    - SHA-256: `b2e81e19b4939b9396a7d1a6dee0a59ed478bd2519bd26bc5192138e71e66aba`
