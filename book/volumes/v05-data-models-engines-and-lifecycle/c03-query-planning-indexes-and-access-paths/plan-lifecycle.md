@@ -105,14 +105,15 @@ An index table is an application-owned lookup table that maps a query key to a p
 locator. The application maintains it on the write path, separately from any native database index,
 because the query shape, sort order or cross-store join is not served by the primary store.
 
-Every lookup row must resolve to the current base row; the mapping and the base write should commit in
-one local transaction, or the write path must publish a durable repair intent. Dual-write ambiguity,
-partial backfill, duplicate lookup keys and stale rows are common. Reconcile with a repair job, keep
+Every lookup row must resolve to the current base row; the mapping and the base write should
+commit in one local transaction, or the write path must publish a durable repair
+intent. Dual-write ambiguity, partial backfill, duplicate lookup keys and stale rows
+are common. Reconcile with a repair job, keep
 the lookup key immutable and bound rebuild time.
 
-A native secondary index, a materialized view or a query-time join may be preferable when the primary
-store already serves the access path. An index table is a fit when the lookup must be shared across
-stores and the write path can own its repair.
+A native secondary index, a materialized view or a query-time join may be preferable when the
+primary store already serves the access path. An index table is a fit when the primary store cannot serve a stable,
+frequently used lookup and the write path can own its repair.
 
 ## Navigation, prerequisites and source scope
 

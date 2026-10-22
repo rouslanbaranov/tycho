@@ -184,14 +184,15 @@ preempt an in-flight low-priority handler, so the handler's latency remains part
 path.
 
 The broker must support the priority field and the queue must define its levels and per-level
-capacity. Criticality must be authenticated and propagated: a class visible only at the edge cannot
-protect a downstream dependency, which sees an ordinary caller. A naive priority queue can starve
-ordinary work forever, so define maximum wait, aging or reserved capacity and the action when a low
-class exceeds its wait bound.
+capacity. Criticality must be authenticated and verified at every hop: a class visible only at the
+edge cannot protect a downstream dependency, which sees an ordinary caller. A global class also
+needs a per-tenant cap, or one tenant can consume the high-priority share.
+A naive priority queue can starve ordinary work forever, so define maximum wait,
+aging or reserved capacity and the action when a low class exceeds its wait bound.
 
-FIFO with admission control, separate lanes per class, or a shared queue with reserved capacity may
-be preferable when priority cannot be authenticated or starvation is unacceptable. A priority queue
-is a fit when classes are real, the broker supports priorities and a starvation bound is enforced.
+A FIFO queue with admission control, separate lanes per class, or reserved capacity is preferable
+when priority cannot be authenticated or starvation is unacceptable. A priority queue is a fit when
+classes are real, the broker supports priorities and a starvation bound is enforced.
 
 ## Navigation, prerequisites and source scope
 

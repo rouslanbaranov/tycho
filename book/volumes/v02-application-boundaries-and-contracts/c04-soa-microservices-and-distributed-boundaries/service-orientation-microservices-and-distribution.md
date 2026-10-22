@@ -116,9 +116,10 @@ Mediation can translate, route and meter, but it must not become a hidden domain
 Governance needs a contract owner, a deprecation window and an observability path for mediated
 calls; a centralized bus is a shared bottleneck and single point that must be sized and failed over.
 
-Microservices, an API gateway or a modular monolith may be preferable when capabilities are few or
-the governance layer adds more operational surface than autonomy. SOA is a fit when many independent
-owners must integrate through stable contracts and mediation is a real, owned capability.
+Microservices may be preferable when capabilities map to independent product teams; a
+modular monolith when one ownership boundary suffices. SOA is a fit when many
+independent owners must integrate through stable contracts and mediation is a real,
+owned capability.
 
 ## Integrated decision and reading route
 

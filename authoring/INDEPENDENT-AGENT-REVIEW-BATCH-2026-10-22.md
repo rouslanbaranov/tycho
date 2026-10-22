@@ -984,3 +984,15 @@ Verdict: **pass-with-findings**. Findings: 2.
 - Unit repeats earlier comparison clause verbatim and gives assignment tests rather than a hot-tenant failure/recovery path.
 - Card hard contraindication on operational cost of many assignments is absent.
 
+
+## Fourth re-review after remediation
+
+### Hedged Requests
+
+Verdict: **pass**. Findings: 0. The split mitigation table is repaired and the card/owner link resolves.
+
+
+### Service-Oriented Architecture (SOA) — latest re-review
+
+Verdict: **pass**. Findings: 0. The alternative now maps microservices to independent product teams and the modular monolith to one ownership boundary; mediation, registry, bus bottleneck and observability are present.
+
