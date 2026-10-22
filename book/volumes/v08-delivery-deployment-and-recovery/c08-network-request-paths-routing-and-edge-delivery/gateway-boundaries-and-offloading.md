@@ -74,14 +74,20 @@ when the trust boundary is explicit and the backend still enforces the authority
 
 A gateway can centralize routing, quotas and common policy. It is a trusted intermediary only
 for the functions it actually enforces. Keep resource authorization at the boundary owning
-the resource, with documented delegation if a central decision service is used. Removing every backend check creates a privileged bypass path unless network and
-identity contracts actually exclude it.
+the resource, with documented delegation if a central decision service is used. Removing
+every backend check creates a privileged bypass path unless network and identity contracts
+actually exclude it.
 
 **Failure and alternative.** Gateway bypass, configuration drift, a stale route and an outage
 that blocks every backend are common. Keep backend authorization, test the network path that
 excludes the gateway and version gateway policy. A BFF, a service-mesh sidecar or direct
 backend exposure with an explicit identity contract may be preferable when the gateway adds a
 shared bottleneck without a required central policy.
+
+**Limits.** A gateway cannot certify object ownership or replace backend authorization.
+A bypass path, a compromised policy plane or an unversioned configuration can defeat the
+edge. Keep gateway policy versioned, tested and observable, and treat a gateway outage as
+its own failure domain rather than assuming every backend remains reachable.
 
 ## Gateway Aggregation
 

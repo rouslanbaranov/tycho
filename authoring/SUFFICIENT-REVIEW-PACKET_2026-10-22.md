@@ -22,7 +22,7 @@ Do not edit the repository. Do not treat this packet as approval.
 2. **API Gateway** — `tycho.pattern.api-gateway`
    - File: `gateway-boundaries-and-offloading.md`
    - Heading: `API Gateway`; 120 words
-   - SHA-256: `f6bc18e85d3fcca876ed0a238c792265f7843f65cff195c1b448717263b71f58`
+   - SHA-256: `941beddfff959af3cc8d6c8097da1f6bae24563212948896dcf114689a8baafa`
 
 3. **Event Sourcing** — `tycho.pattern.event-sourcing`
    - File: `cqrs-event-sourcing-and-projections.md`
