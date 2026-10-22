@@ -149,3 +149,13 @@ Codes: M mechanism, I invariant, F failure/recovery, A alternative.
 - **All 145 entries are `partial-bounded`, 0 are partial, 0 are `sufficient`.** The
   remaining gates are sufficient evidence, independent per-page review and owner acceptance,
   not missing bounded evidence.
+## Page splits — 2026-10-22
+
+- Discovery/routing split: new `routing-and-health.md` with a stable ID.
+- TLS/gateway split: new `gateway-boundaries-and-offloading.md` with a stable ID.
+- Identity split: new `authorization-policy-and-least-privilege.md` and
+  `multitenant-isolation.md` with stable IDs; the identity page retains federation and
+  workload identity.
+- All three deferred split gates are closed. The canonical corpus is 423 pages.
+- Remaining semantic gate: owner acceptance. Remaining delivery gaps: technical
+  sufficiency, decision sufficiency and owner acceptance.

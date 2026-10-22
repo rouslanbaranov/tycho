@@ -28,8 +28,10 @@ Owner acceptance remains open. See
 
 **Deep-source expansion (#228):** started 2026-10-22; all 145 entries now have all four
 evidence dimensions supported and are `partial-bounded` (0 technical partial, 0 sufficient).
-The remaining gates are sufficient evidence, independent per-page review and owner
-acceptance; see the [deep-source plan](DEEP-SOURCE-EXPANSION-PLAN_2026-10-22.md).
+The three deferred page splits were performed with stable IDs; the canonical corpus is 423
+pages. The remaining semantic gate is owner acceptance; the remaining delivery gaps are
+technical sufficiency, decision sufficiency and owner acceptance. See the
+[deep-source plan](DEEP-SOURCE-EXPANSION-PLAN_2026-10-22.md).
 
 **Updated:** 2026-10-20, after manuscript acceptance and merge. See [status reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md) and [roadmap](ROADMAP.md).
 
