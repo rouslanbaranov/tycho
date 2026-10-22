@@ -152,17 +152,18 @@ Exercise a stale process, a missing telemetry stream, a duplicate publication, a
 
 ### Feature Flags-Feature Toggles
 
-A flag decouples deployment from exposure by evaluating a versioned value at request time, scoped by
-tenant, user or cohort, with a documented default and kill switch. The flag is runtime policy, not a
+A runtime, versioned value scoped by tenant, user or cohort separates exposure from deployment,
+with a default and kill switch. The flag is runtime policy, not a
 replacement for a release gate.
 
-A flag is also not a substitute for an authorization check. Each evaluation needs the flag version,
+Flags never replace an authorization check. Each evaluation needs the flag version,
 scope and default; on evaluation failure the default must be the safe branch, not a silent enable.
 Expose the decision and snapshot age so stale exposure is visible; bound snapshot age, alert on
 staleness and fall back to last-known-good or the safe default. Audit every override, cap the flag's
 lifetime and remove it after the rollout.
 
-A canary or branch-by-abstraction may be preferable when the flag would become a permanent
-configuration surface. A flag is a fit when exposure must be separable from deployment and the
+A canary or branch-by-abstraction is preferable when the toggle would become permanent
+configuration. A flag is a fit when exposure must be separable from deployment and the
 evaluation path is bounded, with an owner, a cleanup date and an audit
 trail.
+
