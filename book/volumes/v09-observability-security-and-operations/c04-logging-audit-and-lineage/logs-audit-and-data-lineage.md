@@ -120,3 +120,7 @@ Schema drift or an unredacted field breaks queries or leaks data; validate the s
 and review field allowlists when adding events. Unstructured text parsed at query time is cheaper to
 start; adopt structured events when consistent querying, correlation or retention obligations
 justify the schema.
+
+**Limits.** A field allowlist, retention policy and redaction owner are costs; structured fields
+can still encode sensitive values, and a schema without a migration path becomes query debt.
+Log volume is not free, and sampling must preserve security events.

@@ -149,6 +149,14 @@ deadlines, mark missing parts or fail the composition explicitly. Build a mainta
 client-specific backend for frontend; prefer composition when the sources are authoritative and the
 caller needs a live view.
 
+**No snapshot.** Per-owner reads happen at different times, so the aggregate can mix owner
+revisions; it is not a cross-source snapshot, and a caller's just-committed write may be
+absent. Read-your-writes needs per-source version/as-of markers or a read model.
+
+**Query shape.** Filtering, sorting and pagination cannot generally be delegated to owners;
+the composer over-fetches, joins in memory and must bound payload, memory and merged-page
+stability. A maintained read model is often cheaper for repeated shaped queries.
+
 **Limits.** Fan-out latency is the max of participants; per-source authorization, versioning
 and partial-failure schema are costs, and a maintained read model may be cheaper for repeated
 composition. A composition endpoint is not a transaction.

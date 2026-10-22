@@ -150,9 +150,26 @@ reconcile-or-reject post-expiry behavior.
 
 Re-review returned **pass** with no findings. The current verdict is **pass**.
 
+## Clean / Onion Architecture — pass-with-findings
+
+Reviewer verdict: **pass-with-findings**. Findings: no boundary-data/DTO mapping rule;
+no limit on what the dependency check proves and no Clean/Onion reversal. Remediation adds
+domain-entity containment, owned DTO/port mapping, mapping tests, runtime-coupling caveat and
+the mapping-overhead cutoff.
+
+Not re-reviewed. Verdict remains **pass-with-findings**.
+
+## API Composition — pass-with-findings
+
+Reviewer verdict: **pass-with-findings**. Findings: no cross-source snapshot/consistency
+rule; no query-shape/over-fetch limit. Remediation adds the no-snapshot guarantee,
+read-your-writes markers, and filtering/sorting/pagination over-fetch and merged-page bounds.
+
+Not re-reviewed. Verdict remains **pass-with-findings**.
+
 ## Limits
 
-- Ten sections, not 145 entries or 423 pages.
+- Twelve sections, not 145 entries or 423 pages.
 - Non-human review; no independent human sign-off.
 - No `sufficient` promotion; validators still require a complete review record and policy
   change.

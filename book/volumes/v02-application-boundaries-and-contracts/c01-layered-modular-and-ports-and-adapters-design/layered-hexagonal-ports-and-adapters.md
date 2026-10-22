@@ -147,3 +147,12 @@ Convenience imports erode the boundary until the domain must change for a techno
 remedy is an enforceable dependency test and a deliberate adapter, not another layer name. Hexagonal
 ports and adapters expresses the same inward rule with explicit application ports; prefer the
 simpler layering when the port indirection adds no tested change benefit.
+
+**Boundary data.** Domain entities stay inside the boundary; data crossing it is a DTO or
+port contract with an owned mapper. The adapter validates transport input, the domain refuses
+framework types, and mapping tests preserve meaning rather than only field names.
+
+**Limits.** A static dependency check proves imports, not runtime coupling: reflection, a
+service locator or generated wiring can still bind the domain to a framework. Clean/onion is
+the wrong choice when mapping overhead dominates a small CRUD application or when ports have
+no genuinely different implementations; prefer simpler layering then.

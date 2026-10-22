@@ -162,3 +162,7 @@ Synchronized retries convert a brief failure into a sustained overload; compare 
 counts and retry arrivals with the planned budget and stop the retry policy when pushback persists.
 Retry without jitter at a single layer, or do not retry at all when the failure is non-retryable;
 add jitter when many clients share the same dependency and retry signal.
+
+**Limits.** Jitter reduces synchronization but does not bound aggregate load; a retry storm can
+still overload a shared dependency, and the policy must respect the deadline and cancel
+remaining attempts.

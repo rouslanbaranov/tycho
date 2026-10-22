@@ -16,8 +16,8 @@ Do not edit the repository. Do not treat this packet as approval.
 
 1. **Clean / Onion Architecture** — `tycho.pattern.clean-onion-architecture`
    - File: `layered-hexagonal-ports-and-adapters.md`
-   - Heading: `Clean / Onion Architecture`; 120 words
-   - SHA-256: `b94cc8ca4c071ccaa69ffc02f57de4c365aef84911239ffd92fe90eb7216ec1c`
+   - Heading: `Clean / Onion Architecture`; 211 words
+   - SHA-256: `50bdc8061bb0a2707ef3774ba91658876ae0fadb03bc4488a543a5671da61590`
 
 2. **API Gateway** — `tycho.pattern.api-gateway`
    - File: `gateway-boundaries-and-offloading.md`
@@ -263,12 +263,12 @@ the validators still require a separate policy change.
 49. **Backend for Frontend (BFF)** — `tycho.pattern.backend-for-frontend-bff`
     - File: `http-rpc-contracts-and-compatibility.md`
     - Heading: `Backend for Frontend (BFF)`; 143 words
-    - SHA-256: `cfe157f4aee6b636c59fbdb0af4fb2d9636b18e691fe6e7d550fa28be068a479`
+    - SHA-256: `dcc8eb423e5d9c4d8485a95f9895c3a19b972dd18eb8ee57f9d074a77219ccfe`
 
 50. **API Composition** — `tycho.pattern.api-composition`
     - File: `http-rpc-contracts-and-compatibility.md`
-    - Heading: `API Composition`; 123 words
-    - SHA-256: `cfe157f4aee6b636c59fbdb0af4fb2d9636b18e691fe6e7d550fa28be068a479`
+    - Heading: `API Composition`; 198 words
+    - SHA-256: `dcc8eb423e5d9c4d8485a95f9895c3a19b972dd18eb8ee57f9d074a77219ccfe`
 
 51. **Zero Trust Architecture** — `tycho.pattern.zero-trust-architecture`
     - File: `authorization-policy-and-least-privilege.md`
@@ -279,3 +279,13 @@ the validators still require a separate policy change.
     - File: `object-credentials.md`
     - Heading: `Valet Key`; 129 words
     - SHA-256: `538595c885d153b4bf16c14db24ea0fc7b3b7c220e3bbcc431543fe6f0a6fa9b`
+
+53. **Retry with Jitter** — `tycho.pattern.retry-with-jitter`
+    - File: `deadlines-retries.md`
+    - Heading: `Retry with Jitter`; 137 words
+    - SHA-256: `c6a47e44d7383440d61347ee8ae8c134d553bc3c7aac06086e833d828fbe78b1`
+
+54. **Structured Logging** — `tycho.pattern.structured-logging`
+    - File: `logs-audit-and-data-lineage.md`
+    - Heading: `Structured Logging`; 124 words
+    - SHA-256: `9a8bfe34576d0df53ac2e70a032bff6b92377054136362c64cb424efa2d2168f`
