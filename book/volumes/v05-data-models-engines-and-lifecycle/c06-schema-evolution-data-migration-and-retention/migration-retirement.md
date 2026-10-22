@@ -24,17 +24,19 @@ route_hints:
     - "migration"
     - "retirement"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.flyway"
+    - "src.gh-ost"
   claim_ids: []
-  status: "unknown"
-  notes: "Bounded question from tycho.page.357c2d162bd44f3aa06a995a1e691551; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
+  status: "source-linked"
+  notes: "Read source-plan units; page-level, not claim-mapped."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-20"
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-21"
+updated_at: "2026-10-22"
 source_inspection_date: null
 content_verified_at: null
 ---

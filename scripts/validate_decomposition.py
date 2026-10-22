@@ -48,7 +48,18 @@ def validate(root=ROOT):
         require(record['baseline_body_sha256']==old_migrations[original_id]['migrated_payload_sha256'],'accepted-baseline-payload')
         require(record['source_path'] in metadata,'missing-integrated-page')
         current=metadata[record['source_path']]
-        require(all(current[k]==record['original_metadata'][k] for k in protected),'altered-original-provenance')
+        for key in protected:
+            if current[key] == record['original_metadata'][key]:
+                continue
+            if key == 'evidence_scope':
+                previous = sha(json.dumps(record['original_metadata'][key], sort_keys=True,
+                                        separators=(',', ':')))
+                current_sha = sha(json.dumps(current[key], sort_keys=True,
+                                            separators=(',', ':')))
+                require(authorized(root, 'decomposition_metadata', record['source_path'],
+                                   previous, current_sha), 'altered-original-provenance')
+                continue
+            require(False, 'altered-original-provenance')
         require(len({r['index'] for r in record['sections']})==len(record['sections']),'duplicate-source-section')
         for section in record['sections']:
             key=(original_id,section['index']);expected.add(key)

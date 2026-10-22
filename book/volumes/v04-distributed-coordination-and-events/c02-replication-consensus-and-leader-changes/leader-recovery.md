@@ -24,10 +24,13 @@ route_hints:
     - "leader"
     - "recovery"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.kleppmann-distributed-locking"
+    - "src.kubernetes"
+    - "src.raft"
   claim_ids: []
-  status: "unknown"
-  notes: "Bounded question from tycho.page.1b2657011d454460856103419095031b; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
+  status: "source-linked"
+  notes: "Read source-plan units; page-level, not claim-mapped."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-20"

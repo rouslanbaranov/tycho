@@ -64,6 +64,9 @@ Resolved metadata findings:
 - **F-016/F-018 (owner-page hygiene):** five slash-heading backlinks use the correct
   double-hyphen anchors and the three cited workflow-failure lines are wrapped; four owner
   pages changed and 21 owner-linked records carry a remediation note.
+- **F-014/F-020/F-021/F-022 (content hygiene):** Circuit Breaker fallback, Static Content
+  Hosting cost/version authority, Shuffle Sharding containment/recovery and the 11 empty
+  evidence-scope blocks are now recorded; 14 owner pages changed.
 
 Open findings:
 
@@ -71,7 +74,7 @@ Open findings:
   any verdict change.
 - **Major:** F-009 Expand-and-Contract, F-010 Event Sourcing, F-011 Cache-Aside,
   F-012 Negative Caching, F-013 Process Manager, F-015 duplication.
-- **Minor:** F-014, F-020–F-022.
+- **Minor:** none open; F-008, F-014 and F-016–F-022 are resolved or remediated.
 
 No page, card or `sufficient` state was changed by this integration. The delivery-evidence
 artifact and validator were updated for F-007; owner page bytes remain at the audit head.

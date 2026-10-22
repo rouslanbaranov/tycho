@@ -30,9 +30,9 @@ This set introduces three missing properties:
 | [test_tycho_qrels.py](../tests/test_tycho_qrels.py) | Offline validation and metric tests. |
 
 The dataset is pinned to route snapshot
-`2a017c8c85f3e633edc60e647fb447e32e4e48bd3e1af1b795c4074127e40591` (423 documents).
+`2b3151201de134f793654389121fca24a198ea19d77c0e6764e176c2529be42f` (423 documents).
 Earlier pins were replaced after the source remediations, V11 label fixes and owner-page
-anchor/line-length fixes; no accepted answer pointed at a V11 page.
+hygiene changes; no accepted answer pointed at a V11 page.
 
 ## How labels were constructed
 
@@ -103,10 +103,10 @@ nDCG@10 was 0.558 over 95 answerable items. Dev page hit@5 was 0.740 and chapter
 failure 0.800, fact 0.900, change impact 0.857, synthesis 0.667, contradiction 0.600,
 trade-off 0.556. All five unanswerable items returned results, so refusal is not measured.
 
-Re-pin 2026-10-22: the source remediations, V11 label fixes and owner-page
-anchor/line-length fixes changed the route snapshot to
-`2a017c8c85f3e633edc60e647fb447e32e4e48bd3e1af1b795c4074127e40591` and the section
-snapshot to `248ddb325b5d…`; the 100-item metrics above are unchanged.
+Re-pin 2026-10-22: the source remediations, V11 label fixes and owner-page hygiene
+changes moved the route snapshot to
+`2b3151201de134f793654389121fca24a198ea19d77c0e6764e176c2529be42f` and the section
+snapshot to `6f1feea0d29a…`; the 100-item metrics above are unchanged.
 
 ## Provisional acceptance thresholds
 

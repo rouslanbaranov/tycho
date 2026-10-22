@@ -25,10 +25,12 @@ route_hints:
     - "refresh"
     - "semantics"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.aws-caching-strategies"
+    - "src.microsoft-caching-guidance"
   claim_ids: []
-  status: "unknown"
-  notes: "Bounded question from tycho.page.33742c54f667446cbf57cb9f3696a533; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
+  status: "source-linked"
+  notes: "Read source-plan units; page-level, not claim-mapped."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-20"

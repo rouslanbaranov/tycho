@@ -187,6 +187,10 @@ await one shared database pool, the endpoint assignment proves little. Test the 
 graph, the assignment stability across restarts, the shard size and the measured tenant overlap
 under pool changes. Too few shards or an unstable assignment erodes the isolation benefit.
 
+Containment after a failed worker requires reassigning affected tenants and rechecking the
+shared dependency graph; replacing the worker alone can preserve the same overlap. Measure
+recovery time and tenant impact, not only steady-state isolation.
+
 A fixed cell gives a tenant a durable home and a clear population boundary. Shuffle sharding is
 preferable when many tenants share a pool and measured overlap reduces correlated failure without
 dedicating a cell to each one.

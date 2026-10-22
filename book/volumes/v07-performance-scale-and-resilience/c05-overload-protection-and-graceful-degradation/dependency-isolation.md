@@ -38,7 +38,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-21"
+updated_at: "2026-10-22"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -122,6 +122,10 @@ The open state records why it opened and the cooldown; half-open limits concurre
 closes only after consecutive successes. Rejected calls are not dependency failures and need
 their own metric. A breaker must not replace timeout, backpressure or a retry budget, and an
 open caused by local resource exhaustion hides the real bottleneck.
+
+An open breaker needs an explicit fallback or fail-fast contract; a fallback that calls the
+same dependency or an unbounded alternate path only hides the outage. Record fallback
+ownership and the user-visible degradation.
 
 A retry budget with jitter, a rate limit or a bounded timeout may be preferable when failures
 are not fast. A breaker is a fit when failures are fast and repeated calls amplify them.
