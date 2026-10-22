@@ -110,6 +110,15 @@ An invalid schema or permanently rejected target is not repaired by retrying for
 
 For a fictional failed publication command K, repair may require correcting input while preserving the same logical effect identity, or creating an explicitly new operation if intent changes. Replaying with a new ID merely to bypass deduplication risks a duplicate external effect. Recheck current authorization before repair.
 
+**Dead-letter mechanism.** A dead-letter channel routes a message that exceeds its retry or
+age policy to a quarantine queue, preserving payload, headers and failure reason. It is a
+holding and triage mechanism, not delivery, repair or an automatically safe replay.
+
+**Alternative.** Retrying with backoff, dropping with an audit record, or parking the work in
+a repair table/outbox may be preferable when the failure is deterministic or the broker
+cannot retain evidence safely. Reverse the DLQ choice when quarantine retention and manual
+repair cost exceed the value of preserving the message.
+
 ### Workflow history and upgrades
 
 Temporal's overview describes replay against recorded history; its patching documentation explains explicit branches for compatible changes. That supports a concrete concern: changing code that old histories will replay is an ongoing compatibility obligation. It does not prove arbitrary application effects are exactly once.
@@ -161,7 +170,10 @@ A claim check stores a large or sensitive payload outside the message and sends 
 token instead. It needs payload lifecycle, authorization, expiry, integrity and a cleanup
 rule for abandoned claims. Use it when message size, retention or access boundaries make
 an inline payload unsafe. Do not use it when the payload is small enough to inline or when
-an external store would create an unacceptable consistency dependency.
+an external store would create an unacceptable consistency dependency. An untracked claim store becomes
+a data-retention liability. Bind the claim token to the message and tenant and to a payload
+digest; a token must not resolve to another payload. The retrieval hop needs a latency budget
+and bounded retries.
 
 The failure path is an orphaned payload or a token that outlives its authorization; expire
 and garbage-collect claims, and make the consumer fail closed when the claim cannot be
@@ -172,21 +184,53 @@ transport can carry it safely.
 
 A correlation identifier ties together messages that belong to one request, workflow or
 conversation. It needs a generation rule, propagation across asynchronous boundaries, a
-retention window and a collision check. Use it when independent messages must be joined
-for diagnosis, deduplication or reply routing. Do not use it as an authorization token or
+retention window and a collision check. Uniqueness is scoped to the operation, not global; a
+value reused across operations is a collision, and generation must verify that scope. Use it
+when independent messages must be joined for diagnosis, deduplication or reply routing. Do not use it as an authorization token or
 when the transport already provides an equivalent identity.
 
 The failure path is a lost or duplicated identifier; carry it in the message contract and
-record it at every boundary. A transport-native message identity is the alternative when
+record it at every boundary. Ambiguous matching or an expired identifier needs a disposition:
+quarantine unmatched messages, resolve by a secondary key, or reissue; an expired identifier
+maps to a dead-letter or audit record with an owner. A transport-native message identity is the alternative when
 the broker guarantees the needed scope and lifetime.
+
+**Limits.** Correlation is not deduplication: it groups messages but does not prove one effect;
+identifier retention and trust boundaries need an owner.
 
 ### Request-Reply Messaging
 
 A requester sends a message with a reply address and a correlation value, and the responder returns
-a message that the requester matches to the original request. A reply must correlate to exactly one
+a message that the requester matches to the original request. The reply channel is durable, has an
+owner and is cleaned after its retention window. A reply must correlate to exactly one
 outstanding request and must not be processed as a new command by another consumer.
 
 A lost request or reply leaves an unresolved operation; expose the outstanding request record, apply
-a reply deadline and reconcile before retrying. Synchronous RPC with a deadline is simpler when the
-responder is reachable and the work fits the request budget; choose messaging when availability or
+a reply deadline and reconcile before retrying. A reply after the deadline is late, not valid for
+a new operation: detect it from the request state and quarantine or audit it. A duplicate reply is
+deduplicated by request and responder identity; only the first accepted reply is applied. Request
+state and dedup records must outlive the reply deadline, or a late reply becomes an orphan with no
+route. Synchronous RPC with a deadline is simpler when the responder is reachable and the work fits
+the request budget; choose messaging when availability or
 latency requires decoupling.
+
+**Limits.** Reply queues, correlation state and orphaned replies are operational costs; a lost
+reply must be distinguishable from a slow one, and the requester needs idempotent effects.
+
+### Dead Letter Channel-DLQ
+
+A dead-letter channel routes a message that exceeds its retry or age policy to a quarantine queue,
+preserving payload, headers and failure reason. The DLQ is a policy state, not a second work queue
+that silently retries forever.
+
+An invalid schema or permanently rejected target is not repaired by retrying forever. Classify
+transient, permanent and unknown outcomes; cap attempts and total age; preserve enough evidence in
+quarantine to diagnose without leaking payloads. The DLQ needs an owner, an alert threshold, a
+retention horizon, a capacity limit, an access policy and a cleanup owner. A replay procedure
+preserves the original effect identity, reauthorizes the action and checks whether the effect was
+already committed before republishing; a blind replay is a duplicate-effect risk.
+
+Retrying with backoff, dropping with an audit record, or parking the work in a repair table/outbox
+may be preferable when the failure is deterministic or the broker cannot retain evidence safely. A
+DLQ is a fit when the failure is inspectable and a human or repair job can decide the terminal
+outcome.

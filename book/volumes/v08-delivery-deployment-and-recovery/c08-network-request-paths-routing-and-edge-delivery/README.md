@@ -80,8 +80,10 @@ Follow one operation from name resolution to the authoritative service and back.
 | Page | Question |
 |---|---|
 | [Discovery and selection](discovery-balancing.md) | How do clients find a usable backend and avoid concentrating work on it? |
+| [Request routing and health](routing-and-health.md) | Which route selects a backend, and which health signal may admit or remove it? |
 | [Connections and shutdown](connections-draining.md) | What can an interrupted stream reveal about an application effect? |
 | [Trust at proxies and gateways](tls-gateway-boundaries.md) | Which principal and transport boundary does each hop actually establish? |
+| [Gateway boundaries and offloading](gateway-boundaries-and-offloading.md) | Which policy and connection functions may a gateway own without hiding backend authority? |
 | [Edge cache and origin protection](edge-cache-origin.md) | Which representations may be cached and what happens when the origin is unavailable? |
 
 ## Synthesis and counterexample

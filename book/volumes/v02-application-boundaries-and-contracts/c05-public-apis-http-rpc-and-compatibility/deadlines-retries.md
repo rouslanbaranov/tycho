@@ -59,6 +59,23 @@ A **hypothetical** 900-ms request budget could be partitioned into 50 ms of edge
 
 The [gRPC retry guide](https://grpc.io/docs/guides/retry/) distinguishes transparent retries from configured retry policies; configurable retries are limited by status, attempts, backoff and commitment boundaries. A service configuration can also set per-method timeouts and retry/hedging behavior. These client mechanisms cannot infer application effect identity: an RPC retry is safe only when the underlying operation semantics and downstream effects allow it.
 
+**Exponential backoff.** A retry delay should grow with each failed attempt, be capped, and be
+randomized with jitter so clients do not retry in lockstep. The attempt cap, total delay and
+remaining deadline bound the policy; server pushback/backpressure should reduce or stop
+retries. Backoff does not make a non-idempotent effect safe.
+
+**Timeout and deadline.** A timeout is a local wait bound on one operation; the request
+deadline is the caller's end-to-end budget. Each hop should use at most the remaining
+deadline, minus its own processing and margin, and propagate the remainder. Cancellation
+stops work where possible but does not roll back a committed effect; an ambiguous timeout
+requires outcome lookup.
+
+**Alternatives.** Do not retry when the failure is permanent, the operation has no effect
+identity, or the remaining deadline cannot fit the attempt; fail fast or queue. A shorter
+local timeout with explicit cancellation may protect capacity better than a long caller
+deadline. Propagate a deadline when the caller has a real end-to-end budget; use
+independent timeouts only when each hop is genuinely independent.
+
 **Retry decision contract:**
 
 - First ask whether the operation is read-only, semantically idempotent, or protected by an application effect key.
@@ -145,3 +162,56 @@ Synchronized retries convert a brief failure into a sustained overload; compare 
 counts and retry arrivals with the planned budget and stop the retry policy when pushback persists.
 Retry without jitter at a single layer, or do not retry at all when the failure is non-retryable;
 add jitter when many clients share the same dependency and retry signal.
+
+**Limits.** Jitter reduces synchronization but does not bound aggregate load; a retry storm can
+still overload a shared dependency, and the policy must respect the deadline and cancel
+remaining attempts.
+
+**Jitter bound.** Sample the delay inside `[0, min(backoff_cap, remaining_deadline)]`;
+a spread narrower than the client population still synchronizes, while a wider one spends the
+caller's budget. Retry only when the operation has a stable effect identity or is naturally
+idempotent; jitter cannot make a non-idempotent effect safe.
+
+### Retry with Exponential Backoff
+
+A retry delay should grow with each failed attempt, be capped, and be randomized with jitter so
+clients do not retry in lockstep. The cap and the caller's remaining budget, not a fixed attempt
+count, bound the useful retry window.
+
+Retry only a documented retryable failure class, with a bounded total deadline and bounded
+attempt/backoff budget; observe server pushback/backpressure. If a large fraction of instances is
+overloaded, another attempt is likely to meet the same condition. Return an explicit overload
+result and let the caller decide. Do not retry when the failure is permanent, the operation has no
+effect identity, or the remaining deadline cannot fit the attempt; fail fast or queue.
+
+The policy needs an owner and a visible attempt metric; an exponential curve without a deadline
+check can spend the caller's budget after the result stopped being useful.
+
+### Timeout
+
+A timeout is a local wait bound on one operation; the request deadline is the caller's end-to-end
+budget. Each hop should use at most the remaining deadline, minus its own processing and margin,
+and propagate the remainder.
+
+Timeout expiry does not mean the effect did not commit. Prefer explicit outcome lookup for an
+ambiguous durable command, rather than treating every timeout as "nothing happened". A shorter
+local timeout with explicit cancellation may protect capacity better than a long caller deadline,
+provided the cancellation path is tested and the caller can reconcile.
+
+Name the timeout owner, the unit (connect, read, total) and the retry interaction; a timeout that
+silently becomes a retry can multiply load. The timeout value must be observable.
+
+### Deadline Propagation
+
+Deadline propagation carries the caller's remaining budget as a relative duration. Each hop
+subtracts its own elapsed time, so hosts need monotonic clocks rather than synchronized wall
+clocks; an absolute timestamp requires bounded skew instead.
+
+The ingress sets the budget and each hop checks expiry before starting work. A propagated value
+without an enforcement point is only a hint. Detached asynchronous work gets its own durable
+deadline rather than inheriting the request's remaining time.
+
+Clock skew, a lost header and a hop that ignores expiry are the common failures. On expiry,
+cancel the work and record the outcome; cleanup or reconciliation runs in an explicitly durable
+workflow, not an unbounded request task. Use propagation when the caller has a real end-to-end
+budget; independent per-hop timeouts fit only when the hops are genuinely independent.

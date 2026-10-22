@@ -20,11 +20,18 @@ labels are recorded as non-routes, three catalog-index reads are intentionally
 unused, and three split decisions are deferred. The independent review agent
 **Reviewer** returned ACCEPT-WITH-FINDINGS; its 17 findings and 7 re-review
 residuals were addressed. Owner-confirmed human review passed on 2026-10-21; no
-per-page reviewer record was supplied. No low findings remain; #292 closes after merge.
+per-page reviewer record was supplied. No low findings remain; #292 is closed.
 Owner acceptance remains open. See
 [the semantic audit](PATTERN-SEMANTIC-AUDIT_2026-10-21.md),
 [the agent review](INDEPENDENT-AGENT-REVIEW_2026-10-21.md) and
 [the human review](HUMAN-REVIEW_2026-10-21.md).
+
+**Deep-source expansion (#228):** started 2026-10-22; all 145 entries now have all four
+evidence dimensions supported and are `partial-bounded` (0 technical partial, 0 sufficient).
+The three deferred page splits were performed with stable IDs; the canonical corpus is 423
+pages. The remaining semantic gate is owner acceptance; the remaining delivery gaps are
+technical sufficiency, decision sufficiency and owner acceptance. See the
+[deep-source plan](DEEP-SOURCE-EXPANSION-PLAN_2026-10-22.md).
 
 **Updated:** 2026-10-20, after manuscript acceptance and merge. See [status reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md) and [roadmap](ROADMAP.md).
 

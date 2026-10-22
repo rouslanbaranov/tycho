@@ -55,7 +55,19 @@ Under a Raft-style model:
 5. Reads require a separately defined policy: local follower reads can be stale; linearizable reads require valid confirmation/lease/read-index semantics as implemented.
 6. Client retries need stable effect identity because a network error alone cannot tell whether the previous attempt committed.
 
-A leader process's health endpoint or elected status is not the same as the cluster having quorum and serving correct reads. [Tycho causality/consensus](../c01-time-causality-and-ordering/causality-ordering-and-consensus.md) explains order/time relationships; [transaction/idempotency](../../../distributed/transactional-outbox-and-idempotency.md) explains state effects across service boundaries.
+A leader process's health endpoint or elected status is not the same as the cluster having quorum and serving correct reads.
+
+**Failure and recovery.** Elections can fail to reach quorum, split votes, or elect a
+leader whose log is behind. Randomized timeouts and pre-vote reduce disruption; log
+reconciliation, stable storage and membership rules preserve committed entries. A leader
+that cannot confirm quorum must stop serving authoritative writes and linearizable reads.
+Client retries still need stable effect identity because an election does not resolve an
+unknown outcome. [Raft](https://raft.github.io/) documents the election and log rules.
+
+**Alternative.** Leaderless quorum coordination, static primary assignment or single-writer
+partitioning may be simpler when elections add latency without a real failover
+requirement. Reverse the choice when election latency and split-brain risk exceed the
+coordination benefit. [Tycho causality/consensus](../c01-time-causality-and-ordering/causality-ordering-and-consensus.md) explains order/time relationships; [transaction/idempotency](../../../distributed/transactional-outbox-and-idempotency.md) explains state effects across service boundaries.
 
 <!-- /tycho-question-source -->
 
@@ -96,6 +108,22 @@ These are proposed test cases, not results. Safety proofs require precise protoc
 
 A lock service can give worker B ownership after worker A stops renewing. It cannot make A's paused process disappear. AWS's leader-election discussion identifies timing and process pauses as practical lease hazards. etcd 3.6 documents KV ordering, leases and delayed watches; a watch notification is not a timely external write fence.
 
+**Lock semantics.** A lease-based lock is a time-bounded grant from a lock service.
+[Kubernetes leases](https://kubernetes.io/docs/concepts/architecture/leases/) record
+ownership and renewal/expiry times, not a guarantee that the holder has stopped. Mutual
+exclusion depends on the service's own consistency and on bounded process pauses, not on
+the holder's local belief.
+
+**Failure classes.** A holder can pause past expiry; a delayed write can arrive after a
+new holder is established; the lock service can lose quorum; release can race with
+expiry. The destination must reject stale epochs or the operation remains explicitly
+unsafe. A lock service that cannot establish a quorum cannot safely grant a new lease.
+
+**Alternative.** For one database, a conditional update or unique constraint can provide
+the same exclusion without a separate lock service. For cross-process coordination,
+single-writer partitioning or a consensus-backed lease may be safer than an independent
+lock service. Choose a lock only when its failure and clock assumptions are acceptable.
+
 ### Original stale-owner trace
 
 Assume a fictional thumbnail job updates an authoritative manifest. The destination stores an accepted epoch alongside the manifest.
@@ -129,6 +157,12 @@ Text alternative: the destination rejects the resumed former owner's writes afte
 
 For a single database, a transactional conditional update or unique constraint may satisfy the invariant without a separate lock service. For an external API that cannot fence stale callers, serialize through an authoritative effect owner, use stable idempotent operation identities where supported, or retain an explicit unresolved-safety boundary.
 
+**Alternatives to a lease.** Static ownership or quorum-backed ownership avoids lease
+renewal but risks stale owners on failure. A transactional conditional update at the
+destination can replace a separate lease when the resource is one database. Reverse the
+lease choice when renewal cost exceeds the availability benefit, or when the destination
+cannot fence a stale holder.
+
 ### Failure and recovery decisions
 
 | Event | Required response |
@@ -145,6 +179,51 @@ Use local elapsed time for local budgets under the runtime's actual clock contra
 ### Exact evidence and completion boundary
 
 Selected passages inspected 2026-10-20: [Leader election in distributed systems](https://aws.amazon.com/builders-library/leader-election-in-distributed-systems/) (lease duration and pauses); [etcd API guarantees](https://etcd.io/docs/v3.6/learning/api_guarantees/) (KV versus watch/lease guarantees). The epoch protocol, trace and guard requirements are original synthetic reasoning. No lock client or destination implementation was executed. Proposed acceptance is to pause A across expiry, let B take over, resume A, and require stale effects to be rejected at the actual resource.
+
+## Bounded pattern ownership notes
+
+### Distributed Lock
+
+A lease-based lock is a time-bounded grant from a lock service. The holder may believe it still
+owns the lease after a pause, so the grant alone is not proof of exclusive access.
+
+Mutual exclusion depends on the service's own consistency and on bounded process pauses, not on
+the holder's local belief. Define what the lock protects, the acquisition and release path, and
+the maximum pause the design tolerates. The destination must reject stale epochs or the operation
+remains explicitly unsafe.
+
+For one database, a conditional update or unique constraint can provide the same exclusion without
+a separate lock service. A lock is justified when multiple resources need one coordination grant
+and the destination can enforce the epoch; otherwise the database constraint is simpler and
+stronger.
+
+### Lease-Based Ownership
+
+A lease grants ownership for a bounded interval. The holder renews before expiry; the coordinator
+may reassign after expiry, creating a new epoch. The takeover linearization point is the
+coordinator's grant, not the old holder's last renewal.
+
+Lease duration must cover maximum clock skew, renewal round-trip and process pause, with a margin.
+The holder stops writing at expiry minus that margin; a pause longer than the margin is fenced by
+the destination. Renewal costs one write per holder per interval, so short leases raise coordination
+load. On timeout, ownership is unknown, not failed. Static or quorum-backed ownership avoids renewal
+but risks a stale owner, which is a correctness failure; use leases only when the destination
+fences and clock skew is bounded.
+
+### Fencing Tokens
+
+A fencing token is a monotonic epoch issued with ownership; the destination stores the highest
+token it has accepted and rejects a lower one. The token protects only where the destination
+checks and persists it atomically; a header that is never compared is decoration. A paused former
+owner is rejected when it resumes.
+
+Token or epoch reuse breaks monotonicity: never reuse a value after expiry, and reset the epoch
+only with a new authority. If the destination cannot enforce tokens, serialize through an
+authoritative effect owner or use a stable idempotent operation identity; do not claim mutual
+exclusion from a token the destination ignores.
+
+Reverse to lease-only ownership or single-writer routing when destination enforcement cost
+exceeds the stale-write risk it removes, or retain an explicit unresolved-safety boundary.
 
 ## Navigation, prerequisites and source scope
 

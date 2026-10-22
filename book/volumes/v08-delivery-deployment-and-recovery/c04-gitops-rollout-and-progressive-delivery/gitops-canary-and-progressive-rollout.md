@@ -73,6 +73,16 @@ content_verified_at: null
 
 A release mechanism decides which version is **deployed and exposed**. It does not by itself prove which data, users or business effects each version can safely interpret. Progressive deployment can limit a failure's initial blast radius, but cannot prevent a small canary from writing incompatible shared state used by every older instance.
 
+**Canary mechanism.** Route a small, identifiable cohort to the new version, compare its
+SLIs with a baseline, then expand or abort. It needs exposure control, a representative
+cohort, measurable gates and a rollback/forward-repair decision. The exposure slice is not a
+data-compatibility boundary: a canary can write state that older instances cannot read.
+
+**Failure and recovery.** Small samples hide rare errors, the canary can contaminate shared
+state, and a binary rollback does not undo committed data. Stop expansion, drain the cohort,
+inspect the shared-state effect and reconcile before resuming. Blue/green, shadow traffic or
+a feature flag may be preferable when a canary cannot isolate users or state.
+
 This chapter owns **release-controller behavior, routing/exposure, analysis gates and GitOps reconciliation**. [V08/C05 data compatibility](../c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md) owns old/new readers and online DDL; [V05/C06 data lifecycle](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md) owns semantic migration itself.
 
 <!-- /tycho-question-source -->
@@ -96,7 +106,7 @@ These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. They are synthetic design guidance, not
 measured evidence, and they do not create a new source claim.
 
-### Dark Launching / Shadow Traffic
+### Dark Launching-Shadow Traffic
 
 Dark launching sends mirrored or synthetic traffic to new code while the old path remains
 authoritative. It needs side-effect suppression, a comparison method, a bounded load
@@ -109,6 +119,9 @@ the shadow path and stop it when the comparison or capacity contract fails. A ca
 receives a small real share is the alternative when shadow traffic cannot be made
 side-effect free.
 
+**Limits.** Shadow traffic is not a user-behavior sample; comparison coverage and data
+sensitivity bound what it can prove.
+
 ### Rolling Deployment
 
 A rolling deployment replaces instances in batches, so old and new versions serve traffic together
@@ -119,13 +132,38 @@ Mixed versions expose an incompatibility that a single-version test missed; gate
 readiness and error signals and keep a tested stop condition. Blue/green switches a complete
 environment at once; choose rolling when the extra capacity for a second environment is unavailable.
 
-### Blue/Green Deployment
+**Limits.** Batch size, drain time and mixed-version compatibility are costs; a rolling rollout
+cannot prove a new-only write is reversible. Capacity during the overlap must be budgeted,
+and a canary analysis does not replace this overlap check.
+
+### Blue-Green Deployment
 
 Blue/green runs two complete environments and switches traffic at a routing boundary, leaving the
 previous environment available for a short reversal. The switch must remain reversible until the new
 version's persisted effects are proven compatible with the old version.
 
 A half-switched route or a new-only write makes reversal unsafe; verify routing completeness and
-data compatibility before declaring the cutover. A rolling or canary rollout uses less spare
+data compatibility before declaring the cutover. State must be externalized or readable by both
+versions, and in-flight work must drain or route to both; a switch that drops in-flight work is not
+reversible. A rolling or canary rollout uses less spare
 capacity; choose blue/green when a fast, complete reversal and a clean environment comparison
 justify the double capacity.
+
+**Limits.** Double capacity, data compatibility and switch atomicity are costs; a routing switch
+does not roll back persisted effects. Test the reverse switch under load, give the old
+environment an owner and expiry, and treat a rehearsed reverse switch as acceptance evidence.
+
+## Bounded pattern ownership notes
+
+### Canary Release
+
+Route a small, identifiable cohort to the new version, compare its SLIs with a baseline, then expand
+or abort. The cohort and the metric window are part of the release contract.
+
+The exposure slice is not a data-compatibility boundary: a canary can write state that older
+instances cannot read. Small samples hide rare errors, the canary can contaminate shared state, and a
+binary rollback does not undo committed data. Define the abort threshold, the shared-state guard and
+the rollback-versus-forward-repair path before exposure.
+
+Blue/green, shadow traffic or a feature flag may be preferable when a canary cannot isolate users or
+state. Canary is a fit when traffic can be split safely and the SLI comparison has enough signal and an owner.

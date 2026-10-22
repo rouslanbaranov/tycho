@@ -104,7 +104,7 @@ anemic domain models are common. Recovery starts with dependency checks, explici
 contracts and a review of the change boundary; the linked owner section states the
 remaining limits.
 
-**Technical owner.** [Layered, hexagonal and ports-and-adapters architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#purpose-and-decision-question) — The section owns layering and dependency direction; it is not a dedicated layering manuscript.
+**Technical owner.** [Layered Architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#layered-architecture) — The section owns layering and dependency direction; it is not a dedicated layering manuscript.
 
 **Sources.** [src.fowler-layering](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-layering.2026-10-21: Presentation Domain Data Layering,
@@ -143,7 +143,7 @@ shared data, synchronous call chains and one deployment blast radius. Recovery s
 with explicit module ownership, contract tests and a rollback path; event durability
 and transaction semantics must be verified in the technical owner.
 
-**Technical owner.** [Modular monolith architecture and internal domain events](../../v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md#purpose-and-mission).
+**Technical owner.** [Modular Monolith](../../v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md#modular-monolith).
 
 **Sources.** [src.monolith-first](../../../../edition/patterns/reading-ledger.v1.json)
 read record `read.monolith-first.2026-10-21`: Monolith First, sections "Monolith
@@ -181,7 +181,7 @@ owned independently.
 consistency are normal; recovery requires timeouts, idempotency and observability.
 The linked owner section states the remaining limits.
 
-**Technical owner.** [Service orientation, microservices and distributed boundaries](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#purpose-and-mission) — The section explicitly owns SOA and microservice boundary choices.
+**Technical owner.** [Microservices Architecture](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#microservices-architecture) — The section explicitly owns SOA and microservice boundary choices.
 
 **Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-article.2026-10-21: Microservices, sections
@@ -219,7 +219,7 @@ mediation overhead exceeds the integration benefit.
 mismatch are common. Recovery requires contract ownership and mediation observability;
 the linked owner section states the remaining limits.
 
-**Technical owner.** [Service orientation, microservices and distributed boundaries](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#purpose-and-mission) — The section explicitly owns SOA and microservice boundary choices.
+**Technical owner.** [Service-Oriented Architecture (SOA)](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#service-oriented-architecture-soa) — The section explicitly owns SOA and microservice boundary choices.
 
 **Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-article.2026-10-21: Microservices, section
@@ -256,7 +256,7 @@ abstraction cost exceeds the isolation benefit.
 inconsistently, and mapping layers can hide latency. Recovery requires contract tests,
 explicit error translation and a review of the adapter boundary in the technical owner.
 
-**Technical owner.** [Layered, hexagonal and ports-and-adapters architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#engineering-walkthrough-the-same-adapter-error-in-local-and-remote-architectures).
+**Technical owner.** [Hexagonal Architecture / Ports and Adapters](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#hexagonal-architecture-and-ports-and-adapters).
 
 **Sources.** [src.aws-hexagonal](../../../../edition/patterns/reading-ledger.v1.json)
 read record `read.aws-hexagonal.2026-10-21`: AWS Prescriptive Guidance, sections
@@ -331,7 +331,7 @@ turning a context map into a mandatory graph, and drawing boundaries around team
 rather than business meaning. Recovery starts by revisiting model behavior, ownership
 and translation cost in the technical owner.
 
-**Technical owner.** [Domain semantics and authoritative ownership](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md#1-model-behaviors-and-invariants-before-drawing-ownership-boxes).
+**Technical owner.** [Domain-Driven Design / Bounded Context](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md#domain-driven-design-and-bounded-context).
 
 **Sources.**
 [src.fowler-bounded-context](../../../../edition/patterns/reading-ledger.v1.json)
@@ -443,7 +443,7 @@ Reverse the choice when sidecar overhead and operational complexity exceed reuse
 common. Recovery requires health checks and explicit lifecycle ownership; the technical
 owner section states the remaining limits.
 
-**Technical owner.** [Service mesh and traffic intermediaries](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#sidecar) — The section owns proxies and sidecar data planes, not a dedicated sidecar lifecycle page.
+**Technical owner.** [Sidecar](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#sidecar) — sidecar lifecycle, proxy data plane and coupling are bounded, not a service-mesh guide.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -478,7 +478,7 @@ the choice when the proxy adds a hop without providing a needed capability.
 common. Recovery requires health checks and bounded retries; the bounded owner section
 covers traffic intermediaries, not a dedicated ambassador lifecycle page.
 
-**Technical owner.** [Service mesh and traffic intermediaries](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — The section owns traffic intermediaries, not a dedicated ambassador lifecycle page.
+**Technical owner.** [Ambassador](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — per-client egress proxy ownership is bounded, not a shared ingress gateway.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -516,7 +516,7 @@ becomes a permanent duplicate domain.
 main failure modes. Recovery requires contract tests, versioned mappings and an
 explicit cutover path; verify those mechanics in the technical owner.
 
-**Technical owner.** [Anti-corruption adapters: semantic translation and safe coexistence](../../v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md#engineering-walkthrough-lossy-translation-behind-a-seemingly-compatible-api).
+**Technical owner.** [Anti-Corruption Layer](../../v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md#anti-corruption-layer).
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)

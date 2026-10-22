@@ -105,6 +105,23 @@ Pattern atlas: [Polyglot Persistence](../../v11-pattern-atlas/c06-database-stora
 
 <!-- /tycho-question-source -->
 
+## Bounded pattern ownership notes
+
+### Polyglot Persistence
+
+A single authoritative registration database plus a graph/search/OLAP projection is a valid possible
+design—but then there are *two data representations*, not two automatically consistent sources of
+truth. Each store has its own schema, failure mode and rebuild cost.
+
+Define freshness, rebuild, deduplication, schema migration and failure recovery explicitly. A
+projection view may lag; the response needs a freshness contract. The write owner must be named,
+and a projection must be rebuildable from the authority without relying on the projection itself.
+Test a partial projection failure and a stale read, not only the happy-path query.
+
+A single store with secondary indexes may be preferable when one engine can meet the query shapes
+and the team cannot operate a second consistency contract. Polyglot persistence is a fit when a
+specialized query engine buys measured value and the synchronization contract is owned.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

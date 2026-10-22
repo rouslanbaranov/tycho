@@ -86,6 +86,17 @@ Text alternative: RabbitMQ can confirm taking responsibility for a task separate
 
 Quorum queues are not automatically ideal for very short-lived temporary queues, the lowest latency or arbitrarily large replay backlogs; RabbitMQ's [quorum-queue guide](https://www.rabbitmq.com/docs/quorum-queues) explicitly discusses these choices. It also describes replicated queue members and the costs of data safety; the existence of replication does not prove a specific application's recovery SLO.
 
+**Point-to-point queue.** A queue dispatches each message to one eligible consumer;
+competing consumers share the work, and a consumer acknowledgement retires the message
+(after any configured redelivery policy). A publisher confirm means the broker accepted
+responsibility, not that a consumer completed the business effect.
+
+**Message broker and bridge.** A broker routes, stores and delivers messages between
+producers and consumers. A bridge forwards or translates between brokers/protocols, adding
+another hop, retention policy and failure domain. Direct request/response, pub/sub fan-out
+or a shared log may be preferable when one consumer owns each task or when brokered
+indirection adds no routing/reliability value.
+
 ### NATS Core and JetStream
 
 The current public [NATS JetStream concept documentation](https://docs.nats.io/concepts/jetstream) distinguishes **Core NATS** pub/sub delivery to online subscribers from **JetStream** persistent streams with server-side consumer cursors and acknowledgements. The page describes Core as at-most-once and JetStream's ordinary redelivery as at-least-once, under their respective configurations. [E03]
@@ -93,6 +104,25 @@ The current public [NATS JetStream concept documentation](https://docs.nats.io/c
 A fictional notification can use ephemeral pub/sub if losing a signal when no subscriber is listening is acceptable. A durable business task should not casually use Core alone if clients require recoverable delivery; a JetStream durable consumer or another persisted queue may better match that requirement.
 
 JetStream stream retention and consumer policies still need version/configuration-specific testing, especially around publisher deduplication windows, consumer ack timeouts, replicas and restart behavior. No NATS server was installed or exercised for this page.
+
+**Publish/subscribe.** A topic fans each publication out to every current matching
+subscriber; ephemeral subscribers lose messages published while they are absent. Topic
+design, subscriber registration and per-subscriber cursors are part of the delivery
+contract.
+
+**Event-driven consumer.** The consumer reacts to a delivered message rather than polling a
+queue. It must own effect identity, deduplication and acknowledgement ordering: a crash
+after the effect but before acknowledgement causes redelivery, while acknowledging before
+the effect can lose work.
+
+**Durable subscriber.** A durable subscriber keeps a server-side cursor and retained
+messages for an offline consumer, so delivery can resume after disconnect. Retention,
+acknowledgement timeout and replay policy determine whether that resume is bounded.
+
+**Invariant and alternative.** Every consumer still needs a stable effect identity and a
+deduplication/acknowledgement rule; durable storage does not make the business effect
+idempotent. Polling a queue or a direct request may be preferable when delivery volume is
+low or the consumer cannot own a cursor.
 
 ### Apache Pulsar broker and storage split
 
@@ -169,32 +199,50 @@ sequence. Do not use it when order is irrelevant or when an unbounded gap would 
 stream.
 
 The failure path is a missing sequence that blocks later messages; release the buffer
-after a declared timeout or fail the affected partition. A partitioned consumer that
+after a declared timeout or fail the affected partition. At the buffer cap, reject or spill
+with evidence rather than dropping silently; a message that arrives after its slot was
+released needs a declared late disposition: discard with evidence, reconcile or route to
+a repair queue. A partitioned consumer that
 preserves order within a key is the alternative when global order is unnecessary.
+
+**Limits.** Buffer memory, gap timeout and ordering scope are costs; a global resequencer can
+become a throughput bottleneck.
 
 ### Content-Based Router
 
 A content-based router chooses a destination from message content. It needs a versioned
-predicate set, a default or dead-letter path and an owner for rule changes. Use it when
-routing depends on message attributes and destinations have different contracts. Do not
+predicate set, a default or dead-letter path and an owner for rule changes. Predicate
+fields must be authenticated or validated; routing on an untrusted field lets the producer
+choose a destination. Use it when routing depends on message attributes and destinations
+have different contracts. Do not
 use it when routing rules are unstable, unowned or unable to classify every message.
 
 The failure path is an unmatched or misrouted message; route to a declared fallback and
-record the predicate version. A static topic or queue per producer is the alternative when
-routing is known at publish time.
+record the predicate version. A workflow/orchestrator is the alternative when routing needs
+multiple steps or compensations; do not hide a process engine inside the router. A static
+topic or queue per producer fits when routing is known at publish time.
+
+**Limits.** The predicate set is a policy surface: test unmatched, multi-match and rule
+rollout, because a misroute is not repaired by retry. Rule changes need a canary and a
+rollback path.
 
 ### Pipes and Filters
 
 Pipes and filters decompose processing into ordered, replaceable stages connected by a
 message contract. Each stage needs its own failure and retry policy, and the pipeline
-needs backpressure and a rule for partial completion. Use it when stages can be developed,
-scaled or replaced independently. Do not use it when the work must be one atomic
+needs backpressure, a rule for partial completion and a declared ordering scope. Each stage
+needs an effect identity for deduplication and its own lag or queue-depth signal, not only an
+end-to-end completion metric. Use it when stages can be developed, scaled or replaced
+independently. Do not use it when the work must be one atomic
 transaction or when per-stage latency would exceed the budget.
 
 The failure path is a failed middle stage with earlier effects already applied; record
 stage identity and compensate or replay from a declared checkpoint. A single in-process
 transformation is the alternative when the stages are small and cannot be operated
 independently.
+
+**Limits.** Distributed stages add message contracts and partial-failure states; an in-process
+pipeline cannot be scaled independently.
 
 ### Competing Consumers
 
@@ -207,6 +255,10 @@ bound attempts and route permanently failing work to a declared terminal path. P
 own a stable key range and preserve per-key order; prefer competing consumers when order is not
 required and pool parallelism is the goal.
 
+**Limits.** Pool parallelism removes per-key order unless partition assignment is explicit;
+a poison message needs a terminal path, not infinite visibility timeouts. A per-key worker
+pool preserves order only when partition assignment is stable.
+
 ### Message Filter
 
 A message filter evaluates a predicate and forwards only matching messages to a consumer, discarding
@@ -214,9 +266,14 @@ the rest by policy. Every discarded message must be an intentional drop under a 
 not an unobserved loss.
 
 Predicate drift or a missing default path silently removes traffic; monitor filter rates and keep a
-declared fallback for unmatched messages. A content-based router sends different subsets to
-different destinations; prefer filtering when the destination is the same and only selection
-changes.
+declared fallback for unmatched messages. A rejected message needs a declared disposition:
+discard with audit, fallback, or dead-letter queue, each with a retention owner. A
+content-based router sends different subsets to different destinations; prefer filtering when
+the destination is the same and only selection changes.
+
+**Limits.** Silent drops are data loss; count filter rates, version the predicate and keep a
+declared fallback. A filter that silently drops unmatched traffic is a data-loss path; count
+drops, alert on rate changes and test the fallback with a representative unmatched message.
 
 ### Canonical Data Model
 
@@ -229,3 +286,91 @@ A translation can preserve syntax while losing domain meaning; contract tests wi
 payloads and an owner for schema changes are required. Point-to-point translation or an
 anti-corruption layer avoids a central schema when integrations are few or their models genuinely
 differ.
+
+**Limits.** A shared schema centralizes governance and can become a bottleneck; translation
+still needs semantic tests and an owner. Schema ownership needs a review path and a
+deprecation window; point-to-point translation is cheaper for a few stable pairs.
+
+### Publish-Subscribe
+
+A topic fans each publication out to every current matching subscriber; ephemeral subscribers lose
+messages published while they are absent. Topic design, subscriber registration and per-subscriber
+cursors are part of the delivery contract. A crash after the effect but before acknowledgement
+causes redelivery, while acknowledging before the effect can lose work.
+
+The page describes Core as at-most-once and JetStream's ordinary redelivery as at-least-once, under
+their respective configurations. A subscription name is not a durable business identity: each
+consumer still needs an effect key, a deduplication rule and an acknowledgement policy.
+
+A fictional notification can use ephemeral pub/sub if losing a signal when no subscriber is
+listening is acceptable. A durable business task should not casually use Core alone if clients
+require recoverable delivery; a JetStream durable consumer or another persisted queue may better
+match that requirement. Record whether the subscription is ephemeral or durable before claiming a
+delivery guarantee.
+
+### Point-to-Point Queue
+
+A queue dispatches each message to one eligible consumer; competing consumers share the work, and a
+consumer acknowledgement retires the message (after any configured redelivery policy). These are
+independent; publisher confirm does **not** mean the consumer performed a business transaction.
+
+If the worker crashes after local effect but before acknowledgement, task redelivery may occur.
+Consumer-side deduplication is necessary for nonrepeatable effects. A worker pool therefore needs a
+stable effect identity, a visible in-flight count and a redelivery limit, not only a higher
+prefetch.
+
+Direct request/response, pub/sub fan-out or a shared log may be preferable when one consumer owns
+each task or when brokered indirection adds no routing/reliability value. A queue is a fit when each
+task needs exactly one owner and the consumer can absorb redelivery.
+
+### Event-Driven Consumer
+
+The consumer reacts to a delivered message rather than polling a queue. It must own effect identity,
+deduplication and acknowledgement ordering. The subscription declares a prefetch or in-flight
+bound and an acknowledgement window; when in-flight work reaches the bound, pause delivery or add
+capacity rather than buffering without limit.
+
+A crash after the effect but before acknowledgement causes redelivery, while acknowledging before
+the effect can lose work. The handler must commit the business effect and the dedup marker in one
+local transaction when possible; otherwise it needs a reconciliation path for the unknown state.
+Concurrency and ordering requirements belong to the subscription contract, not to the framework
+default.
+
+Polling a queue or a scheduled batch job may be preferable when volume is low, batch control matters
+or the consumer cannot own a cursor. Reverse to polling when event volume and concurrency overwhelm
+the consumer. Event-driven consumption is justified when latency and fan-out matter more than
+the operational cost of a push subscription.
+
+### Durable Subscriber
+
+A durable subscriber keeps a server-side cursor and retained messages for an offline consumer, so
+delivery can resume after disconnect. Retention, acknowledgement timeout and replay policy determine
+whether that resume is bounded.
+
+The page describes Core as at-most-once and JetStream's ordinary redelivery as at-least-once, under
+their respective configurations. At-least-once redelivery means the consumer needs a stable effect
+key and dedup before applying, or a resumed cursor can double-apply local effects. A durable cursor
+is not a backup of the consumer's business state; if the consumer's database is lost, replaying the
+stream may not reconstruct the effect. Define
+retention, max redelivery and the action when the cursor is too far behind. A replay older than
+the declared deadline is stale: detect it from event time or cursor age and route it to repair
+rather than applying it blindly.
+
+A fictional notification can use ephemeral pub/sub if losing a signal when no subscriber is
+listening is acceptable. A durable business task should not casually use Core alone if clients
+require recoverable delivery; a JetStream durable consumer or another persisted queue may better
+match that requirement.
+
+### Message Broker-Messaging Bridge
+
+A broker routes, stores and delivers messages between producers and consumers. A bridge forwards or
+translates between brokers/protocols, adding another hop, retention policy and failure domain.
+
+These are independent; publisher confirm does **not** mean the consumer performed a business
+transaction. If the worker crashes after local effect but before acknowledgement, task redelivery may
+occur. The bridge needs its own delivery contract, identity mapping and dead-letter path; a message
+that crosses two brokers can be duplicated or delayed at either boundary.
+
+Direct request/response, pub/sub fan-out or a shared log may be preferable when one consumer owns
+each task or when brokered indirection adds no routing/reliability value. A bridge is justified when
+protocol or organizational boundaries cannot be removed, and its extra failure domain is owned.

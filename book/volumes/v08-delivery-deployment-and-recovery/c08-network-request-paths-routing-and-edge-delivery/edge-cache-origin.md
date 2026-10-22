@@ -78,6 +78,17 @@ An edge can reduce distance and origin work, but only for responses it may reuse
 
 RFC 9111 sections 3.5 and 4 constrain reuse of authenticated responses by shared caches and describe cache selection/validation. An authorization header is not a complete design for private edge caching; explicit cache directives can alter reuse rules. Test the actual CDN/proxy configuration.
 
+**Static-content mechanism.** Immutable, versioned assets are published to an object store
+or CDN origin and served by URL without per-request application compute. A publication
+pipeline uploads and verifies the version; the edge caches by that URL; mutable or private
+content needs a separate key and authorization contract.
+
+**Failure and recovery.** Origin outage, incomplete purge, stale deletion and a cold-cache
+miss storm are common. Prewarm critical assets, verify propagation, keep an origin failover
+and use versioned rollback rather than mutating a cached object. A dynamic origin,
+self-hosted files or edge compute may be preferable when content changes per request or the
+publication pipeline cannot be governed.
+
 ## Original worked example
 
 A fictional catalogue exposes versioned public thumbnails and restricted source images. Public thumbnail URLs include immutable content versions. Restricted originals are fetched through an access decision and must not accidentally share a public-cache route. Changing visibility from public to private is a revocation problem: removing the database's public flag does not erase every distributed copy already served.
@@ -113,3 +124,35 @@ Sources: [RFC 9111](https://www.rfc-editor.org/rfc/rfc9111.html#section-3.5) for
 ## Navigation
 
 Parent: [network chapter](README.md). Previous: [trust boundaries](tls-gateway-boundaries.md). Continue to [object access and lifecycle](../../v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md) and [overload recovery](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/README.md).
+
+## Bounded pattern ownership notes
+
+### CDN-Edge Caching
+
+An edge can reduce distance and origin work, but only for responses it may reuse. Cacheability is a
+content and authority contract, not a network location.
+
+The cache key, freshness policy and authorization boundary must agree. An authorization header is
+not a complete design for private edge caching; explicit cache directives can alter reuse rules. A
+misclassified response can serve one user's private data to another, and a purge can lag the origin.
+Test the authorization matrix, the purge path and the stale-on-error behavior.
+
+A direct origin or a private cache may be preferable when every response is user-specific or the
+purge contract cannot be enforced. Edge caching is a fit when the response is shareable and the key,
+freshness and authorization boundary are explicit.
+
+### Static Content Hosting
+
+Static content hosting publishes immutable objects to an object store or CDN origin and serves them
+by URL without per-request application compute. The URL carries a version or content hash; a small
+manifest maps a stable alias to the current version.
+
+The host must own upload validation, origin protection and prewarming for a release. A retained
+version is the rollback path, so garbage collection may delete old objects only after the rollback
+window; a deleted object needs a tombstone or purge proof. The cache key, TTL and authorization
+boundary must agree, especially for private assets signed at the edge. Cold-cache miss storms and
+incomplete purges are common; exercise origin failover and a known purge.
+
+A dynamic origin or edge compute may be preferable when content changes per request or publication
+cannot be governed. Static hosting is a fit when assets are immutable, versioned and the publisher
+can prove upload, prewarm and purge.

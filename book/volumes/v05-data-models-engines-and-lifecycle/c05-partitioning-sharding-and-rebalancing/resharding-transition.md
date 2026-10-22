@@ -139,3 +139,6 @@ A ring change temporarily routes a key to the wrong owner or serves an incomplet
 version-check during the transition and record the epoch. Explicit key-range assignment gives direct
 control of hot ranges; choose consistent hashing when node membership changes often and manual range
 planning is impractical.
+
+**Limits.** Virtual nodes improve balance but add metadata and lookup cost; a ring without epoch
+fencing can route a write to two owners during a change.

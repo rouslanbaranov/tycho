@@ -59,6 +59,12 @@ This page belongs to [V10/C05 — Target architecture versus transition states](
 
 These are conditions, not prescriptive steps. The [Microsoft Strangler Fig pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig) explicitly treats the façade as a temporary infrastructure cost and warns that request interception may be impossible. Use [anti-corruption adapters](../../v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md) when foreign meanings must be translated.
 
+**Branch-by-abstraction invariant.** Old and new implementations behind the internal
+interface must preserve the same contract and observable effects; the switch must remain
+reversible until the old path is removed. Untested side effects, a bypass around the
+abstraction and divergent implementations can break that contract. Detect with contract
+tests and a bounded switch, then hold or roll back to the compatible path.
+
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
@@ -84,6 +90,11 @@ Before a transition changes authoritative state or retirements become irreversib
 
 A transition state should end with **an observed gate**, not a calendar milestone. A failure after the no-return point must use an approved forward-repair path rather than fictional rollback.
 
+**Alternative.** Rolling or blue/green deployment, a canary with a reversible
+gate, or scheduled maintenance may be preferable when the no-return evidence cannot be
+obtained or the change is small enough to reverse. Reverse the controlled-cutover choice
+when its evidence and hold costs exceed the no-return risk.
+
 <!-- /tycho-question-source -->
 
 ## Navigation, prerequisites and source scope
@@ -96,3 +107,36 @@ A transition state should end with **an observed gate**, not a calendar mileston
 | Integrated question | [Original scenario and limits](target-and-transition-architecture-states.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### Branch by Abstraction
+
+Branch by abstraction inserts an internal interface between callers and the old/new
+implementations, so both can run in one deployable while traffic moves gradually. The switch is a
+runtime or configuration decision, not a long-lived source branch.
+
+An internal interface can route old/new implementations with one deployable. Old and new
+implementations behind the internal interface must preserve the same contract and observable
+effects; the switch must remain reversible until the old path is removed. Untested side effects, a
+bypass around the abstraction and divergent implementations can break that contract.
+
+A strangler facade can route requests by capability when the boundary is external. Branch by
+abstraction is a fit when the switch can stay inside one deployable and the interface is genuinely
+owned; otherwise a facade or a parallel run is simpler.
+
+### Controlled Cutover
+
+A controlled cutover moves authority at a declared point with evidence that the target is ready. A
+transition state should end with **an observed gate**, not a calendar milestone.
+
+Before a transition changes authoritative state or retirements become irreversible, require evidence
+for: target correctness, data reconciliation, rollback or forward-repair readiness and the owner who
+accepts the residual risk. A failure after the no-return point must use an approved forward-repair
+path rather than fictional rollback. Publish the no-return point and the abort criteria before the
+change starts.
+
+Rolling or blue/green deployment, a canary with a reversible gate, or scheduled maintenance may be
+preferable when the no-return evidence cannot be obtained or the change is small enough to reverse.
+Controlled cutover is a fit when a real authority switch is unavoidable and the evidence gate is
+observable.

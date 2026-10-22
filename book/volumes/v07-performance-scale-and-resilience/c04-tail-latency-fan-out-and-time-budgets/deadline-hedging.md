@@ -96,6 +96,17 @@ A **hedged request** sends an additional equivalent read to another viable repli
 | Shed excess work | Defined admission priority, bounded queue and explicit caller outcome | Rejection without backoff creates retry storm |
 | Async durable job | User need not block until completion; job state survives crash | Reinterpreting a synchronous contract without client agreement |
 
+**Hedged failure and recovery.** Hedging can double work exactly when a shared dependency
+is saturated; it also risks duplicate side effects if the read is not truly equivalent.
+Cap the speculative budget, cancel losers promptly, measure whether replicas have
+independent tails, and disable hedging when saturation is shared. If cancellation cannot
+stop the duplicate, treat the operation as unsafe until its effect is idempotent.
+
+**Alternative.** Retry with jitter, improve the slow path, or parallelize truly
+independent reads may be preferable when replicas share a bottleneck or the operation is
+not safely repeatable. Reverse the hedging choice when its doubled work exceeds the tail
+benefit or the path is already deadline-bound.
+
 Speculative duplicate **writes** are not a general tail-latency technique. Different replicas may accept divergent effects, and a client receiving one reply cannot assume the other attempt did nothing. See [outbox/idempotency](../../../distributed/transactional-outbox-and-idempotency.md) and [HTTP/RPC operation identity](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md) before recommending retries for effects.
 
 <!-- /tycho-question-source -->

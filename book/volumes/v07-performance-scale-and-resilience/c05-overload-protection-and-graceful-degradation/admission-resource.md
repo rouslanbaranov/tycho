@@ -131,6 +131,11 @@ deadline and from any client-asserted priority, and verify at each hop that lowe
 rejected before higher ones. Propagation is not a license to starve ordinary work; keep a
 bounded wait and a starvation policy.
 
+**Alternative.** FIFO with admission control, separate lanes per class, or a shared queue
+with reserved capacity may be preferable when priority cannot be authenticated or
+starvation is unacceptable. Reverse the priority choice when inversion and starvation
+exceed the latency benefit for critical work.
+
 <!-- /tycho-question-source -->
 
 ## Local limits, global quotas and fair admission
@@ -168,6 +173,23 @@ Advertise retry guidance consistent with remaining budget and deadline. Randomiz
 [Handling Overload](https://sre.google/sre-book/handling-overload/) supports resource-aware overload handling and criticality, not a benchmark for the invented bucket or a proof of a global quota implementation. All numeric budgets and distribution comparisons above are original synthetic reasoning, inspected/self-reviewed 2026-10-20.
 
 Proposed tests: route one tenant across all replicas, change replica count, partition the quota store, duplicate a budget lease, cancel admitted work and restart a permit owner. Verify actual aggregate admitted cost, bounded overshoot and progress for a quiet tenant. No load test or distributed-limiter execution was performed.
+
+## Bounded pattern ownership notes
+
+### Priority Queue
+
+A priority queue is a broker-side ordering policy: ready messages carry a class and the queue
+dispatches higher classes first. It does not preempt a running handler, so a high-class message can
+still wait behind a slow low-class execution.
+
+The queue must define class levels, per-level capacity and the broker's actual priority support.
+Authenticate the class at each hop and cap each tenant's share, or one tenant can occupy the
+high-class lane. Add aging or a maximum-wait rule so low classes make progress; without a wait bound
+the policy is starvation.
+
+An admission-controlled FIFO or separate lanes per class avoids starvation when priority is
+unverifiable. A priority queue is a fit when classes are authenticated, the broker supports
+priorities and a wait bound is enforced.
 
 ## Navigation, prerequisites and source scope
 

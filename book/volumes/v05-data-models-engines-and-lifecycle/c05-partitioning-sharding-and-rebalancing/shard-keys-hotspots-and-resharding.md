@@ -61,6 +61,17 @@ Splitting a database into shards is useful only if **resource or operational con
 
 **Primary question:** How should an architect select a shard key, handle skew and high-cardinality access, preserve co-located transactions and move data to a new shard map without losing correctness?
 
+**Sharding mechanism.** Partition rows by a shard key, route each request to its shard and
+maintain a versioned shard map. Each shard is authoritative for its key range; cross-shard
+operations need an explicit protocol rather than a local transaction.
+
+**Invariant and failure.** One authoritative owner must exist per key, and a resharding move
+must fence writes or preserve a verifiable handoff. Hotspots, map drift, split brain and a
+failed migration are common; detect skew, throttle the hot key and dual-read/verify during
+movement. Partitioning inside one database, read replicas or vertical scaling may be
+preferable when distribution would add cross-shard coordination without relieving the
+measured constraint.
+
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.0d34dd26886340b89fd4f1499d790a81:7 -->
 ## Applied M9 evidence: what transfers and what does not
@@ -100,3 +111,23 @@ query must name a partition key so pruning is possible.
 A query without the partition key fans out across every partition; inspect plans and measure fan-out
 when access paths or keys change. Keep one table and add an index when the main query already
 prunes; partition only when the data volume, retention or maintenance benefit is measured.
+
+**Limits.** Partition count, key skew and cross-partition queries are costs; too many small
+partitions raise planning and maintenance overhead, and a key that changes forces row movement.
+Plan for detach/attach maintenance, not only query pruning.
+
+## Bounded pattern ownership notes
+
+### Sharding
+
+Partition rows by a shard key, route each request to its shard and maintain a versioned shard map.
+The shard key is a data-placement decision and a routing contract at once.
+
+One authoritative owner must exist per key, and a resharding move must fence writes or preserve a
+verifiable handoff. Hotspots, map drift, split brain and a failed migration are common; detect skew,
+throttle the hot key and dual-read/verify during movement. A key that changes often creates a move
+storm; a key with low cardinality creates one hot shard.
+
+Partitioning inside one database, read replicas or vertical scaling may be preferable when
+distribution would add cross-shard coordination without relieving the measured constraint. Sharding
+is a fit when one node cannot hold or serve the data and the key distributes the real access pattern.

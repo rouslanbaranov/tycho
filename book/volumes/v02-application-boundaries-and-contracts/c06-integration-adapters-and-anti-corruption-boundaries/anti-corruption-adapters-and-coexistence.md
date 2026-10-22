@@ -101,3 +101,21 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Coexistence, unknown outcomes and adapter retirement](coexistence-retirement.md) — How is a lost acknowledgment reconciled before old contracts are retired?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+## Bounded pattern ownership notes
+
+### Anti-Corruption Layer
+
+An anti-corruption layer is a translation boundary that keeps an external or legacy model from
+becoming the local authority. It owns mapping, validation and the explicit rejection of meanings
+that do not translate.
+
+Every mapping needs version pinning and contract tests for lossy fields, plus a rejection path for
+values with no local meaning. A dual write or an unknown external outcome retains the correlation
+identifier and resolves against the authority before reporting success; it does not hide the
+ambiguity behind retries. A synthetic example makes the risk concrete: an external ACTIVE status
+does not imply local AVAILABLE stock or allocation, so the mapping must preserve that uncertainty
+or reject it.
+
+A direct adapter or shared contract is preferable only when semantics are genuinely identical and
+stable. An ACL fits when the external model is lossy, changes on a different cadence or carries
+vocabulary the local domain must not inherit.

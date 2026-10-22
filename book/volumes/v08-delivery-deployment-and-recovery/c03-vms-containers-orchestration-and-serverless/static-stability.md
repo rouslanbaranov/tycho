@@ -155,17 +155,25 @@ The failure path is a stale proxy configuration or a proxy that outlives its con
 plane; test configuration rollback and keep a direct-path recovery. A shared gateway is
 the alternative when the concern is ingress rather than per-client egress.
 
+**Limits.** An ambassador cannot grant authority the remote peer does not recognize, and
+it adds a data-plane hop whose latency and outage must be budgeted.
+
 ### Sidecar
 
 A sidecar runs as a helper process or container beside each service instance and supplies
 networking, policy or telemetry behaviour without changing the application image. The sidecar's
-failure policy must be explicit, and its lifecycle and configuration must be coupled to the instance
-it serves.
+failure policy must be explicit, and its lifecycle and configuration must have an owner. Coupling
+to the instance is one choice; independent upgrade is another when the sidecar has its own release
+boundary.
 
 A missing or misconfigured sidecar silently removes a control or opens a bypass; readiness must
 include it, and the fail-open or fail-closed choice must be tested. A shared proxy or an in-process
 library provides the same control without per-instance overhead; choose a sidecar when per-instance
 isolation or independent upgrade matters.
+
+**Limits.** A sidecar cannot isolate a compromised shared kernel, replace host-level policy or
+remove the per-instance resource and upgrade cost. Its failure mode must include
+control-plane unavailability.
 
 ### Immutable Infrastructure
 
@@ -176,5 +184,10 @@ tolerated.
 
 A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled
 change; record digests and test the rebuild path. Configuration management on long-lived hosts is
-cheaper when state locality dominates; choose immutable replacement when reproducibility and
-rollback speed matter.
+cheaper when state locality dominates; choose immutable replacement when reproducibility, an
+automated replacement path and artifact rollback speed matter.
+
+**Limits.** Immutable replacement is not a backup: data, secrets and external effects still need
+lifecycle ownership, toolchain and base-image provenance must be reproducible, and a rollback
+restores an artifact, not necessarily compatible data. Rebuild time and image size are
+operational costs, not proofs of reproducibility.

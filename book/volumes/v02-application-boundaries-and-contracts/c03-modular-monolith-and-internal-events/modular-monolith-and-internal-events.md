@@ -69,6 +69,14 @@ Internal events can reduce direct dependencies between modules, but “event-dri
 
 The [application style chapter](../../../application/architecture-styles-and-module-boundaries.md) compares architectural forms. The [domain ownership chapter](../c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md) owns bounded-context meaning. This chapter focuses on **module lifecycle and internal event contracts**.
 
+**Module enforcement and failure.** Modules own their rules, data and contracts; internal
+interfaces define allowed calls and dependency tests enforce the boundary. Hidden
+cross-module database access, cyclic dependencies and event-based coupling that recreates a
+distributed monolith are common. Detect them with dependency/contract tests and split a
+module only when independent deployment or failure containment is a measured requirement.
+Microservices, hexagonal architecture or a simpler layered application may be preferable
+when module enforcement cost exceeds the coordination benefit.
+
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.a06fd146f96b4b17a754f4d3b608ebdf:9 -->
 ## Engineering walkthrough — An internal event that survives neither process death nor commit
@@ -108,3 +116,19 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Internal events and transaction timing](events-transactions.md) — What can happen between local commit, event handling and process death?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+## Bounded pattern ownership notes
+
+### Modular Monolith
+
+Modules own their rules, data and contracts; internal interfaces define allowed calls and
+dependency tests enforce the boundary. The deployable is one unit even when the modules are
+separately owned.
+
+Internal interfaces define allowed calls and dependency tests enforce the boundary. Hidden
+cross-module database access, cyclic dependencies and event-based coupling that recreates a
+distributed monolith are common. Test the dependency graph and schema ownership, not only the
+public API, and give each module a named owner.
+
+Microservices, hexagonal architecture or a simpler layered application may be preferable when
+module enforcement cost exceeds the coordination benefit. A modular monolith is a fit when the team
+wants one operational unit without surrendering internal ownership, with a documented interface and an owner now.

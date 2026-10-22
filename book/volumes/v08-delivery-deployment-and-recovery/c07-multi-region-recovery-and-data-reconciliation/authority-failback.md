@@ -88,6 +88,16 @@ flowchart LR
 
 **Critical distinction:** *fencing old writes* and *recovering historical acknowledged effects* are separate conditions. Fencing prevents future split-brain; it cannot retroactively make B contain the missing commit. A zero-loss promise would require a suitable acknowledgment/replication protocol with explicit behavior under region partitions and the corresponding availability trade-off. Backups protect against corruption/deletion but cannot by themselves replace a live fencing decision.
 
+**Failback.** Returning traffic to A is a new migration, not the inverse of failover.
+Quarantine A, reconcile any divergent writes under one selected authority, verify user
+journeys, then reintroduce A as a replica or standby before considering promotion. A
+failback that merely points DNS back can resurrect stale writes and split authority.
+
+**Alternative.** Stay on the promoted region and rebuild the old region as a standby when
+failback risk exceeds its benefit. Active-active operation requires conflict-free data
+ownership and is not a safe default for one authoritative invariant. Reverse the failback
+choice when reconciliation evidence is incomplete or the old region cannot be fenced.
+
 **Negative counterexample:** an automated failover sees three missed heartbeats and instantly promotes B, while isolated A continues authorizing bookings. Both sides can now accept the same exclusive resource. A green health probe for each region is compatible with a broken global invariant.
 
 **Proposed drill, not performed:** commit a named operation immediately before partition, record the last durable replication location at both regions, sever controller connectivity while maintaining a client path to A, then require deterministic old-writer fencing, ledger reconciliation and user-level outcome checks before exposing B. Measure RTO from impact to *correct* user capability; measure RPO against the declared acknowledged-operation boundary. If fencing or historical-state evidence is unavailable, **hold writes** rather than claim successful recovery. The [PostgreSQL PITR owner](../../v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md) covers database restore internals; this chapter owns region-level authority and business correctness.
@@ -141,3 +151,20 @@ No such drills were performed in this chapter. A green health endpoint or replic
 | Integrated question | [Original scenario and limits](disaster-recovery-and-recovery-objectives.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### Failover-Failback
+
+Failover moves authority to a surviving region under an explicit decision; failback is a second
+migration, not the inverse operation. Returning traffic to A is a new migration, not the inverse of
+failover.
+
+Quarantine A, reconcile any divergent writes under one selected authority, verify user journeys, then
+reintroduce A as a replica or standby before considering promotion. A failback that merely points DNS
+back can resurrect stale writes and split authority. Record the authority epoch, the data
+reconciliation evidence and the rollback gate.
+
+Stay on the promoted region and rebuild the old region as a standby when failback risk exceeds its
+benefit. Failback is a fit when the old region can be proven consistent and the authority switch is
+observable.

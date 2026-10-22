@@ -90,10 +90,10 @@ an unowned single point, or when network latency dominates the hit benefit.
 **Competing alternative.** Local in-process cache or no cache. Reverse the choice when
 distributed coordination cost exceeds cross-instance reuse.
 
-**Failure and recovery.** Network partitions and stale replicas are common; verify
-placement/freshness in the owner section.
+**Failure and recovery.** Network partitions, stale replicas and a shared failure domain are
+common; bound fallback so a cache outage does not overload the source.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Distributed Cache](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#distributed-cache) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-hazelcast-cache.2026-10-21: sections "Caching Data". The source is
@@ -122,8 +122,9 @@ races cannot be controlled, or when invalidation has no owner.
 **Competing alternative.** Read-through cache or no cache. Reverse the choice when
 application fill logic becomes duplicated and inconsistent.
 
-**Failure and recovery.** Stale fills and concurrent miss stampedes are common; verify the
-sequence in the owner section.
+**Failure and recovery.** Stale fills and concurrent misses are common; gate fills by cached
+revision, distinguish a cold fill from a post-delete tombstone, retry failed invalidation and
+use single-flight for concurrent misses.
 
 **Technical owner.** [Cache-aside is a sequence, not a consistency theorem](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#4-cache-aside-is-a-sequence-not-a-consistency-theorem) — the sequence is bounded, not a complete cache-aside library guide.
 
@@ -322,7 +323,7 @@ when TTL expiry causes unacceptable misses or stale decisions.
 **Failure and recovery.** Synchronized expiry and stale reads are common; verify
 eviction/refresh in the owner section.
 
-**Technical owner.** [Local cache eviction and refresh are different actions](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#3-local-cache-eviction-and-refresh-are-different-actions) — eviction/refresh is bounded, not a universal TTL policy.
+**Technical owner.** [TTL-Based Expiration](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#ttl-based-expiration) — eviction/refresh is bounded, not a universal TTL policy.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -352,8 +353,8 @@ would hide recovery, or when negative entries leak existence or authorization.
 **Competing alternative.** No negative cache or short retry with backoff. Reverse the
 choice when repeated misses amplify origin load.
 
-**Failure and recovery.** Stale failures and information leakage are common; verify
-status/TTL policy in the owner section.
+**Failure and recovery.** A cached denial can outlive a create/grant or leak across principals;
+scope keys by tenant/principal, delete or version on change, bound TTL and test revocation.
 
 **Technical owner.** [Negative caching and discriminating experiments](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md#4-negative-caching-and-evicted-authorization) — negative-cache policy is bounded, not a universal error-cache rule.
 
@@ -385,10 +386,10 @@ coordination would block all callers, or when single-flight state has no owner.
 **Competing alternative.** TTL jitter or prewarming. Reverse the choice when coordination
 latency and failure outweigh source protection.
 
-**Failure and recovery.** Lock loss and retry storms are common; verify source protection
-in the owner section.
+**Failure and recovery.** Lease loss, retry storms and expired-lease double refresh are
+common; measure origin QPS, coalesce refreshes and cap source admission.
 
-**Technical owner.** [Stampedes and source protection](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#2-stampede-at-a-synchronized-expiry) — stampede protection is bounded, not a single-flight implementation.
+**Technical owner.** [Cache Stampede Protection](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#cache-stampede-protection) — stampede protection is bounded, not a single-flight implementation.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -422,7 +423,7 @@ Reverse the choice when shared latency/failure outweighs duplicate-call reductio
 **Failure and recovery.** One failure fans out to all waiters; verify scope and
 cancellation in the owner section.
 
-**Technical owner.** [Cache loss and source protection policy](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#2-stampede-at-a-synchronized-expiry) — source protection is bounded, not a request-coalescing library.
+**Technical owner.** [Single Flight / Request Coalescing](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#single-flight-request-coalescing) — source protection is bounded, not a request-coalescing library.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -519,7 +520,7 @@ cacheability and purge cost outweigh latency benefit.
 **Failure and recovery.** Stale private content and purge failures are common; verify
 cacheability in the owner section.
 
-**Technical owner.** [Edge caching, private content and origin recovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#cacheability-is-a-content-and-authority-contract) — edge caching is bounded, not a CDN product manual.
+**Technical owner.** [CDN / Edge Caching](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#cdn-edge-caching) — edge caching is bounded, not a CDN product manual.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)

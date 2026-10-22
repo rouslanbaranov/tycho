@@ -90,7 +90,7 @@ when every subscriber needs the same durable work, not an independent copy.
 **Failure and recovery.** Fan-out amplifies load and duplicate effects; verify retention
 and acknowledgement semantics in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#nats-core-and-jetstream) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Publish / Subscribe](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#publish-subscribe) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -124,7 +124,7 @@ subscribers need the same event rather than one shared work item.
 **Failure and recovery.** Duplicate delivery and poison messages are normal; verify
 acknowledgement and redelivery semantics in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#rabbitmq-quorum-queues-and-publisher-confirms) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Point-to-Point Queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#point-to-point-queue) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -191,7 +191,7 @@ when event volume and concurrency overwhelm the consumer.
 **Failure and recovery.** Push delivery can outrun processing; verify backpressure and
 acknowledgement in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#nats-core-and-jetstream) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Event-Driven Consumer](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#event-driven-consumer) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -291,7 +291,7 @@ when content rules become a hidden process engine.
 **Failure and recovery.** Rule drift and unmatched messages are common; verify rule
 ownership and fallback in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#content-based-router) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Content-Based Router](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#content-based-router) — predicate ownership, fallback and rule versioning are bounded, not every EIP mechanism.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -323,7 +323,7 @@ choice when downstream cost dominates and rejection is safe.
 **Failure and recovery.** Silent loss is the main risk; verify rejected-message policy in
 the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-filter) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Message Filter](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-filter) — predicate scope and rejected-message disposition are bounded, not every EIP mechanism.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -358,7 +358,7 @@ choice when stage isolation and reuse no longer justify message hops.
 **Failure and recovery.** Partial failure and duplicate processing grow with stages;
 verify stage contracts in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#pipes-and-filters) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Pipes and Filters](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#pipes-and-filters) — stage contracts, ordering and observability are bounded, not every EIP mechanism.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -486,7 +486,7 @@ choice when replay is frequent and needs automated policy.
 **Failure and recovery.** DLQ growth and silent abandonment are common; verify poison-work
 policy in the owner section.
 
-**Technical owner.** [Poison work is a policy state](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#poison-work-is-a-policy-state) — poison-work policy is bounded, not a full DLQ operations manual.
+**Technical owner.** [Dead Letter Channel / DLQ](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#dead-letter-channel-dlq) — poison-work policy is bounded, not a full DLQ operations manual.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -518,7 +518,7 @@ the choice when replay cost and retention exceed the continuity benefit.
 **Failure and recovery.** Retention growth and stale replay are common; verify retention
 and acknowledgement in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#nats-core-and-jetstream) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Durable Subscriber](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#durable-subscriber) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -550,7 +550,7 @@ choice when identity retention and lookup cost exceed duplicate risk.
 **Failure and recovery.** Identity collisions and retention expiry create duplicate
 effects; verify dedup authority in the owner section.
 
-**Technical owner.** [Message redelivery and consumer effects](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md#5-message-redelivery-and-consumer-effects) — deduplication authority is bounded, not a complete idempotent-receiver recipe.
+**Technical owner.** [Idempotent Receiver](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md#idempotent-receiver) — deduplication authority is bounded, not a complete idempotent-receiver recipe.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -577,13 +577,13 @@ policy is bounded; buffer limits are known; late messages have a disposition.
 **Hard contraindications.** Reject when order is irrelevant, when the buffer can grow
 without bound, or when one missing message blocks the stream indefinitely.
 
-**Competing alternative.** Process concurrently and reconcile order downstream. Reverse
+**Competing alternative.** A partitioned consumer that preserves per-key order. Reverse
 the choice when buffering delays and missing-message risk exceed ordering value.
 
 **Failure and recovery.** Head-of-line blocking and buffer growth are common; verify
 timeout and missing policy in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#resequencer) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Resequencer](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#resequencer) — resequencing buffer, gap and ordering scope are bounded, not every EIP mechanism.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -616,7 +616,7 @@ the choice when retrieval and storage complexity exceed transport savings.
 **Failure and recovery.** Orphaned claims and access leaks are common; verify storage and
 retrieval policy in the owner section.
 
-**Technical owner.** [A durable workflow is more than a queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#claim-check) — workflow failure gates are bounded, not a complete request-reply contract.
+**Technical owner.** [Claim Check](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#claim-check) — claim-token binding, lifecycle and retrieval are bounded, not a payload store catalog.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -648,7 +648,7 @@ broker complexity and operational cost exceed decoupling benefit.
 **Failure and recovery.** Broker outage and bridge semantic drift are common; verify
 bridge contracts in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#rabbitmq-quorum-queues-and-publisher-confirms) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Message Broker / Messaging Bridge](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-broker-messaging-bridge) — consumer ownership is the bounded owner, not a dedicated channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -681,7 +681,7 @@ Reverse the choice when canonical-model governance becomes a bottleneck.
 **Failure and recovery.** Model drift and translation debt are common; verify ownership
 and versioning in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#canonical-data-model) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Canonical Data Model](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#canonical-data-model) — canonical schema ownership is bounded, not every EIP mechanism.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -694,27 +694,27 @@ unit, not a benchmark.
 **Related entries.** Anti-Corruption Layer; Message Broker; Domain-Driven Design / Bounded
 Context; Schema Evolution.
 
-### Process Manager / Routing Slip
+### Process Manager-Routing Slip
 
 **Identity.** Process Manager / Routing Slip; family Messaging and event-driven
 integration; kind integration-pattern; priority core.
 
-**Decision question.** Should a durable coordinator own a multi-step message flow and its
-recovery?
+**Decision question.** Should a durable coordinator or a routing-slip itinerary own a
+multi-step message flow and its recovery?
 
-**Good-fit conditions.** Steps span services; progress must survive failure;
-compensation/rollback is a business protocol; the workflow state has an owner.
+**Good-fit conditions.** Steps span services; progress must survive failure; a central
+durable state or a fixed itinerary can carry progress; the workflow state has an owner.
 
 **Hard contraindications.** Reject when one local transaction suffices, when no one owns
-workflow state, or when the process is only a fixed pipeline.
+workflow state, or when the itinerary cannot be made durable.
 
 **Competing alternative.** Saga/choreography or a simple pipeline. Reverse the choice when
-central coordination becomes a bottleneck or a hidden monolith.
+central coordination becomes a bottleneck or the itinerary cannot be fixed.
 
-**Failure and recovery.** Stuck workflows and ambiguous effects are common; verify
-workflow recovery in the owner section.
+**Failure and recovery.** Stuck workflows, lost dispatch, duplicate steps and ambiguous
+effects are common; verify recorded dispatch intent in the owner section.
 
-**Technical owner.** [A saga is a business protocol, not an automatic rollback](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#process-manager-routing-slip) — saga protocol ownership is bounded, not a full process-manager engine specification.
+**Technical owner.** [Process Manager-Routing Slip](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#process-manager-routing-slip) — process-manager and routing-slip coordination is bounded, not a full engine specification.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)

@@ -121,3 +121,6 @@ The failure path is a route to a stale or isolated region; the router must use a
 authoritative health and data-freshness signal, and failover must fence the old writer.
 Active-passive recovery is the alternative when cross-region consistency is not worth the
 routing complexity.
+
+**Limits.** Cross-region replication, conflict resolution and routing health are costs; a stale
+route can defeat locality.

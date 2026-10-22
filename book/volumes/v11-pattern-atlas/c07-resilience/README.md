@@ -82,8 +82,8 @@ resilience-pattern; priority core.
 **Decision question.** Should calls to a failing dependency be rejected early until it
 recovers?
 
-**Good-fit conditions.** Failures are observable; a half-open probe is safe; the fallback
-is defined; state is local or shared deliberately.
+**Good-fit conditions.** Failures are observable; a half-open probe is bounded and safe;
+the fallback is defined; state is local or shared deliberately.
 
 **Hard contraindications.** Reject when failures are caller-specific, when a circuit would
 hide a required dependency, or when recovery probing would overload the dependency.
@@ -91,10 +91,10 @@ hide a required dependency, or when recovery probing would overload the dependen
 **Competing alternative.** Retry with backoff or bulkhead isolation. Reverse the choice
 when circuit state and fallback complexity exceed failure containment benefit.
 
-**Failure and recovery.** Shared opens and false recovery are common; verify
-state/fallback in the owner section.
+**Failure and recovery.** Shared opens, false recovery and a breaker that hides a local
+resource problem are common; probe with a bounded budget and do not treat open as recovered.
 
-**Technical owner.** [Bulkheads, retries and optional dependencies](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities) — dependency isolation is bounded, not a full circuit-breaker library guide.
+**Technical owner.** [Circuit Breaker](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#circuit-breaker) — dependency isolation is bounded, not a full circuit-breaker library guide.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-circuit.2026-10-21: sections "CircuitBreaker",
@@ -114,7 +114,7 @@ priority core.
 the rest of the workload?
 
 **Good-fit conditions.** One dependency can exhaust shared pools; isolation limits blast
-radius; rejection behavior is defined.
+radius; per-pool queue age/utilization are observable; rejection behavior is defined.
 
 **Hard contraindications.** Reject when isolation would strand capacity, when the
 dependency is essential to all work, or when pool sizing cannot be observed.
@@ -122,10 +122,10 @@ dependency is essential to all work, or when pool sizing cannot be observed.
 **Competing alternative.** Shared pool with admission control. Reverse the choice when
 isolation overhead and stranded capacity exceed containment benefit.
 
-**Failure and recovery.** Pool exhaustion and starvation are common; verify isolation in
-the owner section.
+**Failure and recovery.** Bypass, undersized partitions, a shared hidden queue and
+starvation are common; detect per-pool metrics and fail the isolated class explicitly.
 
-**Technical owner.** [Bulkheads, retries and optional dependencies](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities) — dependency isolation is bounded, not a full circuit-breaker library guide.
+**Technical owner.** [Bulkhead](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#bulkhead) — bulkhead isolation is bounded, not a full resilience-library guide.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-bulkhead.2026-10-21: sections "Bulkhead", "Semaphore",
@@ -143,8 +143,9 @@ resilience-pattern; priority core.
 
 **Decision question.** Should a failed call be retried after increasing delays?
 
-**Good-fit conditions.** The failure is transient; the operation is idempotent or has
-idempotency keys; a retry budget exists.
+**Good-fit conditions.** The failure is transient; the operation is idempotent or has an
+effect identity; the attempt cap, backoff cap, jitter and remaining deadline are explicit;
+a retry budget exists.
 
 **Hard contraindications.** Reject when the operation is non-idempotent, when retries
 amplify overload, or when the deadline cannot absorb the backoff.
@@ -152,10 +153,10 @@ amplify overload, or when the deadline cannot absorb the backoff.
 **Competing alternative.** No retry or a single bounded retry. Reverse the choice when
 retry latency and load exceed transient-failure benefit.
 
-**Failure and recovery.** Retry storms and duplicate effects are common; verify
-budget/idempotency in the owner section.
+**Failure and recovery.** Retry storms, duplicate effects and synchronized clients are
+common; jitter the delay, cap attempts and total delay, and stop on server pushback.
 
-**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#3-end-to-end-deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Retry with Exponential Backoff](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-exponential-backoff) — deadlines/retries are bounded, not a complete timeout policy.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-retry.2026-10-21: sections "Retry", "Backoff", "Jitter". The
@@ -174,17 +175,20 @@ resilience-pattern; priority advanced.
 **Decision question.** Should retry delays include randomness to avoid synchronized
 retries?
 
-**Good-fit conditions.** Many clients retry after the same failure; jitter can be applied
-without breaking the retry budget; the source accepts spread.
+**Good-fit conditions.** Many clients retry after the same failure; the operation has stable
+effect identity or is naturally idempotent; sampled delay is bounded by the backoff cap and
+remaining deadline.
 
 **Hard contraindications.** Reject when retry timing must be deterministic, when jitter
-would violate a deadline, or when the thundering herd is caused by something else.
+would violate a deadline, when the thundering herd is caused by something else, or when a
+non-idempotent effect has no stable operation identity.
 
 **Competing alternative.** Fixed backoff or no retry. Reverse the choice when randomized
 delays complicate tracing more than they reduce synchronization.
 
-**Failure and recovery.** Jitter spreads load but does not fix a persistent dependency
-failure; verify budget in the owner section.
+**Failure and recovery.** Jitter spreads load but does not fix a persistent dependency failure
+or make a non-idempotent retry safe; bound the sampled delay and total attempts, and verify the
+retry budget.
 
 **Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-jitter) — deadlines/retries are bounded, not a complete timeout policy.
 
@@ -206,8 +210,8 @@ priority core.
 **Decision question.** Should each call have a bounded wait before it is treated as
 failed?
 
-**Good-fit conditions.** A deadline is known; cancellation is safe; late completion is
-handled; the timeout is shorter than the caller budget.
+**Good-fit conditions.** A local wait bound is known; cancellation is safe; late completion
+is handled; the timeout is shorter than the caller's remaining budget.
 
 **Hard contraindications.** Reject when work must complete regardless of time, when
 cancellation leaves irreversible effects, or when the timeout is longer than the caller
@@ -216,10 +220,11 @@ can wait.
 **Competing alternative.** Long-running async request-reply. Reverse the choice when
 synchronous waiting blocks capacity that could serve other work.
 
-**Failure and recovery.** Timeouts do not prove the remote effect stopped; verify
-cancellation in the owner section.
+**Failure and recovery.** A timeout is an ambiguous outcome, not proof that the remote
+effect stopped. Look up the durable outcome and clean up resources; do not blind-retry
+non-idempotent work.
 
-**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#3-end-to-end-deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Timeout](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#timeout) — deadlines/retries are bounded, not a complete timeout policy.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-timelimiter.2026-10-21: sections "TimeLimiter", "Cancel
@@ -242,17 +247,18 @@ downstream calls?
 **Good-fit conditions.** The full request path can carry a deadline; each hop can shorten
 it; expiration is observable.
 
-**Hard contraindications.** Reject when downstream work is deliberately asynchronous
-beyond the caller, when clocks cannot be compared, or when every hop invents its own
-timeout.
+**Hard contraindications.** Reject when downstream work must outlive the caller request,
+when only absolute wall-clock deadlines are available across hosts with unbounded skew,
+or when no hop enforces expiry.
 
 **Competing alternative.** Independent per-hop timeouts with a parent budget. Reverse the
 choice when propagation complexity exceeds the benefit of end-to-end bounds.
 
-**Failure and recovery.** Clock skew and lost deadlines are common; verify budget
-semantics in the owner section.
+**Failure and recovery.** Clock skew, lost deadlines and divergent per-hop timeouts are
+common; transmit remaining duration where possible, enforce expiry at each hop and keep an
+explicit cleanup path.
 
-**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#3-end-to-end-deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Deadline Propagation](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadline-propagation) — deadlines/retries are bounded, not a complete timeout policy.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: sections "Timeouts and deadlines",
@@ -271,19 +277,21 @@ priority core.
 
 **Decision question.** Should a failed primary path return a defined degraded result?
 
-**Good-fit conditions.** The caller can act on a degraded result; fallback semantics are
-honest; the fallback is cheaper and independently safe.
+**Good-fit conditions.** The caller can act on a degraded result; fallback freshness,
+authority and user-visible label are explicit; the fallback is cheaper and independently
+safe.
 
-**Hard contraindications.** Reject when no degraded result is meaningful, when fallback
-hides a correctness failure, or when the fallback depends on the same failed resource.
+**Hard contraindications.** Reject when no degraded result is meaningful, when fallback is
+cached/fabricated without disclosure, or when the fallback depends on the same failed
+resource.
 
 **Competing alternative.** Fail fast with an explicit error. Reverse the choice when a
 bounded degraded result is more useful than no result.
 
-**Failure and recovery.** Fallback can mask failures and drift; verify honesty in the
-owner section.
+**Failure and recovery.** Fallback can mask failures and drift; a stale or partial result
+must be labelled, and an explicit failure is safer than a plausible but wrong value.
 
-**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#purpose-and-mission) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Fallback](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#fallback) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: sections "Fallback", "Graceful
@@ -302,8 +310,8 @@ resilience-pattern; priority core.
 **Decision question.** Should non-essential capabilities be reduced to protect essential
 work under stress?
 
-**Good-fit conditions.** Essential and optional work are distinguishable; degradation is
-observable; recovery is defined.
+**Good-fit conditions.** Essential and optional work are distinguishable; the reduced
+outcomes and user-visible state are declared; recovery and hysteresis are defined.
 
 **Hard contraindications.** Reject when every capability is essential, when degradation
 cannot be communicated, or when it silently changes correctness.
@@ -311,10 +319,10 @@ cannot be communicated, or when it silently changes correctness.
 **Competing alternative.** Admission control or fail fast. Reverse the choice when partial
 service creates more confusion than value.
 
-**Failure and recovery.** Sticky degradation and unclear recovery are common; verify
-priority in the owner section.
+**Failure and recovery.** Hidden degradation, sticky reduced modes and unclear recovery are
+common; expose the reduced state and define how normal service resumes.
 
-**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#purpose-and-mission) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Graceful Degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#graceful-degradation) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: sections "Graceful degradation",
@@ -333,8 +341,8 @@ resilience-pattern; priority core.
 **Decision question.** Should the system reject some work to preserve useful throughput
 under overload?
 
-**Good-fit conditions.** Load exceeds capacity; rejection is cheaper than queueing;
-priority and retry behavior are defined.
+**Good-fit conditions.** Load exceeds capacity; rejection is cheaper than queueing; a
+bottleneck-specific signal, fair principal policy and retry guidance are defined.
 
 **Hard contraindications.** Reject when all work is equally critical, when rejection would
 violate a hard obligation, or when capacity is actually available.
@@ -342,10 +350,10 @@ violate a hard obligation, or when capacity is actually available.
 **Competing alternative.** Queueing or autoscaling. Reverse the choice when queue delay is
 acceptable and capacity can expand.
 
-**Failure and recovery.** Shedding the wrong work is common; verify priority in the owner
-section.
+**Failure and recovery.** Shedding the wrong work, unfair tenant impact and synchronized
+retry storms are common; declare quotas and retry hints, and protect essential outcomes.
 
-**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#purpose-and-mission) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Load Shedding](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#load-shedding) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: sections "Handling Overload", "Load shedding".
@@ -363,8 +371,8 @@ priority core.
 
 **Decision question.** Should request rate be limited to protect a dependency or budget?
 
-**Good-fit conditions.** A safe rate is known; throttling is observable; callers can back
-off.
+**Good-fit conditions.** A measurable bottleneck rate is known; throttling is observable;
+callers can back off; queue age and per-class latency are measured.
 
 **Hard contraindications.** Reject when the limit is arbitrary, when clients cannot react,
 or when throttling would drop mandatory work.
@@ -372,10 +380,10 @@ or when throttling would drop mandatory work.
 **Competing alternative.** Rate limiting at the edge or admission control. Reverse the
 choice when per-client fairness matters more than aggregate rate.
 
-**Failure and recovery.** Throttle oscillation and unfairness are common; verify limit
-source in the owner section.
+**Failure and recovery.** Throttle oscillation, hidden capacity loss and unfairness are
+common; keep a bounded queue, propagate backpressure and measure per-class latency.
 
-**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Throttling](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#throttling) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: sections "Handling Overload", "Throttling". The
@@ -393,8 +401,8 @@ resilience-pattern; priority core.
 
 **Decision question.** Should each client or tenant have an enforced request budget?
 
-**Good-fit conditions.** Client identity is known; limits reflect capacity/fairness;
-rejection is communicated.
+**Good-fit conditions.** Client identity is known; limits define window, burst and rejection
+response; limits reflect capacity and fairness.
 
 **Hard contraindications.** Reject when traffic is one internal caller, when limits would
 block essential work, or when identity cannot be trusted.
@@ -402,10 +410,10 @@ block essential work, or when identity cannot be trusted.
 **Competing alternative.** Global admission control or throttling. Reverse the choice when
 per-client fairness is not required.
 
-**Failure and recovery.** Bypass and unfair quotas are common; verify identity/limit in
-the owner section.
+**Failure and recovery.** Bypass through many keys, burst doubling and unfair quotas are
+common; bind limits to the scarce resource and declare retry guidance.
 
-**Technical owner.** [Overload protection, admission control and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Rate Limiting](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#rate-limiting) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: sections "Handling Overload", "Rate limiting".
@@ -424,8 +432,8 @@ resilience-pattern; priority core.
 **Decision question.** Should work be buffered in a queue so producers and consumers can
 run at different rates?
 
-**Good-fit conditions.** Bursts exceed consumer capacity; queue durability and backlog
-bounds are owned; latency is acceptable.
+**Good-fit conditions.** Bursts exceed consumer capacity; queue durability, retention/age
+bounds and idempotent consumers are owned; latency is acceptable.
 
 **Hard contraindications.** Reject when the caller needs a synchronous result, when
 backlog would violate a deadline, or when the queue becomes an unbounded hiding place.
@@ -433,10 +441,10 @@ backlog would violate a deadline, or when the queue becomes an unbounded hiding 
 **Competing alternative.** Direct synchronous calls or admission control. Reverse the
 choice when queue delay and backlog risk exceed smoothing benefit.
 
-**Failure and recovery.** Unbounded backlog and poison messages are common; verify
-recovery in the owner section.
+**Failure and recovery.** Unbounded backlog, expired work, poison messages and duplicate
+effects after ambiguous acknowledgment are common; bound age, reject early and drain.
 
-**Technical owner.** [Partial failure, saturation and recovery](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#partial-failure-saturation-and-recovery) — recovery behavior is bounded, not a complete load-leveling design.
+**Technical owner.** [Queue-Based Load Leveling](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#queue-based-load-leveling) — recovery behavior is bounded, not a complete load-leveling design.
 
 **Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-rabbit-reliability.2026-10-21: sections "Reliability Guide",
@@ -465,10 +473,11 @@ low-priority work indefinitely, or when producers can self-assign priority unche
 **Competing alternative.** FIFO with admission control. Reverse the choice when priority
 inversion or starvation exceeds latency benefit.
 
-**Failure and recovery.** Starvation and priority abuse are common; verify policy in the
-owner section.
+**Failure and recovery.** Starvation, priority abuse and unauthenticated class claims are
+common; define max wait, tenant isolation and a starvation policy, and verify the class at
+each hop.
 
-**Technical owner.** [Scarce resources, admission and queues](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md#3-queues-limits-and-priority-create-new-contracts) — admission/queue policy is bounded, not a universal priority scheme.
+**Technical owner.** [Priority Queue](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md#priority-queue) — admission/queue policy is bounded, not a universal priority scheme.
 
 **Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-rabbit-priority.2026-10-21: sections "Priority Support in Queues",
@@ -487,8 +496,8 @@ resilience-pattern; priority advanced.
 **Decision question.** Should a duplicate request be issued after a latency threshold to
 reduce tail latency?
 
-**Good-fit conditions.** Tail latency dominates; duplicate work is safe/idempotent; extra
-load is budgeted; the first response wins.
+**Good-fit conditions.** Replicas have independent tails; duplicate work is safe/idempotent;
+the speculative budget is bounded; cancellation works; the first acceptable response wins.
 
 **Hard contraindications.** Reject when operations are non-idempotent, when extra load
 would overload the dependency, or when the threshold is below normal latency.
@@ -496,7 +505,8 @@ would overload the dependency, or when the threshold is below normal latency.
 **Competing alternative.** Single request with retries or deadline tuning. Reverse the
 choice when duplicate load and cancellation cost exceed tail benefit.
 
-**Failure and recovery.** Hedging amplifies load; verify budget in the owner section.
+**Failure and recovery.** Hedging doubles work under shared saturation and can duplicate
+effects; cap speculation, cancel losers and disable when tails are not independent.
 
 **Technical owner.** [Hedging, replication and selective degradation](../../v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/deadline-hedging.md#4-hedging-replication-and-selective-degradation) — hedging is bounded to the tail-latency discussion.
 
@@ -519,8 +529,9 @@ operations-pattern; priority core.
 **Decision question.** Should an external monitor distinguish liveness, readiness and
 startup health?
 
-**Good-fit conditions.** The runtime exposes separate probes; probe semantics match the
-failure; restart and traffic removal are distinct.
+**Good-fit conditions.** Startup, readiness and liveness are separate probes; probe
+semantics match the failure; restart and traffic removal are distinct; external journey
+monitoring exists.
 
 **Hard contraindications.** Reject when a liveness probe would restart a healthy process
 because a shared dependency is down, or when one probe is used for every failure.
@@ -528,10 +539,11 @@ because a shared dependency is down, or when one probe is used for every failure
 **Competing alternative.** Simple process check plus external journey monitoring. Reverse
 the choice when probe complexity causes false restarts.
 
-**Failure and recovery.** False positives and shared-dependency coupling are common;
-verify semantics in the owner section.
+**Failure and recovery.** Shared-dependency failures can fail every probe and cause mass
+restart/ejection; cached or missing health can keep routing to a draining instance. Define
+no-response behavior, keep probes on an independent path, and bound frequency/exposure.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#failure-and-recovery) — readiness/health is bounded, not a full monitoring product.
+**Technical owner.** [Request routing and health signals](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#health-endpoint-monitoring) — readiness/health is bounded, not a full monitoring product.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-probes.2026-10-21: sections "Liveness", "Readiness",
@@ -552,7 +564,7 @@ resilience-pattern; priority advanced.
 authority?
 
 **Good-fit conditions.** A standby exists; promotion is fenced; data reconciliation is
-owned; failback is planned.
+owned; failback is planned as a new migration, not a DNS switch.
 
 **Hard contraindications.** Reject when no standby is maintained, when split brain cannot
 be fenced, or when failback would lose writes.
@@ -560,10 +572,10 @@ be fenced, or when failback would lose writes.
 **Competing alternative.** Restore from backup or stay on the promoted primary. Reverse
 the choice when failback risk exceeds locality benefit.
 
-**Failure and recovery.** Split brain and lost writes are common; verify recovery state
-machine in the owner section.
+**Failure and recovery.** Split brain and lost writes are common; quarantine the old
+authority, reconcile before failback, and hold writes when fencing evidence is missing.
 
-**Technical owner.** [Recovery state machines, fencing and failback](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md#3-original-synthetic-recovery-scenario) — failover/failback is bounded to recovery state machines.
+**Technical owner.** [Failover / Failback](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md#failover-failback) — failover/failback is bounded to recovery state machines.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",

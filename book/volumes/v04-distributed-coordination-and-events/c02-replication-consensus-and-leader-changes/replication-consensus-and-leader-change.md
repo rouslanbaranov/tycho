@@ -93,6 +93,16 @@ An acknowledged write's durability depends on the actual replication/commit ackn
 
 **Proposed, not run:** partition old leader, issue reads/writes on both sides, restore connectivity and change membership while checking committed-history invariants, stale-term rejection, duplicate effects and correct client error classification. For read-mostly telemetry where temporary staleness is acceptable, simpler asynchronous replicas may avoid quorum overhead; if single-key linearizable authority is mandatory, that alternative may fail the requirement.
 
+**Leader-follower mechanism.** One leader accepts writes and appends a replicated log;
+followers apply it in order. Reads may be served by the leader or by a follower with an
+explicit freshness contract. Failover selects a new leader only under the protocol's
+quorum/term rules; an old leader must not commit independently.
+
+**Alternative.** Quorum-replicated consensus, multi-leader replication or asynchronous
+read replicas may be preferable depending on the required write availability, read freshness
+and conflict model. Reverse leader-follower when cross-region writes or read scale dominate,
+or when the failover window is unacceptable.
+
 <!-- /tycho-question-source -->
 
 ## Integrated decision and reading route
@@ -126,6 +136,10 @@ record the conflicting versions and expose a deterministic resolution path. Sing
 replication avoids write conflicts at the cost of write availability across regions; choose
 multi-leader only when accepting local writes outweighs the conflict contract.
 
+**Limits.** Conflict metadata, per-key convergence and operator reconciliation are costs; a
+multi-leader topology does not remove the need for one authoritative outcome. The conflict
+contract must name the resolver and its audit trail.
+
 ### Read Replicas
 
 Read replicas serve read-only traffic from followers, reducing load on the leader while accepting
@@ -137,3 +151,38 @@ A lag spike serves stale data even though replication is healthy; monitor applie
 and route freshness-critical reads away from a lagging replica. Read from the leader or use a quorum
 read when freshness dominates; add replicas when read volume and tolerance for bounded staleness
 justify the extra copies.
+
+**Limits.** Replica count and lag budgets must be owned; a failover to a stale replica can
+violate read-your-writes even when the replication stream is healthy.
+
+### Leader-Follower Replication
+
+One leader accepts writes and appends a replicated log; followers apply it in order. The leader is
+the write authority for its term, and followers serve reads only under the freshness rule their
+contract declares.
+
+A can remain reachable to some clients, but must not be allowed to commit new authoritative writes
+without a valid quorum/term contract. A stale leader that reappears must be rejected, and the
+follower log must catch up before it serves authoritative reads. Track the commit position and the
+lag of each follower; a healthy connection is not proof of current data.
+
+Quorum-replicated consensus, multi-leader replication or asynchronous read replicas may be
+preferable depending on the required write availability, read freshness and conflict model.
+Leader-follower is a fit when one writer per partition is acceptable and failover can fence the old
+leader.
+
+### Consensus
+
+Consensus gives a group of nodes one ordered decision history despite crashes and partitions. In the
+worked scenario, nodes A, B and C replicate one state machine. A was leader. A's network connection
+to B and C fails; B and C may form a quorum and eventually select a new leader.
+
+A can remain reachable to some clients, but must not be allowed to commit new authoritative writes
+without a valid quorum/term contract. Old A reappears with stale state; reject stale leader commands
+and catch up the log. The commit rule needs a durable term/vote record and stable membership, not
+only a heartbeat.
+
+For read-mostly telemetry where temporary staleness is acceptable, simpler asynchronous replicas may
+avoid quorum overhead; if single-key linearizable authority is mandatory, that alternative may fail
+the requirement. Consensus is a fit when the decision history must survive minority failure and the
+operator can run the quorum safely.

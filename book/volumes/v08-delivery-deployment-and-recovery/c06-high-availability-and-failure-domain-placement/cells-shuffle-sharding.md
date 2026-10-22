@@ -155,6 +155,42 @@ deployment meets the objective or when stamps still share an unowned global depe
 The failure path is configuration drift or split state across stamps; version the stamp
 definition, route by an explicit key and reconcile state at the authority. A cell-based
 deployment is the alternative when isolation is the main goal and scale is secondary.
+
+**Limits.** Stamp duplication, routing-key changes and global dependencies are costs; a stamp
+without a data authority or upgrade owner becomes a snowflake.
+## Bounded pattern ownership notes
+
+### Cell-Based Architecture
+
+A cell serves a bounded population with its own capacity and failure domain. A cell-based
+architecture runs multiple copies of the serving stack, each with a routing key and a data partition,
+so one cell's failure affects only its population.
+
+The boundary is only real if every dependency is cell-scoped. A shared database, queue, cache,
+control plane or configuration publisher can make all cells fail together; trace every dependency a
+tenant can exhaust or corrupt and test the blast radius. Operations need per-cell capacity, routing,
+evacuation and reassignment, plus a control plane that survives one cell's loss.
+
+A single deployment with failure-domain isolation may be preferable when the population is small and
+cell duplication cannot be justified. Cells are a fit when tenant isolation and bounded blast radius
+matter enough to pay the placement, data-partition and control-plane cost.
+
+### Shuffle Sharding
+
+A shuffle shard selects a random subset of workers for each tenant, so different tenants overlap
+in only some of their eligible workers. A failed worker affects every tenant whose subset includes
+it; with shard size s from a pool of N, that is roughly s/N of tenants, not an unconditional
+reduction versus a fixed shard.
+
+Do not assume assignments are statistically independent just because they use a hash. If all workers
+await one shared database pool, the endpoint assignment proves little. Test the actual dependency
+graph, the assignment stability across restarts, the shard size and the measured tenant overlap
+under pool changes. Too few shards or an unstable assignment erodes the isolation benefit.
+
+A fixed cell gives a tenant a durable home and a clear population boundary. Shuffle sharding is
+preferable when many tenants share a pool and measured overlap reduces correlated failure without
+dedicating a cell to each one.
+
 ## Navigation
 
 - Parent chapter: [High availability and failure-domain placement](README.md).

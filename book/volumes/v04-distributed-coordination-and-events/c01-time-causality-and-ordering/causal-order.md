@@ -77,6 +77,23 @@ An integer **Lamport logical clock** can be incremented for a local event, attac
 
 **Decision impact:** if the business only needs every item to preserve its own update order, requiring global total order can introduce unnecessary coordination. If conflicting updates of a shared invariant must be serialized, merely generating timestamps does not create atomic or correct resolution.
 
+**Invariant.** A causal system must deliver causally related operations in the same order
+to every process. Concurrent operations may be ordered differently, but a convergent
+variant requires all nodes to converge once the same updates are visible. Causal metadata
+such as vector clocks carries the dependency; Lamport clocks alone cannot distinguish
+concurrency. [E03]
+
+**Failure and recovery.** A partition can preserve availability only while each client
+stays on one server; reconnecting elsewhere can expose missing dependencies. Lost
+metadata, reordered messages or a switched server can violate causal order. Recovery
+needs durable causal metadata, replay/deduplication and an explicit merge for concurrent
+writes. If total order is required, use consensus or sequential consistency and accept
+the availability and latency cost.
+
+**Alternative.** Use total order via consensus, per-key ordering, or session guarantees
+(read-your-writes, monotonic reads) when full causal metadata is too costly. Reverse the
+choice when causal metadata and convergence cost exceed the ordering requirement. [E03]
+
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
@@ -144,3 +161,22 @@ Selected evidence inspected 2026-10-20: [Leader election in distributed systems]
 | Integrated question | [Original scenario and limits](causality-ordering-and-consensus.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### Causal Ordering
+
+Causal ordering delivers operations so no effect is observed before its cause. It is a partial
+order over knowledge, not a wall-clock or total order.
+
+A **vector clock** can distinguish concurrent updates from causally ordered ones, at per-replica
+metadata cost. A Lamport integer gives only a scalar order and cannot tell whether two events are
+concurrent; use it for tracing, not as a merge decision.
+
+Causal ordering fits when cross-item happens-before is real, metadata can travel with the operation
+and concurrent writes have a merge rule. Reject it when total order is mandatory, metadata cannot
+travel, clients switch servers without session continuity, or no merge rule exists.
+
+Partition, reordered delivery, lost metadata and a server switch can expose missing dependencies.
+Keep durable causal metadata, replay and deduplicate, and define the merge. If total order is
+mandatory, use consensus and accept its coordination cost.

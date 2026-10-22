@@ -68,30 +68,31 @@
 
 
 > **Pattern atlas:**
-> [Gateway Routing](../../v11-pattern-atlas/c02-api-communication/README.md#gateway-routing) — decision conditions and contraindications.
 > [Service Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#service-discovery) — decision conditions and contraindications.
 > [Client-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#client-side-discovery) — decision conditions and contraindications.
 > [Server-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#server-side-discovery) — decision conditions and contraindications.
 
 
 > **Pattern atlas:**
-> [Health Endpoint Monitoring](../../v11-pattern-atlas/c07-resilience/README.md#health-endpoint-monitoring) — decision conditions and contraindications.
-
-
-> **Pattern atlas:**
 > [Load Balancing](../../v11-pattern-atlas/c09-scalability/README.md#load-balancing) — decision conditions and contraindications.
-
-## The routing contract
-
-A caller needs a route to an eligible instance, not a timeless list of machines. Describe separately the externally resolved name, the service membership view, the connection destination and the backend selected for each request. A global route may choose a location; an internal selector chooses a process. A stale membership view can outlive a rollout.
-
-The two SRE load-balancing chapters distinguish global routing from backend selection. Their examples support the need to examine locality, workload and selection policy; they do not prescribe one algorithm for every service.
 
 ## DNS and discovery have different update boundaries
 
 In a typical DNS path, a recursive resolver may answer from a cached record or consult the authoritative naming hierarchy. The application/runtime can also retain resolved addresses or established connections. A DNS TTL governs a DNS record's caching contract; it is not an application transaction deadline or a guarantee that every client stops using an existing connection at that instant.
 
 Service discovery may publish addresses plus eligibility metadata to a proxy or client. Document who observes updates and how stale membership is detected. Distinguish the discovery control path from data-plane requests that can continue against a last-known usable set. If membership is stale, continued reachability still cannot establish write authority.
+
+**Client-side discovery.** The caller obtains the membership view from a registry/control
+plane, caches it and selects a backend. It owns client-side load balancing, health/ejection,
+retry budget and stale-membership handling. Registry unavailability, stale cache and uneven
+client logic are common; a last-known set may serve reads but cannot grant write authority.
+
+**Server-side discovery.** A proxy, gateway or platform keeps the membership view and selects
+a backend for a stable virtual name. The client carries no discovery logic, but the proxy
+becomes a shared dependency and must expose routing/health behavior. It may be preferable
+for thin or heterogeneous clients; client-side discovery may be preferable when callers need
+direct routing or cannot share a proxy. Static DNS, a service mesh or direct endpoint
+configuration may be simpler when membership changes are rare.
 
 For an original cutover decision, publish the replacement endpoint, establish its readiness and trust, and account for old route/connection lifetimes before retiring the former endpoint. A DNS change alone is neither a drain procedure nor a database failover protocol. The exact resolver/runtime's cache and failure behavior remains a product-specific verification task.
 
@@ -188,8 +189,9 @@ signal and the connection topology. Overload shedding is owned by `V07/C05`
 | Fresh discovery is unavailable | A last-known endpoint set may permit reads, but cannot grant write authority | Membership age, reachable data plane and authority epoch |
 | Retry selects another replica | May amplify work or repeat a committed effect | Logical operation IDs and retry budgets |
 
-Define startup eligibility, readiness, draining and permanent removal separately. A liveness endpoint should not restart every healthy process because one shared dependency is unavailable. Exact probe behavior belongs to the chosen runtime/version.
+Define startup eligibility, readiness, draining and permanent removal separately. A liveness endpoint should not restart every healthy process because one shared dependency is unavailable.
 
+Health signal semantics are owned by [request routing and health](routing-and-health.md).
 ## Choice, acceptance and evidence
 
 Use a simple static endpoint or one proxy when its failure and maintenance contract is adequate. Introduce client-side discovery only if clients can maintain and test membership, backoff, observability and upgrade behavior. A mesh adds a policy/control plane; it does not remove those obligations.
@@ -205,6 +207,66 @@ Sources: [Load Balancing at the Frontend](https://sre.google/sre-book/load-balan
 2026-10-21. Algorithm comparisons and the failure matrix are original design
 reasoning.
 
+## Bounded pattern ownership notes
+
+### Service Discovery
+
+Service discovery may publish addresses plus eligibility metadata to a proxy or client. The
+registry is a control-plane view; it does not prove that an address is currently writable or that a
+caller may commit an effect there.
+
+If membership is stale, continued reachability still cannot establish write authority. Document who
+observes updates and how stale membership is detected. Distinguish the discovery control path from
+data-plane requests that can continue against a last-known usable set. The freshness bound belongs
+to the caller's contract, not to the registry's update interval.
+
+Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
+are rare. Discovery is justified when membership changes faster than configuration can be
+republished and the consumer can act on eligibility metadata.
+
+### Client-Side Discovery
+
+The caller obtains the membership view from a registry/control plane, caches it and selects a
+backend. The client is now part of the routing authority, so its cache age and selection policy are
+production concerns. It also needs a refresh budget and a stale-cache alarm.
+
+If membership is stale, continued reachability still cannot establish write authority. Document who
+observes updates and how stale membership is detected. Distinguish the discovery control path from
+data-plane requests that can continue against a last-known usable set. A client that never refreshes
+its view can keep sending traffic to a removed instance.
+
+Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
+are rare. Client-side discovery trades a central proxy for per-client complexity and policy drift.
+
+### Server-Side Discovery
+
+A proxy, gateway or platform keeps the membership view and selects a backend for a stable virtual
+name. The client sees one name; the proxy owns the update, health and selection logic.
+
+If membership is stale, continued reachability still cannot establish write authority. Document who
+observes updates and how stale membership is detected. Distinguish the discovery control path from
+data-plane requests that can continue against a last-known usable set. The proxy itself becomes a
+failure domain and must not hide a stale view behind a green health check.
+
+Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
+are rare. Server-side discovery is a fit when clients should not carry routing policy and the proxy
+can be operated as a critical dependency.
+
+### Load Balancing
+
+A selector can count connections, active requests, completed work, errors or resource utilization.
+These signals answer different questions and fail in different ways.
+
+Cap request cost at the interface where one request can dominate a backend, and test the selector
+under the real cost distribution. A least-loaded or active-request selector assumes that a backend
+with spare capacity will do useful work. A seriously unhealthy backend can instead return an error in
+milliseconds, so its active-request count falls and the selector sends it more traffic. The backend
+becomes a sinkhole.
+
+Compare round-robin, random choice, least-active requests and affinity against request cost, stale
+load signals and state placement. Prefer a simple policy when the cost distribution is uniform;
+move to active signals only when the signal is fresh and its failure mode is understood.
+
 ## Navigation
 
-Parent: [network chapter](README.md). Next: [connection draining](connections-draining.md). Related: [failure domains](../c06-high-availability-and-failure-domain-placement/README.md), [overload admission](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md).
+Parent: [network chapter](README.md). Next: [request routing and health](routing-and-health.md). Related: [failure domains](../c06-high-availability-and-failure-domain-placement/README.md), [overload admission](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md).

@@ -85,7 +85,39 @@ Adding an index may change:
 
 For high write demand, an index improving one query by a few milliseconds can be a net loss if it increases every update or checkpoint cost. Keep the unit of value as correct completed user operations across the whole workload.
 
+**Native secondary-index mechanism.** A native secondary index maps a search key to a row
+locator and is maintained on base-table writes; the planner chooses it when estimated
+selectivity and cost favor it. It is the competing native mechanism, not the application-owned
+lookup table defined below.
+
+**Invariant and failure.** Every index entry must remain consistent with the base row, and
+its write/backup/maintenance cost belongs to the workload budget. Bloat, failed concurrent
+builds, stale statistics and write amplification are common; rebuild or repair explicitly
+and compare end-to-end cost. A sequential scan, covering index, partition pruning or
+materialized view may be preferable when the index would cost more writes than it saves.
+
 <!-- /tycho-question-source -->
+
+## Bounded pattern ownership notes
+
+### Index Table
+
+**Synthetic design guidance, not measured evidence.** An index table is an application-owned
+lookup table that maps a query key to a primary key or row locator. The application
+maintains it on the write path, separately from any native database index,
+because the query shape, sort order or cross-store join is not served by the primary store.
+
+Every lookup row must resolve to the current base row; the mapping and the base write should
+commit in one local transaction, or the write path must publish a durable repair
+intent. Dual-write ambiguity, partial backfill, duplicate lookup keys and stale rows
+are common design-time failure modes; the cited PostgreSQL page covers native indexes,
+not this application-owned table. Reconcile with a repair job, keep the lookup key
+immutable and bound rebuild time.
+
+A native secondary index, a materialized view or a query-time join may be preferable when the
+primary store already serves the access path. An index table is a fit when the primary
+store cannot serve a stable, frequently used lookup, the write path can own its repair and
+the added write/repair cost is lower than the scan or drift cost it removes.
 
 ## Navigation, prerequisites and source scope
 

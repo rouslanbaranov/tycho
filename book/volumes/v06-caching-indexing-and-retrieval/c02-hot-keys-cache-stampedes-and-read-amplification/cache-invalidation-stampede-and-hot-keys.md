@@ -95,7 +95,13 @@ Cache invalidation removes or versions a cached entry when the authoritative val
 later read cannot reuse the superseded copy. The invalidation must be ordered with the write or
 guarded by a version, and a failed invalidation must remain visible rather than silently skipped.
 
-A lost invalidation or an in-flight fill resurrects stale data; bound the TTL, compare versions on
-fill and record invalidations that failed. A short TTL accepts bounded staleness without a purge
-path; use explicit invalidation when the allowed staleness is shorter than the TTL that is
-affordable.
+A reader can miss, read V1, let a writer commit V2 and invalidate, then fill V1 back with a
+fresh TTL. The fill must carry the source revision it read; compare that revision under the
+shared key and discard or retry on mismatch. A lost invalidation or in-flight fill resurrects
+stale data; bound the TTL, record failed invalidations and keep a durable retry path. A short
+TTL accepts bounded staleness without a purge path.
+
+**Limits.** Invalidation couples every writer to every cache and region: fan-out, multi-cache
+coherence and partial purge are architectural costs, and a purge that times out is an unverified
+revocation. Prefer TTL-only when bounded staleness is acceptable, or versioned keys when every
+reader can carry the version.

@@ -91,7 +91,7 @@ the choice when operational shard complexity exceeds scale benefit.
 **Failure and recovery.** Hotspots and resharding are common; verify routing/rebalancing
 in the owner section.
 
-**Technical owner.** [Sharding, partition keys, hotspots and safe resharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#purpose-and-mission) — sharding/partition keys are bounded, not a universal distribution recipe.
+**Technical owner.** [Sharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#sharding) — sharding/partition keys are bounded, not a universal distribution recipe.
 
 **Sources.** [src.citus](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-citus.2026-10-21: sections "Concepts". The source is a public
@@ -185,7 +185,7 @@ unavailability or write locality dominates.
 **Failure and recovery.** Lag, failover and split-brain are common; verify leader change
 in the owner section.
 
-**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment) — replication/leader change is bounded, not a complete multi-leader protocol.
+**Technical owner.** [Leader-Follower Replication](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#leader-follower-replication) — replication/leader change is bounded, not a complete multi-leader protocol.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",
@@ -247,7 +247,7 @@ replica lag and routing complexity exceed read-scale benefit.
 **Failure and recovery.** Stale reads and replica lag are common; verify read routing in
 the owner section.
 
-**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#read-replicas) — replication/leader change is bounded, not a complete multi-leader protocol.
+**Technical owner.** [Read Replicas](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#read-replicas) — read-replica scaling and staleness are bounded, not a complete multi-leader protocol.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",
@@ -278,7 +278,7 @@ choice when quorum availability/latency cost exceeds consistency benefit.
 **Failure and recovery.** Quorum loss and slow replicas are common; verify failure
 envelope in the owner section.
 
-**Technical owner.** [Majority quorum arithmetic and the failure envelope](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#2-majority-quorum-arithmetic-and-the-failure-envelope) — quorum arithmetic is bounded, not a universal consistency guarantee.
+**Technical owner.** [Quorum-Based Reads / Writes](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#quorum-based-reads-writes) — quorum arithmetic is bounded, not a universal consistency guarantee.
 
 **Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-cassandra-dynamo.2026-10-21: sections "Tunable Consistency",
@@ -310,7 +310,7 @@ index maintenance and drift exceed lookup benefit.
 **Failure and recovery.** Stale index rows and write amplification are common; verify
 lifecycle in the owner section.
 
-**Technical owner.** [An index is a data lifecycle change](../../v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md#5-an-index-is-a-data-lifecycle-change) — index lifecycle is bounded, not a full access-path catalogue.
+**Technical owner.** [Index Table](../../v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md#index-table) — index lifecycle is bounded, not a full access-path catalogue.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-indexes.2026-10-21: sections "Indexes", "Index Types",
@@ -344,7 +344,7 @@ workload benefit.
 **Failure and recovery.** Stale projections, dual-write ambiguity and partial migration
 are common; verify freshness and rebuild in the owner section.
 
-**Technical owner.** [Multiple databases create a new synchronization problem](../../v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md#7-multiple-databases-create-a-new-synchronization-problem)
+**Technical owner.** [Polyglot Persistence](../../v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md#polyglot-persistence)
 — bounded selection criteria, not a complete multi-store design.
 
 **Sources.** [src.fowler-polyglot](../../../../edition/patterns/reading-ledger.v1.json)
@@ -376,7 +376,7 @@ Reverse the choice when projection freshness/complexity exceeds read-scale benef
 **Failure and recovery.** Stale and duplicate projections are common; verify freshness in
 the owner section.
 
-**Technical owner.** [CQRS and asynchronous projection freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — projection freshness is bounded, not a complete read-model design.
+**Technical owner.** [CQRS Read Projections](../../../distributed/cqrs-event-sourcing-and-projections.md#cqrs-read-projections) — projection freshness is bounded, not a complete read-model design.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -408,7 +408,7 @@ choice when staged migration cost exceeds rollout risk.
 **Failure and recovery.** Partial backfills and old readers are common; verify gates in
 the owner section.
 
-**Technical owner.** [Expand, migrate, contract as a gated lifecycle](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#3-expand-migrate-contract-as-gated-lifecycle) — expand/contract is bounded, not a complete migration runbook.
+**Technical owner.** [Expand-and-Contract Schema](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#expand-and-contract-schema) — expand/contract is bounded, not a complete migration runbook.
 
 **Sources.** [src.flyway](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-flyway.2026-10-21: sections "Migrations", "Versioned Migrations",
@@ -440,7 +440,7 @@ when online complexity exceeds downtime cost.
 **Failure and recovery.** Stale backfills and cutover ambiguity are common; verify
 acceptance in the owner section.
 
-**Technical owner.** [Backfill acceptance is more than row totals](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#backfill-acceptance-is-more-than-row-totals) — backfill acceptance is bounded, not an online migration tool guide.
+**Technical owner.** [Online Data Migration](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#online-data-migration) — backfill acceptance is bounded, not an online migration tool guide.
 
 **Sources.** [src.gh-ost](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-gh-ost.2026-10-21: sections "How?", "Highlights", "Usage". The

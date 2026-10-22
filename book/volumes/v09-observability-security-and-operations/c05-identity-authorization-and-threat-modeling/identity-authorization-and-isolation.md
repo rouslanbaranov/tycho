@@ -47,7 +47,7 @@ content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.dde63373c50f4f4a80e727b6e160def5:-1 -->
 
-# Threat boundaries, identity, authorization and service isolation
+# Identity and workload trust
 
 > Original Tycho E14-12 [#90](https://github.com/rouslanbaranov/tycho/issues/90), public-specification reading 2026-10-19. This is a decision-method chapter, **not** a penetration test, vulnerability assessment, product certification, configured policy or observed security guarantee. The content_review field retains the decomposition-era draft state; no independent acceptance is asserted.
 
@@ -55,15 +55,7 @@ content_verified_at: null
 
 > **Pattern atlas:**
 > [Federated Identity](../../v11-pattern-atlas/c11-security-operations/README.md#federated-identity) — decision conditions and contraindications.
-> [Zero Trust Architecture](../../v11-pattern-atlas/c11-security-operations/README.md#zero-trust-architecture) — decision conditions and contraindications.
-> [Least Privilege](../../v11-pattern-atlas/c11-security-operations/README.md#least-privilege) — decision conditions and contraindications.
-> [RBAC / ABAC](../../v11-pattern-atlas/c11-security-operations/README.md#rbac-abac) — decision conditions and contraindications.
 > [Workload Identity / mTLS](../../v11-pattern-atlas/c11-security-operations/README.md#workload-identity-mtls) — decision conditions and contraindications.
-> [Multitenant Isolation](../../v11-pattern-atlas/c11-security-operations/README.md#multitenant-isolation) — decision conditions and contraindications.
-
-
-> **Pattern atlas:**
-> [Tenant-Based Resource Isolation](../../v11-pattern-atlas/c09-scalability/README.md#tenant-based-resource-isolation) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.dde63373c50f4f4a80e727b6e160def5:0 -->
 ## Purpose and mission
@@ -80,6 +72,8 @@ Place identity and resource authorization at the actual effect boundary, includi
 
 Network reachability or a valid token does not grant permission to every object; test denied operations through indirect paths.
 
+Authorization and least-privilege decisions are owned by [authorization policy](authorization-policy-and-least-privilege.md); tenant isolation is owned by [multitenant isolation](multitenant-isolation.md). This page keeps the identity mechanisms.
+
 The detailed pages separate the mechanisms that make this decision conditional:
 
 - [Threat models and authenticated identity](threat-identity.md) — Which asset and principal are protected and what does authentication establish?
@@ -94,17 +88,6 @@ These notes define the decision boundary for atlas cards whose mechanism is not 
 this page. They are synthetic design guidance, not measured evidence, and they do not create a new
 source claim.
 
-### Tenant-Based Resource Isolation
-
-Tenant-based isolation assigns each tenant a bounded share of compute, storage and quota, with
-routing and credentials that keep the tenant scope explicit. No query, cache key, queue consumer or
-credential may cross a tenant boundary without an explicit shared-resource contract.
-
-A shared cache or background worker leaks one tenant's data or consumes another's capacity; scope
-keys by tenant and test indirect paths with a foreign identifier. A shared pool with tenant-scoped
-predicates is cheaper at low scale; choose dedicated resources when noisy-neighbour or compliance
-risk dominates.
-
 ### Federated Identity
 
 Federated identity accepts an identity asserted by an external issuer through a configured trust
@@ -116,30 +99,11 @@ deliberately and test rejection of an unexpected audience. Local accounts avoid 
 duplicate identity lifecycle; federate when many services or partners need one governed identity
 source.
 
-### Least Privilege
+**Limits.** Federation concentrates trust in the issuer and metadata; key rotation, audience
+restriction and issuer compromise are ongoing costs, not one-time setup. Metadata caching and
+issuer discovery need their own availability, rollback plan, audit evidence and an owner.
 
-Least privilege grants each principal only the permissions its task needs, limited in resource
-scope, action and time. Every credential must have a bounded scope, an owner and a revocation path
-that does not depend on the compromised principal.
-
-Permission creep and long-lived credentials widen the blast radius without any visible incident;
-review grants on a schedule and prefer short-lived scoped credentials. Coarse roles are simpler to
-administer for small stable systems; narrow them once measured access reviews or incident impact
-justify the overhead.
-
-### RBAC / ABAC
-
-Role-based access control maps roles to permissions, while attribute-based control evaluates
-principal, resource and context attributes to reach a decision. Policy evaluation must be
-deterministic and deny by default, and every decision must be explainable from versioned policy and
-attributes.
-
-Role explosion or stale attributes grants unintended access; test policy changes against denied and
-allowed cases and record policy provenance. Explicit object access lists are transparent at small
-scale; move to roles or attributes when the number of objects and principals makes per-object grants
-unmaintainable.
-
-### Workload Identity / mTLS
+### Workload Identity-mTLS
 
 Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates
 both ends of a service connection with short-lived credentials. The identity must bind to the
@@ -151,13 +115,10 @@ rotate, revoke and test an unauthorized peer. Network policy with shared secrets
 operations are unavailable; choose workload identity when lateral movement and credential reuse are
 the dominant risk.
 
-### Multitenant Isolation
+**Limits.** PKI, certificate rotation and revocation are operational costs; a valid certificate
+authenticates the workload, not every operation it requests. Certificate issuance availability
+is part of the request path; a failed rotation is an outage.
 
-Multitenant isolation keeps tenant data and effects separate inside a shared application by deriving
-tenant scope from authenticated context at every access path. The tenant identifier must be derived
-from authentication and authorization, never accepted from an arbitrary caller field alone.
+## Navigation
 
-A missing tenant predicate in a query, cache or background task exposes another tenant's records;
-test indirect paths and enforce the predicate centrally. A tenant-per-deployment boundary removes
-shared-code risk at higher cost; share a deployment only when scoping is enforced consistently
-across every path.
+Parent: [identity chapter](README.md). Next: [authorization policy](authorization-policy-and-least-privilege.md).

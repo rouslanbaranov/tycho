@@ -120,3 +120,7 @@ A lost or expired reply leaves the caller unable to decide the outcome; keep the
 queryable and reconcile before retrying the original request. A synchronous call with a bounded
 deadline is simpler when the work reliably finishes inside the request budget; split the interaction
 only when waiting would exceed it.
+
+**Limits.** The handle store, retention, polling/callback security and terminal-state schema
+are costs; callbacks need authentication and an idempotent receiver, and polling needs backoff
+and expiry.

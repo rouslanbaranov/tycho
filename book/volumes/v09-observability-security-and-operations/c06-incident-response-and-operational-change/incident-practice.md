@@ -107,3 +107,6 @@ The failure path is a false restart or traffic sent to an unready instance; boun
 timeouts, require consecutive failures and keep shared-dependency checks out of liveness.
 External journey monitoring is the alternative when process-local probes cannot observe
 the user-visible contract.
+
+**Limits.** Probe frequency, false positives and dependency coupling are costs; a green probe
+does not prove a correct user journey.

@@ -76,6 +76,34 @@ Four patterns address different questions:
 - **Saga:** how can several owners coordinate business steps and appropriate compensating actions without claiming one global transaction?
 - **Durable workflow:** how can a coordinator record its progress, resume after failure and surface unknown outcomes?
 
+**Workflow state.** A durable workflow is a persistent state machine: steps, timers,
+retries, versions, compensation and human tasks survive process loss. The engine records
+history and replays deterministic code; activity boundaries hold non-deterministic or
+external effects. [Temporal documentation](https://docs.temporal.io/workflows) describes
+this execution model; it is not a product recommendation.
+
+**Failure and recovery.** Stuck workflows, duplicate activities, lost timers,
+non-deterministic replay and version conflicts are common. Recovery needs replay from
+durable history, idempotent activities, explicit retry/cancel/compensation, and a repair
+state for unknown external effects. Do not infer success from a completed workflow flag
+when an external effect is uncertain.
+
+**Alternative.** Saga choreography, a database-backed job table, or a simple queue
+pipeline may be simpler when steps are few, no long timers are needed, or the team cannot
+operate an engine. Reverse when coordination and versioning cost exceed the workflow
+benefit.
+
+**Outbox mechanism.** Commit the authoritative state change and a publication-intent row
+in one local transaction. A relay reads unpublished rows, publishes them and records a
+checkpoint; consumers deduplicate by event identity. The outbox gives durable intent, not
+atomicity with the broker or exactly-once delivery.
+
+**Failure and recovery.** A relay can crash after publish but before checkpoint, causing a
+duplicate; after commit but before publish, causing a retry; a poison row can block
+progress. Bound attempts and age, retain repair evidence and make publication idempotent.
+Snapshot/log-based CDC, transactional messaging, or direct publish with reconciliation may
+be preferable when the outbox table or relay is not operationally justified.
+
 The exact retry/operation identity contract is owned by [V04/C04](../c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md); this chapter owns multi-boundary state coordination.
 
 <!-- /tycho-question-source -->
@@ -93,3 +121,36 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Sagas, workflow recovery and compensation](saga-workflows.md) — What business recovery contract replaces a nonexistent global rollback?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+### Transactional Outbox
+
+An outbox is a durable publication queue inside the state store. The business row and an intent row
+commit together; a relay leases rows, publishes them and records completion. The broker sees
+at-least-once attempts, not a distributed transaction.
+
+The relay needs bounded attempts and age, a publication key, per-aggregate ordering and a terminal
+quarantine for poison rows. A crash after publish before completion duplicates; after commit before
+publish retries. A consumer still deduplicates by effect identity, and a repair operator needs the
+row, payload digest and attempt history retained for the declared window.
+
+Use an outbox when the lost-publication and duplicate-effect risk justifies relay
+complexity. Reverse to
+direct publish with reconciliation only when relay complexity exceeds the risk it removes; CDC or
+transactional messaging may fit when the log is accessible.
+
+### Distributed Workflow Orchestration
+
+A durable workflow is a persistent state machine: steps, timers, retries, versions, compensation and
+human tasks survive process loss. The workflow history is the authority for progress, not an
+in-memory coroutine.
+
+Recovery needs replay from durable history, idempotent activities, explicit retry/cancel/compensation,
+and a repair state for unknown external effects. Do not infer success from a completed workflow flag
+when an external effect is uncertain. Upgrade workflow code with versioning so a replayed history
+does not change meaning.
+
+Saga choreography, a database-backed job table, or a simple queue pipeline may be simpler when steps
+are few, no long timers are needed, or the team cannot operate an engine. Orchestration is a fit when
+long waits, visibility and compensation justify the engine.

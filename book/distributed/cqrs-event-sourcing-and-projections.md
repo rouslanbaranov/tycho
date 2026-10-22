@@ -108,7 +108,17 @@ Start with no confirmed bookings. Apply, in the intended aggregate order:
 
 The projection `confirmed_count` is calculated as `+1, +1, -1`, yielding **1**. This is **synthetic arithmetic**, not a tested business database. Replaying a historical event sequence under different event semantics may not produce the same result; versioned event handlers and invariant rules must be specified.
 
+**Invariant.** A command appends only when its expected stream version matches the current
+version; a racing command is rejected and the caller re-reads before deciding. Retrying an
+already-appended command needs the same operation identity, or a write-side retry can
+double-append the event.
+
 A snapshot can accelerate replay by recording a state at a known stream offset/version, followed by applying later events. However, a snapshot is a **derivative cache** unless declared and validated as the authority. Rebuilds must check offset continuity and event schema compatibility. "Append-only" alone is not a security-compliant audit log: deletion policies, integrity protection, identity, corruption, retention and privileged access still matter.
+
+**Alternative.** State-stored CRUD with an audit log, CDC/outbox or event notification may
+be preferable when full replay is unnecessary, event-schema ownership is absent or external
+side effects cannot be isolated. Reverse the event-sourcing choice when audit/replay value
+exceeds schema-evolution and rebuild cost.
 
 ## 3. CQRS and asynchronous projection freshness
 
@@ -143,6 +153,24 @@ Some user journeys tolerate short projection lag; others require "read your writ
 
 Measure actual **projection age**, offset gap, end-to-end good-event SLI and failure amplification. Avoid claiming a numeric freshness threshold without an approved requirement and representative tests.
 
+**Materialized-view invariant.** A materialized view must record its source version or
+offset, refresh trigger and freshness contract. A stale view is a derived read, not
+authority; a query that requires current state must use an authority path.
+
+**Failure and recovery.** Projector crash, cursor gaps, schema drift and partial rebuilds
+are common. Resume from a recorded cursor, rebuild with external side effects disabled, and
+represent an unknown or lagging view explicitly rather than serving it as current.
+
+**Alternative.** Direct authority reads, cache-aside or a synchronous read may be preferable
+when the required freshness exceeds the projection benefit. Reverse the view choice when
+rebuild and freshness coordination cost more than the read-latency gain.
+
+**CQRS failure and alternative.** Projection lag, duplicate apply, cursor gaps and schema
+drift are common; make the apply idempotent, commit view and cursor atomically, and rebuild
+with side effects disabled. A single model/CRUD service, a synchronous authority read or an
+event-sourced reconstruction may be preferable when read/write separation complexity exceeds
+the measured benefit.
+
 ## 4. Replay, duplication, ordering and external side effects
 
 If a projector crashes after applying an event but before recording its cursor, it may consume the **same event again**. The read-side update must be idempotent or use an atomic record of event/stream version with the state change. In an event-sourced business application, replaying old authoritative events must **not** resend real money, email or notifications unless that is an explicitly isolated new business workflow. Fowler's *External Updates* discussion highlights this hazard. [E03]
@@ -163,6 +191,24 @@ Text alternative: a projection resumes from a recorded cursor, applies a version
 ### Distinguish source log from integration event
 
 A domain event log can be the source of truth while a broker's integration stream is a **separate transport**. The operation that publishes integration messages may need an outbox/connector, change capture or durable cursor; it does not inherit global exactly-once execution simply because event sourcing is present. Conversely, a CRUD store plus transactional outbox **is not automatically event sourcing**: its history need not be sufficient to reconstruct all business state. See [outbox and duplicate effects](transactional-outbox-and-idempotency.md).
+
+**Domain-event contract.** A domain event records a business fact that already occurred,
+named in past tense, with aggregate/event identity, version and causation where needed. It
+is not a command and not permission: a consumer must not treat receipt as authorization to
+repeat the effect. The same event may feed an internal projection and an integration
+transport, but those are different contracts with different retry and schema rules.
+
+**Failure and recovery.** Duplicate delivery, lost publication, ordering and schema
+evolution are common. Deduplicate by event identity, preserve per-aggregate order, version
+event schemas and keep an explicit unknown/repair state when publication is not atomic with
+state. If consumers need the current authoritative value, query authority instead of
+inferring it from an event.
+
+**Alternative.** A synchronous call or command message may be preferable when the caller
+needs an immediate answer and fan-out is unnecessary. Polling, CDC or event-carried state
+transfer may fit when consumers only need current state and no durable history is
+authoritative. Reverse the domain-event choice when event volume and schema coupling exceed
+the decoupling benefit.
 
 ## 5. Version changes and failure table
 
@@ -212,3 +258,73 @@ Replication delay or failover can serve an older position, so the client must ch
 position or wait for the required one before treating a read as current. Serve the same read from
 the authoritative command store or block until the projection catches up; reverse the choice when
 replica lag is bounded and read load would otherwise overload the authority.
+
+**Remote facts.** When a command needs facts owned by another service, a local replica is a
+cache of that owner's state, not a second authority. Give it an owner, a source version,
+refresh/invalidation and reconciliation when the owner changes; the local copy must never
+become the decision-time writer.
+
+**Decision safety.** A replica may inform a decision only while its staleness bound is
+acceptable for that operation. If the decision needs linearizable remote state, read the
+authority or a lease-confirmed value. Enforce single-writer with fencing or a version check,
+and test the divergent-replica case: a stale copy must reject the command, not overwrite the
+owner.
+
+### Domain Events
+
+A domain event publishes a committed business fact to other owners. It is not a command in
+disguise and not a substitute for a shared transaction; if consumers need either, keep the
+interaction synchronous or local. The event is not permission to repeat an effect.
+
+Use it when the fact has identity, version and causation, consumers own their reactions, and
+publication reliability and ordering are explicit. The producer owns the event contract; each
+consumer owns interpretation and deduplication.
+
+Duplicate, late, out-of-order and schema-evolved events are normal. Deduplicate by identity,
+preserve aggregate order and keep an unknown/repair state when publication is not atomic with the
+state change. A synchronous call or command message is preferable when event fan-out and eventual
+consistency exceed the decoupling benefit.
+### Materialized View
+
+A materialized view stores the result of a query so repeated reads avoid recomputing it. It is
+derived data, not the base table: the stored rows can be stale until a refresh replaces them.
+
+Refresh is a separate write operation with an owner and a mode. An on-demand refresh can block reads
+while it rebuilds; a concurrent refresh needs a unique key and still consumes I/O; a refresh on every
+write turns the view into a cache. Define the freshness contract, the refresh trigger, the lock or
+blocking behavior and a rebuild path. A view that cannot be rebuilt from the authority is a second
+database without an owner.
+
+A native query, cache-aside or a synchronous read may be preferable when the required freshness
+exceeds the view benefit. A materialized view is a fit when repeated read shapes justify the refresh
+cost and stale rows are acceptable between refreshes.
+
+### Command Query Responsibility Segregation (CQRS)
+
+The CQRS design separates update and read representations so each can optimize for different needs.
+The service may use separate objects, tables or storage engines; physical isolation is a choice, not
+an inherent definition.
+
+Before catch-up, a client querying the projection may not see its own accepted change. Projection
+lag, duplicate apply, cursor gaps and schema drift are common; make the apply idempotent, expose the
+applied position and define the read-after-write contract. A single model/CRUD service, a synchronous
+authority read or an event-sourced reconstruction may be preferable when read/write separation
+complexity exceeds the measured benefit.
+
+CQRS is a fit when the read and write shapes genuinely differ and the team can operate the
+projection; it is not a synonym for event sourcing or microservices.
+
+### CQRS Read Projections
+
+Fowler's CQRS description and Chris Richardson's public CQRS pattern both show a separate query view
+that can follow events from the owning service. The projection is a derived read model, not the
+command authority.
+
+Before catch-up, a client querying the projection may not see its own accepted change. A stale
+projection can return an old status after a commit, and a rebuild can serve mixed revisions. Record
+the applied position, bound the wait for a required version and fail explicitly when it is not
+reached; make apply idempotent and test a cursor gap.
+
+A synchronous authority read or a cache-aside view may be preferable when the read must see the
+latest commit. CQRS read projections are a fit when read scale and query shape justify a derived
+store and the client can tolerate the declared freshness.

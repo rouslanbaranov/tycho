@@ -138,3 +138,6 @@ comparison is meaningless or when the doubled cost dominates the decision.
 The failure path is a silent divergence or a duplicate effect; halt promotion, reconcile
 the difference and keep the old authority until the cause is understood. A canary or
 shadow index is the alternative when full parallel processing is unnecessary.
+
+**Limits.** Doubled compute and comparison storage are costs; a comparison that ignores
+nondeterminism or side effects produces false confidence.

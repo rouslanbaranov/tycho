@@ -96,6 +96,7 @@ The following original citation rows, review limits and earlier topical routes a
 | [Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/) | Cache-aside, TTL, invalidation and stampede concerns | Strong consistency for concurrent cache writes |
 | [Redis EXPIRE](https://redis.io/docs/latest/commands/expire/) | Key expiry policies and clock/lifetime behavior | Automatic transactional coordination with source DB |
 | [Caffeine Refresh](https://github.com/ben-manes/caffeine/wiki/Refresh) | Refresh eligibility, async reload and old-value serving | Cross-node refresh serialization |
+| [Google Cloud CDN negative caching](https://docs.cloud.google.com/cdn/docs/using-negative-caching?hl=en) | Per-status TTLs for errors/redirects and origin-load trade-off | Authorization keying, eviction or this page's design |
 | [Earlier Tycho combined cache study](../../../scaling/local-distributed-caching-and-invalidation.md) | Original version-scoped source research | Executed race/lock proof |
 
 - [SRE, *Cascading Failures*](https://sre.google/sre-book/addressing-cascading-failures/),

@@ -98,7 +98,7 @@ the choice when federation trust and revocation cost exceed single-sign-on benef
 **Failure and recovery.** Audience confusion and stale trust are common; verify token
 validation in the owner section.
 
-**Technical owner.** [Threat boundaries, identity, authorization and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#federated-identity) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#federated-identity) — identity/authorization is bounded, not a complete security control catalogue.
 
 **Sources.** [src.oauth-security](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-rfc9700.2026-10-21: sections "Token Handling", "Redirect URI",
@@ -128,10 +128,10 @@ critical flows.
 **Competing alternative.** Perimeter security with explicit compensating controls. Reverse
 the choice when zero-trust policy complexity exceeds the trust-boundary risk.
 
-**Failure and recovery.** Policy gaps and legacy bypasses are common; verify enforcement
-in the owner section.
+**Failure and recovery.** Policy gaps, legacy bypasses and identity-provider outages are
+common; deny by default, test indirect paths and keep a bounded audited break-glass path.
 
-**Technical owner.** [Threat boundaries, identity, authorization and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#integrated-decision-and-reading-route) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#zero-trust-architecture) — identity/authorization is bounded, not a complete security control catalogue.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
@@ -164,7 +164,7 @@ when permission granularity creates unmanageable operational overhead.
 **Failure and recovery.** Permission creep and orphaned grants are common; verify review
 in the owner section.
 
-**Technical owner.** [Threat boundaries, identity, authorization and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#least-privilege) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#least-privilege) — identity/authorization is bounded, not a complete security control catalogue.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
@@ -195,7 +195,7 @@ choice when policy administration cost exceeds access-control benefit.
 **Failure and recovery.** Role explosion and stale attributes are common; verify model in
 the owner section.
 
-**Technical owner.** [Threat boundaries, identity, authorization and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#rbac-abac) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#rbac-abac) — identity/authorization is bounded, not a complete security control catalogue.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
@@ -227,7 +227,7 @@ Reverse the choice when mTLS operational cost exceeds lateral-movement risk.
 **Failure and recovery.** Certificate expiry and identity mismatch are common; verify
 rotation in the owner section.
 
-**Technical owner.** [Threat boundaries, identity, authorization and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#workload-identity-mtls) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#workload-identity-mtls) — identity/authorization is bounded, not a complete security control catalogue.
 
 **Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-istio.2026-10-21: sections "Workload Identity", "Mutual TLS",
@@ -246,8 +246,8 @@ security-pattern; priority advanced.
 **Decision question.** Should a client receive a scoped, time-limited credential for
 direct resource access?
 
-**Good-fit conditions.** The resource can issue scoped tokens; expiry/revocation are
-enforced; the client cannot escalate scope.
+**Good-fit conditions.** The resource or a separate authority can issue scoped tokens; the
+resource enforces scope; expiry/revocation are enforced; the client cannot escalate scope.
 
 **Hard contraindications.** Reject when every access must be mediated, when the resource
 cannot enforce scope, or when token leakage would be catastrophic.
@@ -258,7 +258,7 @@ choice when direct access offload is not worth credential risk.
 **Failure and recovery.** Token leakage and scope confusion are common; verify boundaries
 in the owner section.
 
-**Technical owner.** [Token and credential boundaries](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md#valet-key) — object credentials are bounded, not a complete key-management guide.
+**Technical owner.** [Valet Key](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md#valet-key) — scoped credential issuance, enforcement and revocation are bounded, not a key-management guide.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -290,7 +290,7 @@ the choice when isolation cost exceeds residual risk.
 **Failure and recovery.** Cross-tenant leakage and quota bypass are common; verify layers
 in the owner section.
 
-**Technical owner.** [Threat boundaries, identity, authorization and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#multitenant-isolation) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#multitenant-isolation) — identity/authorization is bounded, not a complete security control catalogue.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
@@ -322,7 +322,7 @@ cross-service latency diagnosis justifies trace infrastructure.
 **Failure and recovery.** Broken context and sampling bias are common; verify propagation
 in the owner section.
 
-**Technical owner.** [Distributed tracing: context propagation, sampling and causal limits](../../v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md#purpose-and-mission) — tracing is bounded, not an SDK implementation.
+**Technical owner.** [Distributed Tracing](../../v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md#distributed-tracing) — tracing is bounded, not an SDK implementation.
 
 **Sources.** [src.otel](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-otel-traces.2026-10-21: sections "Traces", "Spans", "Context
@@ -350,8 +350,8 @@ schema churn is unowned, or when volume overwhelms storage.
 **Competing alternative.** Metrics/traces or minimal audit events. Reverse the choice when
 structured logging cost exceeds diagnostic benefit.
 
-**Failure and recovery.** PII leakage and schema drift are common; verify redaction in the
-owner section.
+**Failure and recovery.** On leakage, stop emission, rotate credentials, purge/redact retained
+records and notify. On schema drift, migrate/backfill or dual-write with a compatibility window.
 
 **Technical owner.** [Structured logging, authoritative audit and data lineage](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#structured-logging) — logging/audit is bounded, not a logging platform manual.
 
@@ -384,7 +384,7 @@ Reverse the choice when audit completeness cannot be evidenced.
 **Failure and recovery.** Tampering and missing events are common; verify authority in the
 owner section.
 
-**Technical owner.** [Structured logging, authoritative audit and data lineage](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#engineering-walkthrough-one-approved-business-change-three-incompatible-records) — logging/audit is bounded, not a logging platform manual.
+**Technical owner.** [Audit Trail](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#audit-trail) — logging/audit is bounded, not a logging platform manual.
 
 **Sources.** [src.openlineage](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-openlineage.2026-10-21: sections "About OpenLineage", "Events",
@@ -415,7 +415,7 @@ the choice when measurement cost exceeds decision value.
 **Failure and recovery.** Gaming and window mismatch are common; verify decisions in the
 owner section.
 
-**Technical owner.** [User-visible service indicators, objectives and error-budget decisions](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations) — SLOs are bounded, not a complete measurement system.
+**Technical owner.** [SLI / SLO and Error Budgets](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md#sli-slo-and-error-budgets) — SLOs are bounded, not a complete measurement system.
 
 **Sources.** [src.sre](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-sre-slo.2026-10-21: sections "Service Level Objectives",

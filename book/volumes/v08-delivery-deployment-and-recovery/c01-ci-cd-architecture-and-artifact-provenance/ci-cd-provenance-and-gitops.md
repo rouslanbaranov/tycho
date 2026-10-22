@@ -82,6 +82,18 @@ The [companion migration chapter](../../../delivery/progressive-delivery-and-sch
 
 Direct push gives the build system deployment credentials; a GitOps pull/reconcile controller can separate rights but still needs strong trust in desired configuration and artifact references. Neither removes the need for live operational authorization, business outcome checks and restore drills. The current GitHub Actions security, SLSA and OpenGitOps references describe bounded controls, not this invented attack's observed outcome.
 
+**GitOps mechanism.** Desired state is stored in a versioned repository; a reconciler pulls
+it, compares the live state and applies the difference. Rollout and rollback are commits to
+that state, not ad hoc commands. The artifact reference, admission policy and credentials
+must be reviewed with the desired state.
+
+**Invariant and failure.** The reconciled commit must be the reviewed desired state; drift is
+detected rather than silently overwritten, and the controller has least-privilege access.
+Controller outage, drift, a compromised repository and stale artifact references are common.
+Reconcile deliberately, revert the reviewed commit, rotate credentials and alert on drift.
+Direct push/CD or an imperative platform operator may be preferable when a separate pull
+controller adds more operational surface than it removes.
+
 **Proposed verification, not executed:** replace one artifact digest, simulate a compromised ephemeral worker, submit an otherwise valid signature from an untrusted key, then attempt rollback after a new-only schema write. Confirm deterministic rejection or forward repair rather than relying on a green pipeline. The final decision must account for who can approve a deployment, how credentials are scoped, and whether maintaining a separate pull controller is proportionate to the team's threat model.
 
 <!-- /tycho-question-source -->
@@ -107,3 +119,21 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Promotion, reconciliation and user-health gates](promotion-rollout.md) — Which failure and authority boundaries separate deployment from accepted release?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+### GitOps
+
+GitOps treats a versioned desired-state repository as reviewed intent. The reconciler pulls a
+commit, applies the difference and records the observed revision; the repository is neither a build
+log nor a credentials store.
+
+Rollback is a revert commit, which needs a linear, reviewable history and an immutable artifact
+reference. Pin image digests and verify the commit signature. Secrets stay out of plaintext: use an
+external secret reference or sealed value that the controller can resolve with least privilege.
+Controller outage, drift, repository compromise and stale artifact references are common; alert on
+reconciliation failure rather than assuming convergence, and name a drift owner.
+
+A pipeline-driven deployment, manual release or imperative operator may be preferable when
+imperative one-off changes dominate or no reconciler owner exists. GitOps fits when the environment
+can be reconciled from a reviewable repository.

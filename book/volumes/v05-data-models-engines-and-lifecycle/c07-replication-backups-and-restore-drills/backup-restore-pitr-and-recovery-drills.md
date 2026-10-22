@@ -99,3 +99,7 @@ A missing or corrupt archive segment makes the target unreachable; run restore d
 and verify checksums and recovery completion. Promote a replica for availability, but it does not
 protect against replicated deletion or corruption; use backups when recovery point and retained
 history matter.
+
+**Limits.** Backup retention, encryption keys and restore time are part of the recovery
+objective; an untested restore is a hypothesis, not a capability. Record the restore owner and
+the last successful drill date.

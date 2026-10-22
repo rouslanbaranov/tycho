@@ -79,6 +79,17 @@ Neither style determines the number of processes or servers. The question is not
 
 The original [Cockburn Hexagonal Architecture paper, 2005](https://alistair.cockburn.us/hexagonal-architecture) frames an application that can be driven by a user, script or test, without depending on one UI or database. This chapter explains that mechanism; separate chapters own [modular monolith and internal events](../c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md), [domain authority](../c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md), and [SOA/microservice deployment decisions](../c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md).
 
+**Layer mechanism.** Layering groups responsibilities by abstraction and restricts source
+dependencies to an allowed direction. A layer may call only declared inward interfaces; the
+rule is enforced by build/dependency tests, not by a diagram. The inner domain must not
+depend on a UI, database or transport adapter.
+
+**Failure and alternative.** Dependency bypass, cyclic imports and a layer that becomes a
+pass-through are common; detect them in the build and fail the change. Hexagonal/clean
+architecture or a modular monolith may be preferable when explicit ports or module ownership
+add more value than layer count. Reverse the layering choice when the layers add indirection
+without a real change boundary.
+
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.77b512c4e2e946bd92d70b4a714600c8:10 -->
 ## Engineering walkthrough — The same adapter error in local and remote architectures
@@ -124,7 +135,37 @@ These notes define the decision boundary for atlas cards whose mechanism is not 
 this page. They are synthetic design guidance, not measured evidence, and they do not create a new
 source claim.
 
-### Clean / Onion Architecture
+### Layered Architecture
+
+Layering groups responsibilities by abstraction and restricts source dependencies to an allowed
+direction. The inner domain must not depend on a UI, database or transport adapter.
+
+Dependency bypass, cyclic imports and a layer that becomes a pass-through are common; detect them in
+the build and fail the change. A layer that only forwards calls adds indirection without a policy.
+Name the allowed direction, the owner of each layer and the test that catches a violation; a diagram
+alone is not enforcement.
+
+Hexagonal/clean architecture or a modular monolith may be preferable when explicit ports or module
+ownership add more value than layer count. Layering is a fit when the team needs a simple dependency
+rule and the domain can stay independent of delivery technology.
+
+### Hexagonal Architecture and Ports and Adapters
+
+The application defines an InventoryPort.reserve(unitId, interval, operationId) capability. One
+JDBC adapter implements the port with a database transaction. An HTTP adapter might instead talk to
+a remote inventory service.
+
+Neither implementation changes the *domain invariant*: a confirmed reservation must have one
+authoritative result for its logical operation. When a unique constraint rejects a competing
+booking, the adapter must translate the database exception into an explicit domain conflict, not a
+generic retry. Port tests should run against both adapters and assert the same contract, including
+timeout and conflict behavior.
+
+If the application will always have one simple persistence choice, avoid a hierarchy of adapters
+that adds indirection without needed substitution. Ports are justified by a real substitution or
+test boundary, not by the number of rings.
+
+### Clean-Onion Architecture
 
 Clean and onion styles place domain rules at the centre and let source dependencies point inward
 only, with application services coordinating use cases and outer layers supplying technology
@@ -136,3 +177,12 @@ Convenience imports erode the boundary until the domain must change for a techno
 remedy is an enforceable dependency test and a deliberate adapter, not another layer name. Hexagonal
 ports and adapters expresses the same inward rule with explicit application ports; prefer the
 simpler layering when the port indirection adds no tested change benefit.
+
+**Boundary data.** Domain entities stay inside the boundary; data crossing it is a DTO or
+port contract with an owned mapper. The adapter validates transport input, the domain refuses
+framework types, and mapping tests preserve meaning rather than only field names.
+
+**Limits.** A static dependency check proves imports, not runtime coupling: reflection, a
+service locator or generated wiring can still bind the domain to a framework. Clean/onion is
+the wrong choice when mapping overhead dominates a small CRUD application or when ports have
+no genuinely different implementations; prefer simpler layering then.

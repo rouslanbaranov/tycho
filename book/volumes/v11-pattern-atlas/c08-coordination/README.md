@@ -88,8 +88,10 @@ election cannot be made safe, or when leader failover would block progress.
 **Competing alternative.** Leaderless/quorum coordination or static assignment. Reverse
 the choice when election latency and split-brain risk exceed coordination benefit.
 
-**Failure and recovery.** Stale leaders and election churn are common; verify terms in the
-owner section.
+**Failure and recovery.** Split votes, quorum loss, stale leaders and divergent uncommitted
+logs are common. A follower read can miss committed state; require read-index or lease
+confirmation for linearizable reads. Stop authoritative writes without quorum, keep retries
+idempotent, and treat durability as contingent on stable storage and membership change.
 
 **Technical owner.** [Leader elections, logs and client observations](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#4-leader-elections-logs-and-client-observations) — leader election is bounded, not a complete Raft implementation.
 
@@ -123,7 +125,7 @@ choice when consensus latency/availability cost exceeds agreement benefit.
 **Failure and recovery.** Quorum loss and leader churn are common; verify safety/progress
 in the owner section.
 
-**Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment) — consensus is bounded to safety/progress discussion.
+**Technical owner.** [Consensus](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#consensus) — consensus is bounded to safety/progress discussion.
 
 **Sources.** [src.raft](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-raft.2026-10-21: sections "Raft Consensus Algorithm", "Safety".
@@ -143,19 +145,22 @@ coordination-pattern; priority core.
 **Decision question.** Should a shared lock prevent concurrent access to one resource
 across processes?
 
-**Good-fit conditions.** The lock protects a correctness-critical section; expiry and
-ownership are explicit; stale owners are fenced.
+**Good-fit conditions.** The lock protects a correctness-critical section; the service
+can maintain quorum; expiry and ownership are explicit; the resource checks a fencing
+epoch, or the operation is safe under uncertain ownership.
 
 **Hard contraindications.** Reject when work is naturally partitioned, when lock loss
-would corrupt state, or when no fencing is possible at the resource.
+would corrupt state, when the lock service cannot maintain quorum, or when the resource
+cannot reject a stale holder.
 
 **Competing alternative.** Lease-based ownership with fencing or single-writer
 partitioning. Reverse the choice when lock safety cannot be proven.
 
-**Failure and recovery.** Stale locks and clock assumptions are common; verify fencing in
-the owner section.
+**Failure and recovery.** Pauses, delayed writes, quorum loss and release races are
+common. Treat ownership as uncertain after a missed renewal; fence stale epochs at the
+resource or keep the outcome explicitly unsafe.
 
-**Technical owner.** [Leases, stale owners and fencing at the destination](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#leases-stale-owners-and-fencing-at-the-destination) — locks/leases/fencing are bounded, not a lock-service API guide.
+**Technical owner.** [Distributed Lock](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#distributed-lock) — locks/leases/fencing are bounded, not a lock-service API guide.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-leases.2026-10-21: sections "Leases", "Lease objects", "Leader
@@ -183,10 +188,11 @@ unbounded, or when expiry could allow two active owners without fencing.
 **Competing alternative.** Static ownership or quorum-backed ownership. Reverse the choice
 when lease renewal cost exceeds availability benefit.
 
-**Failure and recovery.** Expired owners continuing to act is common; verify fencing in
-the owner section.
+**Failure and recovery.** Pauses, delayed renewal and quorum loss can leave two owners
+acting. Treat ownership as uncertain after a missed renewal and fence the stale epoch at
+the destination.
 
-**Technical owner.** [Leases, stale owners and fencing at the destination](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#leases-stale-owners-and-fencing-at-the-destination) — lease ownership is bounded, not a scheduler implementation.
+**Technical owner.** [Lease-Based Ownership](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#lease-based-ownership) — lease ownership is bounded, not a scheduler implementation.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-leases.2026-10-21: sections "Leases", "Lease objects". The
@@ -213,12 +219,12 @@ monotonically; stale owners may still run but cannot commit.
 can be reused, or when the lock is only an efficiency optimization.
 
 **Competing alternative.** Lease-only ownership or single-writer routing. Reverse the
-choice when destination changes are cheaper than stale-write risk.
+choice when destination enforcement cost exceeds the stale-write risk it removes.
 
 **Failure and recovery.** Token bypass and epoch reuse are common; verify destination
 enforcement in the owner section.
 
-**Technical owner.** [Leases, stale owners and fencing at the destination](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#leases-stale-owners-and-fencing-at-the-destination) — destination fencing is bounded, not a universal token protocol.
+**Technical owner.** [Fencing Tokens](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#fencing-tokens) — destination fencing is bounded, not a universal token protocol.
 
 **Sources.**
 [src.kleppmann-distributed-locking](../../../../edition/patterns/reading-ledger.v1.json)
@@ -248,10 +254,11 @@ cannot maintain a majority, or when quorum latency violates the budget.
 **Competing alternative.** Leader-based coordination or static assignment. Reverse the
 choice when quorum availability/latency exceeds safety benefit.
 
-**Failure and recovery.** Quorum loss and slow replicas are common; verify envelope in the
-owner section.
+**Failure and recovery.** Quorum loss, slow replicas and unsafe membership changes are
+common. A minority must refuse conflicting authority; membership changes need joint or
+overlapping safeguards.
 
-**Technical owner.** [Majority quorum arithmetic and the failure envelope](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#2-majority-quorum-arithmetic-and-the-failure-envelope) — quorum arithmetic is bounded, not a consensus protocol.
+**Technical owner.** [Quorum Coordination](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#quorum-coordination) — quorum arithmetic is bounded, not a consensus protocol.
 
 **Sources.** [src.raft](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-raft.2026-10-21: sections "Raft Consensus Algorithm", "Safety".
@@ -270,23 +277,27 @@ priority advanced.
 **Decision question.** Should operations that are causally related preserve their order
 without requiring a total order?
 
-**Good-fit conditions.** Happens-before relationships are meaningful; causal metadata can
-be carried; concurrent operations may diverge.
+**Good-fit conditions.** Happens-before relationships are meaningful; causal metadata such
+as vector clocks can be carried; concurrent operations may diverge but must converge once
+the same updates are visible.
 
 **Hard contraindications.** Reject when a total order is required, when causal metadata
-cannot be propagated, or when clients cannot tolerate concurrent divergence.
+cannot be kept with the operation, when clients switch servers without a session
+guarantee, or when concurrent writes have no merge rule.
 
 **Competing alternative.** Total ordering via consensus or per-key ordering. Reverse the
 choice when causal metadata cost exceeds ordering benefit.
 
-**Failure and recovery.** Metadata growth and orphaned causality are common; verify scope
-in the owner section.
+**Failure and recovery.** Partition, reordered delivery, lost metadata and server switching
+can expose missing dependencies. Keep durable causal metadata, replay/deduplicate, and
+define a merge; if total order is mandatory, use consensus and accept its cost.
 
-**Technical owner.** [The happens-before relation describes causal knowledge](../../v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md#1-the-happens-before-relation-describes-causal-knowledge) — causal ordering is bounded, not a universal clock service.
+**Technical owner.** [Causal Ordering](../../v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md#causal-ordering) — causal ordering is bounded, not a universal clock service.
 
 **Sources.** [src.jepsen-consistency](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-causal.2026-10-21: sections "Causal Consistency", "Formally". The
-source is a public pattern/documentation
+read record read.batch4-causal.2026-10-21: sections "Causal Consistency", "Example",
+"Convergent causal systems", "Sticky availability", "Formally". The source is a public
+pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -311,10 +322,11 @@ cannot be maintained, or when failover loses session state.
 guarantees. Reverse the choice when session routing/failover cost exceeds client
 experience benefit.
 
-**Failure and recovery.** Token loss and replica routing are common; verify observations
-in the owner section.
+**Failure and recovery.** Token loss, server switching and multiwriter frontiers are
+common. Preserve the token across failover, bound waits, and return a retryable failure
+rather than serving an older snapshot.
 
-**Technical owner.** [Session-visible consistency](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md#an-explicit-session-token) — session consistency is bounded, not a complete client-session protocol.
+**Technical owner.** [Session Consistency](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md#session-consistency) — session consistency is bounded, not a complete client-session protocol.
 
 **Sources.** [src.jepsen-consistency](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-jepsen.2026-10-21: sections "Consistency Models", "Session
@@ -334,19 +346,22 @@ coordination-pattern; priority core.
 **Decision question.** Should a durable orchestration engine own multi-step progress,
 timers and recovery?
 
-**Good-fit conditions.** Steps span services/time; progress must survive crashes; retries
-and compensation are business decisions; the engine can own state.
+**Good-fit conditions.** Steps span services or long timers; progress must survive crashes;
+activities can be idempotent; retries, cancellation and compensation are business
+decisions; the team can operate a durable engine and version its histories.
 
-**Hard contraindications.** Reject when one local transaction suffices, when workflow
-state has no owner, or when orchestration becomes a hidden monolith.
+**Hard contraindications.** Reject when one local transaction suffices, when workflow state
+has no owner, when replay/versioning cannot be governed, or when orchestration becomes a
+hidden monolith.
 
 **Competing alternative.** Saga choreography or a simple queue pipeline. Reverse the
 choice when central workflow state and engine operations exceed coordination benefit.
 
-**Failure and recovery.** Stuck workflows and nondeterministic replay are common; verify
-recovery in the owner section.
+**Failure and recovery.** Stuck workflows, duplicate activities, lost timers,
+nondeterministic replay and version conflicts are common. Replay from durable history,
+keep activities idempotent and use a repair state for unknown external effects.
 
-**Technical owner.** [Outbox, inbox, sagas and durable workflow coordination](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#purpose-and-decision-question) — durable workflow coordination is bounded, not a Temporal product guide.
+**Technical owner.** [Distributed Workflow Orchestration](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#distributed-workflow-orchestration) — durable workflow coordination is bounded, not a Temporal product guide.
 
 **Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-temporal-workflows.2026-10-21: sections "Workflows", "Workflow

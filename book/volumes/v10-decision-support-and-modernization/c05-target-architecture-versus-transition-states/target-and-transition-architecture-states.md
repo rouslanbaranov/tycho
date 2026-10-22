@@ -75,6 +75,17 @@ The fundamental reader question is: **What may happen between the old and target
 
 [Fowler's 2024 Strangler Fig explanation](https://martinfowler.com/bliki/StranglerFigApplication.html) motivates gradual replacement rather than assuming a wholesale rewrite is well understood. [Microsoft's Strangler Fig guidance](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig) describes façade-based incremental routing, coexistence cost and conditions where the pattern is unsuitable. Neither guarantees a safe migration for a particular data model.
 
+**Strangler mechanism.** Intercept requests at a façade or route and send one capability at
+a time to the new implementation while the old path remains available. The façade is a
+temporary routing and compatibility layer, not a permanent second architecture.
+
+**Invariant and failure.** Keep one authoritative writer for each invariant and define
+routing plus data compatibility during coexistence. Interception may be impossible,
+internal callers may bypass the façade, and old/new state can diverge. Detect bypass and
+divergence, hold the cutover, and route back to the compatible path until the new capability
+is proven. Branch by abstraction, parallel run or a big-bang replacement may be preferable
+when interception is impossible or the system is small enough to replace whole.
+
 <!-- /tycho-question-source -->
 <!-- tycho-question-source:tycho.page.cf0ce38c73e44950aec5a9c2869bee63:10 -->
 ## Engineering walkthrough — New-only persisted effects turn image rollback into forward repair
@@ -124,3 +135,20 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Migration mechanisms and no-return gates](cutover-gates.md) — What evidence permits a transition to cross an irreversible boundary?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+### Strangler Fig
+
+Intercept requests at a façade or route and send one capability at a time to the new implementation
+while the old path remains available. The old system stays authoritative for the capabilities not
+yet migrated.
+
+Keep one authoritative writer for each invariant and define routing plus data compatibility during
+coexistence. Interception may be impossible, internal callers may bypass the façade, and old/new
+state can diverge. Add a bypass detector, a routing inventory and a data reconciliation check before
+retiring the old path.
+
+Branch by abstraction, parallel run or a big-bang replacement may be preferable when interception is
+impossible or the system is small enough to replace whole. Strangler fig is a fit when requests can
+be intercepted and the migration can proceed capability by capability.

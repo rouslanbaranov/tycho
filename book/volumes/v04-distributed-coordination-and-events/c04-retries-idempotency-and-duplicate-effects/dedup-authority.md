@@ -97,3 +97,25 @@ The event ID is not necessarily the business command ID, nor the notification-de
 | Integrated question | [Original scenario and limits](retries-idempotency-and-ambiguous-effects.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### Idempotent Receiver
+
+An idempotent receiver makes redelivery safe for one consumer's local effects. The mechanism
+describes recording processed message IDs under a consumer identity in the same database transaction
+as the business update, so redelivery cannot apply it twice under that local model.
+
+Atomic (consumer, event/effect ID) uniqueness with business update is the invariant. Derive the key
+from consumer identity, event identity and effect scope; validate that all three are present and
+well formed. A duplicate key with a different payload digest is a collision: reject or quarantine it
+rather than overwriting the marker. Retain the marker at least for the redelivery horizon, assign a
+cleanup owner, and after expiry reject or route the redelivery to reconciliation instead of applying
+it silently. However,
+marking an event processed **before** making a separate external effect can lose the effect if the
+process crashes; marking it processed **after** can duplicate that external effect. The consumer
+must reason about the external capability's own idempotency/reconciliation boundary.
+
+A business-key upsert, a conditional write or the downstream API's idempotency key may be preferable
+when no local processed-message table is available. An idempotent receiver is a fit when the
+consumer owns a local transaction and can retain the dedup record for the redelivery horizon.

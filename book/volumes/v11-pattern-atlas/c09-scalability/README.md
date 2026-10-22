@@ -94,7 +94,7 @@ when balancing complexity and stale membership exceed availability benefit.
 **Failure and recovery.** Stale membership and fast-error attraction are common; verify
 selection in the owner section.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#original-worked-design-one-connection-is-not-one-unit-of-work) — load balancing is bounded, not a product-specific algorithm survey.
+**Technical owner.** [Load Balancing](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#load-balancing) — load balancing is bounded, not a product-specific algorithm survey.
 
 **Sources.**
 [src.sre-frontend-enrichment](../../../../edition/patterns/reading-ledger.v1.json)
@@ -126,7 +126,7 @@ shared-state contention dominates added instances.
 **Failure and recovery.** Coordination and cold-start lag are common; verify ceiling in
 the owner section.
 
-**Technical owner.** [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#purpose-and-mission) — scaling trade-offs are bounded, not a capacity-planning benchmark.
+**Technical owner.** [Horizontal Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#horizontal-scaling) — scaling trade-offs are bounded, not a capacity-planning benchmark.
 
 **Sources.** [src.k8s-hpa](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-k8s-hpa.2026-10-21: sections "Horizontal Pod Autoscaling", "How
@@ -157,7 +157,7 @@ larger node no longer meets availability/cost constraints.
 **Failure and recovery.** Ceiling and restart risk are common; verify limits in the owner
 section.
 
-**Technical owner.** [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#purpose-and-mission) — scaling trade-offs are bounded, not a capacity-planning benchmark.
+**Technical owner.** [Vertical Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#vertical-scaling) — scaling trade-offs are bounded, not a capacity-planning benchmark.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-k8s-resources.2026-10-21: sections "Resource Management for Pods
@@ -188,7 +188,7 @@ autoscaling churn and cold starts dominate cost.
 **Failure and recovery.** Lag and oscillation are common; verify stability in the owner
 section.
 
-**Technical owner.** [Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#purpose-and-mission) — scaling trade-offs are bounded, not a capacity-planning benchmark.
+**Technical owner.** [Autoscaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#autoscaling) — scaling trade-offs are bounded, not a capacity-planning benchmark.
 
 **Sources.** [src.keda](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-keda.2026-10-21: sections "Getting Started", "Scalers",
@@ -221,7 +221,7 @@ blast-radius benefit.
 **Failure and recovery.** Cell routing and cross-cell dependencies are common; verify
 boundaries in the owner section.
 
-**Technical owner.** [Cells and shuffle sharding](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#a-cell-is-a-boundary-in-the-dependency-graph) — cell placement is bounded, not a universal stamp deployment recipe.
+**Technical owner.** [Cell-Based Architecture](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#cell-based-architecture) — cell placement is bounded, not a universal stamp deployment recipe.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -253,7 +253,7 @@ when overlap reduction does not justify assignment complexity.
 **Failure and recovery.** Hot tenants and uneven overlap are common; verify assignment in
 the owner section.
 
-**Technical owner.** [Cells and shuffle shards solve different placement questions](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#cells-and-shuffle-shards-solve-different-placement-questions) — shuffle sharding is bounded, not a hashing implementation guide.
+**Technical owner.** [Shuffle Sharding](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#shuffle-sharding) — shuffle sharding is bounded, not a hashing implementation guide.
 
 **Sources.**
 [src.cortex-shuffle-sharding](../../../../edition/patterns/reading-ledger.v1.json)
@@ -285,7 +285,7 @@ choice when stamp operations and duplication exceed isolation benefit.
 **Failure and recovery.** Configuration drift and state duplication are common; verify
 boundaries in the owner section.
 
-**Technical owner.** [A cell is a boundary in the dependency graph](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#deployment-stamps) — deployment stamps are bounded to cell boundaries.
+**Technical owner.** [Deployment Stamps](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#deployment-stamps) — independent deployment units for scale, isolation or locality, with routing keys and upgrade ownership.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -347,10 +347,10 @@ versioning/purge cannot meet freshness, or when edge configuration is unowned.
 **Competing alternative.** Serve from origin or a cache with explicit TTL. Reverse the
 choice when edge complexity exceeds origin offload benefit.
 
-**Failure and recovery.** Stale content and purge failures are common; verify cacheability
-in the owner section.
+**Failure and recovery.** Origin outage, incomplete purge, stale deletion and a cold-cache
+miss storm are common; prewarm, verify propagation and keep versioned rollback.
 
-**Technical owner.** [Edge caching, private content and origin recovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#cacheability-is-a-content-and-authority-contract) — static hosting is bounded to edge/origin behavior.
+**Technical owner.** [Static Content Hosting](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#static-content-hosting) — static hosting is bounded to edge/origin behavior.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -382,7 +382,7 @@ when isolation cost exceeds noisy-neighbor risk.
 **Failure and recovery.** Quota bypass and cross-tenant leakage are common; verify
 isolation in the owner section.
 
-**Technical owner.** [Threat boundaries, identity, authorization and service isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#tenant-based-resource-isolation) — tenant isolation is bounded, not a full control catalogue.
+**Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#tenant-based-resource-isolation) — tenant isolation is bounded, not a full control catalogue.
 
 **Sources.**
 [src.microsoft-multitenant](../../../../edition/patterns/reading-ledger.v1.json)

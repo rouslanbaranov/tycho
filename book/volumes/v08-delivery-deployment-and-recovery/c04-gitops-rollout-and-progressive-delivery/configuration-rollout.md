@@ -86,6 +86,16 @@ Separate three kinds of decision:
 
 The last row cannot safely inherit the first row's convenient cache policy. A flag is also not a substitute for an authorization check.
 
+**Feature-flag mechanism.** A flag decouples deployment from exposure by evaluating a
+versioned value at request time, scoped by tenant, user or cohort, with a documented default
+and kill switch. The flag service is not authoritative for permissions or irreversible
+actions; those need their own decision path.
+
+**Failure and recovery.** Stale snapshots, flag interactions, permanent flags and
+unauthorized overrides are common. Audit changes, expire temporary flags, bound snapshot age
+and keep a local default that fails safe. A canary or branch-by-abstraction may be preferable
+when the flag would become a permanent configuration surface.
+
 ## Publish, observe, promote
 
 The publisher validates schema and cross-field constraints, checks compatibility, records an immutable revision, and selects a small exposure cohort. Cohorts must be stable for the observation interval: hashing a tenant identifier is more useful than randomly changing the behavior on every request. Exposure percentage measures eligibility, not traffic or risk; a small cohort can contain the most expensive tenant.
@@ -136,4 +146,23 @@ Exercise a stale process, a missing telemetry stream, a duplicate publication, a
 
 - Parent chapter: [GitOps, rollout and progressive delivery](README.md).
 - Related decision: [Safe rollout and recovery](../../../delivery/safe-rollout-and-recovery.md).
-- Pattern atlas: [Feature Toggles](../../v11-pattern-atlas/c12-delivery-and-operations/README.md).
+- Pattern atlas: [Feature Toggles](../../v11-pattern-atlas/c10-deployment-modernization/README.md#feature-flags-feature-toggles).
+
+## Bounded pattern ownership notes
+
+### Feature Flags-Feature Toggles
+
+A flag decouples deployment from exposure by evaluating a versioned value at request time, scoped by
+tenant, user or cohort, with a documented default and kill switch. The flag is runtime policy, not a
+replacement for a release gate.
+
+A flag is also not a substitute for an authorization check. Each evaluation needs the flag version,
+scope and default; on evaluation failure the default must be the safe branch, not a silent enable.
+Expose the decision and snapshot age so stale exposure is visible; bound snapshot age, alert on
+staleness and fall back to last-known-good or the safe default. Audit every override, cap the flag's
+lifetime and remove it after the rollout.
+
+A canary or branch-by-abstraction may be preferable when the flag would become a permanent
+configuration surface. A flag is a fit when exposure must be separable from deployment and the
+evaluation path is bounded, with an owner, a cleanup date and an audit
+trail.

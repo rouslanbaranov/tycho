@@ -51,6 +51,22 @@ This page belongs to [V04/C05 — Outbox, inbox, sagas and durable workflows](RE
 
 Original invented workflow: reserve a device, allocate a supporting kit, confirm a booking, then optionally notify its requester. The business might allow the device reservation to be released if kit allocation definitively fails. But a release itself can fail; a delivered message cannot be un-delivered; the kit may already have been handed to a participant. The domain must determine which actions are reversible and which require manual reconciliation.
 
+**Choreography.** Each owner subscribes to events and emits the next business step;
+progress lives in the event contracts rather than a central coordinator. It needs
+correlation identity, deduplication, dead-letter handling and an observable workflow
+state. Unbounded chains, hidden coupling and conflicting compensations are common; a
+trace can show correlation without proving durable business truth.
+
+**Compensation.** A compensating transaction is a new business action that creates an
+acceptable counter-effect; it is not rollback and it can fail. It needs idempotent effect
+identity, retry/repair ownership and a user-visible unknown state when the counter-effect
+cannot be proven. Orchestration or a single local transaction may be preferable when steps
+need central visibility or when compensations cannot be made safe.
+
+**Saga alternative.** Use one local transaction or a two-phase commit when the steps do not genuinely cross
+independent owners, or when compensation is unsafe. Reverse the saga choice when coordination and compensation cost exceed the
+availability or ownership benefit.
+
 | Step | Durable state needed | False assumption |
 |---|---|---|
 | Admit command | Stable workflow/operation identity | In-memory queue acceptance is durable |
@@ -96,6 +112,17 @@ One service and one database transaction are often simpler than a saga. Move to 
 **Choreography risks:** difficult-to-discover implicit coupling, unbounded event chains, conflicting compensations, and tracing that describes correlation but not durable business truth.
 
 **Orchestration risks:** central coordinator as an added operational dependency; poor command/event boundaries; storing critical progress only in a volatile scheduler; failed compensation hidden behind an automatically “completed” state.
+
+**Orchestration mechanism.** A coordinator persists the workflow state machine and issues
+commands to participants, waiting for replies and timers. Its guarantees depend on durable
+history, idempotent activities, versioned workflow code and reliable timer/retry handling.
+A central coordinator is another operational dependency, but it gives one place to inspect
+progress, compensation and unknown outcomes.
+
+**Failure and recovery.** Coordinator loss, stuck histories, duplicate activities and
+incompatible workflow upgrades are common. Recover from the durable history, keep
+activities idempotent and hold or repair an ambiguous external effect rather than marking
+the workflow complete.
 
 Neither is universally superior. Measure the number of participating owners, duration, idempotency requirements, recoverability, operations burden and business acceptance conditions.
 
@@ -144,13 +171,83 @@ These notes define the decision boundary for atlas cards whose mechanism is not 
 this page. They are synthetic design guidance, not measured evidence, and they do not create a new
 source claim.
 
-### Process Manager / Routing Slip
+### Process Manager-Routing Slip
 
-A process manager records workflow progress and decides which step runs next, while a routing slip
-carries the remaining itinerary with the message. The durable progress record must be updated before
-the next step is dispatched, so a crash cannot repeat or skip a step without detection.
+A process manager keeps a central workflow state machine and decides the next step; a routing slip
+carries the remaining itinerary with the message, so each participant advances a local cursor. The
+two variants place the progress record differently and must not be conflated.
 
-A lost dispatch or duplicate step leaves the workflow stuck or with a duplicated effect; idempotent
-steps, a recorded state and a reconciliation query are required. Event choreography removes the
-central coordinator but hides the overall protocol; prefer a process manager when steps need
-explicit compensation and visibility.
+The invariant is a recorded dispatch intent, not merely a progress row: update state and enqueue the
+next command in one local transaction, or the same outbox. A crash between the two can otherwise
+skip a step. A lost dispatch or duplicate step leaves the workflow stuck or duplicated; idempotent
+steps, a recorded state and a reconciliation query are required.
+
+Event choreography removes the central coordinator but hides the overall protocol. A routing slip
+is simpler when the itinerary is fixed and each hop can forward it; a process manager is preferable
+when steps need explicit compensation, timers or visibility.
+
+### Saga
+
+A saga is a long-running business protocol across independent owners. Each step is a local commit;
+there is no global lock and no hidden intermediate state, so other readers can observe a partially
+completed business outcome.
+
+Before dispatching a step, record the workflow identity, step identity and expected outcome; after
+it, record committed, failed or unknown. A compensation is a new business action with its own
+authorization, evidence and failure mode, and its ordering is declared rather than assumed to be the
+reverse of the forward path.
+
+The invariant is one authority and one effect identity per step; the saga never claims atomicity or
+rollback. A lost acknowledgment is an unknown outcome, not a failure, and a failed
+compensation remains a repair item. Use one local transaction when all effects fit one
+owner, or two-phase commit when participants can hold prepared state and atomic
+visibility is mandatory.
+
+### Saga Choreography
+
+Each owner subscribes to events and emits the next business step; progress lives in the event
+contracts rather than a central coordinator. It needs correlation identity, deduplication,
+dead-letter handling, versioned event contracts and a per-step timeout policy; a timeout must
+advance, retry or flag the chain, not wait forever. The overall protocol needs an observable
+terminal-state query.
+
+Unbounded chains, hidden coupling and conflicting compensations are common; a trace can show
+correlation without proving durable business truth. Each participant needs an idempotent effect
+identity, a terminal-state query and an owner for a stuck chain. The event contract must carry the
+workflow identity and a compatibility window, not only a local message identity.
+
+Orchestration or a single local transaction may be preferable when steps need central visibility,
+when compensation ordering must be centrally enforced, or when compensations cannot be made safe. Choreography is a fit when owners can evolve independently
+and the emitted events are the real business protocol.
+
+### Saga Orchestration
+
+A coordinator persists the workflow state machine and issues commands to participants, waiting for
+replies and timers. Its actual guarantees depend on versioned workflow state persistence, activity
+semantics, timer reliability and recovery configuration.
+
+Coordinator loss, stuck histories, duplicate activities and incompatible workflow upgrades are
+common. Recover from durable history, keep activities idempotent and hold or repair an ambiguous
+external effect rather than marking the workflow complete. The coordinator is another operational
+dependency, so its own backup, upgrade and ownership path must be designed. It needs an owner
+and recovery drills.
+
+One service and one database transaction are often simpler than a saga. Move to orchestration only
+when a business operation genuinely spans multiple independently owned effects with different
+failure and recovery boundaries.
+
+### Compensating Transaction
+
+A compensating transaction is a new business action that creates an acceptable counter-effect; it
+is not rollback and it can fail. It needs idempotent effect identity, retry/repair ownership and a
+user-visible unknown state when the counter-effect cannot be proven.
+
+The domain must determine which actions are reversible and which require manual reconciliation. A
+release itself can fail; a delivered message cannot be un-delivered; the kit may already have been
+handed to a participant. Compensation therefore needs its own authorization, evidence and
+terminal-state check.
+
+Orchestration or a single local transaction may be preferable when steps need central visibility,
+when compensation ordering must be centrally enforced, or when compensations cannot be made
+safe. Do not model compensation as an undo button; model it as a second business decision with
+its own failure semantics.

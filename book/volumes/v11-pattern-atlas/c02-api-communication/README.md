@@ -92,11 +92,11 @@ policy that the gateway cannot safely express.
 backend exposure with client-side policy. Reverse the choice when gateway complexity
 and outage blast radius exceed the shared edge benefit.
 
-**Failure and recovery.** Gateway outage, stale routes and confused authentication are
-common. Recovery requires a bypass or degraded edge path, bounded retries and health
-checks; verify the trust boundary in the owner section.
+**Failure and recovery.** Gateway bypass, configuration drift, stale routes, confused
+authentication and an outage blocking every backend are common. Keep backend authorization,
+test the bypass path and version gateway policy.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#original-fictional-boundary-contract) — edge identity and gateway boundary; not a full API management specification.
+**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#api-gateway) — edge identity and gateway boundary; not a full API management specification.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -129,11 +129,11 @@ client-supplied identifiers; when a route change cannot be rolled back.
 Reverse the choice when routing logic becomes domain logic or the gateway cannot observe
 backend health.
 
-**Failure and recovery.** Stale routes, wrong-version selection and retry loops are
-common. Recovery requires route versioning and observability; verify the routing
-contract in the owner section.
+**Failure and recovery.** Stale routes, ambiguous matches, wrong-version selection, no-match
+behavior and bypass around the gateway are common. Recovery requires route versioning,
+precedence tests and observability.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#the-routing-contract) — routing and backend selection; not a dedicated gateway routing product guide.
+**Technical owner.** [Gateway Routing](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#gateway-routing) — routing and backend selection; not a dedicated gateway routing product guide.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -173,7 +173,7 @@ client simplification benefit.
 common. Recovery requires per-dependency deadlines and explicit partial results;
 verify the gateway boundary and aggregation mechanics in the owner section.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#gateway-aggregation) — bounded edge boundary and aggregation mechanics.
+**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#gateway-aggregation) — bounded edge boundary and aggregation mechanics.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -206,11 +206,11 @@ blocks all work; when the team cannot own gateway configuration.
 Reverse the choice when gateway configuration drift or blast radius exceeds the reuse
 benefit.
 
-**Failure and recovery.** Misconfigured TLS, stale policy and false trust in gateway
-headers are common. Recovery requires configuration tests and explicit trust
-boundaries; verify the edge contract in the owner section.
+**Failure and recovery.** Misconfigured TLS, stale policy, header spoofing and a gateway that
+becomes the only authorization point are common. Recovery requires configuration tests and
+an explicit trust boundary with downstream authorization.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#the-trust-question) — edge functions and trusted identity; not a complete offloading catalogue.
+**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#gateway-offloading) — edge functions and trusted identity; not a complete offloading catalogue.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -316,11 +316,11 @@ when connection draining or timeout behavior cannot be tested.
 choice when proxy configuration and outage cost exceed the connection-management
 benefit.
 
-**Failure and recovery.** Stale connections, header trust and draining failures are
-common. Recovery requires connection lifecycle tests; verify the edge boundary in the
-owner section.
+**Failure and recovery.** Stale connections, proxy bypass, header trust and draining failures
+are common. Recovery requires connection lifecycle tests and explicit forwarded-header and
+draining policy.
 
-**Technical owner.** [TLS termination, gateways and trusted identity](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md#the-trust-question) — proxy and gateway boundary; not a full Envoy operations guide.
+**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#reverse-proxy) — proxy and gateway boundary; not a full Envoy operations guide.
 
 **Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.envoy-http-connection.2026-10-21: HTTP connection management, sections
@@ -355,7 +355,7 @@ when discovery control-plane cost and stale-state risk exceed the change rate.
 are common. Recovery requires last-known-good policy and health checks; verify the
 routing contract in the owner section.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#dns-and-discovery-have-different-update-boundaries) — discovery and selection; not a full control-plane implementation.
+**Technical owner.** [Service Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#service-discovery) — discovery and selection; not a full control-plane implementation.
 
 **Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.envoy-service-discovery.2026-10-21: Service discovery, sections
@@ -388,11 +388,10 @@ backend health; when selection policy must be centrally governed.
 Reverse the choice when client complexity and inconsistent policies exceed the
 resolution benefit.
 
-**Failure and recovery.** Stale caches, divergent policies and retry storms are common.
-Recovery requires a shared contract and bounded backoff; verify the routing contract in
-the owner section.
+**Failure and recovery.** Registry outage, stale caches, divergent client policies and
+retry storms are common. Keep a last-known set for reads, detect staleness and bound retries.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#dns-and-discovery-have-different-update-boundaries) — discovery and selection; client-specific policy is not a dedicated section.
+**Technical owner.** [Client-Side Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#client-side-discovery) — discovery and selection; client-specific policy is not a dedicated section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -425,11 +424,10 @@ policy the proxy cannot express; when the extra hop violates a hard latency budg
 choice when proxy blast radius and operational cost exceed the client simplification
 benefit.
 
-**Failure and recovery.** Proxy outage, stale membership and retry amplification are
-common. Recovery requires health checks and a degraded path; verify the routing
-contract in the owner section.
+**Failure and recovery.** Proxy outage, stale membership, retry amplification and a shared
+proxy bottleneck are common. Health-check backends, expose a degraded path and bound retries.
 
-**Technical owner.** [Discovery, load balancing and backend selection](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#dns-and-discovery-have-different-update-boundaries) — discovery and selection; server-side specifics are not a dedicated section.
+**Technical owner.** [Server-Side Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#server-side-discovery) — discovery and selection; server-side specifics are not a dedicated section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)

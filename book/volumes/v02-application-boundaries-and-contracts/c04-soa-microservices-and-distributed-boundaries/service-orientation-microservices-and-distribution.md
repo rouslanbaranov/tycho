@@ -71,7 +71,55 @@ The primary architecture question is: **which capabilities need independent depl
 
 The [OASIS SOA Reference Model v1.0](https://docs.oasis-open.org/soa-rm/v1.0/soa-rm.html) defines visibility, interaction and effect as core service ideas; it does not prescribe a mandatory message bus, SOAP transport or service deployment granularity. [Fowler and Lewis, *Microservices* (2014)](https://www.martinfowler.com/articles/microservices.html) describe independently deployable services organized around business capabilities, as a characterized style rather than a universal threshold for how small a service must be.
 
+**SOA and microservice mechanisms.** SOA emphasizes published capabilities, explicit
+contracts and governed interaction across independent owners. Microservices emphasize
+independently deployable capabilities with their own data and lifecycle. Both must name
+visibility, contract, authority and failure behavior rather than assuming a bus, protocol or
+container count supplies them.
+
+**Invariant and failure.** Each capability needs a single authoritative owner for its data
+and invariant, and independent deployment must be real rather than a container label.
+Shared databases, synchronized releases and chatty remote calls can recreate a distributed
+monolith; retries, version skew and partial failure are common. Detect shared authority and
+release coupling, then consolidate or split the boundary deliberately. A modular monolith
+or layered application may be preferable when independent deployment and failure containment
+are not measured requirements.
+
 <!-- /tycho-question-source -->
+
+## Bounded pattern ownership notes
+
+### Microservices Architecture
+
+Microservices emphasize independently deployable capabilities with their own data and lifecycle.
+The unit of independence is the deployable service plus its data ownership, not the number of
+repositories.
+
+Each capability needs a single authoritative owner for its data and invariant, and independent
+deployment must be real rather than a container label. Shared databases, synchronized releases and
+chatty remote calls can recreate a distributed monolith; retries, version skew and partial failure
+are common. Define the contract, the failure budget and the local transaction boundary before
+splitting the deployment.
+
+A modular monolith or layered application may be preferable when independent deployment and failure
+containment are not measured requirements. Microservices are a fit when separate ownership,
+independent release cadence and failure isolation justify the remote-call and data-consistency cost.
+
+### Service-Oriented Architecture (SOA)
+
+SOA publishes capabilities as governed service contracts and routes consumers through a mediation
+layer. The service registry, contract version and consumer inventory are the control plane; a
+service bus is an implementation of mediation, not the source of ownership.
+
+A service contract must declare its capability, message semantics, version and consumer obligations.
+Mediation can translate, route and meter, but it must not become a hidden domain authority.
+Governance needs a contract owner, a deprecation window and an observability path for mediated
+calls; a centralized bus is a shared bottleneck and single point that must be sized and failed over.
+
+Microservices may be preferable when capabilities map to independent product teams; a
+modular monolith when one ownership boundary suffices. SOA is a fit when many
+independent owners must integrate through stable contracts and mediation is a real,
+owned capability.
 
 ## Integrated decision and reading route
 

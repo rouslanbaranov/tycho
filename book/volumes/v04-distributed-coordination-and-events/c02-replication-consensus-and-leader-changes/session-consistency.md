@@ -100,6 +100,12 @@ Text alternative: select a replica using the session requirement; read only a qu
 
 This token algorithm assumes positions remain meaningful across leadership changes. A bare counter that resets on a new leader is insufficient. A stable log lineage or epoch-aware comparison must distinguish an established commit from a divergent suffix. In a genuinely multiwriter system, one scalar may not represent causal dependencies; use an appropriate frontier or narrow the guarantee.
 
+**Alternatives.** Linearizable reads require quorum or read-index and accept higher
+latency. Sticky sessions can preserve a weaker guarantee but fail on replica loss. Causal
+consistency with a frontier handles multiwriter dependencies when one scalar is
+insufficient. Reverse the session choice when the stronger contract's cost exceeds the
+user-visible requirement.
+
 Do not let an untrusted client request arbitrarily large positions and force unbounded waits. Authenticate or validate token scope, bound token size and waiting, and bind it to the relevant dataset. A token proves an observation requirement, not permission to read its contents.
 
 ## Worked history and counterexample
@@ -141,3 +147,21 @@ Record invocation and completion, session identifier, operation identifier, obje
 - Volume: [V04 — distributed coordination and events](../../README.md).
 
 [integrated]: replication-consensus-and-leader-change.md
+
+## Bounded pattern ownership notes
+
+### Session Consistency
+
+Session consistency gives one client read-your-writes and monotonic reads by carrying a session token
+that records the positions it has observed. The token is client-visible state, not a global
+guarantee.
+
+A successful write returns partition and commit position. A read returns the position of the snapshot
+it actually read. The client retains the maximum required position for each partition it has observed
+or written. A stable log lineage or epoch-aware comparison must distinguish an established commit from
+a divergent suffix.
+
+If none can, return a retryable failure that preserves the token. Do not silently serve an older
+snapshot to keep a latency target. Linearizable reads require quorum or read-index and accept higher
+latency. Session consistency is a fit when one client needs continuity without a global linearizable
+read.

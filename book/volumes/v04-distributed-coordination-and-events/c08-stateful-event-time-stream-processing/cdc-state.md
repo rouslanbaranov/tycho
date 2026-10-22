@@ -66,6 +66,16 @@ Text alternative: authoritative business state and outbox intent are committed l
 
 **Important distinctions:** database WAL position, Kafka partition offset, application state-store checkpoint and external sink commit are **not the same cursor**. An implementation must document where their alignment is guaranteed and where duplicates or gaps may be replayed.
 
+**Failure and recovery.** Connector lag, WAL/slot retention, schema changes and
+snapshot-to-stream gaps are common. Monitor lag and slot health, take a consistent snapshot,
+handle schema evolution, and make downstream apply idempotent. A missing or expired slot can
+require resnapshotting the source; that recovery point must be explicit.
+
+**Alternative.** A transactional outbox plus relay, dual-write with reconciliation, or
+scheduled batch extraction may be preferable when database log access is unavailable, when
+the source cannot retain a slot, or when the team cannot operate a connector. Reverse the CDC
+choice when connector and schema-coupling cost exceed the replay benefit.
+
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
@@ -113,3 +123,21 @@ A persistent local store may need to replay a large changelog after task migrati
 | Integrated question | [Original scenario and limits](stateful-stream-processing-and-cdc.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### Change Data Capture (CDC)
+
+Change data capture reads the database's own change log and turns committed row changes into a
+replayable stream. The log position, not the connector's wall clock, is the cursor; a snapshot taken
+at a defined log position establishes the starting boundary.
+
+The stream must preserve per-key order and transaction grouping, and consumers must apply each change
+idempotently by a stable key or log position. Connector lag, slot retention, schema changes and a
+snapshot-to-stream gap are common. Monitor the slot, test a schema change, and rebuild from a
+consistent snapshot when the slot is lost rather than assuming the stream is complete. A tombstone
+or delete event needs an explicit downstream interpretation.
+
+A transactional outbox plus relay, dual-write with reconciliation, or scheduled extraction may be
+preferable when log access is unavailable or the team cannot operate a connector. CDC is a fit when
+the log is accessible and the consumer can tolerate derived, at-least-once delivery.

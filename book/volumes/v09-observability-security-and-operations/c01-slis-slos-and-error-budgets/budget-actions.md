@@ -133,3 +133,6 @@ The failure path is a probe that cannot authenticate or that tests only a trivia
 rotate credentials, cover the critical journey and triage probe noise separately.
 Real-user monitoring is the alternative when actual traffic provides enough coverage
 without synthetic load.
+
+**Limits.** Probe identity, journey maintenance and noise are costs; a green synthetic check is
+not proof of every user path.

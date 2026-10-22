@@ -82,6 +82,25 @@ flowchart TD
 
 **Text alternative:** a read can reuse a local value, then a shared value, then the source, *only* when each value satisfies the required freshness and authorization. A source result may fill a cache if a competing update has not made it obsolete. The figure is original hypothetical topology, not evidence a version gate was implemented.
 
+**The stale-fill race.** Reader R misses and reads V1; writer W commits V2 and invalidates
+the key; R then writes V1 back with a fresh TTL, resurrecting stale data. A version gate on
+fill — compare the source revision with the cached revision under the shared key — narrows
+the window. An atomic compare-and-set or conditional write on that shared key closes the
+check/write gap only when it compares the cached revision or tombstone. Absence fails the
+compare only for a fill based on a previously observed revision; a cold key may write its
+first value when no tombstone exists. Distinguish never-cached absence from a post-delete
+tombstone with a durable tombstone or version record. A cache-key CAS cannot compare a source
+revision, and a naive SET NX after DEL still resurrects V1. A non-atomic check-then-write
+leaves the window open.
+A short TTL plus retried invalidation bounds the damage; neither proves freshness when the
+invalidation itself can be lost.
+
+**Failure and recovery.** A write can commit while its delete fails. The invalidation intent
+must be durable at commit time — an outbox row in the same local transaction — and then
+retried; recording only after a failed delete can lose the intent in a crash. Without a TTL, a
+lost invalidation is unbounded. Alert on repeated failures. Concurrent misses need
+single-flight or a lease; a fallback authoritative read must stay bounded.
+
 Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or require strict verification for revocation-sensitive operations. Data authorization must be performed at an enforced boundary; a copied permission bit is not its own authority.
 
 <!-- /tycho-question-source -->
@@ -96,3 +115,20 @@ Even a cache with TTL may expose stale authorization or deleted content. Bypass 
 | Integrated question | [Original scenario and limits](local-and-distributed-cache-design.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### TTL-Based Expiration
+
+TTL-based expiration gives an entry a bounded valid lifetime. **expire-after-write:** after a defined
+lifetime, the entry can no longer be served as a normal valid hit. The cached copy is not refreshed
+merely because the clock passed; the next reader performs the load or waits for a refresh.
+
+The installed Caffeine version and precise loader/executor policy must be checked before promising
+behavior. Size/weight eviction bounds memory and may remove useful hot entries, creating origin read
+bursts. A TTL shorter than the source's change rate reduces staleness but increases load; a longer TTL
+does the opposite. Jitter the expiry across keys to avoid synchronized bursts.
+
+Explicit invalidation or versioned keys may be preferable when the source change must be visible
+immediately. TTL is a fit when bounded staleness is acceptable and the origin can absorb the refill
+rate.

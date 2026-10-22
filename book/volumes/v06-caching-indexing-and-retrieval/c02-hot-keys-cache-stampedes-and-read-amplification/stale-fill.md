@@ -117,3 +117,7 @@ A failing refresh keeps serving the same stale value; cap the stale age, surface
 and fall back to a blocking read when the bound is reached. A blocking refresh guarantees freshness
 at the cost of latency; choose stale-while-revalidate only when the declared stale window is
 acceptable to the reader.
+
+**Limits.** The stale window is a user-visible correctness bound; a refresh that silently fails
+must eventually force a blocking read or explicit error, and the refresh owner needs a failure
+metric.

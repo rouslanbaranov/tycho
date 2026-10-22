@@ -134,3 +134,6 @@ A coordinator crash after prepare leaves participants holding locks with an unkn
 recovery depends on a durable decision log and an explicit resolution procedure. A saga with
 compensating actions avoids prepared locks at the cost of visible intermediate states and non-atomic
 business outcomes; prefer 2PC when participants can hold locks and atomic durability is required.
+
+**Limits.** Prepared locks block resources, coordinator recovery is a single point and
+participant heterogeneity is costly; a saga avoids locks but not compensation complexity.
