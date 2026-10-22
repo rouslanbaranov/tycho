@@ -2633,7 +2633,7 @@
         "heading": "Command Query Responsibility Segregation (CQRS)",
         "anchor": "command-query-responsibility-segregation-cqrs",
         "level": 3,
-        "line": 303,
+        "line": 302,
         "unit_kind": "dedicated",
         "unit_terms": [
           "separates update and read",
@@ -2756,31 +2756,31 @@
         "line": 272,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "business fact",
-          "not a command",
-          "Deduplicate by event identity",
-          "Event-carried state"
+          "past-tense business fact",
+          "producer-unique identity",
+          "deduplicate by event identity",
+          "synchronous call"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A domain event records a business fact that already occurred, named in past tense, with aggregate/event identity, version and causation where needed.",
+          "quote": "A domain event is a past-tense business fact published by the aggregate owner.",
           "reason": "Defines the mechanism."
         },
         "invariant": {
           "state": "supported",
-          "quote": "It is not a command and not permission: a consumer must not treat receipt as authorization to repeat the effect.",
+          "quote": "The event needs a producer-unique identity, aggregate identity, causation and correlation",
           "reason": "States the invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Deduplicate by event identity, preserve per-aggregate order, version event schemas and keep an explicit unknown/repair state when publication is not atomic with state.",
+          "quote": "When publication is not atomic with the state commit, the producer needs an outbox or an explicit unknown/repair state.",
           "reason": "Names failure and recovery."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Event-carried state transfer, polling or CDC may be preferable when consumers only need notification/current state, when no durable domain history is authoritative, or when event-schema ownership is absent.",
+          "quote": "A synchronous call or command message may be preferable when the caller needs an immediate answer and fan-out is unnecessary.",
           "reason": "Names the alternative and reversal."
         }
       },
@@ -3087,7 +3087,7 @@
       "decision_evidence": {
         "atlas_section": "transactional-outbox",
         "question": "Should publication intent be stored in the same local transaction as the state change?",
-        "competing_alternative": "Publish directly after commit with reconciliation. Reverse the choice when lost/duplicate publication risk exceeds relay complexity.",
+        "competing_alternative": "Publish directly after commit with reconciliation. Reverse the choice when relay complexity exceeds the lost/duplicate publication risk it removes.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -3293,7 +3293,7 @@
         "heading": "Materialized View",
         "anchor": "materialized-view",
         "level": 3,
-        "line": 288,
+        "line": 287,
         "unit_kind": "dedicated",
         "unit_terms": [
           "materialized view stores",
@@ -4757,7 +4757,7 @@
         "heading": "CQRS Read Projections",
         "anchor": "cqrs-read-projections",
         "level": 3,
-        "line": 318,
+        "line": 317,
         "unit_kind": "dedicated",
         "unit_terms": [
           "separate query view",

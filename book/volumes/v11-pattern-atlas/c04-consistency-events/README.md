@@ -323,7 +323,7 @@ retention are explicit.
 outbox, when publication latency is unacceptable, or when no relay is operated.
 
 **Competing alternative.** Publish directly after commit with reconciliation. Reverse the
-choice when lost/duplicate publication risk exceeds relay complexity.
+choice when relay complexity exceeds the lost/duplicate publication risk it removes.
 
 **Failure and recovery.** A crash after publish/before checkpoint duplicates; a crash after
 commit/before publish retries; a poison row can block progress. Bound attempts/age and keep

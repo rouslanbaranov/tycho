@@ -714,7 +714,7 @@ central coordination becomes a bottleneck or a hidden monolith.
 **Failure and recovery.** Stuck workflows and ambiguous effects are common; verify
 workflow recovery in the owner section.
 
-**Technical owner.** [A saga is a business protocol, not an automatic rollback](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#process-manager-routing-slip) — saga protocol ownership is bounded, not a full process-manager engine specification.
+**Technical owner.** [Process Manager-Routing Slip](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#process-manager-routing-slip) — process-manager and routing-slip coordination is bounded, not a full engine specification.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)

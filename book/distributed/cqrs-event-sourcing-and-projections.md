@@ -271,19 +271,18 @@ owner.
 
 ### Domain Events
 
-A domain event records a business fact that already occurred, named in past tense, with
-aggregate/event identity, version and causation where needed. It is not a command and not permission:
-a consumer must not treat receipt as authorization to repeat the effect.
+A domain event is a past-tense business fact published by the aggregate owner. It is not the
+internal event store and not a command: publication is a deliberate external contract with its own
+schema, version and compatibility promise.
 
-Deduplicate by event identity, preserve per-aggregate order, version event schemas and keep an
-explicit unknown/repair state when publication is not atomic with state. A source log and an
-integration event are different contracts; do not publish the internal log verbatim without an
-ownership and compatibility decision.
+The event needs a producer-unique identity, aggregate identity, causation and correlation, but none
+of those grants permission to repeat an effect. Consumers must deduplicate by event identity,
+preserve per-aggregate order and handle schema versions. When publication is not atomic with the
+state commit, the producer needs an outbox or an explicit unknown/repair state.
 
-Event-carried state transfer, polling or CDC may be preferable when consumers only need
-notification/current state, when no durable domain history is authoritative, or when event-schema
-ownership is absent. Domain events are a fit when consumers need the fact and its order, not only
-the latest value.
+A synchronous call or command message may be preferable when the caller needs an immediate answer
+and fan-out is unnecessary. Domain events are a fit when independent consumers need the fact and
+its order under eventual consistency, not only the latest value.
 
 ### Materialized View
 

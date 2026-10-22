@@ -133,8 +133,8 @@ intent, not the broker's acknowledgement.
 The outbox gives durable intent, not atomicity with the broker or exactly-once delivery. A relay can
 crash after publish but before checkpoint, causing a duplicate; after commit but before publish,
 causing a retry; a poison row can block progress. Consumers still need effect identity. Bound relay
-attempts and age, retain the repair evidence for the declared window and give a poison row a terminal
-quarantine decision.
+attempts and age, retain the repair evidence for the declared window and give a poison
+row a terminal quarantine decision.
 
 Use an outbox when the lost/duplicate publication risk justifies relay complexity. Reverse to direct
 publish with reconciliation only when relay complexity exceeds the risk it removes; CDC or
