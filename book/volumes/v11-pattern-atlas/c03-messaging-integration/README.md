@@ -699,20 +699,20 @@ Context; Schema Evolution.
 **Identity.** Process Manager / Routing Slip; family Messaging and event-driven
 integration; kind integration-pattern; priority core.
 
-**Decision question.** Should a durable coordinator own a multi-step message flow and its
-recovery?
+**Decision question.** Should a durable coordinator or a routing-slip itinerary own a
+multi-step message flow and its recovery?
 
-**Good-fit conditions.** Steps span services; progress must survive failure;
-compensation/rollback is a business protocol; the workflow state has an owner.
+**Good-fit conditions.** Steps span services; progress must survive failure; a central
+durable state or a fixed itinerary can carry progress; the workflow state has an owner.
 
 **Hard contraindications.** Reject when one local transaction suffices, when no one owns
-workflow state, or when the process is only a fixed pipeline.
+workflow state, or when the itinerary cannot be made durable.
 
 **Competing alternative.** Saga/choreography or a simple pipeline. Reverse the choice when
-central coordination becomes a bottleneck or a hidden monolith.
+central coordination becomes a bottleneck or the itinerary cannot be fixed.
 
-**Failure and recovery.** Stuck workflows and ambiguous effects are common; verify
-workflow recovery in the owner section.
+**Failure and recovery.** Stuck workflows, lost dispatch, duplicate steps and ambiguous
+effects are common; verify recorded dispatch intent in the owner section.
 
 **Technical owner.** [Process Manager-Routing Slip](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#process-manager-routing-slip) — process-manager and routing-slip coordination is bounded, not a full engine specification.
 

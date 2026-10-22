@@ -204,10 +204,11 @@ event schemas and keep an explicit unknown/repair state when publication is not 
 state. If consumers need the current authoritative value, query authority instead of
 inferring it from an event.
 
-**Alternative.** Event-carried state transfer, polling or CDC may be preferable when
-consumers only need notification/current state, when no durable domain history is
-authoritative, or when event-schema ownership is absent. Reverse the domain-event choice
-when event volume and schema coupling exceed the decoupling benefit.
+**Alternative.** A synchronous call or command message may be preferable when the caller
+needs an immediate answer and fan-out is unnecessary. Polling, CDC or event-carried state
+transfer may fit when consumers only need current state and no durable history is
+authoritative. Reverse the domain-event choice when event volume and schema coupling exceed
+the decoupling benefit.
 
 ## 5. Version changes and failure table
 
