@@ -577,13 +577,13 @@ policy is bounded; buffer limits are known; late messages have a disposition.
 **Hard contraindications.** Reject when order is irrelevant, when the buffer can grow
 without bound, or when one missing message blocks the stream indefinitely.
 
-**Competing alternative.** Process concurrently and reconcile order downstream. Reverse
+**Competing alternative.** A partitioned consumer that preserves per-key order. Reverse
 the choice when buffering delays and missing-message risk exceed ordering value.
 
 **Failure and recovery.** Head-of-line blocking and buffer growth are common; verify
 timeout and missing policy in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#resequencer) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Resequencer](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#resequencer) — resequencing buffer, gap and ordering scope are bounded, not every EIP mechanism.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)

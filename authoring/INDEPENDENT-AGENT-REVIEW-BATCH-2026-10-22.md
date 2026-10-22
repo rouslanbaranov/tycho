@@ -1072,3 +1072,8 @@ Verdict: **pass**. Findings: 0. Card label, owner anchor and lifecycle/fit condi
 
 Verdict: **pass**. Findings: 0. Issuance by resource or separate authority and enforcement by the resource cohere; the exact owner link qualifies for the repository link exception.
 
+
+### Resequencer — latest re-review
+
+Verdict: **pass**. Findings: 0. Label, per-key alternative, buffer-cap action and late-message disposition agree.
+

@@ -199,7 +199,10 @@ sequence. Do not use it when order is irrelevant or when an unbounded gap would 
 stream.
 
 The failure path is a missing sequence that blocks later messages; release the buffer
-after a declared timeout or fail the affected partition. A partitioned consumer that
+after a declared timeout or fail the affected partition. At the buffer cap, reject or spill
+with evidence rather than dropping silently; a message that arrives after its slot was
+released needs a declared late disposition: discard with evidence, reconcile or route to
+a repair queue. A partitioned consumer that
 preserves order within a key is the alternative when global order is unnecessary.
 
 **Limits.** Buffer memory, gap timeout and ordering scope are costs; a global resequencer can
