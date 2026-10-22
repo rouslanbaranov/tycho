@@ -46,14 +46,15 @@ Non-human independent-agent reviews are recorded for all 145 candidates:
 | Verdict | Entries |
 |---|---:|
 | Pass | 11 |
-| Pass with findings | 126 |
-| Reject | 8 |
+| Pass with findings | 134 |
+| Reject | 0 |
 | Unreviewed | 0 |
 
-Eight sections are rejected and require remediation before re-review:
-SOA, CDC, Materialized View, Priority Queue, Index Table, Cell-Based Architecture,
-Shuffle Sharding and Static Content Hosting. A pass-with-findings section is not
-promoted until its findings are remediated and re-reviewed. No record here is human
+All eight originally rejected sections — SOA, CDC, Materialized View, Priority Queue,
+Index Table, Cell-Based Architecture, Shuffle Sharding and Static Content Hosting —
+were rewritten and independently re-reviewed to pass-with-findings. Zero rejects remain.
+A pass-with-findings section is not promoted until its findings are remediated and
+re-reviewed. No record here is human
 review, owner acceptance, or a sufficient claim.
 
 ## Promotion sequence
