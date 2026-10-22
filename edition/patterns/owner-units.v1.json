@@ -5087,16 +5087,16 @@
       "owner": {
         "document_id": "tycho.page.43414664520b4866929f7f006f27f59b",
         "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
-        "heading": "3. End-to-end deadlines, cancellation and retry budgets",
-        "anchor": "3-end-to-end-deadlines-cancellation-and-retry-budgets",
-        "level": 2,
-        "line": 52,
-        "unit_kind": "embedded",
+        "heading": "Retry with Exponential Backoff",
+        "anchor": "retry-with-exponential-backoff",
+        "level": 3,
+        "line": 175,
+        "unit_kind": "dedicated",
         "unit_terms": [
+          "retry delay should grow",
           "bounded attempt/backoff budget",
-          "retry policies",
-          "retry amplification",
-          "retryable failure class"
+          "explicit overload result",
+          "effect identity"
         ]
       },
       "technical_evidence": {
@@ -5204,15 +5204,16 @@
       "owner": {
         "document_id": "tycho.page.43414664520b4866929f7f006f27f59b",
         "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
-        "heading": "3. End-to-end deadlines, cancellation and retry budgets",
-        "anchor": "3-end-to-end-deadlines-cancellation-and-retry-budgets",
-        "level": 2,
-        "line": 52,
-        "unit_kind": "embedded",
+        "heading": "Timeout",
+        "anchor": "timeout",
+        "level": 3,
+        "line": 190,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "timeout on one socket",
-          "Per-hop independent 900-ms timeouts",
-          "request deadline"
+          "local wait bound",
+          "remaining deadline",
+          "ambiguous durable command",
+          "cancellation path"
         ]
       },
       "technical_evidence": {
@@ -5228,12 +5229,12 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Prefer explicit outcome lookup for an ambiguous durable command, rather than treating every timeout as “nothing happened”.",
+          "quote": "Prefer explicit outcome lookup for an ambiguous durable command, rather than treating every timeout as \"nothing happened\".",
           "reason": "Treats timeout as an ambiguous outcome and prescribes authority lookup."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A shorter local timeout with explicit cancellation may protect capacity better than a long caller deadline.",
+          "quote": "A shorter local timeout with explicit cancellation may protect capacity better than a long caller deadline",
           "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
@@ -5263,16 +5264,16 @@
       "owner": {
         "document_id": "tycho.page.43414664520b4866929f7f006f27f59b",
         "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
-        "heading": "3. End-to-end deadlines, cancellation and retry budgets",
-        "anchor": "3-end-to-end-deadlines-cancellation-and-retry-budgets",
-        "level": 2,
-        "line": 52,
-        "unit_kind": "embedded",
+        "heading": "Deadline Propagation",
+        "anchor": "deadline-propagation",
+        "level": 3,
+        "line": 204,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "end-to-end business time budget",
-          "propagation between calls",
-          "remaining time",
-          "RPC deadline"
+          "Propagation between calls",
+          "remaining budget",
+          "durable workflow",
+          "clock assumptions"
         ]
       },
       "technical_evidence": {
@@ -8617,11 +8618,11 @@
         "tycho.pattern.retry-with-jitter",
         "tycho.pattern.timeout"
       ],
-      "unit_count": 2,
-      "dedicated_units": 1,
+      "unit_count": 4,
+      "dedicated_units": 4,
       "bounded_entries": 4,
       "decision": "deepen",
-      "rationale": "All four time-budget patterns now have bounded evidence; keep the shared section and deepen only when a distinct mechanism needs its own unit."
+      "rationale": "All four time-budget patterns now have distinct dedicated units; no further page split."
     },
     {
       "document_id": "tycho.page.cccbd188936543a2aaf904f4002236d8",
@@ -9070,9 +9071,9 @@
     "entries": 145,
     "owner_pages": 69,
     "shared_pages": 33,
-    "owner_units": 120,
-    "dedicated_units": 69,
-    "embedded_units": 51,
+    "owner_units": 122,
+    "dedicated_units": 72,
+    "embedded_units": 50,
     "mechanism_supported": 145,
     "invariant_supported": 145,
     "failure_recovery_supported": 128,

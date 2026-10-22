@@ -283,7 +283,7 @@ the validators still require a separate policy change.
 53. **Retry with Jitter** — `tycho.pattern.retry-with-jitter`
     - File: `deadlines-retries.md`
     - Heading: `Retry with Jitter`; 184 words
-    - SHA-256: `ac9701fa651729fa656e339a7bea8f02ba3eb265c7e6c4cc02a5d361793d7422`
+    - SHA-256: `e9c135e7bcc767a609cb2502dad6bb0b82e18d9b345a1fb2253e39a1318dcb8a`
 
 54. **Structured Logging** — `tycho.pattern.structured-logging`
     - File: `logs-audit-and-data-lineage.md`
@@ -349,3 +349,18 @@ the validators still require a separate policy change.
     - File: `incident-practice.md`
     - Heading: `Health, Readiness and Liveness Checks`; 132 words
     - SHA-256: `8eed0c2ebac5f448d2b245d73a3c60c959806c067ceb9181eef05fb857a2a336`
+
+67. **Retry with Exponential Backoff** — `tycho.pattern.retry-with-exponential-backoff`
+    - File: `deadlines-retries.md`
+    - Heading: `Retry with Exponential Backoff`; 140 words
+    - SHA-256: `e9c135e7bcc767a609cb2502dad6bb0b82e18d9b345a1fb2253e39a1318dcb8a`
+
+68. **Timeout** — `tycho.pattern.timeout`
+    - File: `deadlines-retries.md`
+    - Heading: `Timeout`; 120 words
+    - SHA-256: `e9c135e7bcc767a609cb2502dad6bb0b82e18d9b345a1fb2253e39a1318dcb8a`
+
+69. **Deadline Propagation** — `tycho.pattern.deadline-propagation`
+    - File: `deadlines-retries.md`
+    - Heading: `Deadline Propagation`; 120 words
+    - SHA-256: `e9c135e7bcc767a609cb2502dad6bb0b82e18d9b345a1fb2253e39a1318dcb8a`

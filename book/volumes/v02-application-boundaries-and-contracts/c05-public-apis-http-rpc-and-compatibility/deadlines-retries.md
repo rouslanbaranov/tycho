@@ -171,3 +171,45 @@ remaining attempts.
 a spread narrower than the client population still synchronizes, while a wider one spends the
 caller's budget. Retry only when the operation has a stable effect identity or is naturally
 idempotent; jitter cannot make a non-idempotent effect safe.
+
+### Retry with Exponential Backoff
+
+A retry delay should grow with each failed attempt, be capped, and be randomized with jitter so
+clients do not retry in lockstep. The cap and the caller's remaining budget, not a fixed attempt
+count, bound the useful retry window.
+
+Retry only a documented retryable failure class, with a bounded total deadline and bounded
+attempt/backoff budget; observe server pushback/backpressure. If a large fraction of instances is
+overloaded, another attempt is likely to meet the same condition. Return an explicit overload
+result and let the caller decide. Do not retry when the failure is permanent, the operation has no
+effect identity, or the remaining deadline cannot fit the attempt; fail fast or queue.
+
+The policy needs an owner and a visible attempt metric; an exponential curve without a deadline
+check can spend the caller's budget after the result stopped being useful.
+
+### Timeout
+
+A timeout is a local wait bound on one operation; the request deadline is the caller's end-to-end
+budget. Each hop should use at most the remaining deadline, minus its own processing and margin,
+and propagate the remainder.
+
+Timeout expiry does not mean the effect did not commit. Prefer explicit outcome lookup for an
+ambiguous durable command, rather than treating every timeout as "nothing happened". A shorter
+local timeout with explicit cancellation may protect capacity better than a long caller deadline,
+provided the cancellation path is tested and the caller can reconcile.
+
+Name the timeout owner, the unit (connect, read, total) and the retry interaction; a timeout that
+silently becomes a retry can multiply load. The timeout value must be observable.
+
+### Deadline Propagation
+
+**Deadline propagation.** Propagation between calls can subtract elapsed time and thereby limit
+an internal call to the remaining budget. At each hop the effective budget is at most the remaining time, subject to
+clock and propagation behavior.
+
+Propagate a deadline when the caller has a real end-to-end budget; use independent timeouts only
+when each hop is genuinely independent. Critical cleanup and reconciliation may need to continue after the synchronous response budget
+expires, using an explicitly durable workflow rather than an unbounded request task.
+
+Record the deadline source, clock assumptions and the behavior at expiry; a propagated value
+without an enforcement point is only a hint. Every propagation point needs a clock-skew case, an expiry test, source ownership and an owner.

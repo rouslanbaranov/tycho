@@ -156,7 +156,7 @@ retry latency and load exceed transient-failure benefit.
 **Failure and recovery.** Retry storms, duplicate effects and synchronized clients are
 common; jitter the delay, cap attempts and total delay, and stop on server pushback.
 
-**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#3-end-to-end-deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Retry with Exponential Backoff](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-exponential-backoff) — deadlines/retries are bounded, not a complete timeout policy.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-retry.2026-10-21: sections "Retry", "Backoff", "Jitter". The
@@ -224,7 +224,7 @@ synchronous waiting blocks capacity that could serve other work.
 effect stopped. Look up the durable outcome and clean up resources; do not blind-retry
 non-idempotent work.
 
-**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#3-end-to-end-deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Timeout](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#timeout) — deadlines/retries are bounded, not a complete timeout policy.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-timelimiter.2026-10-21: sections "TimeLimiter", "Cancel
@@ -257,7 +257,7 @@ choice when propagation complexity exceeds the benefit of end-to-end bounds.
 **Failure and recovery.** Clock skew, lost deadlines and independent per-hop timeouts are
 common; use the remaining budget at each hop and keep an explicit cleanup path.
 
-**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#3-end-to-end-deadlines-cancellation-and-retry-budgets) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Deadline Propagation](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadline-propagation) — deadlines/retries are bounded, not a complete timeout policy.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: sections "Timeouts and deadlines",
