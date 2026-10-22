@@ -1,10 +1,10 @@
 # Corpus-level relevance judgments and lexical evaluation
 
 > Issue [#298](https://github.com/rouslanbaranov/tycho/issues/298), M4. Capabilities K18 and
-> K28. **Status 2026-10-22:** bootstrap author-labelled set with 50 items, a 25/25
-> development/held-out split and 110 accepted answers. This is the 50-item minimum of the
-> 50–100 target; independent review and expansion to 100 remain. This is not independent
-> ground truth and does not establish search quality.
+> K28. **Status 2026-10-22:** bootstrap author-labelled set with 100 items, a 50/50
+> development/held-out split, 156 accepted answers and 10 section-level labels. Independent
+> adjudication, broader section-level labels and a refusal metric remain. This is not
+> independent ground truth and does not establish search quality.
 
 ## Why this set exists
 
@@ -24,7 +24,7 @@ This set introduces three missing properties:
 | Artifact | Purpose |
 |---|---|
 | [corpus-qrels.v1.schema.json](../schemas/corpus-qrels.v1.schema.json) | Strict Draft 2020-12 structure for items, splits and accepted answers. |
-| [corpus-qrels.v1.json](../evaluation/corpus-qrels.v1.json) | The bootstrap questions and accepted answers. |
+| [corpus-qrels.v1.json](../evaluation/corpus-qrels.v1.json) | The bootstrap questions, accepted answers and section labels. |
 | [validate_corpus_qrels.py](../scripts/validate_corpus_qrels.py) | Schema, snapshot, ID/path and uniqueness checks. |
 | [evaluate_corpus_qrels.py](../scripts/evaluate_corpus_qrels.py) | Pure metric functions and a CLI over the section search layer. |
 | [test_tycho_qrels.py](../tests/test_tycho_qrels.py) | Offline validation and metric tests. |
@@ -42,8 +42,9 @@ not evidence for a label. Every accepted answer carries a grade and a short rati
 - grade 2: directly explains the requested mechanism or decision;
 - grade 1: supporting context needed for a complete answer.
 
-The bootstrap uses page-level labels (`section_id` is null). The schema and evaluator
-already support a specific section ID when a later batch needs it.
+The bootstrap mixes 10 section-level labels with page-level labels (`section_id` is null).
+The validator checks structure; section IDs were verified against the published section index
+at authoring time.
 
 Unanswerable items have no accepted page. The evaluator reports how often search returned
 no results for them; it does **not** score whether an agent correctly refused the premise.
@@ -53,21 +54,20 @@ That requires a separate answer-level evaluation.
 
 | Category | Items |
 |---|---:|
-| fact | 12 |
-| failure | 10 |
-| synthesis | 8 |
-| trade-off | 8 |
-| change impact | 6 |
-| contradiction | 5 |
-| unanswerable | 1 |
-| **Total** | **50** |
+| fact | 23 |
+| failure | 21 |
+| synthesis | 15 |
+| trade-off | 15 |
+| change impact | 13 |
+| contradiction | 8 |
+| unanswerable | 5 |
+| **Total** | **100** |
 
-Split: 25 development and 25 held-out. The held-out items are not used for tuning, query
+Split: 50 development and 50 held-out. The held-out items are not used for tuning, query
 expansion, threshold selection or ranker comparison. No tuning has been performed yet.
 
-Known gaps: the bootstrap still uses page-level labels only, has one unanswerable item, no
-answer-quality labels and no independent adjudication. Expansion to 100 should add those
-and at least one section-level label per volume.
+Known gaps: most labels are still page-level, five unanswerable items have no refusal
+metric, and there is no independent adjudication or answer-quality label.
 
 ## Metrics
 
@@ -84,23 +84,40 @@ A no-result answer is not treated as a miss for answerable items; it is reported
 The evaluator uses limit 10 by default and refuses a run when the search snapshot changes
 between questions.
 
-## Local diagnostic baseline — 2026-10-22
+## Merged-main baseline — 2026-10-22
 
-The 50-item set was run once on the #50 search branch against index snapshot
-`448b35fef9e7bcea60d59c775c6390e74f1271ffa4f89363dd834f716c86bbaf`. The #298 branch
-alone cannot reproduce this until #50 merges.
+Run on merged main at `b534eb6` with search snapshot
+`448b35fef9e7bcea60d59c775c6390e74f1271ffa4f89363dd834f716c86bbaf` and qrels snapshot
+`6684db8339ef674b6270b697872deb4f466c629882f06508028d20917e232bb9`:
 
 | Scope | hit@1 | hit@3 | hit@5 | MRR |
 |---|---:|---:|---:|---:|
-| page | 0.347 | 0.612 | 0.694 | 0.505 |
-| chapter | 0.510 | 0.755 | 0.857 | 0.655 |
-| section | 0.347 | 0.612 | 0.694 | 0.505 |
+| page | 0.379 | 0.642 | 0.758 | 0.539 |
+| chapter | 0.579 | 0.790 | 0.884 | 0.707 |
+| section | 0.337 | 0.600 | 0.716 | 0.495 |
 
-nDCG@10 was 0.465 over 49 answerable items. On the dev split (25 items, the only split used
-to identify weak areas) page hit@5 by category was: fact 0.800, synthesis 0.750, failure
-0.714, change impact 0.667, trade-off 0.500, contradiction 0.500. The single unanswerable
-item returned results, so refusal is not measured. These are diagnostics on author-labelled
-items, not thresholds, acceptance results or confidence claims.
+nDCG@10 was 0.558 over 95 answerable items. Dev page hit@5 was 0.740 and chapter hit@5
+0.880; held-out was 0.778 and 0.889 (reported once, not tuned). Dev page hit@5 by category:
+failure 0.800, fact 0.900, change impact 0.857, synthesis 0.667, contradiction 0.600,
+trade-off 0.556. All five unanswerable items returned results, so refusal is not measured.
+
+## Provisional acceptance thresholds
+
+Fixed before ranker tuning on the 100-item set. The current baseline does not meet all of
+them; they are targets, not claims.
+
+| Metric | Threshold |
+|---|---:|
+| page hit@5 | >= 0.80 |
+| chapter hit@3 | >= 0.80 |
+| chapter hit@5 | >= 0.90 |
+| nDCG@10 | >= 0.55 |
+| dev metric regression after a ranker change | <= 0.03 absolute |
+| held-out use | once per candidate; never for tuning |
+
+Current page hit@5 is 0.758 and chapter hit@3 is 0.790, both below their thresholds;
+chapter hit@5 is 0.884, below 0.90; nDCG@10 is 0.558, above 0.55. No refusal threshold is set
+because no refusal metric exists.
 
 ## Operation
 
@@ -110,9 +127,10 @@ python3 scripts/evaluate_corpus_qrels.py --split dev
 python3 scripts/evaluate_corpus_qrels.py --split heldout
 ~~~
 
-The evaluator imports `section_search` lazily. On a branch without the merged search layer
-it returns `not-available`; on the #50 branch it runs against the published index. This
-document records the bootstrap structure, not a measured baseline.
+The evaluator imports `section_search` lazily and runs against the published section index.
+It returns `not-available` when the search layer or index is absent. The measured baseline
+above belongs to the named merged commit and snapshots; rerun it after a book or index
+change instead of carrying the numbers forward.
 
 ## Staleness and review limits
 
@@ -126,7 +144,8 @@ metric tests proves only structure and arithmetic, not relevance.
 
 ## Next gates
 
-1. Expand to 100 items, with more unanswerable and refusal cases.
-2. Add section-level labels and a second reviewer for a sample.
-3. Record the first real baseline on the #50 snapshot and set thresholds before tuning.
-4. Compare lexical, hybrid and future rankers on the same held-out split.
+1. Obtain independent adjudication for a sample; keep the bootstrap label until then.
+2. Expand section-level labels beyond the current 10 items.
+3. Add a refusal metric for the five unanswerable items.
+4. Tune only on the dev split; compare lexical, hybrid and future rankers on held-out.
+5. Revalidate labels after any book change and record the new snapshot.

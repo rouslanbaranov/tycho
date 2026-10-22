@@ -124,9 +124,9 @@ class QrelsValidationTests(unittest.TestCase):
         qrels = validator.load(ROOT / "evaluation/corpus-qrels.v1.json")
         route = validator.load(ROOT / "generated/route-index.v1.json")
         result = validator.validate(qrels, route, SCHEMA, require_snapshot=False)
-        self.assertEqual(result["items"], 50)
-        self.assertEqual(result["dev"], 25)
-        self.assertEqual(result["heldout"], 25)
+        self.assertEqual(result["items"], 100)
+        self.assertEqual(result["dev"], 50)
+        self.assertEqual(result["heldout"], 50)
         self.assertTrue(result["bootstrap"])
 
 
