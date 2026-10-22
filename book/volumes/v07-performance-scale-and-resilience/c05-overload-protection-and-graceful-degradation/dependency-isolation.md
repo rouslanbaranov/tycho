@@ -114,16 +114,17 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Circuit Breaker
 
-A circuit breaker suppresses repeated costly calls to a failing dependency and probes recovery. It
-is a fast-failure control, not a queue, a retry budget or proof that the dependency is healthy.
+A circuit breaker is a state machine around one dependency: closed counts outcomes over a
+rolling window, open rejects fast for a cooldown, half-open admits a bounded probe. The
+threshold needs a minimum request volume so one failure does not trip a quiet dependency.
 
-Do not treat opening the breaker as permanent recovery or a substitute for backpressure. The open state
-needs a probe policy, a half-open concurrency limit and a metric that separates rejected calls from
-dependency failures. A breaker that opens on local resource exhaustion hides the real bottleneck.
+The open state records why it opened and the cooldown; half-open limits concurrent probes and
+closes only after consecutive successes. Rejected calls are not dependency failures and need
+their own metric. A breaker must not replace timeout, backpressure or a retry budget, and an
+open caused by local resource exhaustion hides the real bottleneck.
 
-A retry budget with jitter, admission/rate limit, or a bounded timeout may be preferable when
-failures are not fast, when the dependency recovers quickly, or when an open breaker would hide a
-local resource problem. A breaker is a fit when failures are fast and repeated calls make them worse.
+A retry budget with jitter, a rate limit or a bounded timeout may be preferable when failures
+are not fast. A breaker is a fit when failures are fast and repeated calls amplify them.
 
 ### Bulkhead
 

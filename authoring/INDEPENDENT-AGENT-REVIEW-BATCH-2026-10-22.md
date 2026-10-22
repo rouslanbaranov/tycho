@@ -1117,3 +1117,8 @@ Verdict: **pass**. Findings: 0. Undefined R7 removed, synthetic example labelled
 
 Verdict: **pass**. Findings: 0. Distinct 127-word note with compatibility gates, reader inventory, expand/contract dates and lines <=100.
 
+
+### Circuit Breaker — latest re-review
+
+Verdict: **pass**. Findings: 0. Distinct state-machine note with thresholds, bounded half-open probes, separated metrics and lines <=100.
+

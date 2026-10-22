@@ -4997,31 +4997,31 @@
         "line": 115,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "suppresses repeated",
-          "Do not treat opening",
-          "probe policy",
-          "retry budget"
+          "state machine",
+          "minimum request volume",
+          "half-open",
+          "rejected calls"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A circuit breaker suppresses repeated costly calls to a failing dependency and probes recovery.",
+          "quote": "A circuit breaker is a state machine around one dependency",
           "reason": "States the breaker action: suppress repeated calls and probe recovery."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Do not treat opening the breaker as permanent recovery or a substitute for backpressure.",
+          "quote": "The threshold needs a minimum request volume so one failure does not trip a quiet dependency.",
           "reason": "Flags the safety constraint that an open breaker is neither recovery nor backpressure."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "The open state needs a probe policy, a half-open concurrency limit and a metric that separates rejected calls from dependency failures.",
+          "quote": "an open caused by local resource exhaustion hides the real bottleneck",
           "reason": "Covers failure detection, call containment and recovery probing."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A retry budget with jitter, admission/rate limit, or a bounded timeout may be preferable when failures are not fast, when the dependency recovers quickly, or when an open breaker would hide a local resource problem.",
+          "quote": "A retry budget with jitter, a rate limit or a bounded timeout may be preferable when failures are not fast.",
           "reason": "Names the competing controls and reversal condition."
         }
       },
@@ -5054,7 +5054,7 @@
         "heading": "Bulkhead",
         "anchor": "bulkhead",
         "level": 3,
-        "line": 128,
+        "line": 129,
         "unit_kind": "dedicated",
         "unit_terms": [
           "reserves bounded workers",
