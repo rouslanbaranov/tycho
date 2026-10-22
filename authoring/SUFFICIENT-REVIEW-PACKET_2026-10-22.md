@@ -69,3 +69,18 @@ Do not edit the repository. Do not treat this packet as approval.
 A reviewer record with: reviewer identity and independence, reviewed date, per-entry
 verdict, page hash, findings and severity. A pass does not by itself change coverage;
 the validators still require a separate policy change.
+
+11. **Sidecar** — `tycho.pattern.sidecar`
+    - File: `static-stability.md`
+    - Heading: `Sidecar`; 122 words
+    - SHA-256: `da0ec4a38b5b605c61261fecb745f4cad886a16ea992d5f5d896f0c6810bcc1c`
+
+12. **Ambassador** — `tycho.pattern.ambassador`
+    - File: `static-stability.md`
+    - Heading: `Ambassador`; 140 words
+    - SHA-256: `da0ec4a38b5b605c61261fecb745f4cad886a16ea992d5f5d896f0c6810bcc1c`
+
+13. **Immutable Infrastructure** — `tycho.pattern.immutable-infrastructure`
+    - File: `static-stability.md`
+    - Heading: `Immutable Infrastructure`; 131 words
+    - SHA-256: `da0ec4a38b5b605c61261fecb745f4cad886a16ea992d5f5d896f0c6810bcc1c`
