@@ -351,8 +351,8 @@ entries cannot hide a later valid result; status-specific policy exists.
 **Hard contraindications.** Reject when failures are transient, when caching an error
 would hide recovery, or when negative entries leak existence or authorization.
 
-**Competing alternative.** No negative cache or short retry with backoff. Reverse the
-choice when repeated misses amplify origin load.
+**Competing alternative.** Bypass, a per-principal key, or a short TTL with backoff.
+Reverse when repeated misses amplify origin load.
 
 **Failure and recovery.** A cached denial can outlive a create/grant or leak across principals;
 scope keys by tenant/principal, delete or version on change, bound TTL and test revocation.

@@ -720,7 +720,9 @@ effects are common; verify recorded dispatch intent in the owner section.
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-process.2026-10-21: sections "Problem", "Solution", "Example". The
 source is a public pattern/documentation
-unit, not a benchmark.
+unit, not a benchmark. The cited source supports the process-manager concept; the
+routing-slip variant is bounded to the owner section's original design guidance, not this
+source.
 
 **Decision state.** applicable-under-conditions.
 

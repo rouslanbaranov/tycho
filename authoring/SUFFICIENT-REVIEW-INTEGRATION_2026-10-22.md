@@ -70,12 +70,15 @@ Resolved metadata findings:
 - **F-009/F-010/F-011 (PWF card alignment):** Expand-and-Contract, Event Sourcing and
   Cache-Aside cards now use only owner-supported contraindications, alternatives and failure
   conditions; verdicts stay `pass-with-findings` pending re-review.
+- **F-012/F-013 (PWF card alignment):** Negative Caching uses the owner-supported bypass/
+  per-principal-key/short-TTL alternative; Process Manager states the routing-slip source
+  boundary. Verdicts stay `pass-with-findings` pending re-review.
 
 Open findings:
 
 - **Blocking:** none open. F-003–F-005 are remediated but still require re-review before
   any verdict change.
-- **Major:** F-012 Negative Caching, F-013 Process Manager, F-015 duplication.
+- **Major:** F-015 duplication.
 - **Minor:** none open; F-008, F-014 and F-016–F-022 are resolved or remediated.
 
 No page, card or `sufficient` state was changed by this integration. The delivery-evidence
