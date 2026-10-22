@@ -225,8 +225,10 @@ that silently retries forever.
 
 An invalid schema or permanently rejected target is not repaired by retrying forever. Classify
 transient, permanent and unknown outcomes; cap attempts and total age; preserve enough evidence in
-quarantine to diagnose without leaking payloads. The DLQ needs an owner, an alert threshold and a
-documented replay or discard procedure.
+quarantine to diagnose without leaking payloads. The DLQ needs an owner, an alert threshold, a
+retention horizon, a capacity limit, an access policy and a cleanup owner. A replay procedure
+preserves the original effect identity, reauthorizes the action and checks whether the effect was
+already committed before republishing; a blind replay is a duplicate-effect risk.
 
 Retrying with backoff, dropping with an audit record, or parking the work in a repair table/outbox
 may be preferable when the failure is deterministic or the broker cannot retain evidence safely. A

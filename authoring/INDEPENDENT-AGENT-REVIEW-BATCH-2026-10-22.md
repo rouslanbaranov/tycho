@@ -1147,3 +1147,8 @@ Verdict: **pass**. Findings: 0. Operation-scoped uniqueness, collision check and
 
 Verdict: **pass**. Findings: 0. Durable owned reply channel, late/duplicate dispositions and state lifetime beyond deadline.
 
+
+### Dead Letter Channel / DLQ — latest re-review
+
+Verdict: **pass**. Findings: 0. Quarantine retention/capacity/access/cleanup and replay identity/authorization/commit checks agree.
+
