@@ -166,14 +166,17 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Causal Ordering
 
-Causal ordering preserves the happens-before relation: a message that depends on an earlier event
-cannot be delivered before it. The relation is about knowledge, not wall-clock time.
+Causal ordering delivers operations so no effect is observed before its cause. It is a partial
+order over knowledge, not a wall-clock or total order.
 
-An integer **Lamport logical clock** can be incremented for a local event, attached to messages, and
-advanced on reception so that causal predecessors have smaller timestamps. A causal system must
-deliver causally related operations in the same order to every process. Recovery needs durable causal
-metadata, replay/deduplication and an explicit merge for concurrent writes.
+A **vector clock** can distinguish concurrent updates from causally ordered ones, at per-replica
+metadata cost. A Lamport integer gives only a scalar order and cannot tell whether two events are
+concurrent; use it for tracing, not as a merge decision.
 
-If the business only needs every item to preserve its own update order, requiring global total order
-can introduce unnecessary coordination. Causal ordering is a fit when cross-item dependencies are
-real and the metadata cost is acceptable and an owner exists.
+Causal ordering fits when cross-item happens-before is real, metadata can travel with the operation
+and concurrent writes have a merge rule. Reject it when total order is mandatory, metadata cannot
+travel, clients switch servers without session continuity, or no merge rule exists.
+
+Partition, reordered delivery, lost metadata and a server switch can expose missing dependencies.
+Keep durable causal metadata, replay and deduplicate, and define the merge. If total order is
+mandatory, use consensus and accept its coordination cost.

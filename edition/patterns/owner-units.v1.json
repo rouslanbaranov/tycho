@@ -6313,31 +6313,31 @@
         "line": 167,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Lamport logical clock",
-          "causal system",
-          "durable causal metadata",
-          "global total order"
+          "partial order",
+          "vector clock",
+          "concurrent updates",
+          "merge rule"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "An integer **Lamport logical clock** can be incremented for a local event, attached to messages, and advanced on reception so that causal predecessors have smaller timestamps.",
+          "quote": "Causal ordering delivers operations so no effect is observed before its cause.",
           "reason": "Explains the three happens-before generating rules and Lamport-clock advancement."
         },
         "invariant": {
           "state": "supported",
-          "quote": "A causal system must deliver causally related operations in the same order to every process.",
+          "quote": "can distinguish concurrent updates from causally ordered ones",
           "reason": "States the core causal-order invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Recovery needs durable causal metadata, replay/deduplication and an explicit merge for concurrent writes.",
+          "quote": "Partition, reordered delivery, lost metadata and a server switch can expose missing dependencies.",
           "reason": "States the recovery requirements after metadata loss or reordering."
         },
         "alternative": {
           "state": "supported",
-          "quote": "if the business only needs every item to preserve its own update order, requiring global total order can introduce unnecessary coordination.",
+          "quote": "If total order is mandatory, use consensus and accept its coordination cost.",
           "reason": "Contrasts global total order with per-item update order and states when total order is unnecessary."
         }
       },

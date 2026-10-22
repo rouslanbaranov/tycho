@@ -1187,3 +1187,8 @@ Verdict: **pass**. Findings: 0. Revert-commit rollback, external secret handling
 
 Verdict: **pass**. Findings: 0. Self-contained, token/epoch reuse failure and corrected reversal condition.
 
+
+### Causal Ordering — latest re-review
+
+Verdict: **pass**. Findings: 0. Vector-clock fit, Lamport concurrency caveat, partition/server-switch recovery and merge rule.
+
