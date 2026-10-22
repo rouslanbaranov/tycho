@@ -119,13 +119,16 @@ An edge can terminate TLS, validate tokens, compress, cache or enforce quotas be
 forwarding. Offloading changes the trust boundary: downstream must receive an authenticated
 identity from a trusted intermediary and still enforce resource authorization. Header
 spoofing, confused-deputy paths and a proxy that becomes the only authorization point are
-common failures. A service-mesh sidecar, application-level authorization or direct
-pass-through may be preferable when the edge cannot attest identity.
+common failures. Only shared, cross-cutting and edge-enforceable functions belong here; a
+domain-state function or an edge that blocks every backend is a contraindication. A
+service-mesh sidecar, application-level authorization or direct pass-through may be preferable
+when the edge cannot attest identity.
 
 **Limits.** Each offloaded function needs an owner, a versioned policy and a failure mode; TLS
 termination does not authenticate the final application, token validation does not authorize
-the object, and compression or caching can create side channels or stale responses. Fail-closed behavior and a tested bypass path are part of
-the contract, with an owner and audit record.
+the object, and compression or caching can create side channels or stale responses.
+Fail-closed behavior and a tested bypass path are part of the contract, with an owner and
+audit record.
 
 ## Reverse Proxy
 

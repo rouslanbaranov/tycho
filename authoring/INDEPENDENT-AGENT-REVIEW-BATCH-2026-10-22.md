@@ -1102,3 +1102,8 @@ Verdict: **pass**. Findings: 0. Token binding, payload digest, retrieval latency
 
 Verdict: **pass**. Findings: 0. Label, timeout policy, versioned contract and central-ordering alternative agree.
 
+
+### Gateway Offloading — latest re-review
+
+Verdict: **pass**. Findings: 0. Inclusion boundary/contraindications align; the exact owner link qualifies for the repository link exception.
+
