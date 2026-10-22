@@ -2744,16 +2744,16 @@
       "owner": {
         "document_id": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af",
         "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
-        "heading": "Distinguish source log from integration event",
-        "anchor": "distinguish-source-log-from-integration-event",
+        "heading": "Domain Events",
+        "anchor": "domain-events",
         "level": 3,
-        "line": 191,
-        "unit_kind": "embedded",
+        "line": 272,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "domain event log",
-          "separate transport",
-          "transactional outbox",
-          "integration stream"
+          "business fact",
+          "not a command",
+          "Deduplicate by event identity",
+          "Event-carried state"
         ]
       },
       "technical_evidence": {
@@ -3284,16 +3284,16 @@
       "owner": {
         "document_id": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af",
         "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
-        "heading": "3. CQRS and asynchronous projection freshness",
-        "anchor": "3-cqrs-and-asynchronous-projection-freshness",
-        "level": 2,
-        "line": 123,
-        "unit_kind": "embedded",
+        "heading": "Materialized View",
+        "anchor": "materialized-view",
+        "level": 3,
+        "line": 288,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "asynchronous projection freshness",
-          "read-oriented store",
-          "projection lag",
-          "projection age"
+          "projector later consumes",
+          "source version or offset",
+          "Projector crash",
+          "Direct authority reads"
         ]
       },
       "technical_evidence": {
@@ -7473,16 +7473,16 @@
       "owner": {
         "document_id": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03",
         "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
-        "heading": "6. Alternative migration mechanisms and contraindications",
-        "anchor": "6-alternative-migration-mechanisms-and-contraindications",
-        "level": 2,
-        "line": 49,
-        "unit_kind": "embedded",
+        "heading": "Branch by Abstraction",
+        "anchor": "branch-by-abstraction",
+        "level": 3,
+        "line": 113,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Internal branch by abstraction",
           "internal interface",
-          "one deployable",
-          "untested side effects"
+          "same contract",
+          "bypass around",
+          "strangler facade"
         ]
       },
       "technical_evidence": {
@@ -7503,8 +7503,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Strangler façade | Requests can be intercepted and routed by capability",
-          "reason": "Names a competing mechanism and the interception condition under which it fits."
+          "quote": "A strangler facade can route requests by capability when the boundary is external.",
+          "reason": "Names the strangler facade and its external-boundary condition."
         }
       },
       "decision_evidence": {
@@ -7713,16 +7713,16 @@
       "owner": {
         "document_id": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03",
         "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
-        "heading": "7. Go/no-go and the no-return contract",
-        "anchor": "7-gono-go-and-the-no-return-contract",
-        "level": 2,
-        "line": 75,
-        "unit_kind": "embedded",
+        "heading": "Controlled Cutover",
+        "anchor": "controlled-cutover",
+        "level": 3,
+        "line": 128,
+        "unit_kind": "dedicated",
         "unit_terms": [
           "observed gate",
-          "no-return contract",
-          "forward-repair path",
-          "Go/no-go and the no-return contract"
+          "evidence for",
+          "no-return point",
+          "blue/green deployment"
         ]
       },
       "technical_evidence": {
@@ -8602,11 +8602,11 @@
         "tycho.pattern.event-sourcing",
         "tycho.pattern.materialized-view"
       ],
-      "unit_count": 4,
-      "dedicated_units": 3,
+      "unit_count": 5,
+      "dedicated_units": 5,
       "bounded_entries": 6,
-      "decision": "keep",
-      "rationale": "Six related patterns sit on one coherent CQRS and projection page, with four distinct units including a dedicated command-side replica note; no split is justified."
+      "decision": "deepen",
+      "rationale": "Event sourcing, command replica, CQRS, domain events and materialized views now have five dedicated units."
     },
     {
       "document_id": "tycho.page.77b512c4e2e946bd92d70b4a714600c8",
@@ -9031,10 +9031,10 @@
         "tycho.pattern.controlled-cutover"
       ],
       "unit_count": 2,
-      "dedicated_units": 0,
+      "dedicated_units": 2,
       "bounded_entries": 2,
       "decision": "deepen",
-      "rationale": "Branch by abstraction and controlled cutover appear in shared tables without a dedicated unit for either; distinct bounded units are required."
+      "rationale": "Branch by abstraction and controlled cutover now have two distinct dedicated units."
     },
     {
       "document_id": "tycho.page.07904f22ca8249069cedc8c2e1140630",
@@ -9100,9 +9100,9 @@
     "entries": 145,
     "owner_pages": 69,
     "shared_pages": 33,
-    "owner_units": 140,
-    "dedicated_units": 123,
-    "embedded_units": 17,
+    "owner_units": 141,
+    "dedicated_units": 127,
+    "embedded_units": 14,
     "mechanism_supported": 145,
     "invariant_supported": 145,
     "failure_recovery_supported": 139,
@@ -9118,8 +9118,8 @@
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
-      "keep": 10,
-      "deepen": 23,
+      "keep": 9,
+      "deepen": 24,
       "split": 0
     },
     "split_deferred": 0

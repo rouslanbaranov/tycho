@@ -163,7 +163,7 @@ event fan-out and eventual consistency exceed the decoupling benefit.
 common; deduplicate by identity, preserve aggregate order and keep an unknown/repair state
 when publication is not atomic with the state change.
 
-**Technical owner.** [Distinguish source log from integration event](../../../distributed/cqrs-event-sourcing-and-projections.md#distinguish-source-log-from-integration-event) — the distinction is bounded, not a domain-event catalogue.
+**Technical owner.** [Domain Events](../../../distributed/cqrs-event-sourcing-and-projections.md#domain-events) — the distinction is bounded, not a domain-event catalogue.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -465,7 +465,7 @@ refresh cost and staleness exceed query cost.
 **Failure and recovery.** Projector crash, cursor gaps, schema drift and partial rebuilds
 are common; resume from a recorded cursor and rebuild with side effects disabled.
 
-**Technical owner.** [CQRS and asynchronous projection freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — projection freshness is bounded, not a PostgreSQL materialized-view manual.
+**Technical owner.** [Materialized View](../../../distributed/cqrs-event-sourcing-and-projections.md#materialized-view) — projection freshness is bounded, not a PostgreSQL materialized-view manual.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-pg-matview.2026-10-21: sections "Materialized Views", "Create

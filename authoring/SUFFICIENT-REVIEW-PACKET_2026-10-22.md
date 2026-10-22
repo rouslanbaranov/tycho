@@ -27,7 +27,7 @@ Do not edit the repository. Do not treat this packet as approval.
 3. **Event Sourcing** — `tycho.pattern.event-sourcing`
    - File: `cqrs-event-sourcing-and-projections.md`
    - Heading: `2. Event sourcing: what becomes authoritative?`; 427 words
-   - SHA-256: `d09b5f54492c4941423acd90f0c8b14bf2bef1ab7758299571b24b7f854002ed`
+   - SHA-256: `2cf8dc6cdb3f8abaf4f334e81c7ff12149f84c1249a67476be850319acf35a59`
 
 4. **Transactional Inbox** — `tycho.pattern.transactional-inbox`
    - File: `inbox-atomicity.md`
@@ -37,7 +37,7 @@ Do not edit the repository. Do not treat this packet as approval.
 5. **Command-Side Replica** — `tycho.pattern.command-side-replica`
    - File: `cqrs-event-sourcing-and-projections.md`
    - Heading: `Command-Side Replica`; 227 words
-   - SHA-256: `d09b5f54492c4941423acd90f0c8b14bf2bef1ab7758299571b24b7f854002ed`
+   - SHA-256: `2cf8dc6cdb3f8abaf4f334e81c7ff12149f84c1249a67476be850319acf35a59`
 
 6. **Cache-Aside / Lazy Loading** — `tycho.pattern.cache-aside-lazy-loading`
    - File: `refresh-semantics.md`
@@ -624,3 +624,23 @@ the validators still require a separate policy change.
     - File: `cells-shuffle-sharding.md`
     - Heading: `Shuffle Sharding`; 120 words
     - SHA-256: `35346976f4b654f24e5beb6881cb26495339b3d3a131939a45f5538782d3c209`
+
+122. **Branch by Abstraction** — `tycho.pattern.branch-by-abstraction`
+    - File: `cutover-gates.md`
+    - Heading: `Branch by Abstraction`; 131 words
+    - SHA-256: `fd2d8c0c617098a56c8125cb2e650b79fbc1caa0623fc527509799e8b655179c`
+
+123. **Controlled Cutover** — `tycho.pattern.controlled-cutover`
+    - File: `cutover-gates.md`
+    - Heading: `Controlled Cutover`; 135 words
+    - SHA-256: `fd2d8c0c617098a56c8125cb2e650b79fbc1caa0623fc527509799e8b655179c`
+
+124. **Domain Events** — `tycho.pattern.domain-events`
+    - File: `cqrs-event-sourcing-and-projections.md`
+    - Heading: `Domain Events`; 134 words
+    - SHA-256: `2cf8dc6cdb3f8abaf4f334e81c7ff12149f84c1249a67476be850319acf35a59`
+
+125. **Materialized View** — `tycho.pattern.materialized-view`
+    - File: `cqrs-event-sourcing-and-projections.md`
+    - Heading: `Materialized View`; 123 words
+    - SHA-256: `2cf8dc6cdb3f8abaf4f334e81c7ff12149f84c1249a67476be850319acf35a59`

@@ -268,3 +268,34 @@ acceptable for that operation. If the decision needs linearizable remote state, 
 authority or a lease-confirmed value. Enforce single-writer with fencing or a version check,
 and test the divergent-replica case: a stale copy must reject the command, not overwrite the
 owner.
+
+### Domain Events
+
+A domain event records a business fact that already occurred, named in past tense, with
+aggregate/event identity, version and causation where needed. It is not a command and not permission:
+a consumer must not treat receipt as authorization to repeat the effect.
+
+Deduplicate by event identity, preserve per-aggregate order, version event schemas and keep an
+explicit unknown/repair state when publication is not atomic with state. A source log and an
+integration event are different contracts; do not publish the internal log verbatim without an
+ownership and compatibility decision.
+
+Event-carried state transfer, polling or CDC may be preferable when consumers only need
+notification/current state, when no durable domain history is authoritative, or when event-schema
+ownership is absent. Domain events are a fit when consumers need the fact and its order, not only
+the latest value.
+
+### Materialized View
+
+A projector later consumes v into a read-oriented store. Before catch-up, a client querying the
+projection may not see its own accepted change. The view is derived data with an explicit source
+position.
+
+A materialized view must record its source version or offset, refresh trigger and freshness contract.
+Projector crash, cursor gaps, schema drift and partial rebuilds are common. Make apply idempotent,
+expose lag and support a rebuild from the authority; a view that cannot be rebuilt is a second
+database without an owner.
+
+Direct authority reads, cache-aside or a synchronous read may be preferable when the required
+freshness exceeds the projection benefit. A materialized view is a fit when repeated read shapes
+justify a derived store and the freshness contract is acceptable.

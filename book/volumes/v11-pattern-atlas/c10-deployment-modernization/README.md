@@ -317,7 +317,7 @@ when abstraction cost exceeds incremental change benefit.
 **Failure and recovery.** Permanent seams, bypass around the abstraction and divergent
 behavior are common; use contract tests, a bounded switch and a removal owner.
 
-**Technical owner.** [Alternative migration mechanisms and contraindications](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#6-alternative-migration-mechanisms-and-contraindications) — branch by abstraction is bounded to internal interface replacement.
+**Technical owner.** [Branch by Abstraction](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#branch-by-abstraction) — branch by abstraction is bounded to internal interface replacement.
 
 **Sources.** [src.fowler-branch](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-fowler-branch.2026-10-21: sections "Branch By Abstraction", "How
@@ -443,7 +443,7 @@ small enough to reverse.
 **Failure and recovery.** No-return points and partial cutovers are common; verify gates
 in the owner section.
 
-**Technical owner.** [Go/no-go and the no-return contract](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#7-gono-go-and-the-no-return-contract) — controlled cutover is bounded to gate/reversal reasoning.
+**Technical owner.** [Controlled Cutover](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#controlled-cutover) — controlled cutover is bounded to gate/reversal reasoning.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".

@@ -107,3 +107,36 @@ when its evidence and hold costs exceed the no-return risk.
 | Integrated question | [Original scenario and limits](target-and-transition-architecture-states.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### Branch by Abstraction
+
+Branch by abstraction inserts an internal interface between callers and the old/new
+implementations, so both can run in one deployable while traffic moves gradually. The switch is a
+runtime or configuration decision, not a long-lived source branch.
+
+An internal interface can route old/new implementations with one deployable. Old and new
+implementations behind the internal interface must preserve the same contract and observable
+effects; the switch must remain reversible until the old path is removed. Untested side effects, a
+bypass around the abstraction and divergent implementations can break that contract.
+
+A strangler facade can route requests by capability when the boundary is external. Branch by
+abstraction is a fit when the switch can stay inside one deployable and the interface is genuinely
+owned; otherwise a facade or a parallel run is simpler.
+
+### Controlled Cutover
+
+A controlled cutover moves authority at a declared point with evidence that the target is ready. A
+transition state should end with **an observed gate**, not a calendar milestone.
+
+Before a transition changes authoritative state or retirements become irreversible, require evidence
+for: target correctness, data reconciliation, rollback or forward-repair readiness and the owner who
+accepts the residual risk. A failure after the no-return point must use an approved forward-repair
+path rather than fictional rollback. Publish the no-return point and the abort criteria before the
+change starts.
+
+Rolling or blue/green deployment, a canary with a reversible gate, or scheduled maintenance may be
+preferable when the no-return evidence cannot be obtained or the change is small enough to reverse.
+Controlled cutover is a fit when a real authority switch is unavoidable and the evidence gate is
+observable.
