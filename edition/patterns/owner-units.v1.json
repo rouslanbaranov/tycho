@@ -4217,16 +4217,16 @@
       "owner": {
         "document_id": "tycho.page.3349b84b088ebcca496bb52fbdbbc565",
         "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
-        "heading": "Cacheability is a content and authority contract",
-        "anchor": "cacheability-is-a-content-and-authority-contract",
-        "level": 2,
-        "line": 75,
-        "unit_kind": "embedded",
+        "heading": "CDN / Edge Caching",
+        "anchor": "cdn-edge-caching",
+        "level": 3,
+        "line": 130,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "responses it may reuse",
-          "cache key, freshness policy",
-          "authorization boundary",
-          "immutable public assets"
+          "An edge can reduce",
+          "cache key",
+          "authorization header",
+          "direct origin"
         ]
       },
       "technical_evidence": {
@@ -4241,14 +4241,14 @@
           "reason": "States the agreement required for correct edge reuse."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "An authorization header is not a complete design for private edge caching; explicit cache directives can alter reuse rules.",
-          "reason": "Warns that header-based assumptions can misclassify private content, but gives no detection or recovery."
+          "state": "supported",
+          "quote": "A misclassified response can serve one user's private data to another, and a purge can lag the origin.",
+          "reason": "Names privacy and purge failure and the required test."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing caching mechanism or reversal condition is named in this section."
+          "state": "supported",
+          "quote": "A direct origin or a private cache may be preferable when every response is user-specific or the purge contract cannot be enforced.",
+          "reason": "Names direct origin/private cache and the reversal."
         }
       },
       "decision_evidence": {
@@ -4622,15 +4622,16 @@
       "owner": {
         "document_id": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80",
         "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
-        "heading": "2. Majority quorum arithmetic and the failure envelope",
-        "anchor": "2-majority-quorum-arithmetic-and-the-failure-envelope",
-        "level": 2,
-        "line": 72,
-        "unit_kind": "embedded",
+        "heading": "Quorum-Based Reads / Writes",
+        "anchor": "quorum-based-reads-writes",
+        "level": 3,
+        "line": 164,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Majority quorum",
-          "quorum is floor(N/2)+1",
-          "failure envelope"
+          "W voters",
+          "Quorums must intersect",
+          "too small R",
+          "leader-based protocol"
         ]
       },
       "technical_evidence": {
@@ -6232,16 +6233,16 @@
       "owner": {
         "document_id": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80",
         "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
-        "heading": "2. Majority quorum arithmetic and the failure envelope",
-        "anchor": "2-majority-quorum-arithmetic-and-the-failure-envelope",
-        "level": 2,
-        "line": 72,
-        "unit_kind": "embedded",
+        "heading": "Quorum Coordination",
+        "anchor": "quorum-coordination",
+        "level": 3,
+        "line": 179,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "majority-voting cluster",
-          "eligible voters",
-          "quorum is floor(N/2)+1",
-          "failure envelope"
+          "floor(N/2)+1",
+          "assumes the quorum protocol",
+          "3-voter",
+          "leader-based protocol"
         ]
       },
       "technical_evidence": {
@@ -6951,16 +6952,16 @@
       "owner": {
         "document_id": "tycho.page.3349b84b088ebcca496bb52fbdbbc565",
         "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
-        "heading": "Cacheability is a content and authority contract",
-        "anchor": "cacheability-is-a-content-and-authority-contract",
-        "level": 2,
-        "line": 75,
-        "unit_kind": "embedded",
+        "heading": "Static Content Hosting",
+        "anchor": "static-content-hosting",
+        "level": 3,
+        "line": 144,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "immutable public assets",
-          "reduce distance and origin work",
-          "responses it may reuse",
-          "mutable public representations"
+          "Immutable, versioned assets",
+          "cache key",
+          "Origin outage",
+          "dynamic origin"
         ]
       },
       "technical_evidence": {
@@ -8691,11 +8692,11 @@
         "tycho.pattern.quorum-based-reads-writes",
         "tycho.pattern.quorum-coordination"
       ],
-      "unit_count": 1,
-      "dedicated_units": 0,
+      "unit_count": 2,
+      "dedicated_units": 2,
       "bounded_entries": 2,
       "decision": "deepen",
-      "rationale": "Quorum reads/writes and quorum coordination now have bounded evidence in the shared majority-arithmetic page."
+      "rationale": "Quorum reads/writes and quorum coordination now have two distinct dedicated units."
     },
     {
       "document_id": "tycho.page.1b2657011d454460856103419095031b",
@@ -8988,11 +8989,11 @@
         "tycho.pattern.cdn-edge-caching",
         "tycho.pattern.static-content-hosting"
       ],
-      "unit_count": 1,
-      "dedicated_units": 0,
+      "unit_count": 2,
+      "dedicated_units": 2,
       "bounded_entries": 2,
       "decision": "deepen",
-      "rationale": "Edge caching and static content hosting now have bounded evidence in the shared page; retain the unit unless a dedicated hosting page is needed."
+      "rationale": "CDN edge caching and static content hosting now have two distinct dedicated units."
     },
     {
       "document_id": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c",
@@ -9100,13 +9101,13 @@
     "entries": 145,
     "owner_pages": 69,
     "shared_pages": 33,
-    "owner_units": 143,
-    "dedicated_units": 129,
-    "embedded_units": 14,
+    "owner_units": 145,
+    "dedicated_units": 133,
+    "embedded_units": 12,
     "mechanism_supported": 145,
     "invariant_supported": 145,
-    "failure_recovery_supported": 140,
-    "alternative_supported": 142,
+    "failure_recovery_supported": 141,
+    "alternative_supported": 143,
     "technical_partial_bounded": 145,
     "technical_partial": 0,
     "technical_name_only": 0,

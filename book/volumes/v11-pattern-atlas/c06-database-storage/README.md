@@ -278,7 +278,7 @@ choice when quorum availability/latency cost exceeds consistency benefit.
 **Failure and recovery.** Quorum loss and slow replicas are common; verify failure
 envelope in the owner section.
 
-**Technical owner.** [Majority quorum arithmetic and the failure envelope](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#2-majority-quorum-arithmetic-and-the-failure-envelope) — quorum arithmetic is bounded, not a universal consistency guarantee.
+**Technical owner.** [Quorum-Based Reads / Writes](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#quorum-based-reads-writes) — quorum arithmetic is bounded, not a universal consistency guarantee.
 
 **Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-cassandra-dynamo.2026-10-21: sections "Tunable Consistency",

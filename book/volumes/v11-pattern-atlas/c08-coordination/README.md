@@ -258,7 +258,7 @@ choice when quorum availability/latency exceeds safety benefit.
 common. A minority must refuse conflicting authority; membership changes need joint or
 overlapping safeguards.
 
-**Technical owner.** [Majority quorum arithmetic and the failure envelope](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#2-majority-quorum-arithmetic-and-the-failure-envelope) — quorum arithmetic is bounded, not a consensus protocol.
+**Technical owner.** [Quorum Coordination](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#quorum-coordination) — quorum arithmetic is bounded, not a consensus protocol.
 
 **Sources.** [src.raft](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-raft.2026-10-21: sections "Raft Consensus Algorithm", "Safety".

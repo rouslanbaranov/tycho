@@ -520,7 +520,7 @@ cacheability and purge cost outweigh latency benefit.
 **Failure and recovery.** Stale private content and purge failures are common; verify
 cacheability in the owner section.
 
-**Technical owner.** [Edge caching, private content and origin recovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#cacheability-is-a-content-and-authority-contract) — edge caching is bounded, not a CDN product manual.
+**Technical owner.** [CDN / Edge Caching](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#cdn-edge-caching) — edge caching is bounded, not a CDN product manual.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)

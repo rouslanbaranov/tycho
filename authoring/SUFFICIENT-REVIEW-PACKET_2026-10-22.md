@@ -664,3 +664,23 @@ the validators still require a separate policy change.
     - File: `dependency-isolation.md`
     - Heading: `Bulkhead`; 121 words
     - SHA-256: `484dfa6b45e0726c791c63acafa4685b9be0c9c2b0d142230e4c7d6c8266d8d5`
+
+130. **CDN / Edge Caching** — `tycho.pattern.cdn-edge-caching`
+    - File: `edge-cache-origin.md`
+    - Heading: `CDN / Edge Caching`; 125 words
+    - SHA-256: `9f8863776c551e7d8afd2ed852b399b712218529ebdb24c4dbfb3bfba58cd29c`
+
+131. **Static Content Hosting** — `tycho.pattern.static-content-hosting`
+    - File: `edge-cache-origin.md`
+    - Heading: `Static Content Hosting`; 126 words
+    - SHA-256: `9f8863776c551e7d8afd2ed852b399b712218529ebdb24c4dbfb3bfba58cd29c`
+
+132. **Quorum-Based Reads/Writes** — `tycho.pattern.quorum-based-reads-writes`
+    - File: `quorum-envelope.md`
+    - Heading: `Quorum-Based Reads / Writes`; 133 words
+    - SHA-256: `88dc92f1a9d2593c45325751622fc91f6202d74dccd4edc7f348a974d3a965de`
+
+133. **Quorum Coordination** — `tycho.pattern.quorum-coordination`
+    - File: `quorum-envelope.md`
+    - Heading: `Quorum Coordination`; 134 words
+    - SHA-256: `88dc92f1a9d2593c45325751622fc91f6202d74dccd4edc7f348a974d3a965de`

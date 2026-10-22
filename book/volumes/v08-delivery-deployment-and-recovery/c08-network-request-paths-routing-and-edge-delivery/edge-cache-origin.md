@@ -124,3 +124,33 @@ Sources: [RFC 9111](https://www.rfc-editor.org/rfc/rfc9111.html#section-3.5) for
 ## Navigation
 
 Parent: [network chapter](README.md). Previous: [trust boundaries](tls-gateway-boundaries.md). Continue to [object access and lifecycle](../../v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md) and [overload recovery](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/README.md).
+
+## Bounded pattern ownership notes
+
+### CDN / Edge Caching
+
+An edge can reduce distance and origin work, but only for responses it may reuse. Cacheability is a
+content and authority contract, not a network location.
+
+The cache key, freshness policy and authorization boundary must agree. An authorization header is
+not a complete design for private edge caching; explicit cache directives can alter reuse rules. A
+misclassified response can serve one user's private data to another, and a purge can lag the origin.
+Test the authorization matrix, the purge path and the stale-on-error behavior.
+
+A direct origin or a private cache may be preferable when every response is user-specific or the
+purge contract cannot be enforced. Edge caching is a fit when the response is shareable and the key,
+freshness and authorization boundary are explicit.
+
+### Static Content Hosting
+
+Immutable, versioned assets are published to an object store or CDN origin and served by URL
+without per-request application compute. The asset identity is the version, so a new release gets a
+new URL instead of overwriting a cached one.
+
+The cache key, freshness policy and authorization boundary must agree. Origin outage, incomplete
+purge, stale deletion and a cold-cache miss storm are common. Exercise the origin failover, purge a
+known asset and verify that a deleted object cannot be served from a stale edge.
+
+A dynamic origin, self-hosted files or edge compute may be preferable when content changes per
+request or the publication pipeline cannot be governed. Static hosting is a fit when assets are
+immutable and the publisher can prove the upload and purge path.
