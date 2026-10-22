@@ -1132,3 +1132,8 @@ Verdict: **pass**. Findings: 0. Skew/pause bounds, stop-write deadline and lease
 
 Verdict: **pass**. Findings: 0. Relative-duration propagation, monotonic clocks, corrected card contraindications and lines <=100.
 
+
+### Graceful Degradation — latest re-review
+
+Verdict: **pass**. Findings: 0. Recovery hysteresis, normal resumption, essential-path retest and non-duplicated closing text.
+

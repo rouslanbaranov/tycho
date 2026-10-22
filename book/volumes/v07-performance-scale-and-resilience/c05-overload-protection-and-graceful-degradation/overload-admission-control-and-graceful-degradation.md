@@ -174,18 +174,19 @@ recognize it. Record the fallback in the response.
 
 ### Graceful Degradation
 
-Degradation removes optional features or reduces quality to protect an essential outcome under
-overload. Declare which outcomes remain mandatory, which become unavailable, and how callers observe
-the reduced state.
+Graceful degradation removes optional features or reduces quality to protect an essential outcome
+under overload. It must declare which outcomes stay mandatory, which become unavailable and how
+callers observe the reduced state.
 
-Hidden degradation that silently drops correctness is worse than an explicit failure. Each degraded
-mode needs an entry condition, a recovery condition and a visible status; otherwise clients cannot
-distinguish reduced service from a bug. The essential path must be tested under the same load that
-triggers the mode.
+Hidden degradation that silently drops correctness is worse than an explicit failure. Each mode
+needs an entry condition, a visible status, an owner and an audited override for emergency use.
+Recovery needs hysteresis: remain degraded
+until the trigger metric stays below threshold for a sustained window, then restore normal service
+and re-test the essential path. Without that window the mode flaps between normal and degraded.
 
-A complete but explicit outage or horizontal capacity increase may be preferable when no safe
-degraded mode exists. Degradation is a product decision, not only an infrastructure switch. Each degraded mode needs an
-owner, a recovery test and a user-visible status now.
+A complete, explicit outage or added capacity may be preferable when no safe mode exists.
+Degradation is a product decision, not only an infrastructure switch, and the essential path must
+be tested under the load that triggers the mode.
 
 ### Load Shedding
 
