@@ -326,7 +326,9 @@ task needs exactly one owner and the consumer can absorb redelivery.
 ### Event-Driven Consumer
 
 The consumer reacts to a delivered message rather than polling a queue. It must own effect identity,
-deduplication and acknowledgement ordering.
+deduplication and acknowledgement ordering. The subscription declares a prefetch or in-flight
+bound and an acknowledgement window; when in-flight work reaches the bound, pause delivery or add
+capacity rather than buffering without limit.
 
 A crash after the effect but before acknowledgement causes redelivery, while acknowledging before
 the effect can lose work. The handler must commit the business effect and the dedup marker in one
@@ -334,8 +336,9 @@ local transaction when possible; otherwise it needs a reconciliation path for th
 Concurrency and ordering requirements belong to the subscription contract, not to the framework
 default.
 
-Polling a queue or a direct request may be preferable when delivery volume is low or the consumer
-cannot own a cursor. Event-driven consumption is justified when latency and fan-out matter more than
+Polling a queue or a scheduled batch job may be preferable when volume is low, batch control matters
+or the consumer cannot own a cursor. Reverse to polling when event volume and concurrency overwhelm
+the consumer. Event-driven consumption is justified when latency and fan-out matter more than
 the operational cost of a push subscription.
 
 ### Durable Subscriber

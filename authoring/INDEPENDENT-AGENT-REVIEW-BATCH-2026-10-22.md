@@ -1162,3 +1162,8 @@ Verdict: **pass**. Findings: 0. Stable effect key/dedup and stale-replay deadlin
 
 Verdict: **pass**. Findings: 0. Key derivation/validation/collision and marker lifetime/cleanup/post-expiry agree.
 
+
+### Event-Driven Consumer — latest re-review
+
+Verdict: **pass**. Findings: 0. Prefetch/in-flight/ack bounds, pause-or-scale overload action and polling/scheduled-batch reversal agree.
+
