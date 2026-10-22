@@ -63,9 +63,8 @@ identity, retry/repair ownership and a user-visible unknown state when the count
 cannot be proven. Orchestration or a single local transaction may be preferable when steps
 need central visibility or when compensations cannot be made safe.
 
-**Saga alternative.** Use one local transaction, a two-phase commit or an orchestrated
-workflow when the steps do not genuinely cross independent owners, or when compensation is
-unsafe. Reverse the saga choice when coordination and compensation cost exceed the
+**Saga alternative.** Use one local transaction or a two-phase commit when the steps do not genuinely cross
+independent owners, or when compensation is unsafe. Reverse the saga choice when coordination and compensation cost exceed the
 availability or ownership benefit.
 
 | Step | Durable state needed | False assumption |

@@ -189,8 +189,8 @@ acceptable; compensation is a business decision; progress is durable.
 **Hard contraindications.** Reject when one local transaction can preserve the invariant,
 when no compensation is possible, or when intermediate visibility is unacceptable.
 
-**Competing alternative.** Single local transaction, two-phase commit or an orchestrated
-workflow. Reverse when steps do not genuinely cross independent owners or compensation is
+**Competing alternative.** Single local transaction or two-phase commit. Reverse when steps do
+not genuinely cross independent owners or compensation is
 unsafe.
 
 **Failure and recovery.** Partial completion and compensation failure are common; verify
