@@ -198,12 +198,12 @@ the validators still require a separate policy change.
 36. **Least Privilege** — `tycho.pattern.least-privilege`
     - File: `authorization-policy-and-least-privilege.md`
     - Heading: `Least Privilege`; 121 words
-    - SHA-256: `751a5f1e0990a1ae9c9b1c9d0df42f3c6c6ece159fd59a5c60ca191886ae41a1`
+    - SHA-256: `e8c480106a885bb691f9ae7d4289fbf5c0683e3bc46dd4b9f3899da63fa15e6b`
 
 37. **RBAC / ABAC** — `tycho.pattern.rbac-abac`
     - File: `authorization-policy-and-least-privilege.md`
     - Heading: `RBAC / ABAC`; 122 words
-    - SHA-256: `751a5f1e0990a1ae9c9b1c9d0df42f3c6c6ece159fd59a5c60ca191886ae41a1`
+    - SHA-256: `e8c480106a885bb691f9ae7d4289fbf5c0683e3bc46dd4b9f3899da63fa15e6b`
 
 38. **Tenant-Based Resource Isolation** — `tycho.pattern.tenant-based-resource-isolation`
     - File: `multitenant-isolation.md`
@@ -259,3 +259,23 @@ the validators still require a separate policy change.
     - File: `workflow-failure.md`
     - Heading: `Request-Reply Messaging`; 124 words
     - SHA-256: `83ba024a26e804455062b61a2049ac88200ea3b4567b5583a3ebab18f37f5fc5`
+
+49. **Backend for Frontend (BFF)** — `tycho.pattern.backend-for-frontend-bff`
+    - File: `http-rpc-contracts-and-compatibility.md`
+    - Heading: `Backend for Frontend (BFF)`; 143 words
+    - SHA-256: `cfe157f4aee6b636c59fbdb0af4fb2d9636b18e691fe6e7d550fa28be068a479`
+
+50. **API Composition** — `tycho.pattern.api-composition`
+    - File: `http-rpc-contracts-and-compatibility.md`
+    - Heading: `API Composition`; 123 words
+    - SHA-256: `cfe157f4aee6b636c59fbdb0af4fb2d9636b18e691fe6e7d550fa28be068a479`
+
+51. **Zero Trust Architecture** — `tycho.pattern.zero-trust-architecture`
+    - File: `authorization-policy-and-least-privilege.md`
+    - Heading: `Zero Trust Architecture`; 134 words
+    - SHA-256: `e8c480106a885bb691f9ae7d4289fbf5c0683e3bc46dd4b9f3899da63fa15e6b`
+
+52. **Valet Key** — `tycho.pattern.valet-key`
+    - File: `object-credentials.md`
+    - Heading: `Valet Key`; 129 words
+    - SHA-256: `538595c885d153b4bf16c14db24ea0fc7b3b7c220e3bbcc431543fe6f0a6fa9b`

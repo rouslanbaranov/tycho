@@ -176,3 +176,6 @@ exceed the intended resource boundary.
 The failure path is a leaked or over-scoped token; shorten lifetime, bind audience and
 scope, and revoke at the authority. A mediated gateway is the alternative when the
 resource cannot enforce scope or when the client cannot protect a credential.
+
+**Limits.** Direct access shifts enforcement to the resource; a token that cannot be
+audience-bound or revoked is a standing data exposure.

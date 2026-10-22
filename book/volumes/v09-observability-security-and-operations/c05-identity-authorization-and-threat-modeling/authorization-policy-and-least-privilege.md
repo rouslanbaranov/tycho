@@ -86,6 +86,9 @@ when legacy components cannot enforce per-request identity or when policy-evalua
 exceeds the threat reduction. Reverse the zero-trust choice when the remaining perimeter
 control is the only enforceable boundary.
 
+**Limits.** Policy-decision latency and telemetry coverage are costs; a zero-trust label does
+not prove enforcement.
+
 ## Least Privilege
 
 Least privilege grants each principal only the permissions its task needs, limited in resource

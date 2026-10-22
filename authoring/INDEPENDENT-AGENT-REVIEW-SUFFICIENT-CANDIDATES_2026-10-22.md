@@ -148,7 +148,7 @@ marker lifetime, cleanup ownership or post-expiry behavior.
 Remediation: added the redelivery/DLQ/replay horizon, cleanup owner, retained evidence and
 reconcile-or-reject post-expiry behavior.
 
-Not re-reviewed. Verdict remains **pass-with-findings**.
+Re-review returned **pass** with no findings. The current verdict is **pass**.
 
 ## Limits
 

@@ -134,6 +134,10 @@ The failure path is drift between the BFF and the domain API; version the compos
 test the client contract. A shared API with client-side selection is the alternative when
 the differences are small and can be expressed without a new authority.
 
+**Limits.** A BFF duplicates client-specific policy and adds a deployable; its contract and
+client matrix need an owner, and a BFF that caches or authorizes objects becomes another
+authority.
+
 ### API Composition
 
 An API composition layer calls several owner APIs for one request and assembles their responses into
@@ -144,3 +148,7 @@ One slow or failed participant must not silently disappear from the result; appl
 deadlines, mark missing parts or fail the composition explicitly. Build a maintained read model or a
 client-specific backend for frontend; prefer composition when the sources are authoritative and the
 caller needs a live view.
+
+**Limits.** Fan-out latency is the max of participants; per-source authorization, versioning
+and partial-failure schema are costs, and a maintained read model may be cheaper for repeated
+composition. A composition endpoint is not a transaction.
