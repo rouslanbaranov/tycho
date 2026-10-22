@@ -128,16 +128,16 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Change Data Capture (CDC)
 
-A relational database may already own an authoritative business state. A CDC pipeline observes
-changes after a commit and publishes records to consumers. The source transaction stays the
-authority; the stream is a derived view of it.
+Change data capture reads the database's own change log and turns committed row changes into a
+replayable stream. The log position, not the connector's wall clock, is the cursor; a snapshot taken
+at a defined log position establishes the starting boundary.
 
-An implementation must document where their alignment is guaranteed and where duplicates or gaps
-may be replayed. Connector lag, WAL/slot retention, schema changes and snapshot-to-stream gaps are
-common. Monitor lag and slot retention, test a schema change, and define a rebuild from a consistent
-snapshot rather than assuming the stream is complete.
+The stream must preserve per-key order and transaction grouping, and consumers must apply each change
+idempotently by a stable key or log position. Connector lag, slot retention, schema changes and a
+snapshot-to-stream gap are common. Monitor the slot, test a schema change, and rebuild from a
+consistent snapshot when the slot is lost rather than assuming the stream is complete. A tombstone
+or delete event needs an explicit downstream interpretation.
 
-A transactional outbox plus relay, dual-write with reconciliation, or scheduled batch extraction may
-be preferable when database log access is unavailable, when the source cannot retain a slot, or when
-the team cannot operate a connector. CDC is a fit when the database log is accessible and the team
-can own connector and schema operations.
+A transactional outbox plus relay, dual-write with reconciliation, or scheduled extraction may be
+preferable when log access is unavailable or the team cannot operate a connector. CDC is a fit when
+the log is accessible and the consumer can tolerate derived, at-least-once delivery.

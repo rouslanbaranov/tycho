@@ -287,18 +287,18 @@ the latest value.
 
 ### Materialized View
 
-A projector later consumes v into a read-oriented store. Before catch-up, a client querying the
-projection may not see its own accepted change. The view is derived data with an explicit source
-position.
+A materialized view stores the result of a query so repeated reads avoid recomputing it. It is
+derived data, not the base table: the stored rows can be stale until a refresh replaces them.
 
-A materialized view must record its source version or offset, refresh trigger and freshness contract.
-Projector crash, cursor gaps, schema drift and partial rebuilds are common. Make apply idempotent,
-expose lag and support a rebuild from the authority; a view that cannot be rebuilt is a second
+Refresh is a separate write operation with an owner and a mode. An on-demand refresh can block reads
+while it rebuilds; a concurrent refresh needs a unique key and still consumes I/O; a refresh on every
+write turns the view into a cache. Define the freshness contract, the refresh trigger, the lock or
+blocking behavior and a rebuild path. A view that cannot be rebuilt from the authority is a second
 database without an owner.
 
-Direct authority reads, cache-aside or a synchronous read may be preferable when the required
-freshness exceeds the projection benefit. A materialized view is a fit when repeated read shapes
-justify a derived store and the freshness contract is acceptable.
+A native query, cache-aside or a synchronous read may be preferable when the required freshness
+exceeds the view benefit. A materialized view is a fit when repeated read shapes justify the refresh
+cost and stale rows are acceptable between refreshes.
 
 ### Command Query Responsibility Segregation (CQRS)
 

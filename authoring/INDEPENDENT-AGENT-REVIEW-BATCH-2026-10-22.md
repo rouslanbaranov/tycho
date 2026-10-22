@@ -939,3 +939,48 @@ Verdict: **pass-with-findings**. Findings: 1.
 
 - Alternative groups microservices, API gateway and modular monolith under capabilities are few and adds a component the card does not list; card maps microservices to independent product capabilities and modular monolith to one ownership boundary.
 
+
+## Second re-review after remediation
+
+Three more prior rejects were rewritten and re-reviewed. All are now pass-with-findings.
+
+### tycho.pattern.change-data-capture-cdc
+
+Verdict: **pass-with-findings**. Findings: 2.
+
+- General CDC replay claims still lack an exact source; source plan records general CDC as unread, card cites only Debezium outbox-router.
+- Card cross-table-ordering contraindication remains unowned; section requires per-key grouping but never states cross-table ordering is unavailable.
+
+### tycho.pattern.materialized-view
+
+Verdict: **pass-with-findings**. Findings: 2.
+
+- Card failure/recovery still cites projector crash/cursor gaps, and good-fit requires source version/offset; rewritten section covers refresh, not event projection.
+- PostgreSQL source record is unpinned and lists SQL commands as page sections; line 294 exceeds 100 chars.
+
+### tycho.pattern.static-content-hosting
+
+Verdict: **pass-with-findings**. Findings: 2.
+
+- Five of eight sentences still track earlier lines 77-90; distinct addition is limited to manifest alias, host ownership and GC/tombstone.
+- Card alternative explicit-TTL cache prong and edge-complexity reversal are absent.
+
+
+## Third re-review after remediation
+
+The final two prior rejects were rewritten and re-reviewed. All are now pass-with-findings.
+
+### tycho.pattern.cell-based-architecture
+
+Verdict: **pass-with-findings**. Findings: 2.
+
+- Card cites only Deployment Stamps read record, not a dedicated cell source; cell-specific blast-radius/failover/migration claims need src.cell-boundaries or a comparison-only label.
+- Concrete outage/restore policy remains outside anchored unit; line 166 exceeds 100 chars.
+
+### tycho.pattern.shuffle-sharding
+
+Verdict: **pass-with-findings**. Findings: 2.
+
+- Unit repeats earlier comparison clause verbatim and gives assignment tests rather than a hot-tenant failure/recovery path.
+- Card hard contraindication on operational cost of many assignments is absent.
+

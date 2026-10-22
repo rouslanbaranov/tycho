@@ -3236,31 +3236,31 @@
         "line": 129,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "authoritative business state",
-          "alignment is guaranteed",
-          "Connector lag",
-          "transactional outbox"
+          "change data capture reads",
+          "replayable stream",
+          "per-key order",
+          "snapshot-to-stream gap"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A relational database may already own an authoritative business state. A CDC pipeline observes changes after a commit and publishes records to consumers.",
+          "quote": "Change data capture reads the database's own change log and turns committed row changes into a replayable stream.",
           "reason": ""
         },
         "invariant": {
           "state": "supported",
-          "quote": "An implementation must document where their alignment is guaranteed and where duplicates or gaps may be replayed.",
+          "quote": "The stream must preserve per-key order and transaction grouping",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Connector lag, WAL/slot retention, schema changes and snapshot-to-stream gaps are common.",
+          "quote": "Connector lag, slot retention, schema changes and a snapshot-to-stream gap are common.",
           "reason": "Names the CDC failure modes."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A transactional outbox plus relay, dual-write with reconciliation, or scheduled batch extraction may be preferable when database log access is unavailable, when the source cannot retain a slot, or when the team cannot operate a connector.",
+          "quote": "A transactional outbox plus relay, dual-write with reconciliation, or scheduled extraction may be preferable when log access is unavailable or the team cannot operate a connector.",
           "reason": "Names the alternative and reversal."
         }
       },
@@ -3296,31 +3296,31 @@
         "line": 288,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "projector later consumes",
-          "source version or offset",
-          "Projector crash",
-          "Direct authority reads"
+          "materialized view stores",
+          "Refresh is a separate",
+          "on-demand refresh",
+          "native query"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A projector later consumes v into a read-oriented store. Before catch-up, a client querying the projection may not see its own accepted change.",
+          "quote": "A materialized view stores the result of a query so repeated reads avoid recomputing it.",
           "reason": "Describes the event-fed read store and its freshness limit, which is the materialized-view mechanism."
         },
         "invariant": {
           "state": "supported",
-          "quote": "A materialized view must record its source version or offset, refresh trigger and freshness contract.",
+          "quote": "Refresh is a separate write operation with an owner and a mode.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Projector crash, cursor gaps, schema drift and partial rebuilds are common.",
+          "quote": "An on-demand refresh can block reads while it rebuilds",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Direct authority reads, cache-aside or a synchronous read may be preferable when the required freshness exceeds the projection benefit.",
+          "quote": "A native query, cache-aside or a synchronous read may be preferable when the required freshness exceeds the view benefit.",
           "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
@@ -6733,31 +6733,31 @@
         "line": 163,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "bounded population",
-          "Merely naming",
-          "shared control plane",
-          "single deployment"
+          "cell-based architecture",
+          "cell-scoped",
+          "blast radius",
+          "control plane"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A cell serves a bounded population with its own capacity and failure domain.",
+          "quote": "A cell-based architecture runs multiple copies of the serving stack, each with a routing key and a data partition",
           "reason": "Defines the cell as a bounded population with independent capacity and failure domain."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Merely naming a group of stateless workers a cell does not isolate a shared database, queue, cache or configuration publisher.",
+          "quote": "The boundary is only real if every dependency is cell-scoped.",
           "reason": "States that shared dependencies defeat a nominal cell boundary."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A shared control plane can still take every cell down at once; test the blast radius, not only the happy-path routing.",
+          "quote": "A shared database, queue, cache, control plane or configuration publisher can make all cells fail together",
           "reason": "Names shared-control-plane blast radius and the required test."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A single deployment with failure-domain isolation may be preferable when the population is small and a cell's duplicated operations cannot be justified.",
+          "quote": "A single deployment with failure-domain isolation may be preferable when the population is small and cell duplication cannot be justified.",
           "reason": "Names single deployment with failure-domain isolation."
         }
       },
@@ -6790,19 +6790,19 @@
         "heading": "Shuffle Sharding",
         "anchor": "shuffle-sharding",
         "level": 3,
-        "line": 177,
+        "line": 178,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "small subset",
-          "statistically independent",
-          "dependency graph",
+          "shuffle shard",
+          "random subset",
+          "tenant overlap",
           "fixed cell"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A shuffle shard selects a small subset from a worker pool, so different tenants overlap in only some of their eligible workers.",
+          "quote": "A shuffle shard selects a random subset of workers for each tenant",
           "reason": "Explains the subset selection and partial tenant overlap."
         },
         "invariant": {
@@ -6812,7 +6812,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Test the actual dependency graph, the assignment stability across restarts and the tenant overlap under pool changes.",
+          "quote": "A failed worker affects every tenant whose subset includes it",
           "reason": "Names shared-dependency and assignment-stability tests."
         },
         "alternative": {
@@ -6973,31 +6973,31 @@
         "line": 144,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Immutable, versioned assets",
-          "cache key",
-          "Origin outage",
+          "Static content hosting",
+          "retained version",
+          "incomplete purges",
           "dynamic origin"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Immutable, versioned assets are published to an object store or CDN origin and served by URL without per-request application compute.",
+          "quote": "Static content hosting publishes immutable objects to an object store or CDN origin and serves them by URL without per-request application compute.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
-          "quote": "The cache key, freshness policy and authorization boundary must agree.",
+          "quote": "A retained version is the rollback path",
           "reason": "Requires cache key, freshness and authorization to agree for served static assets."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Origin outage, incomplete purge, stale deletion and a cold-cache miss storm are common.",
+          "quote": "Cold-cache miss storms and incomplete purges are common; exercise origin failover and a known purge.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A dynamic origin, self-hosted files or edge compute may be preferable when content changes per request or the publication pipeline cannot be governed.",
+          "quote": "A dynamic origin or edge compute may be preferable when content changes per request or publication cannot be governed.",
           "reason": "States the mechanism, invariant, failure or alternative."
         }
       },

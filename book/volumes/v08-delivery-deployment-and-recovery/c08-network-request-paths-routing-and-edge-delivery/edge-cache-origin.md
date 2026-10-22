@@ -143,14 +143,16 @@ freshness and authorization boundary are explicit.
 
 ### Static Content Hosting
 
-Immutable, versioned assets are published to an object store or CDN origin and served by URL
-without per-request application compute. The asset identity is the version, so a new release gets a
-new URL instead of overwriting a cached one.
+Static content hosting publishes immutable objects to an object store or CDN origin and serves them
+by URL without per-request application compute. The URL carries a version or content hash; a small
+manifest maps a stable alias to the current version.
 
-The cache key, freshness policy and authorization boundary must agree. Origin outage, incomplete
-purge, stale deletion and a cold-cache miss storm are common. Exercise the origin failover, purge a
-known asset and verify that a deleted object cannot be served from a stale edge.
+The host must own upload validation, origin protection and prewarming for a release. A retained
+version is the rollback path, so garbage collection may delete old objects only after the rollback
+window; a deleted object needs a tombstone or purge proof. The cache key, TTL and authorization
+boundary must agree, especially for private assets signed at the edge. Cold-cache miss storms and
+incomplete purges are common; exercise origin failover and a known purge.
 
-A dynamic origin, self-hosted files or edge compute may be preferable when content changes per
-request or the publication pipeline cannot be governed. Static hosting is a fit when assets are
-immutable and the publisher can prove the upload and purge path.
+A dynamic origin or edge compute may be preferable when content changes per request or publication
+cannot be governed. Static hosting is a fit when assets are immutable, versioned and the publisher
+can prove upload, prewarm and purge.

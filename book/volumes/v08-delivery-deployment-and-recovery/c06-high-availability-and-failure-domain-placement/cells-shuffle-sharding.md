@@ -162,30 +162,33 @@ without a data authority or upgrade owner becomes a snowflake.
 
 ### Cell-Based Architecture
 
-A cell serves a bounded population with its own capacity and failure domain. The boundary is a
-placement and dependency decision, not a deployment label.
+A cell serves a bounded population with its own capacity and failure domain. A cell-based
+architecture runs multiple copies of the serving stack, each with a routing key and a data partition,
+so one cell's failure affects only its population.
 
-Merely naming a group of stateless workers a cell does not isolate a shared database, queue, cache or
-configuration publisher. Trace every dependency that a tenant can exhaust, corrupt or stall, and
-state which failures cross the boundary. A shared control plane can still take every cell down at
-once; test the blast radius, not only the happy-path routing.
+The boundary is only real if every dependency is cell-scoped. A shared database, queue, cache,
+control plane or configuration publisher can make all cells fail together; trace every dependency a
+tenant can exhaust or corrupt and test the blast radius. Operations need per-cell capacity, routing,
+evacuation and reassignment, plus a control plane that survives one cell's loss.
 
 A single deployment with failure-domain isolation may be preferable when the population is small and
-a cell's duplicated operations cannot be justified. Cells are a fit when tenant isolation and
-bounded blast radius matter enough to pay the placement and routing cost.
+cell duplication cannot be justified. Cells are a fit when tenant isolation and bounded blast radius
+matter enough to pay the placement, data-partition and control-plane cost.
 
 ### Shuffle Sharding
 
-A shuffle shard selects a small subset from a worker pool, so different tenants overlap in only some
-of their eligible workers. A single unhealthy worker affects fewer tenants than a shared queue or a
-fixed shard would.
+A shuffle shard selects a random subset of workers for each tenant, so different tenants overlap
+in only some of their eligible workers. A failed worker affects every tenant whose subset includes
+it; with shard size s from a pool of N, that is roughly s/N of tenants, not an unconditional
+reduction versus a fixed shard.
 
 Do not assume assignments are statistically independent just because they use a hash. If all workers
 await one shared database pool, the endpoint assignment proves little. Test the actual dependency
-graph, the assignment stability across restarts and the tenant overlap under pool changes.
+graph, the assignment stability across restarts, the shard size and the measured tenant overlap
+under pool changes. Too few shards or an unstable assignment erodes the isolation benefit.
 
 A fixed cell gives a tenant a durable home and a clear population boundary. Shuffle sharding is
-preferable when many tenants share a pool and the goal is to reduce correlated failure without
+preferable when many tenants share a pool and measured overlap reduces correlated failure without
 dedicating a cell to each one.
 
 ## Navigation
