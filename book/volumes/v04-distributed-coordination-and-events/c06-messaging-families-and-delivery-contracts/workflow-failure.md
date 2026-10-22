@@ -201,12 +201,17 @@ identifier retention and trust boundaries need an owner.
 ### Request-Reply Messaging
 
 A requester sends a message with a reply address and a correlation value, and the responder returns
-a message that the requester matches to the original request. A reply must correlate to exactly one
+a message that the requester matches to the original request. The reply channel is durable, has an
+owner and is cleaned after its retention window. A reply must correlate to exactly one
 outstanding request and must not be processed as a new command by another consumer.
 
 A lost request or reply leaves an unresolved operation; expose the outstanding request record, apply
-a reply deadline and reconcile before retrying. Synchronous RPC with a deadline is simpler when the
-responder is reachable and the work fits the request budget; choose messaging when availability or
+a reply deadline and reconcile before retrying. A reply after the deadline is late, not valid for
+a new operation: detect it from the request state and quarantine or audit it. A duplicate reply is
+deduplicated by request and responder identity; only the first accepted reply is applied. Request
+state and dedup records must outlive the reply deadline, or a late reply becomes an orphan with no
+route. Synchronous RPC with a deadline is simpler when the responder is reachable and the work fits
+the request budget; choose messaging when availability or
 latency requires decoupling.
 
 **Limits.** Reply queues, correlation state and orphaned replies are operational costs; a lost

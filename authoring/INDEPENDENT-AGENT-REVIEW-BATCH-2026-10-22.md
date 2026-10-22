@@ -1142,3 +1142,8 @@ Verdict: **pass**. Findings: 0. Recovery hysteresis, normal resumption, essentia
 
 Verdict: **pass**. Findings: 0. Operation-scoped uniqueness, collision check and ambiguous/expired recovery agree.
 
+
+### Request-Reply Messaging — latest re-review
+
+Verdict: **pass**. Findings: 0. Durable owned reply channel, late/duplicate dispositions and state lifetime beyond deadline.
+
