@@ -36,6 +36,7 @@ evidence_scope:
     - "src.ietf-idempotency-key"
     - "src.debezium-outbox"
     - "src.postgresql"
+    - "src.postgres-logical"
   claim_ids: []
   status: "source-linked"
   notes: "14 cards cite read units; owner links are bounded."
@@ -45,8 +46,8 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-22"
+source_inspection_date: "2026-10-22"
 content_verified_at: null
 ---
 # V11/C04 — Data consistency, transactions and event sourcing
@@ -434,12 +435,12 @@ slot, or connector operations exceed the replay benefit.
 snapshot-to-stream gaps are common; monitor lag/slot health, resnapshot deliberately and make
 downstream apply idempotent.
 
-**Technical owner.** [Change Data Capture (CDC)](../../v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md#change-data-capture-cdc) — CDC replay is bounded, not a full Debezium operations guide.
+**Technical owner.** [Change Data Capture (CDC)](../../v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md#change-data-capture-cdc) — CDC replay is bounded, not a full connector operations guide.
 
-**Sources.** [src.debezium-outbox](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-debezium-outbox.2026-10-21: sections "Outbox Event Router",
-"Configuration", "Example". The source is a public pattern/specification
-unit, not a benchmark.
+**Sources.** [src.postgres-logical](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch8-postgres-logical.2026-10-22: section "Chapter 29. Logical
+Replication". The source is public PostgreSQL documentation, not a benchmark or connector
+operations guide.
 
 **Decision state.** applicable-under-conditions.
 

@@ -51,11 +51,14 @@ Resolved metadata findings:
 - **F-003 (source remediation):** a dedicated `src.cell-boundaries` read record, source-plan
   unit and card citation now replace the Deployment Stamps source. The Cell verdict remains
   `reject` pending independent re-review.
+- **F-004 (source remediation):** a PostgreSQL logical-replication read record and binding
+  now support general log-based CDC; the Debezium outbox unit is retained as a comparison.
+  The CDC verdict remains `reject` pending independent re-review.
 
 Open findings:
 
-- **Blocking:** F-004 general CDC scope, F-005 Materialized View card/source. F-003 is
-  remediated but still requires re-review before any verdict change.
+- **Blocking:** F-005 Materialized View card/source. F-003 and F-004 are remediated but
+  still require re-review before any verdict change.
 - **Major:** F-006 protocol wording, F-009 Expand-and-Contract, F-010 Event Sourcing,
   F-011 Cache-Aside, F-012 Negative Caching, F-013 Process Manager, F-015 duplication.
 - **Minor:** F-008, F-014, F-016–F-022.
