@@ -54,13 +54,18 @@ Resolved metadata findings:
 - **F-004 (source remediation):** a PostgreSQL logical-replication read record and binding
   now support general log-based CDC; the Debezium outbox unit is retained as a comparison.
   The CDC verdict remains `reject` pending independent re-review.
+- **F-005 (source remediation):** a PostgreSQL 18 `REFRESH MATERIALIZED VIEW` read record
+  now supports the card; failure/recovery describes refresh locks, the CONCURRENTLY unique
+  index and rebuild from base tables. The Materialized View verdict remains `reject`
+  pending independent re-review.
+- **F-006:** the protocol now records three reject-level entries instead of claiming zero.
 
 Open findings:
 
-- **Blocking:** F-005 Materialized View card/source. F-003 and F-004 are remediated but
-  still require re-review before any verdict change.
-- **Major:** F-006 protocol wording, F-009 Expand-and-Contract, F-010 Event Sourcing,
-  F-011 Cache-Aside, F-012 Negative Caching, F-013 Process Manager, F-015 duplication.
+- **Blocking:** none open. F-003–F-005 are remediated but still require re-review before
+  any verdict change.
+- **Major:** F-009 Expand-and-Contract, F-010 Event Sourcing, F-011 Cache-Aside,
+  F-012 Negative Caching, F-013 Process Manager, F-015 duplication.
 - **Minor:** F-008, F-014, F-016–F-022.
 
 No page, card or `sufficient` state was changed by this integration. The delivery-evidence

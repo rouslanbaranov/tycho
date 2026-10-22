@@ -2246,7 +2246,9 @@
       "content_sha256": "243e93039282f42ee61bc221a3fd27e38f3fcb992189fb634ef1bb7ae929de44",
       "read_scope": "complete publicly served unit as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
-      "status": "read"
+      "status": "read",
+      "citation_status": "intentionally-unused",
+      "citation_note": "Retained as the PostgreSQL materialized-view overview; the card now cites the REFRESH page."
     },
     {
       "id": "read.batch2-pg-2pc.2026-10-21",
@@ -4443,6 +4445,40 @@
       ],
       "limitations": "Read the chapter landing page only; linked child pages, replication-slot details, schema-change procedures and connector behavior were not read. The documentation is current, not a pinned release.",
       "content_sha256": "cc529913e4400bf21371fbf6f5c74aa7c21b9b6380725f319a6d287028a49065",
+      "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.batch9-pg-matview-refresh.2026-10-22",
+      "source_id": "src.postgresql",
+      "unit_url": "https://www.postgresql.org/docs/current/sql-refreshmaterializedview.html",
+      "unit_label": "REFRESH MATERIALIZED VIEW — PostgreSQL 18",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-22",
+      "access_method": "public HTTP fetch; served text/html inspected",
+      "sections_read": [
+        "REFRESH MATERIALIZED VIEW"
+      ],
+      "sections_not_read": [
+        "CREATE MATERIALIZED VIEW",
+        "linked pages",
+        "implementation behavior"
+      ],
+      "tables_figures": [
+        "no tables or figures in the inspected page"
+      ],
+      "license_notes": "Public PostgreSQL documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "REFRESH MATERIALIZED VIEW replaces the stored result; a plain refresh can block concurrent selects; CONCURRENTLY requires a unique index covering all rows, is allowed only when populated and permits one refresh at a time; WITH NO DATA leaves the view unscannable; refresh is not automatic."
+      ],
+      "claims_not_supported": [
+        "benchmark or implementation results",
+        "incremental refresh behavior",
+        "linked pages"
+      ],
+      "limitations": "Read one PostgreSQL 18 page; no benchmark, incremental-refresh behavior or linked pages were read.",
+      "content_sha256": "68f246e884ac043c72ac06086401e4eab0a63903908b206ff0adf450a0d518d6",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
       "status": "read"

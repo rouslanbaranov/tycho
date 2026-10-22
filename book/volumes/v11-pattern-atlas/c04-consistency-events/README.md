@@ -464,16 +464,17 @@ refresh blocks critical traffic, or when invalidation has no owner.
 **Competing alternative.** Query on demand or a cache with TTL. Reverse the choice when
 refresh cost and staleness exceed query cost.
 
-**Failure and recovery.** Projector crash, cursor gaps, schema drift and partial rebuilds
-are common; resume from a recorded cursor and rebuild with side effects disabled.
+**Failure and recovery.** Stale rows, refresh duration and lock contention are common; a
+plain refresh can block reads, while CONCURRENTLY needs a unique index covering all rows,
+allows one refresh at a time and still consumes I/O. Define the freshness contract and
+refresh trigger, monitor duration and locks, and rebuild from the base tables rather than
+treating the view as an authority.
 
-**Technical owner.** [Materialized View](../../../distributed/cqrs-event-sourcing-and-projections.md#materialized-view) — projection freshness is bounded, not a PostgreSQL materialized-view manual.
+**Technical owner.** [Materialized View](../../../distributed/cqrs-event-sourcing-and-projections.md#materialized-view) — stored-query freshness is bounded, not a full PostgreSQL materialized-view manual.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-pg-matview.2026-10-21: sections "Materialized Views", "Create
-Materialized View", "Refresh Materialized View". The source is a public
-pattern/specification
-unit, not a benchmark.
+read record read.batch9-pg-matview-refresh.2026-10-22: section "REFRESH MATERIALIZED
+VIEW" (PostgreSQL 18). The source is public documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
