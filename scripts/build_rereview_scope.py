@@ -44,6 +44,11 @@ def chapter_map():
     return mapping
 
 
+def heading_slug(text):
+    value = re.sub(r"[^\w\s-]", "", text.lower())
+    return re.sub(r"\s", "-", value.strip())
+
+
 def build():
     audit = load(PRIOR_AUDIT)
     records = load(RECORDS)["records"]
@@ -58,9 +63,19 @@ def build():
         chapter = batch["chapter"]
         directory = chapters.get(chapter)
         for entry in batch["entries"]:
+            card_path = str(V11 / directory / "README.md") if directory else None
+            anchor = entry["atlas_section"]
+            if card_path:
+                card_text = (ROOT / card_path).read_text(encoding="utf-8")
+                name = registry[entry["pattern_id"]]["catalog_name"]
+                heading = next((line[4:].strip() for line in card_text.splitlines()
+                                if line.startswith("### ") and line[4:].strip() == name),
+                               None)
+                if heading and " / " in heading:
+                    anchor = heading_slug(heading)
             card_map[entry["pattern_id"]] = {
-                "card_path": str(V11 / directory / "README.md") if directory else None,
-                "card_anchor": entry["atlas_section"],
+                "card_path": card_path,
+                "card_anchor": anchor,
             }
     audited = {p["pattern_id"] for p in audit["packets"]}
     phase_a = []

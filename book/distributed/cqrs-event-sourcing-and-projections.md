@@ -82,7 +82,9 @@ A team may implement only one. A simple service with complex command authorizati
 
 ## 2. Event sourcing: what becomes authoritative?
 
-In event sourcing, a durable append-only record of domain facts becomes an authoritative input to reconstruct the present state. Fowler's 2005 *Event Sourcing*, sections **How it Works**, **Application State Storage**, **External Updates**, **External Queries** and **Code Changes**, discusses reconstruction, snapshots and the hazards of replay with external systems and changing logic. The document explicitly labels itself draft material. [E03]
+In event sourcing, a durable append-only record of domain facts becomes an authoritative input
+to reconstruct the present state. The chapter source ledger records the origin material as
+context; this section's technical boundary is the declared pattern source.
 
 A **fictional** registration aggregate might have immutable facts such as `RegistrationRequested`, `SeatReserved`, `RegistrationConfirmed` and `RegistrationCancelled`. Commands are **requests to change state**; events assert that an accepted transition **already occurred** under an authoritative validation rule.
 

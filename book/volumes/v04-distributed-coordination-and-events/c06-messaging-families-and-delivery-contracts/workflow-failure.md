@@ -171,9 +171,9 @@ token instead. It needs payload lifecycle, authorization, expiry, integrity and 
 rule for abandoned claims. Use it when message size, retention or access boundaries make
 an inline payload unsafe. Do not use it when the payload is small enough to inline or when
 an external store would create an unacceptable consistency dependency. An untracked
-claim store becomes a data-retention liability. Bind the claim token to the message and tenant and to a payload
-digest; a token must not resolve to another payload. The retrieval hop needs a latency budget
-and bounded retries.
+claim store becomes a data-retention liability. Bind the claim token to the message and
+tenant and to a payload digest; a token must not resolve to another payload. The retrieval
+hop needs a latency budget and bounded retries.
 
 The failure path is an orphaned payload or a token that outlives its authorization; expire
 and garbage-collect claims, and make the consumer fail closed when the claim cannot be
@@ -225,11 +225,12 @@ A quarantine queue receives a message after its retry or age policy is exhausted
 payload, headers and failure context. The DLQ is a policy state, not a second work queue
 that silently retries forever.
 
-Retrying cannot repair an invalid schema or a permanently rejected target. Separate transient, permanent and unknown outcomes; bound attempts and age; keep diagnostic
-evidence without leaking payload. The DLQ needs an owner, an alert threshold, a
-retention horizon, a capacity limit, an access policy and a cleanup owner. A replay procedure
-preserves the original effect identity, reauthorizes the action and checks whether the effect was
-already committed before republishing; a blind replay is a duplicate-effect risk.
+Retrying cannot repair an invalid schema or a permanently rejected target. Separate
+transient, permanent and unknown outcomes; bound attempts and age; keep diagnostic evidence
+without leaking payload. The DLQ needs an owner, an alert threshold, a retention horizon, a
+capacity limit, an access policy and a cleanup owner. A replay procedure preserves the
+original effect identity, reauthorizes the action and checks whether the effect was already
+committed before republishing; a blind replay is a duplicate-effect risk.
 
 When failure is deterministic or evidence cannot be retained safely, prefer bounded retry with
 audit, drop with a record, or a repair table/outbox. A

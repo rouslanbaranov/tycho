@@ -182,8 +182,8 @@ in only some of their eligible workers. A failed worker affects every tenant who
 it; with shard size s from a pool of N, that is roughly s/N of tenants, not an unconditional
 reduction versus a fixed shard.
 
-Do not assume assignments are statistically independent just because they use a hash. If all workers
-await one shared database pool, the endpoint assignment proves little. Test the actual dependency
+Hash-based assignment alone does not prove statistical independence. A shared database pool can
+dominate the worker assignment. Test the actual dependency
 graph, the assignment stability across restarts, the shard size and the measured tenant overlap
 under pool changes. Too few shards or an unstable assignment erodes the isolation benefit.
 
@@ -191,7 +191,7 @@ Containment after a failed worker requires reassigning affected tenants and rech
 shared dependency graph; replacing the worker alone can preserve the same overlap. Measure
 recovery time and tenant impact, not only steady-state isolation.
 
-A fixed cell gives a tenant a durable home and a clear population boundary. Shuffle sharding is
+A fixed cell anchors one tenant to a known home and population boundary. Shuffle sharding is
 preferable when many tenants share a pool and measured overlap reduces correlated failure without
 dedicating a cell to each one.
 
