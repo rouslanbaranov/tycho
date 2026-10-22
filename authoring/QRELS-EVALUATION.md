@@ -30,9 +30,9 @@ This set introduces three missing properties:
 | [test_tycho_qrels.py](../tests/test_tycho_qrels.py) | Offline validation and metric tests. |
 
 The dataset is pinned to route snapshot
-`1a72bef838f88805c9a0e5b8473e309e6bcd0753a2987cc3a0f0d8223789597f` (423 documents).
+`479adecfabc1412e3c5f5f0a9a48796f2c652de12cad1e1c9edb0fc0c801b986` (423 documents).
 Earlier pins were replaced after source remediations, label/owner fixes, Phase A fixes,
-Cache-Aside source/line fixes and Phase B navigation/anchor integrity; no accepted answer
+Cache-Aside fixes, Phase B integrity and blocker/high content fixes; no accepted answer
 pointed at a V11 page.
 
 ## How labels were constructed
@@ -104,10 +104,10 @@ nDCG@10 was 0.558 over 95 answerable items. Dev page hit@5 was 0.740 and chapter
 failure 0.800, fact 0.900, change impact 0.857, synthesis 0.667, contradiction 0.600,
 trade-off 0.556. All five unanswerable items returned results, so refusal is not measured.
 
-Re-pin 2026-10-23: source/label/owner fixes, Phase A fixes and Phase B navigation/anchor
-integrity moved the route snapshot to
-`1a72bef838f88805c9a0e5b8473e309e6bcd0753a2987cc3a0f0d8223789597f` and the section
-snapshot to `594a324483f4…`; metrics remain within rounding (nDCG@10 0.5577).
+Re-pin 2026-10-23: source/label/owner fixes, Phase A fixes, Phase B integrity and
+blocker/high content fixes moved the route snapshot to
+`479adecfabc1412e3c5f5f0a9a48796f2c652de12cad1e1c9edb0fc0c801b986` and the section
+snapshot to `ac746c9eee1b…`; metrics remain within rounding (nDCG@10 0.5577).
 
 ## Provisional acceptance thresholds
 

@@ -142,7 +142,11 @@ errors is a correctness defect, not a performance choice.
 
 A write-through path updates the cache and the authoritative store in one controlled sequence, so a
 later read can use the cached copy. A write must not be acknowledged before both sides reach the
-declared state, or an explicit reconciliation must repair a partial write.
+declared state, or an explicit reconciliation must repair a partial write. The declared order is
+store commit, then cache update; a reader that sees the new cache value can rely on the store,
+while a reader that sees the old cache value must be treated as stale. If the cache update fails,
+invalidate and repair before serving. A retry carries the same version and must not overwrite a
+newer write.
 
 Failure between the two updates leaves cache and store divergent; version the value and retry or
 invalidate with an audit trail of the failed write. Write-behind or cache-aside with invalidation
@@ -155,13 +159,16 @@ from overwriting a newer write.
 
 ### Write-Behind-Write-Back
 
-A write-behind cache acknowledges the cached write and flushes it to durable storage asynchronously.
-An acknowledged write must survive the declared durability window, so the pending buffer needs its
-own durable or replicated record.
+A write-behind cache acknowledges a write after placing it in a pending buffer and flushes it to
+durable storage asynchronously. If that buffer is the cache itself, cache loss can discard
+acknowledged writes; that is the card's hard contraindication. If the buffer has its own durable
+or replicated record separate from the cache, cache loss is recoverable and the acknowledged write
+survives. State which case applies; never include durable acknowledged writes in a permitted loss
+window.
 
-Cache loss before flush discards acknowledged writes; track the flush backlog and make the
-durability window explicit to callers. Write-through acknowledges only after both sides update;
-prefer write-behind when write throughput dominates and a measured loss window is acceptable.
+Write-through acknowledges only after both sides update; prefer write-behind when write throughput
+dominates and a measured loss window is acceptable for at-risk writes, not for durable acknowledged
+writes.
 
 **Limits.** Flush ordering, retry and shutdown drain are part of the durability contract; an
 unbounded backlog silently breaks the declared loss window. Batch flushes must preserve per-key
@@ -174,10 +181,11 @@ A write-around policy writes directly to the authoritative store and does not po
 leaving later reads to fill it. A cached copy must be invalidated or versioned at the update, or a
 later read can restore a value older than the committed write.
 
-A stale entry survives the update and is served until it expires; pair the policy with invalidation
-or a bounded TTL and test a read immediately after a write. Write-through keeps the cache current at
-the cost of write amplification; choose write-around when write volume is high and later reads can
-tolerate a refill.
+A stale entry survives the update and is served until it expires; the policy requires reliable
+invalidation or versioning at the update and a read test immediately after a write. A bounded
+TTL alone does not meet the card's fit condition when invalidation is unreliable. Write-through
+keeps the cache current at the cost of write amplification; choose write-around when write volume
+is high and later reads can tolerate a refill.
 
 **Limits.** It shifts cost to later reads and increases cold-miss load; latency-critical paths
 may need prewarming or a bounded fallback. Invalidation timing is part of the read contract.

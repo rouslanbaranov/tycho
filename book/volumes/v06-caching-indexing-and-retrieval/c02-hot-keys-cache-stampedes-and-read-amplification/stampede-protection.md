@@ -147,10 +147,9 @@ dominates and stale data is acceptable for the operation.
 
 ### Single Flight-Request Coalescing
 
-Single-flight may deduplicate only loads triggered inside one process. Caffeine's Refresh
-documentation describes eligible asynchronous refresh while an old value may remain available and a
-refresh operation may deduplicate concurrent refresh requests. It is a local optimization, not a
-global lock.
+Single-flight may deduplicate only loads triggered inside one process. A local cache can
+serve an old value while one asynchronous refresh runs and coalesce concurrent refresh
+requests, but that is a local optimization, not a global lock.
 
 That does not, by itself, provide global cross-replica coalescing or make the stale value safe for
 sensitive decisions. A coalesced call can fail after the leader has committed an external effect;

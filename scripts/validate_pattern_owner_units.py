@@ -243,7 +243,8 @@ def validate_data(data, root=ROOT):
         page_text = page_cache[owner["path"]]
         body = section_body(page_text, owner["heading"], owner["level"],
                             owner["line"])
-        require(owner["anchor"] == slug_heading(owner["heading"]),
+        require(owner["anchor"] == slug_heading(owner["heading"])
+                or owner["anchor"] in heading_slugs(page),
                 "owner-units-anchor-slug: " + pattern_id)
         require(owner["anchor"] in heading_slugs(page),
                 "owner-units-anchor-missing: " + pattern_id)

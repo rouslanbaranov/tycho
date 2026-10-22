@@ -204,7 +204,7 @@ Sources: [Load Balancing at the Frontend](https://sre.google/sre-book/load-balan
 (subsetting, selection policies, resource and error signals). Sections
 *Limiting the Connections Pool with Subsetting*, *Varying query costs*,
 *Least-Loaded Round Robin* and *Weighted Round Robin* were inspected
-2026-10-21. Algorithm comparisons and the failure matrix are original design
+2026-10-23. Algorithm comparisons and the failure matrix are original design
 reasoning.
 
 ## Bounded pattern ownership notes

@@ -290,7 +290,7 @@ the choice when isolation cost exceeds residual risk.
 **Failure and recovery.** Cross-tenant leakage and quota bypass are common; verify layers
 in the owner section.
 
-**Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#multitenant-isolation) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#multitenant-isolation-1) — identity/authorization is bounded, not a complete security control catalogue.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
