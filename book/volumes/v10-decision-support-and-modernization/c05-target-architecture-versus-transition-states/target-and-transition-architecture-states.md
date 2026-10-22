@@ -135,3 +135,20 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Migration mechanisms and no-return gates](cutover-gates.md) — What evidence permits a transition to cross an irreversible boundary?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+### Strangler Fig
+
+Intercept requests at a façade or route and send one capability at a time to the new implementation
+while the old path remains available. The old system stays authoritative for the capabilities not
+yet migrated.
+
+Keep one authoritative writer for each invariant and define routing plus data compatibility during
+coexistence. Interception may be impossible, internal callers may bypass the façade, and old/new
+state can diverge. Add a bypass detector, a routing inventory and a data reconciliation check before
+retiring the old path.
+
+Branch by abstraction, parallel run or a big-bang replacement may be preferable when interception is
+impossible or the system is small enough to replace whole. Strangler fig is a fit when requests can
+be intercepted and the migration can proceed capability by capability.

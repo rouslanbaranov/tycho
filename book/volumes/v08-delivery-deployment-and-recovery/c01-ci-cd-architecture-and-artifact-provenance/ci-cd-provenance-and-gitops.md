@@ -119,3 +119,20 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Promotion, reconciliation and user-health gates](promotion-rollout.md) — Which failure and authority boundaries separate deployment from accepted release?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+### GitOps
+
+Desired state is stored in a versioned repository; a reconciler pulls it, compares the live state
+and applies the difference. The repository is the reviewed intent, not a build log or a credentials
+store.
+
+The reconciled commit must be the reviewed desired state; drift is detected rather than silently
+overwritten, and the controller has least-privilege access. Controller outage, drift, a compromised
+repository and stale artifact references are common. Pin artifact digests, sign or verify the
+commit, and alert on reconciliation failure rather than assuming convergence.
+
+Direct push/CD or an imperative platform operator may be preferable when a separate pull controller
+adds more operational surface than it removes. GitOps is a fit when the environment can be
+reconciled from a reviewable repository and drift has an owner.

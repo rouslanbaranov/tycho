@@ -684,3 +684,23 @@ the validators still require a separate policy change.
     - File: `quorum-envelope.md`
     - Heading: `Quorum Coordination`; 134 words
     - SHA-256: `88dc92f1a9d2593c45325751622fc91f6202d74dccd4edc7f348a974d3a965de`
+
+134. **GitOps** — `tycho.pattern.gitops`
+    - File: `ci-cd-provenance-and-gitops.md`
+    - Heading: `GitOps`; 126 words
+    - SHA-256: `966226af9d57ff586e6c1d9c5c8371f3276556e4005a4f44f4c933112a49ef6f`
+
+135. **Canary Release** — `tycho.pattern.canary-release`
+    - File: `gitops-canary-and-progressive-rollout.md`
+    - Heading: `Canary Release`; 120 words
+    - SHA-256: `ec5eb36a2424432fc08976415540169ece95dfe54326469386e6d14cb60bd63b`
+
+136. **Feature Flags / Feature Toggles** — `tycho.pattern.feature-flags-feature-toggles`
+    - File: `configuration-rollout.md`
+    - Heading: `Feature Flags / Feature Toggles`; 124 words
+    - SHA-256: `d6281a81e9f0d8cc1f3fce8300e0f16befef969769ffd318df4869c920afe469`
+
+137. **Strangler Fig** — `tycho.pattern.strangler-fig`
+    - File: `target-and-transition-architecture-states.md`
+    - Heading: `Strangler Fig`; 125 words
+    - SHA-256: `27cab102d5a0ec386df0af53fd9edd3df509b77f980947e4caeee6eeddad8d19`

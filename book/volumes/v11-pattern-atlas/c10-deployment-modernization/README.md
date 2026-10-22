@@ -158,7 +158,7 @@ analysis cost exceeds risk reduction.
 **Failure and recovery.** Low-traffic blindness, metric leakage and shared-state
 contamination are common; a binary rollback does not undo committed data.
 
-**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#purpose-and-mission) — rollout mechanisms are bounded, not a product-specific controller guide.
+**Technical owner.** [Canary Release](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#canary-release) — rollout mechanisms are bounded, not a product-specific controller guide.
 
 **Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-argo-canary.2026-10-21: sections "Canary", "Overview", "Analysis".
@@ -189,7 +189,7 @@ Reverse the choice when toggle lifecycle cost exceeds decoupling benefit.
 **Failure and recovery.** Stale snapshots, flag interactions, permanent flags and
 unauthorized overrides are common; audit changes, expire flags and bound snapshot age.
 
-**Technical owner.** [Dynamic configuration and feature flags](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md#a-configuration-change-is-a-distributed-transition) — flags are bounded, not a full toggle-lifecycle platform.
+**Technical owner.** [Feature Flags / Feature Toggles](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md#feature-flags-feature-toggles) — flags are bounded, not a full toggle-lifecycle platform.
 
 **Sources.**
 [src.fowler-feature-toggles](../../../../edition/patterns/reading-ledger.v1.json)
@@ -222,7 +222,7 @@ choice when reconciliation latency/ownership exceeds audit benefit.
 **Failure and recovery.** Drift, controller outage, a compromised repository and stale
 artifact references are common; alert on drift, revert reviewed commits and scope credentials.
 
-**Technical owner.** [CI/CD architecture, artifact provenance and GitOps reconciliation](../../v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md#engineering-walkthrough-compromised-build-worker-and-a-tempting-image-rollback) — GitOps is bounded to desired-state reconciliation.
+**Technical owner.** [GitOps](../../v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md#gitops) — GitOps is bounded to desired-state reconciliation.
 
 **Sources.** [src.opengitops](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-opengitops.2026-10-21: sections "Home", "Principles". The source
@@ -285,7 +285,7 @@ when coexistence cost exceeds incremental replacement benefit.
 **Failure and recovery.** Interception may be impossible, callers may bypass the façade,
 and old/new state can diverge; detect bypass, hold and route back until proven.
 
-**Technical owner.** [Target architecture versus transition states: coexistence, reversibility and recovery](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md#purpose-and-mission) — strangler is bounded to transition-state reasoning.
+**Technical owner.** [Strangler Fig](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md#strangler-fig) — strangler is bounded to transition-state reasoning.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
