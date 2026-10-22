@@ -30,10 +30,10 @@ This set introduces three missing properties:
 | [test_tycho_qrels.py](../tests/test_tycho_qrels.py) | Offline validation and metric tests. |
 
 The dataset is pinned to route snapshot
-`6207da4c1683618ece6e3900db549bebac56b4949bd933f2b55656637c793ef9` (423 documents).
+`3da44a628410d12af3aec076dbe16d07298bd0189c18143da91a38b77b3e1e3a` (423 documents).
 Earlier pins were replaced after source remediations, V11 label fixes, owner-page hygiene,
-PWF card alignment, duplication cleanup, Phase A v2 fixes and G-008 narrowing; no accepted
-answer pointed at a V11 page.
+PWF card alignment, duplication cleanup, Phase A v2 fixes and Cache-Aside source/line
+fixes; no accepted answer pointed at a V11 page.
 
 ## How labels were constructed
 
@@ -104,10 +104,10 @@ nDCG@10 was 0.558 over 95 answerable items. Dev page hit@5 was 0.740 and chapter
 failure 0.800, fact 0.900, change impact 0.857, synthesis 0.667, contradiction 0.600,
 trade-off 0.556. All five unanswerable items returned results, so refusal is not measured.
 
-Re-pin 2026-10-23: the source remediations, label/owner fixes, Phase A v2 fixes and G-008
-narrowing moved the route snapshot to
-`6207da4c1683618ece6e3900db549bebac56b4949bd933f2b55656637c793ef9` and the section
-snapshot to `88e6ec57844b…`; metrics remain within rounding (nDCG@10 0.5577).
+Re-pin 2026-10-23: the source remediations, label/owner fixes, Phase A v2 fixes and
+Cache-Aside source/line fixes moved the route snapshot to
+`3da44a628410d12af3aec076dbe16d07298bd0189c18143da91a38b77b3e1e3a` and the section
+snapshot to `29c5da35a25a…`; metrics remain within rounding (nDCG@10 0.5577).
 
 ## Provisional acceptance thresholds
 
