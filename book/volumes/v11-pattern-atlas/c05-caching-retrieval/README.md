@@ -122,8 +122,9 @@ races cannot be controlled, or when invalidation has no owner.
 **Competing alternative.** Read-through cache or no cache. Reverse the choice when
 application fill logic becomes duplicated and inconsistent.
 
-**Failure and recovery.** Stale fills and concurrent miss stampedes are common; verify the
-sequence in the owner section.
+**Failure and recovery.** Stale fills and concurrent misses are common; gate fills by cached
+revision, distinguish a cold fill from a post-delete tombstone, retry failed invalidation and
+use single-flight for concurrent misses.
 
 **Technical owner.** [Cache-aside is a sequence, not a consistency theorem](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#4-cache-aside-is-a-sequence-not-a-consistency-theorem) — the sequence is bounded, not a complete cache-aside library guide.
 

@@ -41,8 +41,8 @@ Do not edit the repository. Do not treat this packet as approval.
 
 6. **Cache-Aside / Lazy Loading** — `tycho.pattern.cache-aside-lazy-loading`
    - File: `refresh-semantics.md`
-   - Heading: `4. Cache-aside is a sequence, not a consistency theorem`; 365 words
-   - SHA-256: `7eb3381f60efeabe24d7dcf25df6244fa21368f67977955ee1fb0a1d56f82b88`
+   - Heading: `4. Cache-aside is a sequence, not a consistency theorem`; 398 words
+   - SHA-256: `67b947dedbbdc37241315de19eb7a60b0751ab4e7b981f6fad14bc67dc4f88fc`
 
 7. **Negative Caching** — `tycho.pattern.negative-caching`
    - File: `negative-cache.md`

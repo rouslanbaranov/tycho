@@ -90,9 +90,11 @@ cannot atomically compare a source revision, and a naive SET NX after DEL can re
 The section must say the CAS compares a cached revision/tombstone, with absence treated as
 a failed compare.
 
-This latest finding is now remediated: the section compares the cached revision/tombstone
-under the shared key and treats absence as a failed compare. It is **not re-reviewed**.
-Verdict remains **pass-with-findings**.
+A third review found that treating absence as a failed compare unconditionally blocks the
+first fill of a cold key. This is now remediated: absence fails only for a fill based on a
+previously observed revision, and a cold fill is distinguished from a post-delete tombstone
+by a durable tombstone/version record. It is **not re-reviewed**. Verdict remains
+**pass-with-findings**.
 
 ## Cache Invalidation — pass-with-findings
 
@@ -106,7 +108,7 @@ Reviewer verdict: **pass-with-findings**. Two findings:
 Remediation: added the stale-fill sequence, source-revision-on-fill with discard/retry, and
 fan-out/multi-cache limits with TTL-only and versioned-key alternatives.
 
-Not re-reviewed. Verdict remains **pass-with-findings**.
+Re-review returned **pass** with no findings. The current verdict is **pass**.
 
 ## Leader Election — pass-with-findings
 
@@ -124,7 +126,7 @@ Not re-reviewed. Verdict remains **pass-with-findings**.
 
 ## Limits
 
-- Seven sections, not 145 entries or 423 pages.
+- Eight sections, not 145 entries or 423 pages.
 - Non-human review; no independent human sign-off.
 - No `sufficient` promotion; validators still require a complete review record and policy
   change.

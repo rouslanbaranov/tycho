@@ -86,9 +86,12 @@ flowchart TD
 the key; R then writes V1 back with a fresh TTL, resurrecting stale data. A version gate on
 fill — compare the source revision with the cached revision under the shared key — narrows
 the window. An atomic compare-and-set or conditional write on that shared key closes the
-check/write gap only when it compares the cached revision or tombstone, treating absence as a
-failed compare. A cache-key CAS cannot atomically compare a source revision, and a naive
-SET NX after DEL still resurrects V1. A non-atomic check-then-write leaves the window open.
+check/write gap only when it compares the cached revision or tombstone. Absence fails the
+compare only for a fill based on a previously observed revision; a cold key may write its
+first value when no tombstone exists. Distinguish never-cached absence from a post-delete
+tombstone with a durable tombstone or version record. A cache-key CAS cannot compare a source
+revision, and a naive SET NX after DEL still resurrects V1. A non-atomic check-then-write
+leaves the window open.
 A short TTL plus retried invalidation bounds the damage; neither proves freshness when the
 invalidation itself can be lost.
 
