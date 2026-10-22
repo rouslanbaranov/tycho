@@ -41,21 +41,43 @@ def norm(value):
     return " ".join(value.split())
 
 
+def github_slug(label):
+    text = re.sub(r"<[^>]*>", "", label)
+    text = re.sub(r"`([^`]*)`", r"\1", text)
+    text = text.strip().rstrip("#").strip().lower()
+    text = re.sub(r"[^\w\s-]", "", text, flags=re.UNICODE)
+    return re.sub(r"\s", "-", text)
+
+
 def section(body, slug):
+    return section_with_anchor(body, slug)[0]
+
+
+def section_with_anchor(body, slug):
+    """Return the bounded section and its rendered GitHub heading anchor."""
     lines = body.splitlines()
-    start = None
+    seen = {}
     for index, line in enumerate(lines):
-        if line.startswith("### ") and slug_heading(line[4:].strip()) == slug:
+        match = re.match(r"^(#{1,6})\s+(.+?)\s*$", line)
+        if not match:
+            continue
+        level, label = match.group(1), match.group(2)
+        base = github_slug(label)
+        count = seen.get(base, 0)
+        actual = base if count == 0 else f"{base}-{count}"
+        seen[base] = count + 1
+        if level != "###":
+            continue
+        if (slug_heading(label) == slug
+                or actual.replace("--", "-") == slug.replace("--", "-")):
             start = index + 1
-            break
-    if start is None:
-        return ""
-    end = len(lines)
-    for index in range(start, len(lines)):
-        if lines[index].startswith("### ") or lines[index].startswith("## "):
-            end = index
-            break
-    return "\n".join(lines[start:end])
+            end = len(lines)
+            for cursor in range(start, len(lines)):
+                if lines[cursor].startswith("### ") or lines[cursor].startswith("## "):
+                    end = cursor
+                    break
+            return "\n".join(lines[start:end]), actual
+    return "", slug
 
 
 def field(text, label):
@@ -139,11 +161,11 @@ def build(root=ROOT):
         chapter = chapters[batch["chapter"]]
         _, body = split((root / chapter["path"]).read_text(encoding="utf-8"))
         for entry in batch["entries"]:
-            text = section(body, entry["atlas_section"])
+            text, card_anchor = section_with_anchor(body, entry["atlas_section"])
             owner = patterns[entry["pattern_id"]]["technical_owner"]
             owner_file = root / owner["path"]
             owner_text = owner_file.read_text(encoding="utf-8") if owner_file.is_file() else ""
-            atlas_link = chapter["path"].split("book/volumes/", 1)[-1] + "#" + entry["atlas_section"]
+            atlas_link = chapter["path"].split("book/volumes/", 1)[-1] + "#" + card_anchor
             record = records.get(entry["ledger_record"])
             dimensions = {
                 "identity": "pass" if "**Identity.**" in text else "missing",

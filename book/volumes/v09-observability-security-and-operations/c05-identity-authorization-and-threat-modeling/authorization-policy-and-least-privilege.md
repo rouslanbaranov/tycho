@@ -68,7 +68,7 @@ validated claims; it does not prescribe this policy design.
 > **Pattern atlas:**
 > [Zero Trust Architecture](../../v11-pattern-atlas/c11-security-operations/README.md#zero-trust-architecture) — decision conditions and contraindications.
 > [Least Privilege](../../v11-pattern-atlas/c11-security-operations/README.md#least-privilege) — decision conditions and contraindications.
-> [RBAC / ABAC](../../v11-pattern-atlas/c11-security-operations/README.md#rbac-abac) — decision conditions and contraindications.
+> [RBAC / ABAC](../../v11-pattern-atlas/c11-security-operations/README.md#rbac--abac) — decision conditions and contraindications.
 
 ## Zero Trust Architecture
 

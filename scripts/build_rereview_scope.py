@@ -49,6 +49,10 @@ def heading_slug(text):
     return re.sub(r"\s", "-", value.strip())
 
 
+def norm_heading(text):
+    return " ".join(re.sub(r"[^a-z0-9]+", " ", text.lower()).split())
+
+
 def build():
     audit = load(PRIOR_AUDIT)
     records = load(RECORDS)["records"]
@@ -68,10 +72,15 @@ def build():
             if card_path:
                 card_text = (ROOT / card_path).read_text(encoding="utf-8")
                 name = registry[entry["pattern_id"]]["catalog_name"]
-                heading = next((line[4:].strip() for line in card_text.splitlines()
-                                if line.startswith("### ") and line[4:].strip() == name),
-                               None)
-                if heading and " / " in heading:
+                headings = [line[4:].strip() for line in card_text.splitlines()
+                            if line.startswith("### ")]
+                heading = next((item for item in headings
+                                if norm_heading(item) == norm_heading(name)), None)
+                if heading is None:
+                    heading = next((item for item in headings
+                                    if heading_slug(item).replace("--", "-")
+                                    == anchor.replace("--", "-")), None)
+                if heading:
                     anchor = heading_slug(heading)
             card_map[entry["pattern_id"]] = {
                 "card_path": card_path,

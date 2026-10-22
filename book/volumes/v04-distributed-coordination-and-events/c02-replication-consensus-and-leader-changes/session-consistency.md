@@ -144,7 +144,7 @@ Record invocation and completion, session identifier, operation identifier, obje
 - Integrated page: [replication, consensus and leader change][integrated].
 - Adjacent pages: [quorum-envelope.md](quorum-envelope.md) and
   [leader-recovery.md](leader-recovery.md).
-- Volume: [V04 — distributed coordination and events](../../README.md).
+- Volume: [V04 — distributed coordination and events](../README.md).
 
 [integrated]: replication-consensus-and-leader-change.md
 

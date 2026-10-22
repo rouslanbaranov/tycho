@@ -149,4 +149,4 @@ Choose a simpler transactional byte store if objects are small enough and cross-
   [multitenant project](multitenant-project.md).
 - Integrated decision page:
   [cross-domain architecture decisions](cross-domain-modernization-and-adr-examples.md).
-- Volume: [V10 — decision support and modernization](../../README.md).
+- Volume: [V10 — decision support and modernization](../README.md).

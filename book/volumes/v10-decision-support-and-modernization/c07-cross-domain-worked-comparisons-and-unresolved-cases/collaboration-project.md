@@ -181,6 +181,6 @@ Choose online-only editing when approvals dominate and offline drafts add little
   [multitenant project](multitenant-project.md).
 - Integrated decision page:
   [cross-domain architecture decisions](cross-domain-modernization-and-adr-examples.md).
-- Volume: [V10 — decision support and modernization](../../README.md).
+- Volume: [V10 — decision support and modernization](../README.md).
 
 [periodic-work]: ../../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/periodic-work-leases-and-exactly-once.md

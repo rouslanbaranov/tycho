@@ -27,7 +27,7 @@ def slug_heading(label):
     text = INLINE.sub(lambda m: m.group(0).strip("`"), text)
     text = text.strip().rstrip("#").strip().lower()
     text = re.sub(r"[^\w\s-]", "", text, flags=re.UNICODE)
-    return re.sub(r"\s+", "-", text)
+    return re.sub(r"\s", "-", text)
 
 
 def parse_document(content):

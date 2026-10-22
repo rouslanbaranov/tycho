@@ -139,6 +139,6 @@ Tycho's inferred procedure is to characterize CPU-bound service topology, shard 
 ## Related reading
 
 - [Casebook and synthetic decision playbooks](../README.md).
-- [Reactive versus virtual threads](../decisions/reactive-vs-virtual-threads.md).
+- [Reactive versus virtual threads](decisions/reactive-vs-virtual-threads.md).
 - [Virtual-thread pinning case](netflix-java21-virtual-thread-pinning.md).
 - [Generational ZGC workloads](netflix-generational-zgc-workloads.md).

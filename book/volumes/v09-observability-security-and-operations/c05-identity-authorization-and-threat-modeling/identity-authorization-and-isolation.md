@@ -55,7 +55,7 @@ content_verified_at: null
 
 > **Pattern atlas:**
 > [Federated Identity](../../v11-pattern-atlas/c11-security-operations/README.md#federated-identity) — decision conditions and contraindications.
-> [Workload Identity / mTLS](../../v11-pattern-atlas/c11-security-operations/README.md#workload-identity-mtls) — decision conditions and contraindications.
+> [Workload Identity / mTLS](../../v11-pattern-atlas/c11-security-operations/README.md#workload-identity--mtls) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.dde63373c50f4f4a80e727b6e160def5:0 -->
 ## Purpose and mission
