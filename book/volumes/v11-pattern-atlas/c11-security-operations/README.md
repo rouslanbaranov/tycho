@@ -350,8 +350,8 @@ schema churn is unowned, or when volume overwhelms storage.
 **Competing alternative.** Metrics/traces or minimal audit events. Reverse the choice when
 structured logging cost exceeds diagnostic benefit.
 
-**Failure and recovery.** PII leakage and schema drift are common; verify redaction in the
-owner section.
+**Failure and recovery.** On leakage, stop emission, rotate credentials, purge/redact retained
+records and notify. On schema drift, migrate/backfill or dual-write with a compatibility window.
 
 **Technical owner.** [Structured logging, authoritative audit and data lineage](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#structured-logging) — logging/audit is bounded, not a logging platform manual.
 

@@ -121,6 +121,14 @@ and review field allowlists when adding events. Unstructured text parsed at quer
 start; adopt structured events when consistent querying, correlation or retention obligations
 justify the schema.
 
+**Invariant.** Each event conforms to a versioned schema with required fields; additive
+changes keep the version, while a breaking change needs a new version and a compatibility
+window. A redaction test or canary must fail the build when a sensitive field appears.
+
+**Failure and recovery.** On a leaked field, stop emission, rotate exposed credentials,
+purge or redact retained records under policy and notify. On drift, migrate/backfill or
+dual-write old and new versions, and keep queries working through the window.
+
 **Limits.** A field allowlist, retention policy and redaction owner are costs; structured fields
 can still encode sensitive values, and a schema without a migration path becomes query debt.
 Log volume is not free, and sampling must preserve security events.

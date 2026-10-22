@@ -125,3 +125,6 @@ multi-owner transaction; dependency and latency traces reveal the undeclared cou
 orchestrating service or backend for frontend can coordinate owners explicitly; accept that
 composition when the workflow genuinely spans separate authorities and the coordinator's failure
 behaviour is designed.
+
+**Limits.** Dependency budget, fallback contract and coordination latency are costs; a
+self-contained service can still hide a shared database or synchronous chain.

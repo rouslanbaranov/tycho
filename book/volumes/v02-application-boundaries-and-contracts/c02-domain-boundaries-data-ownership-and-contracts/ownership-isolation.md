@@ -95,3 +95,7 @@ Shared-table shortcuts and distributed joins reappear as hidden coupling; detect
 ownership review and cross-service access inspection rather than assuming the boundary exists. A
 shared database with enforced module ownership is simpler when teams release together; choose
 separate stores only when independent ownership, scaling or recovery justify the coordination cost.
+
+**Limits.** Schema ownership adds migration, cross-service query and reporting costs; a shared
+database with enforced modules is often cheaper until independent failure or scaling domains
+matter.

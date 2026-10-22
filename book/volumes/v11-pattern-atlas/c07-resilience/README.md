@@ -175,17 +175,20 @@ resilience-pattern; priority advanced.
 **Decision question.** Should retry delays include randomness to avoid synchronized
 retries?
 
-**Good-fit conditions.** Many clients retry after the same failure; jitter can be applied
-without breaking the retry budget; the source accepts spread.
+**Good-fit conditions.** Many clients retry after the same failure; the operation has stable
+effect identity or is naturally idempotent; sampled delay is bounded by the backoff cap and
+remaining deadline.
 
 **Hard contraindications.** Reject when retry timing must be deterministic, when jitter
-would violate a deadline, or when the thundering herd is caused by something else.
+would violate a deadline, when the thundering herd is caused by something else, or when a
+non-idempotent effect has no stable operation identity.
 
 **Competing alternative.** Fixed backoff or no retry. Reverse the choice when randomized
 delays complicate tracing more than they reduce synchronization.
 
-**Failure and recovery.** Jitter spreads load but does not fix a persistent dependency
-failure; verify budget in the owner section.
+**Failure and recovery.** Jitter spreads load but does not fix a persistent dependency failure
+or make a non-idempotent retry safe; bound the sampled delay and total attempts, and verify the
+retry budget.
 
 **Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-jitter) — deadlines/retries are bounded, not a complete timeout policy.
 

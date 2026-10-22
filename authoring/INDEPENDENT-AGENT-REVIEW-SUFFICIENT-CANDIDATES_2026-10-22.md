@@ -167,9 +167,26 @@ read-your-writes markers, and filtering/sorting/pagination over-fetch and merged
 
 Not re-reviewed. Verdict remains **pass-with-findings**.
 
+## Structured Logging — pass-with-findings
+
+Reviewer verdict: **pass-with-findings**. Findings: no recovery after leakage/drift; no
+checkable schema/redaction invariant. Remediation adds version compatibility, required fields,
+redaction build test, leak stop/rotate/purge/notify and drift migration/dual-write.
+
+Not re-reviewed. Verdict remains **pass-with-findings**.
+
+## Retry with Jitter — pass-with-findings
+
+Reviewer verdict: **pass-with-findings**. Findings: no jitter magnitude/deadline bound;
+retry safety/effect identity missing from the card. Remediation adds a sampled delay inside
+[0, min(cap, remaining deadline)] and requires a stable effect identity or natural
+idempotence.
+
+Not re-reviewed. Verdict remains **pass-with-findings**.
+
 ## Limits
 
-- Twelve sections, not 145 entries or 423 pages.
+- Fourteen sections, not 145 entries or 423 pages.
 - Non-human review; no independent human sign-off.
 - No `sufficient` promotion; validators still require a complete review record and policy
   change.

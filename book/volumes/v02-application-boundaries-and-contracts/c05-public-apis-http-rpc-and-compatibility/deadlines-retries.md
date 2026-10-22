@@ -166,3 +166,8 @@ add jitter when many clients share the same dependency and retry signal.
 **Limits.** Jitter reduces synchronization but does not bound aggregate load; a retry storm can
 still overload a shared dependency, and the policy must respect the deadline and cancel
 remaining attempts.
+
+**Jitter bound.** Sample the delay inside `[0, min(backoff_cap, remaining_deadline)]`;
+a spread narrower than the client population still synchronizes, while a wider one spends the
+caller's budget. Retry only when the operation has a stable effect identity or is naturally
+idempotent; jitter cannot make a non-idempotent effect safe.

@@ -282,10 +282,25 @@ the validators still require a separate policy change.
 
 53. **Retry with Jitter** — `tycho.pattern.retry-with-jitter`
     - File: `deadlines-retries.md`
-    - Heading: `Retry with Jitter`; 137 words
-    - SHA-256: `c6a47e44d7383440d61347ee8ae8c134d553bc3c7aac06086e833d828fbe78b1`
+    - Heading: `Retry with Jitter`; 184 words
+    - SHA-256: `ac9701fa651729fa656e339a7bea8f02ba3eb265c7e6c4cc02a5d361793d7422`
 
 54. **Structured Logging** — `tycho.pattern.structured-logging`
     - File: `logs-audit-and-data-lineage.md`
-    - Heading: `Structured Logging`; 124 words
-    - SHA-256: `9a8bfe34576d0df53ac2e70a032bff6b92377054136362c64cb424efa2d2168f`
+    - Heading: `Structured Logging`; 203 words
+    - SHA-256: `41b30e5bae3d921c8b0fbf5b03c4d8ce6e74302e1c7b874d73e2f72bcf63e95f`
+
+55. **Database per Service** — `tycho.pattern.database-per-service`
+    - File: `ownership-isolation.md`
+    - Heading: `Database per Service`; 132 words
+    - SHA-256: `c278ed331b3f3acf4d35adaea22dc016fc40301063a9511bb238281872073886`
+
+56. **Self-Contained Service** — `tycho.pattern.self-contained-service`
+    - File: `service-independence.md`
+    - Heading: `Self-Contained Service`; 127 words
+    - SHA-256: `8616633953b0422d01608d9305fdbf2d957fce90cf8bfedaf2c47fec02975ea8`
+
+57. **Asynchronous Request-Reply** — `tycho.pattern.asynchronous-request-reply`
+    - File: `asynchronous-apis-streaming-and-cancellation.md`
+    - Heading: `Asynchronous Request-Reply`; 123 words
+    - SHA-256: `fd79ee55e9a8888d1562ccd5050adabc1c704470066b75e7dc83d53ec0888a8f`

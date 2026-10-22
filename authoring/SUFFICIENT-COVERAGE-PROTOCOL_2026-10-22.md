@@ -28,12 +28,12 @@ Generated from `edition/patterns/sufficient-candidates.v1.json`:
 
 | Status | Entries |
 |---|---:|
-| Candidate for independent review | 54 |
-| Needs a deeper dedicated section | 12 |
+| Candidate for independent review | 57 |
+| Needs a deeper dedicated section | 9 |
 | Needs a dedicated section | 79 |
 | **Total** | **145** |
 
-The 54 candidates are the only entries whose current owner unit is dedicated and at
+The 57 candidates are the only entries whose current owner unit is dedicated and at
 least 120 words. They still need a named independent review before any promotion.
 
 ## Promotion sequence
