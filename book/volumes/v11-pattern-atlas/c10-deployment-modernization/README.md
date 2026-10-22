@@ -410,7 +410,7 @@ Reverse when no compatibility window is possible or the dataset is small enough 
 **Failure and recovery.** Partial backfills and old readers are common; verify gates in
 the owner section.
 
-**Technical owner.** [Reader/writer compatibility and migration stages](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md#2-expand-migrate-contract-includes-a-compatibility-window) — expand/contract is bounded to reader/writer compatibility.
+**Technical owner.** [Expand-and-Contract](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md#expand-and-contract) — expand/contract is bounded to reader/writer compatibility.
 
 **Sources.** [src.flyway](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-flyway.2026-10-21: sections "Migrations", "Versioned Migrations",

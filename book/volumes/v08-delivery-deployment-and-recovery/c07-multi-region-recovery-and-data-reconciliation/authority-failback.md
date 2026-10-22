@@ -151,3 +151,20 @@ No such drills were performed in this chapter. A green health endpoint or replic
 | Integrated question | [Original scenario and limits](disaster-recovery-and-recovery-objectives.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### Failover / Failback
+
+Failover moves authority to a surviving region under an explicit decision; failback is a second
+migration, not the inverse operation. Returning traffic to A is a new migration, not the inverse of
+failover.
+
+Quarantine A, reconcile any divergent writes under one selected authority, verify user journeys, then
+reintroduce A as a replica or standby before considering promotion. A failback that merely points DNS
+back can resurrect stale writes and split authority. Record the authority epoch, the data
+reconciliation evidence and the rollback gate.
+
+Stay on the promoted region and rebuild the old region as a standby when failback risk exceeds its
+benefit. Failback is a fit when the old region can be proven consistent and the authority switch is
+observable.

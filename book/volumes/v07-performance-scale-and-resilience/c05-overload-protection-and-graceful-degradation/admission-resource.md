@@ -174,6 +174,23 @@ Advertise retry guidance consistent with remaining budget and deadline. Randomiz
 
 Proposed tests: route one tenant across all replicas, change replica count, partition the quota store, duplicate a budget lease, cancel admitted work and restart a permit owner. Verify actual aggregate admitted cost, bounded overshoot and progress for a quiet tenant. No load test or distributed-limiter execution was performed.
 
+## Bounded pattern ownership notes
+
+### Priority Queue
+
+**Fairness and priority:** reserving some capacity for critical operations can preserve essential user
+journeys, but naive priority queues can starve ordinary work forever. Define which classes may
+overtake, maximum wait, starvation policy and tenant isolation.
+
+Criticality must be authenticated and propagated. A class visible only at the edge cannot protect a
+downstream dependency: the dependency sees an ordinary caller and may shed the high-criticality work
+first. Encode the class in the authenticated request context, enforce the same policy at each queue
+and cap the share a priority class can consume.
+
+FIFO with admission control, separate lanes per class, or a shared queue with reserved capacity may be
+preferable when priority cannot be authenticated or starvation is unacceptable. A priority queue is a
+fit when classes are real, authenticated and bounded by max-wait.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

@@ -129,3 +129,19 @@ Little's Law is an **accounting/estimation relationship**, not a scheduler, cont
 | Integrated question | [Original scenario and limits](queueing-littles-law.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### Queue-Based Load Leveling
+
+A bounded queue between arrival and processing can absorb a short burst while workers drain at a
+sustainable rate. The queue levels load; it does not create capacity.
+
+It needs an admission rule, a retention/age bound, durable acceptance when the caller is told
+"accepted", and idempotent consumers. An unbounded queue converts overload into memory growth and
+expired work; retries can duplicate effects after an ambiguous acknowledgment. Track queue age,
+rejection rate and drain rate, and set a terminal policy for expired work.
+
+Shedding, backpressure or provisioning may be preferable when work is not deferrable or the burst is
+sustained. Queue leveling is a fit when deferral is valid and the consumer can own an idempotent
+effect, an owner and a documented drain rate.

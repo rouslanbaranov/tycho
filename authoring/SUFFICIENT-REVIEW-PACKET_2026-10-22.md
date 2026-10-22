@@ -724,3 +724,23 @@ the validators still require a separate policy change.
     - File: `plan-lifecycle.md`
     - Heading: `Index Table`; 132 words
     - SHA-256: `087507728cf783e2f40e6d78069f6fab73d666d2554b84577ac7114c8cd9287f`
+
+142. **Queue-Based Load Leveling** — `tycho.pattern.queue-based-load-leveling`
+    - File: `queue-recovery.md`
+    - Heading: `Queue-Based Load Leveling`; 123 words
+    - SHA-256: `68eb0d665315afa0d4aad08584aad194bb5f72ca920b9cd2a869ff525e9a959a`
+
+143. **Priority Queue** — `tycho.pattern.priority-queue`
+    - File: `admission-resource.md`
+    - Heading: `Priority Queue`; 132 words
+    - SHA-256: `4c0bc0ce97f20ecbfc944b75a4d208742f0af3eb141fa5fb21d8f786eae83fa6`
+
+144. **Failover / Failback** — `tycho.pattern.failover-failback`
+    - File: `authority-failback.md`
+    - Heading: `Failover / Failback`; 120 words
+    - SHA-256: `c5cdaea184ce794cddc307e5b6b9eef4eca3b854b6c628be9318d07b978cca2a`
+
+145. **Expand-and-Contract** — `tycho.pattern.expand-and-contract`
+    - File: `reader-writer-matrix.md`
+    - Heading: `Expand-and-Contract`; 123 words
+    - SHA-256: `db7332f35b6b6d84f1adbba2c8392c24e703b50ef394688921c955bb0c971d33`

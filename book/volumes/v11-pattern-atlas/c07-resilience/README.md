@@ -443,7 +443,7 @@ choice when queue delay and backlog risk exceed smoothing benefit.
 **Failure and recovery.** Unbounded backlog, expired work, poison messages and duplicate
 effects after ambiguous acknowledgment are common; bound age, reject early and drain.
 
-**Technical owner.** [Partial failure, saturation and recovery](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#partial-failure-saturation-and-recovery) — recovery behavior is bounded, not a complete load-leveling design.
+**Technical owner.** [Queue-Based Load Leveling](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#queue-based-load-leveling) — recovery behavior is bounded, not a complete load-leveling design.
 
 **Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-rabbit-reliability.2026-10-21: sections "Reliability Guide",
@@ -476,7 +476,7 @@ inversion or starvation exceeds latency benefit.
 common; define max wait, tenant isolation and a starvation policy, and verify the class at
 each hop.
 
-**Technical owner.** [Scarce resources, admission and queues](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md#3-queues-limits-and-priority-create-new-contracts) — admission/queue policy is bounded, not a universal priority scheme.
+**Technical owner.** [Priority Queue](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md#priority-queue) — admission/queue policy is bounded, not a universal priority scheme.
 
 **Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-rabbit-priority.2026-10-21: sections "Priority Support in Queues",
@@ -574,7 +574,7 @@ the choice when failback risk exceeds locality benefit.
 **Failure and recovery.** Split brain and lost writes are common; quarantine the old
 authority, reconcile before failback, and hold writes when fencing evidence is missing.
 
-**Technical owner.** [Recovery state machines, fencing and failback](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md#3-original-synthetic-recovery-scenario) — failover/failback is bounded to recovery state machines.
+**Technical owner.** [Failover / Failback](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md#failover-failback) — failover/failback is bounded to recovery state machines.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",
