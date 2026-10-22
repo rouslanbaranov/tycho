@@ -140,7 +140,8 @@ or shared hidden queue can defeat isolation; detect per-pool queue age, utilizat
 work, and rebalance or fail the isolated class explicitly. Measure the partition you actually
 enforce, not the pool name.
 
-Admission/rate limiting may be preferable when one global resource can be bounded directly; a
-circuit breaker may be preferable when the failure is dependency-specific rather than
-capacity-specific. A bulkhead is a fit when classes have genuinely different latency and failure
-budgets and an owner.
+Admission/rate limiting bounds a shared resource; a circuit breaker rejects calls to a failing
+dependency; a bulkhead bounds concurrent capacity per class. Use a bulkhead when classes have
+genuinely different latency and failure budgets and an owner. Capacity reservation must be
+enforced by the admitting scheduler; a label on a shared pool is not a boundary.
+

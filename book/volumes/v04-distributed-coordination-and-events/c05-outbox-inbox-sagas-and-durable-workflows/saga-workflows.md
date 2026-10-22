@@ -208,14 +208,14 @@ visibility is mandatory.
 
 ### Saga Choreography
 
-Each owner subscribes to events and emits the next business step; progress lives in the event
-contracts rather than a central coordinator. It needs correlation identity, deduplication,
+Participants react to one another's events; the protocol is distributed across those reactions,
+not held in a central state machine. It needs correlation identity, deduplication,
 dead-letter handling, versioned event contracts and a per-step timeout policy; a timeout must
 advance, retry or flag the chain, not wait forever. The overall protocol needs an observable
 terminal-state query.
 
-Unbounded chains, hidden coupling and conflicting compensations are common; a trace can show
-correlation without proving durable business truth. Each participant needs an idempotent effect
+Long chains, hidden coupling and conflicting compensations are the failure modes; a trace shows
+correlation, not durable business truth. Each participant needs an idempotent effect
 identity, a terminal-state query and an owner for a stuck chain. The event contract must carry the
 workflow identity and a compatibility window, not only a local message identity.
 

@@ -46,6 +46,14 @@ class ScopeManifestTests(unittest.TestCase):
             for unit in entry["source_units"]:
                 self.assertIn(unit["read_record_id"], READ_IDS)
 
+    def test_slash_heading_anchors(self):
+        anchors = {entry["pattern_id"]: entry["card_anchor"]
+                   for entry in self.payload["phase_a"]}
+        self.assertEqual(anchors["tycho.pattern.cache-aside-lazy-loading"],
+                         "cache-aside--lazy-loading")
+        self.assertEqual(anchors["tycho.pattern.dead-letter-channel-dlq"],
+                         "dead-letter-channel--dlq")
+
     def test_manifest_is_current(self):
         self.assertEqual(scope.build(), self.payload)
 

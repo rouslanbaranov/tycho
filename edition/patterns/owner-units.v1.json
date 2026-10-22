@@ -1628,16 +1628,16 @@
         "line": 326,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "reacts to a delivered",
+          "push subscription",
           "effect identity",
           "acknowledgement ordering",
-          "Polling"
+          "polling"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "The consumer reacts to a delivered message rather than polling a queue.",
+          "quote": "A push subscription hands each message to the consumer; the handler, not a polling loop, decides when work is acknowledged.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
@@ -1647,7 +1647,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "a crash after the effect but before acknowledgement causes redelivery, while acknowledging before the effect can lose work.",
+          "quote": "A crash between effect and acknowledgement leaves the outcome unknown; acknowledging before the effect can lose work.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
@@ -2219,7 +2219,7 @@
         "heading": "Durable Subscriber",
         "anchor": "durable-subscriber",
         "level": 3,
-        "line": 344,
+        "line": 345,
         "unit_kind": "dedicated",
         "unit_terms": [
           "server-side cursor",
@@ -2236,7 +2236,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Core is at-most-once; ordinary JetStream redelivery is at-least-once under its configuration.",
+          "quote": "Delivery guarantees differ by broker and configuration.",
           "reason": ""
         },
         "failure_recovery": {
@@ -2246,7 +2246,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Ephemeral pub/sub fits a notification whose loss while offline is acceptable. A recoverable business task needs a JetStream durable consumer or another persisted queue, not Core alone.",
+          "quote": "Ephemeral pub/sub fits a notification whose loss while offline is acceptable. A recoverable business task needs a durable consumer or another persisted queue, not a best-effort subscription alone.",
           "reason": ""
         }
       },
@@ -2459,7 +2459,7 @@
         "heading": "Message Broker-Messaging Bridge",
         "anchor": "message-broker-messaging-bridge",
         "level": 3,
-        "line": 359,
+        "line": 362,
         "unit_kind": "dedicated",
         "unit_terms": [
           "routes, stores",
@@ -2636,7 +2636,7 @@
         "heading": "Command Query Responsibility Segregation (CQRS)",
         "anchor": "command-query-responsibility-segregation-cqrs",
         "level": 3,
-        "line": 305,
+        "line": 307,
         "unit_kind": "dedicated",
         "unit_terms": [
           "separates update and read",
@@ -2756,7 +2756,7 @@
         "heading": "Domain Events",
         "anchor": "domain-events",
         "level": 3,
-        "line": 276,
+        "line": 278,
         "unit_kind": "dedicated",
         "unit_terms": [
           "committed business fact",
@@ -2879,16 +2879,16 @@
         "line": 209,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Each owner subscribes",
+          "Participants react",
           "correlation identity",
-          "Unbounded chains",
+          "Long chains",
           "Orchestration"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Each owner subscribes to events and emits the next business step; progress lives in the event contracts rather than a central coordinator.",
+          "quote": "Participants react to one another's events; the protocol is distributed across those reactions, not held in a central state machine.",
           "reason": "Defines the mechanism."
         },
         "invariant": {
@@ -2898,7 +2898,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Unbounded chains, hidden coupling and conflicting compensations are common; a trace can show correlation without proving durable business truth.",
+          "quote": "Long chains, hidden coupling and conflicting compensations are the failure modes; a trace shows correlation, not durable business truth.",
           "reason": "Names failure and recovery."
         },
         "alternative": {
@@ -3296,7 +3296,7 @@
         "heading": "Materialized View",
         "anchor": "materialized-view",
         "level": 3,
-        "line": 290,
+        "line": 292,
         "unit_kind": "dedicated",
         "unit_terms": [
           "materialized view stores",
@@ -3356,7 +3356,7 @@
         "heading": "Command-Side Replica",
         "anchor": "command-side-replica",
         "level": 3,
-        "line": 253,
+        "line": 255,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Command-Side Replica"
@@ -4760,7 +4760,7 @@
         "heading": "CQRS Read Projections",
         "anchor": "cqrs-read-projections",
         "level": 3,
-        "line": 320,
+        "line": 322,
         "unit_kind": "dedicated",
         "unit_terms": [
           "separate query view",
@@ -5084,7 +5084,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Admission/rate limiting may be preferable when one global resource can be bounded directly; a circuit breaker may be preferable when the failure is dependency-specific rather than capacity-specific.",
+          "quote": "Admission/rate limiting bounds a shared resource; a circuit breaker rejects calls to a failing dependency; a bulkhead bounds concurrent capacity per class.",
           "reason": "Names the competing controls and reversal condition."
         }
       },
@@ -6810,7 +6810,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Do not assume assignments are statistically independent just because they use a hash.",
+          "quote": "Hash-based assignment alone does not prove statistical independence.",
           "reason": "Safety rule against assuming hash-based independence."
         },
         "failure_recovery": {
@@ -6820,7 +6820,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A fixed cell gives a tenant a durable home and a clear population boundary.",
+          "quote": "A fixed cell anchors one tenant to a known home and population boundary.",
           "reason": "Contrasts fixed cells and the dedicated-home condition."
         }
       },

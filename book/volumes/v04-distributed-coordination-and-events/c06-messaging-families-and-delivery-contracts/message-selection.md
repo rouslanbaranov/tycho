@@ -325,13 +325,14 @@ task needs exactly one owner and the consumer can absorb redelivery.
 
 ### Event-Driven Consumer
 
-The consumer reacts to a delivered message rather than polling a queue. It must own effect identity,
-deduplication and acknowledgement ordering. The subscription declares a prefetch or in-flight
+A push subscription hands each message to the consumer; the handler, not a polling loop, decides
+when work is acknowledged. It must own effect identity, deduplication and acknowledgement
+ordering. The subscription declares a prefetch or in-flight
 bound and an acknowledgement window; when in-flight work reaches the bound, pause delivery or add
 capacity rather than buffering without limit.
 
-A crash after the effect but before acknowledgement causes redelivery, while acknowledging before
-the effect can lose work. The handler must commit the business effect and the dedup marker in one
+A crash between effect and acknowledgement leaves the outcome unknown; acknowledging before the
+effect can lose work. The handler must commit the business effect and the dedup marker in one
 local transaction when possible; otherwise it needs a reconciliation path for the unknown state.
 Concurrency and ordering requirements belong to the subscription contract, not to the framework
 default.
@@ -345,16 +346,18 @@ the operational cost of a push subscription.
 
 A server-side cursor plus retained messages lets an offline consumer resume after reconnect. Resume is bounded only by retention, acknowledgement timeout and replay policy.
 
-Core is at-most-once; ordinary JetStream redelivery is at-least-once under its configuration. At-least-once redelivery means the consumer needs a stable effect
-key and dedup before applying, or a resumed cursor can double-apply local effects. A durable cursor
-is not a backup of the consumer's business state; if the consumer's database is lost, replaying the
-stream may not reconstruct the effect. Define
-retention, max redelivery and the action when the cursor is too far behind. A replay older than
-the declared deadline is stale: detect it from event time or cursor age and route it to repair
+Delivery guarantees differ by broker and configuration. A durable stream commonly provides
+at-least-once delivery: the consumer needs a stable effect key and dedup before applying, or a
+resumed cursor can double-apply local effects. A best-effort subscription can lose work. A
+durable cursor is not a backup of the consumer's business state; if the consumer's database
+is lost, replaying the stream may not reconstruct the effect. Define retention, max
+redelivery and the action when the cursor is too far behind. A replay older than the
+declared deadline is stale: detect it from event time or cursor age and route it to repair
 rather than applying it blindly.
 
-Ephemeral pub/sub fits a notification whose loss while offline is acceptable. A recoverable business task needs a JetStream durable consumer or another persisted queue, not
-Core alone.
+Ephemeral pub/sub fits a notification whose loss while offline is acceptable. A recoverable
+business task needs a durable consumer or another persisted queue, not a best-effort
+subscription alone.
 
 ### Message Broker-Messaging Bridge
 

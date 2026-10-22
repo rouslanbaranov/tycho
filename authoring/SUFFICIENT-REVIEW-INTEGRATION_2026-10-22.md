@@ -37,6 +37,18 @@ The three reject-level entries are Cell-Based Architecture, Change Data Capture 
 Materialized View. SOA moved to pass; Shuffle Sharding and Static Content Hosting moved to
 pass-with-findings.
 
+## Phase A v2 audit — 2026-10-22
+
+The independent auditor reviewed all 52 Phase A entries at HEAD `86395ec`. Report verdict:
+**REVISE**. Recommendation: 38 pass / 14 pass-with-findings / 0 reject; 7 findings
+(G-001–G-007). Records are unchanged; no entry is promoted.
+
+G-001 (four duplicated owner sections), G-002 (two long lines), G-003 (original vs
+re-review findings counts), G-004 (F-020/F-021 attribution), G-005 (scope-manifest
+anchors), G-006 (delivery evidence) and G-007 (unregistered NATS/Fowler claims) are
+addressed here. G-007 uses narrowed claims, not new source admission. A delta re-review
+of the seven findings is pending; Phase B remains un-reviewed.
+
 ## What is resolved and what remains
 
 Resolved metadata findings:
