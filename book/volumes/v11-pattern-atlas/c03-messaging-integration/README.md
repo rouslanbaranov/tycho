@@ -694,7 +694,7 @@ unit, not a benchmark.
 **Related entries.** Anti-Corruption Layer; Message Broker; Domain-Driven Design / Bounded
 Context; Schema Evolution.
 
-### Process Manager / Routing Slip
+### Process Manager-Routing Slip
 
 **Identity.** Process Manager / Routing Slip; family Messaging and event-driven
 integration; kind integration-pattern; priority core.

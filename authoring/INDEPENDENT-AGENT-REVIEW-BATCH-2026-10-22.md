@@ -1017,3 +1017,13 @@ Verdict: **pass**. Findings: 0. Broker ordering, non-preemption, per-hop class a
 
 Verdict: **pass**. Findings: 0. Card and §4 now name only one local transaction or two-phase commit; the #saga owner anchor resolves.
 
+
+### Process Manager / Routing Slip — latest re-review
+
+Verdict: **pass**. Findings: 0. Both coordinator and routing-slip variants are distinct, and the V04↔V11 anchors match one heading and resolve.
+
+
+### Index Table — latest re-review
+
+Verdict: **pass**. Findings: 0. Synthetic disclosure present, native-index text scoped as the alternative, line lengths under 100 and the card owner anchor resolves.
+
