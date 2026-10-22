@@ -681,7 +681,7 @@ Reverse the choice when canonical-model governance becomes a bottleneck.
 **Failure and recovery.** Model drift and translation debt are common; verify ownership
 and versioning in the owner section.
 
-**Technical owner.** [Requirement-driven comparison, not a ranking](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#canonical-data-model) — the comparison section is bounded; it does not own every EIP mechanism.
+**Technical owner.** [Canonical Data Model](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#canonical-data-model) — canonical schema ownership is bounded, not every EIP mechanism.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)

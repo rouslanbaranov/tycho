@@ -285,7 +285,7 @@ choice when stamp operations and duplication exceed isolation benefit.
 **Failure and recovery.** Configuration drift and state duplication are common; verify
 boundaries in the owner section.
 
-**Technical owner.** [A cell is a boundary in the dependency graph](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#deployment-stamps) — deployment stamps are bounded to cell boundaries.
+**Technical owner.** [Deployment Stamps](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#deployment-stamps) — independent deployment units for scale, isolation or locality, with routing keys and upgrade ownership.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)

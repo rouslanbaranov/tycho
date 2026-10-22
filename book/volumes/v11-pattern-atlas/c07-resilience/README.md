@@ -125,7 +125,7 @@ isolation overhead and stranded capacity exceed containment benefit.
 **Failure and recovery.** Bypass, undersized partitions, a shared hidden queue and
 starvation are common; detect per-pool metrics and fail the isolated class explicitly.
 
-**Technical owner.** [Bulkhead](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#bulkhead) — dependency isolation is bounded, not a full circuit-breaker library guide.
+**Technical owner.** [Bulkhead](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#bulkhead) — bulkhead isolation is bounded, not a full resilience-library guide.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-bulkhead.2026-10-21: sections "Bulkhead", "Semaphore",

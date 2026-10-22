@@ -1037,3 +1037,23 @@ Verdict: **pass**. Findings: 0. Card and section agree on conditions, contraindi
 
 Verdict: **pass**. Findings: 0. Card contraindications and the synchronous-call/command alternative agree, including the reversal condition.
 
+
+### Canonical Data Model — card-label re-review
+
+Verdict: **pass**. Findings: 0. The corrected technical-owner label describes the linked owner section.
+
+
+### Read Replicas — card-label re-review
+
+Verdict: **pass**. Findings: 0. The corrected technical-owner label describes the linked owner section.
+
+
+### Bulkhead — card-label re-review
+
+Verdict: **pass**. Findings: 0. The corrected technical-owner label describes the linked owner section.
+
+
+### Deployment Stamps — card-label re-review
+
+Verdict: **pass**. Findings: 0. The label now names independent deployment units, routing keys and upgrade ownership, all supported by the owner section.
+
