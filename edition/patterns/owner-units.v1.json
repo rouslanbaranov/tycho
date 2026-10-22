@@ -2150,16 +2150,16 @@
       "owner": {
         "document_id": "tycho.page.148a37ff87ca4e42a2fec625c65319b0",
         "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
-        "heading": "Poison work is a policy state",
-        "anchor": "poison-work-is-a-policy-state",
+        "heading": "Dead Letter Channel / DLQ",
+        "anchor": "dead-letter-channel-dlq",
         "level": 3,
-        "line": 107,
-        "unit_kind": "embedded",
+        "line": 210,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "dead-letter queue",
-          "holding mechanism",
-          "Classify transient, permanent and unknown outcomes",
-          "quarantine"
+          "dead-letter channel",
+          "invalid schema",
+          "Classify transient",
+          "Retrying with backoff"
         ]
       },
       "technical_evidence": {
@@ -2270,16 +2270,16 @@
       "owner": {
         "document_id": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73",
         "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
-        "heading": "5. Message redelivery and consumer effects",
-        "anchor": "5-message-redelivery-and-consumer-effects",
-        "level": 2,
-        "line": 71,
-        "unit_kind": "embedded",
+        "heading": "Idempotent Receiver",
+        "anchor": "idempotent-receiver",
+        "level": 3,
+        "line": 103,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Idempotent Consumer",
           "processed message IDs",
-          "redelivery",
-          "consumer identity"
+          "Atomic (consumer",
+          "marking an event processed",
+          "business-key upsert"
         ]
       },
       "technical_evidence": {
@@ -2299,9 +2299,9 @@
           "reason": "Describes crash windows and the external reconciliation boundary."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing deduplication mechanism or reversal condition is named in this section."
+          "state": "supported",
+          "quote": "A business-key upsert, a conditional write or the downstream API's idempotency key may be preferable when no local processed-message table is available.",
+          "reason": "Names competing dedup mechanisms and the reversal."
         }
       },
       "decision_evidence": {
@@ -3162,14 +3162,16 @@
       "owner": {
         "document_id": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f",
         "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
-        "heading": "Integrated decision and reading route",
-        "anchor": "integrated-decision-and-reading-route",
-        "level": 2,
-        "line": 73,
-        "unit_kind": "embedded",
+        "heading": "Idempotency Key",
+        "anchor": "idempotency-key",
+        "level": 3,
+        "line": 103,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "stable logical intent",
-          "authoritative recorded outcome"
+          "binds one logical intent",
+          "different payload",
+          "new identity",
+          "naturally idempotent"
         ]
       },
       "technical_evidence": {
@@ -3220,16 +3222,16 @@
       "owner": {
         "document_id": "tycho.page.54c4335d1dd142e8b794daf4768fc3d2",
         "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
-        "heading": "1. From a database change to a replayable input",
-        "anchor": "1-from-a-database-change-to-a-replayable-input",
-        "level": 2,
-        "line": 50,
-        "unit_kind": "embedded",
+        "heading": "Change Data Capture (CDC)",
+        "anchor": "change-data-capture-cdc",
+        "level": 3,
+        "line": 129,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "CDC pipeline",
-          "replayable input",
-          "logical change stream",
-          "not the same cursor"
+          "authoritative business state",
+          "alignment is guaranteed",
+          "Connector lag",
+          "transactional outbox"
         ]
       },
       "technical_evidence": {
@@ -8787,10 +8789,10 @@
         "tycho.pattern.request-reply-messaging"
       ],
       "unit_count": 4,
-      "dedicated_units": 3,
+      "dedicated_units": 4,
       "bounded_entries": 4,
-      "decision": "keep",
-      "rationale": "Four messaging-failure patterns have four distinct units, three dedicated, and the page remains a coherent failure-gate page."
+      "decision": "deepen",
+      "rationale": "DLQ, claim check, correlation, request-reply and workflow-failure gates now have five dedicated units."
     },
     {
       "document_id": "tycho.page.0d34dd26886340b89fd4f1499d790a81",
@@ -9095,12 +9097,12 @@
     "owner_pages": 69,
     "shared_pages": 33,
     "owner_units": 137,
-    "dedicated_units": 107,
-    "embedded_units": 30,
+    "dedicated_units": 111,
+    "embedded_units": 26,
     "mechanism_supported": 145,
     "invariant_supported": 145,
     "failure_recovery_supported": 135,
-    "alternative_supported": 136,
+    "alternative_supported": 137,
     "technical_partial_bounded": 145,
     "technical_partial": 0,
     "technical_name_only": 0,
@@ -9112,8 +9114,8 @@
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
-      "keep": 16,
-      "deepen": 17,
+      "keep": 15,
+      "deepen": 18,
       "split": 0
     },
     "split_deferred": 0

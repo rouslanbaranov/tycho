@@ -97,3 +97,21 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Retry budgets, retention and adversarial tests](retry-retention.md) — What prevents retries or delayed replay from violating capacity and effect guarantees?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+## Bounded pattern ownership notes
+
+### Idempotency Key
+
+An idempotency key binds one logical intent to an authoritative outcome record. The key binds one
+logical intent, caller/payload scope and retention window to an authoritative outcome record. It is
+not a request ID generated fresh on every retry; the caller must reuse the key for the same intent.
+
+The key does not make a different payload safe: a reused key with changed intent is a conflict, not
+idempotency. After an acknowledgment is lost, a new identity can duplicate a committed effect; an
+expired key cannot guarantee historical deduplication. Store the request fingerprint, outcome and
+expiry, and reject a key reuse with a different payload.
+
+A naturally idempotent operation, a conditional/unique constraint, or a single-writer serialization
+may be preferable when the effect can be expressed without a key store. An idempotency key is a fit
+when the client can generate a stable key and the service can retain the outcome for the retry
+horizon.

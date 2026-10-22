@@ -486,7 +486,7 @@ choice when replay is frequent and needs automated policy.
 **Failure and recovery.** DLQ growth and silent abandonment are common; verify poison-work
 policy in the owner section.
 
-**Technical owner.** [Poison work is a policy state](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#poison-work-is-a-policy-state) — poison-work policy is bounded, not a full DLQ operations manual.
+**Technical owner.** [Dead Letter Channel / DLQ](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#dead-letter-channel-dlq) — poison-work policy is bounded, not a full DLQ operations manual.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -550,7 +550,7 @@ choice when identity retention and lookup cost exceed duplicate risk.
 **Failure and recovery.** Identity collisions and retention expiry create duplicate
 effects; verify dedup authority in the owner section.
 
-**Technical owner.** [Message redelivery and consumer effects](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md#5-message-redelivery-and-consumer-effects) — deduplication authority is bounded, not a complete idempotent-receiver recipe.
+**Technical owner.** [Idempotent Receiver](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md#idempotent-receiver) — deduplication authority is bounded, not a complete idempotent-receiver recipe.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)

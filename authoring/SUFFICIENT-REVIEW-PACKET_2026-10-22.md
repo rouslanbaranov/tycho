@@ -248,17 +248,17 @@ the validators still require a separate policy change.
 46. **Claim Check** — `tycho.pattern.claim-check`
     - File: `workflow-failure.md`
     - Heading: `Claim Check`; 125 words
-    - SHA-256: `83ba024a26e804455062b61a2049ac88200ea3b4567b5583a3ebab18f37f5fc5`
+    - SHA-256: `57d173f1846271dd9a8f84287158cb43ee36d6684e6e7988faf3202f93b30c3f`
 
 47. **Correlation Identifier** — `tycho.pattern.correlation-identifier`
     - File: `workflow-failure.md`
     - Heading: `Correlation Identifier`; 120 words
-    - SHA-256: `83ba024a26e804455062b61a2049ac88200ea3b4567b5583a3ebab18f37f5fc5`
+    - SHA-256: `57d173f1846271dd9a8f84287158cb43ee36d6684e6e7988faf3202f93b30c3f`
 
 48. **Request-Reply Messaging** — `tycho.pattern.request-reply-messaging`
     - File: `workflow-failure.md`
     - Heading: `Request-Reply Messaging`; 124 words
-    - SHA-256: `83ba024a26e804455062b61a2049ac88200ea3b4567b5583a3ebab18f37f5fc5`
+    - SHA-256: `57d173f1846271dd9a8f84287158cb43ee36d6684e6e7988faf3202f93b30c3f`
 
 49. **Backend for Frontend (BFF)** — `tycho.pattern.backend-for-frontend-bff`
     - File: `http-rpc-contracts-and-compatibility.md`
@@ -544,3 +544,23 @@ the validators still require a separate policy change.
     - File: `routing-and-health.md`
     - Heading: `Gateway Routing`; 132 words
     - SHA-256: `6f798e7796c556cfd1458b8ec2200ad113a0d74d033708740d3d61f7a2376f1a`
+
+106. **Dead Letter Channel / DLQ** — `tycho.pattern.dead-letter-channel-dlq`
+    - File: `workflow-failure.md`
+    - Heading: `Dead Letter Channel / DLQ`; 139 words
+    - SHA-256: `57d173f1846271dd9a8f84287158cb43ee36d6684e6e7988faf3202f93b30c3f`
+
+107. **Idempotent Receiver** — `tycho.pattern.idempotent-receiver`
+    - File: `dedup-authority.md`
+    - Heading: `Idempotent Receiver`; 136 words
+    - SHA-256: `06b4811f582595cc77d67d7179532676910c3e1bc697df6d945be3b4baa35111`
+
+108. **Idempotency Key** — `tycho.pattern.idempotency-key`
+    - File: `retries-idempotency-and-ambiguous-effects.md`
+    - Heading: `Idempotency Key`; 154 words
+    - SHA-256: `8b2dfc20407671fbc557e503f73d73b9337fa8a4b82e5a81886feccbd6dbbff8`
+
+109. **Change Data Capture (CDC)** — `tycho.pattern.change-data-capture-cdc`
+    - File: `cdc-state.md`
+    - Heading: `Change Data Capture (CDC)`; 144 words
+    - SHA-256: `147f4fd3c473ce49f03288915ea0de0ed58ca472f706fd7070b3e8ac5fabd213`

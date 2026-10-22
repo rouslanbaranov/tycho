@@ -123,3 +123,21 @@ A persistent local store may need to replay a large changelog after task migrati
 | Integrated question | [Original scenario and limits](stateful-stream-processing-and-cdc.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### Change Data Capture (CDC)
+
+A relational database may already own an authoritative business state. A CDC pipeline observes
+changes after a commit and publishes records to consumers. The source transaction stays the
+authority; the stream is a derived view of it.
+
+An implementation must document where their alignment is guaranteed and where duplicates or gaps
+may be replayed. Connector lag, WAL/slot retention, schema changes and snapshot-to-stream gaps are
+common. Monitor lag and slot retention, test a schema change, and define a rebuild from a consistent
+snapshot rather than assuming the stream is complete.
+
+A transactional outbox plus relay, dual-write with reconciliation, or scheduled batch extraction may
+be preferable when database log access is unavailable, when the source cannot retain a slot, or when
+the team cannot operate a connector. CDC is a fit when the database log is accessible and the team
+can own connector and schema operations.

@@ -206,3 +206,19 @@ latency requires decoupling.
 
 **Limits.** Reply queues, correlation state and orphaned replies are operational costs; a lost
 reply must be distinguishable from a slow one, and the requester needs idempotent effects.
+
+### Dead Letter Channel / DLQ
+
+A dead-letter channel routes a message that exceeds its retry or age policy to a quarantine queue,
+preserving payload, headers and failure reason. The DLQ is a policy state, not a second work queue
+that silently retries forever.
+
+An invalid schema or permanently rejected target is not repaired by retrying forever. Classify
+transient, permanent and unknown outcomes; cap attempts and total age; preserve enough evidence in
+quarantine to diagnose without leaking payloads. The DLQ needs an owner, an alert threshold and a
+documented replay or discard procedure.
+
+Retrying with backoff, dropping with an audit record, or parking the work in a repair table/outbox
+may be preferable when the failure is deterministic or the broker cannot retain evidence safely. A
+DLQ is a fit when the failure is inspectable and a human or repair job can decide the terminal
+outcome.

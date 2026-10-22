@@ -397,7 +397,7 @@ Reverse the choice when key storage and fingerprinting cost exceed retry risk.
 intent is a conflict, not idempotency. Reject mismatched fingerprints and keep the record
 for the retry window.
 
-**Technical owner.** [Retries, idempotency and ambiguous side effects](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md#integrated-decision-and-reading-route) — retry/idempotency is bounded, not a complete HTTP idempotency guide.
+**Technical owner.** [Idempotency Key](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md#idempotency-key) — retry/idempotency is bounded, not a complete HTTP idempotency guide.
 
 **Sources.**
 [src.ietf-idempotency-key](../../../../edition/patterns/reading-ledger.v1.json)
@@ -433,7 +433,7 @@ slot, or connector operations exceed the replay benefit.
 snapshot-to-stream gaps are common; monitor lag/slot health, resnapshot deliberately and make
 downstream apply idempotent.
 
-**Technical owner.** [From a database change to a replayable input](../../v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md#1-from-a-database-change-to-a-replayable-input) — CDC replay is bounded, not a full Debezium operations guide.
+**Technical owner.** [Change Data Capture (CDC)](../../v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md#change-data-capture-cdc) — CDC replay is bounded, not a full Debezium operations guide.
 
 **Sources.** [src.debezium-outbox](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-debezium-outbox.2026-10-21: sections "Outbox Event Router",
