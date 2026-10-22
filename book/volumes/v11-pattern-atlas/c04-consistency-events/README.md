@@ -323,13 +323,14 @@ retention are explicit.
 outbox, when publication latency is unacceptable, or when no relay is operated.
 
 **Competing alternative.** Publish directly after commit with reconciliation. Reverse the
-choice when relay complexity exceeds the lost/duplicate publication risk it removes.
+choice when relay complexity exceeds the lost-publication and duplicate-effect risk it removes.
 
 **Failure and recovery.** A crash after publish/before checkpoint duplicates; a crash after
 commit/before publish retries; a poison row can block progress. Bound attempts/age and keep
 repair evidence.
 
-**Technical owner.** [Transactional Outbox](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#transactional-outbox) — outbox coordination is bounded, not a connector manual.
+**Technical owner.** [Transactional Outbox](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#transactional-outbox) — outbox coordination is bounded, not a
+connector manual.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)

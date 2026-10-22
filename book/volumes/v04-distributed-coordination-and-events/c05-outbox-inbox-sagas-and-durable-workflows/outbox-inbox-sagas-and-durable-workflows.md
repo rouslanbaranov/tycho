@@ -135,7 +135,8 @@ quarantine for poison rows. A crash after publish before completion duplicates; 
 publish retries. A consumer still deduplicates by effect identity, and a repair operator needs the
 row, payload digest and attempt history retained for the declared window.
 
-Use an outbox when the lost/duplicate publication risk justifies relay complexity. Reverse to
+Use an outbox when the lost-publication and duplicate-effect risk justifies relay
+complexity. Reverse to
 direct publish with reconciliation only when relay complexity exceeds the risk it removes; CDC or
 transactional messaging may fit when the log is accessible.
 

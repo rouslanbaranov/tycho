@@ -1007,3 +1007,8 @@ Verdict: **pass-with-findings**. One remaining finding: near-verbatim reuse of s
 
 Verdict: **pass-with-findings**. Latest review flagged a native-index paragraph mislabeled as the index-table mechanism and a long line; both were scoped/wrapped, re-review pending.
 
+
+### Priority Queue — latest re-review
+
+Verdict: **pass**. Findings: 0. Broker ordering, non-preemption, per-hop class authentication, tenant caps, aging/max-wait and admission-controlled FIFO align with the card.
+
