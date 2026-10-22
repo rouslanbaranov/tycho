@@ -197,18 +197,18 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Expand-and-Contract Schema
 
-Expand-and-contract changes a schema in compatible phases: add the new representation, migrate
-readers and writers, then remove the old one. The compatibility window is the safety mechanism, not
-a delay to be skipped.
+Expand-and-contract is a staged change protocol: add a tolerant new representation, migrate
+readers and writers, then remove the old shape only after a reader inventory proves no consumer
+remains.
 
-Begin with versioned authoritative identities, expand without removing old contract, resolve semantic
-mappings, backfill in resumable batches and reconcile *meaning* and references. Retire old data only
-after readers/replay paths are proved gone. Route reads back while source remains compatible;
-otherwise hold and forward-repair. A contract step without a reader inventory is a breaking change.
+Each phase has a compatibility gate. Writers accept both shapes; readers prefer the new one and
+fall back to the old; backfill is resumable; a contract check covers online services, batch jobs,
+replay, CDC and analytics consumers. Record the expand date and the owner; a migration with no
+contract date becomes a permanent dual schema. The mapping must preserve identity and references,
+not only field shape.
 
-Smaller changes may retain the existing schema and add an explicit mapping layer instead of migrating
-authority. Expand-and-contract is a fit when the data must move and old and new readers coexist during
-the transition.
+A smaller change may keep the schema and add a mapping layer instead of moving authority. Fit when
+the data must move and old and new readers coexist during a bounded transition.
 
 ### Online Data Migration
 

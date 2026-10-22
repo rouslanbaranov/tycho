@@ -4820,31 +4820,31 @@
         "line": 198,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "versioned authoritative identities",
-          "Retire old data",
-          "Route reads back",
-          "smaller changes"
+          "staged change protocol",
+          "reader inventory",
+          "contract date",
+          "mapping layer"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "begin with versioned authoritative identities, expand without removing old contract, resolve semantic mappings, backfill in resumable batches and reconcile *meaning* and references.",
+          "quote": "Expand-and-contract is a staged change protocol",
           "reason": "The text alternative lays out the expand/map/backfill/reconcile/contract sequence."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Retire old data only after readers/replay paths are proved gone.",
+          "quote": "Each phase has a compatibility gate.",
           "reason": "States the retirement precondition that must hold before contract."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Route reads back while source remains compatible; otherwise hold and forward-repair",
+          "quote": "a migration with no contract date becomes a permanent dual schema",
           "reason": "The cutover failure row gives the rollback and forward-repair response."
         },
         "alternative": {
           "state": "supported",
-          "quote": "smaller changes may retain the existing schema and add an explicit mapping layer instead of migrating authority.",
+          "quote": "A smaller change may keep the schema and add a mapping layer instead of moving authority.",
           "reason": "Names a mapping layer instead of authority migration and the smaller-change condition that favors it."
         }
       },

@@ -1112,3 +1112,8 @@ Verdict: **pass**. Findings: 0. Inclusion boundary/contraindications align; the 
 
 Verdict: **pass**. Findings: 0. Undefined R7 removed, synthetic example labelled, contract tests/versioned mappings and line lengths fixed.
 
+
+### Expand-and-Contract Schema — latest re-review
+
+Verdict: **pass**. Findings: 0. Distinct 127-word note with compatibility gates, reader inventory, expand/contract dates and lines <=100.
+
