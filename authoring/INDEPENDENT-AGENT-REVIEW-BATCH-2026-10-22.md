@@ -1092,3 +1092,8 @@ Verdict: **pass**. Findings: 0. Label/anchor, predicate-trust, rejected-disposit
 
 Verdict: **pass**. Findings: 0. Label/anchor, predicate-trust, rejected-disposition or stage-contract text agree.
 
+
+### Claim Check — latest re-review
+
+Verdict: **pass**. Findings: 0. Token binding, payload digest, retrieval latency and label/anchor agree.
+

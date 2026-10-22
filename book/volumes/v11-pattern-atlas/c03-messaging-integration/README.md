@@ -616,7 +616,7 @@ the choice when retrieval and storage complexity exceed transport savings.
 **Failure and recovery.** Orphaned claims and access leaks are common; verify storage and
 retrieval policy in the owner section.
 
-**Technical owner.** [A durable workflow is more than a queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#claim-check) — workflow failure gates are bounded, not a complete request-reply contract.
+**Technical owner.** [Claim Check](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#claim-check) — claim-token binding, lifecycle and retrieval are bounded, not a payload store catalog.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)

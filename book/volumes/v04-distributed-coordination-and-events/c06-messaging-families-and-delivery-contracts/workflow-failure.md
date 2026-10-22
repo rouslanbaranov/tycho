@@ -171,7 +171,9 @@ token instead. It needs payload lifecycle, authorization, expiry, integrity and 
 rule for abandoned claims. Use it when message size, retention or access boundaries make
 an inline payload unsafe. Do not use it when the payload is small enough to inline or when
 an external store would create an unacceptable consistency dependency. An untracked claim store becomes
-a data-retention liability.
+a data-retention liability. Bind the claim token to the message and tenant and to a payload
+digest; a token must not resolve to another payload. The retrieval hop needs a latency budget
+and bounded retries.
 
 The failure path is an orphaned payload or a token that outlives its authorization; expire
 and garbage-collect claims, and make the consumer fail closed when the claim cannot be
