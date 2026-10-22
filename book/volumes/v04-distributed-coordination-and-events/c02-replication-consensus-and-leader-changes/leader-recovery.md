@@ -199,17 +199,16 @@ stronger.
 
 ### Lease-Based Ownership
 
-A lock service can give worker B ownership after worker A stops renewing. That reassignment is a
-new ownership epoch, not a repair of A's local state.
+A lease grants ownership for a bounded interval. The holder renews before expiry; the coordinator
+may reassign after expiry, creating a new epoch. The takeover linearization point is the
+coordinator's grant, not the old holder's last renewal.
 
-Define the takeover linearization point, handling of in-flight writes and whether lease ownership
-or destination epoch is the actual authority. On renewal timeout, treat ownership as uncertain; do
-not infer a successful renewal. A stop-write deadline follows. The old holder must stop writing before its lease could expire,
-and the destination must reject its delayed effects.
-
-Static ownership or quorum-backed ownership avoids lease renewal but risks stale owners on failure.
-Choose leases when fast takeover matters and the destination can fence; choose quorum ownership
-when the coordination service itself must survive a partition.
+Lease duration must cover maximum clock skew, renewal round-trip and process pause, with a margin.
+The holder stops writing at expiry minus that margin; a pause longer than the margin is fenced by
+the destination. Renewal costs one write per holder per interval, so short leases raise coordination
+load. On timeout, ownership is unknown, not failed. Static or quorum-backed ownership avoids renewal
+but risks a stale owner, which is a correctness failure; use leases only when the destination
+fences and clock skew is bounded.
 
 ### Fencing Tokens
 

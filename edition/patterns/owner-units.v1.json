@@ -6133,31 +6133,31 @@
         "line": 200,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "takeover linearization point",
-          "Renewal timeout",
-          "Static ownership",
-          "quorum-backed"
+          "bounded interval",
+          "clock skew",
+          "process pause",
+          "unknown"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A lock service can give worker B ownership after worker A stops renewing.",
+          "quote": "A lease grants ownership for a bounded interval.",
           "reason": "Explains lease expiry reassignment and its limit on a paused former owner."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Define the takeover linearization point, handling of in-flight writes and whether lease ownership or destination epoch is the actual authority.",
+          "quote": "Lease duration must cover maximum clock skew, renewal round-trip and process pause, with a margin.",
           "reason": "Requires the takeover linearization point and authority source to be defined."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "treat ownership as uncertain; do not infer a successful renewal.",
+          "quote": "On timeout, ownership is unknown, not failed.",
           "reason": "States the renewal-timeout response and stale-owner rejection."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Static ownership or quorum-backed ownership avoids lease renewal but risks stale owners on failure.",
+          "quote": "Static or quorum-backed ownership avoids renewal but risks a stale owner",
           "reason": "Names static and quorum-backed alternatives to leases."
         }
       },
@@ -6190,7 +6190,7 @@
         "heading": "Fencing Tokens",
         "anchor": "fencing-tokens",
         "level": 3,
-        "line": 214,
+        "line": 213,
         "unit_kind": "dedicated",
         "unit_terms": [
           "monotonically increasing",

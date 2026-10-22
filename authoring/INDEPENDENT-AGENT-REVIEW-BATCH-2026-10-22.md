@@ -1122,3 +1122,8 @@ Verdict: **pass**. Findings: 0. Distinct 127-word note with compatibility gates,
 
 Verdict: **pass**. Findings: 0. Distinct state-machine note with thresholds, bounded half-open probes, separated metrics and lines <=100.
 
+
+### Lease-Based Ownership — latest re-review
+
+Verdict: **pass**. Findings: 0. Skew/pause bounds, stop-write deadline and lease/renewal cost are stated.
+
