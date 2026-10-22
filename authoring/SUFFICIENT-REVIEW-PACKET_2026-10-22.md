@@ -41,8 +41,8 @@ Do not edit the repository. Do not treat this packet as approval.
 
 6. **Cache-Aside / Lazy Loading** — `tycho.pattern.cache-aside-lazy-loading`
    - File: `refresh-semantics.md`
-   - Heading: `4. Cache-aside is a sequence, not a consistency theorem`; 329 words
-   - SHA-256: `44af84dceae81d193c797dfd9d46aece50498baabd3b6081cfb3638e3e636947`
+   - Heading: `4. Cache-aside is a sequence, not a consistency theorem`; 365 words
+   - SHA-256: `7eb3381f60efeabe24d7dcf25df6244fa21368f67977955ee1fb0a1d56f82b88`
 
 7. **Negative Caching** — `tycho.pattern.negative-caching`
    - File: `negative-cache.md`
@@ -162,8 +162,8 @@ the validators still require a separate policy change.
 
 29. **Cache Invalidation** — `tycho.pattern.cache-invalidation`
     - File: `cache-invalidation-stampede-and-hot-keys.md`
-    - Heading: `Cache Invalidation`; 121 words
-    - SHA-256: `305557dc5bcbb741d7d68976c86653e5d8c1f7eddc1e7010594ea7811598a1e8`
+    - Heading: `Cache Invalidation`; 166 words
+    - SHA-256: `820c9cffa217a8c22637ff83c4d973b6001bcd1d12655ed0a859f7ce227caa67`
 
 30. **Stale-While-Revalidate** — `tycho.pattern.stale-while-revalidate`
     - File: `stale-fill.md`
@@ -214,3 +214,18 @@ the validators still require a separate policy change.
     - File: `multitenant-isolation.md`
     - Heading: `Multitenant Isolation`; 120 words
     - SHA-256: `5409f130f7bf8b35f046487848bb6089bce31ca2d3bd58b60fcca2431f989295`
+
+40. **Gateway Aggregation** — `tycho.pattern.gateway-aggregation`
+    - File: `gateway-boundaries-and-offloading.md`
+    - Heading: `Gateway Aggregation`; 126 words
+    - SHA-256: `1ccfdf1234e62e76bbeae7fa039634e953a48e31c455e1c4fe722984c3c365e7`
+
+41. **Gateway Offloading** — `tycho.pattern.gateway-offloading`
+    - File: `gateway-boundaries-and-offloading.md`
+    - Heading: `Gateway Offloading`; 125 words
+    - SHA-256: `1ccfdf1234e62e76bbeae7fa039634e953a48e31c455e1c4fe722984c3c365e7`
+
+42. **Reverse Proxy** — `tycho.pattern.reverse-proxy`
+    - File: `gateway-boundaries-and-offloading.md`
+    - Heading: `Reverse Proxy`; 124 words
+    - SHA-256: `1ccfdf1234e62e76bbeae7fa039634e953a48e31c455e1c4fe722984c3c365e7`

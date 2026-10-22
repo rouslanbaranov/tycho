@@ -910,7 +910,7 @@
         "heading": "Gateway Offloading",
         "anchor": "gateway-offloading",
         "level": 2,
-        "line": 112,
+        "line": 116,
         "unit_kind": "dedicated",
         "unit_terms": [
           "terminate TLS",
@@ -1087,7 +1087,7 @@
         "heading": "Reverse Proxy",
         "anchor": "reverse-proxy",
         "level": 2,
-        "line": 121,
+        "line": 130,
         "unit_kind": "dedicated",
         "unit_terms": [
           "accepts client connections",
@@ -3817,12 +3817,12 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A lost invalidation or an in-flight fill resurrects stale data; bound the TTL, compare versions on fill and record invalidations that failed.",
+          "quote": "A lost invalidation or in-flight fill resurrects stale data; bound the TTL, record failed invalidations and keep a durable retry path.",
           "reason": ""
         },
         "alternative": {
           "state": "supported",
-          "quote": "A short TTL accepts bounded staleness without a purge path; use explicit invalidation when the allowed staleness is shorter than the TTL that is affordable.",
+          "quote": "Prefer TTL-only when bounded staleness is acceptable, or versioned keys when every reader can carry the version.",
           "reason": ""
         }
       },

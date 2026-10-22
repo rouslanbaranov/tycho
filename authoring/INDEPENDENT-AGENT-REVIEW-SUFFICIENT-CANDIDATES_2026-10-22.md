@@ -1,132 +1,116 @@
 # Independent agent review — sufficient candidates — 2026-10-22
 
-Status: one section reviewed and re-reviewed by an independent non-human agent. This is
-not human review, owner acceptance, per-page review of the corpus or a sufficient-coverage
-claim.
+Status: independent non-human agent reviews of selected sufficient-candidate sections.
+This is not human review, owner acceptance, per-page review of the corpus or a
+sufficient-coverage claim.
 
 - Reviewer: independent review agent (separate from the authoring pass)
-- Scope: the **API Gateway** owner section and its atlas card only
 - Mode: read-only
-- Verdict: **pass-with-findings**
+- Scope: the sections named below and their atlas cards
+- Verdicts: API Gateway pass; Event Sourcing pass; Negative Caching pass; Health
+  Endpoint Monitoring pass; Cache-Aside pass-with-findings.
 
-## Findings
+## API Gateway — pass
 
-1. **Mechanism.** The section asserted that a gateway is trusted only for the functions
-   it enforces, but did not explain enforcement: identity establishment/forwarding,
-   binding a central decision to the request, the order of authentication, quota and
-   resource authorization, or fail-closed behavior when the policy plane is unavailable.
-2. **Limits.** Quota/rate-limit state and routing-policy staleness were not bounded:
-   shared counters, per-tenant fairness, counter-store outage and stale-route behavior
-   were missing.
+Original findings:
 
-## Remediation applied after the review
+1. **Mechanism.** No enforcement mechanism for identity forwarding, central-decision
+   binding, authentication/quota/authorization order or fail-closed behavior.
+2. **Limits.** No bound on quota/rate-limit state or routing-policy staleness.
 
-- Added an **Enforcement** paragraph: authenticate, forward integrity-protected context,
-  bind decision to audience/action/resource/tenant, then authorize at the resource-owned
-  boundary; fail closed without a bounded audited break-glass path.
-- Extended **Limits**: quota-state ownership, per-tenant fairness, counter-store outage,
-  and stale route as a routing failure rather than a quota decision.
+Remediation: added enforcement order, trusted-context forwarding, fail-closed/break-glass,
+quota-state ownership, per-tenant fairness and stale-route limits.
 
-## Re-review
+Re-review: **pass**, no findings.
 
-A second read-only independent-agent review examined the remediation and returned
-**pass** with no findings. It confirmed the enforcement order, trusted-context binding,
-fail-closed/break-glass behavior and the quota/routing limits.
+## Event Sourcing — pass
 
-The original verdict was **pass-with-findings**; the current verdict is **pass**.
+Original findings:
 
+1. **Failure.** The card named replay duplication and schema drift without a recovery
+   action; the owner link anchored at §2 did not discuss either.
+2. **Invariant.** §2 did not state the expected-version conditional append, racing-command
+   rejection or retry double-append risk.
+
+Remediation: §2 states conditional append, re-read/reject and operation identity; the card
+names stale-version rejection, idempotent projectors and versioned handlers/rebuild plan.
+
+Re-review: **pass**, no findings.
+
+## Negative Caching — pass
+
+Original findings:
+
+1. **Source.** Status/TTL and error-caching statements lacked a citation, claim ID or ledger
+   row.
+2. **Mechanism.** No tenant/principal key scoping, revocation invalidation or
+   no-entry/tombstone/cached-negative distinction.
+
+Remediation: added the Google CDN citation, page source scope and chapter ledger row;
+tenant/principal/operation keying, delete-or-version on change, tombstone distinction and
+revocation tests.
+
+Re-review: **pass**, no findings.
+
+## Health Endpoint Monitoring — pass
+
+Original findings:
+
+1. No rule for absent/unknown probe data or probe-path independence.
+2. No endpoint exposure, authorization or disclosure limit.
+
+Remediation: fail-open/fail-closed per dependency, independent probe path, missing-data
+alerting, caller authorization and disclosure/load limits.
+
+Re-review: **pass**, no findings.
+
+## Cache-Aside — pass-with-findings
+
+Original findings:
+
+1. **Mechanism.** No stale-fill race or definition of the version gate.
+2. **Failure/recovery.** The card deferred to an owner section that did not sequence stale
+   fills, concurrent misses or failed invalidation.
+
+First remediation: added read-V1/commit-V2/refill-V1, version gate, failed-invalidation
+retry/alert and single-flight recovery.
+
+First re-review findings:
+
+1. The "race always remains" claim was too strong; atomic compare-and-set must be
+   distinguished from non-atomic check-then-write.
+2. Invalidation intent was recorded only after a failed delete; it must be durable at
+   commit time, and a missing TTL makes a lost invalidation unbounded.
+
+Second remediation: added atomic/non-atomic distinction and the outbox-in-the-same-
+transaction requirement, plus the no-TTL case.
+
+Second re-review finding: the CAS sentence still overstates the guarantee. A cache-key CAS
+cannot atomically compare a source revision, and a naive SET NX after DEL can resurrect V1.
+The section must say the CAS compares a cached revision/tombstone, with absence treated as
+a failed compare.
+
+This latest finding is now remediated: the section compares the cached revision/tombstone
+under the shared key and treats absence as a failed compare. It is **not re-reviewed**.
+Verdict remains **pass-with-findings**.
+
+## Cache Invalidation — pass-with-findings
+
+Reviewer verdict: **pass-with-findings**. Two findings:
+
+1. **Mechanism.** No read-V1/commit-V2/fill-V1 sequence, fill-version source or mismatch
+   action.
+2. **Limits.** No invalidation fan-out/coupling, multi-cache/region coherence or TTL/
+   versioned-key trade-off.
+
+Remediation: added the stale-fill sequence, source-revision-on-fill with discard/retry, and
+fan-out/multi-cache limits with TTL-only and versioned-key alternatives.
+
+Not re-reviewed. Verdict remains **pass-with-findings**.
 
 ## Limits
 
-- One section, not 145 entries or 423 pages.
+- Six sections, not 145 entries or 423 pages.
 - Non-human review; no independent human sign-off.
-- No `sufficient` promotion; validators still require a review record and policy change.
-## Event Sourcing — pass-with-findings
-
-Reviewer verdict: **pass-with-findings**. Two findings:
-
-1. **Failure.** The card named replay duplication and schema drift but gave no recovery
-action; the owner link anchored at §2 did not discuss either.
-2. **Invariant.** §2 did not state the write-side conditional-append invariant, the
-racing-command rejection path or retry double-append risk.
-
-Remediation applied after the review:
-
-- §2 now states the expected-version conditional append, re-read/reject on conflict and
-  operation identity for retries.
-- The Event Sourcing card now names the stale-version rejection, idempotent projectors and
-  versioned handlers/rebuild plan.
-
-## Event Sourcing re-review
-
-Second read-only review returned **pass** with no findings. It verified the conditional
-append, re-read/reject path, operation identity, card recovery actions, anchors and hashes.
-The current verdict is **pass**.
-
-Not re-reviewed again.
-## Cache-Aside — pass-with-findings
-
-Reviewer verdict: **pass-with-findings**. Two findings:
-
-1. **Mechanism.** The section promised the read/write interleaving that breaks a naive
-freshness promise but did not show the stale-fill race or define the version gate.
-2. **Failure/recovery.** The card deferred to the owner section, which did not sequence
-stale fills, concurrent misses or a failed/partial invalidation.
-
-Remediation applied after the review:
-
-- Added the stale-fill race (read V1, commit V2, refill V1), the version gate and its
-  remaining check/write window.
-- Added failed-invalidation retry/alert, TTL bound and single-flight recovery.
-- Replaced the card's deferral with concrete gate/retry/single-flight actions.
-
-Not re-reviewed. Verdict remains **pass-with-findings**.
-## Negative Caching — pass-with-findings
-
-Reviewer verdict: **pass-with-findings**. Two findings:
-
-1. **Source.** The section made status/TTL and error-caching statements without a citation,
-claim ID or ledger row; the card cited the Google CDN source.
-2. **Mechanism.** The heading promised "evicted authorization" but did not define key scoping,
-revocation invalidation or no-entry versus tombstone versus cached-negative.
-
-Remediation applied after the review:
-
-- Added tenant/principal/operation key scoping, delete-or-version on create/grant, tombstone
-  distinction and a global-visibility restriction.
-- Added the Google Cloud CDN negative-caching citation to the section, page source scope and
-  chapter source ledger.
-- Replaced the card's status/TTL deferral with scope, delete/version, TTL and revocation tests.
-
-Not re-reviewed. Verdict remains **pass-with-findings**.
-## Cache-Aside re-review — pass-with-findings
-
-Second read-only review confirmed the stale-fill and recovery text is present, but found:
-
-1. The claim that a race always remains is too strong; an atomic compare-and-set closes
-   the check/write gap, as the sibling stale-fill owner states.
-2. Recording invalidation only after a failed delete can lose the intent; the intent must
-   be durable at commit time, and a missing TTL makes a lost invalidation unbounded.
-
-Remediation: the section now distinguishes atomic and non-atomic fill, requires an outbox
-intent in the same local transaction as the write, and states the no-TTL unbounded case.
-
-Not re-reviewed again. Verdict remains **pass-with-findings**.
-## Health Endpoint Monitoring — pass-with-findings
-
-Reviewer verdict: **pass-with-findings**. Two findings:
-
-1. No rule for absent/unknown probe data or probe-path independence; a monitoring outage
-could look like health.
-2. No statement of endpoint exposure, authorization or what the response discloses.
-
-Remediation: added fail-open/fail-closed per dependency, independent probe path and missing-
-data alerting; added caller authorization, disclosure and load-amplification limits. The card
-now names missing health and bounded exposure.
-
-Not re-reviewed. Verdict remains **pass-with-findings**.
-## Negative Caching re-review
-
-Second read-only review returned **pass** with no findings. It verified the Google CDN
-citation and ledger row, tenant/principal/operation keying, delete-or-version on change,
-tombstone distinction and the card recovery actions. The current verdict is **pass**.
+- No `sufficient` promotion; validators still require a complete review record and policy
+  change.

@@ -109,6 +109,10 @@ fan out in parallel with per-call budgets and mark missing parts. Client-side co
 backend for frontend keeps aggregation closer to the client; use gateway aggregation when the
 composition is shared and the gateway is already the trust boundary.
 
+**Limits.** Fan-out latency is set by the slowest participant; partial-response schema, timeout
+ownership and per-downstream authorization must be explicit, and one failing dependency can
+dominate the aggregate. A partial response needs a versioned shape.
+
 ## Gateway Offloading
 
 An edge can terminate TLS, validate tokens, compress, cache or enforce quotas before
@@ -118,6 +122,11 @@ spoofing, confused-deputy paths and a proxy that becomes the only authorization 
 common failures. A service-mesh sidecar, application-level authorization or direct
 pass-through may be preferable when the edge cannot attest identity.
 
+**Limits.** Each offloaded function needs an owner, a versioned policy and a failure mode; TLS
+termination does not authenticate the final application, token validation does not authorize
+the object, and compression or caching can create side channels or stale responses. Fail-closed behavior and a tested bypass path are part of
+the contract, with an owner and audit record.
+
 ## Reverse Proxy
 
 A reverse proxy accepts client connections and forwards them to a selected backend, hiding
@@ -126,6 +135,11 @@ forwarded-header policy and backend failure behavior. Proxy bypass, stale routes
 a client-supplied identity header are common. Direct service discovery, a gateway/BFF or a
 mesh sidecar may be preferable when the proxy adds a shared bottleneck without a required
 policy function.
+
+**Limits.** The proxy's availability, route table and certificate lifecycle are part of the
+request path; a bypass or a trusted forwarded header defeats the boundary, and a shared proxy
+concentrates failure and policy drift. Test the proxy's own outage, stale route and header
+stripping before production, with a named route owner and an explicit failure budget.
 
 ## Failure, recovery and acceptance
 

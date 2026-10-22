@@ -84,10 +84,13 @@ flowchart TD
 
 **The stale-fill race.** Reader R misses and reads V1; writer W commits V2 and invalidates
 the key; R then writes V1 back with a fresh TTL, resurrecting stale data. A version gate on
-fill — write only if the source revision still equals the revision R read — narrows the
-window. An atomic compare-and-set or conditional write at the key closes the check/write gap;
-a non-atomic check-then-write leaves it open. A short TTL plus retried invalidation bounds the
-damage; neither proves freshness when the invalidation itself can be lost.
+fill — compare the source revision with the cached revision under the shared key — narrows
+the window. An atomic compare-and-set or conditional write on that shared key closes the
+check/write gap only when it compares the cached revision or tombstone, treating absence as a
+failed compare. A cache-key CAS cannot atomically compare a source revision, and a naive
+SET NX after DEL still resurrects V1. A non-atomic check-then-write leaves the window open.
+A short TTL plus retried invalidation bounds the damage; neither proves freshness when the
+invalidation itself can be lost.
 
 **Failure and recovery.** A write can commit while its delete fails. The invalidation intent
 must be durable at commit time — an outbox row in the same local transaction — and then
