@@ -8,11 +8,11 @@ independent-agent section review record, but no human per-page review and no own
 acceptance is recorded. Review findings remain unremediated unless a re-review record says
 otherwise.
 
-> **Independent agent re-review — 2026-10-22:** the 52 packets were audited: 33 pass,
-> 16 pass-with-findings and 3 reject. Records now show 37 pass / 105 pass-with-findings /
-> 3 reject overall; all 52 re-reviews have a separate report. Human per-page review and
-> owner acceptance remain open. Do not promote. See
-> [the audit](INDEPENDENT-AGENT-REREVIEW-2026-10-22.md) and
+> **Phase A accepted — 2026-10-22:** owner decision B applied. Phase A is 46 pass /
+> 6 pass-with-findings / 0 reject; overall 50 pass / 95 pass-with-findings / 0 reject.
+> The six PWF are page-unverified verification gaps, not open findings. Phase B (93) was
+> not reviewed; sufficient remains 0; human and owner gates remain open. See
+> [the acceptance](PHASE-A-ACCEPTANCE_2026-10-22.md) and
 > [integration](SUFFICIENT-REVIEW-INTEGRATION_2026-10-22.md).
 
 ## Contract criteria

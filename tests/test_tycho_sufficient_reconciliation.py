@@ -1,4 +1,5 @@
 """Offline tests for the sufficient-candidate review reconciliation."""
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -68,6 +69,11 @@ class StateTests(unittest.TestCase):
             re_reviewed=True, re_review={"verdict": "pass-with-findings", "findings": 2})),
             "residual-findings-after-re-review")
         self.assertEqual(reconciliation.derive_state(record(
+            "tycho.pattern.a", "pass-with-findings", BATCH, findings=2,
+            re_reviewed=True, re_review={"verdict": "pass-with-findings", "findings": 0,
+                                         "verification_gap": "page not re-read"})),
+            "page-unverified-after-delta")
+        self.assertEqual(reconciliation.derive_state(record(
             "tycho.pattern.a", "reject", BATCH, findings=2, re_reviewed=True,
             re_review={"verdict": "reject", "report_path": "report.md"})),
             "rejected-after-review")
@@ -92,24 +98,25 @@ class StateTests(unittest.TestCase):
 
 
 class AuditIntegrationTests(unittest.TestCase):
-    def test_records_reference_audit_report(self):
-        audit = json.loads((
-            ROOT / "edition/patterns/independent-agent-rereview-2026-10-22.v1.json"
-        ).read_text())
+    def test_records_reference_phase_a_v3(self):
         records = json.loads((
             ROOT / "edition/patterns/sufficient-review-records.v1.json"
         ).read_text())["records"]
-        by_id = {record["pattern_id"]: record for record in records}
-        self.assertEqual(len(audit["packets"]), 52)
-        for packet in audit["packets"]:
-            record = by_id[packet["pattern_id"]]
-            self.assertEqual(record["verdict"], packet["audit_verdict"])
-            self.assertEqual(
-                record["re_review"]["report_path"],
-                "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22.md")
-            self.assertEqual(record["re_review"]["page_sha256"],
-                             packet["page_sha256"])
-            self.assertIn("finding_ids", record["re_review"])
+        owners = json.loads((
+            ROOT / "edition/patterns/owner-units.v1.json"
+        ).read_text())["entries"]
+        owner_path = {item["pattern_id"]: item["owner"]["path"] for item in owners}
+        report = "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md"
+        phase_a = [r for r in records
+                   if (r.get("re_review") or {}).get("report_path") == report]
+        self.assertEqual(len(phase_a), 52)
+        self.assertEqual(sum(1 for r in phase_a if r["verdict"] == "pass"), 46)
+        self.assertEqual(sum(1 for r in phase_a
+                               if r["verdict"] == "pass-with-findings"), 6)
+        for record in phase_a:
+            path = ROOT / owner_path[record["pattern_id"]]
+            self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),
+                             record["re_review"]["page_sha256"])
 
 
 class CommittedLedgerTests(unittest.TestCase):
@@ -120,17 +127,18 @@ class CommittedLedgerTests(unittest.TestCase):
         summary = ledger["summary"]
         self.assertEqual(summary["records"], 145)
         self.assertEqual(summary["current_verdicts"],
-                         {"pass": 37, "pass-with-findings": 105, "reject": 3})
-        self.assertEqual(summary["verdict_mismatches"], 34)
+                         {"pass": 50, "pass-with-findings": 95})
+        self.assertEqual(summary["verdict_mismatches"], 42)
         self.assertEqual(summary["re_reviewed"], 52)
         self.assertEqual(summary["re_review_with_separate_report"], 52)
         self.assertEqual(summary["re_review_without_separate_report"], 0)
         self.assertEqual(summary["report_reject_conflicts"], 6)
         self.assertEqual(summary["derived_states"]["needs-remediation-and-re-review"], 83)
         self.assertEqual(summary["derived_states"]["remediated-needs-re-review"], 6)
-        self.assertEqual(summary["derived_states"]["residual-findings-after-re-review"], 16)
-        self.assertEqual(summary["derived_states"]["rejected-after-review"], 3)
-        self.assertEqual(summary["derived_states"]["promoted-after-remediation"], 33)
+        self.assertEqual(summary["derived_states"]["page-unverified-after-delta"], 6)
+        self.assertEqual(summary["derived_states"].get("residual-findings-after-re-review", 0), 0)
+        self.assertEqual(summary["derived_states"].get("rejected-after-review", 0), 0)
+        self.assertEqual(summary["derived_states"]["promoted-after-remediation"], 46)
         self.assertEqual(summary["report_name_matches"]["alias"], 1)
 
     def test_generation_is_deterministic(self):
