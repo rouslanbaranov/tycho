@@ -106,13 +106,16 @@ class AuditIntegrationTests(unittest.TestCase):
             ROOT / "edition/patterns/owner-units.v1.json"
         ).read_text())["entries"]
         owner_path = {item["pattern_id"]: item["owner"]["path"] for item in owners}
-        report = "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md"
+        reports = {
+            "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md",
+            "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-23-phase-a-gap-v6.md",
+        }
         phase_a = [r for r in records
-                   if (r.get("re_review") or {}).get("report_path") == report]
+                   if (r.get("re_review") or {}).get("report_path") in reports]
         self.assertEqual(len(phase_a), 52)
-        self.assertEqual(sum(1 for r in phase_a if r["verdict"] == "pass"), 46)
+        self.assertEqual(sum(1 for r in phase_a if r["verdict"] == "pass"), 52)
         self.assertEqual(sum(1 for r in phase_a
-                               if r["verdict"] == "pass-with-findings"), 6)
+                               if r["verdict"] == "pass-with-findings"), 0)
         for record in phase_a:
             path = ROOT / owner_path[record["pattern_id"]]
             self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),
@@ -127,18 +130,18 @@ class CommittedLedgerTests(unittest.TestCase):
         summary = ledger["summary"]
         self.assertEqual(summary["records"], 145)
         self.assertEqual(summary["current_verdicts"],
-                         {"pass": 50, "pass-with-findings": 95})
-        self.assertEqual(summary["verdict_mismatches"], 42)
+                         {"pass": 56, "pass-with-findings": 89})
+        self.assertEqual(summary["verdict_mismatches"], 47)
         self.assertEqual(summary["re_reviewed"], 52)
         self.assertEqual(summary["re_review_with_separate_report"], 52)
         self.assertEqual(summary["re_review_without_separate_report"], 0)
         self.assertEqual(summary["report_reject_conflicts"], 6)
         self.assertEqual(summary["derived_states"]["needs-remediation-and-re-review"], 83)
         self.assertEqual(summary["derived_states"]["remediated-needs-re-review"], 6)
-        self.assertEqual(summary["derived_states"]["page-unverified-after-delta"], 6)
+        self.assertEqual(summary["derived_states"].get("page-unverified-after-delta", 0), 0)
         self.assertEqual(summary["derived_states"].get("residual-findings-after-re-review", 0), 0)
         self.assertEqual(summary["derived_states"].get("rejected-after-review", 0), 0)
-        self.assertEqual(summary["derived_states"]["promoted-after-remediation"], 46)
+        self.assertEqual(summary["derived_states"]["promoted-after-remediation"], 52)
         self.assertEqual(summary["report_name_matches"]["alias"], 1)
 
     def test_generation_is_deterministic(self):
