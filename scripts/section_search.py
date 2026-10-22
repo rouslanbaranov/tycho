@@ -233,9 +233,12 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
         db.close()
 
 
-def read(root, section_key, offset=0, budget_chars=2000, index_path=None):
+def read(root, section_key, offset=0, budget_chars=2000, index_path=None,
+         include_evidence=False):
     _require(isinstance(section_key, str) and section_key.strip(),
              "section_key must be a non-empty string")
+    _require(isinstance(include_evidence, bool),
+             "include_evidence must be boolean")
     _require(isinstance(offset, int) and offset >= 0,
              "offset must be a non-negative integer")
     _require(isinstance(budget_chars, int) and 1 <= budget_chars <= 5000,
@@ -264,7 +267,7 @@ def read(root, section_key, offset=0, budget_chars=2000, index_path=None):
         content = row["content"]
         _require(offset <= len(content), "offset is beyond the section length")
         end = min(len(content), offset + budget_chars)
-        return {
+        payload = {
             "status": "ok",
             "snapshot": manifest["snapshot_id"],
             "section_key": row["section_key"],
@@ -288,13 +291,43 @@ def read(root, section_key, offset=0, budget_chars=2000, index_path=None):
             "citation_scheme": CITATION_SCHEME,
             "content": content[offset:end],
         }
+        if include_evidence:
+            import section_evidence
+            payload["evidence"] = section_evidence.resolve_document(
+                section_evidence.build_store(), row["document_id"])
+        return payload
     finally:
         db.close()
 
 
+def evidence(root, document_id=None, claim_id=None, source_id=None,
+             index_path=None, expected_evidence_snapshot=None):
+    """Resolve evidence for a section-search result through the current index."""
+    provided = [value for value in (document_id, claim_id, source_id)
+                if value is not None]
+    _require(len(provided) == 1,
+             "provide exactly one of document_id, claim_id or source_id")
+    db, manifest = open_snapshot(root, index_path)
+    db.close()
+    import section_evidence
+    store = section_evidence.build_store()
+    if document_id is not None:
+        payload = section_evidence.resolve_document(
+            store, document_id, expected_evidence_snapshot)
+    elif claim_id is not None:
+        payload = section_evidence.resolve_claim(
+            store, claim_id, expected_evidence_snapshot)
+    else:
+        payload = section_evidence.resolve_source(
+            store, source_id, expected_evidence_snapshot)
+    payload["search_snapshot"] = manifest["snapshot_id"]
+    payload["search_route_snapshot"] = manifest["route_snapshot_sha256"]
+    return payload
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("action", choices=("search", "read"))
+    ap.add_argument("action", choices=("search", "read", "evidence"))
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--index", type=Path)
     ap.add_argument("--query")
@@ -308,6 +341,11 @@ def main(argv=None):
     ap.add_argument("--id")
     ap.add_argument("--offset", type=int, default=0)
     ap.add_argument("--budget-chars", type=int, default=2000)
+    ap.add_argument("--include-evidence", action="store_true")
+    ap.add_argument("--document")
+    ap.add_argument("--claim")
+    ap.add_argument("--source")
+    ap.add_argument("--expected-evidence-snapshot")
     args = ap.parse_args(argv)
     try:
         if args.action == "search":
@@ -316,13 +354,19 @@ def main(argv=None):
                 topic=args.topic, evidence_status=args.evidence_status,
                 path_prefix=args.path_prefix, index_path=args.index,
                 all_sections=args.all_sections)
-        else:
+        elif args.action == "read":
             payload = read(
                 args.root, args.id or "", offset=args.offset,
-                budget_chars=args.budget_chars, index_path=args.index)
-    except SearchError as exc:
-        print(json.dumps({"status": exc.status, "error": str(exc)},
-                         sort_keys=True))
+                budget_chars=args.budget_chars, index_path=args.index,
+                include_evidence=args.include_evidence)
+        else:
+            payload = evidence(
+                args.root, document_id=args.document, claim_id=args.claim,
+                source_id=args.source, index_path=args.index,
+                expected_evidence_snapshot=args.expected_evidence_snapshot)
+    except ValueError as exc:
+        print(json.dumps({"status": getattr(exc, "status", "invalid-request"),
+                          "error": str(exc)}, sort_keys=True))
         return 1
     print(json.dumps(payload, sort_keys=True))
     return 0
