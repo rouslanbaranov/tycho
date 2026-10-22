@@ -84,6 +84,24 @@ A no-result answer is not treated as a miss for answerable items; it is reported
 The evaluator uses limit 10 by default and refuses a run when the search snapshot changes
 between questions.
 
+## Local diagnostic baseline — 2026-10-22
+
+The 50-item set was run once on the #50 search branch against index snapshot
+`448b35fef9e7bcea60d59c775c6390e74f1271ffa4f89363dd834f716c86bbaf`. The #298 branch
+alone cannot reproduce this until #50 merges.
+
+| Scope | hit@1 | hit@3 | hit@5 | MRR |
+|---|---:|---:|---:|---:|
+| page | 0.347 | 0.612 | 0.694 | 0.505 |
+| chapter | 0.510 | 0.755 | 0.857 | 0.655 |
+| section | 0.347 | 0.612 | 0.694 | 0.505 |
+
+nDCG@10 was 0.465 over 49 answerable items. On the dev split (25 items, the only split used
+to identify weak areas) page hit@5 by category was: fact 0.800, synthesis 0.750, failure
+0.714, change impact 0.667, trade-off 0.500, contradiction 0.500. The single unanswerable
+item returned results, so refusal is not measured. These are diagnostics on author-labelled
+items, not thresholds, acceptance results or confidence claims.
+
 ## Operation
 
 ~~~sh
