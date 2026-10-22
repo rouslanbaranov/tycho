@@ -14,10 +14,10 @@ status, paths, source hashes and coverage. It does not create frontmatter, fetch
 enrich prose, run embeddings, build a graph or expose MCP.
 
 The canonical book remains authoritative. The index is a disposable generated artifact at
-`generated/sections-fts-v2.sqlite`; it is excluded by [.gitignore](../.gitignore) and can
+`generated/sections-fts-v3.sqlite`; it is excluded by [.gitignore](../.gitignore) and can
 always be rebuilt from the pinned book tree. Rebuilding never rewrites the book.
 
-## Section model v2
+## Section model
 
 - Every page has one `overview` section: everything after the frontmatter and before the
   first level-2 heading, including the level-1 title and page introduction.
@@ -31,7 +31,7 @@ always be rebuilt from the pinned book tree. Rebuilding never rewrites the book.
 
 Known limits: implicit heading slugs are not stable across heading edits; renaming a
 heading changes its `section_id` and therefore its citation. Level-3 anchors are not
-separately addressable in v2. A future version may add explicit anchors or redirects; the
+separately addressable in this format. A future version may add explicit anchors or redirects; the
 snapshot identifier prevents silently reusing stale references.
 
 ## Published tables
@@ -41,7 +41,7 @@ snapshot identifier prevents silently reusing stale references.
 - `sections`: IDs, path, heading and level, title, kind, evidence status, exact content,
   codepoint offsets and document SHA.
 - `section_topics`: one row per section and topic, used for exact topic filters.
-- `fts`: `section_key` unindexed, plus `title`, `heading` and `body` with `unicode61`.
+- `fts`: `section_key` unindexed, plus `title`, `heading` and `body` with `porter unicode61`.
   BM25 field weights are title 4, heading 3, body 1. For a level-2 section the body
   excludes the heading line, so heading terms are not counted twice.
 
@@ -77,11 +77,11 @@ weighted-BM25 feature probe, and fails closed if that profile is missing.
 |---|---|
 | Canonical documents | 423, coverage complete, 0 unannotated |
 | Sections | 2,753 (423 overviews plus 2,330 level-2 sections) |
-| Snapshot ID | `ebd7cae56659889b81d387b36d9337c0620710ef1a78fdc20cc567e6f8e91739` |
-| Index file size | 12,922,880 bytes |
-| Full build | 1.2 s |
-| Deep check | 1.2 s |
-| Unchanged incremental build | 2.2 s, 423 documents reused |
+| Snapshot ID | `448b35fef9e7bcea60d59c775c6390e74f1271ffa4f89363dd834f716c86bbaf` |
+| Index file size | 12,787,712 bytes |
+| Full build | 1.4 s |
+| Deep check | 1.3 s |
+| Unchanged incremental build | 2.3 s, 423 documents reused |
 | Runtime | Python 3.9.6, SQLite 3.54.0, local checkout |
 
 These are single-machine observations on a warm checkout, not a benchmark, capacity

@@ -5,7 +5,7 @@ Uses the existing route_index.canonical_scan as the authority on document IDs,
 metadata, source SHA and coverage. Never edits book/frontmatter, checks remote
 sources, enriches text, modifies another index or triggers workflows.
 
-Section model v2: one page overview plus every level-2 heading. Level-3 and
+Section model: one page overview plus every level-2 heading. Level-3 and
 deeper headings stay inside the owning level-2 section and remain searchable
 text, but are not separate citable sections in this format.
 
@@ -25,9 +25,9 @@ import tempfile
 import route_index
 
 ROOT = Path(__file__).resolve().parents[1]
-INDEX_NAME = "sections-fts-v2.sqlite"
-VERSION = 2
-SECTION_MODEL = "overview+h2; unicode61; bm25 title=4 heading=3 body=1"
+INDEX_NAME = "sections-fts-v3.sqlite"
+VERSION = 3
+SECTION_MODEL = "overview+h2; porter unicode61; bm25 title=4 heading=3 body=1"
 HEAD = re.compile(r"^ {0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$")
 ANCHOR = re.compile(r"\s*\{#([a-z][a-z0-9_-]*)\}\s*$")
 FENCE = re.compile(r"^ {0,3}(\x60{3,}|~{3,})")
@@ -279,7 +279,8 @@ def require_fts5():
     try:
         with sqlite3.connect(":memory:") as db:
             db.execute("CREATE VIRTUAL TABLE probe USING fts5("
-                       "key UNINDEXED,title,heading,body,tokenize='unicode61')")
+                       "key UNINDEXED,title,heading,body,"
+                       "tokenize='porter unicode61')")
             db.execute("INSERT INTO probe VALUES(?,?,?,?)",
                        ("probe", "Architecture", "Retrieval", "bounded latency"))
             hit = db.execute(
@@ -326,7 +327,7 @@ def write_index(target, manifest, sections, topics):
             try:
                 db.execute(
                     "CREATE VIRTUAL TABLE fts USING fts5(section_key UNINDEXED,"
-                    "title,heading,body,tokenize='unicode61')")
+                    "title,heading,body,tokenize='porter unicode61')")
             except sqlite3.OperationalError as exc:
                 raise ValueError("SQLite build lacks FTS5 support") from exc
             rows = [tuple(section[k] for k in SECTION_COLUMNS)
