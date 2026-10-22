@@ -111,11 +111,11 @@ from consumer identity, event identity and effect scope; validate that all three
 well formed. A duplicate key with a different payload digest is a collision: reject or quarantine it
 rather than overwriting the marker. Retain the marker at least for the redelivery horizon, assign a
 cleanup owner, and after expiry reject or route the redelivery to reconciliation instead of applying
-it silently. However,
-marking an event processed **before** making a separate external effect can lose the effect if the
-process crashes; marking it processed **after** can duplicate that external effect. The consumer
-must reason about the external capability's own idempotency/reconciliation boundary.
+it silently. A marker written before a separate external effect can lose it on crash; a marker written after
+can duplicate it. The consumer must use the external capability's idempotency/reconciliation
+boundary.
 
 A business-key upsert, a conditional write or the downstream API's idempotency key may be preferable
 when no local processed-message table is available. An idempotent receiver is a fit when the
 consumer owns a local transaction and can retain the dedup record for the redelivery horizon.
+

@@ -221,18 +221,18 @@ reply must be distinguishable from a slow one, and the requester needs idempoten
 
 ### Dead Letter Channel-DLQ
 
-A dead-letter channel routes a message that exceeds its retry or age policy to a quarantine queue,
-preserving payload, headers and failure reason. The DLQ is a policy state, not a second work queue
+A quarantine queue receives a message after its retry or age policy is exhausted, retaining
+payload, headers and failure context. The DLQ is a policy state, not a second work queue
 that silently retries forever.
 
-An invalid schema or permanently rejected target is not repaired by retrying forever. Classify
-transient, permanent and unknown outcomes; cap attempts and total age; preserve enough evidence in
-quarantine to diagnose without leaking payloads. The DLQ needs an owner, an alert threshold, a
+Retrying cannot repair an invalid schema or a permanently rejected target. Separate transient, permanent and unknown outcomes; bound attempts and age; keep diagnostic
+evidence without leaking payload. The DLQ needs an owner, an alert threshold, a
 retention horizon, a capacity limit, an access policy and a cleanup owner. A replay procedure
 preserves the original effect identity, reauthorizes the action and checks whether the effect was
 already committed before republishing; a blind replay is a duplicate-effect risk.
 
-Retrying with backoff, dropping with an audit record, or parking the work in a repair table/outbox
-may be preferable when the failure is deterministic or the broker cannot retain evidence safely. A
+When failure is deterministic or evidence cannot be retained safely, prefer bounded retry with
+audit, drop with a record, or a repair table/outbox. A
 DLQ is a fit when the failure is inspectable and a human or repair job can decide the terminal
 outcome.
+

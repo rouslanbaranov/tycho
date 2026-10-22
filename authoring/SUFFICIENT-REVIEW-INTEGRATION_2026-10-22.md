@@ -73,12 +73,15 @@ Resolved metadata findings:
 - **F-012/F-013 (PWF card alignment):** Negative Caching uses the owner-supported bypass/
   per-principal-key/short-TTL alternative; Process Manager states the routing-slip source
   boundary. Verdicts stay `pass-with-findings` pending re-review.
+- **F-015 (duplication):** removed the identified earlier-page repeats from DLQ, Durable
+  Subscriber, Feature Flags, Graceful Degradation and Idempotent Receiver; owner-unit quotes
+  and terms now match the rewritten text.
 
 Open findings:
 
 - **Blocking:** none open. F-003–F-005 are remediated but still require re-review before
   any verdict change.
-- **Major:** F-015 duplication.
+- **Major:** none open; all F-001–F-022 findings are resolved or remediated, pending re-review.
 - **Minor:** none open; F-008, F-014 and F-016–F-022 are resolved or remediated.
 
 No page, card or `sufficient` state was changed by this integration. The delivery-evidence

@@ -178,7 +178,7 @@ Graceful degradation removes optional features or reduces quality to protect an 
 under overload. It must declare which outcomes stay mandatory, which become unavailable and how
 callers observe the reduced state.
 
-Hidden degradation that silently drops correctness is worse than an explicit failure. Each mode
+Silent loss of correctness is worse than an explicit failure. Each mode
 needs an entry condition, a visible status, an owner and an audited override for emergency use.
 Recovery needs hysteresis: remain degraded
 until the trigger metric stays below threshold for a sustained window, then restore normal service

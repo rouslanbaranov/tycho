@@ -2162,31 +2162,31 @@
         "line": 222,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "dead-letter channel",
+          "quarantine queue",
           "invalid schema",
-          "Classify transient",
-          "Retrying with backoff"
+          "Separate transient",
+          "bounded retry"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A dead-letter channel routes a message that exceeds its retry or age policy to a quarantine queue, preserving payload, headers and failure reason.",
+          "quote": "A quarantine queue receives a message after its retry or age policy is exhausted, retaining payload, headers and failure context.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
-          "quote": "An invalid schema or permanently rejected target is not repaired by retrying forever.",
+          "quote": "Retrying cannot repair an invalid schema or a permanently rejected target.",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Classify transient, permanent and unknown outcomes; cap attempts and total age; preserve enough evidence in quarantine to diagnose without leaking payloads.",
+          "quote": "Separate transient, permanent and unknown outcomes; bound attempts and age; keep diagnostic evidence without leaking payload.",
           "reason": ""
         },
         "alternative": {
           "state": "supported",
-          "quote": "Retrying with backoff, dropping with an audit record, or parking the work in a repair table/outbox may be preferable when the failure is deterministic or the broker cannot retain evidence safely.",
+          "quote": "When failure is deterministic or evidence cannot be retained safely, prefer bounded retry with audit, drop with a record, or a repair table/outbox.",
           "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
@@ -2223,7 +2223,7 @@
         "unit_kind": "dedicated",
         "unit_terms": [
           "server-side cursor",
-          "Retention",
+          "resume",
           "at-least-once",
           "ephemeral"
         ]
@@ -2231,22 +2231,22 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A durable subscriber keeps a server-side cursor and retained messages for an offline consumer, so delivery can resume after disconnect.",
+          "quote": "A server-side cursor plus retained messages lets an offline consumer resume after reconnect.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
-          "quote": "The page describes Core as at-most-once and JetStream's ordinary redelivery as at-least-once, under their respective configurations.",
+          "quote": "Core is at-most-once; ordinary JetStream redelivery is at-least-once under its configuration.",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Retention, acknowledgement timeout and replay policy determine whether that resume is bounded.",
+          "quote": "Resume is bounded only by retention, acknowledgement timeout and replay policy.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A fictional notification can use ephemeral pub/sub if losing a signal when no subscriber is listening is acceptable. A durable business task should not casually use Core alone if clients require recoverable delivery; a JetStream durable consumer or another persisted queue may better match that requirement.",
+          "quote": "Ephemeral pub/sub fits a notification whose loss while offline is acceptable. A recoverable business task needs a JetStream durable consumer or another persisted queue, not Core alone.",
           "reason": ""
         }
       },
@@ -2284,7 +2284,7 @@
         "unit_terms": [
           "processed message IDs",
           "Atomic (consumer",
-          "marking an event processed",
+          "marker written before",
           "business-key upsert"
         ]
       },
@@ -2301,7 +2301,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "However, marking an event processed **before** making a separate external effect can lose the effect if the process crashes; marking it processed **after** can duplicate that external effect. The consumer must reason about the external capability's own idempotency/reconciliation boundary.",
+          "quote": "A marker written before a separate external effect can lose it on crash; a marker written after can duplicate it. The consumer must use the external capability's idempotency/reconciliation boundary.",
           "reason": "Describes crash windows and the external reconciliation boundary."
         },
         "alternative": {
@@ -2459,7 +2459,7 @@
         "heading": "Message Broker-Messaging Bridge",
         "anchor": "message-broker-messaging-bridge",
         "level": 3,
-        "line": 364,
+        "line": 359,
         "unit_kind": "dedicated",
         "unit_terms": [
           "routes, stores",
@@ -5436,7 +5436,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Hidden degradation that silently drops correctness is worse than an explicit failure.",
+          "quote": "Silent loss of correctness is worse than an explicit failure.",
           "reason": "Names the failure mode and required response."
         },
         "alternative": {
@@ -7279,12 +7279,12 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A flag decouples deployment from exposure by evaluating a versioned value at request time, scoped by tenant, user or cohort, with a documented default and kill switch.",
+          "quote": "A runtime, versioned value scoped by tenant, user or cohort separates exposure from deployment, with a default and kill switch.",
           "reason": "Defines the flag mechanism."
         },
         "invariant": {
           "state": "supported",
-          "quote": "A flag is also not a substitute for an authorization check.",
+          "quote": "Flags never replace an authorization check.",
           "reason": "Explicit safety rule separating flags from authorization."
         },
         "failure_recovery": {
@@ -7294,7 +7294,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A canary or branch-by-abstraction may be preferable when the flag would become a permanent configuration surface.",
+          "quote": "A canary or branch-by-abstraction is preferable when the toggle would become permanent configuration.",
           "reason": "Names the alternative and reversal."
         }
       },

@@ -30,9 +30,9 @@ This set introduces three missing properties:
 | [test_tycho_qrels.py](../tests/test_tycho_qrels.py) | Offline validation and metric tests. |
 
 The dataset is pinned to route snapshot
-`ff565f712a0d4cafba87c0b1ad20d95c41208fb7fe60210f2f1ec2707997cbe8` (423 documents).
-Earlier pins were replaced after source remediations, V11 label fixes, owner-page hygiene
-and PWF card alignment; no accepted answer pointed at a V11 page.
+`f5921b364492bdba3240db244cf35d9527b938dbaf1feb9d0efd2fe62d359046` (423 documents).
+Earlier pins were replaced after source remediations, V11 label fixes, owner-page hygiene,
+PWF card alignment and duplication cleanup; no accepted answer pointed at a V11 page.
 
 ## How labels were constructed
 
@@ -103,10 +103,10 @@ nDCG@10 was 0.558 over 95 answerable items. Dev page hit@5 was 0.740 and chapter
 failure 0.800, fact 0.900, change impact 0.857, synthesis 0.667, contradiction 0.600,
 trade-off 0.556. All five unanswerable items returned results, so refusal is not measured.
 
-Re-pin 2026-10-22: the source remediations, V11 label fixes, owner-page hygiene and PWF
-card alignment moved the route snapshot to
-`ff565f712a0d4cafba87c0b1ad20d95c41208fb7fe60210f2f1ec2707997cbe8` and the section
-snapshot to `e1ee2ccc15a7…`; the 100-item metrics above are unchanged.
+Re-pin 2026-10-22: the source remediations, V11 label fixes, owner-page hygiene, PWF
+card alignment and duplication cleanup moved the route snapshot to
+`f5921b364492bdba3240db244cf35d9527b938dbaf1feb9d0efd2fe62d359046` and the section
+snapshot to `65faf4fe8566…`; metrics remain within rounding (nDCG@10 0.5577).
 
 ## Provisional acceptance thresholds
 
