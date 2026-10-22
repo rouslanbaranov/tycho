@@ -174,17 +174,18 @@ source claim.
 
 ### Process Manager-Routing Slip
 
-A process manager records workflow progress and decides which step runs next, while a routing slip
-carries the remaining itinerary with the message. The durable progress record must be updated before
-the next step is dispatched, so a crash cannot repeat or skip a step without detection.
+A process manager keeps a central workflow state machine and decides the next step; a routing slip
+carries the remaining itinerary with the message, so each participant advances a local cursor. The
+two variants place the progress record differently and must not be conflated.
 
-A lost dispatch or duplicate step leaves the workflow stuck or with a duplicated effect; idempotent
-steps, a recorded state and a reconciliation query are required. Event choreography removes the
-central coordinator but hides the overall protocol; prefer a process manager when steps need
-explicit compensation and visibility.
+The invariant is a recorded dispatch intent, not merely a progress row: update state and enqueue the
+next command in one local transaction, or the same outbox. A crash between the two can otherwise
+skip a step. A lost dispatch or duplicate step leaves the workflow stuck or duplicated; idempotent
+steps, a recorded state and a reconciliation query are required.
 
-**Limits.** The coordinator durable store, dispatch outbox and versioning are costs; a crash
-between state update and dispatch needs a recorded intent, not a second scheduler.
+Event choreography removes the central coordinator but hides the overall protocol. A routing slip
+is simpler when the itinerary is fixed and each hop can forward it; a process manager is preferable
+when steps need explicit compensation, timers or visibility.
 
 ### Saga
 

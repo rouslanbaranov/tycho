@@ -2576,31 +2576,31 @@
         "line": 175,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Process Manager-Routing Slip",
+          "process manager",
           "routing slip",
-          "durable progress",
-          "compensation"
+          "recorded dispatch intent",
+          "reconciliation query"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A process manager records workflow progress and decides which step runs next, while a routing slip carries the remaining itinerary with the message.",
+          "quote": "A process manager keeps a central workflow state machine and decides the next step",
           "reason": ""
         },
         "invariant": {
           "state": "supported",
-          "quote": "The durable progress record must be updated before the next step is dispatched, so a crash cannot repeat or skip a step without detection.",
+          "quote": "The invariant is a recorded dispatch intent, not merely a progress row",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A lost dispatch or duplicate step leaves the workflow stuck or with a duplicated effect; idempotent steps, a recorded state and a reconciliation query are required.",
+          "quote": "A lost dispatch or duplicate step leaves the workflow stuck or duplicated",
           "reason": ""
         },
         "alternative": {
           "state": "supported",
-          "quote": "Event choreography removes the central coordinator but hides the overall protocol; prefer a process manager when steps need explicit compensation and visibility.",
+          "quote": "A routing slip is simpler when the itinerary is fixed and each hop can forward it",
           "reason": ""
         }
       },
@@ -2813,7 +2813,7 @@
         "heading": "Saga",
         "anchor": "saga",
         "level": 3,
-        "line": 189,
+        "line": 190,
         "unit_kind": "dedicated",
         "unit_terms": [
           "local transactions",
@@ -2873,7 +2873,7 @@
         "heading": "Saga Choreography",
         "anchor": "saga-choreography",
         "level": 3,
-        "line": 204,
+        "line": 205,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Each owner subscribes",
@@ -2933,7 +2933,7 @@
         "heading": "Saga Orchestration",
         "anchor": "saga-orchestration",
         "level": 3,
-        "line": 219,
+        "line": 220,
         "unit_kind": "dedicated",
         "unit_terms": [
           "coordinator persists",
@@ -2993,7 +2993,7 @@
         "heading": "Compensating Transaction",
         "anchor": "compensating-transaction",
         "level": 3,
-        "line": 235,
+        "line": 236,
         "unit_kind": "dedicated",
         "unit_terms": [
           "new business action",
@@ -3056,16 +3056,16 @@
         "line": 127,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Commit the authoritative",
-          "outbox gives durable intent",
-          "relay can crash",
-          "Snapshot/log-based CDC"
+          "publication-intent row",
+          "durable intent",
+          "relay attempts",
+          "terminal quarantine"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Commit the authoritative state change and a publication-intent row in one local transaction.",
+          "quote": "An outbox commits the authoritative state change and a publication-intent row in one local transaction.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
@@ -3075,12 +3075,12 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A relay can crash after publish but before checkpoint, causing a duplicate; after commit but before publish, causing a retry; a poison row can block progress.",
+          "quote": "A relay can crash after publish but before checkpoint, causing a duplicate",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Snapshot/log-based CDC, transactional messaging, or direct publish with reconciliation may be preferable when the outbox table or relay is not operationally justified.",
+          "quote": "Use an outbox when the lost/duplicate publication risk justifies relay complexity.",
           "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
@@ -4697,7 +4697,7 @@
         "heading": "Index Table",
         "anchor": "index-table",
         "level": 3,
-        "line": 102,
+        "line": 103,
         "unit_kind": "dedicated",
         "unit_terms": [
           "application-owned lookup table",
@@ -6430,7 +6430,7 @@
         "heading": "Distributed Workflow Orchestration",
         "anchor": "distributed-workflow-orchestration",
         "level": 3,
-        "line": 142,
+        "line": 143,
         "unit_kind": "dedicated",
         "unit_terms": [
           "persistent state machine",

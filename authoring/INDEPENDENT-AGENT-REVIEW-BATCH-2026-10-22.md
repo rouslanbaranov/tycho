@@ -996,3 +996,14 @@ Verdict: **pass**. Findings: 0. The split mitigation table is repaired and the c
 
 Verdict: **pass**. Findings: 0. The alternative now maps microservices to independent product teams and the modular monolith to one ownership boundary; mediation, registry, bus bottleneck and observability are present.
 
+
+## Fifth re-review after remediation
+
+### Priority Queue
+
+Verdict: **pass-with-findings**. One remaining finding: near-verbatim reuse of section 3.
+
+### Index Table
+
+Verdict: **pass-with-findings**. Latest review flagged a native-index paragraph mislabeled as the index-table mechanism and a long line; both were scoped/wrapped, re-review pending.
+

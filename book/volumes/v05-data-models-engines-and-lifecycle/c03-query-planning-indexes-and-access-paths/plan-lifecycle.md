@@ -85,9 +85,10 @@ Adding an index may change:
 
 For high write demand, an index improving one query by a few milliseconds can be a net loss if it increases every update or checkpoint cost. Keep the unit of value as correct completed user operations across the whole workload.
 
-**Index-table mechanism.** A secondary index maps a search key to a row locator and is
-maintained on base-table writes; the planner chooses it when estimated selectivity and cost
-favor it. The index is derived state, not an independent source of truth.
+**Native secondary-index mechanism.** A native secondary index maps a search key to a row
+locator and is maintained on base-table writes; the planner chooses it when estimated
+selectivity and cost favor it. It is the competing native mechanism, not the application-owned
+lookup table defined below.
 
 **Invariant and failure.** Every index entry must remain consistent with the base row, and
 its write/backup/maintenance cost belongs to the workload budget. Bloat, failed concurrent
@@ -112,8 +113,8 @@ are common. Reconcile with a repair job, keep
 the lookup key immutable and bound rebuild time.
 
 A native secondary index, a materialized view or a query-time join may be preferable when the
-primary store already serves the access path. An index table is a fit when the primary store cannot serve a stable,
-frequently used lookup and the write path can own its repair.
+primary store already serves the access path. An index table is a fit when the primary store
+cannot serve a stable, frequently used lookup and the write path can own its repair.
 
 ## Navigation, prerequisites and source scope
 
