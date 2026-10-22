@@ -101,3 +101,20 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Coexistence, unknown outcomes and adapter retirement](coexistence-retirement.md) — How is a lost acknowledgment reconciled before old contracts are retired?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+## Bounded pattern ownership notes
+
+### Anti-Corruption Layer
+
+An anti-corruption layer translates between an external model and the local domain without letting
+the external vocabulary become the local authority. It owns mapping, validation and the explicit
+rejection of meanings that do not translate.
+
+Mapping ACTIVE directly to AVAILABLE implies stock and allocation guarantees the old system never
+made. The anti-corruption adapter must preserve or explicitly reject that uncertainty. The adapter
+cannot unilaterally roll back R7, nor should it hide the ambiguous outcome behind repeated writes. It
+must retain the cross-system correlation and resolve the result from authority before answering with
+success or a classified pending/unknown status.
+
+A direct adapter or a shared contract may be preferable when the semantics are genuinely identical
+and the external model is stable. An ACL is a fit when the external model is lossy or changes on a
+different cadence; otherwise it adds a translation layer without protecting a real invariant.

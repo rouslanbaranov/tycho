@@ -524,3 +524,23 @@ the validators still require a separate policy change.
     - File: `multi-store-selection.md`
     - Heading: `Polyglot Persistence`; 139 words
     - SHA-256: `f60030288c218bf6175c16a1238f54574ce6f1f40e0f9c51aae9dea2a7152c6e`
+
+102. **Modular Monolith** — `tycho.pattern.modular-monolith`
+    - File: `modular-monolith-and-internal-events.md`
+    - Heading: `Modular Monolith`; 120 words
+    - SHA-256: `a54eacbfd845ca4dc142ef5e002cf7939bbecd6dca958210473291f9c46136dc`
+
+103. **Domain-Driven Design / Bounded Context** — `tycho.pattern.domain-driven-design-bounded-context`
+    - File: `domain-authority.md`
+    - Heading: `Domain-Driven Design / Bounded Context`; 135 words
+    - SHA-256: `82d8aab2c7a84c41aa11a0495fc2efb3ef49dfdc2a2e5d6fc6b439b23b5972a8`
+
+104. **Anti-Corruption Layer** — `tycho.pattern.anti-corruption-layer`
+    - File: `anti-corruption-adapters-and-coexistence.md`
+    - Heading: `Anti-Corruption Layer`; 148 words
+    - SHA-256: `e47be7ccd0b5950542264e20cee2e814c461d1ac672ea40fd4c6f3fb544dd420`
+
+105. **Gateway Routing** — `tycho.pattern.gateway-routing`
+    - File: `routing-and-health.md`
+    - Heading: `Gateway Routing`; 132 words
+    - SHA-256: `6f798e7796c556cfd1458b8ec2200ad113a0d74d033708740d3d61f7a2376f1a`

@@ -83,16 +83,16 @@
       "owner": {
         "document_id": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf",
         "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
-        "heading": "Purpose and mission",
-        "anchor": "purpose-and-mission",
-        "level": 2,
-        "line": 64,
-        "unit_kind": "embedded",
+        "heading": "Modular Monolith",
+        "anchor": "modular-monolith",
+        "level": 3,
+        "line": 121,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "single deployable",
-          "explicitly enforced modules",
-          "which module owns each rule, data object and contract",
-          "local consistency"
+          "Modules own",
+          "internal interfaces",
+          "Hidden cross-module",
+          "Microservices"
         ]
       },
       "technical_evidence": {
@@ -380,16 +380,16 @@
       "owner": {
         "document_id": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238",
         "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md",
-        "heading": "1. Model behaviors and invariants before drawing ownership boxes",
-        "anchor": "1-model-behaviors-and-invariants-before-drawing-ownership-boxes",
-        "level": 2,
-        "line": 51,
-        "unit_kind": "embedded",
+        "heading": "Domain-Driven Design / Bounded Context",
+        "anchor": "domain-driven-design-bounded-context",
+        "level": 3,
+        "line": 126,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "shared word \"item\"",
-          "four contexts",
-          "business rules can be stated separately",
-          "Authoritative responsibility"
+          "bounded context",
+          "shared word",
+          "boundary is weak",
+          "modular application"
         ]
       },
       "technical_evidence": {
@@ -404,14 +404,14 @@
           "reason": "States boundary validity constraints: separable business rules and bounded transactions."
         },
         "failure_recovery": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No failure or recovery treatment in this unit; the ambiguity table is in section 3."
+          "state": "supported",
+          "quote": "A boundary can rot through shared tables, a common entity reused across contexts or a workflow that writes two owners' state; detect those paths and assign one authority per invariant.",
+          "reason": "Names boundary erosion and the required authority assignment."
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Nor must four contexts become four microservices: a modular application could implement them with explicit in-process interfaces and one deployable.",
-          "reason": "Names a modular alternative to four microservices but gives no condition that reverses the choice."
+          "reason": "Names the modular alternative and reversal."
         }
       },
       "decision_evidence": {
@@ -671,16 +671,16 @@
       "owner": {
         "document_id": "tycho.page.31c8e450f78c451d90cb6090df330c5a",
         "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md",
-        "heading": "Engineering walkthrough — Lossy translation behind a seemingly compatible API",
-        "anchor": "engineering-walkthrough-lossy-translation-behind-a-seemingly-compatible-api",
-        "level": 2,
-        "line": 75,
-        "unit_kind": "embedded",
+        "heading": "Anti-Corruption Layer",
+        "anchor": "anti-corruption-layer",
+        "level": 3,
+        "line": 106,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "anti-corruption adapter",
-          "Lossy translation",
-          "Safe semantic disposition",
-          "cross-system correlation"
+          "anti-corruption layer",
+          "ACTIVE directly",
+          "preserve or explicitly reject",
+          "direct adapter"
         ]
       },
       "technical_evidence": {
@@ -700,9 +700,9 @@
           "reason": "Describes lost-response ambiguity and recovery via correlation then authority resolution."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "The retirement sequence and forbidden transformations are not a competing mechanism with a reversal condition."
+          "state": "supported",
+          "quote": "A direct adapter or a shared contract may be preferable when the semantics are genuinely identical and the external model is stable.",
+          "reason": "Names direct/shared contract and the reversal."
         }
       },
       "decision_evidence": {
@@ -791,16 +791,16 @@
       "owner": {
         "document_id": "tycho.page.07904f22ca8249069cedc8c2e1140630",
         "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
-        "heading": "The routing contract",
-        "anchor": "the-routing-contract",
-        "level": 2,
-        "line": 75,
-        "unit_kind": "embedded",
+        "heading": "Gateway Routing",
+        "anchor": "gateway-routing",
+        "level": 3,
+        "line": 132,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "route to an eligible instance",
-          "externally resolved name",
-          "service membership view",
-          "backend selected for each request"
+          "gateway matches",
+          "Describe separately",
+          "Stale routes",
+          "reverse proxy"
         ]
       },
       "technical_evidence": {
@@ -9039,10 +9039,10 @@
         "tycho.pattern.health-endpoint-monitoring"
       ],
       "unit_count": 2,
-      "dedicated_units": 1,
+      "dedicated_units": 2,
       "bounded_entries": 2,
-      "decision": "keep",
-      "rationale": "Gateway routing and health signals have distinct bounded units on the new routing page."
+      "decision": "deepen",
+      "rationale": "Gateway routing and health endpoint monitoring now have separate dedicated units."
     },
     {
       "document_id": "tycho.page.99c509e133d9494fbb3080b6212b7ba7",
@@ -9095,12 +9095,12 @@
     "owner_pages": 69,
     "shared_pages": 33,
     "owner_units": 137,
-    "dedicated_units": 103,
-    "embedded_units": 34,
+    "dedicated_units": 107,
+    "embedded_units": 30,
     "mechanism_supported": 145,
     "invariant_supported": 145,
-    "failure_recovery_supported": 134,
-    "alternative_supported": 134,
+    "failure_recovery_supported": 135,
+    "alternative_supported": 136,
     "technical_partial_bounded": 145,
     "technical_partial": 0,
     "technical_name_only": 0,
@@ -9112,8 +9112,8 @@
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
-      "keep": 17,
-      "deepen": 16,
+      "keep": 16,
+      "deepen": 17,
       "split": 0
     },
     "split_deferred": 0

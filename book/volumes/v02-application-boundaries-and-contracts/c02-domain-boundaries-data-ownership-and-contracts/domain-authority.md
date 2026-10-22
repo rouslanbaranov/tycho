@@ -121,3 +121,19 @@ A translation that cannot preserve a required semantic fact must reject or degra
 | Integrated question | [Original scenario and limits](domain-boundaries-data-ownership-and-contracts.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+## Bounded pattern ownership notes
+
+### Domain-Driven Design / Bounded Context
+
+A bounded context is a boundary within which one model and its ubiquitous language stay
+consistent. A shared word "item" should not force a database schema shared by all four contexts.
+Each context owns its terms, invariants and release cadence.
+
+A boundary is weak if none of its business rules can be stated separately. It is overextended if
+unrelated decisions must share transactions simply because they live behind one URL. A boundary can
+rot through shared tables, a common entity reused across contexts or a workflow that writes two
+owners' state; detect those paths and assign one authority per invariant.
+
+Nor must four contexts become four microservices: a modular application could implement them with
+explicit in-process interfaces and one deployable. Choose deployment boundaries from ownership and
+failure containment, not from the number of model names.

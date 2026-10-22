@@ -143,7 +143,7 @@ shared data, synchronous call chains and one deployment blast radius. Recovery s
 with explicit module ownership, contract tests and a rollback path; event durability
 and transaction semantics must be verified in the technical owner.
 
-**Technical owner.** [Modular monolith architecture and internal domain events](../../v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md#purpose-and-mission).
+**Technical owner.** [Modular Monolith](../../v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md#modular-monolith).
 
 **Sources.** [src.monolith-first](../../../../edition/patterns/reading-ledger.v1.json)
 read record `read.monolith-first.2026-10-21`: Monolith First, sections "Monolith
@@ -331,7 +331,7 @@ turning a context map into a mandatory graph, and drawing boundaries around team
 rather than business meaning. Recovery starts by revisiting model behavior, ownership
 and translation cost in the technical owner.
 
-**Technical owner.** [Domain semantics and authoritative ownership](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md#1-model-behaviors-and-invariants-before-drawing-ownership-boxes).
+**Technical owner.** [Domain-Driven Design / Bounded Context](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md#domain-driven-design-bounded-context).
 
 **Sources.**
 [src.fowler-bounded-context](../../../../edition/patterns/reading-ledger.v1.json)
@@ -516,7 +516,7 @@ becomes a permanent duplicate domain.
 main failure modes. Recovery requires contract tests, versioned mappings and an
 explicit cutover path; verify those mechanics in the technical owner.
 
-**Technical owner.** [Anti-corruption adapters: semantic translation and safe coexistence](../../v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md#engineering-walkthrough-lossy-translation-behind-a-seemingly-compatible-api).
+**Technical owner.** [Anti-Corruption Layer](../../v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md#anti-corruption-layer).
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)

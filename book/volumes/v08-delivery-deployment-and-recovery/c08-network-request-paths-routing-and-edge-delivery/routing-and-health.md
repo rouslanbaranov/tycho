@@ -127,6 +127,23 @@ load. Keep liveness/readiness cheap and internal; protect detailed diagnostics s
 | Shared dependency failure | Do not turn one dependency fault into fleet-wide ejection | Instance-local versus shared probe failures |
 | Cached healthy answer | Bound probe age and drain before removal | Traffic to a draining instance after readiness changes |
 
+## Bounded pattern ownership notes
+
+### Gateway Routing
+
+A gateway matches request attributes to a declared route and backend, then applies its policy. The
+route is a contract about host, path, headers, method and backend identity, not a wildcard that
+silently absorbs every new path.
+
+Describe separately the externally resolved name, the service membership view, the connection
+destination and the backend selected for each request. Stale routes, ambiguous matches and bypass
+around the gateway are common. Test the bypass path and the ambiguous-match rejection, and emit the
+selected route plus backend in the request trace.
+
+A reverse proxy, client-side discovery or a BFF may be preferable when routing policy is simple or
+the gateway would become a hidden shared dependency. Gateway routing is a fit when one edge policy
+must apply across many backends and the bypass surface is closed.
+
 ## Navigation
 
 Parent: [network chapter](README.md). Previous: [discovery and selection](discovery-balancing.md).

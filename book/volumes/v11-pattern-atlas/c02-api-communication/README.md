@@ -133,7 +133,7 @@ backend health.
 behavior and bypass around the gateway are common. Recovery requires route versioning,
 precedence tests and observability.
 
-**Technical owner.** [Request routing and health signals](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#the-routing-contract) — routing and backend selection; not a dedicated gateway routing product guide.
+**Technical owner.** [Gateway Routing](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#gateway-routing) — routing and backend selection; not a dedicated gateway routing product guide.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
