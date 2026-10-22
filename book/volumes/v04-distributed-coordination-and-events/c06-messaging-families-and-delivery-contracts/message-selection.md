@@ -345,9 +345,13 @@ delivery can resume after disconnect. Retention, acknowledgement timeout and rep
 whether that resume is bounded.
 
 The page describes Core as at-most-once and JetStream's ordinary redelivery as at-least-once, under
-their respective configurations. A durable cursor is not a backup of the consumer's business state;
-if the consumer's database is lost, replaying the stream may not reconstruct the effect. Define
-retention, max redelivery and the action when the cursor is too far behind.
+their respective configurations. At-least-once redelivery means the consumer needs a stable effect
+key and dedup before applying, or a resumed cursor can double-apply local effects. A durable cursor
+is not a backup of the consumer's business state; if the consumer's database is lost, replaying the
+stream may not reconstruct the effect. Define
+retention, max redelivery and the action when the cursor is too far behind. A replay older than
+the declared deadline is stale: detect it from event time or cursor age and route it to repair
+rather than applying it blindly.
 
 A fictional notification can use ephemeral pub/sub if losing a signal when no subscriber is
 listening is acceptable. A durable business task should not casually use Core alone if clients

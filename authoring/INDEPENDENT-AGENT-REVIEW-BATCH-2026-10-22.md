@@ -1152,3 +1152,8 @@ Verdict: **pass**. Findings: 0. Durable owned reply channel, late/duplicate disp
 
 Verdict: **pass**. Findings: 0. Quarantine retention/capacity/access/cleanup and replay identity/authorization/commit checks agree.
 
+
+### Durable Subscriber — latest re-review
+
+Verdict: **pass**. Findings: 0. Stable effect key/dedup and stale-replay deadline are explicit and card-aligned.
+
