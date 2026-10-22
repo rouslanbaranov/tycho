@@ -67,9 +67,9 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:** [Layered Architecture](../../v11-pattern-atlas/c01-application-boundaries/README.md#layered-architecture) — decision conditions and contraindications.
-> [Clean / Onion Architecture](../../v11-pattern-atlas/c01-application-boundaries/README.md#clean-onion-architecture) — decision conditions and contraindications.
+> [Clean / Onion Architecture](../../v11-pattern-atlas/c01-application-boundaries/README.md#clean--onion-architecture) — decision conditions and contraindications.
 
-> **Pattern atlas:** [Hexagonal Architecture](../../v11-pattern-atlas/c01-application-boundaries/README.md#hexagonal-architecture-ports-and-adapters) — decision conditions and contraindications.
+> **Pattern atlas:** [Hexagonal Architecture](../../v11-pattern-atlas/c01-application-boundaries/README.md#hexagonal-architecture--ports-and-adapters) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.77b512c4e2e946bd92d70b4a714600c8:0 -->
 ## Purpose and decision question
 

@@ -105,7 +105,7 @@ choice when reconciliation evidence is incomplete or the old region cannot be fe
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Failover / Failback](../../v11-pattern-atlas/c07-resilience/README.md#failover-failback) — decision conditions and contraindications.
+> [Failover / Failback](../../v11-pattern-atlas/c07-resilience/README.md#failover--failback) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765:5 -->
 ## 5. Recovery is a state machine with abort conditions

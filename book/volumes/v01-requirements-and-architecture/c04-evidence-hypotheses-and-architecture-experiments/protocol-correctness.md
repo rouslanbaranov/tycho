@@ -151,6 +151,6 @@ Use a hand-reviewed transition table for a small protocol when building a formal
 - Adjacent pages: [evidence-hypotheses.md](evidence-hypotheses.md),
   [experiment-contract.md](experiment-contract.md) and
   [negative-results.md](negative-results.md).
-- Volume: [V01 — requirements and architecture](../../README.md).
+- Volume: [V01 — requirements and architecture](../README.md).
 
 [integrated-evidence]: architecture-evidence-hypotheses-and-experiments.md

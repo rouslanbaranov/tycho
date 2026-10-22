@@ -16,6 +16,9 @@ This is a first discovery pass, not a claim to contain every excellent source or
 - `pending-content-access`: canonical source identified but full page retrieval incomplete; do not cite unseen contents.
 - `landing-or-abstract-inspected` never means that all chapters, child pages, versions, source code or tests were read.
 - `content_verified: null` means no complete content verification is claimed.
+- Unit-level section reads live in `edition/patterns/reading-ledger.v1.json`; they do not
+  promote the source-level `reading_status` or `content_verified` unless the whole source
+  was verified.
 
 Free access, open-source code, and permission to redistribute are separate properties. No external books, documentation corpora or source code have been mirrored. Public personalized-download offers have not been submitted. No purchases were made.
 

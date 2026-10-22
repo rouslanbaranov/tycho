@@ -169,7 +169,7 @@ Reverse the design if its state partitions still converge on a single saturated 
   [collaboration project](collaboration-project.md).
 - Integrated decision page:
   [cross-domain architecture decisions](cross-domain-modernization-and-adr-examples.md).
-- Volume: [V10 — decision support and modernization](../../README.md).
+- Volume: [V10 — decision support and modernization](../README.md).
 
 [v07c05]: ../../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md
 [v06c02]: ../../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md

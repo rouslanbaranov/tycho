@@ -145,5 +145,5 @@ Compare p99 by partition-size percentile, read queue depth, retries/timeouts, me
 
 - [Casebook and synthetic decision playbooks](../README.md).
 - [Decision support and modernization](../decisions/README.md).
-- [Schema evolution and data-migration owner](../../volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/README.md).
-- [Shard keys, hotspots and resharding](../../volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md).
+- [Schema evolution and data-migration owner](../volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/README.md).
+- [Shard keys, hotspots and resharding](../volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md).

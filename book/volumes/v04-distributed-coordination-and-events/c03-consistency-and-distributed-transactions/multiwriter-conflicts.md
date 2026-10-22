@@ -134,4 +134,4 @@ Enumerate small update histories with duplicates, reordered delivery, concurrent
 - Adjacent pages: [invariants-isolation.md](invariants-isolation.md),
   [distributed-protocols.md](distributed-protocols.md) and
   [coordination-failure.md](coordination-failure.md).
-- Volume: [V04 — distributed coordination and events](../../README.md).
+- Volume: [V04 — distributed coordination and events](../README.md).
