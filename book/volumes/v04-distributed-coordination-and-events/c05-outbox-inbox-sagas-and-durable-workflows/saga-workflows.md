@@ -185,3 +185,64 @@ explicit compensation and visibility.
 
 **Limits.** The coordinator durable store, dispatch outbox and versioning are costs; a crash
 between state update and dispatch needs a recorded intent, not a second scheduler.
+
+### Saga
+
+A saga coordinates a sequence of **local transactions**, with compensating actions when a business
+step cannot complete. Each step commits inside one owner; the saga is the business protocol across
+those commits, not a distributed transaction that can roll them back.
+
+The domain must determine which actions are reversible and which require manual reconciliation.
+Losing an acknowledgment creates an explicit unknown state requiring reconciliation; compensations
+can themselves remain incomplete. Record workflow identity, step state and the accepted terminal
+outcomes before dispatching the next action.
+
+Use one local transaction, a two-phase commit or an orchestrated workflow when the steps do not
+genuinely cross independent owners, or when compensation is unsafe. A saga is justified when
+independent ownership and availability matter more than atomic visibility.
+
+### Saga Choreography
+
+Each owner subscribes to events and emits the next business step; progress lives in the event
+contracts rather than a central coordinator. It needs correlation identity, deduplication,
+dead-letter handling and an observable workflow state.
+
+Unbounded chains, hidden coupling and conflicting compensations are common; a trace can show
+correlation without proving durable business truth. Each participant needs an idempotent effect
+identity, a terminal-state query and an owner for a stuck chain. The event contract must carry the
+workflow identity, not only a local message identity.
+
+Orchestration or a single local transaction may be preferable when steps need central visibility or
+when compensations cannot be made safe. Choreography is a fit when owners can evolve independently
+and the emitted events are the real business protocol.
+
+### Saga Orchestration
+
+A coordinator persists the workflow state machine and issues commands to participants, waiting for
+replies and timers. Its actual guarantees depend on versioned workflow state persistence, activity
+semantics, timer reliability and recovery configuration.
+
+Coordinator loss, stuck histories, duplicate activities and incompatible workflow upgrades are
+common. Recover from durable history, keep activities idempotent and hold or repair an ambiguous
+external effect rather than marking the workflow complete. The coordinator is another operational
+dependency, so its own backup, upgrade and ownership path must be designed. It needs an owner
+and recovery drills.
+
+One service and one database transaction are often simpler than a saga. Move to orchestration only
+when a business operation genuinely spans multiple independently owned effects with different
+failure and recovery boundaries.
+
+### Compensating Transaction
+
+A compensating transaction is a new business action that creates an acceptable counter-effect; it
+is not rollback and it can fail. It needs idempotent effect identity, retry/repair ownership and a
+user-visible unknown state when the counter-effect cannot be proven.
+
+The domain must determine which actions are reversible and which require manual reconciliation. A
+release itself can fail; a delivered message cannot be un-delivered; the kit may already have been
+handed to a participant. Compensation therefore needs its own authorization, evidence and
+terminal-state check.
+
+Orchestration or a single local transaction may be preferable when steps need central visibility or
+when compensations cannot be made safe. Do not model compensation as an undo button; model it as a
+second business decision with its own failure semantics.

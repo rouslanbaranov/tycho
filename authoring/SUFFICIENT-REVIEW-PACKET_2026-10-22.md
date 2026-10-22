@@ -313,7 +313,7 @@ the validators still require a separate policy change.
 59. **Process Manager / Routing Slip** — `tycho.pattern.process-manager-routing-slip`
     - File: `saga-workflows.md`
     - Heading: `Process Manager / Routing Slip`; 121 words
-    - SHA-256: `1e72f5d24bc04f50a490ff59302560d30a1ae28fa502bf28f7afbabdb675052b`
+    - SHA-256: `76c6c37fb8d5f7d6ba42d44c5c2f7fca8b22e1bbc819125da09e349df3797d66`
 
 60. **Two-Phase Commit (2PC)** — `tycho.pattern.two-phase-commit-2pc`
     - File: `invariants-isolation.md`
@@ -379,3 +379,23 @@ the validators still require a separate policy change.
     - File: `leader-recovery.md`
     - Heading: `Fencing Tokens`; 122 words
     - SHA-256: `1993ed0bca91913562b6103c6de77c4fbeff1ea4456afc945c249dabd83d76e9`
+
+73. **Saga** — `tycho.pattern.saga`
+    - File: `saga-workflows.md`
+    - Heading: `Saga`; 123 words
+    - SHA-256: `76c6c37fb8d5f7d6ba42d44c5c2f7fca8b22e1bbc819125da09e349df3797d66`
+
+74. **Saga Choreography** — `tycho.pattern.saga-choreography`
+    - File: `saga-workflows.md`
+    - Heading: `Saga Choreography`; 123 words
+    - SHA-256: `76c6c37fb8d5f7d6ba42d44c5c2f7fca8b22e1bbc819125da09e349df3797d66`
+
+75. **Saga Orchestration** — `tycho.pattern.saga-orchestration`
+    - File: `saga-workflows.md`
+    - Heading: `Saga Orchestration`; 122 words
+    - SHA-256: `76c6c37fb8d5f7d6ba42d44c5c2f7fca8b22e1bbc819125da09e349df3797d66`
+
+76. **Compensating Transaction** — `tycho.pattern.compensating-transaction`
+    - File: `saga-workflows.md`
+    - Heading: `Compensating Transaction`; 124 words
+    - SHA-256: `76c6c37fb8d5f7d6ba42d44c5c2f7fca8b22e1bbc819125da09e349df3797d66`

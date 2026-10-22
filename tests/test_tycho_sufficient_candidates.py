@@ -20,7 +20,7 @@ class SufficientCandidateTests(unittest.TestCase):
             (ROOT / "edition/patterns/sufficient-candidates.v1.json").read_text()
         )
         self.assertEqual(data["summary"]["entries"], 145)
-        self.assertEqual(data["summary"]["candidates"], 72)
+        self.assertEqual(data["summary"]["candidates"], 76)
         self.assertEqual(sum(data["summary"]["by_status"].values()), 145)
         self.assertTrue(all(row["technical_coverage"] == "partial-bounded"
                             for row in data["entries"]))

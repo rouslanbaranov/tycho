@@ -2799,16 +2799,16 @@
       "owner": {
         "document_id": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd",
         "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
-        "heading": "4. A saga is a business protocol, not an automatic rollback",
-        "anchor": "4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
-        "level": 2,
-        "line": 48,
+        "heading": "Saga",
+        "anchor": "saga",
+        "level": 3,
+        "line": 189,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "A saga is a business protocol",
           "local transactions",
           "compensating actions",
-          "manual reconciliation"
+          "manual reconciliation",
+          "unknown state"
         ]
       },
       "technical_evidence": {
@@ -2859,14 +2859,16 @@
       "owner": {
         "document_id": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd",
         "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
-        "heading": "4. A saga is a business protocol, not an automatic rollback",
-        "anchor": "4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
-        "level": 2,
-        "line": 48,
-        "unit_kind": "embedded",
+        "heading": "Saga Choreography",
+        "anchor": "saga-choreography",
+        "level": 3,
+        "line": 204,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Choreography propagates progress through events",
-          "orchestration explicitly coordinates steps"
+          "Each owner subscribes",
+          "correlation identity",
+          "Unbounded chains",
+          "Orchestration"
         ]
       },
       "technical_evidence": {
@@ -2917,16 +2919,16 @@
       "owner": {
         "document_id": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd",
         "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
-        "heading": "5. Durable workflow selection is conditional",
-        "anchor": "5-durable-workflow-selection-is-conditional",
-        "level": 2,
-        "line": 109,
-        "unit_kind": "embedded",
+        "heading": "Saga Orchestration",
+        "anchor": "saga-orchestration",
+        "level": 3,
+        "line": 219,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "Move to orchestration only when",
-          "durable coordinator",
-          "versioned workflow state persistence",
-          "Orchestration risks"
+          "coordinator persists",
+          "versioned workflow state",
+          "Coordinator loss",
+          "One service and one database"
         ]
       },
       "technical_evidence": {
@@ -2977,16 +2979,16 @@
       "owner": {
         "document_id": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd",
         "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
-        "heading": "4. A saga is a business protocol, not an automatic rollback",
-        "anchor": "4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
-        "level": 2,
-        "line": 48,
-        "unit_kind": "embedded",
+        "heading": "Compensating Transaction",
+        "anchor": "compensating-transaction",
+        "level": 3,
+        "line": 235,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "compensating actions",
-          "which actions are reversible",
+          "new business action",
           "manual reconciliation",
-          "compensations can themselves remain incomplete"
+          "release itself can fail",
+          "Orchestration"
         ]
       },
       "technical_evidence": {
@@ -3002,7 +3004,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "But a release itself can fail; a delivered message cannot be un-delivered; the kit may already have been handed to a participant. The domain must determine which actions are reversible and which require manual reconciliation.",
+          "quote": "A release itself can fail; a delivered message cannot be un-delivered; the kit may already have been handed to a participant.",
           "reason": ""
         },
         "alternative": {
@@ -8709,11 +8711,11 @@
         "tycho.pattern.saga-choreography",
         "tycho.pattern.saga-orchestration"
       ],
-      "unit_count": 3,
-      "dedicated_units": 2,
+      "unit_count": 5,
+      "dedicated_units": 5,
       "bounded_entries": 5,
       "decision": "deepen",
-      "rationale": "Saga, choreography, orchestration and compensation now have bounded evidence; the process-manager note remains separate."
+      "rationale": "Saga, choreography, orchestration, compensation and process manager have distinct units."
     },
     {
       "document_id": "tycho.page.0eee61f261054af0ad728d791036c5f4",
@@ -9071,9 +9073,9 @@
     "entries": 145,
     "owner_pages": 69,
     "shared_pages": 33,
-    "owner_units": 124,
-    "dedicated_units": 75,
-    "embedded_units": 49,
+    "owner_units": 126,
+    "dedicated_units": 78,
+    "embedded_units": 48,
     "mechanism_supported": 145,
     "invariant_supported": 145,
     "failure_recovery_supported": 128,

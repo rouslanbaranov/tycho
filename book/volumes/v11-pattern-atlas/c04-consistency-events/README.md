@@ -196,7 +196,7 @@ unsafe.
 **Failure and recovery.** Partial completion and compensation failure are common; verify
 saga protocol in the owner section.
 
-**Technical owner.** [Sagas, workflow recovery and compensation](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — saga recovery is the bounded owner, not a full saga engine.
+**Technical owner.** [Saga](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga) — saga recovery is the bounded owner, not a full saga engine.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -230,7 +230,7 @@ when event chains become hard to trace and recover.
 **Failure and recovery.** Hidden coupling, unbounded event chains and conflicting
 compensations are common; traces show correlation, not durable business truth.
 
-**Technical owner.** [A saga is a business protocol, not an automatic rollback](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — compensation/branching is bounded, not a complete orchestration product guide.
+**Technical owner.** [Saga Choreography](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga-choreography) — compensation/branching is bounded, not a complete orchestration product guide.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -263,7 +263,7 @@ central coordination becomes a bottleneck or single point of failure.
 incompatible upgrades are common; replay from durable history and hold unknown external
 effects for repair.
 
-**Technical owner.** [Durable workflow selection is conditional](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#5-durable-workflow-selection-is-conditional) — workflow selection is bounded, not a dedicated Temporal or orchestration manual.
+**Technical owner.** [Saga Orchestration](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga-orchestration) — workflow selection is bounded, not a dedicated Temporal or orchestration manual.
 
 **Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-temporal-workflows.2026-10-21: sections "Workflows", "Workflow
@@ -295,7 +295,7 @@ back. Reverse the choice when compensation cost exceeds the failed-step risk.
 twice; use idempotent effect identity, bounded retries and a repair state for unknown
 counter-effects.
 
-**Technical owner.** [A saga is a business protocol, not an automatic rollback](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — compensation/branching is bounded, not a complete orchestration product guide.
+**Technical owner.** [Compensating Transaction](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#compensating-transaction) — compensation/branching is bounded, not a complete orchestration product guide.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
