@@ -376,7 +376,7 @@ Reverse the choice when projection freshness/complexity exceeds read-scale benef
 **Failure and recovery.** Stale and duplicate projections are common; verify freshness in
 the owner section.
 
-**Technical owner.** [CQRS and asynchronous projection freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — projection freshness is bounded, not a complete read-model design.
+**Technical owner.** [CQRS Read Projections](../../../distributed/cqrs-event-sourcing-and-projections.md#cqrs-read-projections) — projection freshness is bounded, not a complete read-model design.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)

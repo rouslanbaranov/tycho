@@ -2624,16 +2624,16 @@
       "owner": {
         "document_id": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af",
         "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
-        "heading": "3. CQRS and asynchronous projection freshness",
-        "anchor": "3-cqrs-and-asynchronous-projection-freshness",
-        "level": 2,
-        "line": 123,
+        "heading": "Command Query Responsibility Segregation (CQRS)",
+        "anchor": "command-query-responsibility-segregation-cqrs",
+        "level": 3,
+        "line": 303,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "CQRS and asynchronous projection freshness",
-          "update and read representations",
-          "separate query view",
-          "projection age"
+          "separates update and read",
+          "physical isolation",
+          "Projection lag",
+          "single model/CRUD"
         ]
       },
       "technical_evidence": {
@@ -4741,16 +4741,16 @@
       "owner": {
         "document_id": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af",
         "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
-        "heading": "3. CQRS and asynchronous projection freshness",
-        "anchor": "3-cqrs-and-asynchronous-projection-freshness",
-        "level": 2,
-        "line": 123,
-        "unit_kind": "embedded",
+        "heading": "CQRS Read Projections",
+        "anchor": "cqrs-read-projections",
+        "level": 3,
+        "line": 318,
+        "unit_kind": "dedicated",
         "unit_terms": [
-          "asynchronous projection freshness",
-          "read-oriented store",
-          "query view",
-          "projector"
+          "separate query view",
+          "Before catch-up",
+          "stale projection",
+          "synchronous authority read"
         ]
       },
       "technical_evidence": {
@@ -4765,14 +4765,14 @@
           "reason": "States the read-after-write limit before projector catch-up."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "wait for a projection to reach a specified version within a bounded timeout (with explicit failure)",
-          "reason": "Only bounded waiting for a stale projection; crash/duplicate recovery is section 4, outside the unit."
+          "state": "supported",
+          "quote": "A stale projection can return an old status after a commit, and a rebuild can serve mixed revisions.",
+          "reason": "Names stale/mixed projection failure and the position/wait response."
         },
         "alternative": {
-          "state": "absent",
-          "quote": "",
-          "reason": "No competing mechanism or reversal condition in the unit."
+          "state": "supported",
+          "quote": "A synchronous authority read or a cache-aside view may be preferable when the read must see the latest commit.",
+          "reason": "Names synchronous authority/cache-aside and the freshness reversal."
         }
       },
       "decision_evidence": {
@@ -4978,32 +4978,32 @@
       "owner": {
         "document_id": "tycho.page.80ab784dafed47a7baf31722fce5eabc",
         "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
-        "heading": "4. Bulkheads, circuit breakers and retries have different responsibilities",
-        "anchor": "4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
-        "level": 2,
-        "line": 52,
+        "heading": "Circuit Breaker",
+        "anchor": "circuit-breaker",
+        "level": 3,
+        "line": 115,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Circuit breaker",
-          "failing dependency",
-          "probe recovery",
-          "backpressure"
+          "suppresses repeated",
+          "Do not treat opening",
+          "probe policy",
+          "retry budget"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Circuit breaker | Avoid repeated costly calls to a failing dependency; probe recovery | Treat opening the breaker as permanent recovery or a substitute for backpressure",
+          "quote": "A circuit breaker suppresses repeated costly calls to a failing dependency and probes recovery.",
           "reason": "States the breaker action: suppress repeated calls and probe recovery."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Treat opening the breaker as permanent recovery or a substitute for backpressure",
+          "quote": "Do not treat opening the breaker as permanent recovery or a substitute for backpressure.",
           "reason": "Flags the safety constraint that an open breaker is neither recovery nor backpressure."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Avoid repeated costly calls to a failing dependency; probe recovery",
+          "quote": "The open state needs a probe policy, a half-open concurrency limit and a metric that separates rejected calls from dependency failures.",
           "reason": "Covers failure detection, call containment and recovery probing."
         },
         "alternative": {
@@ -5038,22 +5038,22 @@
       "owner": {
         "document_id": "tycho.page.80ab784dafed47a7baf31722fce5eabc",
         "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
-        "heading": "4. Bulkheads, circuit breakers and retries have different responsibilities",
-        "anchor": "4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
-        "level": 2,
-        "line": 52,
+        "heading": "Bulkhead",
+        "anchor": "bulkhead",
+        "level": 3,
+        "line": 128,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Bulkhead",
-          "bounded workers/pools",
-          "independent classes/dependencies",
-          "allow bypass"
+          "reserves bounded workers",
+          "Partition too tightly",
+          "bulkhead bypass",
+          "Admission/rate limiting"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Bulkhead | Reserve bounded workers/pools for independent classes/dependencies | Partition too tightly and waste capacity, or allow bypass",
+          "quote": "A bulkhead reserves bounded workers or pools for independent classes or dependencies.",
           "reason": "States the isolation mechanism: separate bounded pools per class or dependency."
         },
         "invariant": {
@@ -5063,7 +5063,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Bulkhead bypass, undersized partitions and a shared hidden queue can defeat isolation; detect per-pool queue age, utilization and rejected work, and rebalance or fail the isolated class explicitly.",
+          "quote": "A bulkhead bypass, undersized partition or shared hidden queue can defeat isolation; detect per-pool queue age, utilization and rejected work, and rebalance or fail the isolated class explicitly.",
           "reason": "Names the isolation failures and the detection/response."
         },
         "alternative": {
@@ -8602,11 +8602,11 @@
         "tycho.pattern.event-sourcing",
         "tycho.pattern.materialized-view"
       ],
-      "unit_count": 5,
-      "dedicated_units": 5,
+      "unit_count": 6,
+      "dedicated_units": 6,
       "bounded_entries": 6,
       "decision": "deepen",
-      "rationale": "Event sourcing, command replica, CQRS, domain events and materialized views now have five dedicated units."
+      "rationale": "Event sourcing, command replica, CQRS, domain events, materialized views and read projections now have six dedicated units."
     },
     {
       "document_id": "tycho.page.77b512c4e2e946bd92d70b4a714600c8",
@@ -8880,11 +8880,11 @@
         "tycho.pattern.bulkhead",
         "tycho.pattern.circuit-breaker"
       ],
-      "unit_count": 1,
-      "dedicated_units": 1,
+      "unit_count": 2,
+      "dedicated_units": 2,
       "bounded_entries": 2,
-      "decision": "keep",
-      "rationale": "Circuit breaker and bulkhead share one dedicated comparison unit that explains both mechanisms, so the page remains coherent."
+      "decision": "deepen",
+      "rationale": "Circuit breaker and bulkhead now have two distinct dedicated units."
     },
     {
       "document_id": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060",
@@ -9100,13 +9100,13 @@
     "entries": 145,
     "owner_pages": 69,
     "shared_pages": 33,
-    "owner_units": 141,
-    "dedicated_units": 127,
+    "owner_units": 143,
+    "dedicated_units": 129,
     "embedded_units": 14,
     "mechanism_supported": 145,
     "invariant_supported": 145,
-    "failure_recovery_supported": 139,
-    "alternative_supported": 141,
+    "failure_recovery_supported": 140,
+    "alternative_supported": 142,
     "technical_partial_bounded": 145,
     "technical_partial": 0,
     "technical_name_only": 0,
@@ -9118,8 +9118,8 @@
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
-      "keep": 9,
-      "deepen": 24,
+      "keep": 8,
+      "deepen": 25,
       "split": 0
     },
     "split_deferred": 0

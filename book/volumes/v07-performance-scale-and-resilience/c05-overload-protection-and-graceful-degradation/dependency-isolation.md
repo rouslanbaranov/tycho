@@ -109,3 +109,33 @@ The optional nature of photos is a **fictional stated requirement**. If actual u
 | Integrated question | [Original scenario and limits](overload-admission-control-and-graceful-degradation.md) |
 
 The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is identified explicitly; absent dates and unknowns are retained.
+
+## Bounded pattern ownership notes
+
+### Circuit Breaker
+
+A circuit breaker suppresses repeated costly calls to a failing dependency and probes recovery. It
+is a fast-failure control, not a queue, a retry budget or proof that the dependency is healthy.
+
+Do not treat opening the breaker as permanent recovery or a substitute for backpressure. The open state
+needs a probe policy, a half-open concurrency limit and a metric that separates rejected calls from
+dependency failures. A breaker that opens on local resource exhaustion hides the real bottleneck.
+
+A retry budget with jitter, admission/rate limit, or a bounded timeout may be preferable when
+failures are not fast, when the dependency recovers quickly, or when an open breaker would hide a
+local resource problem. A breaker is a fit when failures are fast and repeated calls make them worse.
+
+### Bulkhead
+
+A bulkhead reserves bounded workers or pools for independent classes or dependencies. The boundary
+contains one class's saturation so it cannot consume every worker, but it does not create capacity.
+
+Partition too tightly and waste capacity, or allow bypass. A bulkhead bypass, undersized partition
+or shared hidden queue can defeat isolation; detect per-pool queue age, utilization and rejected
+work, and rebalance or fail the isolated class explicitly. Measure the partition you actually
+enforce, not the pool name.
+
+Admission/rate limiting may be preferable when one global resource can be bounded directly; a
+circuit breaker may be preferable when the failure is dependency-specific rather than
+capacity-specific. A bulkhead is a fit when classes have genuinely different latency and failure
+budgets and an owner.

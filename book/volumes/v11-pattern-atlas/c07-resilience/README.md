@@ -94,7 +94,7 @@ when circuit state and fallback complexity exceed failure containment benefit.
 **Failure and recovery.** Shared opens, false recovery and a breaker that hides a local
 resource problem are common; probe with a bounded budget and do not treat open as recovered.
 
-**Technical owner.** [Bulkheads, retries and optional dependencies](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities) — dependency isolation is bounded, not a full circuit-breaker library guide.
+**Technical owner.** [Circuit Breaker](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#circuit-breaker) — dependency isolation is bounded, not a full circuit-breaker library guide.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-circuit.2026-10-21: sections "CircuitBreaker",
@@ -125,7 +125,7 @@ isolation overhead and stranded capacity exceed containment benefit.
 **Failure and recovery.** Bypass, undersized partitions, a shared hidden queue and
 starvation are common; detect per-pool metrics and fail the isolated class explicitly.
 
-**Technical owner.** [Bulkheads, retries and optional dependencies](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities) — dependency isolation is bounded, not a full circuit-breaker library guide.
+**Technical owner.** [Bulkhead](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#bulkhead) — dependency isolation is bounded, not a full circuit-breaker library guide.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-bulkhead.2026-10-21: sections "Bulkhead", "Semaphore",

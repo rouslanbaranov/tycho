@@ -27,7 +27,7 @@ Do not edit the repository. Do not treat this packet as approval.
 3. **Event Sourcing** — `tycho.pattern.event-sourcing`
    - File: `cqrs-event-sourcing-and-projections.md`
    - Heading: `2. Event sourcing: what becomes authoritative?`; 427 words
-   - SHA-256: `2cf8dc6cdb3f8abaf4f334e81c7ff12149f84c1249a67476be850319acf35a59`
+   - SHA-256: `0bcaf0fa2cdaf811db62f231801a4de6a52aabee63b813407fa4ac4fbbbca221`
 
 4. **Transactional Inbox** — `tycho.pattern.transactional-inbox`
    - File: `inbox-atomicity.md`
@@ -37,7 +37,7 @@ Do not edit the repository. Do not treat this packet as approval.
 5. **Command-Side Replica** — `tycho.pattern.command-side-replica`
    - File: `cqrs-event-sourcing-and-projections.md`
    - Heading: `Command-Side Replica`; 227 words
-   - SHA-256: `2cf8dc6cdb3f8abaf4f334e81c7ff12149f84c1249a67476be850319acf35a59`
+   - SHA-256: `0bcaf0fa2cdaf811db62f231801a4de6a52aabee63b813407fa4ac4fbbbca221`
 
 6. **Cache-Aside / Lazy Loading** — `tycho.pattern.cache-aside-lazy-loading`
    - File: `refresh-semantics.md`
@@ -638,9 +638,29 @@ the validators still require a separate policy change.
 124. **Domain Events** — `tycho.pattern.domain-events`
     - File: `cqrs-event-sourcing-and-projections.md`
     - Heading: `Domain Events`; 134 words
-    - SHA-256: `2cf8dc6cdb3f8abaf4f334e81c7ff12149f84c1249a67476be850319acf35a59`
+    - SHA-256: `0bcaf0fa2cdaf811db62f231801a4de6a52aabee63b813407fa4ac4fbbbca221`
 
 125. **Materialized View** — `tycho.pattern.materialized-view`
     - File: `cqrs-event-sourcing-and-projections.md`
     - Heading: `Materialized View`; 123 words
-    - SHA-256: `2cf8dc6cdb3f8abaf4f334e81c7ff12149f84c1249a67476be850319acf35a59`
+    - SHA-256: `0bcaf0fa2cdaf811db62f231801a4de6a52aabee63b813407fa4ac4fbbbca221`
+
+126. **Command Query Responsibility Segregation (CQRS)** — `tycho.pattern.command-query-responsibility-segregation-cqrs`
+    - File: `cqrs-event-sourcing-and-projections.md`
+    - Heading: `Command Query Responsibility Segregation (CQRS)`; 124 words
+    - SHA-256: `0bcaf0fa2cdaf811db62f231801a4de6a52aabee63b813407fa4ac4fbbbca221`
+
+127. **CQRS Read Projections** — `tycho.pattern.cqrs-read-projections`
+    - File: `cqrs-event-sourcing-and-projections.md`
+    - Heading: `CQRS Read Projections`; 136 words
+    - SHA-256: `0bcaf0fa2cdaf811db62f231801a4de6a52aabee63b813407fa4ac4fbbbca221`
+
+128. **Circuit Breaker** — `tycho.pattern.circuit-breaker`
+    - File: `dependency-isolation.md`
+    - Heading: `Circuit Breaker`; 129 words
+    - SHA-256: `484dfa6b45e0726c791c63acafa4685b9be0c9c2b0d142230e4c7d6c8266d8d5`
+
+129. **Bulkhead** — `tycho.pattern.bulkhead`
+    - File: `dependency-isolation.md`
+    - Heading: `Bulkhead`; 121 words
+    - SHA-256: `484dfa6b45e0726c791c63acafa4685b9be0c9c2b0d142230e4c7d6c8266d8d5`

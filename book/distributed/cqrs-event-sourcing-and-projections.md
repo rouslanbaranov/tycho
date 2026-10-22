@@ -299,3 +299,33 @@ database without an owner.
 Direct authority reads, cache-aside or a synchronous read may be preferable when the required
 freshness exceeds the projection benefit. A materialized view is a fit when repeated read shapes
 justify a derived store and the freshness contract is acceptable.
+
+### Command Query Responsibility Segregation (CQRS)
+
+The CQRS design separates update and read representations so each can optimize for different needs.
+The service may use separate objects, tables or storage engines; physical isolation is a choice, not
+an inherent definition.
+
+Before catch-up, a client querying the projection may not see its own accepted change. Projection
+lag, duplicate apply, cursor gaps and schema drift are common; make the apply idempotent, expose the
+applied position and define the read-after-write contract. A single model/CRUD service, a synchronous
+authority read or an event-sourced reconstruction may be preferable when read/write separation
+complexity exceeds the measured benefit.
+
+CQRS is a fit when the read and write shapes genuinely differ and the team can operate the
+projection; it is not a synonym for event sourcing or microservices.
+
+### CQRS Read Projections
+
+Fowler's CQRS description and Chris Richardson's public CQRS pattern both show a separate query view
+that can follow events from the owning service. The projection is a derived read model, not the
+command authority.
+
+Before catch-up, a client querying the projection may not see its own accepted change. A stale
+projection can return an old status after a commit, and a rebuild can serve mixed revisions. Record
+the applied position, bound the wait for a required version and fail explicitly when it is not
+reached; make apply idempotent and test a cursor gap.
+
+A synchronous authority read or a cache-aside view may be preferable when the read must see the
+latest commit. CQRS read projections are a fit when read scale and query shape justify a derived
+store and the client can tolerate the declared freshness.

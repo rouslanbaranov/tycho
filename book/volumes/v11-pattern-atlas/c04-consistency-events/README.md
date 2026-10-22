@@ -94,7 +94,7 @@ projection lag and dual-model complexity exceed read-scale benefit.
 common; make the apply idempotent, commit view and cursor atomically, and rebuild with side
 effects disabled.
 
-**Technical owner.** [CQRS and asynchronous projection freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#3-cqrs-and-asynchronous-projection-freshness) — projection freshness is the bounded owner, not a full CQRS implementation guide.
+**Technical owner.** [Command Query Responsibility Segregation (CQRS)](../../../distributed/cqrs-event-sourcing-and-projections.md#command-query-responsibility-segregation-cqrs) — projection freshness is the bounded owner, not a full CQRS implementation guide.
 
 **Sources.** [src.fowler-cqrs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-cqrs.2026-10-21: sections "CQRS", "When to use it", "Further
