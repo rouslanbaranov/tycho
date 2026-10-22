@@ -1,6 +1,11 @@
-"""Limited lexical guard; independent-origin review is still mandatory."""
+"""Limited lexical guard; independent-origin review is still mandatory.
+
+Git-ignored artifacts are not committed content and are skipped. Tracked files and
+untracked non-ignored files remain scanned.
+"""
 from pathlib import Path
 import re
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,11 +27,28 @@ def violations(relative, content):
         result.append("industry-specific terminology is prohibited")
     return result
 
+def git_ignored():
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "--others", "--ignored", "--exclude-standard", "-z"],
+            cwd=ROOT, capture_output=True, check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return frozenset()
+    return frozenset(
+        part for part in result.stdout.decode("utf-8", "surrogateescape").split("\0")
+        if part
+    )
+
+
 def main():
     errors = []
+    ignored = git_ignored()
     for path in sorted(ROOT.rglob("*")):
         rel = path.relative_to(ROOT).as_posix()
         if any(p in {".git", ".venv", "__pycache__"} for p in path.relative_to(ROOT).parts):
+            continue
+        if rel in ignored:
             continue
         if INDUSTRY_WORD.search(rel):
             errors.append((rel, "industry-specific path name is prohibited"))
