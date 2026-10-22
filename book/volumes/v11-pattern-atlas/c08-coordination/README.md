@@ -160,7 +160,7 @@ partitioning. Reverse the choice when lock safety cannot be proven.
 common. Treat ownership as uncertain after a missed renewal; fence stale epochs at the
 resource or keep the outcome explicitly unsafe.
 
-**Technical owner.** [Leases, stale owners and fencing at the destination](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#leases-stale-owners-and-fencing-at-the-destination) — locks/leases/fencing are bounded, not a lock-service API guide.
+**Technical owner.** [Distributed Lock](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#distributed-lock) — locks/leases/fencing are bounded, not a lock-service API guide.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-leases.2026-10-21: sections "Leases", "Lease objects", "Leader
@@ -192,7 +192,7 @@ when lease renewal cost exceeds availability benefit.
 acting. Treat ownership as uncertain after a missed renewal and fence the stale epoch at
 the destination.
 
-**Technical owner.** [Leases, stale owners and fencing at the destination](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#leases-stale-owners-and-fencing-at-the-destination) — lease ownership is bounded, not a scheduler implementation.
+**Technical owner.** [Lease-Based Ownership](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#lease-based-ownership) — lease ownership is bounded, not a scheduler implementation.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-leases.2026-10-21: sections "Leases", "Lease objects". The
@@ -224,7 +224,7 @@ choice when destination changes are cheaper than stale-write risk.
 **Failure and recovery.** Token bypass and epoch reuse are common; verify destination
 enforcement in the owner section.
 
-**Technical owner.** [Leases, stale owners and fencing at the destination](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#leases-stale-owners-and-fencing-at-the-destination) — destination fencing is bounded, not a universal token protocol.
+**Technical owner.** [Fencing Tokens](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#fencing-tokens) — destination fencing is bounded, not a universal token protocol.
 
 **Sources.**
 [src.kleppmann-distributed-locking](../../../../edition/patterns/reading-ledger.v1.json)

@@ -180,6 +180,51 @@ Use local elapsed time for local budgets under the runtime's actual clock contra
 
 Selected passages inspected 2026-10-20: [Leader election in distributed systems](https://aws.amazon.com/builders-library/leader-election-in-distributed-systems/) (lease duration and pauses); [etcd API guarantees](https://etcd.io/docs/v3.6/learning/api_guarantees/) (KV versus watch/lease guarantees). The epoch protocol, trace and guard requirements are original synthetic reasoning. No lock client or destination implementation was executed. Proposed acceptance is to pause A across expiry, let B take over, resume A, and require stale effects to be rejected at the actual resource.
 
+## Bounded pattern ownership notes
+
+### Distributed Lock
+
+A lease-based lock is a time-bounded grant from a lock service. The holder may believe it still
+owns the lease after a pause, so the grant alone is not proof of exclusive access.
+
+Mutual exclusion depends on the service's own consistency and on bounded process pauses, not on
+the holder's local belief. Define what the lock protects, the acquisition and release path, and
+the maximum pause the design tolerates. The destination must reject stale epochs or the operation
+remains explicitly unsafe.
+
+For one database, a conditional update or unique constraint can provide the same exclusion without
+a separate lock service. A lock is justified when multiple resources need one coordination grant
+and the destination can enforce the epoch; otherwise the database constraint is simpler and
+stronger.
+
+### Lease-Based Ownership
+
+A lock service can give worker B ownership after worker A stops renewing. That reassignment is a
+new ownership epoch, not a repair of A's local state.
+
+Define the takeover linearization point, handling of in-flight writes and whether lease ownership
+or destination epoch is the actual authority. On renewal timeout, treat ownership as uncertain; do
+not infer a successful renewal. A stop-write deadline follows. The old holder must stop writing before its lease could expire,
+and the destination must reject its delayed effects.
+
+Static ownership or quorum-backed ownership avoids lease renewal but risks stale owners on failure.
+Choose leases when fast takeover matters and the destination can fence; choose quorum ownership
+when the coordination service itself must survive a partition.
+
+### Fencing Tokens
+
+A fencing token is a monotonically increasing value issued with ownership. It protects only where
+the destination checks and persists the token atomically; a token carried in a request header but
+never compared is decoration.
+
+If B has not yet established its newer epoch at the destination, comparing only against the last
+observed token does not prove A still owns the lease. The destination atomically rejects a delayed
+write whose token is below its active epoch, so a paused former owner cannot commit.
+
+For an external API that cannot fence stale callers, serialize through an authoritative effect
+owner, use stable idempotent operation identities where supported, or retain an explicit
+unresolved-safety boundary. Do not claim mutual exclusion from a token the destination ignores.
+
 ## Navigation, prerequisites and source scope
 
 | Route | Destination |

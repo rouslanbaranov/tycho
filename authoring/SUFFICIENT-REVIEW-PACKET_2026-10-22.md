@@ -62,7 +62,7 @@ Do not edit the repository. Do not treat this packet as approval.
 10. **Leader Election** — `tycho.pattern.leader-election`
    - File: `leader-recovery.md`
     - Heading: `4. Leader elections, logs and client observations`; 295 words
-    - SHA-256: `e04f6b902f0ac4bd251deab0bd2b12d26dd7a5f35e6f048574dedbc6cf011011`
+    - SHA-256: `1993ed0bca91913562b6103c6de77c4fbeff1ea4456afc945c249dabd83d76e9`
 
 ## Required output
 
@@ -364,3 +364,18 @@ the validators still require a separate policy change.
     - File: `deadlines-retries.md`
     - Heading: `Deadline Propagation`; 120 words
     - SHA-256: `e9c135e7bcc767a609cb2502dad6bb0b82e18d9b345a1fb2253e39a1318dcb8a`
+
+70. **Distributed Lock** — `tycho.pattern.distributed-lock`
+    - File: `leader-recovery.md`
+    - Heading: `Distributed Lock`; 126 words
+    - SHA-256: `1993ed0bca91913562b6103c6de77c4fbeff1ea4456afc945c249dabd83d76e9`
+
+71. **Lease-Based Ownership** — `tycho.pattern.lease-based-ownership`
+    - File: `leader-recovery.md`
+    - Heading: `Lease-Based Ownership`; 120 words
+    - SHA-256: `1993ed0bca91913562b6103c6de77c4fbeff1ea4456afc945c249dabd83d76e9`
+
+72. **Fencing Tokens** — `tycho.pattern.fencing-tokens`
+    - File: `leader-recovery.md`
+    - Heading: `Fencing Tokens`; 122 words
+    - SHA-256: `1993ed0bca91913562b6103c6de77c4fbeff1ea4456afc945c249dabd83d76e9`
