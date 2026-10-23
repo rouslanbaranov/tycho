@@ -1,8 +1,9 @@
 # Current state — Tycho
 
-> **Current structural candidate — 2026.10.2-rc.1 (2026-10-21 cut; 423
-> pages after the #228 splits):** 11 volumes, 82 chapters and 423 canonical
-> documents. V11 is a self-checked Phase 6
+> **Current structural candidate — 2026.10.2-rc.1 (cut 2026-10-21):** 11
+> volumes, 82 chapters and 423 canonical pages in the current tree. The book
+> and edition landings still record the 419-page cut; the #228 deep-source
+> splits added four pages after the cut. V11 is a self-checked Phase 6
 > pattern-atlas candidate (#288); human review is recorded and owner acceptance
 > remains open. The #214/rc.3 status below is historical.
 

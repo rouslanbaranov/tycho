@@ -397,6 +397,11 @@ class McpServerTests(unittest.TestCase):
         })["structuredContent"]
         self.assertEqual(tail["returned_chars"], 5)
         self.assertIsNone(tail["next_offset"])
+        with self.assertRaises(mcp_server.ProtocolFailure) as caught:
+            self.call(self.server(), "tycho_page", {
+                "path": "book/alpha.md", "offset": 10 ** 9,
+            })
+        self.assertEqual(caught.exception.code, -32602)
 
     def test_page_rejects_traversal_absolute_and_unknown(self):
         for path in (
@@ -580,6 +585,14 @@ class McpServerTests(unittest.TestCase):
             result["structuredContent"]["query_log"], "not-available")
         self.assertEqual(config.read_text(encoding="utf-8"), "x")
 
+        root_log = self.root / "queries.jsonl"
+        server = mcp_server.TychoMcpServer(
+            self.root, query_log=root_log)
+        result = self.call(server, "tycho_search", {"query": "zebra"})
+        self.assertEqual(
+            result["structuredContent"]["query_log"], "not-available")
+        self.assertFalse(root_log.exists())
+
         directory = self.log_dir / "log-dir"
         directory.mkdir()
         server = mcp_server.TychoMcpServer(
@@ -594,24 +607,29 @@ class McpServerTests(unittest.TestCase):
         try:
             link.symlink_to(target)
         except OSError:
-            self.skipTest("symlinks are unavailable on this platform")
-        server = mcp_server.TychoMcpServer(
-            self.root, query_log=link)
-        result = self.call(server, "tycho_search", {"query": "zebra"})
-        self.assertEqual(
-            result["structuredContent"]["query_log"], "not-available")
-        self.assertEqual(target.read_text(encoding="utf-8"), "")
+            link = None
+        if link is not None:
+            server = mcp_server.TychoMcpServer(
+                self.root, query_log=link)
+            result = self.call(server, "tycho_search", {"query": "zebra"})
+            self.assertEqual(
+                result["structuredContent"]["query_log"], "not-available")
+            self.assertEqual(target.read_text(encoding="utf-8"), "")
 
         alpha = self.root / "book" / "alpha.md"
         before = alpha.read_text(encoding="utf-8")
         hardlink = self.log_dir / "hardlink.jsonl"
-        os.link(alpha, hardlink)
-        server = mcp_server.TychoMcpServer(
-            self.root, query_log=hardlink)
-        result = self.call(server, "tycho_search", {"query": "zebra"})
-        self.assertEqual(
-            result["structuredContent"]["query_log"], "not-available")
-        self.assertEqual(alpha.read_text(encoding="utf-8"), before)
+        try:
+            os.link(alpha, hardlink)
+        except OSError:
+            hardlink = None
+        if hardlink is not None:
+            server = mcp_server.TychoMcpServer(
+                self.root, query_log=hardlink)
+            result = self.call(server, "tycho_search", {"query": "zebra"})
+            self.assertEqual(
+                result["structuredContent"]["query_log"], "not-available")
+            self.assertEqual(alpha.read_text(encoding="utf-8"), before)
 
         fifo = self.log_dir / "fifo.jsonl"
         try:
@@ -626,7 +644,7 @@ class McpServerTests(unittest.TestCase):
                 result["structuredContent"]["query_log"], "not-available")
 
     def test_stdio_protocol_error_responses(self):
-        stdin = io.StringIO("{bad\n[]\n")
+        stdin = io.StringIO("{bad\n[]\n" + "x" * 1000001 + "\n")
         stdout = io.StringIO()
         mcp_server.serve(self.server(), stdin=stdin, stdout=stdout)
         responses = [
@@ -634,7 +652,7 @@ class McpServerTests(unittest.TestCase):
         ]
         self.assertEqual(
             [response["error"]["code"] for response in responses],
-            [-32700, -32600],
+            [-32700, -32600, -32700],
         )
 
     def test_snapshot_pin_mismatch_is_explicit(self):
@@ -795,6 +813,9 @@ class McpServerTests(unittest.TestCase):
                 "capabilities": {},
             })
         self.assertEqual(caught.exception.code, -32602)
+        self.assertEqual(
+            caught.exception.data["supported"], [mcp_server.LEGACY_VERSION])
+        self.assertEqual(caught.exception.data["requested"], "1900-01-01")
         legacy = self.initialize(self.server())
         with self.assertRaises(mcp_server.ProtocolFailure) as caught:
             self.request(legacy, 2, "tools/list", {"cursor": "next"})
@@ -812,6 +833,15 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["content_trust"],
                          mcp_server.CONTENT_TRUST)
         self.assertEqual(payload["tool"], "tycho_evidence")
+        with patch.object(
+                mcp_server.section_search, "evidence", return_value=fake):
+            mismatch = self.call(self.server(), "tycho_evidence", {
+                "document_id": "tycho.page.alphaa",
+                "snapshot_id": "0" * 64,
+            })
+        self.assertTrue(mismatch["isError"])
+        self.assertEqual(
+            mismatch["structuredContent"]["status"], "snapshot-mismatch")
 
     def test_evidence_requires_exactly_one_identifier(self):
         with self.assertRaises(mcp_server.ProtocolFailure) as caught:

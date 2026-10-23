@@ -2,10 +2,11 @@
 
 > Issue [#57](https://github.com/rouslanbaranov/tycho/issues/57), E09-02, M5.
 > 2026-10-23. **Status:** local implementation, 30 offline tests and a one-off
-> official-SDK 2.3.0 smoke; two independent agent reviews returned
-> ACCEPT-WITH-FINDINGS and their findings are addressed; not merged, not
-> human-reviewed, not a pinned-dependency conformance matrix and not a hosted
-> service. No authentication or deployment is claimed.
+> official-SDK 2.3.0 smoke; two independent agent reviews and a focused delta
+> review returned ACCEPT-WITH-FINDINGS. Corrections are recorded; residual
+> limits remain below. Not merged, not human-reviewed, not a pinned-dependency
+> conformance matrix and not a hosted service. No authentication or deployment
+> is claimed.
 
 ## Scope and non-goals
 
@@ -137,6 +138,11 @@ access, retention and deletion. The adapter does not rotate, redact or encrypt
 the file. A write failure is reported as `query_log: "not-available"` and does
 not break retrieval.
 
+`tycho_search` advertises read-only behaviour for the book and index. If the
+operator enables query logging, that call also appends a local audit record;
+clients that require strict no-filesystem-write semantics should treat search
+as non-mutating only while logging is disabled.
+
 The resolved path must be outside the repository checkout. The log file
 itself must not be a symlink, and hard links, directories and special files
 are refused. Parent symlinks are resolved; the resolved location must still
@@ -254,9 +260,9 @@ capacity forecast or a client benchmark.
   that. Decision-method lookup remains outside this slice.
 - The open #51 evidence-quality measurement remains separate. Evidence
   resolution works locally, but it is not a completed #51 acceptance.
-- Two independent agent reviews returned ACCEPT-WITH-FINDINGS; their findings
-  and resolutions are recorded in
-  [the review record](INDEPENDENT-AGENT-REVIEW-MCP_2026-10-23.md). No human
+- Two independent agent reviews and a focused delta review returned
+  ACCEPT-WITH-FINDINGS; corrections, residual limits and the delta record are
+  in [the review record](INDEPENDENT-AGENT-REVIEW-MCP_2026-10-23.md). No human
   review, CI result or merge is claimed.
 
 ## Sources
