@@ -114,9 +114,10 @@ background, within a bounded stale window. The stale window and the refresh owne
 and observable, and a failed refresh must not extend the window indefinitely.
 
 A failing refresh keeps serving the same stale value; cap the stale age, surface refresh failures
-and fall back to a blocking read when the bound is reached. A blocking refresh guarantees freshness
-at the cost of latency; choose stale-while-revalidate only when the declared stale window is
-acceptable to the reader.
+and fall back to a blocking read when the bound is reached. TTL-only expiry is the alternative when
+background refresh cannot be bounded; it trades freshness for no refresh coordination. A blocking
+refresh guarantees freshness at the cost of latency; choose stale-while-revalidate only when the
+declared stale window is acceptable to the reader.
 
 **Limits.** The stale window is a user-visible correctness bound; a refresh that silently fails
 must eventually force a blocking read or explicit error, and the refresh owner needs a failure
