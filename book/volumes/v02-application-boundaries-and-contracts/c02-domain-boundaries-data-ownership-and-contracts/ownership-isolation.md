@@ -92,9 +92,11 @@ share one physical server. Only the owning service writes its records, and no cr
 joins another service's tables without an explicit contract.
 
 Shared-table shortcuts and distributed joins reappear as hidden coupling; detect them through schema
-ownership review and cross-service access inspection rather than assuming the boundary exists. A
-shared database with enforced module ownership is simpler when teams release together; choose
-separate stores only when independent ownership, scaling or recovery justify the coordination cost.
+ownership review and cross-service access inspection rather than assuming the boundary exists. Dual
+writes, stale replicas and cross-service queries are common; use an outbox or idempotent
+reconciliation for cross-service effects and verify replica freshness before joining. A shared
+database with enforced module ownership is simpler when teams release together; choose separate
+stores only when independent ownership, scaling or recovery justify the coordination cost.
 
 **Limits.** Schema ownership adds migration, cross-service query and reporting costs; a shared
 database with enforced modules is often cheaper until independent failure or scaling domains

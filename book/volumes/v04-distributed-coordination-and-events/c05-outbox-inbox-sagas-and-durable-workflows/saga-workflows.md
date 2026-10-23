@@ -231,9 +231,11 @@ semantics, timer reliability and recovery configuration.
 
 Coordinator loss, stuck histories, duplicate activities and incompatible workflow upgrades are
 common. Recover from durable history, keep activities idempotent and hold or repair an ambiguous
-external effect rather than marking the workflow complete. The coordinator is another operational
-dependency, so its own backup, upgrade and ownership path must be designed. It needs an owner
-and recovery drills.
+external effect rather than marking the workflow complete. Orchestration centralizes compensation
+ordering and visibility but adds a coordinator bottleneck and single point of failure; participants
+must remain able to compensate independently, and choreography is the alternative when autonomy
+dominates. The coordinator is another operational dependency, so its own backup, upgrade and
+ownership path must be designed. It needs an owner and recovery drills.
 
 One service and one database transaction are often simpler than a saga. Move to orchestration only
 when a business operation genuinely spans multiple independently owned effects with different
@@ -250,7 +252,9 @@ release itself can fail; a delivered message cannot be un-delivered; the kit may
 handed to a participant. Compensation therefore needs its own authorization, evidence and
 terminal-state check.
 
-Orchestration or a single local transaction may be preferable when steps need central visibility,
-when compensation ordering must be centrally enforced, or when compensations cannot be made
-safe. Do not model compensation as an undo button; model it as a second business decision with
+Compensation ordering follows the reverse dependency order, and the cost/risk test is explicit:
+compensate only when the counter-effect cost is lower than the risk of leaving the failed step
+unresolved. Orchestration or a single local transaction may be preferable when steps need central
+visibility, when compensation ordering must be centrally enforced, or when compensations cannot be
+made safe. Do not model compensation as an undo button; model it as a second business decision with
 its own failure semantics.

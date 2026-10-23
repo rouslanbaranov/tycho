@@ -95,8 +95,10 @@ propagated context and sampled spans, not from a complete transaction log.
 
 A trace can illuminate critical-path waiting, retries and failure propagation—but **it is not an
 authoritative record of every business effect**. A missing span may mean no work occurred, the
-instrumentation failed, or the sampling policy intentionally discarded it. Alert on instrumentation
-coverage and context rejection separately from product errors.
+instrumentation failed, or the sampling policy intentionally discarded it. Exclude sensitive
+payloads, assign retention ownership and reject tracing as a fit for a single-service request; a
+broken context must be detectable and recoverable. Alert on instrumentation coverage and context
+rejection separately from product errors.
 
 For aggregate latency or a discrete business event, metrics or structured logs may be preferable;
 use tracing when the cross-component path itself is the question. Record the sampling policy and the

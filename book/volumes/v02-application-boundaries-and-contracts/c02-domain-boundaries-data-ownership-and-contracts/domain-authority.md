@@ -135,5 +135,7 @@ rot through shared tables, a common entity reused across contexts or a workflow 
 owners' state; detect those paths and assign one authority per invariant.
 
 Nor must four contexts become four microservices: a modular application could implement them with
-explicit in-process interfaces and one deployable. Choose deployment boundaries from ownership and
-failure containment, not from the number of model names.
+explicit in-process interfaces and one deployable. Translation cost between contexts and domain-
+expert validation are explicit fit costs; a boundary without an expert and a translation owner is
+not validated. Choose deployment boundaries from ownership and failure containment, not from the
+number of model names.

@@ -294,9 +294,8 @@ must be labelled, and an explicit failure is safer than a plausible but wrong va
 **Technical owner.** [Fallback](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#fallback) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: sections "Fallback", "Graceful
-degradation". The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.batch4-sre-cascading.2026-10-21: section "Fallback and graceful
+degradation". The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -325,8 +324,8 @@ common; expose the reduced state and define how normal service resumes.
 **Technical owner.** [Graceful Degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#graceful-degradation) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: sections "Graceful degradation",
-"Handling overload". The source is a public pattern/documentation
+read record read.batch4-sre-cascading.2026-10-21: sections "Fallback and graceful
+degradation", "Handling Overload Errors". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -356,9 +355,8 @@ retry storms are common; declare quotas and retry hints, and protect essential o
 **Technical owner.** [Load Shedding](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#load-shedding) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.sre-overload.2026-10-21: sections "Handling Overload", "Load shedding".
-The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.sre-overload.2026-10-21: sections "Handling Overload Errors",
+"Per-Customer Limits". The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -386,9 +384,8 @@ common; keep a bounded queue, propagate backpressure and measure per-class laten
 **Technical owner.** [Throttling](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#throttling) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.sre-overload.2026-10-21: sections "Handling Overload", "Throttling". The
-source is a public pattern/documentation
-unit, not a benchmark.
+read record read.sre-overload.2026-10-21: sections "Client-Side Throttling",
+"Handling Overload Errors". The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -416,9 +413,8 @@ common; bind limits to the scarce resource and declare retry guidance.
 **Technical owner.** [Rate Limiting](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#rate-limiting) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.sre-overload.2026-10-21: sections "Handling Overload", "Rate limiting".
-The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.sre-overload.2026-10-21: sections "Per-Customer Limits",
+"Client-Side Throttling". The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
