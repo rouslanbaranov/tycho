@@ -1,0 +1,1767 @@
+{
+  "dataset": "independent-agent-qrels-v1",
+  "label_status": "agent-adjudicated-not-human",
+  "created": "2026-10-23",
+  "topics": [
+    "Cache-aside, write-through, write-around and write-behind caching",
+    "Cache invalidation, TTL, stampede protection and hot keys",
+    "Queue-based load leveling, backpressure and Little's Law",
+    "Retries, idempotency keys and duplicate effects",
+    "Sagas, compensating transactions, outbox and inbox patterns",
+    "CQRS, event sourcing and read projections",
+    "Quorums, leader election, consensus and fencing",
+    "Rate limiting, admission control, load shedding and throttling",
+    "Sharding, partition keys, hot partitions and rebalancing",
+    "Multi-region failover, replication and consistency trade-offs",
+    "SLIs, SLOs, error budgets and alerting",
+    "Distributed tracing, context propagation and sampling",
+    "Zero trust, least privilege and tenant isolation",
+    "API contracts, versioning and expand-and-contract migration",
+    "Canary, blue-green, rollback and progressive delivery"
+  ],
+  "items": [
+    {
+      "id": "I001",
+      "topic": "Cache-aside, write-through, write-around and write-behind caching",
+      "question": "In cache-aside, what does the application do on a read miss?",
+      "answerability": "answerable",
+      "answer_key": "The application reads the cache first and, on a miss, loads the item from the data store and writes it into the cache with a TTL. Writes normally update the store and invalidate or replace the cached copy.",
+      "key_facts": [
+        "Application code owns cache fill and invalidation",
+        "A miss costs one store read plus one cache write",
+        "The cache is a copy, never the system of record"
+      ],
+      "sources": [
+        {
+          "title": "Cache-Aside pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Caching guidance (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I002",
+      "topic": "Cache-aside, write-through, write-around and write-behind caching",
+      "question": "How do write-through and write-behind differ in latency and durability?",
+      "answerability": "answerable",
+      "answer_key": "Write-through updates the store and the cache in one operation and returns after both succeed, so writes are slower but the store is always current. Write-behind acknowledges after the cache update and flushes later, which is faster but can lose acknowledged writes if the cache tier fails.",
+      "key_facts": [
+        "Write-through returns after store and cache both succeed",
+        "Write-behind flushes asynchronously to the store",
+        "Write-behind trades durability for write latency"
+      ],
+      "sources": [
+        {
+          "title": "Caching guidance (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Cache-Aside pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "A hitchhiker's guide to caching patterns (Hazelcast)",
+          "url": "https://hazelcast.com/blog/a-hitchhikers-guide-to-caching-patterns/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I003",
+      "topic": "Cache-aside, write-through, write-around and write-behind caching",
+      "question": "What is write-around, and which workload does it suit?",
+      "answerability": "answerable",
+      "answer_key": "Writes bypass the cache and go straight to the backing store, so only reads populate the cache. It avoids polluting the cache with data that is rarely read back, but every read after a write pays a cache miss.",
+      "key_facts": [
+        "Writes go to the store; reads fill the cache",
+        "Good for write-heavy, rarely re-read data",
+        "Cost is a guaranteed miss after each write"
+      ],
+      "sources": [
+        {
+          "title": "Caching strategies and how to choose them (CodeAhoy)",
+          "url": "https://codeahoy.com/2017/08/11/caching-strategies-and-how-to-choose-the-right-one/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Cache-Aside pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I004",
+      "topic": "Cache-aside, write-through, write-around and write-behind caching",
+      "question": "What must a cache-aside application do when the cache fails?",
+      "answerability": "answerable",
+      "answer_key": "It must treat cache errors as misses and fall back to the data store instead of failing the request. Because the store then absorbs the extra load, timeouts, bounded retries and load shedding are needed to prevent a cascading failure.",
+      "key_facts": [
+        "Cache outage shifts load to the backing store",
+        "Fallback to the store keeps requests successful",
+        "Timeouts and load shedding protect the store"
+      ],
+      "sources": [
+        {
+          "title": "Cache-Aside pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Caching challenges and strategies (AWS Builders' Library)",
+          "url": "https://aws.amazon.com/builders-library/caching-challenges-and-strategies/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I005",
+      "topic": "Cache invalidation, TTL, stampede protection and hot keys",
+      "question": "Why is a TTL alone not a complete invalidation strategy?",
+      "answerability": "answerable",
+      "answer_key": "A TTL bounds staleness by time, not by writes, so readers can see data that changed before the entry expires. Systems pair TTLs with explicit invalidation or versioned keys on update, and pick TTLs from the staleness the reader can tolerate.",
+      "key_facts": [
+        "TTL cannot react to a write before expiry",
+        "Pair TTL with explicit invalidation",
+        "Shorter TTLs raise origin load and misses"
+      ],
+      "sources": [
+        {
+          "title": "Caching guidance (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Caching challenges and strategies (AWS Builders' Library)",
+          "url": "https://aws.amazon.com/builders-library/caching-challenges-and-strategies/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "EXPIRE command (Redis documentation)",
+          "url": "https://redis.io/docs/latest/commands/expire/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I006",
+      "topic": "Cache invalidation, TTL, stampede protection and hot keys",
+      "question": "What is a cache stampede, and how is it prevented?",
+      "answerability": "answerable",
+      "answer_key": "A stampede happens when many clients miss the same key at once, often at expiry, and all recompute it against the origin. Request coalescing lets one caller refresh while others wait or read stale data, and early or probabilistic refresh spreads expirations.",
+      "key_facts": [
+        "Simultaneous misses drive duplicate origin work",
+        "Single-flight collapses duplicate refreshes",
+        "Early or probabilistic refresh avoids synchronized expiry"
+      ],
+      "sources": [
+        {
+          "title": "Cache stampede (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Cache_stampede",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Caching challenges and strategies (AWS Builders' Library)",
+          "url": "https://aws.amazon.com/builders-library/caching-challenges-and-strategies/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I007",
+      "topic": "Cache invalidation, TTL, stampede protection and hot keys",
+      "question": "How do soft and hard TTLs keep serving during an origin brownout?",
+      "answerability": "answerable",
+      "answer_key": "A soft TTL marks when an item should be refreshed in the background while it is still served. A hard TTL is the absolute limit; if the origin is unavailable, the service keeps serving stale data until the hard TTL, with backpressure to protect the origin.",
+      "key_facts": [
+        "Soft TTL triggers background refresh",
+        "Hard TTL is the absolute staleness limit",
+        "Serve-stale needs backpressure to help origin recovery"
+      ],
+      "sources": [
+        {
+          "title": "Caching challenges and strategies (AWS Builders' Library)",
+          "url": "https://aws.amazon.com/builders-library/caching-challenges-and-strategies/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Caching guidance (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I008",
+      "topic": "Cache invalidation, TTL, stampede protection and hot keys",
+      "question": "A single key carries most traffic: what breaks, and how is load spread?",
+      "answerability": "answerable",
+      "answer_key": "The key becomes a hot spot on one cache node or shard and a stampede when it expires or is evicted, so the origin sees concentrated load. Spread it with key splitting or suffix buckets, request coalescing, and more nodes so consistent hashing redistributes keys.",
+      "key_facts": [
+        "A hot key skews a single node and the origin",
+        "Key splitting adds pseudo-random suffix buckets",
+        "Consistent hashing redistributes when nodes change"
+      ],
+      "sources": [
+        {
+          "title": "Consistent hashing (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Consistent_hashing",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Caching challenges and strategies (AWS Builders' Library)",
+          "url": "https://aws.amazon.com/builders-library/caching-challenges-and-strategies/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Partition key design: using write sharding (AWS)",
+          "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-sharding.html",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I009",
+      "topic": "Queue-based load leveling, backpressure and Little's Law",
+      "question": "How does a queue decouple producer rate from consumer capacity?",
+      "answerability": "answerable",
+      "answer_key": "The producer writes a message to a durable queue and continues, while consumers drain the queue at their own rate. The queue absorbs bursts, but if arrivals exceed service capacity the backlog and wait time grow without bound.",
+      "key_facts": [
+        "Producer and consumer run at different rates",
+        "Queue depth is the buffer between them",
+        "Sustained overload grows latency, not throughput"
+      ],
+      "sources": [
+        {
+          "title": "Queue-Based Load Leveling pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/queue-based-load-leveling",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Avoiding insurmountable queue backlogs (AWS Builders' Library)",
+          "url": "https://aws.amazon.com/builders-library/avoiding-insurmountable-queue-backlogs/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I010",
+      "topic": "Queue-based load leveling, backpressure and Little's Law",
+      "question": "What failure modes does queue-based load leveling introduce?",
+      "answerability": "answerable",
+      "answer_key": "It adds end-to-end latency and operational complexity, and it can accumulate a backlog that is slow to drain. Duplicate or poison messages require idempotent consumers, dead-letter handling and retry limits, and consumers must scale with queue depth.",
+      "key_facts": [
+        "Adds latency between request and completion",
+        "Poison messages need dead-letter queues",
+        "Backlog growth can outlive the traffic spike"
+      ],
+      "sources": [
+        {
+          "title": "Queue-Based Load Leveling pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/queue-based-load-leveling",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Avoiding insurmountable queue backlogs (AWS Builders' Library)",
+          "url": "https://aws.amazon.com/builders-library/avoiding-insurmountable-queue-backlogs/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I011",
+      "topic": "Queue-based load leveling, backpressure and Little's Law",
+      "question": "State Little's Law and one way to use it in capacity planning.",
+      "answerability": "answerable",
+      "answer_key": "Little's Law says the average number of items in a system equals the arrival rate times the average time each item spends there, L = lambda x W. It links queue length, throughput and latency, so a rising queue length at fixed throughput means growing wait time.",
+      "key_facts": [
+        "L = lambda x W for a stable system",
+        "Holds without assumptions about distributions",
+        "Queue length and wait time move together at fixed rate"
+      ],
+      "sources": [
+        {
+          "title": "Little's law (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Little%27s_law",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Queue-Based Load Leveling pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/queue-based-load-leveling",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I012",
+      "topic": "Queue-based load leveling, backpressure and Little's Law",
+      "question": "How does backpressure differ from buffering or dropping work?",
+      "answerability": "answerable",
+      "answer_key": "Backpressure returns a demand signal to the producer, which must not send more than the consumer has requested. Instead of buffering without bound or dropping silently, the producer slows down or the caller receives an explicit rejection.",
+      "key_facts": [
+        "Consumer advertises demand, producer respects it",
+        "Unbounded buffering hides overload as latency",
+        "Explicit rejection is a form of backpressure"
+      ],
+      "sources": [
+        {
+          "title": "Reactive Streams specification (reactive-streams-jvm)",
+          "url": "https://github.com/reactive-streams/reactive-streams-jvm",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Back pressure (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Back_pressure",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Avoiding insurmountable queue backlogs (AWS Builders' Library)",
+          "url": "https://aws.amazon.com/builders-library/avoiding-insurmountable-queue-backlogs/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I013",
+      "topic": "Retries, idempotency keys and duplicate effects",
+      "question": "Why do retries need backoff, jitter and an overall cap?",
+      "answerability": "answerable",
+      "answer_key": "Transient faults often clear on retry, but synchronized immediate retries amplify an outage. Exponential backoff spaces attempts, jitter decorrelates clients, and a retry cap or budget limits total attempts so retries cannot become the outage.",
+      "key_facts": [
+        "Retry only transient, retryable failures",
+        "Jitter prevents synchronized retry waves",
+        "Bound attempts and total retry time"
+      ],
+      "sources": [
+        {
+          "title": "Timeouts, retries and backoff with jitter (AWS Builders' Library)",
+          "url": "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Making retries safe with idempotent APIs (AWS Builders' Library)",
+          "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Retry pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/retry",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I014",
+      "topic": "Retries, idempotency keys and duplicate effects",
+      "question": "Which HTTP methods are idempotent, and why is POST different?",
+      "answerability": "answerable",
+      "answer_key": "GET, HEAD, PUT, DELETE, OPTIONS and TRACE are defined as idempotent, so repeating them has the same intended effect. POST is neither safe nor idempotent, so a retried create can duplicate a resource unless the API adds a deduplication key.",
+      "key_facts": [
+        "PUT and DELETE are idempotent; POST is not",
+        "Idempotence concerns effect, not response body",
+        "Safe methods are also idempotent"
+      ],
+      "sources": [
+        {
+          "title": "RFC 9110: HTTP Semantics (IETF)",
+          "url": "https://datatracker.ietf.org/doc/html/rfc9110",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Idempotence (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Idempotence",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Idempotent requests (Stripe API documentation)",
+          "url": "https://docs.stripe.com/api/idempotent_requests",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I015",
+      "topic": "Retries, idempotency keys and duplicate effects",
+      "question": "How does a server enforce an Idempotency-Key on create requests?",
+      "answerability": "answerable",
+      "answer_key": "The client sends a unique key for each logical operation, and the server stores the key with a request fingerprint and the resulting response. A replay returns the stored result, while reuse of the key with a different payload is rejected, for a bounded retention period.",
+      "key_facts": [
+        "A key identifies a logical operation",
+        "Server stores key, fingerprint and outcome",
+        "Retention windows bound storage"
+      ],
+      "sources": [
+        {
+          "title": "Idempotency-Key HTTP header field (IETF draft)",
+          "url": "https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Idempotent requests (Stripe API documentation)",
+          "url": "https://docs.stripe.com/api/idempotent_requests",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I016",
+      "topic": "Retries, idempotency keys and duplicate effects",
+      "question": "Why can retries create duplicate effects, and how are they removed?",
+      "answerability": "answerable",
+      "answer_key": "A retry after an ambiguous timeout may repeat a request the server already applied, so delivery is at least once. Consumers remove duplicates with idempotent handlers or a processed-message table keyed by message id and committed with the side effect.",
+      "key_facts": [
+        "Ambiguous failures hide whether the write applied",
+        "At-least-once delivery makes dedupe mandatory",
+        "Dedupe record must commit with the effect"
+      ],
+      "sources": [
+        {
+          "title": "Making retries safe with idempotent APIs (AWS Builders' Library)",
+          "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Outbox and inbox patterns explained (Event-Driven.io)",
+          "url": "https://event-driven.io/en/outbox_inbox_patterns_and_delivery_guarantees_explained/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I017",
+      "topic": "Sagas, compensating transactions, outbox and inbox patterns",
+      "question": "How does a saga preserve consistency without a distributed transaction?",
+      "answerability": "answerable",
+      "answer_key": "A saga is a sequence of local transactions linked by messages or events, each with a compensating action. If a step fails, completed steps are undone by compensations, which gives atomicity-like outcomes but not isolation, so intermediate states stay visible.",
+      "key_facts": [
+        "Each saga step is a local ACID transaction",
+        "Compensations undo earlier completed steps",
+        "No isolation: intermediate states are visible"
+      ],
+      "sources": [
+        {
+          "title": "Pattern: Saga (microservices.io)",
+          "url": "https://microservices.io/patterns/data/saga.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Saga distributed transactions (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/saga/saga",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Compensating Transaction pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I018",
+      "topic": "Sagas, compensating transactions, outbox and inbox patterns",
+      "question": "Saga orchestration versus choreography: what are the trade-offs?",
+      "answerability": "answerable",
+      "answer_key": "Choreography lets services react to each other's events, which is simple and decoupled but leaves the flow implicit and can create cycles. Orchestration centralizes the sequence in a coordinator, which is easier to reason about but adds a component and coupling.",
+      "key_facts": [
+        "Choreography: events, implicit flow",
+        "Orchestration: explicit coordinator",
+        "Both need idempotent steps and compensations"
+      ],
+      "sources": [
+        {
+          "title": "Pattern: Saga (microservices.io)",
+          "url": "https://microservices.io/patterns/data/saga.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Saga distributed transactions (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/saga/saga",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I019",
+      "topic": "Sagas, compensating transactions, outbox and inbox patterns",
+      "question": "What does a transactional outbox make atomic?",
+      "answerability": "answerable",
+      "answer_key": "It makes the state change and the event record atomic by writing both in one local transaction. A relay then publishes outbox rows and retries until acknowledged, which removes the dual-write problem at the cost of at-least-once publication.",
+      "key_facts": [
+        "Outbox row commits with the domain change",
+        "Relay publishes and marks rows sent",
+        "Publication is at least once, so consumers dedupe"
+      ],
+      "sources": [
+        {
+          "title": "Pattern: Transactional outbox (microservices.io)",
+          "url": "https://microservices.io/patterns/data/transactional-outbox.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "CQRS pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Outbox and inbox patterns explained (Event-Driven.io)",
+          "url": "https://event-driven.io/en/outbox_inbox_patterns_and_delivery_guarantees_explained/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I020",
+      "topic": "Sagas, compensating transactions, outbox and inbox patterns",
+      "question": "What is the inbox pattern, and why does an outbox need one?",
+      "answerability": "answerable",
+      "answer_key": "Because relays retry, a consumer can receive the same message more than once. The inbox stores processed message ids in the same transaction as the business effect, so a redelivery is detected and ignored.",
+      "key_facts": [
+        "Inbox records ids of processed messages",
+        "Record commits with the business change",
+        "Outbox plus inbox gives effectively-once processing"
+      ],
+      "sources": [
+        {
+          "title": "Outbox and inbox patterns explained (Event-Driven.io)",
+          "url": "https://event-driven.io/en/outbox_inbox_patterns_and_delivery_guarantees_explained/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Pattern: Transactional outbox (microservices.io)",
+          "url": "https://microservices.io/patterns/data/transactional-outbox.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "CQRS pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I021",
+      "topic": "CQRS, event sourcing and read projections",
+      "question": "What does CQRS separate, and when is that separation justified?",
+      "answerability": "answerable",
+      "answer_key": "CQRS separates the write model that validates commands from one or more read models optimized for queries. It pays off when read and write workloads differ sharply or queries need different shapes, and it costs complexity plus eventual consistency.",
+      "key_facts": [
+        "Write model handles commands and invariants",
+        "Read models are query-optimized projections",
+        "Justified by asymmetric load or complex queries"
+      ],
+      "sources": [
+        {
+          "title": "CQRS pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Pattern: CQRS (microservices.io)",
+          "url": "https://microservices.io/patterns/data/cqrs.html",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I022",
+      "topic": "CQRS, event sourcing and read projections",
+      "question": "Which consistency and operational costs does CQRS add?",
+      "answerability": "answerable",
+      "answer_key": "Read models lag behind writes, so clients can observe stale results until projections catch up. The design also adds messaging, duplicate handling, projection rebuilds and more moving parts to operate and migrate.",
+      "key_facts": [
+        "Reads may be stale until projections catch up",
+        "Messaging and duplicate handling are required",
+        "Read-model rebuilds cost time and compute"
+      ],
+      "sources": [
+        {
+          "title": "CQRS pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Pattern: CQRS (microservices.io)",
+          "url": "https://microservices.io/patterns/data/cqrs.html",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I023",
+      "topic": "CQRS, event sourcing and read projections",
+      "question": "How does event sourcing rebuild state, and why use snapshots?",
+      "answerability": "answerable",
+      "answer_key": "State is a fold over an append-only event stream, so replaying events rebuilds an aggregate. A snapshot stores materialized state at a stream position, letting replay start from the snapshot plus later events and bounding rebuild time.",
+      "key_facts": [
+        "Events are the source of truth",
+        "Replay reconstructs aggregate state",
+        "Snapshots bound replay cost"
+      ],
+      "sources": [
+        {
+          "title": "Event Sourcing pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Pattern: Event sourcing (microservices.io)",
+          "url": "https://microservices.io/patterns/data/event-sourcing.html",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I024",
+      "topic": "CQRS, event sourcing and read projections",
+      "question": "How are read projections built and kept correct?",
+      "answerability": "answerable",
+      "answer_key": "Projections subscribe to the event stream and apply changes to a query store, tracking a checkpoint. They must be idempotent and ordered per entity, and must support rebuilds when logic or schema changes.",
+      "key_facts": [
+        "Projections consume events into a read store",
+        "Checkpoints make progress restartable",
+        "Idempotent updates tolerate redelivery"
+      ],
+      "sources": [
+        {
+          "title": "Event Sourcing pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "CQRS pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Pattern: CQRS (microservices.io)",
+          "url": "https://microservices.io/patterns/data/cqrs.html",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I025",
+      "topic": "Quorums, leader election, consensus and fencing",
+      "question": "What does R + W > N guarantee in a replicated data store?",
+      "answerability": "answerable",
+      "answer_key": "With N replicas, a read quorum R and a write quorum W whose sum exceeds N overlap in at least one replica, so a read observes the latest acknowledged write. Larger quorums strengthen consistency but raise latency and reduce availability during failures.",
+      "key_facts": [
+        "R + W > N forces read and write quorum overlap",
+        "Quorum size trades latency for consistency",
+        "Cassandra exposes tunable consistency levels"
+      ],
+      "sources": [
+        {
+          "title": "Cassandra architecture: Dynamo-style replication and consistency",
+          "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Dynamo: Amazon's highly available key-value store (SOSP 2007 paper)",
+          "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Write concern (MongoDB manual)",
+          "url": "https://www.mongodb.com/docs/manual/reference/write-concern/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I026",
+      "topic": "Quorums, leader election, consensus and fencing",
+      "question": "How does Raft elect a leader, and why is a majority required?",
+      "answerability": "answerable",
+      "answer_key": "A candidate asks peers for votes in a new term and becomes leader once it has a majority. Majorities intersect, so two leaders cannot be elected in the same term, and a log entry is committed only after a majority stores it.",
+      "key_facts": [
+        "Votes are counted per term",
+        "Majorities intersect, preventing two leaders",
+        "Committed entries are stored on a majority"
+      ],
+      "sources": [
+        {
+          "title": "In search of an understandable consensus algorithm (Raft paper)",
+          "url": "https://raft.github.io/raft.pdf",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "etcd learning documentation",
+          "url": "https://etcd.io/docs/v3.5/learning/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I027",
+      "topic": "Quorums, leader election, consensus and fencing",
+      "question": "Why are leases unsafe without fencing, and what is a fencing token?",
+      "answerability": "answerable",
+      "answer_key": "A client can pause after its lease expires while another client takes the lease and writes; when the first client resumes it may overwrite newer data. A fencing token, incremented on each acquisition, lets the storage reject writes from stale holders.",
+      "key_facts": [
+        "Pauses can outlive a lease",
+        "A fencing token increases on each acquisition",
+        "Storage rejects writes with older tokens"
+      ],
+      "sources": [
+        {
+          "title": "How to do distributed locking (Martin Kleppmann)",
+          "url": "https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Leases (Kubernetes documentation)",
+          "url": "https://kubernetes.io/docs/concepts/architecture/leases/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I028",
+      "topic": "Quorums, leader election, consensus and fencing",
+      "question": "What availability cost comes with strongly consistent quorum writes?",
+      "answerability": "answerable",
+      "answer_key": "A write needs acknowledgements from a majority of voting replicas, so if enough replicas are slow or partitioned the write stalls or fails rather than diverging. The system chooses consistency over availability on the minority side of a partition.",
+      "key_facts": [
+        "Commit requires a majority of voters",
+        "A minority partition cannot commit writes",
+        "Latency includes the slowest quorum member"
+      ],
+      "sources": [
+        {
+          "title": "Spanner replication (Google Cloud documentation)",
+          "url": "https://cloud.google.com/spanner/docs/replication",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "CAP twelve years later (InfoQ)",
+          "url": "https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Cassandra architecture: Dynamo-style replication and consistency",
+          "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I029",
+      "topic": "Rate limiting, admission control, load shedding and throttling",
+      "question": "Token bucket versus leaky bucket: how do bursts differ?",
+      "answerability": "answerable",
+      "answer_key": "A token bucket accumulates tokens up to a burst size, allowing short bursts while enforcing the average rate. A leaky bucket drains at a fixed rate, smoothing output and typically queueing or dropping excess traffic.",
+      "key_facts": [
+        "Token bucket permits bursts up to bucket size",
+        "Leaky bucket smooths to a constant rate",
+        "Both bound the long-run average rate"
+      ],
+      "sources": [
+        {
+          "title": "Token bucket (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Token_bucket",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Leaky bucket (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Leaky_bucket",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Scaling your API with rate limiters (Stripe Engineering)",
+          "url": "https://stripe.com/blog/rate-limiters",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Throttle requests to your APIs (AWS API Gateway)",
+          "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request-throttling.html",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I030",
+      "topic": "Rate limiting, admission control, load shedding and throttling",
+      "question": "How should a throttled service respond, and what should clients do?",
+      "answerability": "answerable",
+      "answer_key": "Reject explicitly, typically with HTTP 429 and a Retry-After hint, instead of silently dropping or queueing forever. Clients should honor the hint, back off with jitter and reduce concurrency rather than retrying immediately.",
+      "key_facts": [
+        "429 plus Retry-After signals backpressure",
+        "Clients back off and cap concurrency",
+        "Immediate retries turn throttling into an outage"
+      ],
+      "sources": [
+        {
+          "title": "Rate Limiting pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/rate-limiting-pattern",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Throttle requests to your APIs (AWS API Gateway)",
+          "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request-throttling.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Scaling your API with rate limiters (Stripe Engineering)",
+          "url": "https://stripe.com/blog/rate-limiters",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I031",
+      "topic": "Rate limiting, admission control, load shedding and throttling",
+      "question": "What is load shedding, and how does criticality guide it?",
+      "answerability": "answerable",
+      "answer_key": "When demand exceeds capacity, the service drops or defers low-priority work so that critical requests still meet their objective. Google SRE ranks traffic by criticality and sheds the least critical classes first, rather than letting queues fail everything.",
+      "key_facts": [
+        "Shed lowest-criticality traffic first",
+        "Shedding preserves critical-path latency",
+        "Unbounded queues fail all requests"
+      ],
+      "sources": [
+        {
+          "title": "Handling overload (Google SRE book)",
+          "url": "https://sre.google/sre-book/handling-overload/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Scaling your API with rate limiters (Stripe Engineering)",
+          "url": "https://stripe.com/blog/rate-limiters",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I032",
+      "topic": "Rate limiting, admission control, load shedding and throttling",
+      "question": "What is admission control, and why reject work early?",
+      "answerability": "answerable",
+      "answer_key": "Admission control decides whether to accept work before it consumes resources, rejecting or queueing when rate, concurrency or queue limits are exceeded. Early rejection keeps latency bounded and protects shared dependencies from overload.",
+      "key_facts": [
+        "Decide admission before spending resources",
+        "Limits cover rate, concurrency and queue depth",
+        "Early rejection protects downstream capacity"
+      ],
+      "sources": [
+        {
+          "title": "Avoiding insurmountable queue backlogs (AWS Builders' Library)",
+          "url": "https://aws.amazon.com/builders-library/avoiding-insurmountable-queue-backlogs/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Rate Limiting pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/rate-limiting-pattern",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Circuit breaking (Envoy documentation)",
+          "url": "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/circuit_breaking",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I033",
+      "topic": "Sharding, partition keys, hot partitions and rebalancing",
+      "question": "Which properties make a partition key a good choice?",
+      "answerability": "answerable",
+      "answer_key": "A good key has high cardinality, spreads reads and writes evenly, and matches the dominant query pattern so requests touch one partition. Low-cardinality or time-ordered keys concentrate load and cause cross-partition fan-out.",
+      "key_facts": [
+        "High cardinality avoids oversized partitions",
+        "Even access distribution matters more than uniqueness",
+        "Align the key with the main query path"
+      ],
+      "sources": [
+        {
+          "title": "Best practices for partition key design (AWS DynamoDB)",
+          "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-design.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Shard keys (MongoDB manual)",
+          "url": "https://www.mongodb.com/docs/manual/core/sharding-shard-key/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Sharding pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/sharding",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I034",
+      "topic": "Sharding, partition keys, hot partitions and rebalancing",
+      "question": "Why do time-ordered keys create hot partitions, and what helps?",
+      "answerability": "answerable",
+      "answer_key": "New writes all fall into the partition that owns the newest range, so one partition takes the write load while others idle. Adding entropy, such as a random suffix or bucket prefix, spreads writes, and adaptive splitting can relieve sustained skew.",
+      "key_facts": [
+        "Monotonic keys concentrate new writes",
+        "A random suffix or bucket prefix spreads load",
+        "Partition limits cap per-partition throughput"
+      ],
+      "sources": [
+        {
+          "title": "Partition key design: using write sharding (AWS)",
+          "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-sharding.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "DynamoDB adaptive capacity (AWS)",
+          "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/adaptive-capacity.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Partitioning overview (Azure Cosmos DB)",
+          "url": "https://learn.microsoft.com/en-us/azure/cosmos-db/partitioning-overview",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I035",
+      "topic": "Sharding, partition keys, hot partitions and rebalancing",
+      "question": "How do virtual shards or consistent hashing reduce rebalancing cost?",
+      "answerability": "answerable",
+      "answer_key": "Mapping many logical shards onto fewer physical nodes, or hashing keys onto a ring, means adding a node moves only a fraction of the data instead of rehashing everything. With consistent hashing, adding one node moves roughly one nth of the keys.",
+      "key_facts": [
+        "Virtual shards decouple logical and physical layout",
+        "Consistent hashing moves a fraction of keys",
+        "Less data movement means shorter rebalances"
+      ],
+      "sources": [
+        {
+          "title": "Sharding pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/sharding",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Consistent hashing (Wikipedia)",
+          "url": "https://en.wikipedia.org/wiki/Consistent_hashing",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Dynamo: Amazon's highly available key-value store (SOSP 2007 paper)",
+          "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I036",
+      "topic": "Sharding, partition keys, hot partitions and rebalancing",
+      "question": "What operational risks follow from a low-cardinality shard key?",
+      "answerability": "answerable",
+      "answer_key": "Few distinct values mean few shards, so some shards are oversized or hot and rebalancing cannot even out load. Changing the key later requires a resharding migration with dual writes or a controlled cutover.",
+      "key_facts": [
+        "Few values limit maximum parallelism",
+        "Hot shards cause throttling and latency",
+        "Resharding needs migration planning"
+      ],
+      "sources": [
+        {
+          "title": "Sharding pattern (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/sharding",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Partitioning overview (Azure Cosmos DB)",
+          "url": "https://learn.microsoft.com/en-us/azure/cosmos-db/partitioning-overview",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Shard keys (MongoDB manual)",
+          "url": "https://www.mongodb.com/docs/manual/core/sharding-shard-key/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I037",
+      "topic": "Multi-region failover, replication and consistency trade-offs",
+      "question": "How do RTO and RPO drive the choice of disaster recovery strategy?",
+      "answerability": "answerable",
+      "answer_key": "RTO is the acceptable downtime and RPO the acceptable data loss window. Backup and restore is cheap but slow, warm standby shortens RTO, and active/active multi-site gives the lowest RTO and RPO at the highest cost.",
+      "key_facts": [
+        "RTO bounds downtime; RPO bounds data loss",
+        "Strategy cost rises as RTO and RPO shrink",
+        "Active/active needs conflict handling"
+      ],
+      "sources": [
+        {
+          "title": "Disaster recovery strategies on AWS (AWS Architecture Blog)",
+          "url": "https://aws.amazon.com/blogs/architecture/disaster-recovery-dr-architecture-on-aws-part-i-strategies-for-recovery-in-the-cloud/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Disaster recovery planning guide (Google Cloud)",
+          "url": "https://cloud.google.com/architecture/dr-scenarios-planning-guide",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I038",
+      "topic": "Multi-region failover, replication and consistency trade-offs",
+      "question": "Synchronous versus asynchronous replication: what is the trade-off?",
+      "answerability": "answerable",
+      "answer_key": "Synchronous replication waits for remote acknowledgement before commit, giving near-zero RPO but adding cross-region latency and failing when the remote is slow. Asynchronous replication commits locally and ships later, which lowers latency but can lose the unsent tail on failover.",
+      "key_facts": [
+        "Sync replication raises commit latency",
+        "Async replication risks losing recent writes",
+        "Quorum sync needs enough standbys"
+      ],
+      "sources": [
+        {
+          "title": "Warm standby and streaming replication (PostgreSQL docs)",
+          "url": "https://www.postgresql.org/docs/current/warm-standby.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Spanner replication (Google Cloud documentation)",
+          "url": "https://cloud.google.com/spanner/docs/replication",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "CAP twelve years later (InfoQ)",
+          "url": "https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I039",
+      "topic": "Multi-region failover, replication and consistency trade-offs",
+      "question": "What must an active/active multi-region design solve?",
+      "answerability": "answerable",
+      "answer_key": "Both regions serve traffic, so writes must be routed, partitioned or reconciled to avoid conflicting updates. Replication then needs consensus or conflict resolution, and failover becomes traffic steering while latency, cost and consistency guarantees get harder.",
+      "key_facts": [
+        "Concurrent writers need conflict handling",
+        "Consensus or partitioning avoids divergence",
+        "Traffic steering replaces cold failover"
+      ],
+      "sources": [
+        {
+          "title": "Disaster recovery strategies on AWS (AWS Architecture Blog)",
+          "url": "https://aws.amazon.com/blogs/architecture/disaster-recovery-dr-architecture-on-aws-part-i-strategies-for-recovery-in-the-cloud/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Spanner replication (Google Cloud documentation)",
+          "url": "https://cloud.google.com/spanner/docs/replication",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "CAP twelve years later (InfoQ)",
+          "url": "https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I040",
+      "topic": "Multi-region failover, replication and consistency trade-offs",
+      "question": "How can failover create split brain, and what prevents it?",
+      "answerability": "answerable",
+      "answer_key": "If two sites both believe they are primary, both accept writes and the data diverges. Quorum-based election lets only a majority side commit, and leases with fencing tokens make stale writers' operations fail at the storage layer.",
+      "key_facts": [
+        "Split brain means two writable primaries",
+        "Quorum prevents minority-side commits",
+        "Fencing tokens reject stale writers"
+      ],
+      "sources": [
+        {
+          "title": "Spanner replication (Google Cloud documentation)",
+          "url": "https://cloud.google.com/spanner/docs/replication",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "How to do distributed locking (Martin Kleppmann)",
+          "url": "https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "In search of an understandable consensus algorithm (Raft paper)",
+          "url": "https://raft.github.io/raft.pdf",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I041",
+      "topic": "SLIs, SLOs, error budgets and alerting",
+      "question": "Define SLI, SLO and SLA, and give one example SLI.",
+      "answerability": "answerable",
+      "answer_key": "An SLI is a measured indicator, such as the fraction of requests served under 300 ms. An SLO is an internal target for that indicator over a window, and an SLA is a contract with consequences for missing it.",
+      "key_facts": [
+        "SLIs are ratios of good to valid events",
+        "SLOs set an internal target and window",
+        "SLAs carry contractual consequences"
+      ],
+      "sources": [
+        {
+          "title": "Service level objectives (Google SRE book)",
+          "url": "https://sre.google/sre-book/service-level-objectives/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Alerting on SLOs (Google SRE workbook)",
+          "url": "https://sre.google/workbook/alerting-on-slos/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I042",
+      "topic": "SLIs, SLOs, error budgets and alerting",
+      "question": "How is an error budget computed and used in release decisions?",
+      "answerability": "answerable",
+      "answer_key": "The budget is one minus the SLO, expressed as the number of bad events or time allowed in the window. When the budget is spent, risky releases pause and reliability work takes priority; when it is healthy, teams can ship faster.",
+      "key_facts": [
+        "Budget = 1 - SLO over the window",
+        "Exhausted budget freezes risky changes",
+        "Budget policy links reliability and delivery"
+      ],
+      "sources": [
+        {
+          "title": "Embracing risk (Google SRE book)",
+          "url": "https://sre.google/sre-book/embracing-risk/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Service level objectives (Google SRE book)",
+          "url": "https://sre.google/sre-book/service-level-objectives/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I043",
+      "topic": "SLIs, SLOs, error budgets and alerting",
+      "question": "Why alert on burn rate instead of a raw error threshold?",
+      "answerability": "answerable",
+      "answer_key": "Burn rate measures how quickly the error budget is being consumed relative to the SLO window. Multi-window, multi-burn-rate alerts catch fast incidents and slow erosion while keeping false positives low, unlike fixed thresholds.",
+      "key_facts": [
+        "Burn rate = error rate divided by budget rate",
+        "Multiple windows improve precision and detection",
+        "Static thresholds page too often or too late"
+      ],
+      "sources": [
+        {
+          "title": "Alerting on SLOs (Google SRE workbook)",
+          "url": "https://sre.google/workbook/alerting-on-slos/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Service level objectives (Google SRE book)",
+          "url": "https://sre.google/sre-book/service-level-objectives/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I044",
+      "topic": "SLIs, SLOs, error budgets and alerting",
+      "question": "What are the four golden signals, and why monitor them?",
+      "answerability": "answerable",
+      "answer_key": "They are latency, traffic, errors and saturation, the four signals that describe a request-driven service. Saturation is the leading indicator, because it warns that a resource is approaching its limit before users see failures.",
+      "key_facts": [
+        "Latency, traffic, errors, saturation",
+        "Measure latency separately for success and failure",
+        "Saturation predicts imminent degradation"
+      ],
+      "sources": [
+        {
+          "title": "Monitoring distributed systems (Google SRE book)",
+          "url": "https://sre.google/sre-book/monitoring-distributed-systems/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Service level objectives (Google SRE book)",
+          "url": "https://sre.google/sre-book/service-level-objectives/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I045",
+      "topic": "Distributed tracing, context propagation and sampling",
+      "question": "What does the W3C traceparent header carry, and who forwards it?",
+      "answerability": "answerable",
+      "answer_key": "It carries a version, trace-id, parent-id and trace-flags, so each service can attach its span to the same trace. Instrumentation forwards the header, plus optional tracestate, on every downstream call across process boundaries.",
+      "key_facts": [
+        "traceparent fields: version, trace-id, parent-id, flags",
+        "The sampled flag is carried in trace-flags",
+        "tracestate carries vendor-specific data"
+      ],
+      "sources": [
+        {
+          "title": "W3C Trace Context recommendation",
+          "url": "https://www.w3.org/TR/trace-context/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Context propagation (OpenTelemetry documentation)",
+          "url": "https://opentelemetry.io/docs/concepts/context-propagation/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I046",
+      "topic": "Distributed tracing, context propagation and sampling",
+      "question": "Head-based versus tail-based sampling: what do you gain and lose?",
+      "answerability": "answerable",
+      "answer_key": "Head-based sampling decides at trace start, which is cheap but cannot know the outcome, so rare errors may be dropped. Tail-based sampling buffers complete traces and decides on attributes such as errors or latency, improving debugging at the cost of buffering and central collection.",
+      "key_facts": [
+        "Head sampling is decided before the outcome is known",
+        "Tail sampling needs trace buffering",
+        "Bias affects latency and error statistics"
+      ],
+      "sources": [
+        {
+          "title": "Sampling (OpenTelemetry documentation)",
+          "url": "https://opentelemetry.io/docs/concepts/sampling/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Dapper: distributed systems tracing infrastructure (Google paper)",
+          "url": "https://static.googleusercontent.com/media/research.google.com/en//archive/papers/dapper-2010-1.pdf",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I047",
+      "topic": "Distributed tracing, context propagation and sampling",
+      "question": "How do spans form a trace, and what does a parent reference mean?",
+      "answerability": "answerable",
+      "answer_key": "A trace is a tree of spans that share a trace-id, and each span has its own span-id plus the parent span-id of its caller. That linkage reconstructs timing and causality across services.",
+      "key_facts": [
+        "One trace-id is shared by all spans",
+        "Parent links encode call causality",
+        "Span timing shows where time is spent"
+      ],
+      "sources": [
+        {
+          "title": "Dapper: distributed systems tracing infrastructure (Google paper)",
+          "url": "https://static.googleusercontent.com/media/research.google.com/en//archive/papers/dapper-2010-1.pdf",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "W3C Trace Context recommendation",
+          "url": "https://www.w3.org/TR/trace-context/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Context propagation (OpenTelemetry documentation)",
+          "url": "https://opentelemetry.io/docs/concepts/context-propagation/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I048",
+      "topic": "Distributed tracing, context propagation and sampling",
+      "question": "Why is sampling necessary, and what bias can it introduce?",
+      "answerability": "answerable",
+      "answer_key": "Tracing every request is expensive in storage, CPU and network, so systems sample to cut overhead. Uniform sampling preserves aggregate rates but can miss rare failures, while attribute or adaptive sampling can distort metrics unless weights are accounted for.",
+      "key_facts": [
+        "Full-fidelity tracing is costly at scale",
+        "Sampling trades visibility for overhead",
+        "Weights or stratification reduce bias"
+      ],
+      "sources": [
+        {
+          "title": "Sampling (OpenTelemetry documentation)",
+          "url": "https://opentelemetry.io/docs/concepts/sampling/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Dapper: distributed systems tracing infrastructure (Google paper)",
+          "url": "https://static.googleusercontent.com/media/research.google.com/en//archive/papers/dapper-2010-1.pdf",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I049",
+      "topic": "Zero trust, least privilege and tenant isolation",
+      "question": "Which access decisions does zero trust make per request?",
+      "answerability": "answerable",
+      "answer_key": "Every request is authenticated and authorized for the specific resource, using dynamic policy based on identity, device and context rather than network location. NIST frames access as granted per session with the least privileges needed.",
+      "key_facts": [
+        "No implicit trust from network location",
+        "Access is granted per session and resource",
+        "Dynamic policy uses identity and context"
+      ],
+      "sources": [
+        {
+          "title": "NIST SP 800-207: Zero Trust Architecture",
+          "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-207.pdf",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Zero Trust Maturity Model (CISA)",
+          "url": "https://www.cisa.gov/zero-trust-maturity-model",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I050",
+      "topic": "Zero trust, least privilege and tenant isolation",
+      "question": "How is least privilege applied to workloads and service identities?",
+      "answerability": "answerable",
+      "answer_key": "Grant only the permissions a task needs, scope them to specific resources, and prefer short-lived credentials or roles over long-lived keys. Permissions should be reviewed and unused grants removed as the workload changes.",
+      "key_facts": [
+        "Scope permissions to actions and resources",
+        "Prefer short-lived credentials",
+        "Review and remove unused permissions"
+      ],
+      "sources": [
+        {
+          "title": "IAM security best practices (AWS)",
+          "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "NIST SP 800-207: Zero Trust Architecture",
+          "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-207.pdf",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Zero Trust Maturity Model (CISA)",
+          "url": "https://www.cisa.gov/zero-trust-maturity-model",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I051",
+      "topic": "Zero trust, least privilege and tenant isolation",
+      "question": "Compare dedicated and shared tenant isolation models.",
+      "answerability": "answerable",
+      "answer_key": "Dedicated resources give each tenant its own infrastructure and data, which simplifies isolation and noisy-neighbor control but costs more. Shared resources use tenant-scoped partitioning and authorization, which is efficient but makes correctness of tenant scoping critical.",
+      "key_facts": [
+        "Dedicated: stronger isolation, higher cost",
+        "Shared: efficient, scoping-critical",
+        "Many systems mix models by tenant tier"
+      ],
+      "sources": [
+        {
+          "title": "SaaS tenant isolation strategies (AWS whitepaper)",
+          "url": "https://docs.aws.amazon.com/whitepapers/latest/saas-tenant-isolation-strategies/saas-tenant-isolation-strategies.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Storage and data in multitenant solutions (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/approaches/storage-data",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I052",
+      "topic": "Zero trust, least privilege and tenant isolation",
+      "question": "How can one tenant read another tenant's data, and which controls prevent it?",
+      "answerability": "answerable",
+      "answer_key": "Leakage happens when a query, cache key or connection lacks tenant scoping, or when authorization checks identity but not tenant. Prevent it with tenant ids in every key and query, centralized enforcement, row-level or per-tenant encryption, and cross-tenant tests.",
+      "key_facts": [
+        "Missing tenant scope leaks rows",
+        "Enforce tenant checks centrally",
+        "Per-tenant keys limit blast radius"
+      ],
+      "sources": [
+        {
+          "title": "Storage and data in multitenant solutions (Microsoft Learn)",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/approaches/storage-data",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "SaaS tenant isolation strategies (AWS whitepaper)",
+          "url": "https://docs.aws.amazon.com/whitepapers/latest/saas-tenant-isolation-strategies/saas-tenant-isolation-strategies.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "NIST SP 800-207: Zero Trust Architecture",
+          "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-207.pdf",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I053",
+      "topic": "API contracts, versioning and expand-and-contract migration",
+      "question": "Which API changes are backward compatible?",
+      "answerability": "answerable",
+      "answer_key": "Adding optional fields or new endpoints and relaxing validation are compatible. Removing or renaming fields, changing types or semantics, or making optional fields required are breaking changes that need a new version or migration.",
+      "key_facts": [
+        "Additive optional changes are compatible",
+        "Removing or renaming fields breaks clients",
+        "Servers should tolerate unknown fields"
+      ],
+      "sources": [
+        {
+          "title": "AIP-180: Backwards compatibility",
+          "url": "https://aip.dev/180",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Semantic Versioning 2.0.0",
+          "url": "https://semver.org/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Azure API design guidelines (Microsoft)",
+          "url": "https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I054",
+      "topic": "API contracts, versioning and expand-and-contract migration",
+      "question": "How does expand-and-contract migrate a breaking change?",
+      "answerability": "answerable",
+      "answer_key": "Expand adds the new field or endpoint while the old one still works, and the system writes both. Migrate moves consumers and verifies usage with telemetry, then contract removes the old path once no callers remain.",
+      "key_facts": [
+        "Expand: add new alongside old",
+        "Migrate: move consumers, watch telemetry",
+        "Contract: remove old after usage reaches zero"
+      ],
+      "sources": [
+        {
+          "title": "Parallel change, also known as expand and contract (Martin Fowler)",
+          "url": "https://martinfowler.com/bliki/ParallelChange.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "AIP-180: Backwards compatibility",
+          "url": "https://aip.dev/180",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "API versioning (Stripe API documentation)",
+          "url": "https://docs.stripe.com/api/versioning",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I055",
+      "topic": "API contracts, versioning and expand-and-contract migration",
+      "question": "How do URI, query or header and date-based API versioning differ?",
+      "answerability": "answerable",
+      "answer_key": "URI versioning puts the major version in the path, which is visible but changes URLs. Query or header parameters keep URLs stable but can be missed by caches and logs, while date-based versions pin behavior to a release date so providers can evolve defaults.",
+      "key_facts": [
+        "URI versioning is simple and explicit",
+        "Header versions are easy to overlook",
+        "Date-based versions pin behavior per date"
+      ],
+      "sources": [
+        {
+          "title": "API versioning (Stripe API documentation)",
+          "url": "https://docs.stripe.com/api/versioning",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Azure API design guidelines (Microsoft)",
+          "url": "https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "AIP-185: API versioning",
+          "url": "https://aip.dev/185",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I056",
+      "topic": "API contracts, versioning and expand-and-contract migration",
+      "question": "How should a field be deprecated and removed safely?",
+      "answerability": "answerable",
+      "answer_key": "Announce the deprecation, keep the old form working while adding the replacement, and instrument usage. Remove only after telemetry shows no traffic and a sunset date has passed, and document the migration for clients.",
+      "key_facts": [
+        "Keep old and new forms during migration",
+        "Use telemetry to confirm zero usage",
+        "Set and communicate a sunset date"
+      ],
+      "sources": [
+        {
+          "title": "Parallel change, also known as expand and contract (Martin Fowler)",
+          "url": "https://martinfowler.com/bliki/ParallelChange.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "AIP-180: Backwards compatibility",
+          "url": "https://aip.dev/180",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "API versioning (Stripe API documentation)",
+          "url": "https://docs.stripe.com/api/versioning",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I057",
+      "topic": "Canary, blue-green, rollback and progressive delivery",
+      "question": "How does a canary release limit the blast radius of a bad change?",
+      "answerability": "answerable",
+      "answer_key": "A canary sends a small share of traffic or a small cohort to the new version while the baseline keeps serving. Error rate and latency are compared, and the rollout is promoted gradually or aborted, so regressions affect few users.",
+      "key_facts": [
+        "A small traffic slice limits exposure",
+        "Compare canary against baseline metrics",
+        "Automated abort contains regressions"
+      ],
+      "sources": [
+        {
+          "title": "Canary release (Martin Fowler)",
+          "url": "https://martinfowler.com/bliki/CanaryRelease.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Canary deployments (Argo Rollouts documentation)",
+          "url": "https://argo-rollouts.readthedocs.io/en/stable/features/canary/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Canarying releases (Google SRE workbook)",
+          "url": "https://sre.google/workbook/canarying-releases/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I058",
+      "topic": "Canary, blue-green, rollback and progressive delivery",
+      "question": "Blue-green versus canary: resource cost and rollback speed?",
+      "answerability": "answerable",
+      "answer_key": "Blue-green runs two full environments and switches all traffic once the new one is validated, so rollback is a fast switch back but capacity doubles. Canary uses a small slice and limits exposure, but needs traffic splitting and takes longer to reach full rollout.",
+      "key_facts": [
+        "Blue-green needs duplicate capacity",
+        "Rollback is a traffic switch",
+        "Canary reduces exposure, not resource cost"
+      ],
+      "sources": [
+        {
+          "title": "Blue-green deployment (Martin Fowler)",
+          "url": "https://martinfowler.com/bliki/BlueGreenDeployment.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Blue-green deployments (Argo Rollouts documentation)",
+          "url": "https://argo-rollouts.readthedocs.io/en/stable/features/bluegreen/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Canarying releases (Google SRE workbook)",
+          "url": "https://sre.google/workbook/canarying-releases/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I059",
+      "topic": "Canary, blue-green, rollback and progressive delivery",
+      "question": "What is progressive delivery, and how does automated analysis gate it?",
+      "answerability": "answerable",
+      "answer_key": "Progressive delivery exposes a new version gradually and checks metrics at defined steps before increasing traffic. A controller such as Flagger or Argo Rollouts runs the analysis and aborts or rolls back when error rate, latency or custom checks fail.",
+      "key_facts": [
+        "Traffic increases in ordered steps",
+        "Analysis gates promotion",
+        "Failure triggers automatic rollback"
+      ],
+      "sources": [
+        {
+          "title": "How Flagger works (Flagger documentation)",
+          "url": "https://docs.flagger.app/usage/how-it-works",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Canary deployments (Argo Rollouts documentation)",
+          "url": "https://argo-rollouts.readthedocs.io/en/stable/features/canary/",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Canarying releases (Google SRE workbook)",
+          "url": "https://sre.google/workbook/canarying-releases/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    },
+    {
+      "id": "I060",
+      "topic": "Canary, blue-green, rollback and progressive delivery",
+      "question": "What makes rollback safe when a release changes stored data?",
+      "answerability": "answerable",
+      "answer_key": "Rolling back code is unsafe if the new version wrote data the old code cannot read. Use backward-compatible schema changes and dual writes or reads during the transition, and keep the previous version deployable so traffic can be shifted back.",
+      "key_facts": [
+        "Schema changes must be backward compatible",
+        "Dual write or dual read bridges the transition",
+        "Keep the previous version deployable for rollback"
+      ],
+      "sources": [
+        {
+          "title": "Blue-green deployment (Martin Fowler)",
+          "url": "https://martinfowler.com/bliki/BlueGreenDeployment.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Parallel change, also known as expand and contract (Martin Fowler)",
+          "url": "https://martinfowler.com/bliki/ParallelChange.html",
+          "accessed": "2026-10-23"
+        },
+        {
+          "title": "Blue-green deployments (Argo Rollouts documentation)",
+          "url": "https://argo-rollouts.readthedocs.io/en/stable/features/bluegreen/",
+          "accessed": "2026-10-23"
+        }
+      ]
+    }
+  ],
+  "unanswerable": [
+    {
+      "id": "U001",
+      "topic": "Cache-aside, write-through, write-around and write-behind caching",
+      "question": "Which caching product gives the lowest read latency for a 100 GB working set?",
+      "reason": "vendor-specific"
+    },
+    {
+      "id": "U002",
+      "topic": "Cache-aside, write-through, write-around and write-behind caching",
+      "question": "What does a managed cache provider charge per million reads this month?",
+      "reason": "current-fact"
+    },
+    {
+      "id": "U003",
+      "topic": "Cache invalidation, TTL, stampede protection and hot keys",
+      "question": "What cache hit ratio did our production cluster achieve last month?",
+      "reason": "exact-measurement"
+    },
+    {
+      "id": "U004",
+      "topic": "Queue-based load leveling, backpressure and Little's Law",
+      "question": "How many messages per second can one managed FIFO queue sustain today?",
+      "reason": "vendor-specific"
+    },
+    {
+      "id": "U005",
+      "topic": "Queue-based load leveling, backpressure and Little's Law",
+      "question": "What was our production queue depth at peak last week?",
+      "reason": "exact-measurement"
+    },
+    {
+      "id": "U006",
+      "topic": "Retries, idempotency keys and duplicate effects",
+      "question": "Which retry library does the latest Spring Boot release use by default?",
+      "reason": "vendor-specific"
+    },
+    {
+      "id": "U007",
+      "topic": "Sagas, compensating transactions, outbox and inbox patterns",
+      "question": "What is the maximum saga step count in the current Camunda release?",
+      "reason": "vendor-specific"
+    },
+    {
+      "id": "U008",
+      "topic": "Sagas, compensating transactions, outbox and inbox patterns",
+      "question": "Should our payroll system use sagas or two-phase commit?",
+      "reason": "out-of-scope"
+    },
+    {
+      "id": "U009",
+      "topic": "CQRS, event sourcing and read projections",
+      "question": "What read-model lag does our reporting pipeline show at peak?",
+      "reason": "exact-measurement"
+    },
+    {
+      "id": "U010",
+      "topic": "Quorums, leader election, consensus and fencing",
+      "question": "Which etcd patch release is the newest stable version this week?",
+      "reason": "current-fact"
+    },
+    {
+      "id": "U011",
+      "topic": "Quorums, leader election, consensus and fencing",
+      "question": "How many nodes does our production etcd cluster run?",
+      "reason": "exact-measurement"
+    },
+    {
+      "id": "U012",
+      "topic": "Rate limiting, admission control, load shedding and throttling",
+      "question": "What rate limit does our payment provider apply to the Charges API?",
+      "reason": "vendor-specific"
+    },
+    {
+      "id": "U013",
+      "topic": "Rate limiting, admission control, load shedding and throttling",
+      "question": "What is the current price per million API Gateway requests in us-east-1?",
+      "reason": "current-fact"
+    },
+    {
+      "id": "U014",
+      "topic": "Sharding, partition keys, hot partitions and rebalancing",
+      "question": "How many partitions does our production table currently have?",
+      "reason": "exact-measurement"
+    },
+    {
+      "id": "U015",
+      "topic": "Multi-region failover, replication and consistency trade-offs",
+      "question": "Which region pair should our company choose for data residency?",
+      "reason": "out-of-scope"
+    },
+    {
+      "id": "U016",
+      "topic": "SLIs, SLOs, error budgets and alerting",
+      "question": "What SLO target should our checkout service adopt?",
+      "reason": "out-of-scope"
+    },
+    {
+      "id": "U017",
+      "topic": "Distributed tracing, context propagation and sampling",
+      "question": "What sampling rate does Google use for all production traces today?",
+      "reason": "current-fact"
+    },
+    {
+      "id": "U018",
+      "topic": "Zero trust, least privilege and tenant isolation",
+      "question": "Does our tenant isolation design satisfy the external auditor?",
+      "reason": "out-of-scope"
+    },
+    {
+      "id": "U019",
+      "topic": "API contracts, versioning and expand-and-contract migration",
+      "question": "When will the payment provider retire API version 2019-12-03?",
+      "reason": "current-fact"
+    },
+    {
+      "id": "U020",
+      "topic": "Canary, blue-green, rollback and progressive delivery",
+      "question": "What canary traffic percentage does our company release policy require?",
+      "reason": "out-of-scope"
+    }
+  ],
+  "limits": [
+    "Labels are agent-adjudicated, not human-reviewed; no agreement scores exist.",
+    "All cited URLs returned HTTP 200 when retrieved on 2026-10-23; content may change later.",
+    "Answer keys paraphrase the cited material and omit many exceptions and edge cases.",
+    "Sources were checked for the concepts they support, not sentence by sentence.",
+    "Source authority varies: standards and papers, vendor documentation and engineering blogs.",
+    "JSON lines over 100 chars are only long answer keys and URLs; JSON strings cannot wrap.",
+    "The Markdown mirror wraps prose at 96 characters; source URL lines may exceed 100 characters.",
+    "Unanswerable items cite no sources: they need private, account-specific or future data.",
+    "No repository, book page, search output or pre-existing qrels material was read for this set."
+  ]
+}

@@ -186,3 +186,17 @@ python3 scripts/evaluate_abstention.py --qrels evaluation/corpus-qrels.v2.json
 The refusal policy is a diagnostic, not proof of answer correctness. Passing it
 does not create sufficient coverage, independent review, owner acceptance or CI.
 
+## Independent agent challenge (2026-10-23)
+
+A fresh agent-adjudicated challenge set is preserved at
+[independent-agent-qrels.phase1.json](../evaluation/independent-agent-qrels.phase1.json):
+60 answerable and 20 unanswerable questions, written from public sources without
+reading Tycho. It is not human review and was not used for tuning.
+
+The current abstention policy abstained on only 6/20 unanswerable items, returned
+14 false answers, and falsely refused 9/60 answerable items (precision 0.40). The
+details and the decision not to tune on the challenge set are in
+[ABSTENTION-INDEPENDENT-QRELS-2026-10-23.md](ABSTENTION-INDEPENDENT-QRELS-2026-10-23.md).
+The v2 abstention numbers must therefore be read as author-labelled diagnostics,
+not as calibrated production quality.
+
