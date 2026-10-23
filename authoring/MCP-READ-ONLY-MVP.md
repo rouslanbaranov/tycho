@@ -116,6 +116,11 @@ pin it with `registry_snapshot_id`; a mismatch returns
 coverage summary. They do not infer that `partial-bounded` entries are
 sufficient, and they do not claim independent review.
 
+Pattern owner citations use `tycho.markdown-heading-anchor.v1`, not
+`tycho.section-key.v2`. An anchor can point at an H3 that is not a citable
+section. Use `tycho_page` with the owner path and then choose a section from
+its map for `tycho_read`.
+
 ## Query logging
 
 Search queries are **not logged by default**. The operator can opt in with
@@ -130,6 +135,11 @@ enabling the log is a privacy decision: the operator must control the path,
 access, retention and deletion. The adapter does not rotate, redact or encrypt
 the file. A write failure is reported as `query_log: "not-available"` and does
 not break retrieval.
+
+The path must be a regular file outside the canonical stores (`book/`,
+`generated/`, `edition/`, `sources/`, `schemas/`, `authoring/`, `tests/` and
+`scripts/`). Symlinks, directories and special files are refused; a refused
+path is reported as `query_log: "not-available"` and writes nothing.
 
 ## Answerability
 
@@ -152,7 +162,8 @@ refusal metric and independent labels remain future work.
 
 - **Read-only book access:** the process opens the published SQLite index in
   read-only mode and never writes the book, metadata, index or evidence. The
-  optional query log is the only write path and is disabled by default.
+  optional query log is the only write path; it is disabled by default and must
+  be a regular file outside the canonical stores.
 - **No arbitrary paths:** `tycho_page` accepts only a relative canonical
   `book/...md` path without `..`, backslashes, absolute prefixes or empty
   segments. The page must be present in the snapshot; the file must stay
@@ -183,12 +194,13 @@ Run the offline suite from the repository root:
 
 The suite builds a synthetic three-page book with strict metadata, publishes
 a real FTS5 section index, writes a synthetic pattern registry and card batch,
-and exercises 21 cases: modern discovery and cache fields, legacy
+and exercises 23 cases: modern discovery and cache fields, legacy
 initialization, tool listing, search citations, zero results, bounded section
 reads, page maps, traversal refusal, retrieval and registry snapshot pinning,
 unsupported versions, missing metadata, unknown tools and arguments, ping era
-behavior, pattern filters and pagination, pattern card lookup, query-log
-opt-in and failure handling, evidence argument validation, collection counts
+behavior, pattern filters and pagination, pattern card lookup, pattern
+citation scheme, query-log opt-in, failure and protected-path refusal,
+malformed-message handling, evidence argument validation, collection counts
 and a stdio subprocess roundtrip.
 
 A separate manual smoke runs the same server through the official SDK
@@ -205,7 +217,7 @@ offline suite.
 | Section snapshot | `4d2391ee8ba90de07d29ea3554061bea299df6661498f394471ab694a800ec0a` |
 | Pattern registry | 145 entries, all `partial-bounded`, 0 `sufficient` |
 | Pattern registry snapshot | `d63969cf650d7acb174fa1570085b8854c0a28c8470a7918ecd4523470d73814` |
-| Offline tests | 21 passed, about 0.5–1.5 s |
+| Offline tests | 23 passed, about 0.5–1.5 s |
 | `server/discover` | about 0.03 s |
 | `tycho_search` warm local run | about 1.0–1.2 s end to end |
 | `tycho_read` warm local run | about 1.0 s end to end |
@@ -228,9 +240,9 @@ capacity forecast or a client benchmark.
   suite.
 - No hosted Streamable HTTP endpoint, authentication, authorization,
   observability, load test or deployment exists.
-- Query logging is opt-in and has no rotation, retention enforcement,
-  redaction or encryption. It must not be enabled without an explicit
-  privacy decision.
+- Query logging is opt-in, requires a regular non-symlink file outside the
+  canonical stores, and has no rotation, retention enforcement, redaction or
+  encryption. It must not be enabled without an explicit privacy decision.
 - No calibrated answerability or refusal metric exists; the five
   unanswerable qrels items still have no refusal score.
 - Pattern lookup reads a draft registry. All 145 entries remain

@@ -48,6 +48,11 @@ CACHE_TTL_MS = 60000
 CACHE_SCOPE = "public"
 DEFAULT_PATTERN_REGISTRY = "edition/patterns/registry.v1.json"
 DEFAULT_PATTERN_CARDS = "edition/patterns/card-batches.v1.json"
+PATTERN_CITATION_SCHEME = "tycho.markdown-heading-anchor.v1"
+PROTECTED_LOG_DIRS = (
+    "authoring", "book", "edition", "generated", "schemas", "scripts",
+    "sources", "tests",
+)
 
 INSTRUCTIONS = (
     "Tycho is a snapshot-bound, read-only System Design book collection. "
@@ -521,6 +526,7 @@ TOOL_SPECS = {
         "description": (
             "List bounded summaries from the draft Tycho pattern registry, "
             "with owner paths, coverage states and registry snapshot identity. "
+            "Owner citations are page heading anchors, not section keys. "
             "Coverage is not a sufficient or independently reviewed claim."
         ),
         "inputSchema": patterns_schema(),
@@ -537,9 +543,10 @@ TOOL_SPECS = {
         "name": "tycho_pattern",
         "title": "Read one draft pattern-registry entry",
         "description": (
-            "Return one pattern entry, its family, owner citation, coverage "
-            "state and optional card/ledger metadata. Does not return book "
-            "text; use tycho_page or tycho_read for the owner section."
+            "Return one pattern entry, its family, owner heading citation, "
+            "coverage state and optional card/ledger metadata. The citation "
+            "is a page anchor, not a section key; use tycho_page for the "
+            "owner page. Does not return book text."
         ),
         "inputSchema": pattern_schema(),
         "handler": "_tool_pattern",
@@ -658,13 +665,35 @@ class TychoMcpServer:
             "catalog_problem": pattern.get("catalog_problem"),
             "technical_owner": owner,
             "citation": (path + "#" + anchor) if path and anchor else path,
+            "citation_scheme": PATTERN_CITATION_SCHEME,
             "coverage": pattern.get("coverage"),
             "confidence": pattern.get("confidence"),
             "review_status": pattern.get("review_status"),
         }
 
+    def query_log_is_safe(self):
+        target = self.query_log
+        if target is None:
+            return False
+        if target.is_symlink():
+            return False
+        if target.exists() and not target.is_file():
+            return False
+        try:
+            resolved = target.resolve(strict=False)
+        except (OSError, RuntimeError):
+            return False
+        for name in PROTECTED_LOG_DIRS:
+            protected = (self.root / name).resolve()
+            if resolved == protected or resolved.is_relative_to(protected):
+                return False
+        return True
+
     def log_query(self, payload, args, query, limit):
         if self.query_log is None:
+            return
+        if not self.query_log_is_safe():
+            payload["query_log"] = "not-available"
             return
         record = {
             "schema_version": 1,
@@ -692,7 +721,7 @@ class TychoMcpServer:
             with self.query_log.open("a", encoding="utf-8") as handle:
                 handle.write(json.dumps(
                     record, ensure_ascii=False, sort_keys=True) + "\n")
-        except OSError:
+        except (OSError, ValueError):
             payload["query_log"] = "not-available"
         else:
             payload["query_log"] = "recorded"
@@ -1206,13 +1235,13 @@ class TychoMcpServer:
             "coverage_summary": coverage,
             "sufficiency": {
                 "sufficient": sufficient,
-                "state": "draft",
+                "state": data.get("status") or "unknown",
                 "caveat": (
-                    "The pattern registry is a draft; zero sufficient "
-                    "entries and review status are read from the registry, "
-                    "not inferred here."
+                    "Sufficient entries and review status are read from the "
+                    "registry, not inferred here."
                 ),
             },
+            "citation_scheme": PATTERN_CITATION_SCHEME,
             "family": family,
             "query": text,
             "offset": offset,
@@ -1274,6 +1303,11 @@ class TychoMcpServer:
             "card": card,
             "cards_status": "ok" if cards_error is None else "not-available",
             "citation": (path + "#" + anchor) if path and anchor else path,
+            "citation_scheme": PATTERN_CITATION_SCHEME,
+            "owner_read": (
+                {"tool": "tycho_page", "arguments": {"path": path}}
+                if path else None
+            ),
             "coverage": coverage,
             "sufficiency": {
                 "sufficient": coverage.get("overall") == "sufficient",
@@ -1350,6 +1384,10 @@ class TychoMcpServer:
         if mismatch is not None:
             mismatch["tool"] = "tycho_describe"
             return mismatch
+        logging = "disabled"
+        if self.query_log is not None:
+            logging = (
+                "enabled" if self.query_log_is_safe() else "not-available")
         patterns, pattern_snapshot, pattern_error = self.load_patterns()
         if pattern_error is None:
             mismatch = registry_mismatch(
@@ -1364,6 +1402,7 @@ class TychoMcpServer:
                 "registry_status": patterns.get("status"),
                 "entries": len(patterns["patterns"]),
                 "coverage_summary": coverage_summary(patterns["patterns"]),
+                "citation_scheme": PATTERN_CITATION_SCHEME,
             }
         else:
             if registry_requested is not None:
@@ -1397,8 +1436,7 @@ class TychoMcpServer:
             "citation_scheme": section_search.CITATION_SCHEME,
             "protocol_versions": list(SUPPORTED_VERSIONS),
             "tools": list(TOOL_ORDER),
-            "query_logging": (
-                "enabled" if self.query_log is not None else "disabled"),
+            "query_logging": logging,
             "limits": {
                 "search_limit": [1, MAX_LIMIT],
                 "read_budget_chars": [1, MAX_BUDGET],

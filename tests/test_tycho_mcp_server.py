@@ -4,6 +4,7 @@ The suite builds a synthetic three-page book with valid strict metadata, publish
 a real section index, and exercises the modern and legacy protocol paths. It does
 not test a hosted endpoint, an external SDK, authentication or answer quality.
 """
+import io
 import json
 from pathlib import Path
 import shutil
@@ -420,11 +421,15 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["coverage_summary"],
                          {"partial-bounded": 2})
         self.assertEqual(payload["sufficiency"]["sufficient"], 0)
+        self.assertEqual(payload["citation_scheme"],
+                         mcp_server.PATTERN_CITATION_SCHEME)
         self.assertEqual(
             [item["pattern_id"] for item in payload["patterns"]],
             ["tycho.pattern.alpha-pattern",
              "tycho.pattern.beta-pattern"],
         )
+        self.assertEqual(payload["patterns"][0]["citation_scheme"],
+                         mcp_server.PATTERN_CITATION_SCHEME)
         filtered = self.call(server, "tycho_patterns", {
             "family": "family-b",
         })["structuredContent"]
@@ -461,6 +466,11 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["cards_status"], "ok")
         self.assertEqual(payload["citation"],
                          "book/alpha.md#retry-budget")
+        self.assertEqual(payload["citation_scheme"],
+                         mcp_server.PATTERN_CITATION_SCHEME)
+        self.assertEqual(payload["owner_read"],
+                         {"tool": "tycho_page",
+                          "arguments": {"path": "book/alpha.md"}})
         self.assertEqual(payload["sufficiency"]["state"],
                          "partial-bounded")
         self.assertFalse(payload["sufficiency"]["sufficient"])
@@ -523,6 +533,49 @@ class McpServerTests(unittest.TestCase):
         self.assertFalse(result["isError"])
         self.assertEqual(
             result["structuredContent"]["query_log"], "not-available")
+
+    def test_query_log_rejects_protected_special_and_symlink_paths(self):
+        protected = self.root / "book" / "queries.jsonl"
+        server = mcp_server.TychoMcpServer(
+            self.root, query_log=protected)
+        result = self.call(server, "tycho_search", {"query": "zebra"})
+        self.assertEqual(
+            result["structuredContent"]["query_log"], "not-available")
+        self.assertFalse(protected.exists())
+
+        directory = self.root / "log-dir"
+        directory.mkdir()
+        server = mcp_server.TychoMcpServer(
+            self.root, query_log=directory)
+        result = self.call(server, "tycho_search", {"query": "zebra"})
+        self.assertEqual(
+            result["structuredContent"]["query_log"], "not-available")
+
+        target = self.root / "target.jsonl"
+        target.write_text("", encoding="utf-8")
+        link = self.root / "log-link.jsonl"
+        try:
+            link.symlink_to(target)
+        except OSError:
+            self.skipTest("symlinks are unavailable on this platform")
+        server = mcp_server.TychoMcpServer(
+            self.root, query_log=link)
+        result = self.call(server, "tycho_search", {"query": "zebra"})
+        self.assertEqual(
+            result["structuredContent"]["query_log"], "not-available")
+        self.assertEqual(target.read_text(encoding="utf-8"), "")
+
+    def test_stdio_protocol_error_responses(self):
+        stdin = io.StringIO("{bad\n[]\n")
+        stdout = io.StringIO()
+        mcp_server.serve(self.server(), stdin=stdin, stdout=stdout)
+        responses = [
+            json.loads(line) for line in stdout.getvalue().splitlines()
+        ]
+        self.assertEqual(
+            [response["error"]["code"] for response in responses],
+            [-32700, -32600],
+        )
 
     def test_snapshot_pin_mismatch_is_explicit(self):
         result = self.call(self.server(), "tycho_search", {
