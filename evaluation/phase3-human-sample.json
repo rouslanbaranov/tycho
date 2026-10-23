@@ -1,0 +1,443 @@
+{
+  "sample": "phase3-human-20pct",
+  "total_items": 72,
+  "sample_size": 15,
+  "fraction": 0.2083,
+  "status": "human-review-pending",
+  "label_status": "agent-adjudicated-not-human",
+  "items": [
+    {
+      "id": "T1-A01",
+      "topic_id": "T1",
+      "question": "In the cache-aside pattern, what does an application do on a cache hit and on a cache miss, and how does this differ from read-through caching?",
+      "phase3_label": "answerable",
+      "adjudicated_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "section_id": "4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+          "quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss",
+          "rationale": "Cache-first read; a miss fetches the origin, and the same section's flow returns the cached value on a hit."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "section_id": "bounded-pattern-ownership-notes",
+          "quote": "A read-through cache loads a miss from the source on behalf of the caller",
+          "rationale": "Read-through performs the fill in the cache, unlike application-owned cache-aside fill."
+        }
+      ],
+      "answer_key": "The application reads the cache first; a hit returns the cached item directly. On a miss it loads the item from the data store, writes it into the cache, and returns it to the caller. Read-through caching differs because the cache itself performs the load on a miss, while cache-aside keeps that logic in the application.",
+      "key_facts": [
+        "The application checks the cache before going to the data store.",
+        "On a miss the application reads from the data store, populates the cache, and returns the value.",
+        "Read-through caching performs the load inside the caching system; cache-aside emulates it in application code.",
+        "Only data that is actually requested is loaded into the cache."
+      ],
+      "sources": [
+        {
+          "title": "Cache-Aside pattern",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+          "accessed": "2026-10-24"
+        },
+        {
+          "title": "Caching strategies for Memcached - Amazon ElastiCache",
+          "url": "https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Strategies.html",
+          "accessed": "2026-10-24"
+        }
+      ],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T2-A01",
+      "topic_id": "T2",
+      "question": "A service handles a long-run average of 250 requests per second, and each request spends an average of 120 ms in the system. Using Little's law, what is the average number of requests in the system, and what condition must hold for the law to apply?",
+      "phase3_label": "answerable",
+      "adjudicated_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/measurement-boundary.md",
+          "section_id": null,
+          "quote": "For a stable system with a consistent customer/work definition and well-defined steady-state",
+          "rationale": "States the stable/steady-state precondition; the same section gives the mean identity."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/measurement-boundary.md",
+          "section_id": null,
+          "quote": "L = λ × W",
+          "rationale": "Applying the identity to 250 requests/s and 0.12 s gives 30 average requests."
+        }
+      ],
+      "answer_key": "Convert the dwell time to seconds and multiply: L = 250 x 0.12 = 30 requests on average. The law is an average-case identity for a stationary (ergodic) system; apart from that, it does not depend on the arrival distribution, the service-time distribution or the queue discipline.",
+      "key_facts": [
+        "L = lambda x W relates average items in the system, average arrival rate and average time in the system.",
+        "With lambda = 250/s and W = 0.12 s, L = 30.",
+        "The result is a long-run average that requires an ergodic, stationary system.",
+        "The identity applies to whole systems and to subsystems within them."
+      ],
+      "sources": [
+        {
+          "title": "Little's law",
+          "url": "https://en.wikipedia.org/wiki/Little%27s_law",
+          "accessed": "2026-10-24"
+        },
+        {
+          "title": "M/M/1 queue",
+          "url": "https://en.wikipedia.org/wiki/M/M/1_queue",
+          "accessed": "2026-10-24"
+        }
+      ],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T3-A01",
+      "topic_id": "T3",
+      "question": "A five-server Raft cluster uses majority quorums. How many server failures can it tolerate while still electing a leader and committing new entries, and what property of majorities keeps two partitions from both making progress?",
+      "phase3_label": "answerable",
+      "adjudicated_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_id": "2-majority-quorum-arithmetic-and-the-failure-envelope",
+          "quote": "A **5-voter** cluster requires 3.",
+          "rationale": "A majority of five is three, so two failures are tolerable."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_id": "2-majority-quorum-arithmetic-and-the-failure-envelope",
+          "quote": "a minority partition cannot commit authoritatively",
+          "rationale": "Intersecting majorities leave only the majority side able to commit."
+        }
+      ],
+      "answer_key": "Five servers require a majority of three, so the cluster can lose two servers and still elect a leader and commit entries; with three failures only two remain, below quorum. Quorums are counted over all configured servers rather than only the reachable ones, and any two majorities share at least one server. That shared server can vote in only one term and can sit on only one side of a partition, so at most one partition can assemble a quorum and split brain is avoided.",
+      "key_facts": [
+        "A majority of five servers is three, so two failures are tolerable.",
+        "Majorities are computed over the full configured membership, not the live set.",
+        "Any two majority quorums intersect in at least one server.",
+        "At most one partition of a split network can hold a majority."
+      ],
+      "sources": [
+        {
+          "title": "6.824 2016 Lecture 5: Raft (1)",
+          "url": "http://nil.csail.mit.edu/6.824/2016/notes/l-raft.txt",
+          "accessed": "2026-10-24"
+        },
+        {
+          "title": "ZooKeeper Administrator's Guide",
+          "url": "https://zookeeper.apache.org/doc/current/zookeeperAdmin.html",
+          "accessed": "2026-10-24"
+        },
+        {
+          "title": "The Raft Consensus Algorithm",
+          "url": "https://raft.github.io/",
+          "accessed": "2026-10-24"
+        }
+      ],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T4-A01",
+      "topic_id": "T4",
+      "question": "Under RFC 9110, which request methods are idempotent, and when may a client automatically retry a request whose method is not idempotent?",
+      "phase3_label": "answerable",
+      "adjudicated_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "section_id": "2-http-method-semantics-are-not-business-effect-deduplication",
+          "quote": "PUT, DELETE and safe methods are idempotent by their specified semantics.",
+          "rationale": "States the RFC 9110 method-level idempotence set."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "section_id": "2-http-method-semantics-are-not-business-effect-deduplication",
+          "quote": "POST has no general automatic-retry guarantee.",
+          "rationale": "Non-idempotent methods are not automatically retryable."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "section_id": "3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "semantically idempotent, or protected by an application effect key",
+          "rationale": "States the corpus retry precondition: idempotent semantics or an application effect key."
+        }
+      ],
+      "answer_key": "RFC 9110 defines idempotence in terms of the intended effect on the server: several identical requests must have the same effect as one. PUT, DELETE, and every safe method (GET, HEAD, OPTIONS, and TRACE) are idempotent. A client should not automatically retry a non-idempotent request unless it knows the request semantics are actually idempotent or can detect that the original request was never applied; a proxy must not automatically retry non-idempotent requests at all.",
+      "key_facts": [
+        "Idempotence concerns the intended effect on server state, not incidental effects such as access logging.",
+        "RFC 9110 counts PUT, DELETE, GET, HEAD, OPTIONS, and TRACE as idempotent; POST and PATCH are not guaranteed to be idempotent.",
+        "Automatic retries of non-idempotent methods require knowledge of idempotent semantics or evidence that the original request was not applied.",
+        "A proxy must not automatically retry non-idempotent requests, and a client should not automatically retry a failed automatic retry."
+      ],
+      "sources": [
+        {
+          "title": "RFC 9110: HTTP Semantics",
+          "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+          "accessed": "2026-10-24"
+        },
+        {
+          "title": "Idempotent — MDN Web Docs Glossary",
+          "url": "https://developer.mozilla.org/en-US/docs/Glossary/Idempotent",
+          "accessed": "2026-10-24"
+        }
+      ],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T6-A06",
+      "topic_id": "T6",
+      "question": "What distinguishes head-based from tail-based trace sampling, and why can head sampling alone fail to retain every trace that contains an error?",
+      "phase3_label": "answerable",
+      "adjudicated_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/sampling-trust.md",
+          "section_id": "4-sampling-limits-what-the-trace-can-support",
+          "quote": "| Head sampling | Can limit collection near request start | Later severe error may be missed |",
+          "rationale": "Head sampling decides near request start, so a later error can be missed."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/sampling-trust.md",
+          "section_id": "4-sampling-limits-what-the-trace-can-support",
+          "quote": "| Tail sampling | Can prefer slow/error traces using fuller context | Requires buffered state and collector resources; decisions can be late |",
+          "rationale": "Tail sampling uses fuller context but needs buffering; the contrast explains the distinction."
+        }
+      ],
+      "answer_key": "Head sampling decides early, often from the trace ID and a target percentage, without inspecting the finished trace; this keeps whole traces at a consistent rate but cannot condition on errors or total latency. Tail sampling waits until all or most spans are available and can sample by error presence, overall latency, span attributes, or attributes that identify a newly deployed service. That is why a team wanting every error trace may need tail sampling, possibly after an initial head-sampling stage.",
+      "key_facts": [
+        "Head sampling makes an early decision without inspecting the whole trace.",
+        "Consistent probability sampling by trace ID retains whole traces at a fixed rate.",
+        "Tail sampling decides after all or most spans are available.",
+        "Tail criteria can include errors, total latency, span attributes, and attributes that identify a newly deployed service."
+      ],
+      "sources": [
+        {
+          "title": "Sampling (OpenTelemetry documentation)",
+          "url": "https://opentelemetry.io/docs/concepts/sampling/",
+          "accessed": "2026-10-24"
+        },
+        {
+          "title": "Traces (OpenTelemetry documentation)",
+          "url": "https://opentelemetry.io/docs/concepts/signals/traces/",
+          "accessed": "2026-10-24"
+        }
+      ],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T1-U01",
+      "topic_id": "T1",
+      "question": "Which internal data structure and coordination protocol does a named commercial managed cache use to coalesce concurrent misses across its nodes?",
+      "phase3_label": "unanswerable",
+      "adjudicated_label": "unanswerable",
+      "accepted": [],
+      "answer_key": null,
+      "key_facts": [],
+      "sources": [],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T2-U02",
+      "topic_id": "T2",
+      "question": "Which cloud queue service currently charges the least per million messages at list price?",
+      "phase3_label": "unanswerable",
+      "adjudicated_label": "unanswerable",
+      "accepted": [],
+      "answer_key": null,
+      "key_facts": [],
+      "sources": [],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T3-U03",
+      "topic_id": "T3",
+      "question": "Which consensus protocol and quorum sizes does a particular proprietary managed database service use internally for leader election?",
+      "phase3_label": "unanswerable",
+      "adjudicated_label": "unanswerable",
+      "accepted": [],
+      "answer_key": null,
+      "key_facts": [],
+      "sources": [],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T4-U04",
+      "topic_id": "T4",
+      "question": "What CPU and memory allocation should an outbox relay use to sustain 20,000 events per second?",
+      "phase3_label": "unanswerable",
+      "adjudicated_label": "unanswerable",
+      "accepted": [],
+      "answer_key": null,
+      "key_facts": [],
+      "sources": [],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T5-U01",
+      "topic_id": "T5",
+      "question": "What exact per-gigabyte price will a named cloud provider charge this organization for cross-region replication traffic in its next contract year?",
+      "phase3_label": "unanswerable",
+      "adjudicated_label": "unanswerable",
+      "accepted": [],
+      "answer_key": null,
+      "key_facts": [],
+      "sources": [],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T1-A06",
+      "topic_id": "T1",
+      "question": "How does probabilistic early expiration (XFetch) reduce stampedes without a lock?",
+      "phase3_label": "answerable",
+      "adjudicated_label": "unanswerable",
+      "accepted": [],
+      "answer_key": "Each request independently decides whether to refresh the cached value before its nominal expiry, with a probability that rises as expiry approaches. A common test refreshes when current time minus delta times beta times the logarithm of a random value has reached the expiry, where delta is the observed regeneration time and beta is typically 1.0. One request refreshes slightly early while the others keep serving the cached value, smoothing the spike. The cache item must also store delta and, when expiry is not readable, the expiry time.",
+      "key_facts": [
+        "The refresh probability increases as the key gets closer to expiration.",
+        "The decision compares current time with expiry through delta, beta, and a random factor.",
+        "A beta above 1 favors earlier refreshes; the referenced authors report that beta equal to 1 works well.",
+        "The approach needs extra memory for delta and, if necessary, the expiry timestamp.",
+        "Multiple independent early refreshes remain possible, so the effect is mitigation rather than an absolute guarantee."
+      ],
+      "sources": [
+        {
+          "title": "Cache stampede",
+          "url": "https://en.wikipedia.org/wiki/Cache_stampede",
+          "accessed": "2026-10-24"
+        },
+        {
+          "title": "Cache Stampede Prevention",
+          "url": "https://redis.antirez.com/fundamental/cache-stampede-prevention.md",
+          "accessed": "2026-10-24"
+        }
+      ],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T2-A03",
+      "topic_id": "T2",
+      "question": "For an M/M/1 server whose mean service time is fixed, by what factors do the mean sojourn time and the mean number of jobs in the system increase when utilization rises from 0.5 to 0.9?",
+      "phase3_label": "answerable",
+      "adjudicated_label": "unanswerable",
+      "accepted": [],
+      "answer_key": "Mean sojourn time is tau/(1 - rho), so it rises from 2 tau at rho = 0.5 to 10 tau at rho = 0.9, a fivefold increase. Mean system size is rho/(1 - rho), which rises from 1 to 9, a ninefold increase. This divergence as rho approaches 1 is why modest utilization changes near saturation produce much larger latency and backlog changes.",
+      "key_facts": [
+        "Mean sojourn time = tau/(1 - rho).",
+        "Raising utilization from 0.5 to 0.9 multiplies mean time by 5.",
+        "Mean system size rises from 1 to 9, a factor of 9.",
+        "Both measures diverge as rho approaches 1."
+      ],
+      "sources": [
+        {
+          "title": "M/M/1 queue",
+          "url": "https://en.wikipedia.org/wiki/M/M/1_queue",
+          "accessed": "2026-10-24"
+        },
+        {
+          "title": "Kingman's formula",
+          "url": "https://en.wikipedia.org/wiki/Kingman%27s_formula",
+          "accessed": "2026-10-24"
+        }
+      ],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T3-A05",
+      "topic_id": "T3",
+      "question": "What does Flexible Paxos relax about quorum intersection, and what does that relaxation permit in a six-acceptor deployment?",
+      "phase3_label": "answerable",
+      "adjudicated_label": "unanswerable",
+      "accepted": [],
+      "answer_key": "Flexible Paxos shows that Paxos needs intersection only between phase-1 and phase-2 quorums, not majority quorums in both phases, and phase-2 quorums may even be disjoint from each other. With six acceptors, where a strict majority is four, a deployment may use phase-1 quorums of four and phase-2 quorums of three because 4 + 3 exceeds 6. For an even number of acceptors this can shrink the second-phase quorum by one and improve steady-state availability.",
+      "key_facts": [
+        "Intersection is required between every phase-1 and every phase-2 quorum.",
+        "Phase-2 quorums need not intersect one another.",
+        "For six acceptors, phase-1 of four and phase-2 of three are safe.",
+        "Even-sized deployments can reduce the phase-2 quorum by one."
+      ],
+      "sources": [
+        {
+          "title": "Flexible Paxos: Quorum intersection revisited (abstract)",
+          "url": "https://arxiv.org/abs/1608.06696",
+          "accessed": "2026-10-24"
+        },
+        {
+          "title": "Flexible Paxos: Quorum intersection revisited (full text, ar5iv)",
+          "url": "https://ar5iv.labs.arxiv.org/html/1608.06696",
+          "accessed": "2026-10-24"
+        }
+      ],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T5-A03",
+      "topic_id": "T5",
+      "question": "With a replication factor of three, how does Apache Cassandra choose the replicas for a key, and what benefit and what risk come from giving each physical node many tokens?",
+      "phase3_label": "answerable",
+      "adjudicated_label": "unanswerable",
+      "accepted": [],
+      "answer_key": "A coordinator hashes the partition key to a position on the token ring and walks clockwise until it has met three distinct nodes, which become the replicas. Giving each physical node multiple tokens, called virtual nodes, makes a small cluster behave like a larger one, so a new or decommissioned node exchanges roughly equal data with many neighbours. The trade-off is that every token adds up to 2*(RF-1) neighbours, increasing the number of failure combinations that can make part of the ring unavailable and adding repair work.",
+      "key_facts": [
+        "A key is hashed to a token and the ring is walked clockwise to find distinct replicas.",
+        "With RF=3 the write targets three distinct physical nodes.",
+        "Virtual nodes let a new node take approximately equal amounts of data from many nodes.",
+        "Each token introduces up to 2*(RF-1) additional ring neighbours."
+      ],
+      "sources": [
+        {
+          "title": "Apache Cassandra architecture guide: Dynamo-style partitioning",
+          "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
+          "accessed": "2026-10-24"
+        },
+        {
+          "title": "Amazon Dynamo SOSP 2007 paper on highly available key-value storage",
+          "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+          "accessed": "2026-10-24"
+        }
+      ],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    },
+    {
+      "id": "T6-A03",
+      "topic_id": "T6",
+      "question": "For a 99.9% SLO, what long and short windows, burn rates, and error-budget percentages does the Google SRE Workbook recommend for page and ticket alerts?",
+      "phase3_label": "answerable",
+      "adjudicated_label": "unanswerable",
+      "accepted": [],
+      "answer_key": "It recommends two page-level rules: a 14.4 burn rate over a one-hour long window and a five-minute short window, consuming 2% of the budget, and a 6 burn rate over a six-hour long window and a 30-minute short window, consuming 5%. A ticket-level rule uses a burn rate of 1 over a three-day long window and a six-hour short window, consuming 10% of the budget. The short window is one-twelfth the long window.",
+      "key_facts": [
+        "Page rule: one-hour long window, five-minute short window, burn rate 14.4, 2% of budget.",
+        "Page rule: six-hour long window, 30-minute short window, burn rate 6, 5% of budget.",
+        "Ticket rule: three-day long window, six-hour short window, burn rate 1, 10% of budget.",
+        "The recommended short window is one-twelfth of the long window."
+      ],
+      "sources": [
+        {
+          "title": "Alerting on SLOs (Google SRE Workbook, Chapter 5)",
+          "url": "https://sre.google/workbook/alerting-on-slos/",
+          "accessed": "2026-10-24"
+        },
+        {
+          "title": "Implementing SLOs (Google SRE Workbook, Chapter 2)",
+          "url": "https://sre.google/workbook/implementing-slos/",
+          "accessed": "2026-10-24"
+        }
+      ],
+      "human_verdict": null,
+      "reviewer_notes": ""
+    }
+  ],
+  "instructions": "A human reviewer checks the adjudicated label, support quote and answer key; this file does not record a review until a named reviewer fills human_verdict."
+}
