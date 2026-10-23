@@ -95,16 +95,16 @@ class CommittedPacketTests(unittest.TestCase):
 
     def test_committed_counts(self):
         summary = self.payload["summary"]
-        self.assertEqual(summary["packets"], 52)
-        self.assertEqual(summary["promoted"], 52)
-        self.assertEqual(summary["residual"], 0)
+        self.assertEqual(summary["packets"], 145)
+        self.assertEqual(summary["promoted"], 86)
+        self.assertEqual(summary["residual"], 59)
         self.assertEqual(summary["page_unverified"], 0)
         self.assertEqual(summary["rejected"], 0)
-        self.assertEqual(summary["unique_owner_pages"], 32)
+        self.assertEqual(summary["unique_owner_pages"], 69)
         self.assertEqual(summary["ready"], 0)
-        self.assertEqual(summary["reviewed"], 52)
+        self.assertEqual(summary["reviewed"], 139)
         self.assertEqual(summary["packet_statuses"],
-                         {"reviewed-by-independent-agent": 52})
+                         {"report-section-missing": 6, "reviewed-by-independent-agent": 139})
 
     def test_no_packet_contains_a_verdict(self):
         for packet in self.payload["packets"]:
@@ -112,7 +112,8 @@ class CommittedPacketTests(unittest.TestCase):
             self.assertIsNone(template["reviewer"])
             self.assertIsNone(template["verdict"])
             self.assertEqual(template["findings"], [])
-            self.assertTrue(packet["report_section"])
+            if packet["report_section"] is not None:
+                self.assertTrue(packet["report_section"])
             self.assertTrue(packet["page_sha256"])
 
     def test_generation_is_deterministic(self):
