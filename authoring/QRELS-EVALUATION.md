@@ -236,3 +236,11 @@ dev and 3/6 held-out. Phase 3 does not justify promoting the gate.
 Phase 3 is an agent-authored/agent-adjudicated diagnostic. It is not human
 review, benchmark, sufficient coverage or owner acceptance.
 
+## Phase 3 retrieval diagnosis (2026-10-24)
+
+On the 19 retained phase-3 answerable items, page hit@5 is 15/19 and exact H2
+section hit@5 is 10/19. Most misses are same-page or H3-support cases. Passage
+and heading reranking did not improve qrels v2 without regression, so no
+retrieval change was merged. The H3/parent-H2 index is the next bounded step;
+see [PHASE3-RETRIEVAL-DIAGNOSIS-2026-10-24.md](PHASE3-RETRIEVAL-DIAGNOSIS-2026-10-24.md).
+
