@@ -64,12 +64,13 @@ claimed. See
 [the SDK smoke note](MCP-SDK-SMOKE_2026-10-23.md) and
 [the independent agent review](INDEPENDENT-AGENT-REVIEW-MCP_2026-10-23.md).
 
-**MCP local HTTP candidate — 2026-10-24 (#367):** the read-only stdio adapter
-is wrapped by a bearer-authenticated local HTTP container with /mcp, /search,
-/health, /ready and raw book routes. Four HTTP tests and a Docker/SDK smoke
-exist; no GitHub, Vercel or hosted deployment, TLS, OAuth, rate limit, human
-review or production acceptance is claimed. See
-[the local container record](MCP-LOCAL-HTTP-CONTAINER.md).
+**MCP local HTTP candidate — 2026-10-24 (#367, #373):** the read-only stdio
+adapter is wrapped by a bearer-authenticated HTTP container with /mcp,
+/search, /health, /ready and raw book routes. A Vercel test deployment is
+live at https://tycho-theta.vercel.app; remote health, readiness, auth
+boundary, standard client and official SDK checks passed. No production
+acceptance, OAuth, per-client authorization, rate limiting, human review or CI
+is claimed. See [the local container record](MCP-LOCAL-HTTP-CONTAINER.md).
 
 ## Readable directory layout — #214
 
