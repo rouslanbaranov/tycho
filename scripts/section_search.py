@@ -18,6 +18,7 @@ import re
 import sqlite3
 import sys
 
+import answerability as answerability_policy
 import route_index
 import section_fts_index
 
@@ -141,12 +142,25 @@ def excerpt(content, terms, budget=240):
     return text
 
 
+def unknown_term_rate(db, terms):
+    """Fraction of normalized terms absent from the published FTS vocabulary."""
+    try:
+        db.execute("CREATE VIRTUAL TABLE temp.vocabulary USING "
+                   "fts5vocab(main, fts, 'row')")
+        vocabulary = {row[0] for row in
+                      db.execute("SELECT term FROM vocabulary")}
+    except sqlite3.DatabaseError:
+        return 0.0
+    return sum(1 for term in terms if term not in vocabulary) / len(terms)
+
+
 def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
-           path_prefix=None, index_path=None, all_sections=False):
+           path_prefix=None, index_path=None, all_sections=False, abstain=True):
     terms = normalize_terms(query)
     _require(isinstance(limit, int) and 1 <= limit <= 20,
              "limit must be an integer in 1..20")
     _require(isinstance(all_sections, bool), "all_sections must be boolean")
+    _require(isinstance(abstain, bool), "abstain must be boolean")
     for name, value in (("kind", kind), ("topic", topic),
                         ("evidence_status", evidence_status)):
         _require(value is None or (isinstance(value, str) and value),
@@ -223,7 +237,21 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                 "excerpt": excerpt(body, terms),
                 "citation": row["path"] + "#" + row["section_id"],
             })
-        status = "ok" if results else "no-results"
+        unknown = unknown_term_rate(db, terms)
+        assessment = answerability_policy.assess(
+            query, results[0]["score"] if results else 0, unknown)
+        if not results:
+            status = "no-results"
+            assessment = dict(assessment)
+            assessment["state"] = "no-results"
+            assessment["basis"] = "zero-results"
+        elif abstain and assessment["no_confident_answer"]:
+            status = "no-confident-answer"
+            results = []
+            truncated = False
+        else:
+            status = "ok"
+        returned = len(results)
         return {
             "status": status,
             "snapshot": manifest["snapshot_id"],
@@ -238,8 +266,9 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             "filters": {"kind": kind, "topic": topic,
                         "evidence_status": evidence_status,
                         "path_prefix": path_prefix},
-            "returned": len(results),
+            "returned": returned,
             "truncated": truncated,
+            "answerability": assessment,
             "results": results,
         }
     finally:

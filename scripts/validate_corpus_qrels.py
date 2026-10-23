@@ -10,7 +10,7 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_QRELS = ROOT / "evaluation/corpus-qrels.v1.json"
+DEFAULT_QRELS = ROOT / "evaluation/corpus-qrels.v2.json"
 DEFAULT_ROUTE = ROOT / "generated/route-index.v1.json"
 DEFAULT_SCHEMA = ROOT / "schemas/corpus-qrels.v1.schema.json"
 KINDS = {"book", "volume", "chapter", "page", "landing", "decision"}

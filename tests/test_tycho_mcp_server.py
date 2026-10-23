@@ -276,6 +276,8 @@ class McpServerTests(unittest.TestCase):
         return server
 
     def call(self, server, name, arguments, request_id=20):
+        if name == "tycho_search":
+            arguments = {"abstain": False, **arguments}
         response = self.request(server, request_id, "tools/call", {
             "name": name,
             "arguments": arguments,
@@ -355,6 +357,19 @@ class McpServerTests(unittest.TestCase):
         self.assertTrue(payload["answerability"]["no_confident_answer"])
         self.assertIsNone(payload["answerability"]["answerable"])
         self.assertFalse(payload["answerability"]["confident"])
+
+    def test_calibrated_abstention_is_not_a_tool_error(self):
+        result = self.call(self.server(), "tycho_search", {
+            "query": "How do I configure a specific vendor cache policy?",
+            "abstain": True,
+        })
+        payload = result["structuredContent"]
+        self.assertFalse(result["isError"])
+        self.assertEqual(payload["status"], "no-confident-answer")
+        self.assertEqual(payload["returned"], 0)
+        self.assertTrue(payload["answerability"]["no_confident_answer"])
+        self.assertEqual(payload["answerability"]["basis"],
+                         "out-of-scope-intent")
 
     def test_read_bounds_and_continuation(self):
         server = self.server()
@@ -713,7 +728,7 @@ class McpServerTests(unittest.TestCase):
         server = self.initialize(self.server())
         response = self.request(server, 2, "tools/call", {
             "name": "tycho_search",
-            "arguments": {"query": "zebra"},
+            "arguments": {"query": "zebra", "abstain": False},
             "_meta": {"progressToken": "p-1"},
         })
         result = response["result"]
@@ -904,7 +919,7 @@ class McpServerTests(unittest.TestCase):
                 "jsonrpc": "2.0", "id": 3, "method": "tools/call",
                 "params": {
                     "name": "tycho_search",
-                    "arguments": {"query": "zebra"},
+                    "arguments": {"query": "zebra", "abstain": False},
                 },
             })
             payload = called["result"]["structuredContent"]
