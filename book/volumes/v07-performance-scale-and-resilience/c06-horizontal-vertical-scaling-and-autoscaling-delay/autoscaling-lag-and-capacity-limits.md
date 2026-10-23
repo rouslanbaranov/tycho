@@ -123,10 +123,12 @@ Vertical scaling changes resources available to existing replicas. It can raise 
 throughput without adding partition or routing complexity, but it changes the failure domain: one
 larger node is still one node.
 
-Neither can increase throughput past a serial or externally fixed bottleneck. A resize usually
-needs a restart or migration, so the old capacity is unavailable during the change; bound the
-maintenance window and keep a fallback. Measure the resource that actually saturates, not only CPU,
-and verify that the operating system, runtime and dependency can use the larger allocation.
+Neither horizontal nor vertical scaling can increase throughput past a serial or externally fixed
+bottleneck. A resize usually needs a restart or migration, so the old capacity is unavailable during
+the change; bound the maintenance window and keep a fallback. The provider must allow a larger size,
+and cost must not grow superlinearly with that size. Measure the resource that actually saturates,
+not only CPU, and verify that the operating system, runtime and dependency can use the larger
+allocation.
 
 Horizontal scaling or sharding may be preferable when the workload partitions and a single node is
 an unacceptable failure domain. Vertical scaling is a fit when the workload is hard to partition and

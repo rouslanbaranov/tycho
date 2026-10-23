@@ -1214,7 +1214,7 @@
         "heading": "Client-Side Discovery",
         "anchor": "client-side-discovery",
         "level": 3,
-        "line": 227,
+        "line": 229,
         "unit_kind": "dedicated",
         "unit_terms": [
           "caller obtains",
@@ -1231,12 +1231,12 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "If membership is stale, continued reachability still cannot establish write authority.",
+          "quote": "Stale membership can send traffic to a removed instance even when the address remains reachable.",
           "reason": "Applies the stale-membership safety rule to a client-held view as well."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Document who observes updates and how stale membership is detected. Distinguish the discovery control path from data-plane requests that can continue against a last-known usable set.",
+          "quote": "Bound the cache age, refresh budget and stale-cache alarm, and use a last-known set only for reads with an explicit freshness bound.",
           "reason": "Requires the client-side observer to detect stale membership and bound continued data-plane use."
         },
         "alternative": {
@@ -1274,7 +1274,7 @@
         "heading": "Server-Side Discovery",
         "anchor": "server-side-discovery",
         "level": 3,
-        "line": 241,
+        "line": 244,
         "unit_kind": "dedicated",
         "unit_terms": [
           "proxy, gateway",
@@ -1291,12 +1291,12 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "If membership is stale, continued reachability still cannot establish write authority.",
+          "quote": "Stale membership can keep a removed backend in the selection set even when the proxy is healthy.",
           "reason": "Applies the stale-membership safety rule to a proxy-held membership view."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Document who observes updates and how stale membership is detected. Distinguish the discovery control path from data-plane requests that can continue against a last-known usable set.",
+          "quote": "Proxy outage, retry amplification and a shared-proxy bottleneck are common; bound retries, expose a degraded path and plan the proxy's own failover.",
           "reason": "Requires the proxy to detect stale membership and bound last-known data-plane use."
         },
         "alternative": {
@@ -1979,7 +1979,7 @@
         "heading": "Splitter",
         "anchor": "splitter",
         "level": 3,
-        "line": 132,
+        "line": 133,
         "unit_kind": "dedicated",
         "unit_terms": [
           "one input into several independently processable messages",
@@ -2099,7 +2099,7 @@
         "heading": "Scatter-Gather",
         "anchor": "scatter-gather",
         "level": 3,
-        "line": 148,
+        "line": 150,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Scatter-gather sends one request",
@@ -4292,7 +4292,7 @@
         "heading": "Sharding",
         "anchor": "sharding",
         "level": 3,
-        "line": 124,
+        "line": 126,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Partition rows",
@@ -4466,7 +4466,7 @@
         "heading": "Leader-Follower Replication",
         "anchor": "leader-follower-replication",
         "level": 3,
-        "line": 161,
+        "line": 163,
         "unit_kind": "dedicated",
         "unit_terms": [
           "One leader accepts writes",
@@ -4483,12 +4483,12 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "A can remain reachable to some clients, but must not be allowed to commit new authoritative writes without a valid quorum/term contract.",
+          "quote": "A stale leader can remain reachable to some clients, but must not be allowed to commit new authoritative writes without a valid quorum/term contract.",
           "reason": "States the single-writer rule during a partition."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A stale leader that reappears must be rejected, and the follower log must catch up before it serves authoritative reads.",
+          "quote": "Promotion requires a quorum/term check and a fencing token; the old leader must be rejected, and the follower log must catch up before it serves authoritative reads.",
           "reason": "Covers isolation, new-leader election and stale-leader rejection with log catch-up."
         },
         "alternative": {
@@ -4583,7 +4583,7 @@
         "heading": "Read Replicas",
         "anchor": "read-replicas",
         "level": 3,
-        "line": 146,
+        "line": 148,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Read Replicas"
@@ -5906,7 +5906,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Returning traffic to A is a new migration, not the inverse of failover.",
+          "quote": "Failover moves authority from region A to a surviving region B under an explicit decision; failback is a second migration from B back to A, not the inverse operation.",
           "reason": "Defines the mechanism and its scope."
         },
         "invariant": {
@@ -6013,7 +6013,7 @@
         "heading": "Consensus",
         "anchor": "consensus",
         "level": 3,
-        "line": 177,
+        "line": 180,
         "unit_kind": "dedicated",
         "unit_terms": [
           "nodes A, B and C",
@@ -6030,7 +6030,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "A can remain reachable to some clients, but must not be allowed to commit new authoritative writes without a valid quorum/term contract.",
+          "quote": "Safety means no two leaders commit conflicting decisions; progress means a quorum can eventually decide.",
           "reason": "Requires a valid quorum/term contract before authoritative writes."
         },
         "failure_recovery": {
@@ -6493,7 +6493,7 @@
         "heading": "Load Balancing",
         "anchor": "load-balancing",
         "level": 3,
-        "line": 255,
+        "line": 259,
         "unit_kind": "dedicated",
         "unit_terms": [
           "selector can count",
@@ -6630,7 +6630,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Neither can increase throughput past a serial or externally fixed bottleneck.",
+          "quote": "Neither horizontal nor vertical scaling can increase throughput past a serial or externally fixed bottleneck.",
           "reason": "States the capacity ceiling that vertical scaling cannot exceed."
         },
         "failure_recovery": {
@@ -6673,7 +6673,7 @@
         "heading": "Autoscaling",
         "anchor": "autoscaling",
         "level": 3,
-        "line": 135,
+        "line": 137,
         "unit_kind": "dedicated",
         "unit_terms": [
           "feedback-control mechanism",

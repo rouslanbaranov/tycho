@@ -106,7 +106,9 @@ source claim.
 
 Partitioning splits one logical data set into key ranges or lists inside a store so the planner can
 prune unrelated partitions for a query. Each row belongs to exactly one partition, and the main
-query must name a partition key so pruning is possible.
+query must name a partition key so pruning is possible. The same contract covers hash partitioning
+and partitioned streams, not only table range/list layouts; state the partitioning function and
+how it evolves.
 
 A query without the partition key fans out across every partition; inspect plans and measure fan-out
 when access paths or keys change. Keep one table and add an index when the main query already

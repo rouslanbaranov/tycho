@@ -156,9 +156,9 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Failover-Failback
 
-Failover moves authority to a surviving region under an explicit decision; failback is a second
-migration, not the inverse operation. Returning traffic to A is a new migration, not the inverse of
-failover.
+Failover moves authority from region A to a surviving region B under an explicit decision;
+failback is a second migration from B back to A, not the inverse operation. Hold writes when
+fencing evidence is missing, and do not treat DNS pointing as sufficient authority transfer.
 
 Quarantine A, reconcile any divergent writes under one selected authority, verify user journeys, then
 reintroduce A as a replica or standby before considering promotion. A failback that merely points DNS
