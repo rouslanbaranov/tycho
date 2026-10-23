@@ -17,6 +17,7 @@ Read [the independence policy](governance/INDEPENDENCE.md) before contributing. 
 - [Current state and next action](authoring/STATE.md)
 - [Roadmap](authoring/ROADMAP.md)
 - [Knowledge platform and MCP delivery plan](authoring/knowledge-platform-and-mcp-plan.md)
+- [Read-only MCP stdio candidate](authoring/MCP-READ-ONLY-MVP.md)
 - [Source catalogue](sources/CATALOG.md)
 - [Coverage and research questions](sources/COVERAGE.md)
 - [Implementation families](sources/IMPLEMENTATIONS.md)

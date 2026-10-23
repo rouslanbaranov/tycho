@@ -59,3 +59,17 @@ The [retrieval contract](models/retrieval-contracts.md) owns stable IDs, snapsho
 | Remote deployment, authorization, observability, load testing | **Planned** separate rollout/evaluation scope | later E09 / Rocinante integration |
 
 This decision is intentionally reversible if a client compatibility matrix demonstrates that an older SDK is required. **Only exact-version client/server tests can justify changing the deployment stack**, and no speculative protocol-level onboarding method should be invented. Independent reviewer approval, end-to-end client roundtrip, auth pen-test and a live server are not claimed.
+
+## Local implementation update - 2026-10-23
+
+Issue #57 now has a local stdio candidate in
+[scripts/mcp_server.py](../scripts/mcp_server.py). It implements modern
+`server/discover`, `tools/list` and `tools/call` with per-request
+`_meta`, the bounded 2025-11-25 initialize path, explicit unsupported-version
+errors and read-only tools over the existing section index. The offline suite
+covers both eras and a subprocess roundtrip.
+
+This is not the SDK gate. No official SDK is installed or pinned, no HTTP
+endpoint or authorization exists and no external client was tested. See
+[the read-only MCP candidate](MCP-READ-ONLY-MVP.md) for the exact scope,
+envelopes, security checks, measurements and remaining gates.

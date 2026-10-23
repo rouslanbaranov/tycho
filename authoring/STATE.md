@@ -52,6 +52,11 @@ The corpus includes 29 public historical case studies and six synthetic decision
 | #214 | Reopened; substantive page decomposition and editorial acceptance |
 | M9 #121 | Closed under its documented scoped acceptance |
 
+**MCP local candidate — 2026-10-23 (#57):** a read-only stdio adapter and
+offline tests exist on a feature branch; no hosted endpoint, pinned SDK,
+independent review or live-client acceptance is claimed. See
+[the MVP record](MCP-READ-ONLY-MVP.md).
+
 ## Readable directory layout — #214
 
 The owner-requested physical migration covers all ten volumes and 71 chapters, with 339 moved documents and all 406 IDs retained. See [the directory map](../edition/directory-migration.json), [migration record](DIRECTORY_MIGRATION_2026-10-20.md) and [naming policy](DIRECTORY-NAMING.md). Original chapter/decomposition/enrichment manifests remain byte-identical. Their validators use an inverse path view so historical payload and provenance assertions remain active. #214 stays open; physical organization does not establish substantive acceptance.
