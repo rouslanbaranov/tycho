@@ -1,0 +1,1171 @@
+{
+  "dataset": "phase3-topic-isolated-v1",
+  "label_status": "agent-adjudicated-not-human",
+  "created": "2026-10-24",
+  "human_review": "not-performed",
+  "human_sample": "pending",
+  "items": [
+    {
+      "id": "T1-A01",
+      "topic_id": "T1",
+      "question": "In the cache-aside pattern, what does an application do on a cache hit and on a cache miss, and how does this differ from read-through caching?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "section_id": "4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+          "quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss",
+          "rationale": "Cache-first read; a miss fetches the origin, and the same section's flow returns the cached value on a hit."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "section_id": "bounded-pattern-ownership-notes",
+          "quote": "A read-through cache loads a miss from the source on behalf of the caller",
+          "rationale": "Read-through performs the fill in the cache, unlike application-owned cache-aside fill."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "Core hit/miss sequence and read-through contrast are supported. The read-through text is in an H3 subsection under the cited H2; the H2 anchor is used per the H2-only rule. The 'only requested data' detail is not stated verbatim.",
+      "split": "dev"
+    },
+    {
+      "id": "T1-A02",
+      "topic_id": "T1",
+      "question": "Under cache-aside, how is cached data invalidated when a record is updated, and what consistency gap can remain?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "section_id": "4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+          "quote": "TTL-bound value and invalidates on writes",
+          "rationale": "The write path invalidates cached entries."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "section_id": "4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+          "quote": "A write can commit while its delete fails.",
+          "rationale": "A lost delete leaves cache and store divergent; the stale-fill race and lost-invalidation bound are described in the same section."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "Invalidation-on-write and the residual inconsistency gap are supported. The write-through contrast in the answer key is present in a sibling H3 note but is not required to answer the question.",
+      "split": "dev"
+    },
+    {
+      "id": "T1-A03",
+      "topic_id": "T1",
+      "question": "What does a time-to-live (TTL) value accomplish in a cache-aside design, and what trade-off determines whether it is too short or too long?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "section_id": "4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+          "quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a TTL-bound value and invalidates on writes; stampede hazards follow from that sequence.",
+          "rationale": "Places TTL as the bound on the value written after a cache-aside miss."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "section_id": "bounded-pattern-ownership-notes",
+          "quote": "TTL-based expiration gives an entry a bounded valid lifetime.",
+          "rationale": "States what the TTL accomplishes: a bounded valid lifetime."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "section_id": "bounded-pattern-ownership-notes",
+          "quote": "The cached copy is not refreshed merely because the clock passed; the next reader performs the load or waits for a refresh.",
+          "rationale": "Expiry makes the entry non-servable, so the next reader reloads instead of trusting it."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "section_id": "bounded-pattern-ownership-notes",
+          "quote": "A TTL shorter than the source's change rate reduces staleness but increases load; a longer TTL does the opposite.",
+          "rationale": "States the too-short/too-long trade-off between staleness and refill load."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "Confirmed. The H2 'Bounded pattern ownership notes' contains the H3 'TTL-Based Expiration' subsection (refresh-semantics.md:131-143); the H2 anchor is used because H3 owner anchors are excluded. The answer key's 'integer number of seconds' unit is not stated, but bounded lifetime, reload-on-next-read and the staleness/load trade-off are. Second source: cache-authority.md:66 also says a TTL is a lifetime condition, not a freshness proof.",
+      "split": "dev"
+    },
+    {
+      "id": "T1-A04",
+      "topic_id": "T1",
+      "question": "Why can a popular cached item produce a cache stampede when its TTL expires, even if request volume has not increased?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
+          "section_id": "2-stampede-at-a-synchronized-expiry",
+          "quote": "A cache stampede occurs when many concurrent readers miss or decide that a cached value needs refreshing, then issue many redundant expensive origin loads.",
+          "rationale": "Defines the stampede as concurrent misses that duplicate one expensive origin load."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
+          "section_id": "2-stampede-at-a-synchronized-expiry",
+          "quote": "one key receives 600 reads/s. Its TTL expires and 300 clients overlap before the first origin read returns. Without per-key coalescing or a source admission budget, the origin may receive hundreds of near-identical queries even though normally it receives few.",
+          "rationale": "Shows expiry alone turning a steady 600 reads/s into 300 overlapping origin loads, i.e. unchanged request volume."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "Confirmed for the asked mechanism: at a constant 600 reads/s, TTL expiry creates concurrent misses and hundreds of near-identical origin reads. The answer key's congestion-collapse ('value never refills') detail and its 3 s/10 rps arithmetic are not in the corpus; the cold-start/fleet-flush herd is only partly covered (stampede-protection.md:109, 'A broad restart of every replica is the relevant test').",
+      "split": "dev"
+    },
+    {
+      "id": "T1-A05",
+      "topic_id": "T1",
+      "question": "How does request coalescing or a per-key cache lock prevent a stampede, and what can requests that do not acquire the lock do?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
+          "section_id": "2-stampede-at-a-synchronized-expiry",
+          "quote": "Without per-key coalescing or a source admission budget, the origin may receive hundreds of near-identical queries even though normally it receives few.",
+          "rationale": "Defines the stampede and names per-key coalescing as the protection."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
+          "section_id": "5-cache-loss-and-source-protection-policy",
+          "quote": "Excess requests wait, fail or use an explicitly permitted stale result, not unlimited source queries.",
+          "rationale": "Lists what requests may do when the coalescing/source-admission path is exhausted."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "V06/C02 supports the generic mechanism: per-key coalescing and a per-key lock/lease are named, and excess requests may wait, fail or use an explicitly permitted stale result. The nginx proxy_cache_lock timeout and token-checked delete in the answer key are not in Tycho; support is at the mechanism level, not the vendor specifics.",
+      "split": "dev"
+    },
+    {
+      "id": "T1-A06",
+      "topic_id": "T1",
+      "question": "How does probabilistic early expiration (XFetch) reduce stampedes without a lock?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "unsupported",
+      "notes": "Absent from the corpus. Searches for XFetch, probabilistic early expiration, stochastic refresh and early refresh found only jittered TTL, proactive refresh/prewarm and refresh leases in V06/C02; no H2 states the delta/beta probability test, the beta=1 finding or the extra delta/expiry memory. The phase3 answerable claim cannot be supported.",
+      "split": "dev"
+    },
+    {
+      "id": "T1-A07",
+      "topic_id": "T1",
+      "question": "In HTTP caching, how is a response's freshness lifetime calculated, and what does stale-while-revalidate allow a cache to do?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "No H2 section states HTTP freshness-lifetime selection (s-maxage, then max-age, then Expires minus Date) or RFC 5861 delta-seconds semantics. The SWR mechanism appears only in an H3 owner note, which the rules exclude. Relabelled unanswerable.",
+      "split": "dev"
+    },
+    {
+      "id": "T1-A08",
+      "topic_id": "T1",
+      "question": "How do expiration and eviction differ when sizing a cache, and which eviction policy does the AWS guidance call most common?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "refresh-semantics H2 3 distinguishes expiration from eviction, but no page states AWS/Microsoft LRU as the most common policy or the request-volume sizing method. The answer key's second half is unsupported. Relabelled unanswerable.",
+      "split": "dev"
+    },
+    {
+      "id": "T1-U01",
+      "topic_id": "T1",
+      "question": "Which internal data structure and coordination protocol does a named commercial managed cache use to coalesce concurrent misses across its nodes?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "The book covers generic single-flight/coalescing and Discord's request coalescing, but identifies no named commercial managed cache's internal data structure or cross-node coordination protocol.",
+      "split": "dev"
+    },
+    {
+      "id": "T1-U02",
+      "topic_id": "T1",
+      "question": "What share of production caching deployments used Redis rather than Memcached in 2026?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "Kept unanswerable. The book contains zero occurrences of 'Memcached' in book/**/*.md and no 2026 deployment-share survey. The caching pages describe Redis/Caffeine mechanisms, not adoption shares. This is a current-fact question the static corpus does not answer.",
+      "split": "dev"
+    },
+    {
+      "id": "T1-U03",
+      "topic_id": "T1",
+      "question": "What is the exact p99 latency reduction produced by adding request coalescing to a service handling 50,000 requests per second?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "No p99 reduction or 50,000 requests/s coalescing experiment is reported. V06/C02 explicitly labels its 600 reads/s / 300-client example an illustrative fiction and states that no cache, origin or benchmark was run, so the exact measurement is not derivable.",
+      "split": "dev"
+    },
+    {
+      "id": "T1-U04",
+      "topic_id": "T1",
+      "question": "What is the safest migration plan for moving a live service from a local cache to a shared cache without downtime?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "No local-to-shared-cache zero-downtime migration plan. Cache pages cover placement, freshness and failure, not a cutover runbook; out-of-scope recommendation.",
+      "split": "dev"
+    },
+    {
+      "id": "T2-A01",
+      "topic_id": "T2",
+      "question": "A service handles a long-run average of 250 requests per second, and each request spends an average of 120 ms in the system. Using Little's law, what is the average number of requests in the system, and what condition must hold for the law to apply?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/measurement-boundary.md",
+          "section_id": null,
+          "quote": "For a stable system with a consistent customer/work definition and well-defined steady-state",
+          "rationale": "States the stable/steady-state precondition; the same section gives the mean identity."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/measurement-boundary.md",
+          "section_id": null,
+          "quote": "L = λ × W",
+          "rationale": "Applying the identity to 250 requests/s and 0.12 s gives 30 average requests."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "The corpus example uses 120 × 0.20 = 24; the requested 30 is direct arithmetic on the stated identity. The page does not use the word ergodic or discuss distribution independence.",
+      "split": "dev"
+    },
+    {
+      "id": "T2-A02",
+      "topic_id": "T2",
+      "question": "A single worker completes jobs at a mean rate of 40 per second. Jobs arrive as a Poisson process at 30 per second, and service times are exponential. What are the utilization, the mean number of jobs in the system, and the mean sojourn time?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "No M/M/1 treatment, utilization rho, rho/(1-rho), or 1/(mu-lambda) formula appears in the corpus. Queueing pages cover Little's law means and qualitative saturation only, so the exact numeric answer is unsupported.",
+      "split": "dev"
+    },
+    {
+      "id": "T2-A03",
+      "topic_id": "T2",
+      "question": "For an M/M/1 server whose mean service time is fixed, by what factors do the mean sojourn time and the mean number of jobs in the system increase when utilization rises from 0.5 to 0.9?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "unsupported",
+      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. No M/M/1 sojourn-time tau/(1-rho) or system-size rho/(1-rho) formula and no 0.5->0.9 factors appear in book/**/*.md (zero occurrences of 'M/M/1', 'Kingman', 'rho', 'utilization factor'). The nearest owner page (v07/c01 queueing-littles-law.md) treats Little's Law as an accounting identity and explicitly refuses tail/capacity prediction at lines 88 and 96. Rechecked independently by page reading and grep.",
+      "split": "dev"
+    },
+    {
+      "id": "T2-A04",
+      "topic_id": "T2",
+      "question": "Two G/G/1 queues share the same mean arrival rate, mean service time and utilization 0.8. Both have arrival squared coefficient of variation 1, but their service-time squared coefficients of variation are 1 and 4. According to Kingman's formula, how much larger is the mean queue wait in the second queue?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "unsupported",
+      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. Zero occurrences of 'Kingman', 'squared coefficient of variation', 'variability factor' or the VUT decomposition in book/**/*.md; no tau, ca^2/cs^2 or 2.5x comparison. The V07 queueing/contention pages discuss saturation qualitatively and do not derive a G/G/1 waiting approximation.",
+      "split": "dev"
+    },
+    {
+      "id": "T2-A05",
+      "topic_id": "T2",
+      "question": "A team inserts a queue between a bursty producer and a consumer that processes at a fixed rate. What does the producer now wait for, and what happens if the producer's long-run average rate stays above the consumer's? Name two responses the Azure guidance recommends.",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md",
+          "section_id": "partial-failure-saturation-and-recovery",
+          "quote": "Admitted and offered rate are equal, so **backlog grows by** `(200 - 150) × 30 = 1,500` operations.",
+          "rationale": "Quantifies the persistent offered-above-completion backlog."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md",
+          "section_id": "partial-failure-saturation-and-recovery",
+          "quote": "Shedding, backpressure or provisioning may be preferable when work is not\ndeferrable or the burst is sustained.",
+          "rationale": "Names responses to sustained overload: shed, apply backpressure or provision."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+          "section_id": "1-first-identify-what-a-consumer-must-own",
+          "quote": "A publisher confirm means the broker accepted\nresponsibility, not that a consumer completed the business effect.",
+          "rationale": "Shows the producer's confirmation covers broker acceptance, not consumer completion."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "V07/C01 owns queue-based load leveling: a bounded queue absorbs a short burst while workers drain, and offered work above drain rate grows backlog and age. It names shedding, backpressure or provisioning as responses. V04/C06 adds that publisher confirmation covers broker acceptance, not consumer completion. The question's Azure attribution and the phrase 'scale consumers within safe limits' are not present; support is at the mechanism level.",
+      "split": "dev"
+    },
+    {
+      "id": "T2-A06",
+      "topic_id": "T2",
+      "question": "In Reactive Streams, which side controls the pace of element delivery, what limit must a Publisher respect, and why must the demand signal be non-blocking?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/demand-blocking.md",
+          "section_id": "2-reactive-streams-is-demand-coordination-not-a-magic-queue",
+          "quote": "A subscriber signals demand with `request(n)`; signals include item, completion and failure.",
+          "rationale": "Identifies the subscriber as the demand signaler and request(n) as the mechanism."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/demand-blocking.md",
+          "section_id": "2-reactive-streams-is-demand-coordination-not-a-magic-queue",
+          "quote": "the consumer requests a finite number of items and the publisher sends no more than requested under a compliant protocol.",
+          "rationale": "States the publisher's onNext bound under a compliant demand contract."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/demand-blocking.md",
+          "section_id": "1-nonblocking-i-o-is-an-end-to-end-contract",
+          "quote": "If an application blocks an event loop while waiting for JDBC, a mutex or an HTTP response, it prevents unrelated operations assigned to that loop from progressing.",
+          "rationale": "Explains why blocking on the execution path defeats nonblocking processing."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "V03/C03 states that a subscriber signals demand with request(n), that a compliant publisher sends no more than requested, and that blocking an event loop prevents unrelated operations from progressing. The exact Reactive Streams rule that the demand signal itself must be non-blocking is not quoted; the third part is supported by the adjacent nonblocking-contract reasoning.",
+      "split": "dev"
+    },
+    {
+      "id": "T2-A07",
+      "topic_id": "T2",
+      "question": "The SRE book's client-side adaptive throttling keeps two counters per client task. What are they, over what window, and when does local rejection begin? What does the multiplier K control, and what does server-side admission control add?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "admission-resource mentions SRE client-side throttling but gives no counters, two-minute window, K threshold, K=2 example or server-side admission-control detail. Relabelled unanswerable.",
+      "split": "dev"
+    },
+    {
+      "id": "T2-A08",
+      "topic_id": "T2",
+      "question": "A request path is five service layers deep, and each layer retries a failed call three times. What load amplification can the deepest dependency see, and how do exponential backoff with jitter and retry limits reduce it?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_id": "4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+          "quote": "Across multiple layers, retries compound.",
+          "rationale": "States that retry load compounds across layers rather than staying local."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_id": "4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+          "quote": "If three independent layers make three attempts per incoming logical operation",
+          "rationale": "Supplies the multiplicative model; 3^5 for five layers yields 243."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_id": "4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+          "quote": "can create up to **27 downstream attempts** per logical intent",
+          "rationale": "Shows the 3-layer, 3-attempt worked result (27) of the same model."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "section_id": "3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "A retry delay should grow with each failed attempt",
+          "rationale": "Supports exponential backoff as the growth policy."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "section_id": "3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "randomized with jitter so clients do not retry in lockstep",
+          "rationale": "Supports jitter to decorrelate retries."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "Confirmed for the substantive question: compounding retries (3 layers -> 27) gives 3^5=243 for five layers; backoff, jitter and attempt/deadline bounds are covered. The five-layer figure is derived, not verbatim; the AWS token-bucket wording is absent.",
+      "split": "dev"
+    },
+    {
+      "id": "T2-U01",
+      "topic_id": "T2",
+      "question": "What internal replication factor and failover timeout does a specific proprietary message broker use for its queue partitions?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "The book discusses generic quorum/replication, Kafka acks/ISR, and RabbitMQ quorum queues, but no specific proprietary broker's queue-partition replication factor or failover timeout.",
+      "split": "dev"
+    },
+    {
+      "id": "T2-U02",
+      "topic_id": "T2",
+      "question": "Which cloud queue service currently charges the least per million messages at list price?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "Kept unanswerable. The book gives no cloud-queue list prices or per-million-message charges; v07/c07 capacity-cost-model.md:105 says invented cost numbers must not be converted to currency, and the V07/C07 source table marks current provider pricing out of scope. Current-fact label holds.",
+      "split": "dev"
+    },
+    {
+      "id": "T2-U03",
+      "topic_id": "T2",
+      "question": "What p99 queue wait did a named online retailer measure during its 2025 peak-sales event?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "No named retailer, 2025 peak-sales event or measured p99 queue wait appears. Queue examples in V07/C01 are explicitly synthetic, and no production queue telemetry is reported.",
+      "split": "dev"
+    },
+    {
+      "id": "T2-U04",
+      "topic_id": "T2",
+      "question": "What message-retention period does a specific jurisdiction's records-retention law require for queue payloads?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "No jurisdiction-specific legal retention period. Messaging pages treat retention as a design contract, not statutory law; out-of-scope.",
+      "split": "dev"
+    },
+    {
+      "id": "T3-A01",
+      "topic_id": "T3",
+      "question": "A five-server Raft cluster uses majority quorums. How many server failures can it tolerate while still electing a leader and committing new entries, and what property of majorities keeps two partitions from both making progress?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_id": "2-majority-quorum-arithmetic-and-the-failure-envelope",
+          "quote": "A **5-voter** cluster requires 3.",
+          "rationale": "A majority of five is three, so two failures are tolerable."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_id": "2-majority-quorum-arithmetic-and-the-failure-envelope",
+          "quote": "a minority partition cannot commit authoritatively",
+          "rationale": "Intersecting majorities leave only the majority side able to commit."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "The page gives the 5/3 arithmetic, quorum intersection, and the 3/2 split example. It does not spell out one-vote-per-term, which is relevant to T3-A02, not to this question.",
+      "split": "dev"
+    },
+    {
+      "id": "T3-A02",
+      "topic_id": "T3",
+      "question": "When a Raft follower stops hearing from the leader, what steps does it take to begin an election, and what rule prevents two leaders from being elected in the same term?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "The corpus has a high-level Raft state diagram (follower to candidate on election timeout, leader after majority) and mentions randomized timeouts, but no term increment, self-vote, RequestVote exchange, or one-vote-per-term rule. The requested rule is absent.",
+      "split": "dev"
+    },
+    {
+      "id": "T3-A03",
+      "topic_id": "T3",
+      "question": "A Raft leader is cut off by a network partition and never learns that a new leader was elected. Why can the isolated leader not commit new log entries, and what stops it from corrupting committed history?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "section_id": "4-leader-elections-logs-and-client-observations",
+          "quote": "The quorum/term/log rules govern which log entries can be committed without violating safety.",
+          "rationale": "Committing requires the quorum/term rules; an isolated leader in its old term cannot satisfy them."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "section_id": "4-leader-elections-logs-and-client-observations",
+          "quote": "An acknowledged committed log entry has a protocol-specific durability/leader-completeness guarantee, contingent on correct stable storage and membership behavior.",
+          "rationale": "Committed history is protected by leader completeness rather than by the old leader's belief."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "section_id": "4-leader-elections-logs-and-client-observations",
+          "quote": "A leader that cannot confirm quorum must stop serving authoritative writes and linearizable reads.",
+          "rationale": "States the required behaviour of the cut-off leader: no new authoritative commit."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "Confirmed at the corpus's level of abstraction: the isolated leader cannot confirm quorum in its term and must stop authoritative writes; committed entries are protected by quorum/term rules and leader completeness; uncommitted suffixes are reconciled by the new leader. The answer key's explicit higher-term/AppendEntries rejection is not spelled out in the corpus, so that mechanism detail is partial.",
+      "split": "dev"
+    },
+    {
+      "id": "T3-A04",
+      "topic_id": "T3",
+      "question": "Why can a leased distributed lock fail to protect a shared resource when its holder pauses, and how does a fencing token close that gap?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "section_id": "leases-stale-owners-and-fencing-at-the-destination",
+          "quote": "A lock service can give worker B ownership after worker A stops renewing. It cannot make A's paused process disappear.",
+          "rationale": "States why a paused lease holder can coexist with a new holder."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "section_id": "leases-stale-owners-and-fencing-at-the-destination",
+          "quote": "A holder can pause past expiry; a delayed write can arrive after a new holder is established; the lock service can lose quorum; release can race with expiry. The destination must reject stale epochs or the operation remains explicitly unsafe.",
+          "rationale": "Names the pause failure and the required destination-side fencing."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "section_id": "leases-stale-owners-and-fencing-at-the-destination",
+          "quote": "The destination atomically rejects 41 because its active epoch is 42.",
+          "rationale": "Shows the resource, not the lock service, enforcing the monotonic epoch."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "Confirmed. The section states the pause-outlives-lease failure and destination epoch enforcement; the H3 'Fencing Tokens' subsection (not used as an anchor) adds that a token is a monotonic epoch and the destination stores the highest accepted value. The page records no executed lock/destination implementation, consistent with its scope.",
+      "split": "dev"
+    },
+    {
+      "id": "T3-A05",
+      "topic_id": "T3",
+      "question": "What does Flexible Paxos relax about quorum intersection, and what does that relaxation permit in a six-acceptor deployment?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "unsupported",
+      "notes": "Flexible Paxos is absent. V04/C02 has majority-quorum arithmetic (including 3/4/5/6-voter counts) and says quorums must intersect, but it never distinguishes phase-1 from phase-2 quorums, allows disjoint phase-2 quorums, or gives the six-acceptor 4+3 example. The requested relaxation cannot be recovered from the corpus.",
+      "split": "dev"
+    },
+    {
+      "id": "T3-A06",
+      "topic_id": "T3",
+      "question": "According to ZooKeeper's internals documentation, what two conditions must hold before a server acts as leader, and which of them is required for correct operation?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "unsupported",
+      "notes": "ZooKeeper, zxid and the two leader-activation conditions are absent. V04/C02 leader-recovery and V04/C01 agreement-failure discuss Raft-style log up-to-date restrictions and quorum confirmation generically, but never state that only the highest-zxid condition is required for correctness. The exact ZooKeeper answer cannot be supported.",
+      "split": "dev"
+    },
+    {
+      "id": "T3-A07",
+      "topic_id": "T3",
+      "question": "ZooKeeper's administrator guide recommends odd-sized ensembles. What does a four-server ensemble actually tolerate, and why does the fourth server add little?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_id": "2-majority-quorum-arithmetic-and-the-failure-envelope",
+          "quote": "a quorum is floor(N/2)+1",
+          "rationale": "States the majority-quorum rule used by the answer."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_id": "2-majority-quorum-arithmetic-and-the-failure-envelope",
+          "quote": "for example 3 voters → 4 voters raises required votes from 2 to 3",
+          "rationale": "Supports four servers requiring three votes and tolerating one failure."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_id": "2-majority-quorum-arithmetic-and-the-failure-envelope",
+          "quote": "A **5-voter** cluster requires 3.",
+          "rationale": "Supports five servers requiring three votes, hence tolerating two failures."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "Quorum arithmetic supports the 4-vs-5 behavior and why the fourth voter adds no failure tolerance. ZooKeeper, its guide's odd-size recommendation and the three-server minimum are not in the corpus; the answer is generic majority-quorum reasoning.",
+      "split": "dev"
+    },
+    {
+      "id": "T3-A08",
+      "topic_id": "T3",
+      "question": "What is a ZooKeeper observer, and why can adding observers improve read scalability without slowing writes?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "No ZooKeeper observer content. quorum-envelope mentions a non-voting learner receiving state, but not observers learning vote outcomes, forwarding client requests, serving reads/writes, or leaving write quorum unchanged. Relabelled unanswerable.",
+      "split": "dev"
+    },
+    {
+      "id": "T3-U01",
+      "topic_id": "T3",
+      "question": "What is the exact leader-election failover latency, in milliseconds, of a five-node Raft cluster when its leader is killed?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "No measured failover latency is reported. The replication chapter explicitly declines to certify failover timings and states that no cluster or fault injection was run.",
+      "split": "dev"
+    },
+    {
+      "id": "T3-U02",
+      "topic_id": "T3",
+      "question": "Which Apache ZooKeeper release is the newest stable version on 24 October 2026?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "Kept unanswerable. 'ZooKeeper' has zero occurrences in book/**/*.md; consensus pages discuss Raft and etcd, not a release inventory. No 24 October 2026 stable-version statement exists. Current-fact label holds.",
+      "split": "dev"
+    },
+    {
+      "id": "T3-U03",
+      "topic_id": "T3",
+      "question": "Which consensus protocol and quorum sizes does a particular proprietary managed database service use internally for leader election?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "No proprietary managed database service, its consensus protocol or its quorum sizes are named; V04/C02 stays with public Raft-style models and generic majority arithmetic.",
+      "split": "dev"
+    },
+    {
+      "id": "T3-U04",
+      "topic_id": "T3",
+      "question": "Which consensus algorithm is the best choice for a new team building a globally replicated ledger?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "Corpus treats consensus/quorum choice as conditional and gives no algorithm recommendation for a new team or globally replicated ledger; out-of-scope.",
+      "split": "dev"
+    },
+    {
+      "id": "T4-A01",
+      "topic_id": "T4",
+      "question": "Under RFC 9110, which request methods are idempotent, and when may a client automatically retry a request whose method is not idempotent?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "section_id": "2-http-method-semantics-are-not-business-effect-deduplication",
+          "quote": "PUT, DELETE and safe methods are idempotent by their specified semantics.",
+          "rationale": "States the RFC 9110 method-level idempotence set."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "section_id": "2-http-method-semantics-are-not-business-effect-deduplication",
+          "quote": "POST has no general automatic-retry guarantee.",
+          "rationale": "Non-idempotent methods are not automatically retryable."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "section_id": "3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "semantically idempotent, or protected by an application effect key",
+          "rationale": "States the corpus retry precondition: idempotent semantics or an application effect key."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "Core method semantics and retry precondition are supported. The corpus does not enumerate GET/HEAD/OPTIONS/TRACE or state the RFC proxy prohibition; those details are not in the cited text.",
+      "split": "heldout"
+    },
+    {
+      "id": "T4-A02",
+      "topic_id": "T4",
+      "question": "How does the Idempotency-Key header draft handle a key that is reused with a different payload, and how should a server answer a duplicate request that arrives while the first one is still running?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "The corpus treats key reuse with changed payload as a conflict and requires an in-progress/wait/conflict/result-lookup protocol, but never gives the draft's 422 Unprocessable Content or 409 Conflict responses. The exact draft handling is unsupported.",
+      "split": "heldout"
+    },
+    {
+      "id": "T4-A03",
+      "topic_id": "T4",
+      "question": "What problem does jitter address in capped exponential backoff, and how did Full Jitter compare with Equal Jitter and Decorrelated Jitter in the AWS simulation?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "unsupported",
+      "notes": "Phase3 'answerable' not supported for the question's main comparison; label changed to unanswerable. The corpus covers capped exponential backoff and says jitter prevents lockstep retries (deadlines-retries.md:62-63, 165-168), but 'Full Jitter', 'Equal Jitter', 'Decorrelated Jitter', the 100-client simulation and the 'more than half' reduction have zero occurrences in book/**/*.md. The comparative result cannot be produced from Tycho.",
+      "split": "heldout"
+    },
+    {
+      "id": "T4-A04",
+      "topic_id": "T4",
+      "question": "Which retry controls does Google's SRE book recommend to prevent retry amplification, and what multiplication example illustrates the risk?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "section_id": "3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "A retry delay should grow with each failed attempt, be capped, and be randomized with jitter so clients do not retry in lockstep.",
+          "rationale": "Randomized capped backoff is the first recommended control."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "section_id": "3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "A per-request attempt cap bounds one logical operation.",
+          "rationale": "Names the per-request retry cap."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "section_id": "3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "Caps total retry work across clients and operations. This is the one budget that directly protects a shared dependency from a retry storm.",
+          "rationale": "Describes the process- or service-wide retry budget."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "section_id": "3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "Retry only at the layer immediately above the layer that rejected the request. Lower layers should return a classified result, not independently retry work that the caller has already judged non-retryable. This avoids a combinatorial retry explosion across proxy, API, service and client layers.",
+          "rationale": "Controls multi-layer amplification; permanent/non-retryable failures are also excluded at lines 73-74."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "Confirmed for the controls clause: randomized capped backoff, per-request attempt cap, per-client ratio (lines 112-114), process-wide retry budget and single-layer retry. The answer key's '60 retries per minute' figure and the worked 4x4x4=64 multiplication example are not in the corpus; it states the combinatorial risk only qualitatively ('combinatorial retry explosion'). Recorded as partial numerical evidence, not a relabel, because the question's main ask is the control set.",
+      "split": "heldout"
+    },
+    {
+      "id": "T4-A05",
+      "topic_id": "T4",
+      "question": "Why is publishing to a message broker inside a database transaction unreliable, and how does the transactional outbox pattern avoid that problem?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "section_id": "1-two-unsafe-dual-write-orders",
+          "quote": "Naive sequence **DB then broker** can commit the reservation and crash before publishing.",
+          "rationale": "Shows the DB-then-broker crash window that makes the dual write unreliable."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "section_id": "1-two-unsafe-dual-write-orders",
+          "quote": "records publication intent together with the business state in a **single local** transaction, then uses a relay.",
+          "rationale": "States the outbox's single-local-transaction plus relay mechanism."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "section_id": "1-two-unsafe-dual-write-orders",
+          "quote": "There is **no atomic transaction spanning all illustrated components**.",
+          "rationale": "Confirms that no cross-component atomic transaction is assumed."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "V04/C05 directly explains both unsafe dual-write orders, the single local transaction that stores business state with an outbox record, the separate relay, and the absence of a cross-component atomic transaction. The exact 'publish while the transaction is still open' framing is represented by the broker-then-DB rollback case.",
+      "split": "heldout"
+    },
+    {
+      "id": "T4-A06",
+      "topic_id": "T4",
+      "question": "How does the idempotent consumer pattern detect a duplicate message, and why is the processed-messages primary key important?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/inbox-atomicity.md",
+          "section_id": "3-inbox-and-consumer-local-atomicity",
+          "quote": "An inbox can persist a consumer's processed-event identity and business effect together in **one local transaction**.",
+          "rationale": "States inbox identity-plus-effect atomicity."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/inbox-atomicity.md",
+          "section_id": "3-inbox-and-consumer-local-atomicity",
+          "quote": "The identity must include the correct subscriber and event/effect scope; two different consumers legitimately process the same event into different local states.",
+          "rationale": "Explains why subscriber/event scope belongs in the identity."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/inbox-atomicity.md",
+          "section_id": "a-four-window-consumer-recovery-trace",
+          "quote": "A uniqueness or equivalent atomic authority rule must decide which transaction can record the identity",
+          "rationale": "Requires a uniqueness/atomic-authority rule for the identity, which is why the processed-messages key matters."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "V04/C05 states that an inbox persists processed-event identity and the business effect in one local transaction, requires the identity to include the subscriber and event scope, and requires a uniqueness/atomic-authority rule for the identity. The PROCESSED_MESSAGES composite primary key and duplicate-insert rollback are not spelled out, but the duplicate-detection mechanism is supported.",
+      "split": "heldout"
+    },
+    {
+      "id": "T4-A07",
+      "topic_id": "T4",
+      "question": "In the Azure Architecture Center's Saga pattern guidance, what is a pivot transaction, and how do compensable and retryable transactions differ around it?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "saga-workflows covers choreography, orchestration and compensation, but not the Azure pivot transaction or the compensable/retryable classification around it. Relabelled unanswerable.",
+      "split": "heldout"
+    },
+    {
+      "id": "T4-A08",
+      "topic_id": "T4",
+      "question": "In Garcia-Molina and Salem's saga model, what is a saga, and how do backward recovery and forward recovery differ?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "Saga pages describe compensation and semantic non-rollback, but not Garcia-Molina backward recovery, forward recovery or savepoints; \"forward recovery\" elsewhere means deployment recovery. Relabelled unanswerable.",
+      "split": "heldout"
+    },
+    {
+      "id": "T4-U01",
+      "topic_id": "T4",
+      "question": "What default retry limit and compensation timeout does a specific managed saga-orchestration product apply to a failed activity before it aborts the workflow?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "Saga, outbox, and compensation mechanics are discussed generically; no managed saga-orchestration product's default retry limit or compensation timeout is named.",
+      "split": "heldout"
+    },
+    {
+      "id": "T4-U02",
+      "topic_id": "T4",
+      "question": "As of October 2026, what share of publicly documented HTTP APIs support the Idempotency-Key request header?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "Kept unanswerable. No measured share of public HTTP APIs supporting the Idempotency-Key header exists in the book; the idempotency pages discuss RFC 9110 method semantics and application key contracts (retries-idempotency-and-ambiguous-effects.md:69,79) without population data. Current-fact label holds.",
+      "split": "heldout"
+    },
+    {
+      "id": "T4-U03",
+      "topic_id": "T4",
+      "question": "By what percentage did a specific retailer reduce duplicate order fulfillments after adding an inbox table?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "No retailer, inbox deployment or duplicate-fulfillment reduction percentage is reported. The inbox page uses fictional failures and explicitly unexecuted tests.",
+      "split": "heldout"
+    },
+    {
+      "id": "T4-U04",
+      "topic_id": "T4",
+      "question": "What CPU and memory allocation should an outbox relay use to sustain 20,000 events per second?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "No CPU/memory sizing for an outbox relay at 20,000 events/s. Capacity pages require measured workload and give no such allocation; out-of-scope.",
+      "split": "heldout"
+    },
+    {
+      "id": "T5-A01",
+      "topic_id": "T5",
+      "question": "In Amazon Dynamo's replication model, what does an (N,R,W) setting of (3,2,2) mean, and how does a sloppy quorum with hinted handoff keep writes available when one designated replica is unreachable?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "No Amazon Dynamo coverage: no (N,R,W)=(3,2,2), sloppy quorum, preference-list substitution, or hinted-handoff delivery. A generic R+W>N statement and one hinted-handoff mention in a Discord case do not answer the Dynamo question.",
+      "split": "heldout"
+    },
+    {
+      "id": "T5-A02",
+      "topic_id": "T5",
+      "question": "A DynamoDB table uses the current date as its partition key and absorbs a daily write burst. What throughput ceiling applies per partition, and how do random and calculated write suffixes change write spread and read cost?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "No DynamoDB partition limits, read/write capacity units, or random/calculated write-suffix guidance appears in the corpus. Generic shard-key and hot-key advice does not answer the question.",
+      "split": "heldout"
+    },
+    {
+      "id": "T5-A03",
+      "topic_id": "T5",
+      "question": "With a replication factor of three, how does Apache Cassandra choose the replicas for a key, and what benefit and what risk come from giving each physical node many tokens?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "unsupported",
+      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. The corpus has no Cassandra coordinator/token-ring walk, no 'three distinct physical nodes' rule, no 2*(RF-1) neighbour arithmetic and no 2*(RF-1) risk statement. 'virtual nodes' appears only once, as generic guidance ('Virtual nodes improve balance but add metadata and lookup cost', resharding-transition.md:145); 'token ring', 'clockwise' and 'vnodes' have zero occurrences. Final unanswerable.",
+      "split": "heldout"
+    },
+    {
+      "id": "T5-A04",
+      "topic_id": "T5",
+      "question": "How does a Spanner coordinator determine a read-write transaction's commit timestamp, and what must it wait for before the commit is applied at replicas?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "unsupported",
+      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. Zero occurrences of 'Spanner', 'TrueTime', 'commit-wait' or 'external consistency' in book/**/*.md. The multi-region/replication pages describe quorum, leases and recovery, not a commit-timestamp protocol or a tie to clock uncertainty.",
+      "split": "heldout"
+    },
+    {
+      "id": "T5-A05",
+      "topic_id": "T5",
+      "question": "How does Redis Cluster move a hash slot between masters, and when should a client expect an ASK redirection rather than a MOVED redirection?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "unsupported",
+      "notes": "Redis Cluster is absent: no hash-slot count, CRC16, MIGRATING/IMPORTING, ASKING, ASK or MOVED text exists. V05/C05 covers generic ownership movement and resharding, but not the slot-redirection protocol, so the ASK-versus-MOVED rule cannot be answered.",
+      "split": "heldout"
+    },
+    {
+      "id": "T5-A06",
+      "topic_id": "T5",
+      "question": "In a MongoDB sharded cluster, how do the shard key and chunk layout govern query routing and rebalancing, and why can hashed sharding help with a monotonically increasing key?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "section_id": "2-why-shard-key-selection-cannot-be-made-from-average-rps",
+          "quote": "- **Access-path fit:** can the main query identify its shard without scatter-gather across all owners?",
+          "rationale": "Shows that shard-key presence determines targeted routing versus scatter-gather."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "section_id": "3-four-partition-strategies-and-their-drawbacks",
+          "quote": "| Range by ordered key | Efficient range pruning/time-based lifecycle and data locality | Right-edge hotspot from sequential inserts, uneven key ranges, split planning |",
+          "rationale": "Explains the right-edge hotspot of range layout for sequential inserts."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "section_id": "3-four-partition-strategies-and-their-drawbacks",
+          "quote": "| Hash of high-cardinality key | Usually reduces skew from otherwise uniformly distributed distinct keys | Single hot key still hot; cross-key queries scatter; remapping costs |",
+          "rationale": "Explains how hashing reduces skew while cross-key queries scatter."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "quote": "Evenly distributing rows can leave one tenant or key overloaded; resharding must preserve correct reads and writes during movement.",
+          "rationale": "States the rebalancing invariant during ownership movement."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "V05/C05 covers shard-key routing and scatter-gather, range-versus-hash trade-offs (right-edge hotspot from sequential inserts; hash reduces skew), and safe ownership movement. MongoDB-specific chunks, mongos and balancer details are absent, so support is at the generic sharding-mechanism level, not the vendor API level.",
+      "split": "heldout"
+    },
+    {
+      "id": "T5-A07",
+      "topic_id": "T5",
+      "question": "How does Azure Cosmos DB serve reads from local regions, and what does its strong consistency level require of a write?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "No Cosmos DB content. Generic multi-region/consistency pages discuss regional authority and staleness, but not Cosmos's five levels, all-region write acknowledgment or dynamic quorum. Relabelled unanswerable.",
+      "split": "heldout"
+    },
+    {
+      "id": "T5-A08",
+      "topic_id": "T5",
+      "question": "What do CockroachDB's REGIONAL BY TABLE, REGIONAL BY ROW and GLOBAL localities each optimize, and what write-latency trade-off distinguishes the global setting?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "No CockroachDB locality content; CockroachDB appears only as a generic distributed-SQL option. REGIONAL BY TABLE/ROW, GLOBAL and their write-latency trade-off are absent. Relabelled unanswerable.",
+      "split": "heldout"
+    },
+    {
+      "id": "T5-U01",
+      "topic_id": "T5",
+      "question": "What exact per-gigabyte price will a named cloud provider charge this organization for cross-region replication traffic in its next contract year?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "No provider price, contract-year rate, or organization-specific quote is present. Cost discussion is qualitative and explicitly non-specific.",
+      "split": "heldout"
+    },
+    {
+      "id": "T5-U02",
+      "topic_id": "T5",
+      "question": "How many cloud regions does a named infrastructure provider operate at this moment?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "Kept unanswerable. The book contains no count of a named provider's regions at a point in time and deliberately avoids provider-specific current inventories; multi-region pages discuss failure classes and recovery contracts. Current-fact label holds.",
+      "split": "heldout"
+    },
+    {
+      "id": "T5-U03",
+      "topic_id": "T5",
+      "question": "What p99 replication lag did a specific production cluster experience during a regional failover last quarter?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "No production cluster, regional failover or replication-lag percentile is reported. The resharding and failover material consists of proposed tests and synthetic scenarios.",
+      "split": "heldout"
+    },
+    {
+      "id": "T5-U04",
+      "topic_id": "T5",
+      "question": "Which sharding strategy should a particular twelve-person team adopt for its application, given its budget, skills and risk tolerance?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "Sharding pages give conditional key/strategy criteria, not a recommendation for a specific team's budget, skills and risk tolerance; out-of-scope.",
+      "split": "heldout"
+    },
+    {
+      "id": "T6-A01",
+      "topic_id": "T6",
+      "question": "How do the Google SRE definitions separate an SLI, an SLO, and an SLA, and what test distinguishes an SLA from an SLO?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "SLI and SLO definitions are present, but SLA is only called a separate agreement. The consequence-based test that distinguishes an SLA from an SLO is absent.",
+      "split": "heldout"
+    },
+    {
+      "id": "T6-A02",
+      "topic_id": "T6",
+      "question": "For an event-ratio SLO, how is the error budget calculated, and what does the example four-week error-budget policy do once the budget is exhausted?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "Error-budget arithmetic and a generic rollout-pause example appear, but no four-week policy, 1,000,000-request/1,000-error example, or halt-all-changes rule. The named example policy is unsupported.",
+      "split": "heldout"
+    },
+    {
+      "id": "T6-A03",
+      "topic_id": "T6",
+      "question": "For a 99.9% SLO, what long and short windows, burn rates, and error-budget percentages does the Google SRE Workbook recommend for page and ticket alerts?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "unsupported",
+      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. budget-actions.md:49-53 explains burn rate qualitatively and says the workbook method 'does not imply universal thresholds', but the book has no 14.4/6/1 burn rates, no 1 h/6 h/3 d windows, no 2%/5%/10% values and no 1:12 short/long ratio. Zero occurrences of '14.4' as a burn rate (the only 14.4 is 114.44 TiB in an unrelated calculation) and zero of '13.9'. Final unanswerable.",
+      "split": "heldout"
+    },
+    {
+      "id": "T6-A04",
+      "topic_id": "T6",
+      "question": "Why can a single failed request page an on-call engineer for a 99.9% SLO on a service handling only 10 requests per hour, and which remedies does the workbook suggest?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "unsupported",
+      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. The corpus has no 10-requests-per-hour/13.9% arithmetic and no synthetic-traffic, grouping, retry/fallback, lower-SLO or longer-window remedy list. The SLO pages only warn that short windows are noisy for intermittent traffic and that idle periods give insufficient samples (budget-actions.md:51-53,60). Final unanswerable.",
+      "split": "heldout"
+    },
+    {
+      "id": "T6-A05",
+      "topic_id": "T6",
+      "question": "How do rolling and calendar-aligned SLO windows differ, and why does the Google SRE Workbook favor a four-week rolling window as a general-purpose choice?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "unsupported",
+      "notes": "V09/C01 mentions 'rolling or calendar window' only as a phrase and never contrasts the two, discusses planning-cycle alignment, or explains why a four-week rolling window is preferred. The Workbook source row covers user-facing SLIs and targets, not window selection. No H2 supports the answer key.",
+      "split": "heldout"
+    },
+    {
+      "id": "T6-A06",
+      "topic_id": "T6",
+      "question": "What distinguishes head-based from tail-based trace sampling, and why can head sampling alone fail to retain every trace that contains an error?",
+      "phase3_label": "answerable",
+      "final_label": "answerable",
+      "accepted": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/sampling-trust.md",
+          "section_id": "4-sampling-limits-what-the-trace-can-support",
+          "quote": "| Head sampling | Can limit collection near request start | Later severe error may be missed |",
+          "rationale": "Head sampling decides near request start, so a later error can be missed."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/sampling-trust.md",
+          "section_id": "4-sampling-limits-what-the-trace-can-support",
+          "quote": "| Tail sampling | Can prefer slow/error traces using fuller context | Requires buffered state and collector resources; decisions can be late |",
+          "rationale": "Tail sampling uses fuller context but needs buffering; the contrast explains the distinction."
+        }
+      ],
+      "adjudication": "confirmed",
+      "notes": "V09/C03 directly distinguishes head sampling (early decision; later severe error may be missed) from tail sampling (fuller context; buffered state and late decisions). The trace-ID ratio rule and attribute-based tail criteria are not detailed, but the core distinction and the reason head sampling can miss error traces are supported.",
+      "split": "heldout"
+    },
+    {
+      "id": "T6-A07",
+      "topic_id": "T6",
+      "question": "When does OpenTelemetry advise against sampling, and what costs does its guidance say a sampling strategy can introduce?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "sampling-trust H2 4 lists head/tail sampling limits, but not OTel's when-not-to-sample conditions (low volume, aggregate-only, regulation) or the direct/indirect/opportunity cost taxonomy. Relabelled unanswerable.",
+      "split": "heldout"
+    },
+    {
+      "id": "T6-A08",
+      "topic_id": "T6",
+      "question": "What four fields make up the W3C traceparent header, and how do trace and span identifiers let a backend reconstruct a distributed trace?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "relabelled",
+      "notes": "trace-causality H2 1 gives trace/span/parent roles and mentions traceparent, but not the four-field layout, hex lengths, version-00 flags or invalid all-zero IDs. Relabelled unanswerable.",
+      "split": "heldout"
+    },
+    {
+      "id": "T6-U01",
+      "topic_id": "T6",
+      "question": "What default tail-sampling rate does a particular commercial observability platform apply to a tenant's traces when no sampling policy is configured?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "The book requires a declared head/tail sampling policy and discusses sampling costs, but names no commercial platform default tail-sampling rate.",
+      "split": "heldout"
+    },
+    {
+      "id": "T6-U02",
+      "topic_id": "T6",
+      "question": "As of October 2026, what exact default trace-retention period does the newest release of a major hosted observability platform use?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "Kept unanswerable. No hosted observability platform's default trace-retention period is stated; retention appears only as a sampling/lifecycle cost variable (trace-context-lineage-and-audit.md:84; lifecycle-cost.md:77). The book makes no 'newest release' claim. Current-fact label holds.",
+      "split": "heldout"
+    },
+    {
+      "id": "T6-U03",
+      "topic_id": "T6",
+      "question": "For a service with a 99.9% SLO and 2.5 million requests in a four-week window, how much error budget remained at 09:00 UTC on 12 October 2026?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "The exact remaining budget at 09:00 UTC on 12 October 2026 depends on that service's consumption history, which is not in the corpus. V09/C01 provides synthetic budget arithmetic but no event data or 2.5M-request window.",
+      "split": "heldout"
+    },
+    {
+      "id": "T6-U04",
+      "topic_id": "T6",
+      "question": "Should a service team or a central reliability group own the on-call rotation for a 99.99% SLO?",
+      "phase3_label": "unanswerable",
+      "final_label": "unanswerable",
+      "accepted": [],
+      "adjudication": "confirmed",
+      "notes": "SLO/incident pages cover indicators, budgets and incident roles, but not whether a service team or central reliability group should own on-call for a 99.99% SLO; out-of-scope.",
+      "split": "heldout"
+    }
+  ],
+  "summary": {
+    "items": 72,
+    "answerable": 19,
+    "unanswerable": 53,
+    "dev": 36,
+    "heldout": 36,
+    "by_topic": {
+      "T1": 12,
+      "T2": 12,
+      "T3": 12,
+      "T4": 12,
+      "T5": 12,
+      "T6": 12
+    },
+    "by_split_label": {
+      "('dev', 'answerable')": 13,
+      "('dev', 'unanswerable')": 23,
+      "('heldout', 'answerable')": 6,
+      "('heldout', 'unanswerable')": 30
+    }
+  }
+}
