@@ -71,7 +71,7 @@ Set a high-entropy token in the environment; do not commit it:
 
 ~~~sh
 export TYCHO_MCP_TOKEN='<set-a-long-random-token>'
-docker build -t tycho-mcp-local:0.1 .
+docker build -f Dockerfile.vercel -t tycho-mcp-local:0.1 .
 docker run --rm --read-only --tmpfs /tmp:size=16m \
   -p 8000:8000 -e TYCHO_MCP_TOKEN tycho-mcp-local:0.1
 ~~~
@@ -112,10 +112,11 @@ a book page. They are transport checks, not agent answer-quality evaluation.
 |---|---|
 | Host runtime | Docker 28.3.2 on macOS |
 | Base image | `python:3.12-slim` |
-| Image | `tycho-mcp-local:test`, `sha256:d512349ca7f5...`; 264 MB |
+| Image | `tycho-mcp-local:test`, `sha256:b397fef04fb0...`; 264 MB |
 | Book and index | 423 documents, 2,753 sections |
 | Section snapshot | `f0a80c286a3f6b5bc6db20898389146ea330ffc9a92168df2a65579935325329` |
 | Read-only run | `--read-only --tmpfs /tmp:size=16m` |
+| Vercel-ready port run | `PORT=8080`; health, standard client and SDK passed |
 | Health | HTTP 200, no auth |
 | MCP discovery | HTTP 200, modern 2026-07-28 only |
 | Tools | 7 |
@@ -127,6 +128,27 @@ a book page. They are transport checks, not agent answer-quality evaluation.
 
 These are single-machine observations, not a latency, capacity or security
 benchmark.
+
+## Vercel compatibility
+
+Vercel's container runtime can deploy an OCI image as an autoscaling Function.
+It detects a project-root `Dockerfile.vercel`, serves HTTP on port 80 by
+default and honors the `PORT` environment variable. The image uses that
+filename and the server reads `PORT` at startup, so the same image is a
+candidate for Vercel Functions.
+
+- Set `TYCHO_MCP_TOKEN` in the Vercel project environment.
+- Set `PORT=8080` in the Vercel project environment. The image runs as uid
+  10001 and does not bind privileged port 80.
+- Vercel supplies TLS and the domain; the process still does not implement
+  OAuth, per-client authorization or rate limiting.
+- Scale-to-zero and cold starts apply. The section index is built into the
+  image; there is no persistent `/tmp` or query log.
+- No Vercel project, token or remote deployment was available, so no Vercel
+  deployment or remote client test is claimed.
+
+See the public Vercel guide
+[Running Docker on Vercel](https://vercel.com/kb/guide/docker).
 
 ## Tests
 

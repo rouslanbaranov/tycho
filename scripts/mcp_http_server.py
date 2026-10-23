@@ -386,7 +386,8 @@ def main(argv=None):
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--index", type=Path)
     parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument(
+        "--port", type=int, default=int(os.environ.get("PORT", "8000")))
     parser.add_argument("--token-env", default="TYCHO_MCP_TOKEN")
     args = parser.parse_args(argv)
     token = os.environ.get(args.token_env)
