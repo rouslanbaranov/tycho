@@ -102,16 +102,17 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ### Idempotency Key
 
-An idempotency key binds one logical intent to an authoritative outcome record. The key binds one
-logical intent, caller/payload scope and retention window to an authoritative outcome record. It is
-not a request ID generated fresh on every retry; the caller must reuse the key for the same intent.
+An idempotency key belongs to the operation owner, who defines its scope, fingerprint inputs and
+retention period. Callers choose a value only within that published contract. The owner also
+names the conflict response and the record a support engineer may inspect.
 
-The key does not make a different payload safe: a reused key with changed intent is a conflict, not
-idempotency. After an acknowledgment is lost, a new identity can duplicate a committed effect; an
-expired key cannot guarantee historical deduplication. Store the request fingerprint, outcome and
-expiry, and reject a key reuse with a different payload.
+The outcome record and business effect must commit together; a later separate write leaves a
+window for duplicate execution. A repeated key with a changed fingerprint is a conflict, not a
+replay.
 
-A naturally idempotent operation, a conditional/unique constraint, or a single-writer serialization
-may be preferable when the effect can be expressed without a key store. An idempotency key is a fit
-when the client can generate a stable key and the service can retain the outcome for the retry
-horizon.
+Retention is a product and compliance decision, not an arbitrary cache timeout. State what
+happens after expiry and how an operator resolves a caller that retries beyond it.
+
+Some effects can rely on a uniqueness rule, a compare-and-set or one writer instead of a key
+store. Review the contract when payload shape, caller population or retention cost changes. A
+key store without a cleanup plan becomes an unbounded dependency.

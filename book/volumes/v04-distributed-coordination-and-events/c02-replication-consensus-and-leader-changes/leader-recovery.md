@@ -187,18 +187,21 @@ Selected passages inspected 2026-10-20: [Leader election in distributed systems]
 
 ### Distributed Lock
 
-A lease-based lock is a time-bounded grant from a lock service. The holder may believe it still
-owns the lease after a pause, so the grant alone is not proof of exclusive access.
+A distributed lock needs a named coordinator owner and a register of protected resources. The
+register states each resource's tolerated pause and the destination check that rejects a former
+holder. An operator also needs authority to revoke a grant during an incident.
 
-Mutual exclusion depends on the service's own consistency and on bounded process pauses, not on
-the holder's local belief. Define what the lock protects, the acquisition and release path, and
-the maximum pause the design tolerates. The destination must reject stale epochs or the operation
-remains explicitly unsafe.
+The coordinator owner answers for quorum health, lease renewal budgets and the rule that denies
+new grants while coordination is degraded. Publish the health signal so callers can distinguish
+a valid grant from an uncertain one.
 
-For one database, a conditional update or unique constraint can provide the same exclusion without
-a separate lock service. A lock is justified when multiple resources need one coordination grant
-and the destination can enforce the epoch; otherwise the database constraint is simpler and
-stronger.
+The resource owner, not the lock client, decides whether an epoch is enforced. Without
+enforcement at the destination, the design offers a coordination signal rather than mutual
+exclusion.
+
+Prefer a conditional write or single-writer route for one database. Review the lock when pause
+budgets, quorum latency or stale-write exposure changes materially. Remove the lock when its
+protection cannot be enforced at the resource.
 
 ### Lease-Based Ownership
 

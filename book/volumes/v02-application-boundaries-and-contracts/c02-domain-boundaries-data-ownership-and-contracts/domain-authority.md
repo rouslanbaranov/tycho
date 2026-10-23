@@ -125,17 +125,18 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Domain-Driven Design and Bounded Context
 
-A bounded context is a boundary within which one model and its ubiquitous language stay
-consistent. A shared word "item" should not force a database schema shared by all four contexts.
-Each context owns its terms, invariants and release cadence.
+A bounded context has one accountable model owner and one accepted vocabulary. A named domain
+expert co-owns that vocabulary and arbitrates disputed meanings. The model owner may reject a
+term carrying a conflicting invariant, even when another team introduced it.
 
-A boundary is weak if none of its business rules can be stated separately. It is overextended if
-unrelated decisions must share transactions simply because they live behind one URL. A boundary can
-rot through shared tables, a common entity reused across contexts or a workflow that writes two
-owners' state; detect those paths and assign one authority per invariant.
+The context map records each relationship, translation direction and mapping maintainer. Treat
+it as an ownership artifact that changes with the model, not a diagram produced once for review.
 
-Nor must four contexts become four microservices: a modular application could implement them with
-explicit in-process interfaces and one deployable. Translation cost between contexts and domain-
-expert validation are explicit fit costs; a boundary without an expert and a translation owner is
-not validated. Choose deployment boundaries from ownership and failure containment, not from the
-number of model names.
+Keep deployment choices separate from model boundaries: one deployable can host several
+contexts, and one context can span services. What matters is a single decision authority for
+each invariant.
+
+Reopen the boundary when a shared term changes meaning, a translation gains a second owner or
+releases become unavoidably coupled. Merging models is honest when the vocabularies truly
+coincide. Record the rationale so a later team can distinguish a deliberate merger from an
+accidental one.

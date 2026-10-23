@@ -91,20 +91,21 @@ are not measured requirements.
 
 ### Microservices Architecture
 
-Microservices emphasize independently deployable capabilities with their own data and lifecycle.
-The unit of independence is the deployable service plus its data ownership, not the number of
-repositories.
+A microservice owner accepts a deployable, its data and the pager that follows both.
+Independence is credible only when the team can release without coordinating another service's
+schedule.
 
-Each capability needs a single authoritative owner for its data and invariant, and independent
-deployment must be real rather than a container label. Shared databases, synchronized releases and
-chatty remote calls can recreate a distributed monolith; retries, version skew and partial failure
-are common. Timeouts, idempotency and observability are part of the failure budget; remaining
-limits are remote-call cost, data consistency and operational surface. Define the contract, the
-failure budget and the local transaction boundary before splitting the deployment.
+Each service publishes its contract, version policy and supported consumer set. Shared tables,
+hidden synchronous chains and lockstep migrations undermine that boundary regardless of
+repository layout. A shared client library does not make contract changes independent.
 
-A modular monolith or layered application may be preferable when independent deployment and failure
-containment are not measured requirements. Microservices are a fit when separate ownership,
-independent release cadence and failure isolation justify the remote-call and data-consistency cost.
+Budget the remote surface explicitly: timeouts, retries, partial failure, tracing and rollback
+rehearsals. Record which dependency failures may degrade a journey and who decides to disable a
+path.
+
+One team owning every invariant may do better with a modular monolith than with remote
+boundaries. Revisit the split when release coupling or blast radius stops matching the stated
+ownership. That alternative is an architecture choice, not a temporary failure to split.
 
 ### Service-Oriented Architecture (SOA)
 

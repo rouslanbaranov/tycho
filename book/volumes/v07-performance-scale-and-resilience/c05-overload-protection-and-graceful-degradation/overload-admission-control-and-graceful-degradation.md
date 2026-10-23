@@ -159,18 +159,21 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ### Fallback
 
-A fallback returns a declared alternate result or dependency when the primary is unavailable. It
-must preserve the same correctness contract: a cached, fabricated or partial value is not a
-successful authoritative result.
+The owner of the primary outcome also owns its fallback, because only that owner can judge
+whether an alternate preserves the same correctness contract. A dependency team's proposal needs
+explicit acceptance.
 
-Name the fallback's freshness, authority and user-visible label; fail explicitly if none is valid.
-The fallback needs an owner, a trigger distinct from ordinary load and a test that proves the
-alternate path is safe for the operation's effect. A fallback that writes cannot be treated as a
-read-only substitution.
+Document the trigger, freshness bound and caller-visible label. A plausible substitute that
+hides its limits is a correctness failure, not resilience. A fast answer does not entitle the
+alternate to impersonate the primary.
 
-An explicit failure or a queued retry may be safer than a plausible but wrong fallback. Use a
-fallback only when the degraded answer is still a valid business outcome and the caller can
-recognize it. Record the fallback in the response.
+A read-only fallback may serve a display; a fallback that writes needs duplicate protection,
+reconciliation and a repair procedure. An explicit error remains valid when no alternate
+satisfies the contract.
+
+Exercise the alternate under the same load profile as the primary and record how often it
+activates. Remove it when the failure it hides outlives its usefulness. Ownership includes the
+decision to stop offering the alternate, recorded alongside its original approval.
 
 ### Graceful Degradation
 
@@ -190,30 +193,38 @@ be tested under the load that triggers the mode.
 
 ### Load Shedding
 
-Shedding rejects or drops work before a scarce resource is exhausted so accepted work can meet its
-deadline. It needs a bottleneck-specific signal, fair principal policy and retry guidance.
+Shedding requires one named bottleneck and an admission point close to it. A load balancer
+rejecting traffic without that link merely relocates the queue.
 
-A rejection without a retry hint can create a synchronized retry storm; shedding one tenant's
-traffic can be unfair if the policy does not declare quotas. Return a typed rejection with a retry
-class and measure shed versus accepted work; a shed counter without an outcome label hides whether
-the right work was rejected.
+The policy owner defines criticality classes, tenant fairness and the share of work that may be
+refused. Those are product choices that deserve review outside an incident. Publish the class
+definitions so callers can predict which requests may be refused.
 
-Queueing/backpressure, admission control or provisioning may be preferable when the work is
-deferrable or the bottleneck can be expanded. Shedding is a fit when rejecting early is cheaper and
-safer than queueing. Record the rejected class now.
+Return a typed rejection with a retry class and the protected resource, not a generic failure.
+Count shed work by class so silent starvation cannot masquerade as health. The rejection
+contract also states whether a retry is safe and when.
+
+Deferral and added capacity remain the competing responses when rejection would waste useful
+work. Revisit the thresholds when traffic mix, tenant count or bottleneck capacity changes. The
+policy should also state who may approve an emergency exception and for how long.
 
 ### Throttling
 
-Throttling paces or slows admitted work below offered load to protect a dependency. It needs a
-measurable bottleneck, a bounded queue and propagation of backpressure.
+Throttling slows work that has already been admitted; it does not decide who deserves service.
+The owner must state which dependency is protected and which class waits. That declaration
+belongs with the operational policy, not only in a dashboard.
 
-Throttling can hide capacity loss, add latency to essential classes or turn a transient spike into a
-long tail; measure accepted work, queue age and per-class latency. The throttle must state whether it
-delays work or rejects it, and which class gets priority when the dependency is saturated.
+A finite buffer and an upstream backpressure signal make pacing enforceable. Without them,
+pacing shifts latency and memory pressure downstream. That buffer converts overload into an
+explicit decision rather than a growing delay. Sizing should follow observed service time, not
+an arbitrary request count.
 
-Admission control, queueing or provisioning may be preferable when work is deferrable or capacity
-can expand. Throttling is a fit when the dependency needs a sustained lower rate, not merely a
-shorter queue. The throttle owner must review queue age during every incident and in real time.
+Publish the limit, measurement window and retry guidance so callers can pace themselves. Watch
+waiting time and class-specific completion, not only the arrival rate.
+
+Rejecting excess work or adding capacity may be cheaper than delaying everyone. Review the
+policy when the protected dependency, traffic shape or deadline changes. Emergency work needs an
+exception path with an owner and an expiry.
 
 ### Rate Limiting
 

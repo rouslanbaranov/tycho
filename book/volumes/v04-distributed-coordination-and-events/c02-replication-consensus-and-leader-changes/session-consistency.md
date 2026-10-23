@@ -152,16 +152,18 @@ Record invocation and completion, session identifier, operation identifier, obje
 
 ### Session Consistency
 
-Session consistency gives one client read-your-writes and monotonic reads by carrying a session token
-that records the positions it has observed. The token is client-visible state, not a global
-guarantee.
+The product owner defines what counts as one session and which observations its users must
+retain. That choice sets the guarantee; no infrastructure default should supply it implicitly.
 
-A successful write returns partition and commit position. A read returns the position of the snapshot
-it actually read. The client retains the maximum required position for each partition it has observed
-or written. A stable log lineage or epoch-aware comparison must distinguish an established commit from
-a divergent suffix.
+The service owner publishes the token format, maximum size, lifetime and the failure callers
+receive when no replica can satisfy it. The routing layer owns the wait, reroute and rejection
+policy.
 
-If none can, return a retryable failure that preserves the token. Do not silently serve an older
-snapshot to keep a latency target. Linearizable reads require quorum or read-index and accept higher
-latency. Session consistency is a fit when one client needs continuity without a global linearizable
-read.
+An epoch or lineage field stops a token from crossing a leadership change as though positions
+remained comparable. External indexes and caches need their own watermark before claiming the
+same session view.
+
+Token growth, lost client state or exhausted wait budgets each argue for a narrower guarantee.
+The authority path may then be the only honest answer. Record the chosen scope and the reason a
+weaker guarantee is acceptable. A guarantee that only some routes honor should be narrowed
+before release.

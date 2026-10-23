@@ -149,32 +149,32 @@
         "line": 92,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "independently deployable",
-          "single authoritative owner",
-          "distributed monolith",
-          "modular monolith"
+          "A microservice owner accepts",
+          "Independence is credible only",
+          "Each service publishes its",
+          "Shared tables, hidden synchronous"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Microservices emphasize independently deployable capabilities with their own data and lifecycle.",
-          "reason": "Defines the mechanism."
+          "quote": "A microservice owner accepts a deployable, its data and the pager that follows both.",
+          "reason": "Bounded owner statement from the current section."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Each capability needs a single authoritative owner for its data and invariant, and independent deployment must be real rather than a container label.",
-          "reason": "States the invariant."
+          "quote": "Independence is credible only when the team can release without coordinating another service's schedule.",
+          "reason": "Bounded owner statement from the current section."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Shared databases, synchronized releases and chatty remote calls can recreate a distributed monolith; retries, version skew and partial failure are common.",
-          "reason": "Names failure and recovery."
+          "quote": "Each service publishes its contract, version policy and supported consumer set.",
+          "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A modular monolith or layered application may be preferable when independent deployment and failure containment are not measured requirements.",
-          "reason": "Names the alternative and reversal."
+          "quote": "Shared tables, hidden synchronous chains and lockstep migrations undermine that boundary regardless of repository layout.",
+          "reason": "Bounded owner statement from the current section."
         }
       },
       "decision_evidence": {
@@ -206,7 +206,7 @@
         "heading": "Service-Oriented Architecture (SOA)",
         "anchor": "service-oriented-architecture-soa",
         "level": 3,
-        "line": 109,
+        "line": 110,
         "unit_kind": "dedicated",
         "unit_terms": [
           "governed service contracts",
@@ -389,32 +389,32 @@
         "line": 126,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "bounded context",
-          "shared word",
-          "boundary is weak",
-          "modular application"
+          "A bounded context has",
+          "A named domain expert",
+          "The model owner may",
+          "The context map records"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A shared word \"item\" should not force a database schema shared by all four contexts.",
-          "reason": "Explains that contexts carry different meanings and own their rules, so they need not share a schema."
+          "quote": "A bounded context has one accountable model owner and one accepted vocabulary.",
+          "reason": "Bounded owner statement from the current section."
         },
         "invariant": {
           "state": "supported",
-          "quote": "A boundary is weak if none of its business rules can be stated separately. It is overextended if unrelated decisions must share transactions simply because they live behind one URL.",
-          "reason": "States boundary validity constraints: separable business rules and bounded transactions."
+          "quote": "A named domain expert co-owns that vocabulary and arbitrates disputed meanings.",
+          "reason": "Bounded owner statement from the current section."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A boundary can rot through shared tables, a common entity reused across contexts or a workflow that writes two owners' state; detect those paths and assign one authority per invariant.",
-          "reason": "Names boundary erosion and the required authority assignment."
+          "quote": "The model owner may reject a term carrying a conflicting invariant, even when another team introduced it.",
+          "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Nor must four contexts become four microservices: a modular application could implement them with explicit in-process interfaces and one deployable.",
-          "reason": "Names the modular alternative and reversal."
+          "quote": "The context map records each relationship, translation direction and mapping maintainer.",
+          "reason": "Bounded owner statement from the current section."
         }
       },
       "decision_evidence": {
@@ -2639,32 +2639,32 @@
         "line": 307,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "separates update and read",
-          "physical isolation",
-          "Projection lag",
-          "single model/CRUD"
+          "CQRS begins with a",
+          "The write owner accepts",
+          "The read side owns",
+          "A shared schema may"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "The CQRS design separates update and read representations so each can optimize for different needs. The service may use separate objects, tables or storage engines; physical isolation is a choice, not an inherent definition.",
-          "reason": "Explains command/read separation and that physical isolation is a choice, not a definitional requirement."
+          "quote": "CQRS begins with a recorded decision about divergent command and query needs, not with a second database.",
+          "reason": "Bounded owner statement from the current section."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Before catch-up, a client querying the projection may not see its own accepted change.",
-          "reason": "States the read-after-write limit: accepted writes can remain invisible until the projector catches up."
+          "quote": "The write owner accepts command admission, invariant checks and rejection semantics.",
+          "reason": "Bounded owner statement from the current section."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Projection lag, duplicate apply, cursor gaps and schema drift are common; make the apply idempotent",
-          "reason": "Names the projection failure modes."
+          "quote": "The read side owns a derived view, its freshness declaration and its rebuild procedure.",
+          "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A single model/CRUD service, a synchronous authority read or an event-sourced reconstruction may be preferable when read/write separation complexity exceeds the measured benefit.",
-          "reason": "Names the competing designs and reversal."
+          "quote": "A shared schema may remain, provided table ownership and permitted writers are explicit.",
+          "reason": "Bounded owner statement from the current section."
         }
       },
       "decision_evidence": {
@@ -3179,32 +3179,32 @@
         "line": 103,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "binds one logical intent",
-          "different payload",
-          "new identity",
-          "naturally idempotent"
+          "An idempotency key belongs",
+          "Callers choose a value",
+          "The owner also names",
+          "The outcome record and"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "The key binds one logical intent, caller/payload scope and retention window to an authoritative outcome record.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "quote": "An idempotency key belongs to the operation owner, who defines its scope, fingerprint inputs and retention period.",
+          "reason": "Bounded owner statement from the current section."
         },
         "invariant": {
           "state": "supported",
-          "quote": "The key does not make a different payload safe: a reused key with changed intent is a conflict, not idempotency.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "quote": "Callers choose a value only within that published contract.",
+          "reason": "Bounded owner statement from the current section."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "After an acknowledgment is lost, a new identity can duplicate a committed effect; an expired key cannot guarantee historical deduplication.",
-          "reason": ""
+          "quote": "The owner also names the conflict response and the record a support engineer may inspect.",
+          "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A naturally idempotent operation, a conditional/unique constraint, or a single-writer serialization may be preferable when the effect can be expressed without a key store.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "quote": "The outcome record and business effect must commit together; a later separate write leaves a window for duplicate execution.",
+          "reason": "Bounded owner statement from the current section."
         }
       },
       "decision_evidence": {
@@ -4763,32 +4763,32 @@
         "line": 323,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "separate query view",
-          "Before catch-up",
-          "stale projection",
-          "synchronous authority read"
+          "The projection owner publishes",
+          "Those commitments belong in",
+          "That owner also sets",
+          "Silent coercion of unknown"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Fowler's CQRS description and Chris Richardson's public CQRS pattern both show a separate query view that can follow events from the owning service.",
-          "reason": "Describes a separate query view fed by events from the owning service."
+          "quote": "The projection owner publishes the event schema it accepts, the position it has applied and the staleness callers should expect.",
+          "reason": "Bounded owner statement from the current section."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Before catch-up, a client querying the projection may not see its own accepted change.",
-          "reason": "States the read-after-write limit before projector catch-up."
+          "quote": "Those commitments belong in the read contract, not in an operator's memory.",
+          "reason": "Bounded owner statement from the current section."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A stale projection can return an old status after a commit, and a rebuild can serve mixed revisions.",
-          "reason": "Names stale/mixed projection failure and the position/wait response."
+          "quote": "That owner also sets the compatibility window for schema changes and rejects an event whose version falls outside it.",
+          "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A synchronous authority read or a cache-aside view may be preferable when the read must see the latest commit.",
-          "reason": "Names synchronous authority/cache-aside and the freshness reversal."
+          "quote": "Silent coercion of unknown fields turns a contract breach into corrupted rows.",
+          "reason": "Bounded owner statement from the current section."
         }
       },
       "decision_evidence": {
@@ -5357,32 +5357,32 @@
         "line": 160,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "declared alternate result",
-          "correctness contract",
-          "freshness, authority",
-          "explicit failure"
+          "The owner of the",
+          "A dependency team's proposal",
+          "Document the trigger, freshness",
+          "A plausible substitute that"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A fallback returns a declared alternate result or dependency when the primary is unavailable.",
-          "reason": "Defines the mechanism and its scope."
+          "quote": "The owner of the primary outcome also owns its fallback, because only that owner can judge whether an alternate preserves the same correctness contract.",
+          "reason": "Bounded owner statement from the current section."
         },
         "invariant": {
           "state": "supported",
-          "quote": "It must preserve the same correctness contract: a cached, fabricated or partial value is not a successful authoritative result.",
-          "reason": "States the correctness or policy invariant."
+          "quote": "A dependency team's proposal needs explicit acceptance.",
+          "reason": "Bounded owner statement from the current section."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Name the fallback's freshness, authority and user-visible label; fail explicitly if none is valid.",
-          "reason": "Names the failure mode and required response."
+          "quote": "Document the trigger, freshness bound and caller-visible label.",
+          "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
           "state": "supported",
-          "quote": "An explicit failure or a queued retry may be safer than a plausible but wrong fallback.",
-          "reason": "Names the competing choice and reversal condition."
+          "quote": "A plausible substitute that hides its limits is a correctness failure, not resilience.",
+          "reason": "Bounded owner statement from the current section."
         }
       },
       "decision_evidence": {
@@ -5414,7 +5414,7 @@
         "heading": "Graceful Degradation",
         "anchor": "graceful-degradation",
         "level": 3,
-        "line": 175,
+        "line": 178,
         "unit_kind": "dedicated",
         "unit_terms": [
           "optional features",
@@ -5474,35 +5474,35 @@
         "heading": "Load Shedding",
         "anchor": "load-shedding",
         "level": 3,
-        "line": 191,
+        "line": 194,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Shedding rejects",
-          "bottleneck-specific signal",
-          "synchronized retry storm",
-          "Queueing/backpressure"
+          "Shedding requires one named",
+          "A load balancer rejecting",
+          "The policy owner defines",
+          "Those are product choices"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Shedding rejects or drops work before a scarce resource is exhausted so accepted work can meet its deadline.",
-          "reason": "Defines the mechanism and its scope."
+          "quote": "Shedding requires one named bottleneck and an admission point close to it.",
+          "reason": "Bounded owner statement from the current section."
         },
         "invariant": {
           "state": "supported",
-          "quote": "It needs a bottleneck-specific signal, fair principal policy and retry guidance.",
-          "reason": "States the correctness or policy invariant."
+          "quote": "A load balancer rejecting traffic without that link merely relocates the queue.",
+          "reason": "Bounded owner statement from the current section."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A rejection without a retry hint can create a synchronized retry storm; shedding one tenant's traffic can be unfair if the policy does not declare quotas.",
-          "reason": "Names the failure mode and required response."
+          "quote": "The policy owner defines criticality classes, tenant fairness and the share of work that may be refused.",
+          "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Queueing/backpressure, admission control or provisioning may be preferable when the work is deferrable or the bottleneck can be expanded.",
-          "reason": "Names the competing choice and reversal condition."
+          "quote": "Those are product choices that deserve review outside an incident.",
+          "reason": "Bounded owner statement from the current section."
         }
       },
       "decision_evidence": {
@@ -5534,35 +5534,35 @@
         "heading": "Throttling",
         "anchor": "throttling",
         "level": 3,
-        "line": 205,
+        "line": 211,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "paces or slows",
-          "bounded queue",
-          "hide capacity loss",
-          "Admission control"
+          "Throttling slows work that",
+          "The owner must state",
+          "That declaration belongs with",
+          "A finite buffer and"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Throttling paces or slows admitted work below offered load to protect a dependency.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "quote": "Throttling slows work that has already been admitted; it does not decide who deserves service.",
+          "reason": "Bounded owner statement from the current section."
         },
         "invariant": {
           "state": "supported",
-          "quote": "It needs a measurable bottleneck, a bounded queue and propagation of backpressure.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "quote": "The owner must state which dependency is protected and which class waits.",
+          "reason": "Bounded owner statement from the current section."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Throttling can hide capacity loss, add latency to essential classes or turn a transient spike into a long tail; measure accepted work, queue age and per-class latency.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "quote": "That declaration belongs with the operational policy, not only in a dashboard.",
+          "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Admission control, queueing or provisioning may be preferable when work is deferrable or capacity can expand.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "quote": "A finite buffer and an upstream backpressure signal make pacing enforceable.",
+          "reason": "Bounded owner statement from the current section."
         }
       },
       "decision_evidence": {
@@ -5594,7 +5594,7 @@
         "heading": "Rate Limiting",
         "anchor": "rate-limiting",
         "level": 3,
-        "line": 218,
+        "line": 229,
         "unit_kind": "dedicated",
         "unit_terms": [
           "bounds requests",
@@ -6076,32 +6076,32 @@
         "line": 188,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "lease-based lock",
-          "Mutual exclusion",
-          "stale epochs",
-          "conditional update"
+          "A distributed lock needs",
+          "The register states each",
+          "An operator also needs",
+          "The coordinator owner answers"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A lease-based lock is a time-bounded grant from a lock service.",
-          "reason": "Defines the lease grant and time-bounded ownership."
+          "quote": "A distributed lock needs a named coordinator owner and a register of protected resources.",
+          "reason": "Bounded owner statement from the current section."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Mutual exclusion depends on the service's own consistency and on bounded process pauses, not on the holder's local belief.",
-          "reason": "States the exclusion precondition and its limit."
+          "quote": "The register states each resource's tolerated pause and the destination check that rejects a former holder.",
+          "reason": "Bounded owner statement from the current section."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "The destination must reject stale epochs or the operation remains explicitly unsafe.",
-          "reason": "States the required stale-owner rejection and the unsafe fallback."
+          "quote": "An operator also needs authority to revoke a grant during an incident.",
+          "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
           "state": "supported",
-          "quote": "For one database, a conditional update or unique constraint can provide the same exclusion without a separate lock service.",
-          "reason": "Names the single-database alternative."
+          "quote": "The coordinator owner answers for quorum health, lease renewal budgets and the rule that denies new grants while coordination is degraded.",
+          "reason": "Bounded owner statement from the current section."
         }
       },
       "decision_evidence": {
@@ -6133,7 +6133,7 @@
         "heading": "Lease-Based Ownership",
         "anchor": "lease-based-ownership",
         "level": 3,
-        "line": 203,
+        "line": 206,
         "unit_kind": "dedicated",
         "unit_terms": [
           "bounded interval",
@@ -6193,7 +6193,7 @@
         "heading": "Fencing Tokens",
         "anchor": "fencing-tokens",
         "level": 3,
-        "line": 216,
+        "line": 219,
         "unit_kind": "dedicated",
         "unit_terms": [
           "monotonic epoch",
@@ -6376,32 +6376,32 @@
         "line": 153,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "session token",
-          "commit position",
-          "stable log lineage",
-          "Linearizable reads"
+          "The product owner defines",
+          "That choice sets the",
+          "The service owner publishes",
+          "The routing layer owns"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A successful write returns partition and commit position. A read returns the position of the snapshot it actually read. The client retains the maximum required position for each partition it has observed or written.",
-          "reason": "Explains commit-position tokens and replica selection against applied position."
+          "quote": "The product owner defines what counts as one session and which observations its users must retain.",
+          "reason": "Bounded owner statement from the current section."
         },
         "invariant": {
           "state": "supported",
-          "quote": "A stable log lineage or epoch-aware comparison must distinguish an established commit from a divergent suffix.",
-          "reason": "Requires stable lineage or epoch-aware comparison across leadership changes."
+          "quote": "That choice sets the guarantee; no infrastructure default should supply it implicitly.",
+          "reason": "Bounded owner statement from the current section."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "If none can, return a retryable failure that preserves the token. Do not silently serve an older snapshot to keep a latency target.",
-          "reason": "Defines bounded wait, reroute and retryable failure without serving stale snapshots."
+          "quote": "The service owner publishes the token format, maximum size, lifetime and the failure callers receive when no replica can satisfy it.",
+          "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Linearizable reads require quorum or read-index and accept higher latency.",
-          "reason": "Names linearizable reads as the stronger alternative."
+          "quote": "The routing layer owns the wait, reroute and rejection policy.",
+          "reason": "Bounded owner statement from the current section."
         }
       },
       "decision_evidence": {
