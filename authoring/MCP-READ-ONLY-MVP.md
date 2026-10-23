@@ -151,8 +151,8 @@ be outside the checkout. A refused path is reported as
 
 ## Answerability
 
-Section search exposes a calibrated refusal policy. It is a diagnostic, not
-proof of answer correctness:
+Section search exposes an evidence-aware refusal policy. It is an
+agent-adjudicated diagnostic, not proof of answer correctness:
 
 | Field | Value | Meaning |
 |---|---|---|
@@ -160,13 +160,14 @@ proof of answer correctness:
 | `no_confident_answer` | `true` or `false` | Refusal decision |
 | `state` | `abstained`, `not-calibrated-answer` or `no-results` | Retrieval state |
 | `confident` | `false` | No answer-correctness model |
-| `basis` | scope, score, unknown-term or no-signal reason | Why |
+| `basis` | evidence score, zero results or no-results | Why |
 
-The policy is documented in
-[ABSTENTION-CALIBRATION-2026-10-23.md](ABSTENTION-CALIBRATION-2026-10-23.md).
-It abstains on explicit out-of-scope intent, low lexical score or a high
-unknown-term rate. Zero results are not proof that the corpus lacks the concept;
-independent labels and answer correctness remain separate gates.
+The model and limits are documented in
+[ABSTENTION-EVIDENCE-GATE-2026-10-24.md](ABSTENTION-EVIDENCE-GATE-2026-10-24.md).
+It combines retrieval confidence, term coverage, phrase evidence, unknown-term
+rate, query-scope signals and a small token model trained on phase-2 dev. Zero
+results are not proof that the corpus lacks the concept; human review and answer
+correctness remain separate gates.
 
 ## Security and trust boundary
 

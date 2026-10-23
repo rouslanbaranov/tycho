@@ -3,6 +3,10 @@
 Status: author-labelled diagnostic. Not an independent relevance judgment, not a
 sufficiency claim and not a benchmark. Human review and CI are not claimed.
 
+> Superseded for runtime refusal by
+> [ABSTENTION-EVIDENCE-GATE-2026-10-24.md](ABSTENTION-EVIDENCE-GATE-2026-10-24.md).
+> The qrels v2 numbers below remain historical author-labelled diagnostics.
+
 ## Qrels v2
 
 `evaluation/corpus-qrels.v2.json` contains 220 items:

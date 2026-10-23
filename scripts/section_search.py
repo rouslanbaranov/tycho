@@ -19,6 +19,7 @@ import sqlite3
 import sys
 
 import answerability as answerability_policy
+import evidence_gate
 import route_index
 import section_fts_index
 
@@ -238,11 +239,15 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                 "citation": row["path"] + "#" + row["section_id"],
             })
         unknown = unknown_term_rate(db, terms)
-        assessment = answerability_policy.assess(
-            query, results[0]["score"] if results else 0, unknown)
+        assessment = evidence_gate.assess(query, results, unknown)
+        if assessment is None:
+            assessment = answerability_policy.assess(
+                query, results[0]["score"] if results else 0, unknown)
         if not results:
             status = "no-results"
             assessment = dict(assessment)
+            assessment["no_confident_answer"] = True
+            assessment["confident"] = False
             assessment["state"] = "no-results"
             assessment["basis"] = "zero-results"
         elif abstain and assessment["no_confident_answer"]:
