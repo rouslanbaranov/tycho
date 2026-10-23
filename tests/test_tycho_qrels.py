@@ -129,6 +129,16 @@ class QrelsValidationTests(unittest.TestCase):
         self.assertEqual(result["heldout"], 50)
         self.assertTrue(result["bootstrap"])
 
+    def test_committed_v2_dataset_structure(self):
+        qrels = validator.load(ROOT / "evaluation/corpus-qrels.v2.json")
+        route = validator.load(ROOT / "generated/route-index.v1.json")
+        result = validator.validate(qrels, route, SCHEMA, require_snapshot=False)
+        self.assertEqual(result["items"], 220)
+        self.assertEqual(result["dev"], 110)
+        self.assertEqual(result["heldout"], 110)
+        self.assertEqual(result["categories"]["unanswerable"], 65)
+        self.assertFalse(result["bootstrap"])
+
 
 class MetricTests(unittest.TestCase):
     def setUp(self):

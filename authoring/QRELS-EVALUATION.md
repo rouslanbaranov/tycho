@@ -5,6 +5,10 @@
 > development/held-out split, 156 accepted answers and 10 section-level labels. Independent
 > adjudication, broader section-level labels and a refusal metric remain. This is not
 > independent ground truth and does not establish search quality.
+>
+> **Update 2026-10-23:** [qrels v2](../evaluation/corpus-qrels.v2.json) has 220
+> author-labelled items (155 answerable / 65 unanswerable) and a calibrated refusal
+> policy. Independence and answer-correctness adjudication remain open.
 
 ## Why this set exists
 
@@ -157,3 +161,28 @@ metric tests proves only structure and arithmetic, not relevance.
 3. Add a refusal metric for the five unanswerable items.
 4. Tune only on the dev split; compare lexical, hybrid and future rankers on held-out.
 5. Revalidate labels after any book change and record the new snapshot.
+
+## Qrels v2 and calibrated abstention (2026-10-23)
+
+Qrels v2 is [corpus-qrels.v2.json](../evaluation/corpus-qrels.v2.json): 220
+author-labelled items, 155 answerable and 65 unanswerable, split 110 dev / 110
+held-out. It adds 60 card decision questions and 60 out-of-scope questions to
+the original 100-item set. It remains author-labelled; independent adjudication
+does not exist.
+
+The section search now exposes a calibrated refusal decision. The policy is
+documented in [ABSTENTION-CALIBRATION-2026-10-23.md](ABSTENTION-CALIBRATION-2026-10-23.md):
+out-of-scope intent, low lexical score, or a high unknown-term rate. On qrels v2
+it abstains on 58/65 unanswerable items and retains 147/155 answerable items;
+held-out abstention is 33/35 with 3 answerable false refusals.
+
+Evaluation commands:
+
+```sh
+python3 scripts/evaluate_corpus_qrels.py --qrels evaluation/corpus-qrels.v2.json
+python3 scripts/evaluate_abstention.py --qrels evaluation/corpus-qrels.v2.json
+```
+
+The refusal policy is a diagnostic, not proof of answer correctness. Passing it
+does not create sufficient coverage, independent review, owner acceptance or CI.
+

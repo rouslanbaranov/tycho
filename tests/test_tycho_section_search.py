@@ -73,6 +73,7 @@ class SearchTests(unittest.TestCase):
             return section_fts_index.publish(self.root, full=True)
 
     def search(self, *args, **kwargs):
+        kwargs.setdefault("abstain", False)
         with patch.object(route_index, "canonical_scan",
                           side_effect=self.fake_scan):
             return section_search.search(self.root, *args, **kwargs)
@@ -255,6 +256,21 @@ class SearchTests(unittest.TestCase):
             with patch.dict(os.environ, {"TYCHO_BM25_WEIGHTS": raw}):
                 with self.assertRaises(section_search.SearchError):
                     section_search.bm25_weights()
+
+
+    def test_abstention_scope_and_bypass(self):
+        self.build()
+        query = "How do I configure a specific vendor cache policy?"
+        blocked = self.search(query, abstain=True)
+        self.assertEqual(blocked["status"], "no-confident-answer")
+        self.assertEqual(blocked["returned"], 0)
+        self.assertEqual(blocked["results"], [])
+        self.assertTrue(blocked["answerability"]["no_confident_answer"])
+        self.assertEqual(blocked["answerability"]["basis"],
+                         "out-of-scope-intent")
+        raw = self.search(query, abstain=False)
+        self.assertIn(raw["status"], {"ok", "no-results"})
+        self.assertTrue(raw["answerability"]["no_confident_answer"])
 
 
 if __name__ == "__main__":

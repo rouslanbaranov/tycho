@@ -12,7 +12,7 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_QRELS = ROOT / "evaluation/corpus-qrels.v1.json"
+DEFAULT_QRELS = ROOT / "evaluation/corpus-qrels.v2.json"
 DEFAULT_ROUTE = ROOT / "generated/route-index.v1.json"
 K_VALUES = (1, 3, 5)
 SCOPES = ("page", "chapter", "section")
@@ -176,7 +176,7 @@ def main(argv=None):
 
     def search_fn(question):
         return section_search.search(args.root, question, limit=args.limit,
-                                     index_path=args.index)
+                                     index_path=args.index, abstain=False)
 
     result = evaluate(items, search_fn, parent_of)
     if len(result["search_snapshots"]) > 1:
