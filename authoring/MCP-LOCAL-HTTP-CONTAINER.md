@@ -159,6 +159,71 @@ candidate for Vercel Functions.
 See the public Vercel guide
 [Running Docker on Vercel](https://vercel.com/kb/guide/docker).
 
+## Update and release model
+
+The deployed image is immutable. A book or API change produces a new image and
+a new Vercel deployment; there is no in-place update of the running container.
+
+### Book-only change
+
+1. Edit the Markdown/frontmatter and run the repository book validators.
+2. Rebuild the local section index:
+   ~~~sh
+   .venv/bin/python scripts/section_fts_index.py build --full
+   .venv/bin/python scripts/section_fts_index.py check
+   ~~~
+3. Run the MCP tests:
+   ~~~sh
+   .venv/bin/python -m unittest discover -s tests \
+     -p 'test_tycho_mcp*.py' -v
+   ~~~
+4. Open a PR and merge it. The Vercel build runs
+   `section_fts_index.py build --full` inside `Dockerfile.vercel`; the
+   committed SQLite artifact is not used.
+5. Check `/ready` and rerun the remote SDK smoke.
+
+No MCP code or `SERVER_VERSION` change is needed for book-only changes.
+
+### API change
+
+- Update `TOOL_SPECS` and handlers in `scripts/mcp_server.py`, HTTP behavior
+  in `scripts/mcp_http_server.py`, and the relevant tests/docs.
+- Keep changes additive where possible; removing or renaming a tool, argument
+  or response field is breaking for clients.
+- Bump `SERVER_VERSION` for a tool/API behavior change. `server/discover`
+  and `/health` expose it. The MCP protocol version (`2026-07-28`) is
+  independent and changes only with the protocol.
+- Test old and new client paths; update the stdlib and SDK smokes.
+- Merge; Vercel replaces the deployment atomically after the build succeeds.
+
+### Snapshot semantics and client pinning
+
+The service serves exactly one section snapshot. `/ready` and search
+responses expose it, and `tycho_search` accepts a `snapshot` argument.
+
+A client that pins an old snapshot must refresh it after a redeploy; the old
+snapshot is not retained. There is no multi-snapshot serving or blue/green
+snapshot switch. Treat a snapshot-mismatch response as a signal to re-read
+`/ready` and retry against the current snapshot.
+
+### Preview, production and rollback
+
+- A feature branch can create a Vercel Preview deployment; set Preview
+  `TYCHO_MCP_TOKEN` and `PORT=8080` before testing.
+- Merge to `main` creates the production test deployment.
+- Vercel keeps previous immutable deployments; use Instant Rollback to return
+  to a prior image. Rollback restores the old index and API together.
+- There is no database migration or persistent state to reconcile.
+
+### What the platform does not enforce
+
+- Vercel builds the image but does not run the Python test suite.
+- Vercel does not check local index freshness; the image build always rebuilds
+  the full index.
+- A successful build is not evidence that the API or clients work.
+- `scripts/premerge_check.py` and the remote smoke remain mandatory release
+  gates.
+
 ## Tests
 
 ~~~sh
@@ -170,8 +235,14 @@ The four tests cover authentication, discovery, tools/list, tools/call,
 search, book files, traversal refusal, readiness, malformed JSON and header
 mismatch. The container build and client smokes remain manual evidence.
 
-## Limits and next gates
+## Known limitations and next gates
 
+- The service serves one snapshot. A client holding an old snapshot must
+  refresh after each redeploy; there is no multi-snapshot retention.
+- Renaming or removing a tool or response field has no deprecation window;
+  coordinate clients and bump `SERVER_VERSION` for API changes.
+- Vercel builds the image but does not run tests or check local index freshness;
+  pre-merge tests and the remote smoke are manual gates.
 - Vercel provides TLS for the test deployment, but there is no OAuth,
   per-client authorization, rate limiting or durable audit sink. The one
   static bearer token is suitable only for a restricted test.
@@ -191,3 +262,4 @@ mismatch. The container build and client smokes remain manual evidence.
 - [Read-only stdio MCP record](MCP-READ-ONLY-MVP.md)
 - [MCP follow-up questions](https://github.com/rouslanbaranov/tycho/issues/362)
 - [Service container issue](https://github.com/rouslanbaranov/tycho/issues/367)
+- [Update model issue](https://github.com/rouslanbaranov/tycho/issues/377)
