@@ -197,7 +197,7 @@ Service; Self-Contained Service.
 ### Service-Oriented Architecture (SOA)
 
 **Identity.** Service-Oriented Architecture; alias SOA; family Application architecture
-and boundaries; kind architecture-style; priority advanced.
+and boundaries; kind architecture-style; priority core.
 
 **Decision question.** Should independently governed services and contracts be composed
 across organizational boundaries, rather than designed as one application or one
@@ -273,7 +273,7 @@ Layer; Modular Monolith.
 
 **Identity.** Clean / Onion Architecture; aliases Clean Architecture, Onion
 Architecture; family Application architecture and boundaries; kind architecture-style;
-priority advanced.
+priority core.
 
 **Decision question.** Should dependencies point inward toward domain policies, with
 frameworks and delivery mechanisms at the outside?

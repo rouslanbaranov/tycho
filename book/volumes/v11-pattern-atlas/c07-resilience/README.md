@@ -170,7 +170,7 @@ unit, not a benchmark.
 ### Retry with Jitter
 
 **Identity.** Retry with Jitter; family Resilience and fault tolerance; kind
-resilience-pattern; priority advanced.
+resilience-pattern; priority core.
 
 **Decision question.** Should retry delays include randomness to avoid synchronized
 retries?
@@ -214,8 +214,8 @@ failed?
 is handled; the timeout is shorter than the caller's remaining budget.
 
 **Hard contraindications.** Reject when work must complete regardless of time, when
-cancellation leaves irreversible effects, or when the timeout is longer than the caller
-can wait.
+cancellation leaves irreversible effects that cannot be reconciled, or when the timeout
+is longer than the caller can wait.
 
 **Competing alternative.** Long-running async request-reply. Reverse the choice when
 synchronous waiting blocks capacity that could serve other work.
@@ -459,7 +459,7 @@ Consumers.
 ### Priority Queue
 
 **Identity.** Priority Queue; family Resilience and fault tolerance; kind
-resilience-pattern; priority advanced.
+resilience-pattern; priority core.
 
 **Decision question.** Should queued work be ordered by business priority rather than
 arrival?
@@ -558,7 +558,7 @@ Monitoring; Circuit Breaker.
 ### Failover / Failback
 
 **Identity.** Failover / Failback; family Resilience and fault tolerance; kind
-resilience-pattern; priority advanced.
+resilience-pattern; priority core.
 
 **Decision question.** Should traffic move to a standby and later return to the original
 authority?

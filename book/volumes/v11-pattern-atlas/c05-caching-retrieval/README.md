@@ -143,7 +143,7 @@ Distributed Cache.
 ### Read-Through Cache
 
 **Identity.** Read-Through Cache; family Caching and retrieval; kind caching-pattern;
-priority advanced.
+priority core.
 
 **Decision question.** Should the cache layer load missing data on behalf of the
 application?
@@ -340,7 +340,7 @@ Stale-While-Revalidate.
 ### Negative Caching
 
 **Identity.** Negative Caching; family Caching and retrieval; kind caching-pattern;
-priority advanced.
+priority core.
 
 **Decision question.** Should failures or empty results be cached like successful
 responses?
@@ -406,7 +406,7 @@ Stale-While-Revalidate.
 ### Single Flight / Request Coalescing
 
 **Identity.** Single Flight / Request Coalescing; family Caching and retrieval; kind
-caching-pattern; priority advanced.
+caching-pattern; priority core.
 
 **Decision question.** Should duplicate in-flight requests for the same key share one
 source call?
@@ -472,7 +472,7 @@ CDN / Edge Caching.
 ### Multi-Level Caching
 
 **Identity.** Multi-Level Caching; family Caching and retrieval; kind caching-pattern;
-priority advanced.
+priority core.
 
 **Decision question.** Should data be cached in more than one tier with different latency
 and freshness?

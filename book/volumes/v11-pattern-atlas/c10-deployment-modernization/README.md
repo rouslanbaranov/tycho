@@ -301,7 +301,7 @@ Cutover.
 ### Branch by Abstraction
 
 **Identity.** Branch by Abstraction; family Deployment and legacy modernization; kind
-modernization-pattern; priority advanced.
+modernization-pattern; priority core.
 
 **Decision question.** Should an internal abstraction seam allow old/new implementations
 to coexist in one deployable?
@@ -332,7 +332,7 @@ unit, not a benchmark.
 ### Parallel Run
 
 **Identity.** Parallel Run; family Deployment and legacy modernization; kind
-modernization-pattern; priority advanced.
+modernization-pattern; priority core.
 
 **Decision question.** Should old and new implementations process the same work
 concurrently for comparison?
@@ -349,7 +349,7 @@ cost exceeds confidence benefit.
 **Failure and recovery.** Divergent outputs and doubled cost are common; verify authority
 in the owner section.
 
-**Technical owner.** [A versioned sequence of safe intermediate states](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md#parallel-run) — parallel run is bounded to coexistence/authority states.
+**Technical owner.** [Parallel Run](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md#parallel-run) — parallel run is bounded to coexistence/authority states.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
@@ -426,7 +426,7 @@ Compatibility; Backup/PITR.
 ### Controlled Cutover
 
 **Identity.** Controlled Cutover; family Deployment and legacy modernization; kind
-modernization-pattern; priority advanced.
+modernization-pattern; priority core.
 
 **Decision question.** Should the final authority switch be gated by explicit go/no-go
 evidence and a no-return contract?
@@ -448,8 +448,8 @@ in the owner section.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-The source is a public pattern/documentation
-unit, not a benchmark.
+This reused unit supports a bounded comparison; it is not a dedicated treatment of this
+pattern. The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

@@ -306,7 +306,7 @@ unit, not a benchmark.
 ### Message Filter
 
 **Identity.** Message Filter; family Messaging and event-driven integration; kind
-integration-pattern; priority advanced.
+integration-pattern; priority core.
 
 **Decision question.** Should messages be removed when they do not meet explicit criteria?
 
@@ -339,7 +339,7 @@ Trail.
 ### Pipes and Filters
 
 **Identity.** Pipes and Filters; family Messaging and event-driven integration; kind
-integration-pattern; priority advanced.
+integration-pattern; priority core.
 
 **Decision question.** Should processing be composed as independent stages connected by
 channels?
@@ -373,7 +373,7 @@ unit, not a benchmark.
 ### Splitter
 
 **Identity.** Splitter; family Messaging and event-driven integration; kind
-integration-pattern; priority advanced.
+integration-pattern; priority core.
 
 **Decision question.** Should a composite message be divided into independently processed
 parts?
@@ -405,7 +405,7 @@ unit, not a benchmark.
 ### Aggregator
 
 **Identity.** Aggregator; family Messaging and event-driven integration; kind
-integration-pattern; priority advanced.
+integration-pattern; priority core.
 
 **Decision question.** Should related messages be combined using completion and timeout
 rules?
@@ -437,7 +437,7 @@ unit, not a benchmark.
 ### Scatter-Gather
 
 **Identity.** Scatter-Gather; family Messaging and event-driven integration; kind
-integration-pattern; priority advanced.
+integration-pattern; priority core.
 
 **Decision question.** Should one request be broadcast to several recipients and their
 responses combined?
@@ -502,7 +502,7 @@ Failure; Audit Trail.
 ### Durable Subscriber
 
 **Identity.** Durable Subscriber; family Messaging and event-driven integration; kind
-messaging-pattern; priority advanced.
+messaging-pattern; priority core.
 
 **Decision question.** Should a subscriber retain messages across temporary disconnects?
 
@@ -697,7 +697,7 @@ Context; Schema Evolution.
 ### Process Manager-Routing Slip
 
 **Identity.** Process Manager / Routing Slip; family Messaging and event-driven
-integration; kind integration-pattern; priority core.
+integration; kind integration-pattern; priority advanced.
 
 **Decision question.** Should a durable coordinator or a routing-slip itinerary own a
 multi-step message flow and its recovery?

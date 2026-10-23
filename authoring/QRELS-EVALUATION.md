@@ -30,10 +30,10 @@ This set introduces three missing properties:
 | [test_tycho_qrels.py](../tests/test_tycho_qrels.py) | Offline validation and metric tests. |
 
 The dataset is pinned to route snapshot
-`479adecfabc1412e3c5f5f0a9a48796f2c652de12cad1e1c9edb0fc0c801b986` (423 documents).
+`6f6a3a58cbee321dd1c7d5078722cc128158bad83bbe409b288c9e60fb1c8844` (423 documents).
 Earlier pins were replaced after source remediations, label/owner fixes, Phase A fixes,
-Cache-Aside fixes, Phase B integrity and blocker/high content fixes; no accepted answer
-pointed at a V11 page.
+Cache-Aside fixes, Phase B integrity, blocker/high and card-metadata fixes; no accepted
+answer pointed at a V11 page.
 
 ## How labels were constructed
 
@@ -104,10 +104,10 @@ nDCG@10 was 0.558 over 95 answerable items. Dev page hit@5 was 0.740 and chapter
 failure 0.800, fact 0.900, change impact 0.857, synthesis 0.667, contradiction 0.600,
 trade-off 0.556. All five unanswerable items returned results, so refusal is not measured.
 
-Re-pin 2026-10-23: source/label/owner fixes, Phase A fixes, Phase B integrity and
-blocker/high content fixes moved the route snapshot to
-`479adecfabc1412e3c5f5f0a9a48796f2c652de12cad1e1c9edb0fc0c801b986` and the section
-snapshot to `ac746c9eee1b…`; metrics remain within rounding (nDCG@10 0.5577).
+Re-pin 2026-10-23: source/label/owner fixes, Phase A fixes, Phase B integrity, blocker/high
+content fixes and card metadata alignment moved the route snapshot to
+`6f6a3a58cbee321dd1c7d5078722cc128158bad83bbe409b288c9e60fb1c8844` and the section
+snapshot to `b348ee05fb19…`; metrics remain within rounding (nDCG@10 0.5577).
 
 ## Provisional acceptance thresholds
 

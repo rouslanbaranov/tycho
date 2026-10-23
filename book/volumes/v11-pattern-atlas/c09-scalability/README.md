@@ -204,7 +204,7 @@ Planning.
 ### Cell-Based Architecture
 
 **Identity.** Cell-Based Architecture; family Scalability and load distribution; kind
-scalability-pattern; priority advanced.
+scalability-pattern; priority core.
 
 **Decision question.** Should the system be partitioned into cells with bounded blast
 radius and independent operation?
@@ -269,7 +269,7 @@ unit, not a benchmark.
 ### Deployment Stamps
 
 **Identity.** Deployment Stamps; family Scalability and load distribution; kind
-scalability-pattern; priority advanced.
+scalability-pattern; priority core.
 
 **Decision question.** Should independent deployment units be replicated as stamps for
 scale, isolation or locality?

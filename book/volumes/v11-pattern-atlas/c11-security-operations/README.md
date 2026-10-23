@@ -210,7 +210,7 @@ Identity.
 ### Workload Identity / mTLS
 
 **Identity.** Workload Identity / mTLS; family Security, isolation and operational
-architecture; kind security-pattern; priority advanced.
+architecture; kind security-pattern; priority core.
 
 **Decision question.** Should workloads authenticate each other with cryptographic
 identities rather than network location?
@@ -241,7 +241,7 @@ unit, not a benchmark.
 ### Valet Key
 
 **Identity.** Valet Key; family Security, isolation and operational architecture; kind
-security-pattern; priority advanced.
+security-pattern; priority core.
 
 **Decision question.** Should a client receive a scoped, time-limited credential for
 direct resource access?
@@ -429,7 +429,7 @@ unit, not a benchmark.
 ### Synthetic Monitoring
 
 **Identity.** Synthetic Monitoring; family Security, isolation and operational
-architecture; kind operations-pattern; priority advanced.
+architecture; kind operations-pattern; priority core.
 
 **Decision question.** Should probes exercise user-visible behavior from outside the
 service rather than rely only on internal metrics?

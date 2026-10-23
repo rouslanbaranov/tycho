@@ -108,7 +108,7 @@ Coordination.
 ### Consensus
 
 **Identity.** Consensus; family Distributed coordination; kind coordination-pattern;
-priority advanced.
+priority core.
 
 **Decision question.** Should replicas agree on an ordered log despite failures and
 partitions?
@@ -140,7 +140,7 @@ unit, not a benchmark.
 ### Distributed Lock
 
 **Identity.** Distributed Lock; family Distributed coordination; kind
-coordination-pattern; priority core.
+coordination-pattern; priority advanced.
 
 **Decision question.** Should a shared lock prevent concurrent access to one resource
 across processes?
@@ -207,7 +207,7 @@ Monitoring.
 ### Fencing Tokens
 
 **Identity.** Fencing Tokens; family Distributed coordination; kind coordination-pattern;
-priority advanced.
+priority core.
 
 **Decision question.** Should every write carry an epoch/token so the destination rejects
 a stale owner?
@@ -240,7 +240,7 @@ Receiver.
 ### Quorum Coordination
 
 **Identity.** Quorum Coordination; family Distributed coordination; kind
-coordination-pattern; priority advanced.
+coordination-pattern; priority core.
 
 **Decision question.** Should decisions require a majority of replicas rather than one
 node?

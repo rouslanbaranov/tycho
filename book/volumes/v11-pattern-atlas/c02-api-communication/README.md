@@ -151,7 +151,7 @@ Aggregation.
 ### Gateway Aggregation
 
 **Identity.** Gateway Aggregation; family API and service communication; kind
-integration pattern; priority advanced.
+integration pattern; priority core.
 
 **Decision question.** Should a gateway aggregate several downstream responses into one
 client-facing result, rather than making the client orchestrate every call?
@@ -189,7 +189,7 @@ Frontend.
 ### Gateway Offloading
 
 **Identity.** Gateway Offloading; family API and service communication; kind integration
-pattern; priority advanced.
+pattern; priority core.
 
 **Decision question.** Should reusable cross-cutting functions be moved to a gateway
 without moving domain authority there?
@@ -391,7 +391,7 @@ resolution benefit.
 **Failure and recovery.** Registry outage, stale caches, divergent client policies and
 retry storms are common. Keep a last-known set for reads, detect staleness and bound retries.
 
-**Technical owner.** [Client-Side Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#client-side-discovery) — discovery and selection; client-specific policy is not a dedicated section.
+**Technical owner.** [Client-Side Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#client-side-discovery) — discovery and selection; client-specific policy is bounded to the linked section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -407,7 +407,7 @@ Proxy.
 ### Server-Side Discovery
 
 **Identity.** Server-Side Discovery; family API and service communication; kind
-discovery pattern; priority advanced.
+discovery pattern; priority core.
 
 **Decision question.** Should a proxy or load balancer own service lookup and backend
 selection for the caller?
@@ -427,7 +427,7 @@ benefit.
 **Failure and recovery.** Proxy outage, stale membership, retry amplification and a shared
 proxy bottleneck are common. Health-check backends, expose a degraded path and bound retries.
 
-**Technical owner.** [Server-Side Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#server-side-discovery) — discovery and selection; server-side specifics are not a dedicated section.
+**Technical owner.** [Server-Side Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#server-side-discovery) — discovery and selection; server-side specifics are bounded to the linked section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
@@ -502,7 +502,7 @@ exceed the reduced attack surface.
 outage are common. Recovery requires explicit trust boundaries and backend checks;
 verify the authorization boundary in the owner section.
 
-**Technical owner.** [Authorization boundaries and multitenancy: domain ownership and isolation](../../v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md#gatekeeper) — authorization boundary; gatekeeper mechanics are not a dedicated section.
+**Technical owner.** [Authorization boundaries and multitenancy: domain ownership and isolation](../../v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md#gatekeeper) — authorization boundary; gatekeeper mechanics are bounded to the linked section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
