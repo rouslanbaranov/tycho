@@ -3470,7 +3470,7 @@
         "heading": "Distributed Cache",
         "anchor": "distributed-cache",
         "level": 3,
-        "line": 200,
+        "line": 208,
         "unit_kind": "dedicated",
         "unit_terms": [
           "distributed cache",
@@ -3704,34 +3704,34 @@
         "heading": "Write-Behind-Write-Back",
         "anchor": "write-behind-write-back",
         "level": 3,
-        "line": 156,
+        "line": 160,
         "unit_kind": "dedicated",
         "unit_terms": [
           "write-behind",
-          "durability window",
           "pending buffer",
+          "durable or replicated record",
           "write-through"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A write-behind cache acknowledges the cached write and flushes it to durable storage asynchronously.",
+          "quote": "A write-behind cache acknowledges a write after placing it in a pending buffer and flushes it to durable storage asynchronously.",
           "reason": ""
         },
         "invariant": {
           "state": "supported",
-          "quote": "An acknowledged write must survive the declared durability window, so the pending buffer needs its own durable or replicated record.",
+          "quote": "If the buffer has its own durable or replicated record separate from the cache, cache loss is recoverable and the acknowledged write survives.",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Cache loss before flush discards acknowledged writes; track the flush backlog and make the durability window explicit to callers.",
+          "quote": "If that buffer is the cache itself, cache loss can discard acknowledged writes; that is the card's hard contraindication.",
           "reason": ""
         },
         "alternative": {
           "state": "supported",
-          "quote": "Write-through acknowledges only after both sides update; prefer write-behind when write throughput dominates and a measured loss window is acceptable.",
+          "quote": "Write-through acknowledges only after both sides update; prefer write-behind when write throughput dominates and a measured loss window is acceptable for at-risk writes, not for durable acknowledged writes.",
           "reason": ""
         }
       },
@@ -3764,7 +3764,7 @@
         "heading": "Write-Around",
         "anchor": "write-around",
         "level": 3,
-        "line": 171,
+        "line": 178,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Write-Around"
@@ -3783,7 +3783,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A stale entry survives the update and is served until it expires; pair the policy with invalidation or a bounded TTL and test a read immediately after a write.",
+          "quote": "the policy requires reliable invalidation or versioning at the update and a read test immediately after a write.",
           "reason": ""
         },
         "alternative": {
@@ -4175,7 +4175,7 @@
         "heading": "Multi-Level Caching",
         "anchor": "multi-level-caching",
         "level": 3,
-        "line": 185,
+        "line": 193,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Multi-Level Caching"
@@ -8156,7 +8156,7 @@
         "document_id": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb",
         "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md",
         "heading": "Multitenant Isolation",
-        "anchor": "multitenant-isolation",
+        "anchor": "multitenant-isolation-1",
         "level": 2,
         "line": 86,
         "unit_kind": "dedicated",

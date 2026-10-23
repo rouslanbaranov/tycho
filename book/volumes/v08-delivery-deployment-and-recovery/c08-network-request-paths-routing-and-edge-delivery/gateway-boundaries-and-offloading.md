@@ -135,10 +135,12 @@ audit record.
 
 A reverse proxy accepts client connections and forwards them to a selected backend, hiding
 topology and optionally terminating TLS. It must define route identity, peer authentication,
-forwarded-header policy and backend failure behavior. Proxy bypass, stale routes and trusting
-a client-supplied identity header are common. Direct service discovery, a gateway/BFF or a
-mesh sidecar may be preferable when the proxy adds a shared bottleneck without a required
-policy function.
+forwarded-header policy and backend failure behavior. Health checks and draining are part of the
+contract: the proxy removes an unhealthy or draining backend from selection before closing pooled
+connections, keeps in-flight requests within a bounded drain window, and tests connection reuse,
+timeout and reset behavior. Proxy bypass, stale routes and trusting a client-supplied identity
+header are common. Direct service discovery, a gateway/BFF or a mesh sidecar may be preferable
+when the proxy adds a shared bottleneck without a required policy function.
 
 **Limits.** The proxy's availability, route table and certificate lifecycle are part of the
 request path; a bypass or a trusted forwarded header defeats the boundary, and a shared proxy

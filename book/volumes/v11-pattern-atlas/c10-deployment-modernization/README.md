@@ -353,8 +353,8 @@ in the owner section.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-The source is a public pattern/documentation
-unit, not a benchmark.
+This reused unit supports a bounded comparison; it is not a dedicated treatment of this
+pattern. The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -384,8 +384,8 @@ isolation in the owner section.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-The source is a public pattern/documentation
-unit, not a benchmark.
+This reused unit supports a bounded comparison; it is not a dedicated treatment of this
+pattern. The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
