@@ -100,9 +100,10 @@ compatibility window and old-reader inventory cost exceed the migration risk.
 
 ### Expand-and-Contract
 
-Expand-and-contract changes a schema through compatible phases: expand the representation, run a
-tested mixed-version phase, reconcile migrated data, and contract only after old readers are proven
-absent.
+Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain compatible
+with readers still running the previous version, and the contract phase is gated by observed reader
+absence. The protocol owns the compatibility window, the reader inventory and the rollback or
+forward-repair decision.
 
 New writers must preserve enough old representation for old supported readers until a verified
 cutover. Incompatible writes hold the rollout and may require forward repair rather than redeploying

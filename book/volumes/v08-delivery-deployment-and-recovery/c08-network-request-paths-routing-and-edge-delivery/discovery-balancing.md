@@ -258,8 +258,12 @@ can be operated as a critical dependency.
 
 ### Load Balancing
 
-A selector can count connections, active requests, completed work, errors or resource utilization.
-These signals answer different questions and fail in different ways.
+Load balancing chooses among eligible backends. The invariant is that no request reaches an
+ineligible backend and no retry loop is unbounded; it needs fresh health/selection signals and
+retry-safe callers. Signal freshness, selector state and retry storms are the limits, and failover
+plus stale membership must be tested. A selector can count connections, active requests, completed
+work, errors or resource utilization; these signals answer different questions and fail in
+different ways.
 
 Cap request cost at the interface where one request can dominate a backend, and test the selector
 under the real cost distribution. A least-loaded or active-request selector assumes that a backend

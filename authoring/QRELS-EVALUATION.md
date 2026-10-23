@@ -30,7 +30,7 @@ This set introduces three missing properties:
 | [test_tycho_qrels.py](../tests/test_tycho_qrels.py) | Offline validation and metric tests. |
 
 The dataset is pinned to route snapshot
-`4d5473f1648ca4881596e597913483990049cd7d568e8e2a1bdab81192bd9150` (423 documents).
+`7c63ba42daaec3854a84843f5f84aab6aa20aca1e889d9530d1d4ed2e291ae28` (423 documents).
 Earlier pins were replaced after source remediations, label/owner fixes, Phase A fixes,
 Cache-Aside fixes, Phase B integrity, blocker/high and medium card/owner fixes; no accepted
 answer pointed at a V11 page.
@@ -106,8 +106,8 @@ trade-off 0.556. All five unanswerable items returned results, so refusal is not
 
 Re-pin 2026-10-23: source/label/owner fixes, Phase A fixes, Phase B integrity, blocker/high
 content fixes and medium card/owner coverage moved the route snapshot to
-`4d5473f1648ca4881596e597913483990049cd7d568e8e2a1bdab81192bd9150` and the section
-snapshot to `d256922fe656…`; nDCG@10 is 0.5626.
+`7c63ba42daaec3854a84843f5f84aab6aa20aca1e889d9530d1d4ed2e291ae28` and the section
+snapshot to `8479652d397f…`; nDCG@10 is 0.5626.
 
 ## Provisional acceptance thresholds
 

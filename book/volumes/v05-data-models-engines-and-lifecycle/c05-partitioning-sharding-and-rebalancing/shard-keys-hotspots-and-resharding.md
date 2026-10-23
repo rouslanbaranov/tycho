@@ -125,8 +125,10 @@ new source claim.
 
 ### Sharding
 
-Partition rows by a shard key, route each request to its shard and maintain a versioned shard map.
-The shard key is a data-placement decision and a routing contract at once.
+Sharding is an application-level routing contract: a versioned shard map assigns each key to a
+shard, the request carries the shard key, and the store enforces one owner per key. Unlike table
+partitioning inside one store, a shard crosses independent stores, so the map and rebalancing
+protocol are part of the contract rather than a physical-layout detail.
 
 One authoritative owner must exist per key, and a resharding move must fence writes or preserve a
 verifiable handoff. Hotspots, map drift, split brain and a failed migration are common; detect skew,

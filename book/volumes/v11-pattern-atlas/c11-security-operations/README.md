@@ -231,8 +231,8 @@ rotation in the owner section.
 
 **Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-istio.2026-10-21: sections "Workload Identity", "Mutual TLS",
-"Authorization". The source is a public pattern/specification
-unit, not a benchmark.
+"Authorization". The read record notes a 100,000-character truncation; later sections are
+unverified. The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -483,8 +483,8 @@ verify semantics in the owner section.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-probes.2026-10-21: sections "Liveness", "Readiness",
-"Startup". The source is a public pattern/specification
-unit, not a benchmark.
+"Startup". The read record notes a 100,000-character truncation; later sections are unverified.
+The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

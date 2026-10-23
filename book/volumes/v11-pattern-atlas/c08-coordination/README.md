@@ -164,8 +164,8 @@ resource or keep the outcome explicitly unsafe.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-leases.2026-10-21: sections "Leases", "Lease objects", "Leader
-election". The source is a public pattern/documentation
-unit, not a benchmark.
+election". The read record notes a 100,000-character truncation; later sections are unverified.
+The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
