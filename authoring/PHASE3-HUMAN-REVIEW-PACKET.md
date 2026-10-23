@@ -2,14 +2,12 @@
 
 Status: **human review pending**. No human review has been performed.
 
-Sample: 15 of 72 items (20.8%).
+Sample: 9 of 43 items (20.9%).
 
-Full paths, quotes and machine-readable fields are in
-evaluation/phase3-human-sample.json. This packet omits long paths to keep
-Markdown lines within 100 characters.
+Full paths and quotes are in evaluation/phase3-human-sample.json.
 
 For each item: check the adjudicated label, support section and answer key.
-Record agree/disagree, corrected label and notes. Do not edit the frozen qrels.
+Record agree/disagree, corrected label and notes. Do not edit frozen qrels.
 
 ## 1. T1-A01 — T1
 
@@ -201,129 +199,13 @@ database service use internally for leader election?
 
 ---
 
-## 9. T4-U04 — T4
-
-**Question.** What CPU and memory allocation should an outbox relay use to sustain 20,000 events
-per second?
-
-**Phase-3 label.** unanswerable
-**Adjudicated label.** unanswerable
-
-**Human verdict.** [ ] agree  [ ] disagree  [ ] relabel
-
-**Corrected label / notes.**
-
----
-
-## 10. T5-U01 — T5
+## 9. T5-U01 — T5
 
 **Question.** What exact per-gigabyte price will a named cloud provider charge this organization
 for cross-region replication traffic in its next contract year?
 
 **Phase-3 label.** unanswerable
 **Adjudicated label.** unanswerable
-
-**Human verdict.** [ ] agree  [ ] disagree  [ ] relabel
-
-**Corrected label / notes.**
-
----
-
-## 11. T1-A06 — T1
-
-**Question.** How does probabilistic early expiration (XFetch) reduce stampedes without a lock?
-
-**Phase-3 label.** answerable
-**Adjudicated label.** unanswerable
-
-**Answer key.** Each request independently decides whether to refresh the cached value before
-its nominal expiry, with a probability that rises as expiry approaches. A common test refreshes
-when current time minus delta times beta times the logarithm of a random value has reached the
-expiry, where delta is the observed regeneration time and beta is typically 1.0. One request
-refreshes slightly early while the others keep serving the cached value, smoothing the spike.
-The cache item must also store delta and, when expiry is not readable, the expiry time.
-
-**Human verdict.** [ ] agree  [ ] disagree  [ ] relabel
-
-**Corrected label / notes.**
-
----
-
-## 12. T2-A03 — T2
-
-**Question.** For an M/M/1 server whose mean service time is fixed, by what factors do the mean
-sojourn time and the mean number of jobs in the system increase when utilization rises from 0.5
-to 0.9?
-
-**Phase-3 label.** answerable
-**Adjudicated label.** unanswerable
-
-**Answer key.** Mean sojourn time is tau/(1 - rho), so it rises from 2 tau at rho = 0.5 to 10
-tau at rho = 0.9, a fivefold increase. Mean system size is rho/(1 - rho), which rises from 1 to
-9, a ninefold increase. This divergence as rho approaches 1 is why modest utilization changes
-near saturation produce much larger latency and backlog changes.
-
-**Human verdict.** [ ] agree  [ ] disagree  [ ] relabel
-
-**Corrected label / notes.**
-
----
-
-## 13. T3-A05 — T3
-
-**Question.** What does Flexible Paxos relax about quorum intersection, and what does that
-relaxation permit in a six-acceptor deployment?
-
-**Phase-3 label.** answerable
-**Adjudicated label.** unanswerable
-
-**Answer key.** Flexible Paxos shows that Paxos needs intersection only between phase-1 and
-phase-2 quorums, not majority quorums in both phases, and phase-2 quorums may even be disjoint
-from each other. With six acceptors, where a strict majority is four, a deployment may use
-phase-1 quorums of four and phase-2 quorums of three because 4 + 3 exceeds 6. For an even number
-of acceptors this can shrink the second-phase quorum by one and improve steady-state
-availability.
-
-**Human verdict.** [ ] agree  [ ] disagree  [ ] relabel
-
-**Corrected label / notes.**
-
----
-
-## 14. T5-A03 — T5
-
-**Question.** With a replication factor of three, how does Apache Cassandra choose the replicas
-for a key, and what benefit and what risk come from giving each physical node many tokens?
-
-**Phase-3 label.** answerable
-**Adjudicated label.** unanswerable
-
-**Answer key.** A coordinator hashes the partition key to a position on the token ring and walks
-clockwise until it has met three distinct nodes, which become the replicas. Giving each physical
-node multiple tokens, called virtual nodes, makes a small cluster behave like a larger one, so a
-new or decommissioned node exchanges roughly equal data with many neighbours. The trade-off is
-that every token adds up to 2*(RF-1) neighbours, increasing the number of failure combinations
-that can make part of the ring unavailable and adding repair work.
-
-**Human verdict.** [ ] agree  [ ] disagree  [ ] relabel
-
-**Corrected label / notes.**
-
----
-
-## 15. T6-A03 — T6
-
-**Question.** For a 99.9% SLO, what long and short windows, burn rates, and error-budget
-percentages does the Google SRE Workbook recommend for page and ticket alerts?
-
-**Phase-3 label.** answerable
-**Adjudicated label.** unanswerable
-
-**Answer key.** It recommends two page-level rules: a 14.4 burn rate over a one-hour long window
-and a five-minute short window, consuming 2% of the budget, and a 6 burn rate over a six-hour
-long window and a 30-minute short window, consuming 5%. A ticket-level rule uses a burn rate of
-1 over a three-day long window and a six-hour short window, consuming 10% of the budget. The
-short window is one-twelfth the long window.
 
 **Human verdict.** [ ] agree  [ ] disagree  [ ] relabel
 

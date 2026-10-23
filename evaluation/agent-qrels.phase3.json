@@ -1,5 +1,5 @@
 {
-  "dataset": "phase3-topic-isolated-v1",
+  "dataset": "phase3-topic-isolated-v2-filtered",
   "label_status": "agent-adjudicated-not-human",
   "created": "2026-10-24",
   "human_review": "not-performed",
@@ -138,39 +138,6 @@
       "split": "dev"
     },
     {
-      "id": "T1-A06",
-      "topic_id": "T1",
-      "question": "How does probabilistic early expiration (XFetch) reduce stampedes without a lock?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "unsupported",
-      "notes": "Absent from the corpus. Searches for XFetch, probabilistic early expiration, stochastic refresh and early refresh found only jittered TTL, proactive refresh/prewarm and refresh leases in V06/C02; no H2 states the delta/beta probability test, the beta=1 finding or the extra delta/expiry memory. The phase3 answerable claim cannot be supported.",
-      "split": "dev"
-    },
-    {
-      "id": "T1-A07",
-      "topic_id": "T1",
-      "question": "In HTTP caching, how is a response's freshness lifetime calculated, and what does stale-while-revalidate allow a cache to do?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "No H2 section states HTTP freshness-lifetime selection (s-maxage, then max-age, then Expires minus Date) or RFC 5861 delta-seconds semantics. The SWR mechanism appears only in an H3 owner note, which the rules exclude. Relabelled unanswerable.",
-      "split": "dev"
-    },
-    {
-      "id": "T1-A08",
-      "topic_id": "T1",
-      "question": "How do expiration and eviction differ when sizing a cache, and which eviction policy does the AWS guidance call most common?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "refresh-semantics H2 3 distinguishes expiration from eviction, but no page states AWS/Microsoft LRU as the most common policy or the request-volume sizing method. The answer key's second half is unsupported. Relabelled unanswerable.",
-      "split": "dev"
-    },
-    {
       "id": "T1-U01",
       "topic_id": "T1",
       "question": "Which internal data structure and coordination protocol does a named commercial managed cache use to coalesce concurrent misses across its nodes?",
@@ -239,39 +206,6 @@
       "split": "dev"
     },
     {
-      "id": "T2-A02",
-      "topic_id": "T2",
-      "question": "A single worker completes jobs at a mean rate of 40 per second. Jobs arrive as a Poisson process at 30 per second, and service times are exponential. What are the utilization, the mean number of jobs in the system, and the mean sojourn time?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "No M/M/1 treatment, utilization rho, rho/(1-rho), or 1/(mu-lambda) formula appears in the corpus. Queueing pages cover Little's law means and qualitative saturation only, so the exact numeric answer is unsupported.",
-      "split": "dev"
-    },
-    {
-      "id": "T2-A03",
-      "topic_id": "T2",
-      "question": "For an M/M/1 server whose mean service time is fixed, by what factors do the mean sojourn time and the mean number of jobs in the system increase when utilization rises from 0.5 to 0.9?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "unsupported",
-      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. No M/M/1 sojourn-time tau/(1-rho) or system-size rho/(1-rho) formula and no 0.5->0.9 factors appear in book/**/*.md (zero occurrences of 'M/M/1', 'Kingman', 'rho', 'utilization factor'). The nearest owner page (v07/c01 queueing-littles-law.md) treats Little's Law as an accounting identity and explicitly refuses tail/capacity prediction at lines 88 and 96. Rechecked independently by page reading and grep.",
-      "split": "dev"
-    },
-    {
-      "id": "T2-A04",
-      "topic_id": "T2",
-      "question": "Two G/G/1 queues share the same mean arrival rate, mean service time and utilization 0.8. Both have arrival squared coefficient of variation 1, but their service-time squared coefficients of variation are 1 and 4. According to Kingman's formula, how much larger is the mean queue wait in the second queue?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "unsupported",
-      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. Zero occurrences of 'Kingman', 'squared coefficient of variation', 'variability factor' or the VUT decomposition in book/**/*.md; no tau, ca^2/cs^2 or 2.5x comparison. The V07 queueing/contention pages discuss saturation qualitatively and do not derive a G/G/1 waiting approximation.",
-      "split": "dev"
-    },
-    {
       "id": "T2-A05",
       "topic_id": "T2",
       "question": "A team inserts a queue between a bursty producer and a consumer that processes at a fixed rate. What does the producer now wait for, and what happens if the producer's long-run average rate stays above the consumer's? Name two responses the Azure guidance recommends.",
@@ -329,17 +263,6 @@
       ],
       "adjudication": "confirmed",
       "notes": "V03/C03 states that a subscriber signals demand with request(n), that a compliant publisher sends no more than requested, and that blocking an event loop prevents unrelated operations from progressing. The exact Reactive Streams rule that the demand signal itself must be non-blocking is not quoted; the third part is supported by the adjacent nonblocking-contract reasoning.",
-      "split": "dev"
-    },
-    {
-      "id": "T2-A07",
-      "topic_id": "T2",
-      "question": "The SRE book's client-side adaptive throttling keeps two counters per client task. What are they, over what window, and when does local rejection begin? What does the multiplier K control, and what does server-side admission control add?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "admission-resource mentions SRE client-side throttling but gives no counters, two-minute window, K threshold, K=2 example or server-side admission-control detail. Relabelled unanswerable.",
       "split": "dev"
     },
     {
@@ -453,17 +376,6 @@
       "split": "dev"
     },
     {
-      "id": "T3-A02",
-      "topic_id": "T3",
-      "question": "When a Raft follower stops hearing from the leader, what steps does it take to begin an election, and what rule prevents two leaders from being elected in the same term?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "The corpus has a high-level Raft state diagram (follower to candidate on election timeout, leader after majority) and mentions randomized timeouts, but no term increment, self-vote, RequestVote exchange, or one-vote-per-term rule. The requested rule is absent.",
-      "split": "dev"
-    },
-    {
       "id": "T3-A03",
       "topic_id": "T3",
       "question": "A Raft leader is cut off by a network partition and never learns that a new leader was elected. Why can the isolated leader not commit new log entries, and what stops it from corrupting committed history?",
@@ -524,28 +436,6 @@
       "split": "dev"
     },
     {
-      "id": "T3-A05",
-      "topic_id": "T3",
-      "question": "What does Flexible Paxos relax about quorum intersection, and what does that relaxation permit in a six-acceptor deployment?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "unsupported",
-      "notes": "Flexible Paxos is absent. V04/C02 has majority-quorum arithmetic (including 3/4/5/6-voter counts) and says quorums must intersect, but it never distinguishes phase-1 from phase-2 quorums, allows disjoint phase-2 quorums, or gives the six-acceptor 4+3 example. The requested relaxation cannot be recovered from the corpus.",
-      "split": "dev"
-    },
-    {
-      "id": "T3-A06",
-      "topic_id": "T3",
-      "question": "According to ZooKeeper's internals documentation, what two conditions must hold before a server acts as leader, and which of them is required for correct operation?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "unsupported",
-      "notes": "ZooKeeper, zxid and the two leader-activation conditions are absent. V04/C02 leader-recovery and V04/C01 agreement-failure discuss Raft-style log up-to-date restrictions and quorum confirmation generically, but never state that only the highest-zxid condition is required for correctness. The exact ZooKeeper answer cannot be supported.",
-      "split": "dev"
-    },
-    {
       "id": "T3-A07",
       "topic_id": "T3",
       "question": "ZooKeeper's administrator guide recommends odd-sized ensembles. What does a four-server ensemble actually tolerate, and why does the fourth server add little?",
@@ -573,17 +463,6 @@
       ],
       "adjudication": "confirmed",
       "notes": "Quorum arithmetic supports the 4-vs-5 behavior and why the fourth voter adds no failure tolerance. ZooKeeper, its guide's odd-size recommendation and the three-server minimum are not in the corpus; the answer is generic majority-quorum reasoning.",
-      "split": "dev"
-    },
-    {
-      "id": "T3-A08",
-      "topic_id": "T3",
-      "question": "What is a ZooKeeper observer, and why can adding observers improve read scalability without slowing writes?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "No ZooKeeper observer content. quorum-envelope mentions a non-voting learner receiving state, but not observers learning vote outcomes, forwarding client requests, serving reads/writes, or leaving write quorum unchanged. Relabelled unanswerable.",
       "split": "dev"
     },
     {
@@ -658,28 +537,6 @@
       ],
       "adjudication": "confirmed",
       "notes": "Core method semantics and retry precondition are supported. The corpus does not enumerate GET/HEAD/OPTIONS/TRACE or state the RFC proxy prohibition; those details are not in the cited text.",
-      "split": "heldout"
-    },
-    {
-      "id": "T4-A02",
-      "topic_id": "T4",
-      "question": "How does the Idempotency-Key header draft handle a key that is reused with a different payload, and how should a server answer a duplicate request that arrives while the first one is still running?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "The corpus treats key reuse with changed payload as a conflict and requires an in-progress/wait/conflict/result-lookup protocol, but never gives the draft's 422 Unprocessable Content or 409 Conflict responses. The exact draft handling is unsupported.",
-      "split": "heldout"
-    },
-    {
-      "id": "T4-A03",
-      "topic_id": "T4",
-      "question": "What problem does jitter address in capped exponential backoff, and how did Full Jitter compare with Equal Jitter and Decorrelated Jitter in the AWS simulation?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "unsupported",
-      "notes": "Phase3 'answerable' not supported for the question's main comparison; label changed to unanswerable. The corpus covers capped exponential backoff and says jitter prevents lockstep retries (deadlines-retries.md:62-63, 165-168), but 'Full Jitter', 'Equal Jitter', 'Decorrelated Jitter', the 100-client simulation and the 'more than half' reduction have zero occurrences in book/**/*.md. The comparative result cannot be produced from Tycho.",
       "split": "heldout"
     },
     {
@@ -779,28 +636,6 @@
       "split": "heldout"
     },
     {
-      "id": "T4-A07",
-      "topic_id": "T4",
-      "question": "In the Azure Architecture Center's Saga pattern guidance, what is a pivot transaction, and how do compensable and retryable transactions differ around it?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "saga-workflows covers choreography, orchestration and compensation, but not the Azure pivot transaction or the compensable/retryable classification around it. Relabelled unanswerable.",
-      "split": "heldout"
-    },
-    {
-      "id": "T4-A08",
-      "topic_id": "T4",
-      "question": "In Garcia-Molina and Salem's saga model, what is a saga, and how do backward recovery and forward recovery differ?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "Saga pages describe compensation and semantic non-rollback, but not Garcia-Molina backward recovery, forward recovery or savepoints; \"forward recovery\" elsewhere means deployment recovery. Relabelled unanswerable.",
-      "split": "heldout"
-    },
-    {
       "id": "T4-U01",
       "topic_id": "T4",
       "question": "What default retry limit and compensation timeout does a specific managed saga-orchestration product apply to a failed activity before it aborts the workflow?",
@@ -845,61 +680,6 @@
       "split": "heldout"
     },
     {
-      "id": "T5-A01",
-      "topic_id": "T5",
-      "question": "In Amazon Dynamo's replication model, what does an (N,R,W) setting of (3,2,2) mean, and how does a sloppy quorum with hinted handoff keep writes available when one designated replica is unreachable?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "No Amazon Dynamo coverage: no (N,R,W)=(3,2,2), sloppy quorum, preference-list substitution, or hinted-handoff delivery. A generic R+W>N statement and one hinted-handoff mention in a Discord case do not answer the Dynamo question.",
-      "split": "heldout"
-    },
-    {
-      "id": "T5-A02",
-      "topic_id": "T5",
-      "question": "A DynamoDB table uses the current date as its partition key and absorbs a daily write burst. What throughput ceiling applies per partition, and how do random and calculated write suffixes change write spread and read cost?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "No DynamoDB partition limits, read/write capacity units, or random/calculated write-suffix guidance appears in the corpus. Generic shard-key and hot-key advice does not answer the question.",
-      "split": "heldout"
-    },
-    {
-      "id": "T5-A03",
-      "topic_id": "T5",
-      "question": "With a replication factor of three, how does Apache Cassandra choose the replicas for a key, and what benefit and what risk come from giving each physical node many tokens?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "unsupported",
-      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. The corpus has no Cassandra coordinator/token-ring walk, no 'three distinct physical nodes' rule, no 2*(RF-1) neighbour arithmetic and no 2*(RF-1) risk statement. 'virtual nodes' appears only once, as generic guidance ('Virtual nodes improve balance but add metadata and lookup cost', resharding-transition.md:145); 'token ring', 'clockwise' and 'vnodes' have zero occurrences. Final unanswerable.",
-      "split": "heldout"
-    },
-    {
-      "id": "T5-A04",
-      "topic_id": "T5",
-      "question": "How does a Spanner coordinator determine a read-write transaction's commit timestamp, and what must it wait for before the commit is applied at replicas?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "unsupported",
-      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. Zero occurrences of 'Spanner', 'TrueTime', 'commit-wait' or 'external consistency' in book/**/*.md. The multi-region/replication pages describe quorum, leases and recovery, not a commit-timestamp protocol or a tie to clock uncertainty.",
-      "split": "heldout"
-    },
-    {
-      "id": "T5-A05",
-      "topic_id": "T5",
-      "question": "How does Redis Cluster move a hash slot between masters, and when should a client expect an ASK redirection rather than a MOVED redirection?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "unsupported",
-      "notes": "Redis Cluster is absent: no hash-slot count, CRC16, MIGRATING/IMPORTING, ASKING, ASK or MOVED text exists. V05/C05 covers generic ownership movement and resharding, but not the slot-redirection protocol, so the ASK-versus-MOVED rule cannot be answered.",
-      "split": "heldout"
-    },
-    {
       "id": "T5-A06",
       "topic_id": "T5",
       "question": "In a MongoDB sharded cluster, how do the shard key and chunk layout govern query routing and rebalancing, and why can hashed sharding help with a monotonically increasing key?",
@@ -933,28 +713,6 @@
       ],
       "adjudication": "confirmed",
       "notes": "V05/C05 covers shard-key routing and scatter-gather, range-versus-hash trade-offs (right-edge hotspot from sequential inserts; hash reduces skew), and safe ownership movement. MongoDB-specific chunks, mongos and balancer details are absent, so support is at the generic sharding-mechanism level, not the vendor API level.",
-      "split": "heldout"
-    },
-    {
-      "id": "T5-A07",
-      "topic_id": "T5",
-      "question": "How does Azure Cosmos DB serve reads from local regions, and what does its strong consistency level require of a write?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "No Cosmos DB content. Generic multi-region/consistency pages discuss regional authority and staleness, but not Cosmos's five levels, all-region write acknowledgment or dynamic quorum. Relabelled unanswerable.",
-      "split": "heldout"
-    },
-    {
-      "id": "T5-A08",
-      "topic_id": "T5",
-      "question": "What do CockroachDB's REGIONAL BY TABLE, REGIONAL BY ROW and GLOBAL localities each optimize, and what write-latency trade-off distinguishes the global setting?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "No CockroachDB locality content; CockroachDB appears only as a generic distributed-SQL option. REGIONAL BY TABLE/ROW, GLOBAL and their write-latency trade-off are absent. Relabelled unanswerable.",
       "split": "heldout"
     },
     {
@@ -1002,61 +760,6 @@
       "split": "heldout"
     },
     {
-      "id": "T6-A01",
-      "topic_id": "T6",
-      "question": "How do the Google SRE definitions separate an SLI, an SLO, and an SLA, and what test distinguishes an SLA from an SLO?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "SLI and SLO definitions are present, but SLA is only called a separate agreement. The consequence-based test that distinguishes an SLA from an SLO is absent.",
-      "split": "heldout"
-    },
-    {
-      "id": "T6-A02",
-      "topic_id": "T6",
-      "question": "For an event-ratio SLO, how is the error budget calculated, and what does the example four-week error-budget policy do once the budget is exhausted?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "Error-budget arithmetic and a generic rollout-pause example appear, but no four-week policy, 1,000,000-request/1,000-error example, or halt-all-changes rule. The named example policy is unsupported.",
-      "split": "heldout"
-    },
-    {
-      "id": "T6-A03",
-      "topic_id": "T6",
-      "question": "For a 99.9% SLO, what long and short windows, burn rates, and error-budget percentages does the Google SRE Workbook recommend for page and ticket alerts?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "unsupported",
-      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. budget-actions.md:49-53 explains burn rate qualitatively and says the workbook method 'does not imply universal thresholds', but the book has no 14.4/6/1 burn rates, no 1 h/6 h/3 d windows, no 2%/5%/10% values and no 1:12 short/long ratio. Zero occurrences of '14.4' as a burn rate (the only 14.4 is 114.44 TiB in an unrelated calculation) and zero of '13.9'. Final unanswerable.",
-      "split": "heldout"
-    },
-    {
-      "id": "T6-A04",
-      "topic_id": "T6",
-      "question": "Why can a single failed request page an on-call engineer for a 99.9% SLO on a service handling only 10 requests per hour, and which remedies does the workbook suggest?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "unsupported",
-      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. The corpus has no 10-requests-per-hour/13.9% arithmetic and no synthetic-traffic, grouping, retry/fallback, lower-SLO or longer-window remedy list. The SLO pages only warn that short windows are noisy for intermittent traffic and that idle periods give insufficient samples (budget-actions.md:51-53,60). Final unanswerable.",
-      "split": "heldout"
-    },
-    {
-      "id": "T6-A05",
-      "topic_id": "T6",
-      "question": "How do rolling and calendar-aligned SLO windows differ, and why does the Google SRE Workbook favor a four-week rolling window as a general-purpose choice?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "unsupported",
-      "notes": "V09/C01 mentions 'rolling or calendar window' only as a phrase and never contrasts the two, discusses planning-cycle alignment, or explains why a four-week rolling window is preferred. The Workbook source row covers user-facing SLIs and targets, not window selection. No H2 supports the answer key.",
-      "split": "heldout"
-    },
-    {
       "id": "T6-A06",
       "topic_id": "T6",
       "question": "What distinguishes head-based from tail-based trace sampling, and why can head sampling alone fail to retain every trace that contains an error?",
@@ -1078,28 +781,6 @@
       ],
       "adjudication": "confirmed",
       "notes": "V09/C03 directly distinguishes head sampling (early decision; later severe error may be missed) from tail sampling (fuller context; buffered state and late decisions). The trace-ID ratio rule and attribute-based tail criteria are not detailed, but the core distinction and the reason head sampling can miss error traces are supported.",
-      "split": "heldout"
-    },
-    {
-      "id": "T6-A07",
-      "topic_id": "T6",
-      "question": "When does OpenTelemetry advise against sampling, and what costs does its guidance say a sampling strategy can introduce?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "sampling-trust H2 4 lists head/tail sampling limits, but not OTel's when-not-to-sample conditions (low volume, aggregate-only, regulation) or the direct/indirect/opportunity cost taxonomy. Relabelled unanswerable.",
-      "split": "heldout"
-    },
-    {
-      "id": "T6-A08",
-      "topic_id": "T6",
-      "question": "What four fields make up the W3C traceparent header, and how do trace and span identifiers let a backend reconstruct a distributed trace?",
-      "phase3_label": "answerable",
-      "final_label": "unanswerable",
-      "accepted": [],
-      "adjudication": "relabelled",
-      "notes": "trace-causality H2 1 gives trace/span/parent roles and mentions traceparent, but not the four-field layout, hex lengths, version-00 flags or invalid all-zero IDs. Relabelled unanswerable.",
       "split": "heldout"
     },
     {
@@ -1148,24 +829,289 @@
     }
   ],
   "summary": {
-    "items": 72,
+    "items": 43,
     "answerable": 19,
-    "unanswerable": 53,
-    "dev": 36,
-    "heldout": 36,
+    "unanswerable": 24,
+    "dev": 25,
+    "heldout": 18,
+    "excluded": 29,
     "by_topic": {
-      "T1": 12,
-      "T2": 12,
-      "T3": 12,
-      "T4": 12,
-      "T5": 12,
-      "T6": 12
+      "T1": 9,
+      "T2": 8,
+      "T3": 8,
+      "T4": 8,
+      "T5": 5,
+      "T6": 5
     },
     "by_split_label": {
       "('dev', 'answerable')": 13,
-      "('dev', 'unanswerable')": 23,
+      "('dev', 'unanswerable')": 12,
       "('heldout', 'answerable')": 6,
-      "('heldout', 'unanswerable')": 30
+      "('heldout', 'unanswerable')": 12
     }
-  }
+  },
+  "excluded": [
+    {
+      "id": "T1-A06",
+      "topic_id": "T1",
+      "question": "How does probabilistic early expiration (XFetch) reduce stampedes without a lock?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "Absent from the corpus. Searches for XFetch, probabilistic early expiration, stochastic refresh and early refresh found only jittered TTL, proactive refresh/prewarm and refresh leases in V06/C02; no H2 states the delta/beta probability test, the beta=1 finding or the extra delta/expiry memory. The phase3 answerable claim cannot be supported."
+    },
+    {
+      "id": "T1-A07",
+      "topic_id": "T1",
+      "question": "In HTTP caching, how is a response's freshness lifetime calculated, and what does stale-while-revalidate allow a cache to do?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "No H2 section states HTTP freshness-lifetime selection (s-maxage, then max-age, then Expires minus Date) or RFC 5861 delta-seconds semantics. The SWR mechanism appears only in an H3 owner note, which the rules exclude. Relabelled unanswerable."
+    },
+    {
+      "id": "T1-A08",
+      "topic_id": "T1",
+      "question": "How do expiration and eviction differ when sizing a cache, and which eviction policy does the AWS guidance call most common?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "refresh-semantics H2 3 distinguishes expiration from eviction, but no page states AWS/Microsoft LRU as the most common policy or the request-volume sizing method. The answer key's second half is unsupported. Relabelled unanswerable."
+    },
+    {
+      "id": "T2-A02",
+      "topic_id": "T2",
+      "question": "A single worker completes jobs at a mean rate of 40 per second. Jobs arrive as a Poisson process at 30 per second, and service times are exponential. What are the utilization, the mean number of jobs in the system, and the mean sojourn time?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "No M/M/1 treatment, utilization rho, rho/(1-rho), or 1/(mu-lambda) formula appears in the corpus. Queueing pages cover Little's law means and qualitative saturation only, so the exact numeric answer is unsupported."
+    },
+    {
+      "id": "T2-A03",
+      "topic_id": "T2",
+      "question": "For an M/M/1 server whose mean service time is fixed, by what factors do the mean sojourn time and the mean number of jobs in the system increase when utilization rises from 0.5 to 0.9?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. No M/M/1 sojourn-time tau/(1-rho) or system-size rho/(1-rho) formula and no 0.5->0.9 factors appear in book/**/*.md (zero occurrences of 'M/M/1', 'Kingman', 'rho', 'utilization factor'). The nearest owner page (v07/c01 queueing-littles-law.md) treats Little's Law as an accounting identity and explicitly refuses tail/capacity prediction at lines 88 and 96. Rechecked independently by page reading and grep."
+    },
+    {
+      "id": "T2-A04",
+      "topic_id": "T2",
+      "question": "Two G/G/1 queues share the same mean arrival rate, mean service time and utilization 0.8. Both have arrival squared coefficient of variation 1, but their service-time squared coefficients of variation are 1 and 4. According to Kingman's formula, how much larger is the mean queue wait in the second queue?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. Zero occurrences of 'Kingman', 'squared coefficient of variation', 'variability factor' or the VUT decomposition in book/**/*.md; no tau, ca^2/cs^2 or 2.5x comparison. The V07 queueing/contention pages discuss saturation qualitatively and do not derive a G/G/1 waiting approximation."
+    },
+    {
+      "id": "T2-A07",
+      "topic_id": "T2",
+      "question": "The SRE book's client-side adaptive throttling keeps two counters per client task. What are they, over what window, and when does local rejection begin? What does the multiplier K control, and what does server-side admission control add?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "admission-resource mentions SRE client-side throttling but gives no counters, two-minute window, K threshold, K=2 example or server-side admission-control detail. Relabelled unanswerable."
+    },
+    {
+      "id": "T3-A02",
+      "topic_id": "T3",
+      "question": "When a Raft follower stops hearing from the leader, what steps does it take to begin an election, and what rule prevents two leaders from being elected in the same term?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "The corpus has a high-level Raft state diagram (follower to candidate on election timeout, leader after majority) and mentions randomized timeouts, but no term increment, self-vote, RequestVote exchange, or one-vote-per-term rule. The requested rule is absent."
+    },
+    {
+      "id": "T3-A05",
+      "topic_id": "T3",
+      "question": "What does Flexible Paxos relax about quorum intersection, and what does that relaxation permit in a six-acceptor deployment?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "Flexible Paxos is absent. V04/C02 has majority-quorum arithmetic (including 3/4/5/6-voter counts) and says quorums must intersect, but it never distinguishes phase-1 from phase-2 quorums, allows disjoint phase-2 quorums, or gives the six-acceptor 4+3 example. The requested relaxation cannot be recovered from the corpus."
+    },
+    {
+      "id": "T3-A06",
+      "topic_id": "T3",
+      "question": "According to ZooKeeper's internals documentation, what two conditions must hold before a server acts as leader, and which of them is required for correct operation?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "ZooKeeper, zxid and the two leader-activation conditions are absent. V04/C02 leader-recovery and V04/C01 agreement-failure discuss Raft-style log up-to-date restrictions and quorum confirmation generically, but never state that only the highest-zxid condition is required for correctness. The exact ZooKeeper answer cannot be supported."
+    },
+    {
+      "id": "T3-A08",
+      "topic_id": "T3",
+      "question": "What is a ZooKeeper observer, and why can adding observers improve read scalability without slowing writes?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "No ZooKeeper observer content. quorum-envelope mentions a non-voting learner receiving state, but not observers learning vote outcomes, forwarding client requests, serving reads/writes, or leaving write quorum unchanged. Relabelled unanswerable."
+    },
+    {
+      "id": "T4-A02",
+      "topic_id": "T4",
+      "question": "How does the Idempotency-Key header draft handle a key that is reused with a different payload, and how should a server answer a duplicate request that arrives while the first one is still running?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "The corpus treats key reuse with changed payload as a conflict and requires an in-progress/wait/conflict/result-lookup protocol, but never gives the draft's 422 Unprocessable Content or 409 Conflict responses. The exact draft handling is unsupported."
+    },
+    {
+      "id": "T4-A03",
+      "topic_id": "T4",
+      "question": "What problem does jitter address in capped exponential backoff, and how did Full Jitter compare with Equal Jitter and Decorrelated Jitter in the AWS simulation?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "Phase3 'answerable' not supported for the question's main comparison; label changed to unanswerable. The corpus covers capped exponential backoff and says jitter prevents lockstep retries (deadlines-retries.md:62-63, 165-168), but 'Full Jitter', 'Equal Jitter', 'Decorrelated Jitter', the 100-client simulation and the 'more than half' reduction have zero occurrences in book/**/*.md. The comparative result cannot be produced from Tycho."
+    },
+    {
+      "id": "T4-A07",
+      "topic_id": "T4",
+      "question": "In the Azure Architecture Center's Saga pattern guidance, what is a pivot transaction, and how do compensable and retryable transactions differ around it?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "saga-workflows covers choreography, orchestration and compensation, but not the Azure pivot transaction or the compensable/retryable classification around it. Relabelled unanswerable."
+    },
+    {
+      "id": "T4-A08",
+      "topic_id": "T4",
+      "question": "In Garcia-Molina and Salem's saga model, what is a saga, and how do backward recovery and forward recovery differ?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "Saga pages describe compensation and semantic non-rollback, but not Garcia-Molina backward recovery, forward recovery or savepoints; \"forward recovery\" elsewhere means deployment recovery. Relabelled unanswerable."
+    },
+    {
+      "id": "T5-A01",
+      "topic_id": "T5",
+      "question": "In Amazon Dynamo's replication model, what does an (N,R,W) setting of (3,2,2) mean, and how does a sloppy quorum with hinted handoff keep writes available when one designated replica is unreachable?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "No Amazon Dynamo coverage: no (N,R,W)=(3,2,2), sloppy quorum, preference-list substitution, or hinted-handoff delivery. A generic R+W>N statement and one hinted-handoff mention in a Discord case do not answer the Dynamo question."
+    },
+    {
+      "id": "T5-A02",
+      "topic_id": "T5",
+      "question": "A DynamoDB table uses the current date as its partition key and absorbs a daily write burst. What throughput ceiling applies per partition, and how do random and calculated write suffixes change write spread and read cost?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "No DynamoDB partition limits, read/write capacity units, or random/calculated write-suffix guidance appears in the corpus. Generic shard-key and hot-key advice does not answer the question."
+    },
+    {
+      "id": "T5-A03",
+      "topic_id": "T5",
+      "question": "With a replication factor of three, how does Apache Cassandra choose the replicas for a key, and what benefit and what risk come from giving each physical node many tokens?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. The corpus has no Cassandra coordinator/token-ring walk, no 'three distinct physical nodes' rule, no 2*(RF-1) neighbour arithmetic and no 2*(RF-1) risk statement. 'virtual nodes' appears only once, as generic guidance ('Virtual nodes improve balance but add metadata and lookup cost', resharding-transition.md:145); 'token ring', 'clockwise' and 'vnodes' have zero occurrences. Final unanswerable."
+    },
+    {
+      "id": "T5-A04",
+      "topic_id": "T5",
+      "question": "How does a Spanner coordinator determine a read-write transaction's commit timestamp, and what must it wait for before the commit is applied at replicas?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. Zero occurrences of 'Spanner', 'TrueTime', 'commit-wait' or 'external consistency' in book/**/*.md. The multi-region/replication pages describe quorum, leases and recovery, not a commit-timestamp protocol or a tie to clock uncertainty."
+    },
+    {
+      "id": "T5-A05",
+      "topic_id": "T5",
+      "question": "How does Redis Cluster move a hash slot between masters, and when should a client expect an ASK redirection rather than a MOVED redirection?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "Redis Cluster is absent: no hash-slot count, CRC16, MIGRATING/IMPORTING, ASKING, ASK or MOVED text exists. V05/C05 covers generic ownership movement and resharding, but not the slot-redirection protocol, so the ASK-versus-MOVED rule cannot be answered."
+    },
+    {
+      "id": "T5-A07",
+      "topic_id": "T5",
+      "question": "How does Azure Cosmos DB serve reads from local regions, and what does its strong consistency level require of a write?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "No Cosmos DB content. Generic multi-region/consistency pages discuss regional authority and staleness, but not Cosmos's five levels, all-region write acknowledgment or dynamic quorum. Relabelled unanswerable."
+    },
+    {
+      "id": "T5-A08",
+      "topic_id": "T5",
+      "question": "What do CockroachDB's REGIONAL BY TABLE, REGIONAL BY ROW and GLOBAL localities each optimize, and what write-latency trade-off distinguishes the global setting?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "No CockroachDB locality content; CockroachDB appears only as a generic distributed-SQL option. REGIONAL BY TABLE/ROW, GLOBAL and their write-latency trade-off are absent. Relabelled unanswerable."
+    },
+    {
+      "id": "T6-A01",
+      "topic_id": "T6",
+      "question": "How do the Google SRE definitions separate an SLI, an SLO, and an SLA, and what test distinguishes an SLA from an SLO?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "SLI and SLO definitions are present, but SLA is only called a separate agreement. The consequence-based test that distinguishes an SLA from an SLO is absent."
+    },
+    {
+      "id": "T6-A02",
+      "topic_id": "T6",
+      "question": "For an event-ratio SLO, how is the error budget calculated, and what does the example four-week error-budget policy do once the budget is exhausted?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "Error-budget arithmetic and a generic rollout-pause example appear, but no four-week policy, 1,000,000-request/1,000-error example, or halt-all-changes rule. The named example policy is unsupported."
+    },
+    {
+      "id": "T6-A03",
+      "topic_id": "T6",
+      "question": "For a 99.9% SLO, what long and short windows, burn rates, and error-budget percentages does the Google SRE Workbook recommend for page and ticket alerts?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. budget-actions.md:49-53 explains burn rate qualitatively and says the workbook method 'does not imply universal thresholds', but the book has no 14.4/6/1 burn rates, no 1 h/6 h/3 d windows, no 2%/5%/10% values and no 1:12 short/long ratio. Zero occurrences of '14.4' as a burn rate (the only 14.4 is 114.44 TiB in an unrelated calculation) and zero of '13.9'. Final unanswerable."
+    },
+    {
+      "id": "T6-A04",
+      "topic_id": "T6",
+      "question": "Why can a single failed request page an on-call engineer for a 99.9% SLO on a service handling only 10 requests per hour, and which remedies does the workbook suggest?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "Phase3 'answerable' not supported; label changed to unanswerable. The corpus has no 10-requests-per-hour/13.9% arithmetic and no synthetic-traffic, grouping, retry/fallback, lower-SLO or longer-window remedy list. The SLO pages only warn that short windows are noisy for intermittent traffic and that idle periods give insufficient samples (budget-actions.md:51-53,60). Final unanswerable."
+    },
+    {
+      "id": "T6-A05",
+      "topic_id": "T6",
+      "question": "How do rolling and calendar-aligned SLO windows differ, and why does the Google SRE Workbook favor a four-week rolling window as a general-purpose choice?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "V09/C01 mentions 'rolling or calendar window' only as a phrase and never contrasts the two, discusses planning-cycle alignment, or explains why a four-week rolling window is preferred. The Workbook source row covers user-facing SLIs and targets, not window selection. No H2 supports the answer key."
+    },
+    {
+      "id": "T6-A07",
+      "topic_id": "T6",
+      "question": "When does OpenTelemetry advise against sampling, and what costs does its guidance say a sampling strategy can introduce?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "sampling-trust H2 4 lists head/tail sampling limits, but not OTel's when-not-to-sample conditions (low volume, aggregate-only, regulation) or the direct/indirect/opportunity cost taxonomy. Relabelled unanswerable."
+    },
+    {
+      "id": "T6-A08",
+      "topic_id": "T6",
+      "question": "What four fields make up the W3C traceparent header, and how do trace and span identifiers let a backend reconstruct a distributed trace?",
+      "phase3_label": "answerable",
+      "final_label": "unanswerable",
+      "reason": "author answerable claim not supported by Tycho",
+      "notes": "trace-causality H2 1 gives trace/span/parent roles and mentions traceparent, but not the four-field layout, hex lengths, version-00 flags or invalid all-zero IDs. Relabelled unanswerable."
+    }
+  ],
+  "exclusion_note": "29 author-answerable items had no Tycho support and are preserved here for audit; they are not part of the scored set."
 }

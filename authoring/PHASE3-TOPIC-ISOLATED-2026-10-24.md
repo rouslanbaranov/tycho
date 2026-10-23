@@ -3,65 +3,51 @@
 Status: agent-authored and agent-adjudicated. Not human review, benchmark,
 sufficiency or owner acceptance. No CI is claimed.
 
-## Design
+## Design and filtering
 
 - 6 fresh authoring agents, one topic each, 8 answerable + 4 unanswerable.
-- 72 unique questions; 15 public-source citations per topic range.
-- 4 fresh Reviewer adjudicators, 18 items each, mixed across topics.
-- Topic split: T1-T3 dev, T4-T6 held-out.
-- 20% human sample: 15 items, selected before any gate evaluation.
+- 72 unique questions; 4 fresh adjudicators mapped them to Tycho.
+- 29 author-answerable claims had no Tycho support. They are preserved in
+  evaluation/agent-qrels.phase3.json under "excluded" for audit, but removed
+  from the scored set.
+- Filtered scored set: 43 items, 19 answerable / 24 unanswerable.
+- Split: 25 dev (T1-T3) / 18 held-out (T4-T6).
+- 9-item human sample (20.9%), stratified across all six topics.
+- Human sample: evaluation/phase3-human-sample.json and
+  authoring/PHASE3-HUMAN-REVIEW-PACKET.md. Human review is pending.
 
-Authoring agents did not read Tycho, qrels, gate code or other author files.
-Adjudicators did not read gate code, qrels or other batches.
+## Current gate and retrieval on the filtered set
 
-## Adjudication result
-
-- 19 answerable / 53 unanswerable.
-- 29 phase-3 answerable claims were unsupported by Tycho and became unanswerable.
-- 2 invalid H2 anchors were cleared to page-level.
-- All accepted quotes are verbatim; all retained section IDs exist.
-- Split: 36 dev / 36 held-out.
-
-The high unsupported rate is a corpus-coverage finding, not proof that the
-external answer keys are false. Topics T5/T6 are especially thin in Tycho.
-
-## Current evidence gate on phase 3
-
-No retraining and no threshold tuning. This is a topic-held-out challenge for the
-phase-2 model:
+No retraining and no threshold tuning:
 
 | Split | True abstain | False abstain | False answer | True answer | Answerable retained |
 |---|---:|---:|---:|---:|---:|
-| Dev (T1-T3) | 22 | 12 | 1 | 1 | 1/13 |
-| Held-out (T4-T6) | 30 | 5 | 0 | 1 | 1/6 |
+| Dev | 12 | 12 | 0 | 1 | 1/13 |
+| Held-out | 12 | 5 | 0 | 1 | 1/6 |
 
-The gate is extremely conservative on these items: it abstains on 30/30 held-out
-unanswerable items but retains only 1/6 answerable items. Phase 3 therefore does
-not support promoting the gate; it shows that many author questions require
-facts absent from Tycho.
+Retrieval page/section hit@5: 7/13 dev, 3/6 held-out.
+
+The gate is conservative and the retrieval layer often misses the accepted
+support. This is a retrieval/evidence problem, not a reason to tune the gate on
+phase 3.
 
 ## Human sample
 
-[phase3-human-sample.json](../evaluation/phase3-human-sample.json) contains 15
-items (20.8%), including confirmed answerable, unanswerable and contested
-answerable-to-unanswerable relabels. [PHASE3-HUMAN-REVIEW-PACKET.md](PHASE3-HUMAN-REVIEW-PACKET.md)
-is the review form.
-
-**human_review: not-performed**. No verdicts are filled; the sample is pending.
+The sample contains five confirmed answerable and four unanswerable items. No
+verdicts are filled; the status remains human-review-pending.
 
 ## Decision
 
-- Preserve phase 3 as an adjudicated challenge set.
-- Do not train on it: only 19 answerable items, and held-out has 6.
-- Do not tune the evidence gate on this set.
-- Next data step is to resolve the 29 unsupported items: either add corpus
-  support or replace them with questions the book can answer.
-- Gate work remains blocked on a larger, more balanced independent set.
+- Keep phase 3 as a challenge set, not training data.
+- Do not tune the evidence gate on it: 19 answerable items are too few.
+- Fix retrieval/evidence support for the retained answerable items before any
+  gate retraining.
+- Do not re-admit excluded items without corpus support.
 
 ## Limits
 
 - Agent-authored/agent-adjudicated, not human review.
 - Adjudication is single-agent per batch; no inter-annotator agreement.
-- Topic coverage is uneven; T5/T6 are thin.
-- Quotes are verbatim but external sources were not re-fetched by adjudicators.
+- Topic coverage is uneven; T5/T6 have five retained items each.
+- Quotes are verbatim, but external sources were not re-fetched.
 - The 20% human sample is pending, not passed.
