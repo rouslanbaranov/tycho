@@ -55,14 +55,21 @@ The corpus includes 29 public historical case studies and six synthetic decision
 | M9 #121 | Closed under its documented scoped acceptance |
 
 **MCP local candidate — 2026-10-23 (#57):** a read-only stdio adapter,
-30 offline tests and a one-off official SDK 2.3.0 smoke exist on a feature
-branch; two independent agent reviews and a focused delta review returned
+30 offline tests and a one-off official SDK 2.3.0 smoke are recorded in merged
+PR #359; two independent agent reviews and a focused delta review returned
 ACCEPT-WITH-FINDINGS; corrections and residual limits are recorded. No hosted
 endpoint, repository SDK pin, human review or live-service acceptance is
 claimed. See
 [the MVP record](MCP-READ-ONLY-MVP.md),
 [the SDK smoke note](MCP-SDK-SMOKE_2026-10-23.md) and
 [the independent agent review](INDEPENDENT-AGENT-REVIEW-MCP_2026-10-23.md).
+
+**MCP local HTTP candidate — 2026-10-24 (#367):** the read-only stdio adapter
+is wrapped by a bearer-authenticated local HTTP container with /mcp, /search,
+/health, /ready and raw book routes. Four HTTP tests and a Docker/SDK smoke
+exist; no GitHub, Vercel or hosted deployment, TLS, OAuth, rate limit, human
+review or production acceptance is claimed. See
+[the local container record](MCP-LOCAL-HTTP-CONTAINER.md).
 
 ## Readable directory layout — #214
 

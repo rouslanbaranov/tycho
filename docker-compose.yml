@@ -1,0 +1,28 @@
+services:
+  tycho-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.vercel
+    image: tycho-mcp-local:0.1
+    ports:
+      - "8000:8000"
+    environment:
+      TYCHO_MCP_TOKEN: ${TYCHO_MCP_TOKEN:?set TYCHO_MCP_TOKEN}
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: "no"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; url='http://' + '127.0.0.1' + ':8000/health'; urllib.request.urlopen(url, timeout=3).read()"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
