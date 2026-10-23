@@ -66,10 +66,15 @@ Issue #57 now has a local stdio candidate in
 [scripts/mcp_server.py](../scripts/mcp_server.py). It implements modern
 `server/discover`, `tools/list` and `tools/call` with per-request
 `_meta`, the bounded 2025-11-25 initialize path, explicit unsupported-version
-errors and read-only tools over the existing section index. The offline suite
-covers both eras and a subprocess roundtrip.
+errors and read-only tools over the existing section index and draft pattern
+registry. Search, read, page, pattern and evidence calls are bounded. Query
+logging is opt-in and disabled by default. The offline suite covers both eras,
+pattern lookup, query-log behavior and a subprocess roundtrip.
 
-This is not the SDK gate. No official SDK is installed or pinned, no HTTP
-endpoint or authorization exists and no external client was tested. See
-[the read-only MCP candidate](MCP-READ-ONLY-MVP.md) for the exact scope,
-envelopes, security checks, measurements and remaining gates.
+A separate one-off smoke used the official `mcp` 2.3.0 client under
+Python 3.15.0; modern 2026-07-28 and legacy 2025-11-25 modes both connected
+and called tools. The SDK is not a repository dependency, there is no full
+client matrix, and no HTTP endpoint, authorization or deployment exists.
+See [the SDK smoke note](MCP-SDK-SMOKE_2026-10-23.md) and
+[the read-only MCP candidate](MCP-READ-ONLY-MVP.md) for scope, envelopes,
+security checks, measurements and remaining gates.

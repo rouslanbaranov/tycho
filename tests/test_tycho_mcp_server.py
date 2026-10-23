@@ -101,6 +101,133 @@ class McpServerTests(unittest.TestCase):
         )
         cls.snapshot = section_fts_index.publish(
             cls.root, full=True)["snapshot"]
+        cls.write_patterns()
+
+    @classmethod
+    def write_patterns(cls):
+        directory = cls.root / "edition" / "patterns"
+        directory.mkdir(parents=True)
+        registry = {
+            "schema_version": 1,
+            "registry_version": "test-0.1",
+            "edition_version": "test",
+            "status": "draft",
+            "updated_at": "2026-10-23",
+            "catalog": {"entry_count": 2},
+            "atlas": {"volume_code": "V11"},
+            "families": [
+                {
+                    "id": "family-a",
+                    "number": 1,
+                    "title": "Family A",
+                    "chapter": "V11/C01",
+                    "chapter_path": "book/volumes/v11-pattern-atlas",
+                    "pattern_ids": ["tycho.pattern.alpha-pattern"],
+                },
+                {
+                    "id": "family-b",
+                    "number": 2,
+                    "title": "Family B",
+                    "chapter": "V11/C02",
+                    "chapter_path": "book/volumes/v11-pattern-atlas",
+                    "pattern_ids": ["tycho.pattern.beta-pattern"],
+                },
+            ],
+            "patterns": [
+                {
+                    "id": "tycho.pattern.alpha-pattern",
+                    "catalog_name": "Alpha pattern",
+                    "catalog_order": 1,
+                    "family": "family-a",
+                    "kind": "architecture-style",
+                    "priority": "core",
+                    "catalog_problem": (
+                        "Separate alpha concerns from beta concerns"),
+                    "aliases": ["Alpha"],
+                    "relations": [],
+                    "atlas_section": "alpha-pattern",
+                    "technical_owner": {
+                        "document_id": "tycho.page.alphaa",
+                        "path": "book/alpha.md",
+                        "anchor": "retry-budget",
+                        "state": "partial-bounded",
+                    },
+                    "atlas_owner": {
+                        "chapter": "V11/C01",
+                        "section": "alpha-pattern",
+                        "state": "partial-bounded",
+                    },
+                    "coverage": {
+                        "technical": "partial-bounded",
+                        "decision": "partial-bounded",
+                        "overall": "partial-bounded",
+                    },
+                    "confidence": "medium",
+                    "source_units": [],
+                    "review_status": "self-checked",
+                    "notes": "Synthetic pattern fixture.",
+                },
+                {
+                    "id": "tycho.pattern.beta-pattern",
+                    "catalog_name": "Beta pattern",
+                    "catalog_order": 2,
+                    "family": "family-b",
+                    "kind": "resilience",
+                    "priority": "advanced",
+                    "catalog_problem": "Handle beta failures",
+                    "aliases": ["Beta"],
+                    "relations": [],
+                    "atlas_section": "beta-pattern",
+                    "technical_owner": {
+                        "document_id": "tycho.page.betaaa",
+                        "path": "book/beta.md",
+                        "anchor": "overview",
+                        "state": "partial-bounded",
+                    },
+                    "atlas_owner": {
+                        "chapter": "V11/C02",
+                        "section": "beta-pattern",
+                        "state": "partial-bounded",
+                    },
+                    "coverage": {
+                        "technical": "partial-bounded",
+                        "decision": "partial-bounded",
+                        "overall": "partial-bounded",
+                    },
+                    "confidence": "low",
+                    "source_units": [],
+                    "review_status": "self-checked",
+                    "notes": "Synthetic pattern fixture.",
+                },
+            ],
+            "source_policy": {},
+            "review": {},
+        }
+        cards = {
+            "schema_version": 1,
+            "batches": [
+                {
+                    "id": "test-batch",
+                    "issue": 1,
+                    "chapter": "V11/C01",
+                    "status": "self-checked",
+                    "entries": [
+                        {
+                            "pattern_id": "tycho.pattern.alpha-pattern",
+                            "atlas_section": "alpha-pattern",
+                            "owner_path": "book/alpha.md",
+                            "owner_anchor": "retry-budget",
+                            "ledger_record": "read.test",
+                            "owner_state": "linked",
+                        },
+                    ],
+                },
+            ],
+        }
+        (directory / "registry.v1.json").write_text(
+            json.dumps(registry, indent=1), encoding="utf-8")
+        (directory / "card-batches.v1.json").write_text(
+            json.dumps(cards, indent=1), encoding="utf-8")
 
     @classmethod
     def tearDownClass(cls):
@@ -282,6 +409,121 @@ class McpServerTests(unittest.TestCase):
         self.assertTrue(missing["isError"])
         self.assertEqual(missing["structuredContent"]["status"], "not-found")
 
+    def test_patterns_list_filter_and_pagination(self):
+        server = self.server()
+        payload = self.call(server, "tycho_patterns", {})[
+            "structuredContent"]
+        self.assertEqual(payload["status"], "ok")
+        self.assertEqual(payload["total"], 2)
+        self.assertEqual(payload["returned"], 2)
+        self.assertEqual(payload["registry_entries"], 2)
+        self.assertEqual(payload["coverage_summary"],
+                         {"partial-bounded": 2})
+        self.assertEqual(payload["sufficiency"]["sufficient"], 0)
+        self.assertEqual(
+            [item["pattern_id"] for item in payload["patterns"]],
+            ["tycho.pattern.alpha-pattern",
+             "tycho.pattern.beta-pattern"],
+        )
+        filtered = self.call(server, "tycho_patterns", {
+            "family": "family-b",
+        })["structuredContent"]
+        self.assertEqual(filtered["total"], 1)
+        self.assertEqual(filtered["patterns"][0]["pattern_id"],
+                         "tycho.pattern.beta-pattern")
+        searched = self.call(server, "tycho_patterns", {
+            "query": "alpha",
+        })["structuredContent"]
+        self.assertEqual(searched["total"], 1)
+        self.assertEqual(searched["patterns"][0]["pattern_id"],
+                         "tycho.pattern.alpha-pattern")
+        first = self.call(server, "tycho_patterns", {
+            "limit": 1,
+        })["structuredContent"]
+        self.assertTrue(first["truncated"])
+        self.assertEqual(first["next_offset"], 1)
+        second = self.call(server, "tycho_patterns", {
+            "limit": 1, "offset": 1,
+        })["structuredContent"]
+        self.assertFalse(second["truncated"])
+        self.assertEqual(second["patterns"][0]["pattern_id"],
+                         "tycho.pattern.beta-pattern")
+
+    def test_pattern_get_returns_card_owner_and_coverage(self):
+        payload = self.call(self.server(), "tycho_pattern", {
+            "pattern_id": "tycho.pattern.alpha-pattern",
+        })["structuredContent"]
+        self.assertEqual(payload["status"], "ok")
+        self.assertEqual(payload["pattern"]["id"],
+                         "tycho.pattern.alpha-pattern")
+        self.assertEqual(payload["family"]["title"], "Family A")
+        self.assertEqual(payload["card"]["ledger_record"], "read.test")
+        self.assertEqual(payload["cards_status"], "ok")
+        self.assertEqual(payload["citation"],
+                         "book/alpha.md#retry-budget")
+        self.assertEqual(payload["sufficiency"]["state"],
+                         "partial-bounded")
+        self.assertFalse(payload["sufficiency"]["sufficient"])
+        missing = self.call(self.server(), "tycho_pattern", {
+            "pattern_id": "tycho.pattern.missing-pattern",
+        })
+        self.assertTrue(missing["isError"])
+        self.assertEqual(missing["structuredContent"]["status"], "not-found")
+
+    def test_pattern_registry_snapshot_mismatch(self):
+        server = self.server()
+        listed = self.call(server, "tycho_patterns", {})[
+            "structuredContent"]
+        snapshot = listed["registry_snapshot"]
+        mismatch = self.call(server, "tycho_patterns", {
+            "registry_snapshot_id": "0" * 64,
+        })
+        self.assertTrue(mismatch["isError"])
+        payload = mismatch["structuredContent"]
+        self.assertEqual(payload["status"], "snapshot-mismatch")
+        self.assertEqual(payload["requested_registry_snapshot"], "0" * 64)
+        self.assertEqual(payload["current_registry_snapshot"], snapshot)
+
+    def test_query_log_is_opt_in_and_search_only(self):
+        log_path = self.root / "queries.jsonl"
+        if log_path.exists():
+            log_path.unlink()
+        server = mcp_server.TychoMcpServer(
+            self.root, query_log=log_path)
+        first = self.call(server, "tycho_search", {"query": "zebra"})
+        self.assertEqual(first["structuredContent"]["query_log"], "recorded")
+        second = self.call(server, "tycho_search", {
+            "query": "nothingmatches",
+        })
+        self.assertEqual(second["structuredContent"]["query_log"], "recorded")
+        self.call(server, "tycho_read", {
+            "section_key": "tycho.page.alphaa#retry-budget",
+        })
+        lines = [
+            json.loads(line) for line in log_path.read_text(
+                encoding="utf-8").splitlines()
+        ]
+        self.assertEqual(len(lines), 2)
+        self.assertEqual(lines[0]["tool"], "tycho_search")
+        self.assertEqual(lines[0]["query"], "zebra")
+        self.assertEqual(lines[1]["status"], "no-results")
+        self.assertNotIn("clientInfo", lines[0])
+        self.assertNotIn("ip", lines[0])
+        self.assertNotIn("request_id", lines[0])
+        plain = self.call(self.server(), "tycho_search", {
+            "query": "zebra",
+        })["structuredContent"]
+        self.assertNotIn("query_log", plain)
+
+    def test_query_log_failure_does_not_break_search(self):
+        log_path = self.root / "missing" / "queries.jsonl"
+        server = mcp_server.TychoMcpServer(
+            self.root, query_log=log_path)
+        result = self.call(server, "tycho_search", {"query": "zebra"})
+        self.assertFalse(result["isError"])
+        self.assertEqual(
+            result["structuredContent"]["query_log"], "not-available")
+
     def test_snapshot_pin_mismatch_is_explicit(self):
         result = self.call(self.server(), "tycho_search", {
             "query": "zebra", "snapshot_id": "0" * 64,
@@ -354,7 +596,12 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["counts"]["documents"], 3)
         self.assertEqual(payload["counts"]["sections"], 5)
         self.assertEqual(payload["limits"]["search_limit"], [1, 20])
+        self.assertEqual(payload["limits"]["patterns_limit"], [1, 50])
         self.assertIn("tycho_page", payload["tools"])
+        self.assertIn("tycho_patterns", payload["tools"])
+        self.assertEqual(payload["pattern_registry"]["status"], "ok")
+        self.assertEqual(payload["pattern_registry"]["entries"], 2)
+        self.assertEqual(payload["query_logging"], "disabled")
         self.assertIn("semantic, vector or hybrid ranking",
                       payload["not_implemented"])
 
@@ -387,7 +634,7 @@ class McpServerTests(unittest.TestCase):
             listed = send({
                 "jsonrpc": "2.0", "id": 2, "method": "tools/list",
             })
-            self.assertEqual(len(listed["result"]["tools"]), 5)
+            self.assertEqual(len(listed["result"]["tools"]), 7)
             called = send({
                 "jsonrpc": "2.0", "id": 3, "method": "tools/call",
                 "params": {

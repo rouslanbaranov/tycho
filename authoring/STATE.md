@@ -52,10 +52,11 @@ The corpus includes 29 public historical case studies and six synthetic decision
 | #214 | Reopened; substantive page decomposition and editorial acceptance |
 | M9 #121 | Closed under its documented scoped acceptance |
 
-**MCP local candidate — 2026-10-23 (#57):** a read-only stdio adapter and
-offline tests exist on a feature branch; no hosted endpoint, pinned SDK,
-independent review or live-client acceptance is claimed. See
-[the MVP record](MCP-READ-ONLY-MVP.md).
+**MCP local candidate — 2026-10-23 (#57):** a read-only stdio adapter,
+offline tests and a one-off official SDK 2.3.0 smoke exist on a feature
+branch; no hosted endpoint, repository SDK pin, independent review or
+live-service acceptance is claimed. See [the MVP record](MCP-READ-ONLY-MVP.md)
+and [the SDK smoke note](MCP-SDK-SMOKE_2026-10-23.md).
 
 ## Readable directory layout — #214
 
