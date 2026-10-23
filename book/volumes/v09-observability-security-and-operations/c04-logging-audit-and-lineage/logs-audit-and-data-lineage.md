@@ -137,7 +137,9 @@ Log volume is not free, and sampling must preserve security events.
 
 A durable business audit records who attempted or authorized which object mutation and the resulting
 authoritative state, under a specified tamper and retention policy. It is a controlled business
-record, not a debug log with a longer retention setting.
+record, not a debug log with a longer retention setting. The cited OpenLineage unit supports
+dataset/job/run lineage events, not tamper-proof audit records; the audit controls here are
+synthetic design guidance.
 
 If legal obligations require atomic audit recording, architect the local commit or durable audit
 handoff explicitly; arbitrary asynchronous logs are insufficient. The booking state and required
