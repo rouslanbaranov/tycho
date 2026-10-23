@@ -4,9 +4,9 @@
 > 2026-10-23. **Status:** local implementation, 30 offline tests and a one-off
 > official-SDK 2.3.0 smoke; two independent agent reviews and a focused delta
 > review returned ACCEPT-WITH-FINDINGS. Corrections are recorded; residual
-> limits remain below. Not merged, not human-reviewed, not a pinned-dependency
-> conformance matrix and not a hosted service. No authentication or deployment
-> is claimed.
+> limits remain below. Merged in PR #359; not human-reviewed, not a
+> pinned-dependency conformance matrix and not a hosted service. No
+> authentication or deployment is claimed.
 
 ## Scope and non-goals
 

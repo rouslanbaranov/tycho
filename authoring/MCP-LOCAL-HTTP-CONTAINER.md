@@ -1,0 +1,160 @@
+# Local HTTP MCP container and client smoke
+
+> Issue [#367](https://github.com/rouslanbaranov/tycho/issues/367), E09-07, M5.
+> **Status:** local container prototype, 2026-10-24. Not deployed to GitHub,
+> Vercel or any public host; not independently reviewed; no TLS, OAuth,
+> rate-limit or production acceptance is claimed.
+
+## Purpose
+
+[scripts/mcp_http_server.py](../scripts/mcp_http_server.py) wraps the merged
+stdio MCP adapter in a read-only HTTP service so client agents and humans can
+reach the book, search and MCP tools over the network. The stdio adapter
+remains the canonical protocol implementation.
+
+The service is deliberately local and bounded:
+
+- modern MCP 2026-07-28 stateless JSON-RPC over `POST /mcp`;
+- bearer-token authentication from the environment;
+- `GET /search` and `POST /search` for the same section index;
+- `GET /book` and `GET /book/<path>` for raw canonical Markdown;
+- `GET /health` and `GET /ready` for container readiness;
+- no writes to the book, index or query log during requests.
+
+Legacy `initialize` is rejected over HTTP because this wrapper is stateless.
+SSE subscriptions, sessions and the legacy handshake remain outside the local
+prototype.
+
+```mermaid
+flowchart LR
+    Agent["Client agent"] -->|"Bearer + POST /mcp"| Service["Tycho HTTP container"]
+    Human["Human reader"] -->|"Bearer + GET /book"| Service
+    Service --> Adapter["TychoMcpServer"]
+    Adapter --> Index["Section FTS snapshot"]
+    Adapter --> Book["Canonical book Markdown"]
+```
+
+The diagram describes the local prototype, not a deployed production topology.
+
+## Endpoints
+
+| Route | Auth | Purpose |
+|---|---|---|
+| `GET /health` | no | Liveness only; no book data |
+| `GET /ready` | no | Snapshot identity and counts |
+| `POST /mcp` | bearer | Modern MCP JSON-RPC |
+| `GET /search?q=...` | bearer | Bounded section search |
+| `POST /search` | bearer | JSON search arguments |
+| `GET /book` | bearer | HTML list of Markdown pages |
+| `GET /book/<path>` | bearer | Raw canonical Markdown |
+
+MCP requests may include `MCP-Protocol-Version`, `Mcp-Method` and, for tool
+calls, `Mcp-Name`. A mismatch returns HTTP 400 with code `-32020`.
+
+## Security boundary
+
+- `TYCHO_MCP_TOKEN` is required at startup; there is no anonymous MCP,
+  search or book access.
+- Tokens are compared with `hmac.compare_digest`; they are never logged.
+- The container runs as an unprivileged user and the compose profile uses a
+  read-only root filesystem plus a small `/tmp` tmpfs.
+- Book reads reject absolute paths, `..`, backslashes, symlinks and paths
+  outside `book/`.
+- The query log is disabled; no request writes the book, index or evidence.
+- TLS is not implemented in the process. A terminating proxy or container
+  host must provide TLS, request limits, per-client authorization and audit
+  retention before any shared deployment.
+
+## Build and run
+
+Set a high-entropy token in the environment; do not commit it:
+
+~~~sh
+export TYCHO_MCP_TOKEN='<set-a-long-random-token>'
+docker build -t tycho-mcp-local:0.1 .
+docker run --rm --read-only --tmpfs /tmp:size=16m \
+  -p 8000:8000 -e TYCHO_MCP_TOKEN tycho-mcp-local:0.1
+~~~
+
+Or with compose:
+
+~~~sh
+TYCHO_MCP_TOKEN='<set-a-long-random-token>' docker compose up --build
+~~~
+
+The image builds the section index during `docker build`; the runtime image
+contains the book, schema, route index and pattern registry.
+
+## Client smoke
+
+Standard-library client, no SDK required:
+
+~~~sh
+TYCHO_MCP_TOKEN="$TYCHO_MCP_TOKEN" .venv/bin/python \
+  scripts/mcp_http_client_smoke.py --url http://<container-host>:8000 \
+  --query "retry budget"
+~~~
+
+Official SDK client, Python 3.11+ and `mcp==2.3.0` in a separate environment:
+
+~~~sh
+TYCHO_MCP_TOKEN="$TYCHO_MCP_TOKEN" \
+  /tmp/tycho-mcp-sdk-2.3.0/bin/python scripts/mcp_http_sdk_smoke.py \
+  --url http://<container-host>:8000
+~~~
+
+Both smokes exercise discovery, `tools/list`, `tools/call`, `/search` and
+a book page. They are transport checks, not agent answer-quality evaluation.
+
+## Measured local evidence - 2026-10-24
+
+| Observation | Value |
+|---|---|
+| Host runtime | Docker 28.3.2 on macOS |
+| Base image | `python:3.12-slim` |
+| Image | `tycho-mcp-local:test`, `sha256:d512349ca7f5...`; 264 MB |
+| Book and index | 423 documents, 2,753 sections |
+| Section snapshot | `f0a80c286a3f6b5bc6db20898389146ea330ffc9a92168df2a65579935325329` |
+| Read-only run | `--read-only --tmpfs /tmp:size=16m` |
+| Health | HTTP 200, no auth |
+| MCP discovery | HTTP 200, modern 2026-07-28 only |
+| Tools | 7 |
+| Search call | `ok`, 2 results, citation returned |
+| HTTP search | `ok`, 2 results |
+| Book page | HTTP 200, 10,181 bytes |
+| Standard client | exit 0 |
+| Official SDK client | protocol 2026-07-28, 7 tools, search `ok`, 2 results |
+
+These are single-machine observations, not a latency, capacity or security
+benchmark.
+
+## Tests
+
+~~~sh
+.venv/bin/python -m unittest discover -s tests \
+  -p 'test_tycho_mcp_http.py' -v
+~~~
+
+The four tests cover authentication, discovery, tools/list, tools/call,
+search, book files, traversal refusal, readiness, malformed JSON and header
+mismatch. The container build and client smokes remain manual evidence.
+
+## Limits and next gates
+
+- No TLS, OAuth, per-client authorization, rate limiting, audit sink or
+  hosted deployment. The one static bearer token is suitable only for a
+  restricted local test.
+- No legacy HTTP handshake, sessions, SSE subscriptions, cancellation
+  processing or progress forwarding.
+- The book route returns raw Markdown; it does not render a reading site.
+- The container is local only. GitHub Pages cannot run it; GitHub Actions
+  runners are ephemeral; a stable host needs an external container platform
+  or a Codespace-style test environment.
+- No independent review, human acceptance, CI result or production claim.
+  `sufficient: 0`.
+
+## Related records
+
+- [Read-only stdio MCP record](MCP-READ-ONLY-MVP.md)
+- [MCP follow-up questions](https://github.com/rouslanbaranov/tycho/issues/362)
+- [Service container issue](https://github.com/rouslanbaranov/tycho/issues/367)
