@@ -17,6 +17,7 @@ Read [the independence policy](governance/INDEPENDENCE.md) before contributing. 
 - [Current state and next action](authoring/STATE.md)
 - [Roadmap](authoring/ROADMAP.md)
 - [Knowledge platform and MCP delivery plan](authoring/knowledge-platform-and-mcp-plan.md)
+- [Read-only MCP stdio candidate](authoring/MCP-READ-ONLY-MVP.md)
 - [Source catalogue](sources/CATALOG.md)
 - [Coverage and research questions](sources/COVERAGE.md)
 - [Implementation families](sources/IMPLEMENTATIONS.md)
@@ -35,7 +36,7 @@ Volumes and chapters now use `vNN-<description>/cNN-<description>/` under `book/
 
 [The second-pass contract](authoring/SECOND_ENRICHMENT_CONTRACT_2026-10-20.md) records the scope. [Executed validation](authoring/PYTHON_MERMAID_VALIDATION_2026-10-20.md) records 16/16 Python check groups, 233/233 tests with zero skips, and 221/221 Mermaid syntax parses. Python reproduced the candidate index byte for byte. The earlier environment block is resolved.
 
-[PR #222](https://github.com/rouslanbaranov/tycho/pull/222) remains draft; #214 remains open for integration verification and substantive page acceptance. The historical 2026.10.0 snapshot is unchanged.
+[PR #222](https://github.com/rouslanbaranov/tycho/pull/222) is merged; #214 remains open for integration verification and substantive page acceptance. The historical 2026.10.0 snapshot is unchanged.
 
 ## Industry-neutral delivery
 
