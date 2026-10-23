@@ -284,8 +284,8 @@ layer; noisy-neighbor and data-leak risks are material.
 **Hard contraindications.** Reject when one tenant exists, when isolation would strand
 capacity, or when the resource cannot enforce tenant scope.
 
-**Competing alternative.** Shared pool with per-tenant authorization and quotas. Reverse
-the choice when isolation cost exceeds residual risk.
+**Competing alternative.** A tenant-per-deployment boundary. Reverse the choice when
+isolation cost exceeds residual risk.
 
 **Failure and recovery.** Cross-tenant leakage and quota bypass are common; verify layers
 in the owner section.

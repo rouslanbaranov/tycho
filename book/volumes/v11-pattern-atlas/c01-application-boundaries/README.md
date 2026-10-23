@@ -406,7 +406,7 @@ benefit.
 common. Recovery requires reconciliation and clear ownership; the bounded owner section
 describes hidden shared state and orchestration/BFF alternatives.
 
-**Technical owner.** [Independent deployment and its costs](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md#self-contained-service) — The section owns remote-boundary costs and local-transaction alternatives.
+**Technical owner.** [Independent deployment and its costs](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md#self-contained-service) — The section owns dependency budgets, fallback contracts and orchestration/BFF alternatives.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)

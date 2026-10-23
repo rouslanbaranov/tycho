@@ -108,8 +108,10 @@ replica becomes ready inside the demand window.
 
 Neither can increase throughput past a serial or externally fixed bottleneck. A new replica may
 start cold, contend on a shared dependency or amplify connection churn; test scale-out under a burst
-and bound the work each replica can claim. Keep a per-replica concurrency limit and a readiness gate
-so traffic does not reach a process before its caches and pools are usable.
+and bound the work each replica can claim. Instances must serve any request without local session
+state, or the shared state must be externalized; otherwise adding replicas only multiplies the
+bottleneck. Keep a per-replica concurrency limit and a readiness gate so traffic does not reach a
+process before its caches and pools are usable.
 
 Vertical scaling or a queue/backpressure policy may be preferable when the bottleneck is per-replica
 resource or the workload cannot partition. Horizontal scaling is a fit when the work is
@@ -138,7 +140,9 @@ readiness and dependent-service capacity.
 
 During that delay, new demand still reaches the old infrastructure. Pre-provision headroom for the
 measured lag, add queueing or admission control for the gap and alert when the controller cannot
-converge. A scale-in needs a stabilization window and a check that in-flight work has drained.
+converge. A metric that tenants or operators can influence adversarially must be paired with an
+independent guardrail; otherwise the control loop can be gamed. A scale-in needs a stabilization
+window and a check that in-flight work has drained.
 
 Scheduled capacity or static headroom may be simpler when demand is predictable or the scale-out
 path is slower than the burst. Autoscaling is a fit when demand varies enough to justify the control

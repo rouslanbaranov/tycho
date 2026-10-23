@@ -30,9 +30,9 @@ This set introduces three missing properties:
 | [test_tycho_qrels.py](../tests/test_tycho_qrels.py) | Offline validation and metric tests. |
 
 The dataset is pinned to route snapshot
-`6f6a3a58cbee321dd1c7d5078722cc128158bad83bbe409b288c9e60fb1c8844` (423 documents).
+`85a77f1dcb413e2d965167a3726dd83f57da9911232826355ed0468639bfa8bf` (423 documents).
 Earlier pins were replaced after source remediations, label/owner fixes, Phase A fixes,
-Cache-Aside fixes, Phase B integrity, blocker/high and card-metadata fixes; no accepted
+Cache-Aside fixes, Phase B integrity, blocker/high and medium card/owner fixes; no accepted
 answer pointed at a V11 page.
 
 ## How labels were constructed
@@ -105,9 +105,9 @@ failure 0.800, fact 0.900, change impact 0.857, synthesis 0.667, contradiction 0
 trade-off 0.556. All five unanswerable items returned results, so refusal is not measured.
 
 Re-pin 2026-10-23: source/label/owner fixes, Phase A fixes, Phase B integrity, blocker/high
-content fixes and card metadata alignment moved the route snapshot to
-`6f6a3a58cbee321dd1c7d5078722cc128158bad83bbe409b288c9e60fb1c8844` and the section
-snapshot to `b348ee05fb19…`; metrics remain within rounding (nDCG@10 0.5577).
+content fixes and medium card/owner fixes moved the route snapshot to
+`85a77f1dcb413e2d965167a3726dd83f57da9911232826355ed0468639bfa8bf` and the section
+snapshot to `6cc621b7ce6d…`; metrics remain within rounding (nDCG@10 0.5577).
 
 ## Provisional acceptance thresholds
 

@@ -116,7 +116,10 @@ prunes; partition only when the data volume, retention or maintenance benefit is
 partitions raise planning and maintenance overhead, and a key that changes forces row movement.
 Plan for detach/attach maintenance, not only query pruning.
 
-## Bounded pattern ownership notes
+## Sharding ownership notes
+
+These notes are synthetic design guidance, not measured evidence, and they do not create a
+new source claim.
 
 ### Sharding
 

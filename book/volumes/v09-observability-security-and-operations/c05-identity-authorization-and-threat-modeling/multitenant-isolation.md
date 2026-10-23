@@ -75,13 +75,17 @@ routing and credentials that keep the tenant scope explicit. No query, cache key
 or credential may cross a tenant boundary without an explicit shared-resource contract.
 
 A shared cache or background worker leaks one tenant's data or consumes another's capacity;
-scope keys by tenant and test indirect paths with a foreign identifier. A shared pool with
-tenant-scoped predicates is cheaper at low scale; choose dedicated resources when
-noisy-neighbour or compliance risk dominates.
+scope keys by tenant and test indirect paths with a foreign identifier. Network quotas and
+isolation — routing, egress and cross-tenant reachability — are part of the contract;
+compute-only quotas do not isolate network effects. A shared pool with tenant-scoped
+predicates is cheaper at low scale; choose dedicated resources when noisy-neighbour or
+compliance risk dominates.
 
 **Limits.** Per-tenant quotas, noisy-neighbour isolation and cross-tenant test paths are costs;
-a shared pool needs explicit fairness and escape hatches. A dedicated pool is justified only
-when measured noisy-neighbour cost exceeds its operational cost.
+a shared pool needs explicit fairness and escape hatches. A shared pool can also strand
+capacity or fail to enforce quotas; those are reversal conditions, not deployment details.
+A dedicated pool is justified only when measured noisy-neighbour cost exceeds its operational
+cost.
 
 ## Multitenant Isolation
 

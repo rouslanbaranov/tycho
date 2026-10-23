@@ -454,7 +454,8 @@ cleanup are defined.
 
 **Hard contraindications.** Reject the claim when a synchronous call reliably meets the
 deadline; when the client cannot handle pending state; when result retention and
-cleanup have no owner; when the operation is not idempotent.
+cleanup have no owner; when duplicate submission cannot be made safe by an idempotency
+key or reconciliation.
 
 **Competing alternative.** Synchronous request-reply with a bounded deadline. Reverse
 the choice when durable work and client polling add more complexity than the latency
