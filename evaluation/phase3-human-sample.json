@@ -1,8 +1,8 @@
 {
   "sample": "phase3-human-20pct",
-  "total_items": 72,
-  "sample_size": 15,
-  "fraction": 0.2083,
+  "total_items": 43,
+  "sample_size": 9,
+  "fraction": 0.2093,
   "status": "human-review-pending",
   "label_status": "agent-adjudicated-not-human",
   "items": [
@@ -267,19 +267,6 @@
       "reviewer_notes": ""
     },
     {
-      "id": "T4-U04",
-      "topic_id": "T4",
-      "question": "What CPU and memory allocation should an outbox relay use to sustain 20,000 events per second?",
-      "phase3_label": "unanswerable",
-      "adjudicated_label": "unanswerable",
-      "accepted": [],
-      "answer_key": null,
-      "key_facts": [],
-      "sources": [],
-      "human_verdict": null,
-      "reviewer_notes": ""
-    },
-    {
       "id": "T5-U01",
       "topic_id": "T5",
       "question": "What exact per-gigabyte price will a named cloud provider charge this organization for cross-region replication traffic in its next contract year?",
@@ -289,152 +276,6 @@
       "answer_key": null,
       "key_facts": [],
       "sources": [],
-      "human_verdict": null,
-      "reviewer_notes": ""
-    },
-    {
-      "id": "T1-A06",
-      "topic_id": "T1",
-      "question": "How does probabilistic early expiration (XFetch) reduce stampedes without a lock?",
-      "phase3_label": "answerable",
-      "adjudicated_label": "unanswerable",
-      "accepted": [],
-      "answer_key": "Each request independently decides whether to refresh the cached value before its nominal expiry, with a probability that rises as expiry approaches. A common test refreshes when current time minus delta times beta times the logarithm of a random value has reached the expiry, where delta is the observed regeneration time and beta is typically 1.0. One request refreshes slightly early while the others keep serving the cached value, smoothing the spike. The cache item must also store delta and, when expiry is not readable, the expiry time.",
-      "key_facts": [
-        "The refresh probability increases as the key gets closer to expiration.",
-        "The decision compares current time with expiry through delta, beta, and a random factor.",
-        "A beta above 1 favors earlier refreshes; the referenced authors report that beta equal to 1 works well.",
-        "The approach needs extra memory for delta and, if necessary, the expiry timestamp.",
-        "Multiple independent early refreshes remain possible, so the effect is mitigation rather than an absolute guarantee."
-      ],
-      "sources": [
-        {
-          "title": "Cache stampede",
-          "url": "https://en.wikipedia.org/wiki/Cache_stampede",
-          "accessed": "2026-10-24"
-        },
-        {
-          "title": "Cache Stampede Prevention",
-          "url": "https://redis.antirez.com/fundamental/cache-stampede-prevention.md",
-          "accessed": "2026-10-24"
-        }
-      ],
-      "human_verdict": null,
-      "reviewer_notes": ""
-    },
-    {
-      "id": "T2-A03",
-      "topic_id": "T2",
-      "question": "For an M/M/1 server whose mean service time is fixed, by what factors do the mean sojourn time and the mean number of jobs in the system increase when utilization rises from 0.5 to 0.9?",
-      "phase3_label": "answerable",
-      "adjudicated_label": "unanswerable",
-      "accepted": [],
-      "answer_key": "Mean sojourn time is tau/(1 - rho), so it rises from 2 tau at rho = 0.5 to 10 tau at rho = 0.9, a fivefold increase. Mean system size is rho/(1 - rho), which rises from 1 to 9, a ninefold increase. This divergence as rho approaches 1 is why modest utilization changes near saturation produce much larger latency and backlog changes.",
-      "key_facts": [
-        "Mean sojourn time = tau/(1 - rho).",
-        "Raising utilization from 0.5 to 0.9 multiplies mean time by 5.",
-        "Mean system size rises from 1 to 9, a factor of 9.",
-        "Both measures diverge as rho approaches 1."
-      ],
-      "sources": [
-        {
-          "title": "M/M/1 queue",
-          "url": "https://en.wikipedia.org/wiki/M/M/1_queue",
-          "accessed": "2026-10-24"
-        },
-        {
-          "title": "Kingman's formula",
-          "url": "https://en.wikipedia.org/wiki/Kingman%27s_formula",
-          "accessed": "2026-10-24"
-        }
-      ],
-      "human_verdict": null,
-      "reviewer_notes": ""
-    },
-    {
-      "id": "T3-A05",
-      "topic_id": "T3",
-      "question": "What does Flexible Paxos relax about quorum intersection, and what does that relaxation permit in a six-acceptor deployment?",
-      "phase3_label": "answerable",
-      "adjudicated_label": "unanswerable",
-      "accepted": [],
-      "answer_key": "Flexible Paxos shows that Paxos needs intersection only between phase-1 and phase-2 quorums, not majority quorums in both phases, and phase-2 quorums may even be disjoint from each other. With six acceptors, where a strict majority is four, a deployment may use phase-1 quorums of four and phase-2 quorums of three because 4 + 3 exceeds 6. For an even number of acceptors this can shrink the second-phase quorum by one and improve steady-state availability.",
-      "key_facts": [
-        "Intersection is required between every phase-1 and every phase-2 quorum.",
-        "Phase-2 quorums need not intersect one another.",
-        "For six acceptors, phase-1 of four and phase-2 of three are safe.",
-        "Even-sized deployments can reduce the phase-2 quorum by one."
-      ],
-      "sources": [
-        {
-          "title": "Flexible Paxos: Quorum intersection revisited (abstract)",
-          "url": "https://arxiv.org/abs/1608.06696",
-          "accessed": "2026-10-24"
-        },
-        {
-          "title": "Flexible Paxos: Quorum intersection revisited (full text, ar5iv)",
-          "url": "https://ar5iv.labs.arxiv.org/html/1608.06696",
-          "accessed": "2026-10-24"
-        }
-      ],
-      "human_verdict": null,
-      "reviewer_notes": ""
-    },
-    {
-      "id": "T5-A03",
-      "topic_id": "T5",
-      "question": "With a replication factor of three, how does Apache Cassandra choose the replicas for a key, and what benefit and what risk come from giving each physical node many tokens?",
-      "phase3_label": "answerable",
-      "adjudicated_label": "unanswerable",
-      "accepted": [],
-      "answer_key": "A coordinator hashes the partition key to a position on the token ring and walks clockwise until it has met three distinct nodes, which become the replicas. Giving each physical node multiple tokens, called virtual nodes, makes a small cluster behave like a larger one, so a new or decommissioned node exchanges roughly equal data with many neighbours. The trade-off is that every token adds up to 2*(RF-1) neighbours, increasing the number of failure combinations that can make part of the ring unavailable and adding repair work.",
-      "key_facts": [
-        "A key is hashed to a token and the ring is walked clockwise to find distinct replicas.",
-        "With RF=3 the write targets three distinct physical nodes.",
-        "Virtual nodes let a new node take approximately equal amounts of data from many nodes.",
-        "Each token introduces up to 2*(RF-1) additional ring neighbours."
-      ],
-      "sources": [
-        {
-          "title": "Apache Cassandra architecture guide: Dynamo-style partitioning",
-          "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
-          "accessed": "2026-10-24"
-        },
-        {
-          "title": "Amazon Dynamo SOSP 2007 paper on highly available key-value storage",
-          "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
-          "accessed": "2026-10-24"
-        }
-      ],
-      "human_verdict": null,
-      "reviewer_notes": ""
-    },
-    {
-      "id": "T6-A03",
-      "topic_id": "T6",
-      "question": "For a 99.9% SLO, what long and short windows, burn rates, and error-budget percentages does the Google SRE Workbook recommend for page and ticket alerts?",
-      "phase3_label": "answerable",
-      "adjudicated_label": "unanswerable",
-      "accepted": [],
-      "answer_key": "It recommends two page-level rules: a 14.4 burn rate over a one-hour long window and a five-minute short window, consuming 2% of the budget, and a 6 burn rate over a six-hour long window and a 30-minute short window, consuming 5%. A ticket-level rule uses a burn rate of 1 over a three-day long window and a six-hour short window, consuming 10% of the budget. The short window is one-twelfth the long window.",
-      "key_facts": [
-        "Page rule: one-hour long window, five-minute short window, burn rate 14.4, 2% of budget.",
-        "Page rule: six-hour long window, 30-minute short window, burn rate 6, 5% of budget.",
-        "Ticket rule: three-day long window, six-hour short window, burn rate 1, 10% of budget.",
-        "The recommended short window is one-twelfth of the long window."
-      ],
-      "sources": [
-        {
-          "title": "Alerting on SLOs (Google SRE Workbook, Chapter 5)",
-          "url": "https://sre.google/workbook/alerting-on-slos/",
-          "accessed": "2026-10-24"
-        },
-        {
-          "title": "Implementing SLOs (Google SRE Workbook, Chapter 2)",
-          "url": "https://sre.google/workbook/implementing-slos/",
-          "accessed": "2026-10-24"
-        }
-      ],
       "human_verdict": null,
       "reviewer_notes": ""
     }

@@ -221,16 +221,17 @@ not proof of answer correctness, and does not change the sufficient status.
 ## Topic-isolated phase 3 (2026-10-24)
 
 Six topic-isolated authors produced 72 questions; four fresh adjudicators mapped
-them to Tycho. Result: 19 answerable and 53 unanswerable, with 29 author
-answerable claims unsupported by the corpus. Topics T1-T3 are dev and T4-T6 are
-held-out; no model was trained on phase 3.
+them to Tycho. Twenty-nine author-answerable items had no Tycho support and are
+preserved in the excluded audit list, not in the scored set. The filtered set
+has 43 items: 19 answerable and 24 unanswerable; 25 dev and 18 held-out. No model
+was trained or tuned on phase 3.
 
-A 15-item (20.8%) human sample is preserved at
+A 9-item (20.9%) human sample is preserved at
 [phase3-human-sample.json](../evaluation/phase3-human-sample.json) with the
 [review packet](PHASE3-HUMAN-REVIEW-PACKET.md). Human review is pending, not
-performed. The phase-2 evidence gate abstains on 30/30 held-out unanswerable
-items but retains only 1/6 answerable items, so phase 3 does not justify
-promoting the gate.
+performed. The phase-2 evidence gate abstains on all 12 held-out unanswerable
+items but retains only 1/6 answerable items; retrieval page/section hit@5 is 7/13
+dev and 3/6 held-out. Phase 3 does not justify promoting the gate.
 
 Phase 3 is an agent-authored/agent-adjudicated diagnostic. It is not human
 review, benchmark, sufficient coverage or owner acceptance.

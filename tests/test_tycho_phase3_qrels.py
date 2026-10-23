@@ -14,28 +14,26 @@ class Phase3QrelsTests(unittest.TestCase):
         self.sample = json.loads(SAMPLE.read_text(encoding="utf-8"))
 
     def test_topic_counts_and_split(self):
-        self.assertEqual(len(self.data["items"]), 72)
+        self.assertEqual(len(self.data["items"]), 43)
         labels = [item["final_label"] for item in self.data["items"]]
         self.assertEqual(labels.count("answerable"), 19)
-        self.assertEqual(labels.count("unanswerable"), 53)
+        self.assertEqual(labels.count("unanswerable"), 24)
+        self.assertEqual(len(self.data["excluded"]), 29)
         self.assertEqual(
             sum(1 for item in self.data["items"] if item["split"] == "dev"),
-            36)
+            25)
         self.assertEqual(
             sum(1 for item in self.data["items"]
-                if item["split"] == "heldout"), 36)
+                if item["split"] == "heldout"), 18)
         self.assertEqual(
             {item["topic_id"] for item in self.data["items"]},
             {"T1", "T2", "T3", "T4", "T5", "T6"})
 
-    def test_label_changes_are_recorded(self):
-        changed = [item for item in self.data["items"]
-                   if item["phase3_label"] != item["final_label"]]
-        self.assertEqual(len(changed), 29)
-        for item in changed:
+    def test_excluded_unsupported_items_are_preserved(self):
+        self.assertEqual(len(self.data["excluded"]), 29)
+        for item in self.data["excluded"]:
             self.assertEqual(item["phase3_label"], "answerable")
             self.assertEqual(item["final_label"], "unanswerable")
-            self.assertEqual(item["accepted"], [])
 
     def test_answerable_support_is_verbatim(self):
         for item in self.data["items"]:
@@ -50,14 +48,14 @@ class Phase3QrelsTests(unittest.TestCase):
                 self.assertIn(quote, body, item["id"])
 
     def test_human_sample_is_pending_and_stratified(self):
-        self.assertEqual(self.sample["sample_size"], 15)
-        self.assertAlmostEqual(self.sample["fraction"], 15 / 72, places=3)
+        self.assertEqual(self.sample["sample_size"], 9)
+        self.assertAlmostEqual(self.sample["fraction"], 9 / 43, places=3)
         self.assertEqual(self.sample["status"], "human-review-pending")
         self.assertTrue(all(item["human_verdict"] is None
                             for item in self.sample["items"]))
         labels = [item["adjudicated_label"] for item in self.sample["items"]]
         self.assertEqual(labels.count("answerable"), 5)
-        self.assertEqual(labels.count("unanswerable"), 10)
+        self.assertEqual(labels.count("unanswerable"), 4)
 
 
 if __name__ == "__main__":
