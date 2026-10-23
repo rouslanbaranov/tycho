@@ -125,17 +125,9 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Domain-Driven Design and Bounded Context
 
-A bounded context is a boundary within which one model and its ubiquitous language stay
-consistent. A shared word "item" should not force a database schema shared by all four contexts.
-Each context owns its terms, invariants and release cadence.
 
-A boundary is weak if none of its business rules can be stated separately. It is overextended if
-unrelated decisions must share transactions simply because they live behind one URL. A boundary can
-rot through shared tables, a common entity reused across contexts or a workflow that writes two
-owners' state; detect those paths and assign one authority per invariant.
+A bounded context owns one model and its language; the owner must name the domain expert
+and the translation map to adjacent contexts. Translation and maintenance are the cost; a shared
+model is the alternative when contexts do not genuinely diverge. Deployment boundaries follow
+ownership and failure containment, not the number of model names. A context map records the translation and ownership; without it, shared terms hide the boundary. A context map should record upstream/downstream relationships and the translation owner for each shared term. A context map records upstream and downstream relationships and the translation owner for each shared term. The domain expert accepts the model and its language; without that owner the boundary is decorative. Review the map when a shared term, authority or team boundary changes.
 
-Nor must four contexts become four microservices: a modular application could implement them with
-explicit in-process interfaces and one deployable. Translation cost between contexts and domain-
-expert validation are explicit fit costs; a boundary without an expert and a translation owner is
-not validated. Choose deployment boundaries from ownership and failure containment, not from the
-number of model names.

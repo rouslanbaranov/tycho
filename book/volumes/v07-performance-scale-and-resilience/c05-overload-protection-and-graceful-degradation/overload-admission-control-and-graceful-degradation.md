@@ -159,18 +159,11 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ### Fallback
 
-A fallback returns a declared alternate result or dependency when the primary is unavailable. It
-must preserve the same correctness contract: a cached, fabricated or partial value is not a
-successful authoritative result.
 
-Name the fallback's freshness, authority and user-visible label; fail explicitly if none is valid.
-The fallback needs an owner, a trigger distinct from ordinary load and a test that proves the
-alternate path is safe for the operation's effect. A fallback that writes cannot be treated as a
-read-only substitution.
-
-An explicit failure or a queued retry may be safer than a plausible but wrong fallback. Use a
-fallback only when the degraded answer is still a valid business outcome and the caller can
-recognize it. Record the fallback in the response.
+A fallback is a declared alternate outcome with the same correctness contract; it must be
+cheaper, independently safe and labelled. The owner defines freshness, authority, trigger and a test
+that the alternate path is safe for the effect. A fallback that writes is not a read-only
+substitution. An explicit failure is preferable when no safe alternate exists. Exercise the fallback path in the same load test as the primary, and record the trigger and user-visible label. Exercise the fallback in the same load test as the primary, and record the trigger and user-visible label. A fallback that writes needs its own idempotency and repair path. Test a stale alternate and an unavailable fallback. The owner should document the trigger, label and repair path for the fallback.
 
 ### Graceful Degradation
 
@@ -190,30 +183,19 @@ be tested under the load that triggers the mode.
 
 ### Load Shedding
 
-Shedding rejects or drops work before a scarce resource is exhausted so accepted work can meet its
-deadline. It needs a bottleneck-specific signal, fair principal policy and retry guidance.
 
-A rejection without a retry hint can create a synchronized retry storm; shedding one tenant's
-traffic can be unfair if the policy does not declare quotas. Return a typed rejection with a retry
-class and measure shed versus accepted work; a shed counter without an outcome label hides whether
-the right work was rejected.
-
-Queueing/backpressure, admission control or provisioning may be preferable when the work is
-deferrable or the bottleneck can be expanded. Shedding is a fit when rejecting early is cheaper and
-safer than queueing. Record the rejected class now.
+Shedding rejects work before a scarce resource is exhausted; the owner defines the bottleneck
+signal, criticality/fairness policy and retry class. A typed rejection with retry guidance prevents a
+synchronized storm, and a shed counter must record the rejected class. Queueing, admission control or
+provisioning are the alternatives when work is deferrable. Test the policy under the real overload shape. The rejection should carry the retry class and the protected bottleneck, not a generic failure code. The rejection carries the retry class and protected bottleneck, not a generic failure. Record the rejected class and measure shed versus accepted work. Test a synchronized retry and an unfair tenant mix. The owner should document the rejection budget, the escalation path and the audit trail.
 
 ### Throttling
 
-Throttling paces or slows admitted work below offered load to protect a dependency. It needs a
-measurable bottleneck, a bounded queue and propagation of backpressure.
 
-Throttling can hide capacity loss, add latency to essential classes or turn a transient spike into a
-long tail; measure accepted work, queue age and per-class latency. The throttle must state whether it
-delays work or rejects it, and which class gets priority when the dependency is saturated.
-
-Admission control, queueing or provisioning may be preferable when work is deferrable or capacity
-can expand. Throttling is a fit when the dependency needs a sustained lower rate, not merely a
-shorter queue. The throttle owner must review queue age during every incident and in real time.
+Throttling paces admitted work to protect a dependency; the owner defines the measurable
+bottleneck, bounded queue/backpressure and whether work is delayed or rejected. It must name the
+priority class when saturated and measure queue age and per-class latency. Admission control or
+provisioning is the alternative when work is deferrable. A throttle without a bounded queue only moves the overload downstream. Publish the limit, window and retry-after so clients can pace instead of retrying blindly. Publish the limit, window and retry-after so clients pace rather than retry blindly. Record whether work is delayed or rejected and which class wins when saturated. Test a burst, a long queue and a dependency slowdown. The owner should document the limit source and the escalation path.
 
 ### Rate Limiting
 

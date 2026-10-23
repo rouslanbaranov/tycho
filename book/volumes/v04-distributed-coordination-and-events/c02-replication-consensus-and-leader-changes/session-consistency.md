@@ -152,16 +152,9 @@ Record invocation and completion, session identifier, operation identifier, obje
 
 ### Session Consistency
 
-Session consistency gives one client read-your-writes and monotonic reads by carrying a session token
-that records the positions it has observed. The token is client-visible state, not a global
-guarantee.
 
-A successful write returns partition and commit position. A read returns the position of the snapshot
-it actually read. The client retains the maximum required position for each partition it has observed
-or written. A stable log lineage or epoch-aware comparison must distinguish an established commit from
-a divergent suffix.
+A session token carries observed positions so one client gets read-your-writes and monotonic
+reads. The owner defines how the router waits, reroutes or returns a retryable failure; it must not
+silently serve an older snapshot. Linearizable reads need quorum or read-index and are a separate
+choice. Session consistency is one client's continuity, not a global guarantee. The router should reject a token from a divergent epoch and return the last applied position. Reject a token from a divergent epoch and return the last applied position. Record the wait or reroute policy and the retryable failure. Test a lagging replica, a leader change and a token that outlives the session. The owner should document the token lifetime and the repair path for a divergent epoch.
 
-If none can, return a retryable failure that preserves the token. Do not silently serve an older
-snapshot to keep a latency target. Linearizable reads require quorum or read-index and accept higher
-latency. Session consistency is a fit when one client needs continuity without a global linearizable
-read.

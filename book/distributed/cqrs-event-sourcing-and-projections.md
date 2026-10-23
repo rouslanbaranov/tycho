@@ -306,31 +306,17 @@ cost and stale rows are acceptable between refreshes.
 
 ### Command Query Responsibility Segregation (CQRS)
 
-The CQRS design separates update and read representations so each can optimize for different needs.
-The service may use separate objects, tables or storage engines; physical isolation is a choice, not
-an inherent definition.
 
-Before catch-up, a client querying the projection may not see its own accepted change. Projection
-lag, duplicate apply, cursor gaps and schema drift are common; make the apply idempotent, expose the
-applied position and define the read-after-write contract. Commit the view update and cursor
-atomically, or make replay idempotent; rebuild with side effects disabled. A single model/CRUD
-service, a synchronous authority read or an event-sourced reconstruction may be preferable when
-read/write separation complexity exceeds the measured benefit.
-
-CQRS is a fit when the read and write shapes genuinely differ and the team can operate the
-projection; it is not a synonym for event sourcing or microservices.
+CQRS gives command invariants to the write model and a derived view to the read
+model. The write owner defines the event and cursor contract; the projection owner defines position,
+idempotent apply, read-after-write wait and rebuild mode. The stores may share a database; physical
+separation is a choice. CQRS is not event sourcing. A command handler should reject a stale expected version, and a query should declare whether it accepts the projection lag. The owner should record command and event versions, the expected aggregate version and the replay cursor. A rebuild runs with side effects disabled; a query that needs a newer position must wait or fail. Alert on cursor gaps and schema mismatches. A command without an expected version is not safe to retry.
 
 ### CQRS Read Projections
 
-Fowler's CQRS description and Chris Richardson's public CQRS pattern both show a separate query view
-that can follow events from the owning service. The projection is a derived read model, not the
-command authority.
 
-Before catch-up, a client querying the projection may not see its own accepted change. A stale
-projection can return an old status after a commit, and a rebuild can serve mixed revisions. Record
-the applied position, bound the wait for a required version and fail explicitly when it is not
-reached; make apply idempotent and test a cursor gap.
+A projection is a derived store with an event contract and an applied cursor. Its owner
+defines the freshness bound, the wait or retry for a required version, and a rebuild that disables
+side effects. A stale row is a declared state, not a hidden cache miss. A synchronous authority read
+is the alternative when the latest commit is required. The projection should expose its applied cursor to observability and reject an event with an unexpected schema version. Publish the event schema version, applied cursor and rejected-event count. A rebuild preserves source offsets and disables side effects. A query that needs a newer position waits or fails; it never falls back silently. Alert on cursor gaps, schema mismatches and rebuild age.
 
-A synchronous authority read or a cache-aside view may be preferable when the read must see the
-latest commit. CQRS read projections are a fit when read scale and query shape justify a derived
-store and the client can tolerate the declared freshness.

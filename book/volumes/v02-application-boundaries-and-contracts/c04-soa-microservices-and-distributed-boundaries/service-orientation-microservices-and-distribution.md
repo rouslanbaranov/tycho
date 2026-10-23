@@ -91,20 +91,11 @@ are not measured requirements.
 
 ### Microservices Architecture
 
-Microservices emphasize independently deployable capabilities with their own data and lifecycle.
-The unit of independence is the deployable service plus its data ownership, not the number of
-repositories.
 
-Each capability needs a single authoritative owner for its data and invariant, and independent
-deployment must be real rather than a container label. Shared databases, synchronized releases and
-chatty remote calls can recreate a distributed monolith; retries, version skew and partial failure
-are common. Timeouts, idempotency and observability are part of the failure budget; remaining
-limits are remote-call cost, data consistency and operational surface. Define the contract, the
-failure budget and the local transaction boundary before splitting the deployment.
-
-A modular monolith or layered application may be preferable when independent deployment and failure
-containment are not measured requirements. Microservices are a fit when separate ownership,
-independent release cadence and failure isolation justify the remote-call and data-consistency cost.
+A service owns a deployable and its data, but the failure budget is the real cost: timeouts,
+idempotency, observability and partial failure. Shared databases or synchronized releases recreate a
+distributed monolith. A modular monolith is the alternative when independent failure is not required.
+The owner must fund the remote-call and operational surface. The owner should record which calls are retried, how version skew is detected and which dependency failure may degrade the user journey. Record which calls are retried, how version skew is detected and which dependency failure may degrade the user journey. The owner funds the remote-call budget, dashboards and on-call path. Review the split when the failure domain or team boundary changes. The owner should also record the split rationale and the rollback path.
 
 ### Service-Oriented Architecture (SOA)
 
