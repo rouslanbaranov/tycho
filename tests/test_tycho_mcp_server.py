@@ -6,12 +6,14 @@ not test a hosted endpoint, an external SDK, authentication or answer quality.
 """
 import io
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -70,6 +72,9 @@ class McpServerTests(unittest.TestCase):
     def setUpClass(cls):
         cls.tmp = tempfile.TemporaryDirectory(prefix="tycho-mcp-fixture-")
         cls.root = Path(cls.tmp.name)
+        cls.external = tempfile.TemporaryDirectory(
+            prefix="tycho-mcp-log-")
+        cls.log_dir = Path(cls.external.name)
         (cls.root / "book").mkdir()
         (cls.root / "schemas").mkdir()
         (cls.root / "generated").mkdir()
@@ -232,6 +237,7 @@ class McpServerTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        cls.external.cleanup()
         cls.tmp.cleanup()
 
     @classmethod
@@ -420,7 +426,10 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["registry_entries"], 2)
         self.assertEqual(payload["coverage_summary"],
                          {"partial-bounded": 2})
-        self.assertEqual(payload["sufficiency"]["sufficient"], 0)
+        self.assertEqual(
+            payload["sufficiency"]["sufficient_entries"], 0)
+        self.assertEqual(
+            payload["sufficiency"]["registry_status"], "draft")
         self.assertEqual(payload["citation_scheme"],
                          mcp_server.PATTERN_CITATION_SCHEME)
         self.assertEqual(
@@ -430,6 +439,7 @@ class McpServerTests(unittest.TestCase):
         )
         self.assertEqual(payload["patterns"][0]["citation_scheme"],
                          mcp_server.PATTERN_CITATION_SCHEME)
+        self.assertEqual(payload["patterns"][0]["source_units"], [])
         filtered = self.call(server, "tycho_patterns", {
             "family": "family-b",
         })["structuredContent"]
@@ -453,6 +463,12 @@ class McpServerTests(unittest.TestCase):
         self.assertFalse(second["truncated"])
         self.assertEqual(second["patterns"][0]["pattern_id"],
                          "tycho.pattern.beta-pattern")
+        past = self.call(server, "tycho_patterns", {
+            "offset": 99,
+        })["structuredContent"]
+        self.assertEqual(past["status"], "ok")
+        self.assertEqual(past["returned"], 0)
+        self.assertEqual(past["total"], 2)
 
     def test_pattern_get_returns_card_owner_and_coverage(self):
         payload = self.call(self.server(), "tycho_pattern", {
@@ -471,9 +487,10 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["owner_read"],
                          {"tool": "tycho_page",
                           "arguments": {"path": "book/alpha.md"}})
-        self.assertEqual(payload["sufficiency"]["state"],
+        self.assertEqual(payload["sufficiency"]["coverage_state"],
                          "partial-bounded")
         self.assertFalse(payload["sufficiency"]["sufficient"])
+        self.assertEqual(payload["pattern"]["source_units"], [])
         missing = self.call(self.server(), "tycho_pattern", {
             "pattern_id": "tycho.pattern.missing-pattern",
         })
@@ -495,7 +512,7 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["current_registry_snapshot"], snapshot)
 
     def test_query_log_is_opt_in_and_search_only(self):
-        log_path = self.root / "queries.jsonl"
+        log_path = self.log_dir / "queries.jsonl"
         if log_path.exists():
             log_path.unlink()
         server = mcp_server.TychoMcpServer(
@@ -526,7 +543,7 @@ class McpServerTests(unittest.TestCase):
         self.assertNotIn("query_log", plain)
 
     def test_query_log_failure_does_not_break_search(self):
-        log_path = self.root / "missing" / "queries.jsonl"
+        log_path = self.log_dir / "missing" / "queries.jsonl"
         server = mcp_server.TychoMcpServer(
             self.root, query_log=log_path)
         result = self.call(server, "tycho_search", {"query": "zebra"})
@@ -534,7 +551,7 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(
             result["structuredContent"]["query_log"], "not-available")
 
-    def test_query_log_rejects_protected_special_and_symlink_paths(self):
+    def test_query_log_rejects_root_protected_hardlink_and_special(self):
         protected = self.root / "book" / "queries.jsonl"
         server = mcp_server.TychoMcpServer(
             self.root, query_log=protected)
@@ -543,7 +560,27 @@ class McpServerTests(unittest.TestCase):
             result["structuredContent"]["query_log"], "not-available")
         self.assertFalse(protected.exists())
 
-        directory = self.root / "log-dir"
+        readme = self.root / "book" / "README.md"
+        original = readme.read_text(encoding="utf-8")
+        server = mcp_server.TychoMcpServer(
+            self.root, query_log=readme)
+        result = self.call(server, "tycho_search", {"query": "zebra"})
+        self.assertEqual(
+            result["structuredContent"]["query_log"], "not-available")
+        self.assertEqual(readme.read_text(encoding="utf-8"), original)
+
+        git_dir = self.root / ".git"
+        git_dir.mkdir()
+        config = git_dir / "config"
+        config.write_text("x", encoding="utf-8")
+        server = mcp_server.TychoMcpServer(
+            self.root, query_log=config)
+        result = self.call(server, "tycho_search", {"query": "zebra"})
+        self.assertEqual(
+            result["structuredContent"]["query_log"], "not-available")
+        self.assertEqual(config.read_text(encoding="utf-8"), "x")
+
+        directory = self.log_dir / "log-dir"
         directory.mkdir()
         server = mcp_server.TychoMcpServer(
             self.root, query_log=directory)
@@ -551,9 +588,9 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(
             result["structuredContent"]["query_log"], "not-available")
 
-        target = self.root / "target.jsonl"
+        target = self.log_dir / "target.jsonl"
         target.write_text("", encoding="utf-8")
-        link = self.root / "log-link.jsonl"
+        link = self.log_dir / "log-link.jsonl"
         try:
             link.symlink_to(target)
         except OSError:
@@ -564,6 +601,29 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(
             result["structuredContent"]["query_log"], "not-available")
         self.assertEqual(target.read_text(encoding="utf-8"), "")
+
+        alpha = self.root / "book" / "alpha.md"
+        before = alpha.read_text(encoding="utf-8")
+        hardlink = self.log_dir / "hardlink.jsonl"
+        os.link(alpha, hardlink)
+        server = mcp_server.TychoMcpServer(
+            self.root, query_log=hardlink)
+        result = self.call(server, "tycho_search", {"query": "zebra"})
+        self.assertEqual(
+            result["structuredContent"]["query_log"], "not-available")
+        self.assertEqual(alpha.read_text(encoding="utf-8"), before)
+
+        fifo = self.log_dir / "fifo.jsonl"
+        try:
+            os.mkfifo(fifo)
+        except OSError:
+            fifo = None
+        if fifo is not None:
+            server = mcp_server.TychoMcpServer(
+                self.root, query_log=fifo)
+            result = self.call(server, "tycho_search", {"query": "zebra"})
+            self.assertEqual(
+                result["structuredContent"]["query_log"], "not-available")
 
     def test_stdio_protocol_error_responses(self):
         stdin = io.StringIO("{bad\n[]\n")
@@ -630,6 +690,128 @@ class McpServerTests(unittest.TestCase):
         with self.assertRaises(mcp_server.ProtocolFailure) as caught:
             self.request(modern, 1, "ping", {"_meta": self.meta()})
         self.assertEqual(caught.exception.code, -32601)
+
+    def test_legacy_progress_meta_is_not_modern(self):
+        server = self.initialize(self.server())
+        response = self.request(server, 2, "tools/call", {
+            "name": "tycho_search",
+            "arguments": {"query": "zebra"},
+            "_meta": {"progressToken": "p-1"},
+        })
+        result = response["result"]
+        self.assertFalse(result["isError"])
+        self.assertEqual(
+            result["structuredContent"]["status"], "ok")
+
+        fresh = self.server()
+        with self.assertRaises(mcp_server.ProtocolFailure) as caught:
+            self.request(fresh, 1, "tools/call", {
+                "name": "tycho_search",
+                "arguments": {"query": "zebra"},
+                "_meta": {"progressToken": "p-1"},
+            })
+        self.assertEqual(caught.exception.code, -32602)
+
+    def test_modern_tools_call_envelope(self):
+        response = self.request(self.server(), 1, "tools/call", {
+            "_meta": self.meta(),
+            "name": "tycho_search",
+            "arguments": {"query": "zebra"},
+        })
+        result = response["result"]
+        self.assertEqual(result["resultType"], "complete")
+        self.assertEqual(
+            result["_meta"][mcp_server.META_SERVER]["name"],
+            mcp_server.SERVER_NAME)
+        self.assertIn("content", result)
+        self.assertIn("structuredContent", result)
+        self.assertFalse(result["isError"])
+
+    def test_notifications_produce_no_response(self):
+        stdin = io.StringIO(
+            '{"jsonrpc":"2.0","method":"notifications/initialized"}\n'
+            '{"jsonrpc":"2.0","method":"notifications/cancelled",'
+            '"params":[]}\n')
+        stdout = io.StringIO()
+        mcp_server.serve(self.server(), stdin=stdin, stdout=stdout)
+        self.assertEqual(stdout.getvalue(), "")
+
+    def test_page_hash_reconstruction_and_symlink_refusals(self):
+        server = self.server()
+        db, manifest = server.open_snapshot()
+        try:
+            rows = db.execute(
+                "SELECT section_key,document_id,section_id,path,heading,"
+                "heading_level,title,kind,evidence_status,content,char_start,"
+                "char_end,document_sha256 FROM sections WHERE path = ? "
+                "ORDER BY char_start",
+                ("book/alpha.md",),
+            ).fetchall()
+        finally:
+            db.close()
+        self.assertGreaterEqual(len(rows), 2)
+        source = self.root / "book" / "alpha.md"
+        original = source.read_text(encoding="utf-8")
+        try:
+            source.write_text(
+                original + "\n<!-- changed -->\n", encoding="utf-8")
+            changed = server.page_payload(
+                rows, manifest, "book/alpha.md", 0, 10, False)
+            self.assertEqual(changed["status"], "snapshot-mismatch")
+        finally:
+            source.write_text(original, encoding="utf-8")
+        broken = [dict(row) for row in rows]
+        broken[1]["char_start"] += 1
+        no_reconstruction = server.page_payload(
+            broken, manifest, "book/alpha.md", 0, 10, False)
+        self.assertEqual(no_reconstruction["status"], "not-available")
+        link = self.root / "book" / "link.md"
+        link.symlink_to(source)
+        try:
+            link_rows = [dict(row) for row in rows]
+            for row in link_rows:
+                row["path"] = "book/link.md"
+            symlinked = server.page_payload(
+                link_rows, manifest, "book/link.md", 0, 10, False)
+            self.assertEqual(symlinked["status"], "not-available")
+        finally:
+            link.unlink()
+
+    def test_registry_failure_is_path_free(self):
+        server = mcp_server.TychoMcpServer(
+            self.root,
+            pattern_registry=self.root / "missing-registry.json",
+        )
+        result = self.call(server, "tycho_patterns", {})
+        payload = result["structuredContent"]
+        self.assertEqual(payload["status"], "not-available")
+        self.assertNotIn(str(self.root), payload["error"])
+
+    def test_legacy_version_and_cursor_rejections(self):
+        fresh = self.server()
+        with self.assertRaises(mcp_server.ProtocolFailure) as caught:
+            self.request(fresh, 1, "initialize", {
+                "protocolVersion": "1900-01-01",
+                "capabilities": {},
+            })
+        self.assertEqual(caught.exception.code, -32602)
+        legacy = self.initialize(self.server())
+        with self.assertRaises(mcp_server.ProtocolFailure) as caught:
+            self.request(legacy, 2, "tools/list", {"cursor": "next"})
+        self.assertEqual(caught.exception.code, -32602)
+
+    def test_evidence_wrapper_binds_snapshot_and_trust(self):
+        fake = {"status": "ok", "search_snapshot": self.snapshot}
+        with patch.object(
+                mcp_server.section_search, "evidence", return_value=fake):
+            result = self.call(self.server(), "tycho_evidence", {
+                "document_id": "tycho.page.alphaa",
+            })
+        payload = result["structuredContent"]
+        self.assertEqual(payload["status"], "ok")
+        self.assertEqual(payload["content_trust"],
+                         mcp_server.CONTENT_TRUST)
+        self.assertEqual(payload["tool"], "tycho_evidence")
 
     def test_evidence_requires_exactly_one_identifier(self):
         with self.assertRaises(mcp_server.ProtocolFailure) as caught:

@@ -1,7 +1,8 @@
 # Current state — Tycho
 
-> **Current structural candidate — 2026.10.2-rc.1 (2026-10-21):** 11 volumes,
-> 82 chapters and 419 canonical documents. V11 is a self-checked Phase 6
+> **Current structural candidate — 2026.10.2-rc.1 (2026-10-21 cut; 423
+> pages after the #228 splits):** 11 volumes, 82 chapters and 423 canonical
+> documents. V11 is a self-checked Phase 6
 > pattern-atlas candidate (#288); human review is recorded and owner acceptance
 > remains open. The #214/rc.3 status below is historical.
 
@@ -53,10 +54,13 @@ The corpus includes 29 public historical case studies and six synthetic decision
 | M9 #121 | Closed under its documented scoped acceptance |
 
 **MCP local candidate — 2026-10-23 (#57):** a read-only stdio adapter,
-offline tests and a one-off official SDK 2.3.0 smoke exist on a feature
-branch; no hosted endpoint, repository SDK pin, independent review or
-live-service acceptance is claimed. See [the MVP record](MCP-READ-ONLY-MVP.md)
-and [the SDK smoke note](MCP-SDK-SMOKE_2026-10-23.md).
+30 offline tests and a one-off official SDK 2.3.0 smoke exist on a feature
+branch; two independent agent reviews returned ACCEPT-WITH-FINDINGS and their
+findings are addressed. No hosted endpoint, repository SDK pin, human review
+or live-service acceptance is claimed. See
+[the MVP record](MCP-READ-ONLY-MVP.md),
+[the SDK smoke note](MCP-SDK-SMOKE_2026-10-23.md) and
+[the independent agent review](INDEPENDENT-AGENT-REVIEW-MCP_2026-10-23.md).
 
 ## Readable directory layout — #214
 

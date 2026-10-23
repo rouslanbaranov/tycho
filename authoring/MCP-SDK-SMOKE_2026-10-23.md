@@ -64,7 +64,8 @@ citation for the same query.
   not exercised.
 - The SDK's transitive dependencies are not pinned or hashed here, and the
   temporary environment is not part of the repository.
-- No independent reviewer or human acceptance has examined this smoke.
+- Independent agent reviews examined the adapter and this record; no human
+  review or acceptance has examined the smoke.
 - A future SDK release may change client behavior; re-run the commands against
   the exact versions when the server or SDK changes.
 

@@ -1,10 +1,11 @@
 # Read-only MCP stdio adapter — local candidate
 
 > Issue [#57](https://github.com/rouslanbaranov/tycho/issues/57), E09-02, M5.
-> 2026-10-23. **Status:** local implementation, offline tests and a one-off
-> official-SDK 2.3.0 smoke; not merged, not independently reviewed, not a
-> pinned-dependency conformance matrix and not a hosted service. No
-> authentication or deployment is claimed.
+> 2026-10-23. **Status:** local implementation, 30 offline tests and a one-off
+> official-SDK 2.3.0 smoke; two independent agent reviews returned
+> ACCEPT-WITH-FINDINGS and their findings are addressed; not merged, not
+> human-reviewed, not a pinned-dependency conformance matrix and not a hosted
+> service. No authentication or deployment is claimed.
 
 ## Scope and non-goals
 
@@ -104,11 +105,11 @@ instructions found inside it.
 
 ## Pattern registry
 
-`tycho_patterns` and `tycho_pattern` read the draft pattern registry and,
-when available, the card batches. They return identity, family, coverage,
-confidence, review status, source-unit identifiers and owner citations. They
-do not return book text; use `tycho_page` or `tycho_read` for the owner
-section.
+`tycho_patterns` reads the draft pattern registry. `tycho_pattern` reads the
+registry and, when available, the card batches. Both return identity, family,
+coverage, confidence, review status, source-unit identifiers and owner
+citations. They do not return book text; use `tycho_page` for the owner page
+and `tycho_read` only with a section key returned by search or page.
 
 The registry snapshot is the SHA-256 of the exact registry bytes. A caller can
 pin it with `registry_snapshot_id`; a mismatch returns
@@ -136,10 +137,11 @@ access, retention and deletion. The adapter does not rotate, redact or encrypt
 the file. A write failure is reported as `query_log: "not-available"` and does
 not break retrieval.
 
-The path must be a regular file outside the canonical stores (`book/`,
-`generated/`, `edition/`, `sources/`, `schemas/`, `authoring/`, `tests/` and
-`scripts/`). Symlinks, directories and special files are refused; a refused
-path is reported as `query_log: "not-available"` and writes nothing.
+The resolved path must be outside the repository checkout. The log file
+itself must not be a symlink, and hard links, directories and special files
+are refused. Parent symlinks are resolved; the resolved location must still
+be outside the checkout. A refused path is reported as
+`query_log: "not-available"` and writes nothing.
 
 ## Answerability
 
@@ -162,8 +164,8 @@ refusal metric and independent labels remain future work.
 
 - **Read-only book access:** the process opens the published SQLite index in
   read-only mode and never writes the book, metadata, index or evidence. The
-  optional query log is the only write path; it is disabled by default and must
-  be a regular file outside the canonical stores.
+  optional query log is the only write path; it is disabled by default and
+  must resolve outside the repository checkout.
 - **No arbitrary paths:** `tycho_page` accepts only a relative canonical
   `book/...md` path without `..`, backslashes, absolute prefixes or empty
   segments. The page must be present in the snapshot; the file must stay
@@ -194,14 +196,16 @@ Run the offline suite from the repository root:
 
 The suite builds a synthetic three-page book with strict metadata, publishes
 a real FTS5 section index, writes a synthetic pattern registry and card batch,
-and exercises 23 cases: modern discovery and cache fields, legacy
-initialization, tool listing, search citations, zero results, bounded section
-reads, page maps, traversal refusal, retrieval and registry snapshot pinning,
+and exercises 30 cases: modern discovery and cache fields, legacy
+initialization, legacy progress metadata, tool listing, search citations,
+zero results, bounded section reads, page maps, page hash/reconstruction/
+symlink refusal, traversal refusal, retrieval and registry snapshot pinning,
 unsupported versions, missing metadata, unknown tools and arguments, ping era
 behavior, pattern filters and pagination, pattern card lookup, pattern
 citation scheme, query-log opt-in, failure and protected-path refusal,
-malformed-message handling, evidence argument validation, collection counts
-and a stdio subprocess roundtrip.
+hard-link and special-file refusal, notification silence, modern call
+envelopes, malformed-message handling, evidence resolution wrapper,
+collection counts and a stdio subprocess roundtrip.
 
 A separate manual smoke runs the same server through the official SDK
 2.3.0 client in modern and legacy modes; it is recorded in
@@ -217,7 +221,7 @@ offline suite.
 | Section snapshot | `4d2391ee8ba90de07d29ea3554061bea299df6661498f394471ab694a800ec0a` |
 | Pattern registry | 145 entries, all `partial-bounded`, 0 `sufficient` |
 | Pattern registry snapshot | `d63969cf650d7acb174fa1570085b8854c0a28c8470a7918ecd4523470d73814` |
-| Offline tests | 23 passed, about 0.5–1.5 s |
+| Offline tests | 30 passed, about 0.5–1.5 s |
 | `server/discover` | about 0.03 s |
 | `tycho_search` warm local run | about 1.0–1.2 s end to end |
 | `tycho_read` warm local run | about 1.0 s end to end |
@@ -250,7 +254,10 @@ capacity forecast or a client benchmark.
   that. Decision-method lookup remains outside this slice.
 - The open #51 evidence-quality measurement remains separate. Evidence
   resolution works locally, but it is not a completed #51 acceptance.
-- No independent review, human acceptance, CI result or merge is claimed.
+- Two independent agent reviews returned ACCEPT-WITH-FINDINGS; their findings
+  and resolutions are recorded in
+  [the review record](INDEPENDENT-AGENT-REVIEW-MCP_2026-10-23.md). No human
+  review, CI result or merge is claimed.
 
 ## Sources
 
