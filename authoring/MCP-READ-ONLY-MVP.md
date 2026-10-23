@@ -5,8 +5,10 @@
 > official-SDK 2.3.0 smoke; two independent agent reviews and a focused delta
 > review returned ACCEPT-WITH-FINDINGS. Corrections are recorded; residual
 > limits remain below. Merged in PR #359; not human-reviewed, not a
-> pinned-dependency conformance matrix and not a hosted service. No
-> authentication or deployment is claimed.
+> pinned-dependency conformance matrix and not a production hosted service.
+> A separate authenticated Vercel HTTP test is recorded in the local container
+> record. No authentication of external clients or deployment acceptance is
+> claimed here.
 
 ## Scope and non-goals
 

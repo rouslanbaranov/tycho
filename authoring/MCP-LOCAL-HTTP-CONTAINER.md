@@ -1,9 +1,11 @@
 # Local HTTP MCP container and client smoke
 
-> Issue [#367](https://github.com/rouslanbaranov/tycho/issues/367), E09-07, M5.
-> **Status:** local container prototype, 2026-10-24. Not deployed to GitHub,
-> Vercel or any public host; not independently reviewed; no TLS, OAuth,
-> rate-limit or production acceptance is claimed.
+> Issue [#367](https://github.com/rouslanbaranov/tycho/issues/367), E09-07,
+> and evidence issue [#373](https://github.com/rouslanbaranov/tycho/issues/373),
+> M5. **Status:** local container plus an authenticated Vercel test deployment,
+> 2026-10-24. Not a production service; not independently reviewed; no OAuth,
+> per-client authorization, rate limiting or owner acceptance is claimed.
+> Vercel supplies TLS and the domain.
 
 ## Purpose
 
@@ -12,7 +14,7 @@ stdio MCP adapter in a read-only HTTP service so client agents and humans can
 reach the book, search and MCP tools over the network. The stdio adapter
 remains the canonical protocol implementation.
 
-The service is deliberately local and bounded:
+The service is deliberately bounded; it is tested locally and on Vercel:
 
 - modern MCP 2026-07-28 stateless JSON-RPC over `POST /mcp`;
 - bearer-token authentication from the environment;
@@ -125,9 +127,13 @@ a book page. They are transport checks, not agent answer-quality evaluation.
 | Book page | HTTP 200, 10,181 bytes |
 | Standard client | exit 0 |
 | Official SDK client | protocol 2026-07-28, 7 tools, search `ok`, 2 results |
+| Vercel URL | https://tycho-theta.vercel.app |
+| Vercel readiness | 423 documents, 2,753 sections, section snapshot `f0a80...` |
+| Vercel no-auth boundary | HTTP 401 for /mcp and /search |
+| Vercel clients | standard client and mcp 2.3.0 client both exit 0 |
 
-These are single-machine observations, not a latency, capacity or security
-benchmark.
+These are single-machine and remote test observations, not a latency, capacity
+or security benchmark.
 
 ## Vercel compatibility
 
@@ -144,8 +150,11 @@ candidate for Vercel Functions.
   OAuth, per-client authorization or rate limiting.
 - Scale-to-zero and cold starts apply. The section index is built into the
   image; there is no persistent `/tmp` or query log.
-- No Vercel project, token or remote deployment was available, so no Vercel
-  deployment or remote client test is claimed.
+- The test deployment is live at https://tycho-theta.vercel.app. It uses
+  the project environment variables TYCHO_MCP_TOKEN and PORT=8080; the token
+  is not recorded here.
+- Remote checks passed: health, readiness, no-auth 401 for MCP/search,
+  standard-library client and official mcp==2.3.0 client.
 
 See the public Vercel guide
 [Running Docker on Vercel](https://vercel.com/kb/guide/docker).
@@ -163,15 +172,17 @@ mismatch. The container build and client smokes remain manual evidence.
 
 ## Limits and next gates
 
-- No TLS, OAuth, per-client authorization, rate limiting, audit sink or
-  hosted deployment. The one static bearer token is suitable only for a
-  restricted local test.
+- Vercel provides TLS for the test deployment, but there is no OAuth,
+  per-client authorization, rate limiting or durable audit sink. The one
+  static bearer token is suitable only for a restricted test.
+- The Vercel deployment is a test, not production acceptance; scale-to-zero,
+  cold starts and the absence of persistent disk apply.
 - No legacy HTTP handshake, sessions, SSE subscriptions, cancellation
   processing or progress forwarding.
 - The book route returns raw Markdown; it does not render a reading site.
-- The container is local only. GitHub Pages cannot run it; GitHub Actions
-  runners are ephemeral; a stable host needs an external container platform
-  or a Codespace-style test environment.
+- A stable host beyond the Vercel test needs explicit capacity, auth and
+  operations decisions. GitHub Pages cannot run it; GitHub Actions runners
+  are ephemeral.
 - No independent review, human acceptance, CI result or production claim.
   `sufficient: 0`.
 
