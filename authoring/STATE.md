@@ -56,9 +56,10 @@ The corpus includes 29 public historical case studies and six synthetic decision
 
 **MCP local candidate — 2026-10-23 (#57):** a read-only stdio adapter,
 30 offline tests and a one-off official SDK 2.3.0 smoke exist on a feature
-branch; two independent agent reviews returned ACCEPT-WITH-FINDINGS and their
-findings are addressed. No hosted endpoint, repository SDK pin, human review
-or live-service acceptance is claimed. See
+branch; two independent agent reviews and a focused delta review returned
+ACCEPT-WITH-FINDINGS; corrections and residual limits are recorded. No hosted
+endpoint, repository SDK pin, human review or live-service acceptance is
+claimed. See
 [the MVP record](MCP-READ-ONLY-MVP.md),
 [the SDK smoke note](MCP-SDK-SMOKE_2026-10-23.md) and
 [the independent agent review](INDEPENDENT-AGENT-REVIEW-MCP_2026-10-23.md).

@@ -1,14 +1,16 @@
 # Independent agent review — MCP read-only MVP
 
 > Issue [#57](https://github.com/rouslanbaranov/tycho/issues/57), E09-02, M5.
-> Reviewer preset: `reviewer` (DeepSeek Harness). Two independent child
-> batches: `b11c723b-a42b-4491-95f8-12c9ecf8bca9` (code, protocol, security)
-> and `18c9b948-d7b8-4b6c-89ef-497d168e09f8` (documentation and evidence).
-> Review completed by 2026-10-23T15:34Z.
+> Reviewer preset: `reviewer` (DeepSeek Harness). Three independent child
+> batches: `b11c723b-a42b-4491-95f8-12c9ecf8bca9` (code, protocol, security),
+> `18c9b948-d7b8-4b6c-89ef-497d168e09f8` (documentation and evidence), and
+> `71cd778e-1e50-4b9e-8c2f-460dce380530` (focused delta).
+> Initial reviews completed by 2026-10-23T15:34Z; delta by 15:41Z.
 >
 > **Status:** independent agent audit only. It is not named human review,
 > owner acceptance, CI, sufficiency, deployment approval or permission to
-> merge. Reviewers wrote no repository files; `git status` stayed unchanged.
+> merge. Reviewers wrote no repository files; the final `git status` was
+> clean except the unrelated untracked `deliverables/`.
 > `human_review: not-performed`; `sufficient: 0`.
 
 ## Reviewed revision
@@ -34,6 +36,7 @@ audits.
 |---|---|---|
 | Code, protocol and security | ACCEPT-WITH-FINDINGS | 3 medium, 5 low |
 | Documentation and evidence | ACCEPT-WITH-FINDINGS | 3 medium, 2 low |
+| Focused delta | ACCEPT-WITH-FINDINGS | residuals M1, L4, D3; no regressions |
 
 No blocker or high severity finding was raised. The code review supported the
 bounded local acceptance case only if the medium findings were fixed or
@@ -48,6 +51,8 @@ hard links plus check/open races remained. The resolved log path must now be
 outside the checkout; final symlinks, non-regular files and multiply-linked
 files are refused; writes use `O_NOFOLLOW` and verify the opened descriptor.
 Tests cover root files, `.git`, directories, symlinks, hard links and FIFOs.
+Residual LOW: the parent-directory symlink swap between the predicate and
+`os.open` is not covered; the write remains outside the checkout by design.
 
 **M2 — medium: legacy era detection.**
 Era detection keyed on `_meta` presence and rejected legacy progress-token
@@ -59,7 +64,10 @@ progress metadata remain legacy. A legacy progress-token test was added.
 Integrity, notification, envelope and evidence paths were untested. The suite
 now has 30 tests covering page hash/reconstruction/symlink refusal,
 notification silence, modern envelopes, legacy progress metadata, registry
-failure, cursor/version rejection and the evidence wrapper.
+failure, cursor/version rejection and the evidence wrapper. After the delta,
+test-only assertions added root-level log refusal, oversized-message handling,
+page-offset refusal, evidence snapshot mismatch and legacy version data; the
+server code did not change.
 
 **L1 — low: error text could expose absolute paths.**
 Raw `str(exc)` is replaced with path-free client messages for retrieval,
@@ -77,13 +85,15 @@ is now `ok` when the filtered total is non-zero; the test covers an empty
 past-end page.
 
 **L4 — low: query-log side effect versus `readOnlyHint`.**
-The tool description now states the local JSONL side effect when query logging
-is enabled.
+The tool description and MVP security note now state the local JSONL side
+effect when query logging is enabled. The annotation remains
+`readOnlyHint: true` because the domain is read-only by default; the
+conditional write is a residual LOW limitation.
 
 **L5 — low: minor protocol details.**
 Notifications are ignored before parameter validation; missing log parents are
 refused; legacy version errors remain explicit `-32602` with
-supported/requested data and are tested.
+supported/requested data; the test now asserts that data.
 
 ## Documentation findings
 
@@ -96,11 +106,11 @@ A missing-registry error exposed the checkout path. The error is now
 path-free; a test asserts the checkout path is absent.
 
 **D3 — medium: 419 versus 423 pages.**
-STATE now labels 423 as the post-#228 current count and 419 as the earlier cut.
-The book and edition landing counts were not rewritten because they are outside
-this MCP slice and changing an indexed book page would invalidate the pinned
-section index and qrels. The residual landing-count inconsistency is recorded
-as a pre-existing editorial and index task.
+STATE now explains the 419-page cut, the 423-page current tree and the four
+pages added by the #228 deep-source splits. The book and edition landings still
+record 419; they were not rewritten because they are outside this MCP slice and
+changing an indexed book page would invalidate the pinned section index and
+qrels. The residual is tracked under #228.
 
 **D4 — low: README and STATE disagreed on PR #222.**
 GitHub confirms #222 merged on 2026-10-20; README now says merged.
@@ -109,20 +119,26 @@ GitHub confirms #222 merged on 2026-10-20; README now says merged.
 The record now says the log file itself must not be a symlink, parent symlinks
 are resolved, and the resolved location must be outside the checkout.
 
-## Post-review verification
+## Corrections and delta review
 
 | Item | Value |
 |---|---|
 | Correction commit | `39bbaa28d88bdea86cd8e8683990ff0b01597535` |
+| Final test and wording commit | `1a63d4351d7d1a8ad466a47a53c9f82ff9ba3077` |
 | Server after correction | `cd89a36e4b4ae7bcb85b2ecb8d8f0ecfa3c00be1c8605a798582db73f104b296` |
+| Tests after correction | `ffb7658a45c7ba2595250429cee1a8a6cfc7170884a3abceed2bcd6d45d631ec` |
 | Focused MCP tests | 30 passed |
-| Repository tests | 446 passed in the local pre-merge gate |
+| Pre-merge tests | 446 methods; 467 total methods including non-premerge files |
 | SDK smoke | mcp 2.3.0, modern and legacy reruns passed |
-| Boundary, line length, whitespace | passed |
+| Boundary and whitespace | passed |
+| Line length | V11 checker passed; new and edited MCP docs checked locally |
 
-The correction changed the code and tests after the reviewed revision. A
-separate delta review is the remaining review step; this record does not
-claim that delta review has already passed.
+The delta reviewed `87d85b5` and code commit `39bbaa2`. It found no
+regressions and resolved M2, L1, L2, L3, D1, D2, D4 and D5. Residuals are M1
+(parent-symlink race, LOW), L4 (`readOnlyHint`, LOW), and D3 (landing counts,
+MEDIUM). Test-only coverage additions in `1a63d43` close the root, message,
+page-offset, evidence and legacy-data gaps noted by the delta; they were not
+separately re-reviewed.
 
 ## Limits
 
@@ -130,8 +146,9 @@ claim that delta review has already passed.
   authorization, concurrency, cancellation, load test or full client matrix.
 - The SDK smoke is one machine, one SDK version and one process lifecycle; its
   client makes no assertions and is not a conformance suite.
-- The full repository suite was run locally by the authoring session, not by
-  CI; the reviewers ran the focused MCP suite.
+- The pre-merge subset (446 test methods) was run locally by the authoring
+  session, not by CI; 467 total test methods exist. The reviewers ran the
+  focused MCP suite.
 - No independent verification of the 419/423 landing-page count was performed
   beyond the current index and the recorded #228 split.
 - Pattern coverage remains 145 entries, all `partial-bounded`, 0
