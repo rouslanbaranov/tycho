@@ -12,6 +12,7 @@ quick integrity/count check and the route-snapshot comparison.
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import sqlite3
@@ -21,9 +22,20 @@ import route_index
 import section_fts_index
 
 ROOT = Path(__file__).resolve().parents[1]
-RANKER_VERSION = "tycho-section-fts5-bm25-v3"
+RANKER_VERSION = "tycho-section-fts5-bm25-v4"
 CITATION_SCHEME = "tycho.section-key.v2"
 TOKEN = section_fts_index.TOKEN
+
+
+def bm25_weights():
+    raw = os.environ.get("TYCHO_BM25_WEIGHTS", "5,2,0.25")
+    try:
+        values = tuple(float(part) for part in raw.split(","))
+    except ValueError as exc:
+        raise SearchError("TYCHO_BM25_WEIGHTS must be three numbers") from exc
+    if len(values) != 3 or any(value <= 0 for value in values):
+        raise SearchError("TYCHO_BM25_WEIGHTS must be three positive numbers")
+    return values
 
 
 class SearchError(ValueError):
@@ -156,9 +168,10 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             filters.append("EXISTS (SELECT 1 FROM section_topics t"
                            " WHERE t.section_key = s.section_key AND t.topic = ?)")
             params.append(topic)
+        weight_sql = ",".join(f"{value:g}" for value in bm25_weights())
         sql = ("SELECT s.section_key,s.document_id,s.section_id,s.path,s.heading,"
                "s.heading_level,s.title,s.kind,s.evidence_status,s.char_start,"
-               "s.char_end,s.content,bm25(fts,0.0,4.0,3.0,1.0) AS rank"
+               "s.char_end,s.content,bm25(fts,0.0," + weight_sql + ") AS rank"
                " FROM fts JOIN sections s ON s.section_key = fts.section_key"
                " WHERE fts MATCH ?")
         if filters:

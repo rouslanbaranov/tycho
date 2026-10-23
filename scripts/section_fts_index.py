@@ -27,7 +27,7 @@ import route_index
 ROOT = Path(__file__).resolve().parents[1]
 INDEX_NAME = "sections-fts-v3.sqlite"
 VERSION = 3
-SECTION_MODEL = "overview+h2; porter unicode61; bm25 title=4 heading=3 body=1"
+SECTION_MODEL = "overview+h2; porter unicode61; bm25 title=5 heading=2 body=0.25"
 HEAD = re.compile(r"^ {0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$")
 ANCHOR = re.compile(r"\s*\{#([a-z][a-z0-9_-]*)\}\s*$")
 FENCE = re.compile(r"^ {0,3}(\x60{3,}|~{3,})")
