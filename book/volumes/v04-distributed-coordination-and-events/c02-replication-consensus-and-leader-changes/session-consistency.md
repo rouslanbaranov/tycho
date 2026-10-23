@@ -163,7 +163,5 @@ An epoch or lineage field stops a token from crossing a leadership change as tho
 remained comparable. External indexes and caches need their own watermark before claiming the
 same session view.
 
-Token growth, lost client state or exhausted wait budgets each argue for a narrower guarantee.
-The authority path may then be the only honest answer. Record the chosen scope and the reason a
-weaker guarantee is acceptable. A guarantee that only some routes honor should be narrowed
-before release.
+Record the chosen scope and why a weaker guarantee is acceptable. Narrow any route that cannot
+honor it before release. Document the token lifetime and the repair path for a divergent epoch.

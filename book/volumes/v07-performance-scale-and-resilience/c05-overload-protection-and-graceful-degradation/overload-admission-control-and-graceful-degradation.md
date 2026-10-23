@@ -163,9 +163,8 @@ The owner of the primary outcome also owns its fallback, because only that owner
 whether an alternate preserves the same correctness contract. A dependency team's proposal needs
 explicit acceptance.
 
-Document the trigger, freshness bound and caller-visible label. A plausible substitute that
-hides its limits is a correctness failure, not resilience. A fast answer does not entitle the
-alternate to impersonate the primary.
+Document the trigger and caller-visible label. A plausible substitute that hides its limits is a
+correctness failure; do not let the alternate impersonate the primary.
 
 A read-only fallback may serve a display; a fallback that writes needs duplicate protection,
 reconciliation and a repair procedure. An explicit error remains valid when no alternate
