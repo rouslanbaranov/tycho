@@ -91,11 +91,21 @@ are not measured requirements.
 
 ### Microservices Architecture
 
+A microservice owner accepts a deployable, its data and the pager that follows both.
+Independence is credible only when the team can release without coordinating another service's
+schedule.
 
-A service owns a deployable and its data, but the failure budget is the real cost: timeouts,
-idempotency, observability and partial failure. Shared databases or synchronized releases recreate a
-distributed monolith. A modular monolith is the alternative when independent failure is not required.
-The owner must fund the remote-call and operational surface. The owner should record which calls are retried, how version skew is detected and which dependency failure may degrade the user journey. Record which calls are retried, how version skew is detected and which dependency failure may degrade the user journey. The owner funds the remote-call budget, dashboards and on-call path. Review the split when the failure domain or team boundary changes. The owner should also record the split rationale and the rollback path.
+Each service publishes its contract, version policy and supported consumer set. Shared tables,
+hidden synchronous chains and lockstep migrations undermine that boundary regardless of
+repository layout. A shared client library does not make contract changes independent.
+
+Budget the remote surface explicitly: timeouts, retries, partial failure, tracing and rollback
+rehearsals. Record which dependency failures may degrade a journey and who decides to disable a
+path.
+
+One team owning every invariant may do better with a modular monolith than with remote
+boundaries. Revisit the split when release coupling or blast radius stops matching the stated
+ownership. That alternative is an architecture choice, not a temporary failure to split.
 
 ### Service-Oriented Architecture (SOA)
 

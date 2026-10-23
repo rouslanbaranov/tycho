@@ -187,11 +187,21 @@ Selected passages inspected 2026-10-20: [Leader election in distributed systems]
 
 ### Distributed Lock
 
+A distributed lock needs a named coordinator owner and a register of protected resources. The
+register states each resource's tolerated pause and the destination check that rejects a former
+holder. An operator also needs authority to revoke a grant during an incident.
 
-A lock is a grant from a coordination service; the holder's local belief is not proof after
-a pause. The design names the protected resource, acquisition/release path, maximum tolerated pause
-and the fencing check at the resource. A conditional update or unique constraint is the alternative
-for one database. A lock service that cannot maintain quorum is not a safe grant. The lock service should expose its quorum and health state; a grant from a degraded service is not a safe grant. Expose quorum and health state; a grant from a degraded service is not safe. Record the maximum pause, the fencing-token check and the repair path for a stale holder. Test a pause across expiry and a grant from the minority.
+The coordinator owner answers for quorum health, lease renewal budgets and the rule that denies
+new grants while coordination is degraded. Publish the health signal so callers can distinguish
+a valid grant from an uncertain one.
+
+The resource owner, not the lock client, decides whether an epoch is enforced. Without
+enforcement at the destination, the design offers a coordination signal rather than mutual
+exclusion.
+
+Prefer a conditional write or single-writer route for one database. Review the lock when pause
+budgets, quorum latency or stale-write exposure changes materially. Remove the lock when its
+protection cannot be enforced at the resource.
 
 ### Lease-Based Ownership
 

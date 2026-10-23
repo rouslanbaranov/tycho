@@ -152,9 +152,18 @@ Record invocation and completion, session identifier, operation identifier, obje
 
 ### Session Consistency
 
+The product owner defines what counts as one session and which observations its users must
+retain. That choice sets the guarantee; no infrastructure default should supply it implicitly.
 
-A session token carries observed positions so one client gets read-your-writes and monotonic
-reads. The owner defines how the router waits, reroutes or returns a retryable failure; it must not
-silently serve an older snapshot. Linearizable reads need quorum or read-index and are a separate
-choice. Session consistency is one client's continuity, not a global guarantee. The router should reject a token from a divergent epoch and return the last applied position. Reject a token from a divergent epoch and return the last applied position. Record the wait or reroute policy and the retryable failure. Test a lagging replica, a leader change and a token that outlives the session. The owner should document the token lifetime and the repair path for a divergent epoch.
+The service owner publishes the token format, maximum size, lifetime and the failure callers
+receive when no replica can satisfy it. The routing layer owns the wait, reroute and rejection
+policy.
 
+An epoch or lineage field stops a token from crossing a leadership change as though positions
+remained comparable. External indexes and caches need their own watermark before claiming the
+same session view.
+
+Token growth, lost client state or exhausted wait budgets each argue for a narrower guarantee.
+The authority path may then be the only honest answer. Record the chosen scope and the reason a
+weaker guarantee is acceptable. A guarantee that only some routes honor should be narrowed
+before release.

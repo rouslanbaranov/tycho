@@ -125,9 +125,18 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Domain-Driven Design and Bounded Context
 
+A bounded context has one accountable model owner and one accepted vocabulary. A named domain
+expert co-owns that vocabulary and arbitrates disputed meanings. The model owner may reject a
+term carrying a conflicting invariant, even when another team introduced it.
 
-A bounded context owns one model and its language; the owner must name the domain expert
-and the translation map to adjacent contexts. Translation and maintenance are the cost; a shared
-model is the alternative when contexts do not genuinely diverge. Deployment boundaries follow
-ownership and failure containment, not the number of model names. A context map records the translation and ownership; without it, shared terms hide the boundary. A context map should record upstream/downstream relationships and the translation owner for each shared term. A context map records upstream and downstream relationships and the translation owner for each shared term. The domain expert accepts the model and its language; without that owner the boundary is decorative. Review the map when a shared term, authority or team boundary changes.
+The context map records each relationship, translation direction and mapping maintainer. Treat
+it as an ownership artifact that changes with the model, not a diagram produced once for review.
 
+Keep deployment choices separate from model boundaries: one deployable can host several
+contexts, and one context can span services. What matters is a single decision authority for
+each invariant.
+
+Reopen the boundary when a shared term changes meaning, a translation gains a second owner or
+releases become unavoidably coupled. Merging models is honest when the vocabularies truly
+coincide. Record the rationale so a later team can distinguish a deliberate merger from an
+accidental one.

@@ -102,9 +102,17 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ### Idempotency Key
 
+An idempotency key belongs to the operation owner, who defines its scope, fingerprint inputs and
+retention period. Callers choose a value only within that published contract. The owner also
+names the conflict response and the record a support engineer may inspect.
 
-An idempotency key binds one logical intent to an outcome record; the owner defines key scope,
-payload fingerprint, retention and the conflict response. The outcome is committed atomically with
-the effect, or replay is made safe. A natural constraint or single-writer path is the alternative.
-A fresh request ID per retry is not a key. A key store should be scoped to the operation and caller, not shared across unrelated endpoints. Scope the key store to the operation and caller; never share it across unrelated endpoints. Record the fingerprint, outcome and expiry, and reject a reused key with a different payload. Test a lost acknowledgment and an expired key. The owner should document the retention horizon and the repair path for an expired key.
+The outcome record and business effect must commit together; a later separate write leaves a
+window for duplicate execution. A repeated key with a changed fingerprint is a conflict, not a
+replay.
 
+Retention is a product and compliance decision, not an arbitrary cache timeout. State what
+happens after expiry and how an operator resolves a caller that retries beyond it.
+
+Some effects can rely on a uniqueness rule, a compare-and-set or one writer instead of a key
+store. Review the contract when payload shape, caller population or retention cost changes. A
+key store without a cleanup plan becomes an unbounded dependency.

@@ -159,11 +159,21 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ### Fallback
 
+The owner of the primary outcome also owns its fallback, because only that owner can judge
+whether an alternate preserves the same correctness contract. A dependency team's proposal needs
+explicit acceptance.
 
-A fallback is a declared alternate outcome with the same correctness contract; it must be
-cheaper, independently safe and labelled. The owner defines freshness, authority, trigger and a test
-that the alternate path is safe for the effect. A fallback that writes is not a read-only
-substitution. An explicit failure is preferable when no safe alternate exists. Exercise the fallback path in the same load test as the primary, and record the trigger and user-visible label. Exercise the fallback in the same load test as the primary, and record the trigger and user-visible label. A fallback that writes needs its own idempotency and repair path. Test a stale alternate and an unavailable fallback. The owner should document the trigger, label and repair path for the fallback.
+Document the trigger, freshness bound and caller-visible label. A plausible substitute that
+hides its limits is a correctness failure, not resilience. A fast answer does not entitle the
+alternate to impersonate the primary.
+
+A read-only fallback may serve a display; a fallback that writes needs duplicate protection,
+reconciliation and a repair procedure. An explicit error remains valid when no alternate
+satisfies the contract.
+
+Exercise the alternate under the same load profile as the primary and record how often it
+activates. Remove it when the failure it hides outlives its usefulness. Ownership includes the
+decision to stop offering the alternate, recorded alongside its original approval.
 
 ### Graceful Degradation
 
@@ -183,19 +193,38 @@ be tested under the load that triggers the mode.
 
 ### Load Shedding
 
+Shedding requires one named bottleneck and an admission point close to it. A load balancer
+rejecting traffic without that link merely relocates the queue.
 
-Shedding rejects work before a scarce resource is exhausted; the owner defines the bottleneck
-signal, criticality/fairness policy and retry class. A typed rejection with retry guidance prevents a
-synchronized storm, and a shed counter must record the rejected class. Queueing, admission control or
-provisioning are the alternatives when work is deferrable. Test the policy under the real overload shape. The rejection should carry the retry class and the protected bottleneck, not a generic failure code. The rejection carries the retry class and protected bottleneck, not a generic failure. Record the rejected class and measure shed versus accepted work. Test a synchronized retry and an unfair tenant mix. The owner should document the rejection budget, the escalation path and the audit trail.
+The policy owner defines criticality classes, tenant fairness and the share of work that may be
+refused. Those are product choices that deserve review outside an incident. Publish the class
+definitions so callers can predict which requests may be refused.
+
+Return a typed rejection with a retry class and the protected resource, not a generic failure.
+Count shed work by class so silent starvation cannot masquerade as health. The rejection
+contract also states whether a retry is safe and when.
+
+Deferral and added capacity remain the competing responses when rejection would waste useful
+work. Revisit the thresholds when traffic mix, tenant count or bottleneck capacity changes. The
+policy should also state who may approve an emergency exception and for how long.
 
 ### Throttling
 
+Throttling slows work that has already been admitted; it does not decide who deserves service.
+The owner must state which dependency is protected and which class waits. That declaration
+belongs with the operational policy, not only in a dashboard.
 
-Throttling paces admitted work to protect a dependency; the owner defines the measurable
-bottleneck, bounded queue/backpressure and whether work is delayed or rejected. It must name the
-priority class when saturated and measure queue age and per-class latency. Admission control or
-provisioning is the alternative when work is deferrable. A throttle without a bounded queue only moves the overload downstream. Publish the limit, window and retry-after so clients can pace instead of retrying blindly. Publish the limit, window and retry-after so clients pace rather than retry blindly. Record whether work is delayed or rejected and which class wins when saturated. Test a burst, a long queue and a dependency slowdown. The owner should document the limit source and the escalation path.
+A finite buffer and an upstream backpressure signal make pacing enforceable. Without them,
+pacing shifts latency and memory pressure downstream. That buffer converts overload into an
+explicit decision rather than a growing delay. Sizing should follow observed service time, not
+an arbitrary request count.
+
+Publish the limit, measurement window and retry guidance so callers can pace themselves. Watch
+waiting time and class-specific completion, not only the arrival rate.
+
+Rejecting excess work or adding capacity may be cheaper than delaying everyone. Review the
+policy when the protected dependency, traffic shape or deadline changes. Emergency work needs an
+exception path with an owner and an expiry.
 
 ### Rate Limiting
 

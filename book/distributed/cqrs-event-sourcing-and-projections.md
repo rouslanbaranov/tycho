@@ -306,17 +306,34 @@ cost and stale rows are acceptable between refreshes.
 
 ### Command Query Responsibility Segregation (CQRS)
 
+CQRS begins with a recorded decision about divergent command and query needs, not with a second
+database. The write owner accepts command admission, invariant checks and rejection semantics.
 
-CQRS gives command invariants to the write model and a derived view to the read
-model. The write owner defines the event and cursor contract; the projection owner defines position,
-idempotent apply, read-after-write wait and rebuild mode. The stores may share a database; physical
-separation is a choice. CQRS is not event sourcing. A command handler should reject a stale expected version, and a query should declare whether it accepts the projection lag. The owner should record command and event versions, the expected aggregate version and the replay cursor. A rebuild runs with side effects disabled; a query that needs a newer position must wait or fail. Alert on cursor gaps and schema mismatches. A command without an expected version is not safe to retry.
+The read side owns a derived view, its freshness declaration and its rebuild procedure. A shared
+schema may remain, provided table ownership and permitted writers are explicit.
+
+Neither side may claim authority merely because it can read the other's tables. A projection
+must expose no write path for command-owned state, and a command handler must not depend on a
+lagging view for an invariant decision.
+
+Record who approves changes to each contract. Revisit the separation when command contention,
+projection lag or rebuild duration outweighs the read benefit, and prefer one model when that
+case cannot be made. A reversal deserves the same written rationale as the initial choice.
 
 ### CQRS Read Projections
 
+The projection owner publishes the event schema it accepts, the position it has applied and the
+staleness callers should expect. Those commitments belong in the read contract, not in an
+operator's memory.
 
-A projection is a derived store with an event contract and an applied cursor. Its owner
-defines the freshness bound, the wait or retry for a required version, and a rebuild that disables
-side effects. A stale row is a declared state, not a hidden cache miss. A synchronous authority read
-is the alternative when the latest commit is required. The projection should expose its applied cursor to observability and reject an event with an unexpected schema version. Publish the event schema version, applied cursor and rejected-event count. A rebuild preserves source offsets and disables side effects. A query that needs a newer position waits or fails; it never falls back silently. Alert on cursor gaps, schema mismatches and rebuild age.
+That owner also sets the compatibility window for schema changes and rejects an event whose
+version falls outside it. Silent coercion of unknown fields turns a contract breach into
+corrupted rows.
 
+Authorize rebuilds through a named procedure that preserves log offsets and blocks outbound
+effects. A query needing a newer position waits, reroutes or fails; an older row must never pass
+as current.
+
+End the projection when its refresh burden outgrows the queries it serves. An authority read or
+simpler cache may serve the journey with fewer contracts, and that reversal should be recorded.
+Name the replacement path before removing the old read model.
