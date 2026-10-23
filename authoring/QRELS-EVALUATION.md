@@ -200,3 +200,21 @@ details and the decision not to tune on the challenge set are in
 The v2 abstention numbers must therefore be read as author-labelled diagnostics,
 not as calibrated production quality.
 
+## Phase 2 adjudication and evidence gate (2026-10-24)
+
+The frozen phase-1 challenge was adjudicated against Tycho pages by a fresh
+Reviewer agent: 54 answerable and 26 unanswerable items, 159 support entries,
+and six phase-1 answerable items left unsupported. The 80 items are split 40
+dev / 40 held-out; phase 1 remains a separate challenge set.
+
+The new evidence model is
+[evidence-gate.v1.json](../edition/patterns/evidence-gate.v1.json), documented in
+[ABSTENTION-EVIDENCE-GATE-2026-10-24.md](ABSTENTION-EVIDENCE-GATE-2026-10-24.md).
+On the phase-2 held-out split it abstains on 10/14 unanswerable items and
+falsely refuses 2/26 answerable items; on the phase-1 challenge it abstains on
+19/20 unanswerable items and falsely refuses 5/60. The old heuristic remains
+only as a fallback when the model artifact is absent.
+
+These are agent-adjudicated labels, not human review. The model is a diagnostic,
+not proof of answer correctness, and does not change the sufficient status.
+

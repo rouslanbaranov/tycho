@@ -369,7 +369,7 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["returned"], 0)
         self.assertTrue(payload["answerability"]["no_confident_answer"])
         self.assertEqual(payload["answerability"]["basis"],
-                         "out-of-scope-intent")
+                         "evidence-score-threshold")
 
     def test_read_bounds_and_continuation(self):
         server = self.server()
