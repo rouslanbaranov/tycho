@@ -8,10 +8,11 @@ independent-agent section review record, but no human per-page review and no own
 acceptance is recorded. Review findings remain unremediated unless a re-review record says
 otherwise.
 
-> **Phase A gap closure — 2026-10-23:** all six verification gaps were re-read and pass.
-> Phase A is 52 pass / 0 pass-with-findings / 0 reject; overall 56 pass / 89
-> pass-with-findings / 0 reject. Phase B (93) was not reviewed; sufficient remains 0;
-> human and owner gates remain open. See
+> **Phase B acceptance — 2026-10-23:** Phase A is 52 pass / 0 PWF / 0 reject. The
+> independent Phase B re-audit accepted 34 pass / 59 PWF / 0 reject, so the overall
+> record is 86 pass / 59 PWF / 0 reject. Phase B is accepted with findings; sufficient
+> remains 0; human and owner gates remain open. See
+> [the Phase B acceptance](PHASE-B-ACCEPTANCE_2026-10-23.md),
 > [the gap acceptance](PHASE-A-GAP-ACCEPTANCE_2026-10-23.md) and
 > [integration](SUFFICIENT-REVIEW-INTEGRATION_2026-10-22.md).
 

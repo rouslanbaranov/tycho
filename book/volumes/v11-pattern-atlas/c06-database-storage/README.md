@@ -74,7 +74,7 @@ none claims sufficient technical or decision coverage.
 ### Sharding
 
 **Identity.** Sharding; family Database and storage architecture; kind
-data-distribution-pattern; priority advanced.
+data-distribution-pattern; priority core.
 
 **Decision question.** Should data be split across shards by a partition key to scale
 beyond one node?
@@ -137,7 +137,7 @@ unit, not a benchmark.
 ### Consistent Hashing
 
 **Identity.** Consistent Hashing; family Database and storage architecture; kind
-data-distribution-pattern; priority advanced.
+data-distribution-pattern; priority core.
 
 **Decision question.** Should keys and nodes share a hash ring so membership changes move
 only a fraction of data?
@@ -424,7 +424,7 @@ Retirement.
 ### Online Data Migration
 
 **Identity.** Online Data Migration; family Database and storage architecture; kind
-migration-pattern; priority advanced.
+migration-pattern; priority core.
 
 **Decision question.** Should data be backfilled while the system continues serving reads
 and writes?

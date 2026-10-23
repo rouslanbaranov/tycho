@@ -140,8 +140,10 @@ replication avoids write conflicts at the cost of write availability across regi
 multi-leader only when accepting local writes outweighs the conflict contract.
 
 **Limits.** Conflict metadata, per-key convergence and operator reconciliation are costs; a
-multi-leader topology does not remove the need for one authoritative outcome. The conflict
-contract must name the resolver and its audit trail.
+multi-leader topology does not remove the need for one authoritative outcome. Reject multi-leader
+when monotonic writes are mandatory or the resolver cannot preserve causal order; quorum writes or
+single-leader replication are the alternatives. The conflict contract must name the resolver and
+its audit trail.
 
 ### Read Replicas
 
@@ -164,10 +166,11 @@ One leader accepts writes and appends a replicated log; followers apply it in or
 the write authority for its term, and followers serve reads only under the freshness rule their
 contract declares.
 
-A can remain reachable to some clients, but must not be allowed to commit new authoritative writes
-without a valid quorum/term contract. A stale leader that reappears must be rejected, and the
-follower log must catch up before it serves authoritative reads. Track the commit position and the
-lag of each follower; a healthy connection is not proof of current data.
+A stale leader can remain reachable to some clients, but must not be allowed to commit new
+authoritative writes without a valid quorum/term contract. Promotion requires a quorum/term check
+and a fencing token; the old leader must be rejected, and the follower log must catch up before it
+serves authoritative reads. Test failover, not only steady-state replication. Track the commit
+position and the lag of each follower; a healthy connection is not proof of current data.
 
 Quorum-replicated consensus, multi-leader replication or asynchronous read replicas may be
 preferable depending on the required write availability, read freshness and conflict model.
@@ -180,10 +183,11 @@ Consensus gives a group of nodes one ordered decision history despite crashes an
 worked scenario, nodes A, B and C replicate one state machine. A was leader. A's network connection
 to B and C fails; B and C may form a quorum and eventually select a new leader.
 
-A can remain reachable to some clients, but must not be allowed to commit new authoritative writes
-without a valid quorum/term contract. Old A reappears with stale state; reject stale leader commands
-and catch up the log. The commit rule needs a durable term/vote record and stable membership, not
-only a heartbeat.
+The old leader can remain reachable to some clients, but must not be allowed to commit new
+authoritative writes without a valid quorum/term contract. Safety means no two leaders commit
+conflicting decisions; progress means a quorum can eventually decide. Old A reappears with stale
+state; reject stale leader commands and catch up the log. The commit rule needs a durable term/vote
+record and stable membership, not only a heartbeat.
 
 For read-mostly telemetry where temporary staleness is acceptable, simpler asynchronous replicas may
 avoid quorum overhead; if single-key linearizable authority is mandatory, that alternative may fail

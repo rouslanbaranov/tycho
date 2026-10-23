@@ -131,14 +131,17 @@ load. Keep liveness/readiness cheap and internal; protect detailed diagnostics s
 
 ### Gateway Routing
 
-A gateway matches request attributes to a declared route and backend, then applies its policy. The
-route is a contract about host, path, headers, method and backend identity, not a wildcard that
+Gateway routing is an edge contract over a versioned route table: a gateway matches request
+attributes to a route and applies policy, each route binds match predicates to a backend and a
+policy version, and the table changes independently of the backends.
+The route is a contract about host, path, headers, method and backend identity, not a wildcard that
 silently absorbs every new path.
 
 Describe separately the externally resolved name, the service membership view, the connection
-destination and the backend selected for each request. Stale routes, ambiguous matches and bypass
-around the gateway are common. Test the bypass path and the ambiguous-match rejection, and emit the
-selected route plus backend in the request trace.
+destination and the backend selected for each request. Version routes, test precedence and no-match
+behavior, and recover wrong-version selection explicitly. Stale routes, ambiguous matches and
+bypass around the gateway are common. Test the bypass path and the ambiguous-match rejection, and
+emit the selected route plus backend in the request trace.
 
 A reverse proxy, client-side discovery or a BFF may be preferable when routing policy is simple or
 the gateway would become a hidden shared dependency. Gateway routing is a fit when one edge policy

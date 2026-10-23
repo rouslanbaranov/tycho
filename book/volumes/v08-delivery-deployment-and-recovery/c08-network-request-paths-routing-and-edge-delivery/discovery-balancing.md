@@ -215,10 +215,12 @@ Service discovery may publish addresses plus eligibility metadata to a proxy or 
 registry is a control-plane view; it does not prove that an address is currently writable or that a
 caller may commit an effect there.
 
-If membership is stale, continued reachability still cannot establish write authority. Document who
-observes updates and how stale membership is detected. Distinguish the discovery control path from
-data-plane requests that can continue against a last-known usable set. The freshness bound belongs
-to the caller's contract, not to the registry's update interval.
+If membership is stale, continued reachability still cannot establish write authority. Stale
+membership can outlive the registry update. Document who observes updates and how stale membership
+is detected. Distinguish the discovery control path from data-plane requests that can continue
+against a last-known usable set. A discovery outage, stale
+health signal or fast-error attraction can defeat the last-known set; define the fallback and the
+freshness bound in the caller's contract, not in the registry's update interval.
 
 Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
 are rare. Discovery is justified when membership changes faster than configuration can be
@@ -230,10 +232,11 @@ The caller obtains the membership view from a registry/control plane, caches it 
 backend. The client is now part of the routing authority, so its cache age and selection policy are
 production concerns. It also needs a refresh budget and a stale-cache alarm.
 
-If membership is stale, continued reachability still cannot establish write authority. Document who
-observes updates and how stale membership is detected. Distinguish the discovery control path from
-data-plane requests that can continue against a last-known usable set. A client that never refreshes
-its view can keep sending traffic to a removed instance.
+A client that never refreshes its view can keep sending traffic to a removed instance. Stale
+membership can send traffic to a removed instance even when the address remains reachable. Bound
+the cache age, refresh budget and stale-cache alarm, and use a last-known set only for reads with
+an explicit freshness bound. The client is part of the routing authority, so its failure mode must be
+observable.
 
 Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
 are rare. Client-side discovery trades a central proxy for per-client complexity and policy drift.
@@ -243,10 +246,11 @@ are rare. Client-side discovery trades a central proxy for per-client complexity
 A proxy, gateway or platform keeps the membership view and selects a backend for a stable virtual
 name. The client sees one name; the proxy owns the update, health and selection logic.
 
-If membership is stale, continued reachability still cannot establish write authority. Document who
-observes updates and how stale membership is detected. Distinguish the discovery control path from
-data-plane requests that can continue against a last-known usable set. The proxy itself becomes a
-failure domain and must not hide a stale view behind a green health check.
+The proxy itself becomes a failure domain and must not hide a stale view behind a green health
+check. Stale membership can keep a removed backend in the selection set even when the proxy is
+healthy. Proxy outage, retry amplification and a shared-proxy bottleneck are common; bound
+retries, expose a degraded path and plan the proxy's own failover. Health checks must remove a stale backend
+before it attracts more traffic.
 
 Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
 are rare. Server-side discovery is a fit when clients should not carry routing policy and the proxy
@@ -254,8 +258,12 @@ can be operated as a critical dependency.
 
 ### Load Balancing
 
-A selector can count connections, active requests, completed work, errors or resource utilization.
-These signals answer different questions and fail in different ways.
+Load balancing chooses among eligible backends. The invariant is that no request reaches an
+ineligible backend and no retry loop is unbounded; it needs fresh health/selection signals and
+retry-safe callers. Signal freshness, selector state and retry storms are the limits, and failover
+plus stale membership must be tested. A selector can count connections, active requests, completed
+work, errors or resource utilization; these signals answer different questions and fail in
+different ways.
 
 Cap request cost at the interface where one request can dominate a backend, and test the selector
 under the real cost distribution. A least-loaded or active-request selector assumes that a backend

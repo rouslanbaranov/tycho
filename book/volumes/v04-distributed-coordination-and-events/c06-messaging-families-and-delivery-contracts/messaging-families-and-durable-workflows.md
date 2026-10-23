@@ -117,7 +117,8 @@ measured evidence, and they do not create a new source claim.
 
 An aggregator fans in related results from multiple participants and returns one composed
 result. It needs correlation, a per-participant timeout, a partial-failure policy and a
-rule for late or duplicate responses. Use it when callers need one response and the
+rule for late or duplicate responses. Define the expected participant set, a completion rule (all
+or quorum), and eviction of late responses. Use it when callers need one response and the
 participants can be queried independently. Do not use it when one participant is
 authoritative, when atomicity across participants is required, or when one slow
 participant would consume the caller complete budget.
@@ -133,7 +134,8 @@ alternative when the caller can tolerate multiple responses.
 
 A splitter turns one input into several independently processable messages. It needs
 stable partition identity, per-part idempotency, a completion or compensation rule and a
-bounded fan-out. Use it when downstream steps can make progress independently and partial
+bounded fan-out. Carry a parent correlation key and an expected-part set; a coordinator owns
+completion and decides how missing parts are retried. Use it when downstream steps can make progress independently and partial
 completion is meaningful. Do not use it when the whole input must succeed atomically or
 when downstream ordering cannot be reconstructed.
 
@@ -149,7 +151,8 @@ is required.
 
 Scatter-gather sends one request to several participants and gathers their responses. It
 needs a response contract, a quorum or completeness rule, a deadline and a policy for
-stragglers. Use it when independent participants can answer the same question and a
+stragglers. Assign a per-recipient deadline and a correlation key; accept at most one reply per
+recipient. Use it when independent participants can answer the same question and a
 partial view is useful. Do not use it when one authority must answer, when responses are
 not comparable, or when tail latency would exceed the caller budget.
 

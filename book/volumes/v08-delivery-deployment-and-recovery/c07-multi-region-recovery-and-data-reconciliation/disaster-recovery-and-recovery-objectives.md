@@ -118,9 +118,10 @@ use it when a single region meets the objective or when routing would hide diver
 state.
 
 The failure path is a route to a stale or isolated region; the router must use an
-authoritative health and data-freshness signal, and failover must fence the old writer.
-Active-passive recovery is the alternative when cross-region consistency is not worth the
-routing complexity.
+authoritative health and data-freshness signal, and failover must fence the old writer. Global
+routing can itself add a single point of failure, and replication lag or a regional failover can
+leave the nearby region stale; test those paths. Active-passive recovery is the alternative when
+cross-region consistency is not worth the routing complexity.
 
 **Limits.** Cross-region replication, conflict resolution and routing health are costs; a stale
 route can defeat locality.

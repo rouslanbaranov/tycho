@@ -98,8 +98,9 @@ repositories.
 Each capability needs a single authoritative owner for its data and invariant, and independent
 deployment must be real rather than a container label. Shared databases, synchronized releases and
 chatty remote calls can recreate a distributed monolith; retries, version skew and partial failure
-are common. Define the contract, the failure budget and the local transaction boundary before
-splitting the deployment.
+are common. Timeouts, idempotency and observability are part of the failure budget; remaining
+limits are remote-call cost, data consistency and operational surface. Define the contract, the
+failure budget and the local transaction boundary before splitting the deployment.
 
 A modular monolith or layered application may be preferable when independent deployment and failure
 containment are not measured requirements. Microservices are a fit when separate ownership,

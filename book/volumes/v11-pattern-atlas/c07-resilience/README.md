@@ -170,7 +170,7 @@ unit, not a benchmark.
 ### Retry with Jitter
 
 **Identity.** Retry with Jitter; family Resilience and fault tolerance; kind
-resilience-pattern; priority advanced.
+resilience-pattern; priority core.
 
 **Decision question.** Should retry delays include randomness to avoid synchronized
 retries?
@@ -214,8 +214,8 @@ failed?
 is handled; the timeout is shorter than the caller's remaining budget.
 
 **Hard contraindications.** Reject when work must complete regardless of time, when
-cancellation leaves irreversible effects, or when the timeout is longer than the caller
-can wait.
+cancellation leaves irreversible effects that cannot be reconciled, or when the timeout
+is longer than the caller can wait.
 
 **Competing alternative.** Long-running async request-reply. Reverse the choice when
 synchronous waiting blocks capacity that could serve other work.
@@ -294,9 +294,8 @@ must be labelled, and an explicit failure is safer than a plausible but wrong va
 **Technical owner.** [Fallback](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#fallback) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: sections "Fallback", "Graceful
-degradation". The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.batch4-sre-cascading.2026-10-21: section "Fallback and graceful
+degradation". The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -325,8 +324,8 @@ common; expose the reduced state and define how normal service resumes.
 **Technical owner.** [Graceful Degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#graceful-degradation) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: sections "Graceful degradation",
-"Handling overload". The source is a public pattern/documentation
+read record read.batch4-sre-cascading.2026-10-21: sections "Fallback and graceful
+degradation", "Handling Overload Errors". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -356,9 +355,8 @@ retry storms are common; declare quotas and retry hints, and protect essential o
 **Technical owner.** [Load Shedding](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#load-shedding) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.sre-overload.2026-10-21: sections "Handling Overload", "Load shedding".
-The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.sre-overload.2026-10-21: sections "Handling Overload Errors",
+"Per-Customer Limits". The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -386,9 +384,8 @@ common; keep a bounded queue, propagate backpressure and measure per-class laten
 **Technical owner.** [Throttling](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#throttling) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.sre-overload.2026-10-21: sections "Handling Overload", "Throttling". The
-source is a public pattern/documentation
-unit, not a benchmark.
+read record read.sre-overload.2026-10-21: sections "Client-Side Throttling",
+"Handling Overload Errors". The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -416,9 +413,8 @@ common; bind limits to the scarce resource and declare retry guidance.
 **Technical owner.** [Rate Limiting](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#rate-limiting) — overload policy is bounded, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.sre-overload.2026-10-21: sections "Handling Overload", "Rate limiting".
-The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.sre-overload.2026-10-21: sections "Per-Customer Limits",
+"Client-Side Throttling". The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -459,7 +455,7 @@ Consumers.
 ### Priority Queue
 
 **Identity.** Priority Queue; family Resilience and fault tolerance; kind
-resilience-pattern; priority advanced.
+resilience-pattern; priority core.
 
 **Decision question.** Should queued work be ordered by business priority rather than
 arrival?
@@ -558,7 +554,7 @@ Monitoring; Circuit Breaker.
 ### Failover / Failback
 
 **Identity.** Failover / Failback; family Resilience and fault tolerance; kind
-resilience-pattern; priority advanced.
+resilience-pattern; priority core.
 
 **Decision question.** Should traffic move to a standby and later return to the original
 authority?

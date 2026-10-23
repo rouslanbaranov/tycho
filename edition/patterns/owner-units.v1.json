@@ -206,7 +206,7 @@
         "heading": "Service-Oriented Architecture (SOA)",
         "anchor": "service-oriented-architecture-soa",
         "level": 3,
-        "line": 108,
+        "line": 109,
         "unit_kind": "dedicated",
         "unit_terms": [
           "governed service contracts",
@@ -809,7 +809,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A gateway matches request attributes to a declared route and backend, then applies its policy.",
+          "quote": "Gateway routing is an edge contract over a versioned route table: a gateway matches request attributes to a route and applies policy, each route binds match predicates to a backend and a policy version, and the table changes independently of the backends.",
           "reason": "Defines the mechanism."
         },
         "invariant": {
@@ -1214,7 +1214,7 @@
         "heading": "Client-Side Discovery",
         "anchor": "client-side-discovery",
         "level": 3,
-        "line": 227,
+        "line": 229,
         "unit_kind": "dedicated",
         "unit_terms": [
           "caller obtains",
@@ -1231,12 +1231,12 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "If membership is stale, continued reachability still cannot establish write authority.",
+          "quote": "Stale membership can send traffic to a removed instance even when the address remains reachable.",
           "reason": "Applies the stale-membership safety rule to a client-held view as well."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Document who observes updates and how stale membership is detected. Distinguish the discovery control path from data-plane requests that can continue against a last-known usable set.",
+          "quote": "Bound the cache age, refresh budget and stale-cache alarm, and use a last-known set only for reads with an explicit freshness bound.",
           "reason": "Requires the client-side observer to detect stale membership and bound continued data-plane use."
         },
         "alternative": {
@@ -1274,7 +1274,7 @@
         "heading": "Server-Side Discovery",
         "anchor": "server-side-discovery",
         "level": 3,
-        "line": 241,
+        "line": 244,
         "unit_kind": "dedicated",
         "unit_terms": [
           "proxy, gateway",
@@ -1291,12 +1291,12 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "If membership is stale, continued reachability still cannot establish write authority.",
+          "quote": "Stale membership can keep a removed backend in the selection set even when the proxy is healthy.",
           "reason": "Applies the stale-membership safety rule to a proxy-held membership view."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Document who observes updates and how stale membership is detected. Distinguish the discovery control path from data-plane requests that can continue against a last-known usable set.",
+          "quote": "Proxy outage, retry amplification and a shared-proxy bottleneck are common; bound retries, expose a degraded path and plan the proxy's own failover.",
           "reason": "Requires the proxy to detect stale membership and bound last-known data-plane use."
         },
         "alternative": {
@@ -1979,7 +1979,7 @@
         "heading": "Splitter",
         "anchor": "splitter",
         "level": 3,
-        "line": 132,
+        "line": 133,
         "unit_kind": "dedicated",
         "unit_terms": [
           "one input into several independently processable messages",
@@ -2099,7 +2099,7 @@
         "heading": "Scatter-Gather",
         "anchor": "scatter-gather",
         "level": 3,
-        "line": 148,
+        "line": 150,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Scatter-gather sends one request",
@@ -2996,7 +2996,7 @@
         "heading": "Compensating Transaction",
         "anchor": "compensating-transaction",
         "level": 3,
-        "line": 242,
+        "line": 244,
         "unit_kind": "dedicated",
         "unit_terms": [
           "new business action",
@@ -3470,7 +3470,7 @@
         "heading": "Distributed Cache",
         "anchor": "distributed-cache",
         "level": 3,
-        "line": 208,
+        "line": 210,
         "unit_kind": "dedicated",
         "unit_terms": [
           "distributed cache",
@@ -3647,7 +3647,7 @@
         "heading": "Write-Through Cache",
         "anchor": "write-through-cache",
         "level": 3,
-        "line": 141,
+        "line": 142,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Write-Through Cache"
@@ -3704,7 +3704,7 @@
         "heading": "Write-Behind-Write-Back",
         "anchor": "write-behind-write-back",
         "level": 3,
-        "line": 160,
+        "line": 161,
         "unit_kind": "dedicated",
         "unit_terms": [
           "write-behind",
@@ -3764,7 +3764,7 @@
         "heading": "Write-Around",
         "anchor": "write-around",
         "level": 3,
-        "line": 178,
+        "line": 179,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Write-Around"
@@ -4058,7 +4058,7 @@
         "heading": "Single Flight-Request Coalescing",
         "anchor": "single-flight-request-coalescing",
         "level": 3,
-        "line": 148,
+        "line": 150,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Single-flight",
@@ -4175,7 +4175,7 @@
         "heading": "Multi-Level Caching",
         "anchor": "multi-level-caching",
         "level": 3,
-        "line": 193,
+        "line": 194,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Multi-Level Caching"
@@ -4292,19 +4292,19 @@
         "heading": "Sharding",
         "anchor": "sharding",
         "level": 3,
-        "line": 121,
+        "line": 126,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Partition rows",
-          "One authoritative owner",
-          "Hotspots",
-          "Partitioning inside one database"
+          "Sharding is",
+          "versioned shard map",
+          "one owner per key",
+          "rebalancing"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Partition rows by a shard key, route each request to its shard and maintain a versioned shard map.",
+          "quote": "Sharding is an application-level routing contract: a versioned shard map assigns each key to a shard, the request carries the shard key, and the store enforces one owner per key.",
           "reason": "Defines the mechanism."
         },
         "invariant": {
@@ -4466,7 +4466,7 @@
         "heading": "Leader-Follower Replication",
         "anchor": "leader-follower-replication",
         "level": 3,
-        "line": 161,
+        "line": 163,
         "unit_kind": "dedicated",
         "unit_terms": [
           "One leader accepts writes",
@@ -4483,12 +4483,12 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "A can remain reachable to some clients, but must not be allowed to commit new authoritative writes without a valid quorum/term contract.",
+          "quote": "A stale leader can remain reachable to some clients, but must not be allowed to commit new authoritative writes without a valid quorum/term contract.",
           "reason": "States the single-writer rule during a partition."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A stale leader that reappears must be rejected, and the follower log must catch up before it serves authoritative reads.",
+          "quote": "Promotion requires a quorum/term check and a fencing token; the old leader must be rejected, and the follower log must catch up before it serves authoritative reads.",
           "reason": "Covers isolation, new-leader election and stale-leader rejection with log catch-up."
         },
         "alternative": {
@@ -4583,7 +4583,7 @@
         "heading": "Read Replicas",
         "anchor": "read-replicas",
         "level": 3,
-        "line": 146,
+        "line": 148,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Read Replicas"
@@ -4760,7 +4760,7 @@
         "heading": "CQRS Read Projections",
         "anchor": "cqrs-read-projections",
         "level": 3,
-        "line": 322,
+        "line": 323,
         "unit_kind": "dedicated",
         "unit_terms": [
           "separate query view",
@@ -5234,7 +5234,7 @@
         "heading": "Timeout",
         "anchor": "timeout",
         "level": 3,
-        "line": 190,
+        "line": 191,
         "unit_kind": "dedicated",
         "unit_terms": [
           "local wait bound",
@@ -5294,7 +5294,7 @@
         "heading": "Deadline Propagation",
         "anchor": "deadline-propagation",
         "level": 3,
-        "line": 204,
+        "line": 205,
         "unit_kind": "dedicated",
         "unit_terms": [
           "relative duration",
@@ -5906,7 +5906,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Returning traffic to A is a new migration, not the inverse of failover.",
+          "quote": "Failover moves authority from region A to a surviving region B under an explicit decision; failback is a second migration from B back to A, not the inverse operation.",
           "reason": "Defines the mechanism and its scope."
         },
         "invariant": {
@@ -6013,7 +6013,7 @@
         "heading": "Consensus",
         "anchor": "consensus",
         "level": 3,
-        "line": 177,
+        "line": 180,
         "unit_kind": "dedicated",
         "unit_terms": [
           "nodes A, B and C",
@@ -6030,7 +6030,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "A can remain reachable to some clients, but must not be allowed to commit new authoritative writes without a valid quorum/term contract.",
+          "quote": "Safety means no two leaders commit conflicting decisions; progress means a quorum can eventually decide.",
           "reason": "Requires a valid quorum/term contract before authoritative writes."
         },
         "failure_recovery": {
@@ -6493,7 +6493,7 @@
         "heading": "Load Balancing",
         "anchor": "load-balancing",
         "level": 3,
-        "line": 255,
+        "line": 259,
         "unit_kind": "dedicated",
         "unit_terms": [
           "selector can count",
@@ -6505,7 +6505,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A selector can count connections, active requests, completed work, errors or resource utilization. These signals answer different questions and fail in different ways.",
+          "quote": "Load balancing chooses among eligible backends. The invariant is that no request reaches an ineligible backend and no retry loop is unbounded; it needs fresh health/selection signals and retry-safe callers.",
           "reason": "Explains selection signals as the basis for distributing requests and that they are not equivalent."
         },
         "invariant": {
@@ -6613,7 +6613,7 @@
         "heading": "Vertical Scaling",
         "anchor": "vertical-scaling",
         "level": 3,
-        "line": 118,
+        "line": 120,
         "unit_kind": "dedicated",
         "unit_terms": [
           "changes resources",
@@ -6630,7 +6630,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Neither can increase throughput past a serial or externally fixed bottleneck.",
+          "quote": "Neither horizontal nor vertical scaling can increase throughput past a serial or externally fixed bottleneck.",
           "reason": "States the capacity ceiling that vertical scaling cannot exceed."
         },
         "failure_recovery": {
@@ -6673,7 +6673,7 @@
         "heading": "Autoscaling",
         "anchor": "autoscaling",
         "level": 3,
-        "line": 133,
+        "line": 137,
         "unit_kind": "dedicated",
         "unit_terms": [
           "feedback-control mechanism",
@@ -6973,7 +6973,7 @@
         "heading": "Static Content Hosting",
         "anchor": "static-content-hosting",
         "level": 3,
-        "line": 144,
+        "line": 146,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Static content hosting",
@@ -7687,16 +7687,16 @@
         "line": 101,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "expand the representation",
-          "New writers",
-          "Incompatible writes",
-          "big-bang migration"
+          "Expand-and-contract",
+          "compatibility window",
+          "reader inventory",
+          "contract phase"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "expand the representation, run a tested mixed-version phase, reconcile migrated data, and contract only after old readers are proven absent.",
+          "quote": "Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain compatible with readers still running the previous version, and the contract phase is gated by observed reader absence.",
           "reason": "States the expand, migrate, verify and contract sequence."
         },
         "invariant": {
@@ -7744,7 +7744,7 @@
         "heading": "Controlled Cutover",
         "anchor": "controlled-cutover",
         "level": 3,
-        "line": 128,
+        "line": 130,
         "unit_kind": "dedicated",
         "unit_terms": [
           "observed gate",
@@ -8158,7 +8158,7 @@
         "heading": "Multitenant Isolation",
         "anchor": "multitenant-isolation-1",
         "level": 2,
-        "line": 86,
+        "line": 90,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Multitenant Isolation"
@@ -8189,7 +8189,7 @@
       "decision_evidence": {
         "atlas_section": "multitenant-isolation",
         "question": "Should tenants be isolated in compute, data, identity and network layers rather than share one trusted pool?",
-        "competing_alternative": "Shared pool with per-tenant authorization and quotas. Reverse the choice when isolation cost exceeds residual risk.",
+        "competing_alternative": "A tenant-per-deployment boundary. Reverse the choice when isolation cost exceeds residual risk.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },

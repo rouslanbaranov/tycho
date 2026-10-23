@@ -110,7 +110,7 @@ Events.
 ### Event Sourcing
 
 **Identity.** Event Sourcing; family Data consistency, transactions and event sourcing;
-kind data-pattern; priority advanced.
+kind data-pattern; priority core.
 
 **Decision question.** Should authoritative state be derived from an ordered event history
 rather than stored as current rows?
@@ -213,7 +213,7 @@ Transactional Outbox.
 ### Saga Choreography
 
 **Identity.** Saga Choreography; family Data consistency, transactions and event sourcing;
-kind transaction-pattern; priority advanced.
+kind transaction-pattern; priority core.
 
 **Decision question.** Should saga participants react to events without a central
 coordinator?
@@ -246,7 +246,7 @@ unit, not a benchmark.
 ### Saga Orchestration
 
 **Identity.** Saga Orchestration; family Data consistency, transactions and event
-sourcing; kind transaction-pattern; priority advanced.
+sourcing; kind transaction-pattern; priority core.
 
 **Decision question.** Should a central coordinator drive saga steps and compensations?
 
@@ -278,7 +278,7 @@ unit, not a benchmark.
 ### Compensating Transaction
 
 **Identity.** Compensating Transaction; family Data consistency, transactions and event
-sourcing; kind transaction-pattern; priority advanced.
+sourcing; kind transaction-pattern; priority core.
 
 **Decision question.** Should a failed saga step be undone by an explicit business
 compensation rather than a rollback?
@@ -416,7 +416,7 @@ Backoff; Correlation Identifier.
 ### Change Data Capture (CDC)
 
 **Identity.** Change Data Capture (CDC); family Data consistency, transactions and event
-sourcing; kind data-pattern; priority advanced.
+sourcing; kind data-pattern; priority core.
 
 **Decision question.** Should database changes be captured as a replayable stream instead
 of dual-written by the application?
@@ -533,7 +533,7 @@ when blocking and coordinator complexity exceed atomicity benefit.
 **Failure and recovery.** Prepared transactions can hold locks and block recovery; verify
 protocol limits in the owner section.
 
-**Technical owner.** [Local atomic commit does not include the outside world](../../v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md#two-phase-commit-2pc) — local/global commit limits are bounded, not a 2PC protocol reference.
+**Technical owner.** [Two-Phase Commit (2PC)](../../v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md#two-phase-commit-2pc) — local/global commit limits are bounded, not a 2PC protocol reference.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-pg-2pc.2026-10-21: sections "Two-Phase Transactions", "Prepare

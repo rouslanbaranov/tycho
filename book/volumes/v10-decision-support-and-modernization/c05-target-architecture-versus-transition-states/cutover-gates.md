@@ -118,8 +118,10 @@ runtime or configuration decision, not a long-lived source branch.
 
 An internal interface can route old/new implementations with one deployable. Old and new
 implementations behind the internal interface must preserve the same contract and observable
-effects; the switch must remain reversible until the old path is removed. Untested side effects, a
-bypass around the abstraction and divergent implementations can break that contract.
+effects; the switch must remain reversible until the old path is removed. Give the seam a removal
+date and owner; a permanent seam is a maintenance failure, and the switch must remain reversible
+until removal. Untested side effects, a bypass around the abstraction and divergent implementations
+can break that contract.
 
 A strangler facade can route requests by capability when the boundary is external. Branch by
 abstraction is a fit when the switch can stay inside one deployable and the interface is genuinely

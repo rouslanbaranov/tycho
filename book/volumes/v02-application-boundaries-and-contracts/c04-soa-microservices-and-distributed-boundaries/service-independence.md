@@ -121,10 +121,12 @@ contract must state which dependencies are required, which are optional, and wha
 when an optional dependency is unavailable.
 
 Hidden shared state or a chatty dependency chain turns an apparently local request into a
-multi-owner transaction; dependency and latency traces reveal the undeclared coupling. An
-orchestrating service or backend for frontend can coordinate owners explicitly; accept that
-composition when the workflow genuinely spans separate authorities and the coordinator's failure
-behaviour is designed.
+multi-owner transaction; dependency and latency traces reveal the undeclared coupling. A local
+read model is justified only when the service can own duplication and reconciliation: state
+which copy is authoritative, how stale data is detected and repaired, and why strong consistency
+is not required. Otherwise API composition is preferable. An orchestrating service or backend
+for frontend can coordinate owners explicitly; accept that composition when the workflow
+genuinely spans separate authorities and the coordinator's failure behaviour is designed.
 
 **Limits.** Dependency budget, fallback contract and coordination latency are costs; a
 self-contained service can still hide a shared database or synchronous chain.

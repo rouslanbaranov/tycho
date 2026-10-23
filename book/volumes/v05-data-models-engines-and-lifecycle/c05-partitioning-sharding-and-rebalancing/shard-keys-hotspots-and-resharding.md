@@ -106,7 +106,9 @@ source claim.
 
 Partitioning splits one logical data set into key ranges or lists inside a store so the planner can
 prune unrelated partitions for a query. Each row belongs to exactly one partition, and the main
-query must name a partition key so pruning is possible.
+query must name a partition key so pruning is possible. The same contract covers hash partitioning
+and partitioned streams, not only table range/list layouts; state the partitioning function and
+how it evolves.
 
 A query without the partition key fans out across every partition; inspect plans and measure fan-out
 when access paths or keys change. Keep one table and add an index when the main query already
@@ -116,12 +118,17 @@ prunes; partition only when the data volume, retention or maintenance benefit is
 partitions raise planning and maintenance overhead, and a key that changes forces row movement.
 Plan for detach/attach maintenance, not only query pruning.
 
-## Bounded pattern ownership notes
+## Sharding ownership notes
+
+These notes are synthetic design guidance, not measured evidence, and they do not create a
+new source claim.
 
 ### Sharding
 
-Partition rows by a shard key, route each request to its shard and maintain a versioned shard map.
-The shard key is a data-placement decision and a routing contract at once.
+Sharding is an application-level routing contract: a versioned shard map assigns each key to a
+shard, the request carries the shard key, and the store enforces one owner per key. Unlike table
+partitioning inside one store, a shard crosses independent stores, so the map and rebalancing
+protocol are part of the contract rather than a physical-layout detail.
 
 One authoritative owner must exist per key, and a resharding move must fence writes or preserve a
 verifiable handoff. Hotspots, map drift, split brain and a failed migration are common; detect skew,

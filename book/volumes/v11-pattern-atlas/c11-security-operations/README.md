@@ -210,7 +210,7 @@ Identity.
 ### Workload Identity / mTLS
 
 **Identity.** Workload Identity / mTLS; family Security, isolation and operational
-architecture; kind security-pattern; priority advanced.
+architecture; kind security-pattern; priority core.
 
 **Decision question.** Should workloads authenticate each other with cryptographic
 identities rather than network location?
@@ -231,8 +231,8 @@ rotation in the owner section.
 
 **Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-istio.2026-10-21: sections "Workload Identity", "Mutual TLS",
-"Authorization". The source is a public pattern/specification
-unit, not a benchmark.
+"Authorization". The read record notes a 100,000-character truncation; later sections are
+unverified. The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -241,7 +241,7 @@ unit, not a benchmark.
 ### Valet Key
 
 **Identity.** Valet Key; family Security, isolation and operational architecture; kind
-security-pattern; priority advanced.
+security-pattern; priority core.
 
 **Decision question.** Should a client receive a scoped, time-limited credential for
 direct resource access?
@@ -284,8 +284,8 @@ layer; noisy-neighbor and data-leak risks are material.
 **Hard contraindications.** Reject when one tenant exists, when isolation would strand
 capacity, or when the resource cannot enforce tenant scope.
 
-**Competing alternative.** Shared pool with per-tenant authorization and quotas. Reverse
-the choice when isolation cost exceeds residual risk.
+**Competing alternative.** A tenant-per-deployment boundary. Reverse the choice when
+isolation cost exceeds residual risk.
 
 **Failure and recovery.** Cross-tenant leakage and quota bypass are common; verify layers
 in the owner section.
@@ -429,7 +429,7 @@ unit, not a benchmark.
 ### Synthetic Monitoring
 
 **Identity.** Synthetic Monitoring; family Security, isolation and operational
-architecture; kind operations-pattern; priority advanced.
+architecture; kind operations-pattern; priority core.
 
 **Decision question.** Should probes exercise user-visible behavior from outside the
 service rather than rely only on internal metrics?
@@ -483,8 +483,8 @@ verify semantics in the owner section.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-probes.2026-10-21: sections "Liveness", "Readiness",
-"Startup". The source is a public pattern/specification
-unit, not a benchmark.
+"Startup". The read record notes a 100,000-character truncation; later sections are unverified.
+The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

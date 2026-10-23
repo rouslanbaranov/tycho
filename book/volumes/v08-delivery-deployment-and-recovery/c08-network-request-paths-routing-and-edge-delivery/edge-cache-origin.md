@@ -137,9 +137,11 @@ not a complete design for private edge caching; explicit cache directives can al
 misclassified response can serve one user's private data to another, and a purge can lag the origin.
 Test the authorization matrix, the purge path and the stale-on-error behavior.
 
-A direct origin or a private cache may be preferable when every response is user-specific or the
-purge contract cannot be enforced. Edge caching is a fit when the response is shareable and the key,
-freshness and authorization boundary are explicit.
+The cited Microsoft static-hosting unit is narrower than this CDN guidance; RFC 9111 supports
+shared-cache restrictions and validation, not product-specific CDN behavior. A direct origin or a
+private cache may be preferable when every response is user-specific or the purge contract cannot
+be enforced. Edge caching is a fit when the response is shareable and the key, freshness and
+authorization boundary are explicit.
 
 ### Static Content Hosting
 

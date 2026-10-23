@@ -126,8 +126,10 @@ separately owned.
 
 Internal interfaces define allowed calls and dependency tests enforce the boundary. Hidden
 cross-module database access, cyclic dependencies and event-based coupling that recreates a
-distributed monolith are common. Test the dependency graph and schema ownership, not only the
-public API, and give each module a named owner.
+distributed monolith are common. Internal events are not automatically durable with the module's
+database commit: state whether the event is written in the same local transaction (outbox) or is
+best-effort, and who repairs a missed event. Test the dependency graph and schema ownership, not
+only the public API, and give each module a named owner.
 
 Microservices, hexagonal architecture or a simpler layered application may be preferable when
 module enforcement cost exceeds the coordination benefit. A modular monolith is a fit when the team

@@ -136,9 +136,11 @@ of keys instead of remapping the whole keyspace. Clients and owners must agree o
 mapping, and a key must retain one authoritative owner at any mapping epoch.
 
 A ring change temporarily routes a key to the wrong owner or serves an incomplete copy; dual-read or
-version-check during the transition and record the epoch. Explicit key-range assignment gives direct
-control of hot ranges; choose consistent hashing when node membership changes often and manual range
-planning is impractical.
+version-check during the transition and record the epoch. Virtual nodes and the replication factor
+are configuration, not optional: size them for balance and failure, and detect hotspots before
+they become a single-node bottleneck. Explicit key-range assignment gives direct control of hot
+ranges; choose consistent hashing when node membership changes often and manual range planning is
+impractical.
 
 **Limits.** Virtual nodes improve balance but add metadata and lookup cost; a ring without epoch
 fencing can route a write to two owners during a change.

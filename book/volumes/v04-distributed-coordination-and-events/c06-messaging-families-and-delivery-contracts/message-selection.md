@@ -362,7 +362,9 @@ subscription alone.
 ### Message Broker-Messaging Bridge
 
 A broker routes, stores and delivers messages between producers and consumers. A bridge forwards or
-translates between brokers/protocols, adding another hop, retention policy and failure domain.
+translates between brokers/protocols, adding another hop, retention policy and failure domain. The
+bridge must preserve message identity, ordering and delivery semantics across the translation; a
+faithful broker contract on one side does not imply the same contract on the other.
 
 These are independent; publisher confirm does **not** mean the consumer performed a business
 transaction. If the worker crashes after local effect but before acknowledgement, task redelivery may

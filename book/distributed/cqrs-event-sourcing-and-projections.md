@@ -312,9 +312,10 @@ an inherent definition.
 
 Before catch-up, a client querying the projection may not see its own accepted change. Projection
 lag, duplicate apply, cursor gaps and schema drift are common; make the apply idempotent, expose the
-applied position and define the read-after-write contract. A single model/CRUD service, a synchronous
-authority read or an event-sourced reconstruction may be preferable when read/write separation
-complexity exceeds the measured benefit.
+applied position and define the read-after-write contract. Commit the view update and cursor
+atomically, or make replay idempotent; rebuild with side effects disabled. A single model/CRUD
+service, a synchronous authority read or an event-sourced reconstruction may be preferable when
+read/write separation complexity exceeds the measured benefit.
 
 CQRS is a fit when the read and write shapes genuinely differ and the team can operate the
 projection; it is not a synonym for event sourcing or microservices.

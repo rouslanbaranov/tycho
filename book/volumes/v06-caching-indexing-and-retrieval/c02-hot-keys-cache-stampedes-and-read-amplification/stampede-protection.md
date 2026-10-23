@@ -140,6 +140,8 @@ A stampede policy must bound concurrent origin loads per key and total source wo
 stale-while-revalidate is only valid when the operation accepts the stale value. An expired lease can
 release a second refresh while the first is still writing; jittered TTLs do not protect one extremely
 hot key. Add a per-key lock or lease, jitter the refresh time, and expose origin-load concurrency.
+If the coordination service is unavailable, fail closed with a bounded wait or serve a declared
+stale value; never retry unbounded.
 
 Jittered TTL is a competing technique for simultaneous expiry of *different* keys; one extremely hot
 key can still stampede. A distributed refresh lease or request coalescing is preferable when one key
@@ -157,7 +159,9 @@ the followers need the same outcome record, not a fresh retry. Bound the wait an
 failure to every waiter.
 
 Single-flight within process is a fit for multiple concurrent source loads per key on one instance;
-many replicas still load in parallel. A distributed refresh lease is preferable when duplicate
+many replicas still load in parallel. It is a fit for read-mostly stable keys whose waiters can
+share failure; reject differing authorization or parameters and independent cancellation, and use
+independent calls when isolation matters. A distributed refresh lease is preferable when duplicate
 concurrent refreshes across instances matter, with its lease-expiry and fencing costs.
 
 ## Navigation, prerequisites and source scope

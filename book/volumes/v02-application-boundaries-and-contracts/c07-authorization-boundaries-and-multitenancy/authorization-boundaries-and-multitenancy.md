@@ -126,9 +126,10 @@ must reject calls that bypass the gatekeeper, or repeat the security-relevant ch
 boundary cannot be sidestepped by an alternate route.
 
 A stale policy or an undeclared direct path defeats the check while dashboards remain green; combine
-network policy, denial logs and a bypass test in the acceptance evidence. Enforce authorization
-inside the service at each effect boundary; use a gatekeeper when it centralizes a policy that every
-route must apply and the bypass surface is closed.
+network policy, denial logs and a bypass test in the acceptance evidence. A gatekeeper is a trust
+boundary only when it exposes a limited operation and credential surface; otherwise it is another
+proxy. Enforce authorization inside the service at each effect boundary; use a gatekeeper when it
+centralizes a policy that every route must apply and the bypass surface is closed.
 
 **Limits.** Gatekeeper availability, policy freshness and bypass routes are costs; a gatekeeper
 that only authenticates without resource authorization shifts the decision.

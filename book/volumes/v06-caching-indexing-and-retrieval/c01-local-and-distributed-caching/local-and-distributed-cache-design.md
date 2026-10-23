@@ -130,9 +130,10 @@ explicitly, never hidden as an ordinary cache miss, and concurrent fills must no
 source.
 
 Slow fills and error masking make the cache appear healthy while the source degrades; bound fill
-concurrency, timeouts and error translation. Cache-aside with application-owned fill keeps loading
-policy visible; prefer read-through when the cache can call the source and the loading contract is
-uniform.
+concurrency, timeouts and error translation. A fill must carry the source version and must not
+overwrite a newer committed value, and a read-through cache cannot make per-read application
+authorization decisions. Cache-aside with application-owned fill keeps loading policy visible;
+prefer read-through when the cache can call the source and the loading contract is uniform.
 
 **Limits.** The cache must implement the source protocol, authentication and backpressure;
 a bypass with different client semantics defeats the uniformity claim. A fill that hides source
@@ -197,9 +198,10 @@ for more places that can hold a stale copy. Every tier must receive the invalida
 must carry a bounded staleness contract and a version check.
 
 Tier divergence serves different values from different processes; version keys and measure the
-propagation delay of each invalidation path. One shared cache keeps a single copy but pays remote
-latency; add a local tier when the measured remote-read cost exceeds the staleness and invalidation
-effort.
+propagation delay of each invalidation path. Promote a value to the local tier only after the
+shared tier accepts the version; a local-only tier is the alternative when invalidation paths
+cannot be bounded. One shared cache keeps a single copy but pays remote latency; add a local tier
+when the measured remote-read cost exceeds the staleness and invalidation effort.
 
 **Limits.** Each added tier multiplies invalidation paths and failure modes; a tier without an
 owner becomes an unbounded stale copy. Test each tier during a rolling deploy and after a cold
@@ -212,9 +214,11 @@ one cached representation. API replicas A and B cache the same inventory availab
 authoritative database revision v17. The cache is a shared dependency with its own failure domain.
 
 Never treat cached tenant permissions or exclusive availability as harmlessly stale without the
-actual security/domain owner's approval. Blind bypass can turn a cache incident into an authoritative
-database overload. Define bounded concurrent fallback, explicit overload response and whether stale
-public descriptions may be served.
+actual security/domain owner's approval. The cache's partitioning, replication and replica
+ownership are part of its failure domain: define which replica is authoritative for a key and how
+a stale replica is detected. Blind bypass can turn a cache incident into an authoritative database
+overload. Define bounded concurrent fallback, explicit overload response and whether stale public
+descriptions may be served.
 
 Fail the cache strategy if user-visible freshness or pool budgets are breached; a direct
 authoritative query with better indexes may be the lower-risk alternative. A distributed cache is a

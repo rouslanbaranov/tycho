@@ -135,7 +135,9 @@ The source material keeps its original published/inferred/synthetic/unverified d
 ### Queue-Based Load Leveling
 
 A bounded queue between arrival and processing can absorb a short burst while workers drain at a
-sustainable rate. The queue levels load; it does not create capacity.
+sustainable rate. The queue levels load; it does not create capacity. The cited RabbitMQ guide
+supports reliability mechanics, not load-leveling policy; the admission and drain guidance here is
+synthetic.
 
 It needs an admission rule, a retention/age bound, durable acceptance when the caller is told
 "accepted", and idempotent consumers. An unbounded queue converts overload into memory growth and
