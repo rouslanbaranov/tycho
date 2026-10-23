@@ -199,9 +199,9 @@ The resource owner, not the lock client, decides whether an epoch is enforced. W
 enforcement at the destination, the design offers a coordination signal rather than mutual
 exclusion.
 
-Prefer a conditional write or single-writer route for one database. Review the lock when pause
-budgets, quorum latency or stale-write exposure changes materially. Remove the lock when its
-protection cannot be enforced at the resource.
+A resource that cannot check an epoch should not rely on this lock for exclusion; use a
+conditional write or single-writer route instead. Review the lock when pause budgets, quorum
+latency or stale-write exposure changes materially. Remove it when protection cannot be enforced.
 
 ### Lease-Based Ownership
 

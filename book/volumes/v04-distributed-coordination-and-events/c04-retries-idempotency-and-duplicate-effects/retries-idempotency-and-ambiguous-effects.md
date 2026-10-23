@@ -107,8 +107,8 @@ retention period. Callers choose a value only within that published contract. Th
 names the conflict response and the record a support engineer may inspect.
 
 The outcome record and business effect must commit together; a later separate write leaves a
-window for duplicate execution. A repeated key with a changed fingerprint is a conflict, not a
-replay.
+window for duplicate execution. The owner treats a changed fingerprint on a reused key as a new
+decision rather than a replay.
 
 Retention is a product and compliance decision, not an arbitrary cache timeout. State what
 happens after expiry and how an operator resolves a caller that retries beyond it.
