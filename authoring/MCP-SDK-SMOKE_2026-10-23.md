@@ -14,8 +14,8 @@
 | Client interpreter | Python 3.15.0 in a temporary virtual environment |
 | Server interpreter | Python 3.9.6 in the repository virtual environment |
 | Transport | stdio, newline-delimited JSON-RPC |
-| Code commit exercised | `7b9f49322d478053d905c858308427fa4c0bcc1a` |
-| Server file SHA-256 | `79879040fca80e24c003cbef3ea4d1fb0dd48359b5521e2d9ba7be5dd62686e2` |
+| Code commit exercised | `39bbaa28d88bdea86cd8e8683990ff0b01597535` |
+| Server file SHA-256 | `cd89a36e4b4ae7bcb85b2ecb8d8f0ecfa3c00be1c8605a798582db73f104b296` |
 | Smoke client SHA-256 | `c929086d2f2576271df876a5cc16c54eea6912d70369d37c75a3a55dd1c13cc3` |
 
 The SDK was installed only in `/tmp/tycho-mcp-sdk-2.3.0`. It is not a
