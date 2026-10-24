@@ -3386,12 +3386,65 @@
         }
       ],
       "reader": "Delegated reading subagent; no independent review or execution."
+    },
+    {
+      "id": "R080",
+      "source_ids": [
+        "src.postgres-wal"
+      ],
+      "url": "https://www.postgresql.org/docs/current/wal.html",
+      "unit": "Complete PostgreSQL 18 chapter 28 documentation set, sections 28.1-28.6",
+      "revision": "PostgreSQL 18.6 documentation, chapter 28; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 174 lines / 5912 words across wal-reliability, checksums, wal-intro, wal-async-commit, wal-configuration and wal-internals",
+      "retrieval_refs": [
+        "/tmp/refs/pgwal/chapter28.md lines 1-174",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked runtime-config pages, PITR chapter and source code not read; no database experiment.",
+      "representation_sha256": "58141dc85c3bdbbdb095c87b8cb28ddd76d4532c9a01a309d651ad6ebe14d5f2",
+      "retrieved_lines": 174,
+      "retrieved_words": 5912,
+      "sections": [
+        "28.1 Reliability",
+        "28.2 Data Checksums",
+        "28.3 Write-Ahead Logging",
+        "28.4 Asynchronous Commit",
+        "28.5 WAL Configuration",
+        "28.6 WAL Internals"
+      ],
+      "notes": [
+        "Source claim: committed PostgreSQL data must reach nonvolatile storage; OS, controller and drive write-back caches can defeat that guarantee unless flushed or battery-backed.",
+        "Source claim: data pages carry checksums by default; checksums cover data pages only, can be disabled or enabled offline, and do not protect internal structures or temporary files.",
+        "Source claim: WAL writes change records before data pages; recovery redoes logged changes, so data pages need not be flushed on every commit.",
+        "Source claim: synchronous commit waits for WAL flush; asynchronous commit returns before flush and can lose recent transactions but not corrupt the database.",
+        "Source claim: checkpoints flush dirty data pages and bound recovery; checkpoint_timeout, max_wal_size, full_page_writes and completion target trade recovery time against I/O.",
+        "Source claim: WAL segments are 16 MB by default, pages 8 kB, and LSNs are monotonic byte offsets used to measure replication and recovery progress.",
+        "Source claim: a checkpoint position is stored in pg_control; recovery reads it and scans forward, with full-page writes restoring torn pages.",
+        "Inference: documentation defines mechanisms and defaults, not a durability guarantee for a specific disk or configuration.",
+        "Inference: asynchronous commit is a data-loss window, not corruption; fsync=off is a broader corruption risk."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+          "candidate": "Does the WAL page separate commit acknowledgment from WAL flush and data-page durability?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Does recovery name the checkpoint, redo record and full-page-write assumptions?"
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "candidate": "Does the integrity page include data-page checksums and their limits?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 49,
+    "full_reads": 50,
     "blocked": 14,
     "records": [
       "R015",
@@ -3458,9 +3511,10 @@
       "R076",
       "R077",
       "R078",
-      "R079"
+      "R079",
+      "R080"
     ],
-    "scope": "JEP 444, JEP 491, thirty public engineering articles, sixteen documentation/paper units including scoped RFC 9111/9113 and partial RFC 9110, fourteen blocked pages and two excluded internal team sites",
+    "scope": "JEP 444, JEP 491, thirty public engineering articles, seventeen documentation/paper units, fourteen blocked pages and two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
     "partial_reads": 0
