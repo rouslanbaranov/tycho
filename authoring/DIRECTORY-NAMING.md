@@ -67,8 +67,8 @@ never authorizes a revision and does not replace `premerge_check.py`, claim
 review or independent review. The plan reports remaining work relative to the
 recorded edition inventory; a change whose derived artifacts were already
 refreshed may show no changed pages. Source-commit ancestry checks need a full
-git checkout with commit history; exported or shallow trees report those checks
-as unavailable.
+git checkout whose history contains the recorded source commit; exported or
+shallow trees that omit it report those checks as unavailable.
 
 Ownership stays with the existing contracts: identity and metadata in
 [METADATA-IDENTITY-CONTRACT](METADATA-IDENTITY-CONTRACT.md), heading, section

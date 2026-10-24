@@ -3,6 +3,7 @@ import hashlib
 import io
 import json
 import sqlite3
+import subprocess
 from contextlib import redirect_stdout
 from pathlib import Path
 import tempfile
@@ -15,7 +16,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import book_change
 from book_change import (build_plan, delivery_state, diff_maps,
                          directory_revision_gaps, fts_state, owner_units_state,
-                         semantic_audit_state, semantic_changes, state)
+                         semantic_audit_state, semantic_changes, source_plan_state,
+                         state)
 import section_fts_index
 
 
@@ -146,6 +148,61 @@ class BookChangePlanTests(unittest.TestCase):
                                side_effect=ValueError("fatal: not a git repository")):
             item = semantic_audit_state(ROOT, route)
         self.assertEqual(item["state"], "unavailable")
+        self.assertTrue(item["blocking"])
+
+    def test_git_missing_exception_is_unavailable(self):
+        route = book_change.canonical_scan(ROOT)
+        with mock.patch.object(book_change.validate_pattern_semantic_audit, "validate",
+                               side_effect=FileNotFoundError("git")):
+            item = semantic_audit_state(ROOT, route)
+        self.assertEqual(item["state"], "unavailable")
+        self.assertTrue(item["blocking"])
+
+    def test_called_process_error_is_unavailable(self):
+        route = book_change.canonical_scan(ROOT)
+        error = subprocess.CalledProcessError(128, ["git", "rev-parse", "HEAD"])
+        with mock.patch.object(book_change.validate_pattern_semantic_audit, "validate",
+                               side_effect=error):
+            item = semantic_audit_state(ROOT, route)
+        self.assertEqual(item["state"], "unavailable")
+        self.assertTrue(item["blocking"])
+
+    def test_source_commit_classification(self):
+        route = book_change.canonical_scan(ROOT)
+        error = ValueError("semantic-audit-source-commit-not-ancestor")
+        with mock.patch.object(book_change.validate_pattern_semantic_audit, "validate",
+                               side_effect=error):
+            with mock.patch.object(book_change, "git_is_shallow", return_value=True):
+                shallow = semantic_audit_state(ROOT, route)
+            with mock.patch.object(book_change, "git_is_shallow", return_value=False):
+                full = semantic_audit_state(ROOT, route)
+        self.assertEqual(shallow["state"], "unavailable")
+        self.assertEqual(full["state"], "stale")
+
+    def test_route_state_stale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "generated").mkdir()
+            (root / "generated/route-index.v1.json").write_text(
+                json.dumps({"documents": [], "snapshot_sha256": "old"}),
+                encoding="utf-8")
+            item = book_change.route_state(
+                root, {"documents": [], "snapshot_sha256": "new"})
+        self.assertEqual(item["state"], "stale")
+        self.assertTrue(item["blocking"])
+
+    def test_source_plan_state_stale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "edition/patterns").mkdir(parents=True)
+            (root / "edition/patterns/registry.v1.json").write_text("{}", encoding="utf-8")
+            (root / "edition/patterns/reading-ledger.v1.json").write_text(
+                json.dumps({"records": []}), encoding="utf-8")
+            (root / "edition/patterns/source-plan.v1.json").write_text(
+                json.dumps({"route_index_snapshot": "old", "registry_sha256": "x",
+                            "summary": {"ledger_records": 0}}), encoding="utf-8")
+            item = source_plan_state(root, {"snapshot_sha256": "new"})
+        self.assertEqual(item["state"], "stale")
         self.assertTrue(item["blocking"])
 
     def test_non_strict_error_exits_nonzero(self):

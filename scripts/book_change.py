@@ -13,6 +13,7 @@ from collections import Counter
 from pathlib import Path
 import shlex
 import sqlite3
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -187,12 +188,28 @@ def state(artifact, value, reason, action=None, blocking=False, mode="auto"):
             "action": action, "mode": mode, "blocking": blocking}
 
 
-def validator_state(artifact, exc, action):
+def git_is_shallow(root):
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "--is-shallow-repository"],
+            capture_output=True, text=True, check=True)
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    return result.stdout.strip() == "true"
+
+
+def validator_state(root, artifact, exc, action):
     message = str(exc)
-    git_failure = ("not a git repository" in message
-                   or "source-commit-not-ancestor" in message
-                   or "returned non-zero exit status 128" in message)
-    if git_failure:
+    if isinstance(exc, FileNotFoundError) or "not a git repository" in message:
+        return state(artifact, "unavailable", message,
+                     "run in a full git checkout with commit history", True, "manual")
+    if "source-commit-not-ancestor" in message:
+        if git_is_shallow(root) is True:
+            return state(artifact, "unavailable", message,
+                         "run in a checkout whose history contains the source commit",
+                         True, "manual")
+        return state(artifact, "stale", message, action, True, "manual")
+    if isinstance(exc, subprocess.CalledProcessError) or "returned non-zero exit status 128" in message:
         return state(artifact, "unavailable", message,
                      "run in a full git checkout with commit history", True, "manual")
     return state(artifact, "stale", message, action, True, "manual")
@@ -206,7 +223,7 @@ def semantic_audit_state(root, route):
     try:
         validate_pattern_semantic_audit.validate(root)
     except Exception as exc:  # noqa: BLE001 - validators fail with readable codes
-        return validator_state(artifact, exc,
+        return validator_state(root, artifact, exc,
                                "re-review changed pages and update sha/review")
     changes = semantic_changes(root, route)
     if changes:
@@ -224,7 +241,7 @@ def owner_units_state(root):
     try:
         validate_pattern_owner_units.validate(root)
     except Exception as exc:  # noqa: BLE001 - validators fail with readable codes
-        return validator_state(artifact, exc,
+        return validator_state(root, artifact, exc,
                                "re-audit the owner units and rebind evidence")
     return state(artifact, "fresh", "validator matches the current pages")
 
@@ -357,7 +374,7 @@ def delivery_state(root, route):
     try:
         validate_delivery_evidence.validate(root)
     except Exception as exc:  # noqa: BLE001 - validators fail with readable codes
-        return validator_state(artifact, exc,
+        return validator_state(root, artifact, exc,
                                "manual rebind after the cited artifact is repaired")
     return state(artifact, "fresh", "summary and validator match the current tree")
 
@@ -500,13 +517,13 @@ def build_plan(root, branch=None, issue_title=None):
             "python3 scripts/pattern_coverage.py --write")
     if phase4_item["state"] in ("stale", "missing", "deferred", "unavailable"):
         add("rebuild", "Rebuild the phase 4 artifact", "python3 scripts/phase4_audit.py")
-    if semantic or semantic_item["state"] != "fresh":
+    if semantic or semantic_item["state"] in ("stale", "missing"):
         add("review", "Restore or re-review the semantic audit and update sha/review")
     if plan_item["state"] in ("stale", "missing", "unavailable"):
         add("review", "Rebind the source plan snapshot, registry hash and ledger count")
-    if delivery_item["state"] in ("stale", "missing", "unavailable"):
+    if delivery_item["state"] in ("stale", "missing"):
         add("review", "Rebind delivery-evidence counts and source commit")
-    if owner_item["state"] in ("stale", "missing", "unavailable"):
+    if owner_item["state"] in ("stale", "missing"):
         add("review", "Re-audit owner units and rebind delivery evidence")
     if inventory_item["state"] in ("stale", "missing", "unavailable"):
         add("rebuild", "Refresh the edition inventory after review",
@@ -537,7 +554,7 @@ def build_plan(root, branch=None, issue_title=None):
             "Read-only plan; it does not validate claims, authorize revisions or replace premerge.",
             "New or removed pages also change outline, membership and counts; premerge remains the gate.",
             "Decomposition source-block revisions are not enumerated; premerge and its tests remain the gate.",
-            "Source-commit ancestry checks need a full git checkout with history; export or shallow copies report unavailable.",
+            "Source-commit ancestry checks need a checkout whose history contains the recorded commit; trees that omit it report unavailable.",
             "A not-built local section index is advisory and does not block a book change.",
             "Manual steps must be reviewed by a human or agent; the plan does not accept them.",
         ],
