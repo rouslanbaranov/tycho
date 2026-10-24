@@ -1,0 +1,649 @@
+[
+  {
+    "id": "B052",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-intro.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-intro.pdf",
+    "unit": "Complete chapter 4, The Abstraction: The Process",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:20:08Z; 13 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 200 lines / 13 pages; sections 4.1-4.6; Figures 4.1-4.5 and the xv6 struct listing; asides on time/space sharing, policy/mechanism separation, the process list, and key terms; references and simulation homework; raster figures not visually inspected",
+    "retrieved_lines": 200,
+    "retrieved_words": 4446,
+    "representation_sha256": "d7d4c6dc899d03d63051a47e46c8f659848860109f36bcb03741b85bc61e724a",
+    "pages": 13,
+    "pdf_sha256": null,
+    "sections": [
+      "4.1 The Abstraction: A Process",
+      "4.2 Process API",
+      "4.3 Process Creation: A Little More Detail",
+      "4.4 Process States",
+      "4.5 Data Structures",
+      "4.6 Summary"
+    ],
+    "figures": [
+      "Figure 4.1: Loading: From Program To Process",
+      "Figure 4.2: Process: State Transitions",
+      "Figure 4.3: Tracing Process State: CPU Only",
+      "Figure 4.4: Tracing Process State: CPU and I/O",
+      "Figure 4.5: The xv6 Proc Structure"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/cpu-intro.md lines 1-200",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: a process is a running program, and the OS creates the illusion of many CPUs by time sharing one or a few physical CPUs; the stated cost is slower per-process progress while the CPU is shared.",
+      "Source claim: a process's machine state is an inventory of its address space, registers (including the program counter and stack pointer), and I/O state such as open files.",
+      "Source claim: any process API needs create, destroy, wait, miscellaneous control (suspend/resume), and status operations; the chapter presents these as generic rather than UNIX-specific.",
+      "Source claim: creation loads code and static data, allocates and initializes the stack with argc/argv, may allocate a heap, sets up standard file descriptors, and then jumps to main(); loading may be eager or lazy.",
+      "Source claim: the simplified states are running, ready, and blocked, with scheduled/descheduled and I/O initiate/complete transitions; xv6 adds unused, embryonic, sleeping, runnable, and zombie states.",
+      "Source claim: xv6's struct proc stores memory bounds, kernel stack, state, pid, parent, sleep channel, open files, cwd, saved register context, and trap frame; a context switch saves and restores that register context.",
+      "Source claim: a zombie has exited but not been reaped; the parent's wait() retrieves the exit status and releases the remaining process structures.",
+      "Inference: the chapter bundles scheduling identity, address space, and I/O ownership into one abstraction; later thread and container designs deliberately separate some of these, which the chapter does not examine.",
+      "Inference: the policy/mechanism split is presented as modularity, but the chapter gives no cost model for switching frequency or policy choice, so the performance consequences remain qualitative."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+        "candidate": "Process and task lifecycle vocabulary: running, ready, blocked, and ownership of waiting; compare OS process states with the book's task states."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+        "candidate": "Diagnostic distinction between runnable and blocked work, PID-level identity, and CPU-time attribution."
+      },
+      {
+        "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/workload-demand-and-arrival-models.md",
+        "candidate": "Time sharing versus space sharing as competing demand models for a finite resource; useful analogy for capacity sharing."
+      }
+    ],
+    "remaining": "Raster figures were not visually inspected; cited papers and the xv6 source were not retrieved; the process-run.py simulation homework was not executed; no PDF binary was obtained and no independent review was performed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B053",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-api.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-api.pdf",
+    "unit": "Complete chapter 5, Interlude: Process API",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-10T21:42:53Z; 15 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 636 lines / 15 pages; sections 5.1-5.7; Figures 5.1-5.4 code listings plus p1-p4 output traces; asides on interludes, Lampson's law, man pages, the superuser, key terms, and coding homeworks; references and both homework sets; raster figures not visually inspected",
+    "retrieved_lines": 636,
+    "retrieved_words": 5681,
+    "representation_sha256": "bcc475578b13193356855d7f7066202a98bfb8b34685cd849a0c447570cdf07f",
+    "pages": 15,
+    "pdf_sha256": null,
+    "sections": [
+      "5.1 The fork() System Call",
+      "5.2 The wait() System Call",
+      "5.3 Finally, The exec() System Call",
+      "5.4 Why? Motivating The API",
+      "5.5 Process Control And Users",
+      "5.6 Useful Tools",
+      "5.7 Summary"
+    ],
+    "figures": [
+      "Figure 5.1: Calling fork() (p1.c)",
+      "Figure 5.2: Calling fork() And wait() (p2.c)",
+      "Figure 5.3: Calling fork(), wait(), And exec() (p3.c)",
+      "Figure 5.4: All Of The Above With Redirection (p4.c)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/cpu-api.md lines 1-636",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: fork() creates a nearly exact copy with a private address space, registers, and PC; the parent receives the child PID, the child receives zero, and failure returns a negative value.",
+      "Source claim: after fork() either process may run first; output order is non-deterministic because the CPU scheduler decides, so programs should not rely on it.",
+      "Source claim: wait() blocks the parent until the child exits, making the example output deterministic; a footnote concedes that wait() can return before child exit in some cases.",
+      "Source claim: exec() replaces the calling program's code and static data, reinitializes the heap and stack, keeps the same process, and does not return on success; Linux exposes six variants.",
+      "Source claim: the shell exploits the fork/exec gap to redirect output by closing STDOUT_FILENO and opening a file; UNIX allocates the lowest free descriptor, and descriptors survive exec().",
+      "Source claim: pipes use an in-kernel queue to connect one process's output to another's input, enabling command pipelines such as grep | wc.",
+      "Source claim: kill() and signals (for example SIGINT from control-c and SIGTSTP from control-z) control processes and process groups; ownership limits control to a user's own processes, with the superuser exempt.",
+      "Source claim: the authors cite [B+19] as arguing that fork() has design problems and advocating spawn()-style creation, and they explicitly present their positive view as an opinion.",
+      "Inference: the fork/exec split buys flexibility (redirection, pipes, environment changes) at the cost of a two-process mental model and failure paths that the short examples do not exercise.",
+      "Inference: the chapter describes fork() as giving each process its own memory but does not discuss copy-on-write or fork failure under memory pressure, so implementation cost is out of scope."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+        "candidate": "API design trade-off between one flexible primitive and a smaller, safer operation; fork's asymmetric return contract is a clarity example."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md",
+        "candidate": "Separation of launching work from configuring and executing it; cancellation and signal-like control surfaces."
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+        "candidate": "Principal-scoped control: users may signal only their own processes, with a privileged override; maps to authorization boundaries."
+      }
+    ],
+    "remaining": "Raster figures were not visually inspected; cited papers, man pages, and referenced code were not retrieved; the fork.py simulation and coding homeworks were not executed; no PDF binary was obtained and no independent review was performed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B054",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-mechanisms.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-mechanisms.pdf",
+    "unit": "Complete chapter 6, Mechanism: Limited Direct Execution",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:20:46Z; 16 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 377 lines / 16 pages; sections 6.1-6.5 plus the opening crux box, chapter summary and references; figures 6.1-6.4 (direct-execution protocol, limited-direct-execution protocol, timer-interrupt protocol, xv6 swtch assembly listing); asides and tips on procedure-call disguise, protected control transfer, user inputs in secure systems, application misbehavior, timer interrupt, reboot, context-switch cost, and key CPU-virtualization terms; homework (measurement) prompt and its measurement aside; raster figures not visually inspected",
+    "retrieved_lines": 377,
+    "retrieved_words": 6751,
+    "representation_sha256": "6f143c647cf34a44b111c58126569ce6ffdad106e6df8d8f262e21f98ca1fbae",
+    "pages": 16,
+    "pdf_sha256": null,
+    "sections": [
+      "6.1 Basic Technique: Limited Direct Execution",
+      "6.2 Problem #1: Restricted Operations",
+      "6.3 Problem #2: Switching Between Processes",
+      "6.4 Worried About Concurrency?",
+      "6.5 Summary",
+      "References",
+      "Homework (Measurement)"
+    ],
+    "figures": [
+      "Figure 6.1: Direct Execution Protocol (Without Limits)",
+      "Figure 6.2: Limited Direct Execution Protocol",
+      "Figure 6.3: Limited Direct Execution Protocol (Timer Interrupt)",
+      "Figure 6.4: The xv6 Context Switch Code"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/cpu-mechanisms.md lines 1-377",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "[Source] The chapter frames CPU virtualization as a two-constraint problem: direct execution buys performance, while limits buy control, and it states that both hardware and OS support are required (sections 6.1-6.2).",
+      "[Source] Two execution modes are the primitive: user mode blocks privileged operations such as I/O and trap-table installation, kernel mode permits them, and the trap instruction is the only sanctioned crossing (section 6.2, tip on protected control transfer).",
+      "[Source] Trap dispatch is indirected through a boot-time trap table and a system-call number rather than a user-supplied jump address; the chapter explicitly calls this indirection a form of protection (section 6.2).",
+      "[Source] Figure 6.2 decomposes the protocol into boot-time setup (trap table, first timer arming) and per-run transitions, with hardware saving registers onto a per-process kernel stack.",
+      "[Source] Cooperative relinquishment through system calls, yield, or faults cannot bound a spinning process; the timer interrupt is presented as the minimal hardware addition that restores OS control without process cooperation (section 6.3).",
+      "[Source] The context switch is described as two separate save/restore pairs: implicit hardware saves on trap, then explicit software saves into the process structure inside switch(); changing the kernel stack pointer is what makes return-from-trap resume B instead of A (section 6.3, Figure 6.3).",
+      "[Source] The xv6 swtch listing in Figure 6.4 makes the mechanism concrete: the return address is popped into the old context, %esp is stored, then a fresh return address is pushed and ret resumes the new context.",
+      "[Source] Section 6.4 concedes that an interrupt during trap handling is a real problem and defers it to the concurrency material, sketching interrupt disabling while flagging lost interrupts as the cost of overusing it.",
+      "[Inference] The lmbench figures quoted in the context-switch aside are 1996 hardware measurements plus a qualitative modern remark, so they are not usable as a current latency budget without fresh measurement.",
+      "[Inference] The baby-proofing analogy implies a perimeter security posture: once traps and the timer are configured, the kernel still has to distrust the arguments crossing the boundary, which is the residual attack surface the user-input tip names."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+        "candidate": "Use the user/kernel split as a minimal contrast case: hardware-enforced privilege is a different class of boundary from application-level authorization, which would keep the isolation claims in that chapter scoped."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md",
+        "candidate": "Mirror the chapter's mechanism-versus-policy split: trap, timer and context switch are mechanisms, while the scheduler is policy, which maps onto separating runtime thread mechanics from executor scheduling choices."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/task-lifetime.md",
+        "candidate": "Does task lifetime distinguish an OS context switch from cooperative cancellation and application-level timeouts?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures 6.1-6.4 not visually inspected; cited works (Atlas, Alto, lmbench, microreboot, Intel manuals, return-into-libc, POSIX) not retrieved or read; the measurement homework was not executed and no timings were taken; the xv6 listing was read as transcribed text only, not compiled or run.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B055",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched.pdf",
+    "unit": "Complete chapter 7, Scheduling: Introduction",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:21:05Z; 13 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 264 lines / 13 pages; sections 7.1-7.10 plus the opening crux box, chapter summary and references; figures 7.1-7.9 (FIFO simple, FIFO convoy, SJF simple, SJF with late arrivals, STCF, SJF for response time, round robin, poor I/O overlap, overlapping I/O); asides and tips on preemptive schedulers, the SJF principle, amortization, and overlap; homework (simulation) with 7 numbered questions; raster figures not visually inspected",
+    "retrieved_lines": 264,
+    "retrieved_words": 4785,
+    "representation_sha256": "9b51d2ae2d892aeec0df49db61337c2ea3d7d99826a6b9eab6dc7caac02adc90",
+    "pages": 13,
+    "pdf_sha256": null,
+    "sections": [
+      "7.1 Workload Assumptions",
+      "7.2 Scheduling Metrics",
+      "7.3 First In, First Out (FIFO)",
+      "7.4 Shortest Job First (SJF)",
+      "7.5 Shortest Time-to-Completion First (STCF)",
+      "7.6 A New Metric: Response Time",
+      "7.7 Round Robin",
+      "7.8 Incorporating I/O",
+      "7.9 No More Oracle",
+      "7.10 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 7.1: FIFO Simple Example",
+      "Figure 7.2: Why FIFO Is Not That Great",
+      "Figure 7.3: SJF Simple Example",
+      "Figure 7.4: SJF With Late Arrivals From B and C",
+      "Figure 7.5: STCF Simple Example",
+      "Figure 7.6: SJF Again (Bad for Response Time)",
+      "Figure 7.7: Round Robin (Good For Response Time)",
+      "Figure 7.8: Poor Use Of Resources",
+      "Figure 7.9: Overlap Allows Better Use Of Resources"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/cpu-sched.md lines 1-264",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "[Source] Policy is built by progressively relaxing five stated workload assumptions; the chapter singles out known job runtime as the worst offender because it would make the scheduler omniscient (section 7.1).",
+      "[Source] Turnaround time is completion minus arrival, which collapses to completion time under simultaneous arrivals; FIFO averages 110 seconds on the 100/10/10 example (sections 7.2-7.3).",
+      "[Source] The convoy effect names FIFO's failure when a long job blocks short ones, and SJF lowers that same example's average turnaround to 50 seconds (sections 7.3-7.4).",
+      "[Source] SJF is non-preemptive, so short jobs arriving late still wait; STCF preempts and re-ranks by remaining time on each arrival, reaching 50 seconds in the late-arrival example (section 7.5).",
+      "[Source] Response time is first-run minus arrival, the metric under which STCF is poor and round robin strong: 1 second average versus 5 seconds in the three-job, five-second example (sections 7.6-7.7).",
+      "[Source] Time-slice length is an explicit trade-off: shorter slices improve response time while context-switch cost, including cache, TLB and branch-predictor state, must be amortized, so the slice cannot shrink without bound (section 7.7, tip on amortization).",
+      "[Source] Round robin is called nearly pessimal for turnaround (average 14 seconds in the same example), and the chapter generalizes that any policy fair on a small time scale will trade away turnaround time (section 7.7).",
+      "[Source] I/O is folded in by treating each CPU burst as an independent job, so a blocked process yields the CPU and its next burst can preempt a long CPU-bound job, producing overlap and better utilization (section 7.8).",
+      "[Inference] The claim that STCF is provably optimal is scoped to the chapter's assumptions and the single turnaround metric; it is not evidence for multicore, multi-metric, or I/O-heavy behavior, which the text does not analyze.",
+      "[Inference] The assumption ladder is a reusable audit device: a workload profile could record which assumptions (equal length, known runtime, no I/O, run to completion) are violated and which single metric the design is optimizing."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/measurement-boundary.md",
+        "candidate": "Distinguish response time from turnaround time explicitly: the chapter shows a policy can be excellent on first-response latency and pessimal on completion time, which would sharpen what a stated latency objective actually measures."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-pools.md",
+        "candidate": "Use the quantum-versus-switch-cost arithmetic (10 ms slice against 1 ms switch, then a 100 ms slice for amortization) as a compact illustration of why pool sizing and yield frequency trade throughput for responsiveness."
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/finite-window.md",
+        "candidate": "Does the measurement page distinguish first-response latency from completion time over a finite observation window?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures 7.1-7.9 not visually inspected; cited works (convoy phenomenon, Cobham, Kleinrock, Coffman-Kleinrock, Jain, Phipps-Van Voorhis, Mogul-Borg) not retrieved or read; the scheduler.py simulation homework and its 7 questions were not executed; no measurements were taken.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B056",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-mlfq.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-mlfq.pdf",
+    "unit": "Complete chapter 8, Scheduling: The Multi-Level Feedback Queue",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:21:26Z; 12 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 223 lines / 12 pages; sections 8.1-8.6, References, Homework; figures 8.1-8.6 (queue snapshot, long-running job, two interactive examples, boost on/off, gaming on/off, unequal quanta); four TIP asides; six homework questions; no code listings; raster figures not visually inspected",
+    "retrieved_lines": 223,
+    "retrieved_words": 4688,
+    "representation_sha256": "a1ef9b95f72f66d00dc0ac5c175e70824929b7a927187c9109370424be46ae93",
+    "pages": 12,
+    "pdf_sha256": null,
+    "sections": [
+      "8.1 MLFQ: Basic Rules",
+      "8.2 Attempt #1: How To Change Priority",
+      "8.3 Attempt #2: The Priority Boost",
+      "8.4 Attempt #3: Better Accounting",
+      "8.5 Tuning MLFQ And Other Issues",
+      "8.6 MLFQ: Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 8.1: MLFQ Example",
+      "Figure 8.2: Long-running Job Over Time",
+      "Figure 8.3: Along Came An Interactive Job: Two Examples",
+      "Figure 8.4: Without (Left) and With (Right) Priority Boost",
+      "Figure 8.5: Without (Left) and With (Right) Gaming Tolerance",
+      "Figure 8.6: Lower Priority, Longer Quanta"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/cpu-sched-mlfq.md lines 1-223",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: MLFQ originated with Corbato et al.'s 1962 CTSS work and is presented as a way to approximate short-job-first scheduling without knowing job length in advance.",
+      "Source claim: Rules 1-2 make priority strict across queues and round-robin within one, while Rules 3-4 move a job down as it consumes its per-level allotment.",
+      "Source claim: the first priority-changing design let a job keep its level whenever it yielded before the allotment expired; the chapter identifies this as both a starvation risk and a gaming vector.",
+      "Source claim: Rule 5 boosts every job to the top queue after interval S, which bounds starvation and lets a job that became interactive re-enter at high priority.",
+      "Source claim: Rule 4 replaces 4a/4b with cumulative accounting, so splitting CPU use across many I/O yields no longer preserves a high queue position.",
+      "Source claim: queue parameters are deliberately unequal, with short slices at high priority and long slices at low priority; Solaris TS is cited with 60 queues and roughly one-second boosts.",
+      "Source claim: FreeBSD 4.3 used decayed CPU usage rather than explicit queues, and some systems reserve top priorities for kernel work or expose nice as optional advice.",
+      "Inference: the anti-gaming property depends on trustworthy per-job CPU accounting at each level; the chapter does not describe how that accounting is implemented, migrated across CPUs, or protected from coarse clock granularity.",
+      "Inference: all performance evidence in the chapter is illustrative trace diagrams, so the parameter guidance is experience-based rather than measured in the text.",
+      "Representation note: the page footers print VERSION 1.10 and copyright through 2023, consistent with the 2023-11-14 PDF timestamp."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md",
+        "candidate": "Use MLFQ's feedback-plus-boost pattern as a candidate priority/fairness policy: latency-sensitive classes get preference, but a bounded boost interval must guarantee progress for batch classes."
+      },
+      {
+        "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/tenant-effects.md",
+        "candidate": "Noisy-neighbor control needs more than quotas: dynamic priority can starve a long-running tenant, so document anti-starvation boost or reserved-share assumptions."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/scheduler-context.md",
+        "candidate": "Separate OS-level time-slice and priority assumptions from application runtime scheduler assumptions; MLFQ's priority changes are not a stable contract an application can rely on."
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures 8.1-8.6 not visually inspected (captions and surrounding text only); cited papers and notes ([C+62], [AD00], [E95], [LM+89], [CS97], [M06], [O11], [P+95], [Y+18]) not retrieved; mlfq.py and its README not retrieved or executed; six homework questions not executed; no independent measurements taken.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B057",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-lottery.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-lottery.pdf",
+    "unit": "Complete chapter 9, Scheduling: Proportional Share",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.20; PDF Published Time 2026-08-25T14:46:55Z; 14 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 356 lines / 14 pages; sections 9.1-9.8 including CFS subsections (Basic Operation, Weighting, Red-Black Trees, I/O and Sleeping Processes, Other CFS Fun), References, Homework; figures 9.1-9.5 including the lottery decision code listing; equations 9.1-9.2; three TIP asides; five homework questions; raster figures not visually inspected",
+    "retrieved_lines": 356,
+    "retrieved_words": 6076,
+    "representation_sha256": "3a8a85cb81fc3b2f11b877b63cb762a2307871e893240fbd33c7b3bd6703a710",
+    "pages": 14,
+    "pdf_sha256": null,
+    "sections": [
+      "9.1 Basic Concept: Tickets Represent Your Share",
+      "9.2 Ticket Mechanisms",
+      "9.3 Implementation",
+      "9.4 An Example",
+      "9.5 How To Assign Tickets?",
+      "9.6 Stride Scheduling",
+      "9.7 The Linux Completely Fair Scheduler (CFS)",
+      "9.8 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 9.1: Lottery Scheduling Decision Code",
+      "Figure 9.2: Lottery Fairness Study",
+      "Figure 9.3: Stride Scheduling: A Trace",
+      "Figure 9.4: CFS Simple Example",
+      "Figure 9.5: CFS Red-Black Tree"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/cpu-sched-lottery.md lines 1-356",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: proportional-share scheduling targets a defined fraction of CPU rather than turnaround or response time, and lottery scheduling realizes the fraction probabilistically through tickets.",
+      "Source claim: ticket currency, transfer, and inflation are mechanisms for reallocating shares; the chapter warns that inflation is only sensible among processes that trust one another.",
+      "Source claim: the lottery implementation draws one random number over the total tickets and walks a list accumulating each job's tickets until the counter passes the winner.",
+      "Source claim: sorting the job list by ticket count does not change which job wins but can reduce the expected number of list steps.",
+      "Source claim: the chapter's fairness metric is the first completion time divided by the second; simulator results show poor fairness for short jobs and convergence toward 1 as jobs lengthen.",
+      "Source claim: stride scheduling uses a stride inversely proportional to tickets and always runs the smallest pass value, giving exact proportions per cycle but requiring global per-job pass state.",
+      "Source claim: CFS selects the lowest vruntime, derives slices from sched_latency divided by runnable count, floors them at min_granularity, and maps nice -20..+19 to weights with 1024 at nice 0.",
+      "Source claim: CFS scales vruntime accrual by 1024/weight_i and stores runnable jobs in a red-black tree; a waking job's vruntime is set to the tree minimum to prevent a catch-up monopoly.",
+      "Source claim: the chapter names Linux 6.6's EEVDF as the current default and concedes that proportional-share schedulers interact poorly with I/O and leave ticket/priority assignment unresolved.",
+      "Representation note: this PDF prints VERSION 1.20 and copyright through 2026, unlike chapter 8's 1.10 footer; the edition field records the printed 1.20."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md",
+        "candidate": "Treat weighted fair-share (tickets or weights) as an admission contract: expected share is a policy target, not a per-window guarantee, so the measurement window and variance must be named."
+      },
+      {
+        "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/tenant-effects.md",
+        "candidate": "Ticket or nice assignment is the unresolved policy problem; per-tenant weights require an authority that sets and audits them, not self-service inflation by the tenant."
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+        "candidate": "Proportional guarantees only bind when runnable demand exceeds capacity; state whether a capacity model assumes reserved shares or work-conserving sharing."
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures 9.1-9.5 not visually inspected (captions and surrounding text only); referenced papers [WW94], [W95], [KL88], [B+18], [K+15], [AC97], [SA95], [Z23] and Linux kernel/EEVDF documentation not retrieved; lottery.py and its README not retrieved or executed; five homework questions not executed; no independent measurements taken.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original.",
+    "version_note": "Chapter PDF footer says VERSION 1.20; the OSTEP site table of contents still says version 1.10 when checked 2026-10-24. Treat this as a later chapter revision, not proof that the whole book is 1.20."
+  },
+  {
+    "id": "B058",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-multi.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-sched-multi.pdf",
+    "unit": "Complete chapter 10, Multiprocessor Scheduling (Advanced)",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-08T14:45:56Z; 13 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 296 lines / 13 pages; sections 10.1-10.7, References, Homework (Simulation); figures 10.1-10.3 (two architecture diagrams, one code listing), unnumbered queue/timeline diagrams, one aside, two footnotes, nine homework questions; raster figures not visually inspected",
+    "retrieved_lines": 296,
+    "retrieved_words": 5408,
+    "representation_sha256": "931cbce1d2589614988f248119e89da48159b298301a5fe70c96d0f251dd0e1f",
+    "pages": 13,
+    "pdf_sha256": null,
+    "sections": [
+      "10.1 Background: Multiprocessor Architecture",
+      "10.2 Don't Forget Synchronization",
+      "10.3 One Final Issue: Cache Affinity",
+      "10.4 Single-Queue Scheduling",
+      "10.5 Multi-Queue Scheduling",
+      "10.6 Linux Multiprocessor Schedulers",
+      "10.7 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 10.1: Single CPU With Cache (architecture diagram, text labels only)",
+      "Figure 10.2: Two CPUs With Caches Sharing Memory (architecture diagram, text labels only)",
+      "Figure 10.3: Simple List Delete Code (code listing, lines 64-108)",
+      "Unnumbered queue diagrams: five jobs on four CPUs, and Q0/Q1 assignments (text-rendered)",
+      "Unnumbered scheduling timelines: SQMS rotation, MQMS round robin, post-completion imbalance, migration sequence (text-rendered)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/cpu-sched-multi.md lines 1-296",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "The chapter traces multiprocessor ubiquity to power constraints that slowed single-core gains, then states the scheduling problem rather than assuming parallelism is free (source claim, introduction).",
+      "Coherence is assigned to hardware via bus snooping; the text notes that write-back caches complicate invalidation but does not derive a protocol (source claim, §10.1).",
+      "A coherent shared memory still permits the Figure 10.3 list race, so the chapter treats locks as a correctness requirement and only then raises their performance cost (source claim, §10.2).",
+      "Cache affinity is explicitly a performance heuristic: correct execution on a different CPU is preserved, but warm cache and TLB state are lost (source claim, §10.3).",
+      "SQMS is characterized as easy to retrofit and load-balanced by construction, with a single lock as the scaling bottleneck and cross-CPU job motion as the affinity cost (source claim, §10.4).",
+      "The MQMS examples show imbalance appearing even with equal initial queue lengths: after C exits, A receives twice the CPU of B and D, and after A and C exit one CPU has no work (source claim, §10.5).",
+      "Work stealing is presented with an unresolved polling-frequency trade-off; the chapter offers no threshold, measurement, or proof of convergence (source claim, §10.5).",
+      "Linux's O(1)/CFS (multi-queue) and BFS (single-queue) are cited as coexisting designs, which supports the inference that queue topology alone does not determine scheduler suitability (source claim plus inference, §10.6).",
+      "The closing warning that small code changes produce large behavioral differences is a design caution, not an empirical finding; the chapter reports no measurements of its own (inference, §10.7).",
+      "The homework asks readers to predict and then verify warm-cache speedup, affinity pinning, and super-linear speedup with multi.py; no simulator results are included in the text (source claim, Homework)."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-saturation-and-scaling-laws.md",
+        "candidate": "Add a single global run-queue lock as a concrete contention mechanism: it bounds scheduling scalability even when total CPU capacity is sufficient, and lock alternatives have their own scaling limits."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
+        "candidate": "Use a shared list pop as a compact worked example that cache coherence does not enforce compound invariants; a mutex restores correctness at the cost of serializing the critical section."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/fleet-budgets.md",
+        "candidate": "Contrast one central work queue with per-worker queues: per-worker ownership improves locality and removes a global lock, but static assignment creates idle capacity and unequal shares unless work migrates."
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/controller-stability.md",
+        "candidate": "Treat repeated job migration as control-loop churn: require a minimum imbalance threshold and residency interval before moving work, otherwise balancing overhead can cancel the capacity it seeks."
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures 10.1-10.2 not visually inspected; unnumbered queue and timeline diagrams read only as linear text; cited papers [A90], [B+10], [CSG99], [FLR98], [G83], [M11], [SHW11], [SA96], [TTG95] not retrieved; multi.py simulator and homework exercises not executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B059",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-threeeasy.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-threeeasy.pdf",
+    "unit": "Complete chapter 1, A Dialogue on the Book",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:19:26Z; 2 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 68 lines / 2 pages; complete dialogue text and footnotes; no figures or tables.",
+    "retrieved_lines": 68,
+    "retrieved_words": 779,
+    "representation_sha256": "3a310f9b20a6b912e46b72a8cdaade5488288c97097a5c96fba5ef8d149dde51",
+    "pages": 2,
+    "pdf_sha256": null,
+    "sections": [
+      "A Dialogue on the Book"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/dialogue-threeeasy.md lines 1-68",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "The book frames operating systems around virtualization, concurrency and persistence; this is scope framing, not an architecture taxonomy.",
+      "The dialogue names CPU scheduling, memory overload, virtual machines, disks and distributed failure as later topics.",
+      "The learning advice prioritizes code and projects; reading alone is not presented as operational competence.",
+      "The dialogue contains no implementation measurement or guarantee; it cannot support a technical claim.",
+      "Use it only for terminology and scope, not as evidence about a deployed system.",
+      "Tycho should not treat this framing as a universal decomposition of application architecture.",
+      "The footnote is a quotation attribution, not technical evidence."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+        "candidate": "Does the page distinguish OS scheduling mechanisms from application-level coordination and admission?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/virtual-threads.md",
+        "candidate": "Does the virtual-thread page avoid treating carrier scheduling as a capacity or backpressure mechanism?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+        "candidate": "Does the queueing page separate run-queue/scheduler delay from application pool queueing?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-saturation-and-scaling-laws.md",
+        "candidate": "Are scheduler migration and cache-affinity effects considered as confounders in scaling measurements?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-modes.md",
+        "candidate": "Does the pool page distinguish pool wait from OS run-queue wait and priority effects?"
+      }
+    ],
+    "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is framing, not technical evidence.",
+    "reader": "Tycho agent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B060",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-virtualization.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-virtualization.pdf",
+    "unit": "Complete chapter 3, A Dialogue on Virtualization",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:19:49Z; 4 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 67 lines / 4 pages; complete dialogue text and footnotes; no figures or tables.",
+    "retrieved_lines": 67,
+    "retrieved_words": 443,
+    "representation_sha256": "21a26111769b6114fa2791cbcba284ffec1819fcef3021f856b40288aaf78ca6",
+    "pages": 4,
+    "pdf_sha256": null,
+    "sections": [
+      "Part I: Virtualization",
+      "A Dialogue on Virtualization"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/dialogue-virtualization.md lines 1-67",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Virtualization is presented as giving each consumer an illusion of a private resource over a shared physical resource.",
+      "The CPU example time-multiplexes one physical CPU; the illusion depends on other tasks being descheduled.",
+      "The dialogue does not specify the sharing policy; policy is deferred to later chapters.",
+      "The metaphor is illustrative and does not establish isolation, capacity or fairness guarantees.",
+      "A virtual resource is not the same as a dedicated resource or an application-level admission control.",
+      "Tycho comparisons should keep OS CPU virtualization separate from JVM carrier scheduling and service capacity.",
+      "No figures, tables or measured behavior appear in this dialogue."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+        "candidate": "Does the page distinguish OS scheduling mechanisms from application-level coordination and admission?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/virtual-threads.md",
+        "candidate": "Does the virtual-thread page avoid treating carrier scheduling as a capacity or backpressure mechanism?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+        "candidate": "Does the queueing page separate run-queue/scheduler delay from application pool queueing?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-saturation-and-scaling-laws.md",
+        "candidate": "Are scheduler migration and cache-affinity effects considered as confounders in scaling measurements?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-modes.md",
+        "candidate": "Does the pool page distinguish pool wait from OS run-queue wait and priority effects?"
+      }
+    ],
+    "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is framing, not technical evidence.",
+    "reader": "Tycho agent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B061",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-dialogue.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/cpu-dialogue.pdf",
+    "unit": "Complete chapter 11, Summary Dialogue on CPU Virtualization",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:22:23Z; 2 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 75 lines / 2 pages; complete dialogue text and footnotes; no figures or tables.",
+    "retrieved_lines": 75,
+    "retrieved_words": 758,
+    "representation_sha256": "6caa966ece0b9a5e68d823917c842c6377e7fee02f63209ccb157ae93a6fc97f",
+    "pages": 2,
+    "pdf_sha256": null,
+    "sections": [
+      "Summary Dialogue on CPU Virtualization"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/cpu-dialogue.md lines 1-75",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "CPU virtualization mechanisms include traps, timer interrupts, and saving/restoring state across context switches.",
+      "The policy layer includes short-job preference, round robin and multi-level feedback; no single policy is universally best.",
+      "Turnaround and response metrics can conflict; the dialogue treats this as a design trade-off, not a solvable constant.",
+      "Limited direct execution reflects an OS desire for efficiency while retaining control over errant processes.",
+      "The dialogue is a synthesis, not new evidence or a benchmark.",
+      "Tycho should separate mechanism (context switch, timer) from policy (priority, quantum, feedback) when discussing scheduling.",
+      "A scheduler policy is not a capacity guarantee; queueing and admission remain separate concerns."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+        "candidate": "Does the page distinguish OS scheduling mechanisms from application-level coordination and admission?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/virtual-threads.md",
+        "candidate": "Does the virtual-thread page avoid treating carrier scheduling as a capacity or backpressure mechanism?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+        "candidate": "Does the queueing page separate run-queue/scheduler delay from application pool queueing?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-saturation-and-scaling-laws.md",
+        "candidate": "Are scheduler migration and cache-affinity effects considered as confounders in scaling measurements?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-modes.md",
+        "candidate": "Does the pool page distinguish pool wait from OS run-queue wait and priority effects?"
+      }
+    ],
+    "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is framing, not technical evidence.",
+    "reader": "Tycho agent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  }
+]

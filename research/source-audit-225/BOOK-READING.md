@@ -1,13 +1,18 @@
 # Foundational book reading
 
-Issue [#225](https://github.com/rouslanbaranov/tycho/issues/225). Updated 2026-10-21. **SRE whole-book reading complete; wider reading and comparison in progress.** The owner prioritized foundational books over further technology-reference auditing. Earlier reference readings remain recorded; one whole book is now complete. The wider source-reading and Tycho comparison obligations remain open.
+Issue [#225](https://github.com/rouslanbaranov/tycho/issues/225). Updated 2026-10-24.
+**SRE whole-book reading complete; OSTEP CPU and scheduling batch read;**
+**wider reading and comparison in progress.** The owner prioritized foundational
+books over further technology-reference auditing. Earlier reference readings remain
+recorded; one whole book is now complete. The wider source-reading and Tycho
+comparison obligations remain open.
 
 ## Current reading position
 
 | Book | Actual progress | Next action |
 | --- | --- | --- |
 | Site Reliability Engineering | All 48 public book units read: 34 chapters, foreword, preface, five part introductions, six appendices and bibliography, with footnotes, tables, examples and embedded figures/formulas | Whole scoped book complete; compare exact passages with the frozen Tycho baseline and separately read linked publications; see `SRE-COMPLETION.md` |
-| Operating Systems: Three Easy Pieces | Chapter 2 read completely, all 19 pages, examples, footnotes, references and homework text | Continue introductory dialogue and CPU/process chapters before deeper concurrency and persistence sections |
+| Operating Systems: Three Easy Pieces | Chapters 1, 3 and 4-11 read completely (10 new units; chapter 2 earlier): CPU virtualization, process API, limited direct execution and scheduling. 11 numbered units total; raster figures not visually inspected | Continue chapter 12 and the memory/VM chapters; then concurrency and persistence |
 | Designing Data-Intensive Applications, 2nd edition | Publisher contents and short chapter 1 preview only | Full text requires lawful access; do not count the preview as chapter reading or silently substitute the first edition |
 | Distributed Systems, 4th edition | Author's access instructions examined; no book text obtained | Personalized download requires an email and human-verification step; no request submitted |
 | Other registered books | Not started in this audit | Continue `book-queue.json`; distinguish available complete texts from commercial previews |
@@ -71,3 +76,52 @@ The prior chapter-19 continuation instruction is superseded by this completed re
 - **Appendix E:** the published checklist is explicitly historical and abridged. Its categories prompt dependency, capacity, failure, security, growth and rollout questions; it is not a current exhaustive standard.
 - **Appendix F:** the sample meeting turns service metrics and incidents into tracked operational changes. It is an example, not an independently observed team practice.
 - **Bibliography:** all entries read. Their publication texts, videos and code remain separate reading units; bibliography completion does not complete those dependencies.
+
+## OSTEP continuation - CPU virtualization and scheduling
+
+Ten records B052-B061 add chapters 1, 3 and 4-11; chapter 2 was read at the
+earlier checkpoint. The records use the official publisher PDF URLs and a
+plain-text reader representation retrieved on 2026-10-24. Raster figures were
+not visually inspected; linked papers, simulator code and exercises were not
+executed. Chapter 9's PDF footer says version 1.20 while the site table of
+contents still says 1.10; the record keeps the chapter's printed version.
+
+- **Chapter 1:** the book frames operating systems around virtualization,
+  concurrency and persistence; this is scope framing, not an architecture
+  taxonomy or technical evidence.
+- **Chapter 3:** virtualization gives each consumer an illusion of a private
+  resource over a shared physical resource; the sharing policy is deferred,
+  and the metaphor does not establish isolation or capacity.
+- **Chapter 4:** a process is a running program whose machine state includes
+  address space, registers and I/O state; running/ready/blocked states are
+  policy-visible abstractions, and xv6 adds lifecycle states including zombie.
+- **Chapter 5:** fork() returns asymmetrically, wait() orders child completion,
+  and exec() replaces the current program; the fork-exec gap enables shell
+  redirection and pipes, while signals and ownership complete the control
+  surface.
+- **Chapter 6:** limited direct execution combines two privilege modes, a trap
+  gate and a timer; protection depends on kernel-owned trap-table indirection,
+  not on trapping alone. A context switch is two save/restore pairs plus a
+  kernel-stack swap; syscall argument validation and interrupt masking remain
+  explicit risks.
+- **Chapter 7:** scheduling policy is derived by relaxing workload assumptions.
+  Turnaround and response time are antagonistic metrics; FIFO, SJF, STCF and
+  RR expose the trade-off, and slice length must amortize switch cost.
+- **Chapter 8:** MLFQ infers job class from observed CPU use, combining strict
+  priority with intra-queue round robin, demotion on cumulative use and a
+  periodic boost. Starvation and gaming remain policy costs; the boost interval
+  is a tuned constant, not a derived guarantee.
+- **Chapter 9:** lottery scheduling gives probabilistic expected shares, stride
+  scheduling is exact per cycle but needs global pass state, and CFS uses
+  nice-derived weights, vruntime and a red-black tree. Linux 6.6 moved to
+  EEVDF; ticket assignment remains an unresolved policy choice.
+- **Chapter 10:** cache coherence does not make compound shared updates atomic.
+  SQMS is simple but lock-contended and affinity-hostile; MQMS scales but needs
+  migration or work stealing, with a tuned overhead/imbalance trade-off.
+- **Chapter 11:** the summary separates mechanism (traps, timer, context switch)
+  from policy (priority, quantum, feedback) and treats metric conflict as a
+  design trade-off rather than a solvable constant.
+
+The batch advances reading, not source-to-book completeness. Candidate
+comparisons are recorded in [comparisons.json](comparisons.json); they are
+questions, not defects or proposed book edits.

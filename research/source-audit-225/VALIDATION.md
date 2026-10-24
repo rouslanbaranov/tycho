@@ -28,3 +28,31 @@ The preceding chapter-19 instruction is historical and superseded. All 48 public
 - The optional HTML helper dependency was unavailable in the first verification attempt; the navigation membership check was then implemented and passed using Python's standard HTML parser. Fragmented bibliography links were normalized before set comparison. These verification adjustments did not change reading status or source content.
 
 No technical runtime experiment, independent peer review, final claim synthesis or new full book test-suite run is asserted. No canonical Mermaid or book code changed. Main is kept at the frozen baseline; the research-only delta belongs to the existing #225 branch and draft PR #226.
+
+## OSTEP continuation - 2026-10-24
+
+Ten records B052-B061 add chapters 1, 3 and 4-11 (chapter 2 was read at the
+earlier checkpoint): `2562` retrieved lines, `39815` words and `104`
+pages across CPU virtualization, process API, limited direct execution and
+scheduling. Source representations were fetched on 2026-10-24 through the
+public Jina reader from the official publisher PDF URLs; the record hashes
+match the local text representations. No PDF binary or publication text is
+committed.
+
+- All ten records parse as JSON, carry unique IDs and the same 22-field shape;
+  every chapter record matches its local line count, word count and SHA-256.
+- All `tycho_candidates` paths exist in the frozen baseline; four candidate
+  comparisons are recorded in `comparisons.json` as questions, not findings.
+- The read-only census passed: all 681 original tracked files, 247 registered
+  sources and 406 canonical documents match the frozen baseline. The census
+  wrote no tracked changes beyond the intended research delta.
+- `python3 scripts/check_boundary.py` passed. `git diff --check` passed.
+  The current-main `check_markdown_line_length.py` covers only V11 prose; run
+  against this tree it passed, but it does not validate research Markdown.
+- No book, source register, canonical metadata, index, edition or historical
+  report changed. Only this research directory is in the delta.
+
+Limitations: raster figures were not visually inspected; linked papers, code,
+simulator exercises and homework were not read or executed; chapter 9's PDF
+footer prints version 1.20 while the site table of contents still says 1.10;
+this checkpoint does not claim independent review or whole-book completion.
