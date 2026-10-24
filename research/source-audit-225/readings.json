@@ -5306,12 +5306,339 @@
           "candidate": "Add log-injection sanitization and pre/post security-event logging as evidence-quality constraints on audit records."
         }
       ]
+    },
+    {
+      "id": "R109",
+      "source_ids": [
+        "src.sre-frontend-enrichment"
+      ],
+      "url": "https://sre.google/sre-book/load-balancing-frontend/",
+      "unit": "Complete page or bounded chapter set: Google SRE- DNS Load Balancing For Traffic Distribution",
+      "revision": "Public SRE book chapter (sre.google web edition); retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 87 lines / 2650 words; three H2 sections (Load Balancing at the Frontend; Power Isn't the Answer, which carries the DNS discussion; Load Balancing at the Virtual IP Address); chrome excluded (lines 1-7 Jina title, URL, published-time and 'Markdown Content' header). The reader title 'Google SRE- DNS Load Balancing For Traffic Distribution' is auto-generated and differs from the chapter's own H1 'Load Balancing at the Frontend'; it was not used as a technical claim.",
+      "retrieval_refs": [
+        "/tmp/batch10/raw/src.sre-frontend-enrichment.md lines 1-87",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution. Bibliography entries (Con15, Kar97, Eis16, Han94, Moc87) and footnote targets 103-105 not fetched; DNS RFCs consulted only through the chapter's own statements. No sidebar, cookie banner or navigation text was present in the representation.",
+      "representation_sha256": "fd613b6b894e04a15a298b6c5f7963394450b2e9969568776ac0af64e1fdd065",
+      "retrieved_lines": 87,
+      "retrieved_words": 2650,
+      "sections": [
+        "Load Balancing at the Frontend",
+        "Power Isn't the Answer",
+        "Load Balancing at the Virtual IP Address"
+      ],
+      "notes": [
+        "Source claim: even a hypothetical single supercomputer is rejected because it remains a single point of failure and is bounded by the speed of light over fiber. Inference: the argument disqualifies vertical consolidation on reliability and physics grounds, not merely on cost or throughput.",
+        "Source claim: optimal global distribution depends on the request; a search is sent to the nearest datacenter by RTT, while a video upload may take an underutilized link to maximize throughput at some latency cost. Inference: 'optimal' is workload-defined, so one global policy cannot be correct for both request types.",
+        "Source claim: inside a datacenter, machines are treated as equally distant on one network, so local balancing targets utilization and protecting a single server. Inference: global and local selection optimize different objectives and can legitimately disagree.",
+        "Source claim: the simplest DNS approach returns several A/AAAA records and lets clients pick arbitrarily; SRV weights and priorities are not adopted for HTTP. Inference: the fallback policy executes in client software the operator does not control or observe.",
+        "Source claim: anycast authoritative nameservers plus a maintained network-to-location map can approximate proximity, but require a complex DNS implementation and a pipeline that keeps the map current. Inference: proximity steering is itself a stateful service with its own staleness failure mode.",
+        "Source claim: recursive resolvers hide the client address, so replies can only be tuned for resolver-to-nameserver distance unless EDNS0 client subnet is used, which is not yet standard though large resolvers support it. Inference: resolver topology becomes part of the load-balancing correctness argument, not just a networking detail.",
+        "Source claim: one authoritative reply can reach one user or thousands because resolvers cache within the TTL; Google therefore tracks resolver population size and geography. Inference: a DNS decision is also a blast-radius decision, and TTL is a lower bound on convergence, not an acknowledgment that clients switched.",
+        "Source claim: DNS replies must fit the 512-byte RFC 1035 limit, bounding addresses per reply well below fleet size, so VIP-level balancing must follow. Inference: the two-layer design is structural rather than an optimization.",
+        "Source claim: VIPs are shared addresses; 'id(packet) mod N' avoids per-connection state, but removing one backend changes N and remaps almost every connection, resetting stateful sessions. Inference: statelessness buys failure coupling, and consistent hashing is presented as a degraded-mode fallback rather than the default.",
+        "Source claim: consistent hashing (1997) keeps the mapping relatively stable when backends are added or removed, and is used when the system is under pressure such as a DoS attack. Inference: the chapter treats connection tracking as normal operation and hashing as the pressure valve.",
+        "Source claim: NAT needs a per-connection table; layer-2 MAC rewriting enables Direct Server Response so replies bypass the balancer, but requires one broadcast domain, which Google outgrew. Inference: DSR savings scale with the request/reply size asymmetry, and its limit is topological rather than algorithmic.",
+        "Source claim: the current design encapsulates with GRE and the backend strips the outer header, removing the shared-broadcast-domain requirement at 24 bytes IPv4+GRE overhead that can exceed MTU and force fragmentation, mitigated by a larger intra-datacenter MTU. Inference: topology independence is paid per packet and depends on a path-MTU contract the chapter leaves implicit."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+          "candidate": "Add resolver caching, EDNS0 client-subnet and anycast-proximity limits as constraints on DNS-derived routing; keep DNS convergence distinct from endpoint readiness."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/connections-draining.md",
+          "candidate": "Use VIP forwarding (DSR/GRE) and consistent hashing as reasons connection identity outlives a backend-list change, and tie hash stability to the drain window."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Cite mod-N remapping failure and consistent hashing as placement-stability evidence, while noting the source frames hashing as a load-balancer fallback, not a shard-assignment proof."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
+          "candidate": "Distinguish minimal-remap hashing from bounded-overlap shuffle sharding; hashed assignment alone does not establish independence."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+          "candidate": "Record cache warmth as a legitimate reason to route past the nearest datacenter, so proximity is one routing objective among several."
+        }
+      ],
+      "reader": "Delegated reader batch 10; parent validation pending."
+    },
+    {
+      "id": "R110",
+      "source_ids": [
+        "src.sre-balancing-enrichment"
+      ],
+      "url": "https://sre.google/sre-book/load-balancing-datacenter/",
+      "unit": "Complete page or bounded chapter set: Boost Efficacy with Network Load Balancer",
+      "revision": "Public SRE book chapter (sre.google web edition); retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 224 lines / 5604 words; five H2 sections (Load Balancing in the Datacenter; The Ideal Case; Identifying Bad Tasks: Flow Control and Lame Ducks; Limiting the Connections Pool with Subsetting; Load Balancing Policies); chrome excluded (lines 1-5 Jina title, URL and 'Markdown Content' header). The reader title 'Boost Efficacy with Network Load Balancer' is auto-generated and differs from the chapter's own H1 'Load Balancing in the Datacenter'; it was not used as a technical claim.",
+      "retrieval_refs": [
+        "/tmp/batch10/raw/src.sre-balancing-enrichment.md lines 1-224",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution. Six figure images (Figure 20-1 to 20-6) were not rendered or inspected; their values are reported only as the prose states them, and captions/alt text were read as text. The linked overload-handling chapter and bibliography were not fetched.",
+      "representation_sha256": "da9e94ed67895f292ee5810686f0339db3f797f0b6ec943c3688ce09037e492e",
+      "retrieved_lines": 224,
+      "retrieved_words": 5604,
+      "sections": [
+        "Load Balancing in the Datacenter",
+        "The Ideal Case",
+        "Identifying Bad Tasks: Flow Control and Lame Ducks",
+        "Limiting the Connections Pool with Subsetting",
+        "Load Balancing Policies"
+      ],
+      "notes": [
+        "Source claim: the model assumes homogeneous interchangeable backend processes, at least three and sometimes more than 10,000, typically 100-1,000, with clients selecting a backend per query. Inference: the policies are analyzed under a symmetry that the later machine-diversity discussion concedes real fleets do not have.",
+        "Source claim: with uneven load, usable capacity is capped by the most loaded task and waste is the sum over tasks of CPU[0] minus CPU[i], so 1,000 reserved CPUs may yield only about 700 usable. Inference: reserved capacity overstates usable capacity, and part of the gap is a deliberate latency margin rather than pure inefficiency.",
+        "Source claim: a client-side active-request limit near 100 is crude flow control that can backfire, leaving requests blocked until timeout, especially with long-lived requests. Inference: a fixed per-connection concurrency cap can turn slow backends into a total outage of the pool.",
+        "Source claim: backends are healthy, refusing connections or lame duck; lame duck is broadcast to active clients and reaches inactive clients through periodic UDP health checks within 1-2 RTT. Inference: drain propagation needs a second channel precisely because idle clients hold no connection to update.",
+        "Source claim: shutdown is SIGTERM, then lame duck, then in-flight requests complete, then exit or kill after a configured interval of 10-150 s depending on client complexity. Inference: that interval is a budget derived from the request-duration distribution; too short produces errors and too long slows every maintenance action.",
+        "Source claim: subsetting bounds each client to typically 20-100 backends, with larger subsets when clients are fewer than backends or when client-side bursts concentrate load, and idle connections drop to UDP with reduced health checks. Inference: subset size trades assignment coverage against per-client memory and health-check load.",
+        "Source claim: random subsetting with 300 clients, 300 backends and a 30% subset gives the least-loaded backend 63% and the most-loaded 121% of average load; at 10% the range is 50-150%; roughly 75% subsets would be needed for even spread. Inference: these are simulation results rather than measurements, and they disqualify random selection at practical subset sizes.",
+        "Source claim: deterministic subsetting groups clients into rounds sharing a seeded shuffle, assigns each backend once per round and uses a different seed per round; the shuffle matters because ordered task updates would otherwise put consecutively updated backends into one subset. Inference: the round index makes assignment reproducible without coordination, and per-round seeds spread a failed backend's load beyond its subset.",
+        "Source claim: Round Robin can spread CPU up to 2x because of small subsets, varying query cost, machine diversity and unpredictable factors; the costliest requests may consume 1000x the cheapest, motivating pagination or functional caps. Inference: request-cost variance, not scheduling order, dominates the imbalance, and the proposed remedy changes the interface contract rather than the balancer.",
+        "Source claim: GCUs normalize heterogeneous CPU capacity; antagonistic neighbors produced performance differences up to 20%, and restarted tasks need minutes of warmup, so servers are prewarmed in lame duck. Inference: static capacity units cannot capture noisy-neighbor and JIT effects, so the scheduler needs runtime feedback, not only provisioning-time equivalence factors.",
+        "Source claim: Least-Loaded Round Robin filters to minimum active requests, but active-request counts are a poor capability proxy when requests block on I/O, each client sees only its own requests, and a fast-failing unhealthy task can sinkhole traffic; counting recent errors as active requests fixes that. Inference: the fix promotes error rate to a routing signal and requires a defined error taxonomy to avoid penalizing legitimate fast failures.",
+        "Source claim: Weighted Round Robin has backends report QPS, error rates and utilization in every response including health checks; clients adjust capability scores and penalize failures, and the measured CPU spread narrowed after switching. Inference: closing the loop on backend self-report makes routing depend on trustworthy, versioned feedback rather than on client-observable latency alone."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+          "candidate": "Add the sinkhole failure (fast errors attract least-loaded traffic) and the active-request-versus-capability gap to the selection comparison."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/connections-draining.md",
+          "candidate": "Use the lame duck protocol (broadcast to active clients, UDP health checks to idle ones, 10-150 s grace) as the concrete drain contract behind the generic procedure."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
+          "candidate": "Contrast deterministic subsetting rounds with shuffle shards: both bound the peer set, but only one is designed around overlap between tenants."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+          "candidate": "Classify the per-connection active-request cap as crude flow control with a documented backfire mode, distinct from admission control at the service edge."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+          "candidate": "Price reserved-but-unusable capacity: the 1,000-reserved/700-usable example treats load imbalance as idle headroom with a latency rationale."
+        }
+      ],
+      "reader": "Delegated reader batch 10; parent validation pending."
+    },
+    {
+      "id": "R111",
+      "source_ids": [
+        "src.sre-cron-enrichment"
+      ],
+      "url": "https://sre.google/sre-book/distributed-periodic-scheduling/",
+      "unit": "Complete page or bounded chapter set: Distributed Periodic Scheduling with Cron Service",
+      "revision": "Public SRE book chapter (sre.google web edition); retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 180 lines / 4555 words; six H2 sections (Cron; Cron Jobs and Idempotency; Cron at Large Scale; Building Cron at Google; The Roles of the Leader and the Follower; Summary); chrome excluded (lines 1-5 Jina title, URL and 'Markdown Content' header). Byline and editor lines 6-8 and footnotes 114-115 (lines 178-180) retained. Heading structure is flat: log compaction, snapshot/log storage and thundering-herd material sit under 'The Roles of the Leader and the Follower'.",
+      "retrieval_refs": [
+        "/tmp/batch10/raw/src.sre-cron-enrichment.md lines 1-180",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution. The 2015 ACM Queue original named in footnote 114 was not fetched; bibliography entries (Ver15, Lam06) and footnote 115 target were not fetched; no Borg, Paxos or cron implementation was inspected.",
+      "representation_sha256": "53419356d31fba2a021a584e40fd21b05aba531613175048a54ccc20a29f9bff",
+      "retrieved_lines": 180,
+      "retrieved_words": 4555,
+      "sections": [
+        "Cron",
+        "Cron Jobs and Idempotency",
+        "Cron at Large Scale",
+        "Building Cron at Google",
+        "The Roles of the Leader and the Follower",
+        "Summary"
+      ],
+      "notes": [
+        "Source claim: traditional crond has a single-machine failure domain, persists only the crontab, and launches jobs fire-and-forget; anacron is the exception that relaunches missed daily-or-less-frequent jobs from a last-run timestamp. Inference: without a durable launch record, no distributed design can distinguish a missed launch from an unobserved one.",
+        "Source claim: jobs differ in idempotency (garbage collection versus a newsletter) and in whether a missed launch is acceptable (every five minutes versus monthly payroll); Google prefers skipping to double launching and fails closed. Inference: this is a stated policy default, not a correctness result, and the chapter says no single answer fits every job.",
+        "Source claim: a single cron machine in a 1,000-machine datacenter makes 1/1000 of capacity a single point of failure; decoupling processes from machines turns launches into scheduler RPCs, but rescheduling takes health-check timeouts plus install and start time, can lose local state, and can exceed the one-minute interval, so hot spares shorten the window. Inference: scheduler recovery latency, not cron logic, sets the shortest safe period and cron's availability bound.",
+        "Source claim: datacenter deployment uses containers and requires resource quantities up front, so a job may be delayed when capacity is unavailable, and launch state must be tracked from scheduled time to termination. Inference: admission delay is a normal scheduling outcome that the state model must represent, not an error to retry.",
+        "Source claim: a launch may need multiple RPCs and some may succeed while others fail, for example when the sending process dies mid-sequence. Inference: a logical launch is a non-atomic transaction spanning the cron log and the external scheduler, so recovery must reconcile partial effects.",
+        "Source claim: state is kept inside the cron service rather than external distributed storage because small writes are expensive on GFS/HDFS and base services should have few dependencies. Inference: the choice trades dependency risk for the burden of implementing replication, snapshots and restore inside the service.",
+        "Source claim: multiple replicas use Paxos; the leader is the only replica that writes state and launches jobs, the Fast Paxos leader doubles as cron leader, and failover stays within about one minute. Inference: single-writer authority simplifies mutual exclusion with the scheduler but makes failover latency a correctness parameter rather than an operational metric.",
+        "Source claim: launch start and completion are recorded synchronously through Paxos before and after the launch, and the start time uniquely identifies a launch, otherwise a new leader may repeat it. Inference: operation identity must include the scheduled time, not only the job name, or high-frequency jobs become ambiguous.",
+        "Source claim: a leader that loses leadership must immediately stop interacting with the datacenter scheduler to preserve mutual exclusion, and followers track state to take over. Inference: this is fencing by self-denial, which depends on the old leader learning of its demotion; the chapter does not fully examine a partition in which it does not.",
+        "Source claim: recovery requires either idempotent external operations or the ability to look up their state; precomputed job names let a new leader launch only missing names, and the scheduled time must be part of the name so a long failover cannot cause a second launch. Inference: naming is used as an idempotency key for the external scheduler, and the long-failover example shows why the key needs the scheduled time.",
+        "Source claim: the Paxos log is compacted by snapshots; snapshots are critical, stored locally and backed up to a distributed filesystem, while logs stay on local disk across three replicas with bounded loss accepted; a fresh replica can fetch snapshot and logs from a running peer. Inference: the recovery point is the last snapshot plus surviving logs, so the snapshot interval sets worst-case replay and loss.",
+        "Source claim: cron load is spiky; a '?' crontab field lets the system hash the job configuration over the time range to spread launches, yet spikes persist from jobs pinned to external events. Inference: jitter removes synchronization but not event-driven demand, so the herd problem is only partly mitigated."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "candidate": "Add single-writer launch authority and the requirement that a demoted leader stop issuing external commands, as a concrete fencing obligation."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "candidate": "Use the one-minute failover budget and the resolution of open launches as constraints for leader-change acceptance tests."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+          "candidate": "Use the scheduled launch time in the external job name as the operation identity that prevents a double launch after an ambiguous RPC."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+          "candidate": "Anchor the missed-versus-duplicate launch policy and the definition-plus-interval run key to the cron chapter's fail-closed default and launch-time identity."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+          "candidate": "Distinguish snapshot backup from log retention: losing logs is bounded replay loss, losing snapshots is total state loss, which reframes the backup interval as a recovery objective."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "candidate": "Require cron replicas across diverse power domains and treat the datacenter scheduler as a shared-fate dependency of the scheduler service."
+        }
+      ],
+      "reader": "Delegated reader batch 10; parent validation pending."
+    },
+    {
+      "id": "R112",
+      "source_ids": [
+        "src.shuffle-shard-isolation"
+      ],
+      "url": "https://aws.amazon.com/blogs/architecture/shuffle-sharding-massive-and-magical-fault-isolation/",
+      "unit": "Complete page or bounded chapter set: Shuffle Sharding: Massive and Magical Fault Isolation | Amazon Web Services",
+      "revision": "Public SRE book chapter, AWS article or PostgreSQL 18 docs; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 80 lines / 1591 words; sections Traditional Horizontal Scaling, Sharding and Bulkheads, Shuffle Sharding, Infima and Shuffle Sharding, Post-script; chrome excluded (extract contains no site navigation, cookie banner or footer links; only the trailing 'About the authors' heading is present with no bio text, and four figures exist as image URLs without transcribed captions)",
+      "retrieval_refs": [
+        "/tmp/batch10/raw/src.shuffle-shard-isolation.md lines 1-80",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution. Four figure images not opened or described. No AWS documentation or Infima library documentation consulted; service-name claims taken from the article only.",
+      "representation_sha256": "140c276caf16b02e1ddef0d1b26e59113849b3a66325196a4de78addfe0a4bcf",
+      "retrieved_lines": 80,
+      "retrieved_words": 1591,
+      "sections": [
+        "Traditional Horizontal Scaling",
+        "Sharding and Bulkheads",
+        "Shuffle Sharding",
+        "Infima and Shuffle Sharding",
+        "Post-script",
+        "About the authors (empty in extract)"
+      ],
+      "notes": [
+        "Representation: the file is a Jina reader rendering with a four-field header (Title, URL Source, Published Time, Markdown Content); body runs from line 8 to line 76 with a trailing author-bio heading at line 80 that carries no text.",
+        "Source claim (line 14, 42): shuffle sharding combines the rapidly diminishing overlap probability of dealt card hands with horizontal scaling, so that request-borne faults are confined to few instances.",
+        "Source claim (lines 18-22): traditional horizontal scaling spreads every request across all instances, so a single harmful or poisonous request can affect every instance; per-customer throttling can itself be overwhelmed.",
+        "Source claim (lines 26-34): dividing eight instances into four shards of two bounds a request-caused incident to roughly one quarter of customers, with the shard key chosen by customer id, operation type, resource id or a multidimensional combination.",
+        "Source claim (lines 46-54): two-of-eight shuffle shards give 56 potential shards (~1/56 impact); four-of-eight with three retries gives ~1/1680 impact; the article attributes the gain to client retry across every endpoint in the shard.",
+        "Arithmetic observation (inference, not a source claim): C(8,2)=28 and C(8,4)=70, whereas 56 and 1680 equal ordered selections P(8,2) and P(8,4). Distinct shard sets are therefore half and 1/24 of the quoted counts.",
+        "Source claim (line 76): the author's postscript corrects an earlier hand-count figure, replacing a permutations-based 7 million with a combinations-based 300,000 - the same permutations-vs-combinations distinction the shard counts in the body do not apply.",
+        "Source claim (lines 48-50): overlap between shuffle shards is acceptable because a fault-tolerant client retries each endpoint until one succeeds; impact is then bounded by the number of shards, not by instance count alone.",
+        "Source claim (line 58): stateless shuffle sharding hashes identifiers (compared to a bloom filter) and tolerates probabilistic overlap, while stateful searching shuffle sharding checks each new shard against all previously assigned shards to bound overlap explicitly.",
+        "Source claim (line 62): compartmentalization awareness lets shards draw a fixed number of endpoints per availability zone rather than purely at random, so zone placement is preserved inside a shard.",
+        "Source claim (lines 70-72): the general principles are many small units (cheaper capacity buffers, small contention impact) and partial membership overlap in exchange for an exponential increase in supported shards; the technique is offered as general-purpose for queues, rate limiters and locks.",
+        "Inference: the 1/56 and 1/1680 fractions assume failures confined to individual instances and retries that succeed elsewhere; correlated failure (shared dependency, zone-wide event) is not modelled, so realised isolation is weaker than the arithmetic suggests. 'Route 53 Infima' and 'RubberTrees' are managed-service names and only the technique is portable."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "candidate": "Bulkheads and retries as separate responsibilities; add shuffle-sharded endpoint assignment as a containment pattern whose effect depends on client retry behaviour."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Contrast disjoint shard sets with overlapping shuffle shards and state the combinatorial overlap budget as a distinct strategy family."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/isolation-axes.md",
+          "candidate": "Per-tenant shard assignment as a placement axis: isolation strength versus instance count, including per-tenant DNS as an addressing consequence."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-saturation-and-scaling-laws.md",
+          "candidate": "Noisy-neighbour containment: how partial overlap trades buffered capacity for a reduced blast radius, and where the scaling laws stop applying."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/scaling-delay.md",
+          "candidate": "Limit of adding replicas: horizontal scaling does not isolate request-triggered faults, motivating shard membership rather than instance count."
+        }
+      ],
+      "reader": "Delegated reader batch 10; parent validation pending."
+    },
+    {
+      "id": "R113",
+      "source_ids": [
+        "src.postgres-indexes"
+      ],
+      "url": "https://www.postgresql.org/docs/current/indexes.html",
+      "unit": "Complete page or bounded chapter set: Chapter 11. Indexes",
+      "revision": "Public SRE book chapter, AWS article or PostgreSQL 18 docs; retrieved 2026-10-24; no immutable revision exposed (page titles identify PostgreSQL 18.6; the 'current' URL is mutable)",
+      "status": "full-scoped-text-read",
+      "coverage": "All 601 lines / 9509 words; bounded chapter set of 13 blocks - chapter 11 landing page plus sections 11.1-11.12 concatenated, each block carrying its own Title/URL Source/Published Time header; chrome excluded (site header navigation, release banner, supported/development/unsupported version selector, prev/up/next pager table, submit-correction and policy footer appear only in the landing block; section blocks begin directly at body text)",
+      "retrieval_refs": [
+        "/tmp/batch10/raw/src.postgres-indexes-chapter.md lines 1-601",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution. Chapter 14, 19.7, 24.1, 27.2, 65.x, 66.7, 5.12 and the bibliography entries referenced inline were not retrieved. No server was queried and no index was built, so no plan or timing was observed.",
+      "representation_sha256": "94b81c5d74e3a4b0f2fd22fd0637d5e4ba508b42658d189aeebd61e9b8322fef",
+      "retrieved_lines": 601,
+      "retrieved_words": 9509,
+      "sections": [
+        "Chapter 11 landing",
+        "11.1 Introduction",
+        "11.2 Index Types (11.2.1 B-Tree, 11.2.2 Hash, 11.2.3 GiST, 11.2.4 SP-GiST, 11.2.5 GIN, 11.2.6 BRIN)",
+        "11.3 Multicolumn Indexes",
+        "11.4 Indexes and ORDER BY",
+        "11.5 Combining Multiple Indexes",
+        "11.6 Unique Indexes",
+        "11.7 Indexes on Expressions",
+        "11.8 Partial Indexes",
+        "11.9 Index-Only Scans and Covering Indexes",
+        "11.10 Operator Classes and Operator Families",
+        "11.11 Indexes and Collations",
+        "11.12 Examining Index Usage"
+      ],
+      "notes": [
+        "Representation: 13 concatenated reader captures; each begins with Title/URL Source/Published Time and 'Markdown Content'. The 'Published Time' value is identical (2026-08-13T12:52:54) across all blocks, so it is a fetch artefact rather than a document revision date - the docs are identified as PostgreSQL 18.6 in page titles and the 18 version row.",
+        "Source claim (11.9, line 421): all PostgreSQL indexes are secondary, stored separately from the table heap, so an ordinary index scan pays index access plus random heap access.",
+        "Source claim (11.9, lines 423-439): index-only scans require an index type that stores or can reconstruct values (B-tree always; GiST/SP-GiST only for some operator classes; GIN never) and a query referencing only stored columns, plus an all-visible visibility-map bit; without the bit a heap visit is still required and the advantage disappears.",
+        "Source claim (11.2, lines 113-127): B-tree is the default and serves =, <, <=, >=, >, BETWEEN, IN and IS NULL, can deliver sorted output, and helps LIKE/~ only for constant patterns anchored at the start, requiring pattern operator classes outside the C locale.",
+        "Source claim (11.3, lines 201-203): multicolumn B-tree efficiency depends on constraints on leading columns; the skip scan optimisation can apply later-column constraints by generating internal equality constraints, but only when the leading column has few distinct values.",
+        "Source claim (11.5, line 250): combining indexes builds in-memory bitmaps, ANDs/ORs them and visits heap rows in physical order, losing index ordering and adding per-index scan cost, so the planner sometimes prefers a single index scan.",
+        "Source claim (11.8, line 371): a partial index is usable only if the planner can prove the query's WHERE mathematically implies the predicate; matching happens at plan time, so parameterized clauses such as 'x < ?' never qualify, and PostgreSQL is explicitly not a theorem prover for equivalent forms.",
+        "Source claim (11.8, lines 397-411): a family of non-overlapping partial indexes keyed by category is a bad substitute for partitioning because the planner must test each index; a single leading-column index or declared partitioning is preferred.",
+        "Source claim (11.9, lines 453-459): INCLUDE payload columns are not search-key columns, need not be indexable types, do not participate in uniqueness, and are supported only for B-tree, GiST and SP-GiST; wide payload columns risk tuple-size failures and bloat.",
+        "Source claim (11.1 line 103; 11.1 line 105): building an index on a large table permits concurrent reads but blocks writes unless CONCURRENTLY is used (with caveats); indexes add write overhead and prevent heap-only tuple updates, so unused indexes should be dropped.",
+        "Source claim (11.12, lines 585-599): index-usage analysis requires ANALYZE first, real data volumes (a 1-in-100 selection is a poor candidate because it fits one page), and forced-plan experiments with enable_seqscan/enable_nestloop before blaming cost estimates.",
+        "Inference: the chapter's guidance presumes reasonably stable value distributions and offers no measurement protocol for skewed, seasonal or rapidly changing workloads; the small-test-data warning is qualitative, with no sample-size rule."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md",
+          "candidate": "Anchor access-path choices in index type capability (operator class, sort order, uniqueness) rather than in generic 'add an index' advice."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+          "candidate": "Plan-time predicate implication for partial indexes, and why prepared/parameterized statements cannot use them, as a selectivity-model limit."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md",
+          "candidate": "Index lifecycle cost: write amplification, HOT blocking, blocking versus concurrent build, and removal of unused indexes as a lifecycle stage."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/mvcc-snapshots-and-vacuum.md",
+          "candidate": "Visibility-map freshness as the precondition for index-only scans links vacuum state to read-path performance, not only to space reclamation."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/ddl-events.md",
+          "candidate": "Index creation as a DDL budget item: lock profile of a default build versus CONCURRENTLY, and the caveats that make concurrent builds unsuitable for some migrations."
+        }
+      ],
+      "reader": "Delegated reader batch 10; parent validation pending."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 77,
+    "full_reads": 82,
     "blocked": 14,
     "records": [
       "R015",
@@ -5407,7 +5734,12 @@
       "R105",
       "R106",
       "R107",
-      "R108"
+      "R108",
+      "R109",
+      "R110",
+      "R111",
+      "R112",
+      "R113"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
