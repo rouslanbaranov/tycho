@@ -264,3 +264,18 @@ d65652d. The child returned no report before the bounded stop. No verdict,
 finding, acceptance or independent review is claimed. human_review is
 not-performed and sufficient is 0. The latest commits b95af3e, dad953d and
 a96c6b7 are outside that attempted review's stated HEAD.
+
+## Page matrix and interim synthesis - 2026-10-24
+
+- The 406-page census records a review status for every canonical page:
+  14 are comparison-assessed and 392 carry an explicit evidence gap. The
+  per-page list is in page-review-summary.json; a gap is not a pass.
+- The reference ledger has 59 records: 40 full reads, 17 blocked pages and 2
+  excluded internal team sites. All 45 baseline fetch-incomplete sources are
+  accounted for: 29 full, 14 blocked, 2 excluded, 0 unaccounted.
+- DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
+  two candidate page actions, the zero-contradiction result, the 202
+  landing-only sources, the 392 unassessed pages and the missing independent
+  review. It does not claim #225 completion.
+- Boundary, whitespace, JSON, candidate-path and anchor checks passed. No book,
+  source register, index or edition file changed.
