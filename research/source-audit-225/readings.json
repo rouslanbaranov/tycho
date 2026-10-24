@@ -38953,12 +38953,528 @@
           "candidate": "Candidate anchor for the parallelism-versus-load trade-off stated in the operational section; no edit under #225."
         }
       ]
+    },
+    {
+      "id": "R365",
+      "source_ids": [
+        "src.k8s-deployments"
+      ],
+      "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+      "unit": "Kubernetes documentation page 'Deployments' (concepts/workloads/controllers/deployment), single page, captured as raw/k8s-deploy.md",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Whole page body read sequentially: 1,223 lines / 7,677 words, 34 section headings (15 Note/Caution asides, 96 fenced code blocks). No content section of the page is missing from the capture; kubernetes.io header, sidebar TOC, 'Was this page helpful?' widget and footer are absent from the file rather than skipped by the reader.",
+      "retrieval_refs": [
+        "manifest R365 -> raw/k8s-deploy.md (lines 1223, words 7677, sha256 48a9e70659d3f7a065e61c26cfbfea9d3f71e0ab1a4764d01dea2f65f2eacb60)",
+        "/tmp/B24/raw/k8s-deploy.md read in full: offsets 1-320, 321-640, 641-960, 961-1223",
+        "capture metadata: lines 1-3 (Title, URL Source, Markdown Content)"
+      ],
+      "omissions": "Linked documentation pages outside the registered page not read; no experiment",
+      "representation_gap": null,
+      "representation_sha256": "48a9e70659d3f7a065e61c26cfbfea9d3f71e0ab1a4764d01dea2f65f2eacb60",
+      "retrieved_lines": 1223,
+      "retrieved_words": 7677,
+      "sections": [
+        {
+          "heading": "Use Case",
+          "lines": "16-27",
+          "kind": "content"
+        },
+        {
+          "heading": "Creating a Deployment",
+          "lines": "28-151",
+          "kind": "content"
+        },
+        {
+          "heading": "Pod-template-hash label",
+          "lines": "152-161",
+          "kind": "content"
+        },
+        {
+          "heading": "Updating a Deployment",
+          "lines": "162-308",
+          "kind": "content"
+        },
+        {
+          "heading": "Rollover (aka multiple updates in-flight)",
+          "lines": "309-316",
+          "kind": "content"
+        },
+        {
+          "heading": "Label selector updates",
+          "lines": "317-326",
+          "kind": "content"
+        },
+        {
+          "heading": "Rolling Back a Deployment",
+          "lines": "327-435",
+          "kind": "content"
+        },
+        {
+          "heading": "Checking Rollout History of a Deployment",
+          "lines": "436-486",
+          "kind": "content"
+        },
+        {
+          "heading": "Rolling Back to a Previous Revision",
+          "lines": "487-577",
+          "kind": "content"
+        },
+        {
+          "heading": "Scaling a Deployment",
+          "lines": "578-603",
+          "kind": "content"
+        },
+        {
+          "heading": "Proportional scaling",
+          "lines": "604-671",
+          "kind": "content"
+        },
+        {
+          "heading": "Pausing and Resuming a rollout of a Deployment",
+          "lines": "672-807",
+          "kind": "content"
+        },
+        {
+          "heading": "Deployment status",
+          "lines": "808-811",
+          "kind": "content"
+        },
+        {
+          "heading": "Progressing Deployment",
+          "lines": "812-828",
+          "kind": "content"
+        },
+        {
+          "heading": "Complete Deployment",
+          "lines": "829-867",
+          "kind": "content"
+        },
+        {
+          "heading": "Failed Deployment",
+          "lines": "868-1005",
+          "kind": "content"
+        },
+        {
+          "heading": "Operating on a failed deployment",
+          "lines": "1006-1009",
+          "kind": "content"
+        },
+        {
+          "heading": "Clean up Policy",
+          "lines": "1010-1021",
+          "kind": "content"
+        },
+        {
+          "heading": "Canary deployments",
+          "lines": "1022-1027",
+          "kind": "content"
+        },
+        {
+          "heading": "Writing a Deployment Spec",
+          "lines": "1028-1035",
+          "kind": "content"
+        },
+        {
+          "heading": "Pod Template",
+          "lines": "1036-1045",
+          "kind": "content"
+        },
+        {
+          "heading": "Replicas",
+          "lines": "1046-1055",
+          "kind": "content"
+        },
+        {
+          "heading": "Selector",
+          "lines": "1056-1071",
+          "kind": "content"
+        },
+        {
+          "heading": "Strategy",
+          "lines": "1072-1075",
+          "kind": "content"
+        },
+        {
+          "heading": "Recreate Deployment",
+          "lines": "1076-1083",
+          "kind": "content"
+        },
+        {
+          "heading": "Rolling Update Deployment",
+          "lines": "1084-1087",
+          "kind": "content"
+        },
+        {
+          "heading": "Max Unavailable",
+          "lines": "1088-1093",
+          "kind": "content"
+        },
+        {
+          "heading": "Max Surge (plus three example manifests)",
+          "lines": "1094-1186",
+          "kind": "content"
+        },
+        {
+          "heading": "Progress Deadline Seconds",
+          "lines": "1187-1192",
+          "kind": "content"
+        },
+        {
+          "heading": "Min Ready Seconds",
+          "lines": "1193-1196",
+          "kind": "content"
+        },
+        {
+          "heading": "Terminating Pods",
+          "lines": "1197-1204",
+          "kind": "content"
+        },
+        {
+          "heading": "Revision History Limit",
+          "lines": "1205-1212",
+          "kind": "content"
+        },
+        {
+          "heading": "Paused",
+          "lines": "1213-1216",
+          "kind": "content"
+        },
+        {
+          "heading": "What's next",
+          "lines": "1217-1223",
+          "kind": "nav"
+        }
+      ],
+      "notes": [
+        "Source claim (lines 6-10): a Deployment declares desired state for stateless Pods; the Deployment controller moves actual state to desired state at a controlled rate via ReplicaSets.",
+        "Source claim (166, 333): a rollout and a new revision are created only when .spec.template changes; scaling does not, so a rollback restores only the Pod template part.",
+        "Source claim (251-255, 307): default RollingUpdate keeps 25% maxUnavailable and 25% maxSurge; terminating Pods are not counted in availableReplicas, so live Pods can exceed replicas+maxSurge until terminationGracePeriodSeconds expires.",
+        "Source claim (879-905, 989-1004, 1189): progressDeadlineSeconds defaults to 600 and surfaces Progressing=False with reason ProgressDeadlineExceeded; the controller keeps retrying and Kubernetes takes no further action.",
+        "Source claim (1012-1020, 1205-1211): revisionHistoryLimit defaults to 10; revision configuration lives in ReplicaSets, so setting 0 removes rollback ability and crashes can leave more ReplicaSets than the limit.",
+        "Source claim (319-325, 1062): .spec.selector is immutable in apps/v1; a selector change requires delete and recreate, and --cascade=orphan leaves old Pods orphaned while a new ReplicaSet is created.",
+        "Source claim (309-315): updating during an in-flight rollout rolls over the previous new ReplicaSet rather than waiting for it to finish.",
+        "Source claim (1022-1027): canary release is described only as creating multiple Deployments and pointing to a tutorial; no mechanism, metric analysis or traffic split is specified here.",
+        "Artifact: section headings render as '## Title[](url)' and link tooltip text is inlined in parentheses (e.g. line 8, 1040); a note at line 66 interrupts the bullet list continued at 67-71, and line 70 lacks a space before the Docker Hub link.",
+        "Artifact: 96 fenced code blocks (192 fence lines) carry much of the word count; the page H1 'Deployments' exists only as capture metadata (line 1), not as body text.",
+        "Inference (labelled): the page documents controller mechanics and status conditions; it reports no measured rollout duration, failure rate or production observation, so timing and availability numbers cannot be sourced from it.",
+        "Candidate note: src.k8s-deployments is already referenced by seven book files, listed under tycho_candidates."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/desired-state-exposure.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/canary-compatibility.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/delivery/safe-rollout-and-recovery.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": {
+        "label": "delegated-reader",
+        "agent_id": "session-339f3170-2943-4eff-877d-b6b465e229ef",
+        "model": "deepseek-flash",
+        "read_at": "2026-10-24",
+        "note": "Extraction only; no book findings, support classification or verdicts."
+      }
+    },
+    {
+      "id": "R366",
+      "source_ids": [
+        "src.docker"
+      ],
+      "url": "https://docs.docker.com/get-started/docker-overview/",
+      "unit": "Docker documentation page 'What is Docker?' (get-started/docker-overview), single page, captured as raw/docker.md",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Whole page read: 104 lines / 1,417 words; body prose lines 8-101 (1,392 words, 98.2% of captured words). All eleven body headings plus the unlabelled architecture lead, 'The underlying technology' and 'Next steps' blocks are present in text; only the last three heading labels were dropped by the extractor (no sentences missing). Page chrome (site header, left nav, 'Next' card headers, footer) is absent from the capture.",
+      "retrieval_refs": [
+        "manifest R366 -> raw/docker.md (lines 104, words 1417, sha256 8e234df5333909cfdc72ee00c2c526bd33d76f278ab6b9228bc04f6ba703373a)",
+        "/tmp/B24/raw/docker.md read in full, offsets 1-104",
+        "capture metadata: lines 1-5 (Title, URL Source, Published Time)"
+      ],
+      "omissions": "Linked documentation pages outside the registered page not read (get-docker install page, run-an-app tutorial, Docker Desktop docs); no experiment",
+      "representation_gap": {
+        "severity": "label-only",
+        "substantive_content_missing": false,
+        "detail": "Three section heading labels are absent from the capture although their body text is present: the 'Docker architecture' lead (line 39 follows the 'Running more workloads...' section with no heading), 'The underlying technology' (text at 99-101), and 'Next steps' (link list at 103-104). The page H1 'What is Docker?' survives only as Title metadata (line 1). None of these removals deletes a sentence.",
+        "evidence_lines": "39, 99-101, 103-104"
+      },
+      "representation_sha256": "8e234df5333909cfdc72ee00c2c526bd33d76f278ab6b9228bc04f6ba703373a",
+      "retrieved_lines": 104,
+      "retrieved_words": 1417,
+      "sections": [
+        {
+          "heading": "Lead: what Docker is and container packaging",
+          "lines": "8-17",
+          "kind": "content"
+        },
+        {
+          "heading": "Fast, consistent delivery of your applications",
+          "lines": "18-28",
+          "kind": "content"
+        },
+        {
+          "heading": "Responsive deployment and scaling",
+          "lines": "29-34",
+          "kind": "content"
+        },
+        {
+          "heading": "Running more workloads on the same hardware",
+          "lines": "35-38",
+          "kind": "content"
+        },
+        {
+          "heading": "Docker architecture (heading label absent)",
+          "lines": "39-44",
+          "kind": "content"
+        },
+        {
+          "heading": "The Docker daemon",
+          "lines": "45-48",
+          "kind": "content"
+        },
+        {
+          "heading": "The Docker client",
+          "lines": "49-52",
+          "kind": "content"
+        },
+        {
+          "heading": "Docker Desktop",
+          "lines": "53-56",
+          "kind": "content"
+        },
+        {
+          "heading": "Docker registries",
+          "lines": "57-62",
+          "kind": "content"
+        },
+        {
+          "heading": "Docker objects",
+          "lines": "63-66",
+          "kind": "content"
+        },
+        {
+          "heading": "Images",
+          "lines": "67-72",
+          "kind": "content"
+        },
+        {
+          "heading": "Containers",
+          "lines": "73-80",
+          "kind": "content"
+        },
+        {
+          "heading": "Example docker run command",
+          "lines": "81-98",
+          "kind": "content"
+        },
+        {
+          "heading": "The underlying technology (heading label absent)",
+          "lines": "99-102",
+          "kind": "content"
+        },
+        {
+          "heading": "Next steps (heading label absent)",
+          "lines": "103-104",
+          "kind": "nav"
+        }
+      ],
+      "notes": [
+        "Source claim (line 10): Docker packages an application in a loosely isolated environment called a container; many containers can share a host and each carries what the application needs rather than relying on host installs.",
+        "Source claim (39, 51): client-server architecture, with the docker client sending commands to dockerd over a REST API using UNIX sockets or a network interface; a client may talk to more than one daemon.",
+        "Source claim (55): Docker Desktop bundles dockerd, the docker client, Docker Compose, Docker Content Trust, Kubernetes and Credential Helper for Mac, Windows and Linux.",
+        "Source claim (59-61): a registry stores images, Docker Hub is the default public registry, and pull/push move images between host and configured registry.",
+        "Source claim (69-71): an image is a read-only layered template; rebuilding after a Dockerfile change rebuilds only changed layers, which the page attributes to images being lightweight and fast.",
+        "Source claim (75-79): a container is a runnable instance that can be created, started, stopped, moved or deleted, attached to networks and storage; state not in persistent storage disappears when the container is removed.",
+        "Source claim (85-97): docker run performs pull-if-absent, container create, read-write final layer, network interface and IP allocation, start and attached execution; exit stops but does not remove the container.",
+        "Source claim (99-101): Docker is written in Go and uses Linux kernel namespaces, one set per container, as the isolation layer; the text says each aspect runs in a separate namespace.",
+        "Claim without measurement: lines 37 and 33 assert 'lightweight and fast', a 'cost-effective alternative to hypervisor-based virtual machines' and near-real-time scaling, but the page presents no benchmark, density figure or comparison data.",
+        "Artifact: the architecture diagram is duplicated as two image references to the same URL (lines 41 and 43); 'Markdown Content:' at line 7 is an extractor marker, and headings keep '### [Title](url)' link syntax.",
+        "Inference (labelled): the page is an overview, not a reference; it contains no CLI syntax beyond one docker run example, no Compose/Kubernetes deployment mechanics and no security-hardening or multi-tenant isolation detail.",
+        "Candidate note: no book file currently lists src.docker; the five candidates below are topic matches reached by reading their bodies, not by source-id linkage."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/compute-models.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/provenance-subjects.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/desired-state-exposure.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": {
+        "label": "delegated-reader",
+        "agent_id": "session-339f3170-2943-4eff-877d-b6b465e229ef",
+        "model": "deepseek-flash",
+        "read_at": "2026-10-24",
+        "note": "Extraction only; no book findings, support classification or verdicts."
+      }
+    },
+    {
+      "id": "R367",
+      "source_ids": [
+        "src.aws-dr"
+      ],
+      "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html",
+      "unit": "AWS whitepaper 'Disaster Recovery of Workloads on AWS: Recovery in the Cloud' - abstract/landing page only (whitepaper body chapters not registered), captured as raw/aws-dr.md",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "Registered page read in full: 222 lines / 1,052 words, of which only 119 words (lines 148-156, 11.3%) are page content - publication date, abstract, on-premises-paper pointer, Document Conventions. The other 917 words (87.2%) are cookie-consent dialogs, header/search, sidebar TOC, breadcrumbs, download row, feedback widget and footer. The whitepaper's 16 linked chapters (lines 104-119) are outside the registered page and were not read; partial status reflects that whitepaper-level scope, not missing text in this capture.",
+      "retrieval_refs": [
+        "manifest R367 -> raw/aws-dr.md (lines 222, words 1052, sha256 5b3c85c57a292e7315e78aa31c81d3db506ec5d74f4cb0b8d10b690e2ec05ab1)",
+        "/tmp/B24/raw/aws-dr.md read in full, offsets 1-222",
+        "substantive text: lines 148-156; chapter link list: lines 104-119"
+      ],
+      "omissions": "Linked documentation pages outside the registered page not read: 16 whitepaper chapters including 'What is a disaster?', 'High availability is not disaster recovery', 'Disaster recovery options in the cloud', 'Detection' and 'Testing disaster recovery'; no experiment",
+      "representation_gap": null,
+      "representation_sha256": "5b3c85c57a292e7315e78aa31c81d3db506ec5d74f4cb0b8d10b690e2ec05ab1",
+      "retrieved_lines": 222,
+      "retrieved_words": 1052,
+      "sections": [
+        {
+          "heading": "Capture metadata (Title, URL Source, Markdown Content)",
+          "lines": "1-5",
+          "kind": "metadata"
+        },
+        {
+          "heading": "Cookie consent banner and preference dialogs",
+          "lines": "6-74",
+          "kind": "chrome"
+        },
+        {
+          "heading": "Header: skip link, language, preferences, contact, feedback, logo, menus, search, account",
+          "lines": "76-98",
+          "kind": "chrome"
+        },
+        {
+          "heading": "Sidebar table of contents (16 chapter links)",
+          "lines": "100-119",
+          "kind": "nav"
+        },
+        {
+          "heading": "Breadcrumb trails (duplicated)",
+          "lines": "121-128",
+          "kind": "chrome"
+        },
+        {
+          "heading": "Page title, PDF/RSS/Markdown downloads, focus mode",
+          "lines": "130-146",
+          "kind": "chrome"
+        },
+        {
+          "heading": "Publication date",
+          "lines": "148",
+          "kind": "content"
+        },
+        {
+          "heading": "Abstract: disaster definition, paper scope, RTO/RPO",
+          "lines": "150",
+          "kind": "content"
+        },
+        {
+          "heading": "Scope pointer to on-premises DR whitepaper",
+          "lines": "152",
+          "kind": "content"
+        },
+        {
+          "heading": "Document Conventions and Introduction links",
+          "lines": "154-156",
+          "kind": "nav"
+        },
+        {
+          "heading": "Feedback widget ('Did this page help you?')",
+          "lines": "158-170",
+          "kind": "chrome"
+        },
+        {
+          "heading": "Next topic",
+          "lines": "172-174",
+          "kind": "nav"
+        },
+        {
+          "heading": "Footer: Get Started, Service Guides, Developer Tools, legal",
+          "lines": "176-222",
+          "kind": "chrome"
+        }
+      ],
+      "notes": [
+        "Source claim (line 150): disaster recovery is the process of preparing for and recovering from a disaster, and a disaster is an event that prevents a workload or system from fulfilling its business objectives in its primary deployed location.",
+        "Source claim (150): the paper outlines best practices for planning and testing disaster recovery for any workload deployed to AWS and offers approaches to mitigate risk and meet the workload's RTO and RPO.",
+        "Source claim (152): disaster recovery of on-premises applications to AWS is handled by a separate whitepaper, named and linked here.",
+        "Metadata (148): publication date February 12, 2021, with a document-history link; the capture carries no revision identifier beyond this.",
+        "Structure (104-119): the whitepaper is a 16-page chapter set from Abstract through Document history, Notices and AWS Glossary; every link decodes to a sibling page under the same docs path, and none of their bodies are in the capture.",
+        "Chrome weight: 917 of 1,052 captured words (87.2%) are consent dialogs (6-74), header (76-98), TOC (100-119), duplicated breadcrumbs (121-128), download row (130-146), feedback widget (158-170) and footer (176-222).",
+        "Artifact: the breadcrumb list appears twice (121-124 with a literal '...' item, then 126-128 clean); cookie preference checkboxes survive as '- [x]' fragments (22-46); the 'Agent Setup' promotional line (138) and 'Focus mode' checkbox (140) are site chrome.",
+        "Absent from this page: any DR strategy name (backup and restore, pilot light, warm standby, multi-site), any numeric RTO/RPO, any workload example, test procedure or measurement; those would sit in the unread 'Disaster recovery options in the cloud' and 'Testing disaster recovery' chapters.",
+        "Inference (labelled): the definition is location-relative ('primary deployed location') and business-objective-relative, so the page does not equate a disaster with a specific infrastructure failure; this reading rests on one sentence.",
+        "Status basis: every non-chrome sentence of the registered URL is present and read (119 words); partial is a scope statement about the unread whitepaper body. If the parent treats the single URL as the whole registered scope, the page itself is fully represented.",
+        "Candidate note: no book file lists src.aws-dr as a source_id, although book/deployment/multi-region-disaster-recovery-contracts.md and c07/objectives-strategies.md both name the whitepaper's strategy families in prose."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/objectives-strategies.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": {
+        "label": "delegated-reader",
+        "agent_id": "session-339f3170-2943-4eff-877d-b6b465e229ef",
+        "model": "deepseek-flash",
+        "read_at": "2026-10-24",
+        "note": "Extraction only; no book findings, support classification or verdicts."
+      }
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 329,
+    "full_reads": 331,
     "blocked": 14,
     "records": [
       "R015",
@@ -39310,11 +39826,14 @@
       "R361",
       "R362",
       "R363",
-      "R364"
+      "R364",
+      "R365",
+      "R366",
+      "R367"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
-    "partial_reads": 11
+    "partial_reads": 12
   }
 }
