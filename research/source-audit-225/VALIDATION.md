@@ -207,8 +207,8 @@ No independent review or source-to-book completeness is claimed.
 ## Comparison assessment - 2026-10-24
 
 Sixteen candidate comparisons from the OSTEP reading were assessed against the
-frozen Tycho baseline. Result: thirty-six assessed comparisons: nineteen supported,
-fifteen qualified, two not-addressed and zero contradicted. Two JEP-to-book
+frozen Tycho baseline. Result: thirty-nine assessed comparisons: twenty-one supported,
+sixteen qualified, two not-addressed and zero contradicted. Two JEP-to-book
 comparisons were added after the reference batch: JEP 491 provenance and JEP 444
 socket interruption. Each assessment records the exact book
 anchor, the OSTEP record and sections, a bounded conclusion, and a proposed
@@ -269,14 +269,14 @@ a96c6b7 are outside that attempted review's stated HEAD.
 ## Page matrix and interim synthesis - 2026-10-24
 
 - The 406-page census records a review status for every canonical page:
-  27 are comparison-assessed and 379 carry an explicit evidence gap. The
+  30 are comparison-assessed and 376 carry an explicit evidence gap. The
   per-page list is in page-review-summary.json; a gap is not a pass.
 - The reference ledger has 90 records: 70 full reads, 1 partial, 17 blocked and 2
   excluded internal team sites. All 45 baseline fetch-incomplete sources are
   accounted for: 29 full, 14 blocked, 2 excluded, 0 unaccounted.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
   two candidate page actions, the zero-contradiction result, the 202
-  landing-only sources, the 379 unassessed pages and the missing independent
+  landing-only sources, the 376 unassessed pages and the missing independent
   review. It does not claim #225 completion.
 - Boundary, whitespace, JSON, candidate-path and anchor checks passed. No book,
   source register, index or edition file changed.
