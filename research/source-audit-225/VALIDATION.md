@@ -103,3 +103,27 @@ Limitations: raster figures were not visually inspected; linked papers, code
 and exercises were not read or executed; chapter 9 prints version 1.20 and
 chapter 32 also prints 1.20 while the site table of contents says 1.10; no
 independent review or whole-book completion is claimed.
+
+## OSTEP concurrency continuation - 2026-10-24
+
+Ten records B075-B084 add chapters 25-34: 6,667 retrieved lines, 51,357 words
+and 139 pages. The combined OSTEP continuation is 33 records: 12,845 lines,
+156,030 words and 408 pages. The batch covers the concurrency dialogue, thread
+introduction and API, locks, lock-based structures, condition variables,
+semaphores, common bugs, event-based concurrency and the summary dialogue.
+
+- All ten records parse, have unique IDs B075-B084 and the same 22-field
+  shape; each matches the local line count, word count and SHA-256.
+- All candidate paths exist in the frozen baseline; `comparisons.json` now has
+  ten candidate comparisons, still questions rather than findings.
+- The read-only census passed again; 681 baseline files, 247 sources and 406
+  canonical documents remain represented.
+- `check_boundary.py` and `git diff --check` passed. The current-main V11 line
+  checker passes against this tree but does not validate research Markdown.
+- No book, source register, canonical metadata, index, edition or historical
+  report changed. Only the research directory is in the delta.
+
+Limitations: raster figures and trace tables were read only as text; linked
+papers, code and homework were not read or executed; chapter 9 and chapter 32
+print version 1.20 while the site table of contents says 1.10; no independent
+review or whole-book completion is claimed.

@@ -108,6 +108,32 @@
       "severity": "none",
       "proposed_action": "No correction. Keep TLB/page-table effects as a diagnostic hypothesis when memory stalls do not fit heap or GC evidence.",
       "status": "candidate"
+    },
+    {
+      "id": "C009",
+      "book_page": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
+      "book_anchor": "lines 51-55",
+      "source_id": "src.ostep",
+      "source_record": "B078",
+      "source_unit": "OSTEP chapter 28, sections 28.1-28.14",
+      "observation": "Tycho says a JVM-local semaphore cannot serialize writes across replicas and requires a state-owner protocol. OSTEP lock mechanics corroborate the narrower claim that mutual exclusion covers one critical section, not a distributed business invariant.",
+      "support": "supported",
+      "severity": "none",
+      "proposed_action": "No correction. Keep the scope distinction between a local lock and distributed authority.",
+      "status": "candidate"
+    },
+    {
+      "id": "C010",
+      "book_page": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/scheduler-context.md",
+      "book_anchor": "lines 50-54",
+      "source_id": "src.ostep",
+      "source_record": "B083",
+      "source_unit": "OSTEP chapter 33, sections 33.1-33.5",
+      "observation": "Tycho explains that publishOn/subscribeOn and boundedElastic move work but do not make a blocking driver asynchronous. OSTEP event-based concurrency shows the same boundary from the OS side: one event loop and nonblocking I/O, with blocking calls as the failure mode.",
+      "support": "qualified",
+      "severity": "none",
+      "proposed_action": "No correction. The two levels (OS event loop and Reactor scheduler) should not be conflated.",
+      "status": "candidate"
     }
   ]
 }

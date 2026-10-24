@@ -1531,5 +1531,740 @@
     "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is a synthesis, not technical evidence.",
     "reader": "Tycho agent; no independent review or execution.",
     "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B075",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-concurrency.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-concurrency.pdf",
+    "unit": "Complete chapter 25, A Dialogue on Concurrency",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:26:46Z; 4 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 77 lines / 4 pages; Part II heading and complete chapter 25 dialogue; no figures, code, tables, asides, or homework; raster figures not visually inspected",
+    "retrieved_lines": 77,
+    "retrieved_words": 578,
+    "representation_sha256": "7b15c1d0150f14df8873480861b2ffb90738d566002b506fee72bfb45b083b49",
+    "pages": 4,
+    "pdf_sha256": null,
+    "sections": [
+      "Part II: Concurrency",
+      "25. A Dialogue on Concurrency"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/dialogue-concurrency.md lines 1-77",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: uncoordinated access can be fast but lets multiple actors target the same resource, so one actor can lose its opportunity.",
+      "Source claim: serializing access through a queue makes the outcome correct at the cost of much of the original concurrency.",
+      "Source claim: the desirable design point is both correct and fast, rather than choosing one property and ignoring the other.",
+      "Source claim: threads are independent execution agents within one program, and their shared memory is the resource that needs coordination.",
+      "Source claim: the OS matters both as a provider of synchronization primitives such as locks and condition variables and as a concurrent program protecting its own structures.",
+      "Inference: the dialogue supplies intuition and vocabulary, not a synchronization mechanism, implementation, or measured comparison.",
+      "Inference: calling the OS the first concurrent program is a historical framing, not evidence that kernel code is automatically correct.",
+      "Inference: the peach analogy illustrates lost updates from competing access, but does not cover visibility, ordering, deadlock, or recovery."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+        "candidate": "Does the chapter establish the correctness-versus-parallelism tension before introducing pools, executors, or virtual threads?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
+        "candidate": "Does the page distinguish process-local mutual exclusion from enforcement of an invariant across independent replicas?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md",
+        "candidate": "Does the capacity discussion avoid implying that adding threads removes the need to serialize shared state?"
+      }
+    ],
+    "remaining": "No raster figures or tables to inspect. No linked papers or code were read; no exercises were present or executed. The dialogue is conceptual and reports no implementation or measurements.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B076",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "unit": "Complete chapter 26, Concurrency: An Introduction",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-10T18:26:06Z; 16 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 532 lines / 16 pages; sections 26.1-26.7, References and Homework; figures 26.1-26.7 and code listings t0.c/t1.c; asides on tools, atomic operations, synchronization support and key terms; homework 10 simulator questions not executed; raster figures not visually inspected",
+    "retrieved_lines": 532,
+    "retrieved_words": 5994,
+    "representation_sha256": "5c4d5e13a1009d95eead4b4bd579d7dd150c4a1bcc1aa8f4b1e3223e32bd30d6",
+    "pages": 16,
+    "pdf_sha256": null,
+    "sections": [
+      "26. Concurrency: An Introduction",
+      "26.1 Why Use Threads?",
+      "26.2 An Example: Thread Creation",
+      "26.3 Why It Gets Worse: Shared Data",
+      "26.4 The Heart Of The Problem: Uncontrolled Scheduling",
+      "26.5 The Wish For Atomicity",
+      "26.6 One More Problem: Waiting For Another",
+      "26.7 Summary: Why in OS Class?",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 26.1: Single-Threaded And Multi-Threaded Address Spaces",
+      "Figure 26.2: Simple Thread Creation Code (t0.c)",
+      "Figure 26.3: Thread Trace (1)",
+      "Figure 26.4: Thread Trace (2)",
+      "Figure 26.5: Thread Trace (3)",
+      "Figure 26.6: Sharing Data: Uh Oh (t1.c)",
+      "Figure 26.7: The Problem: Up Close and Personal"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/threads-intro.md lines 1-532",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: threads share one address space, while each thread has a private program counter, register set, and stack; a context switch saves and restores that execution state without switching page tables.",
+      "Source claim: a multi-threaded address space contains one stack per thread, which complicates the simple stack/heap layout and its room for growth.",
+      "Source claim: threads are justified by parallel execution across processors and by preserving progress while one thread waits for I/O; processes are an alternative, but sharing data is less convenient.",
+      "Source claim: a newly created thread may run immediately or merely become ready, and creation order does not determine execution order; joins bound completion of the created threads.",
+      "Source claim: the shared-counter example can finish below the expected total, with different values on repeated runs, even on a single processor.",
+      "Source claim: incrementing the counter becomes a load, an add, and a store; an interrupt after the load lets both threads write the same incremented value, losing one update.",
+      "Source claim: the chapter names this a data race in a critical section, calls the result indeterminate, and defines mutual exclusion as preventing concurrent entry.",
+      "Source claim: a single hypothetical atomic memory-add would avoid the race, but general updates need synchronization primitives built from hardware support plus OS involvement.",
+      "Source claim: waiting for another thread to finish an action, such as I/O completion, is a sleep/wake problem distinct from excluding concurrent access.",
+      "Inference: the volatile counter still races because volatility does not make a compound read-modify-write atomic; the printed failures illustrate possibility, not a measured probability."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/task-lifetime.md",
+        "candidate": "Does the page state which execution state is private to a thread and which state is shared before discussing ownership or cancellation?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
+        "candidate": "Does the page show a compound check-and-update race and require atomicity across the whole invariant rather than per-operation atomicity?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md",
+        "candidate": "Does the page keep CPU-parallelism and I/O-overlap justifications separate when reasoning about thread or virtual-thread capacity?"
+      }
+    ],
+    "remaining": "Raster figures 26.1-26.7 were not visually inspected; linked references and the x86.py simulator/code were not read or executed; the 10 homework questions were not run.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B077",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-api.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/threads-api.pdf",
+    "unit": "Complete chapter 27, Interlude: Thread API",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:27:23Z; 12 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 410 lines / 12 pages; sections 27.1 Thread Creation, 27.2 Thread Completion, 27.3 Locks, 27.4 Condition Variables, 27.5 Compiling and Running, 27.6 Summary, Aside: Thread API Guidelines, References, Homework (Code); figures 27.1-27.4 plus four inline listings (alternate pthread_create signatures, the stack-return counterexample, lock/unlock usage, the spin-on-flag replacement), footnotes 1-3 on wrappers, gcc warnings and pthread_cond_init, and nine homework questions; raster figures not visually inspected",
+    "retrieved_lines": 410,
+    "retrieved_words": 4415,
+    "representation_sha256": "9036a194262f3395b5fabc6dff58001b13b90deacb163b649a46bcfd86136459",
+    "pages": 12,
+    "pdf_sha256": null,
+    "sections": [
+      "27.1 Thread Creation",
+      "27.2 Thread Completion",
+      "27.3 Locks",
+      "27.4 Condition Variables",
+      "27.5 Compiling and Running",
+      "27.6 Summary",
+      "Aside: Thread API Guidelines",
+      "References",
+      "Homework (Code)"
+    ],
+    "figures": [
+      "Figure 27.1: Creating a Thread (code listing, struct myarg_t, lines 1-21)",
+      "Figure 27.2: Waiting for Thread Completion (code listing returning a heap-allocated myret_t)",
+      "Figure 27.3: Simpler Argument Passing to a Thread (single long long int value and return)",
+      "Figure 27.4: An Example Wrapper (asserting Pthread_mutex_lock)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/threads-api.md lines 1-410",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: pthread_create takes a thread handle, an attributes object, a start routine and one void* argument, and the handle initialized by the call is what a later join waits on.",
+      "Source claim: a created thread is a live entity with its own call stack inside the creating process's address space, so locals are private while heap or global state is shared.",
+      "Source claim: a thread result is a void*, so pthread_join takes a void** and overwrites the caller's pointer; passing NULL for either the argument or the result slot is legal.",
+      "Source claim: returning a pointer to a stack-allocated structure is a defect because the frame is reclaimed on return; the compiler may warn, but nothing detects it at run time.",
+      "Source claim: a mutex must be initialized (PTHREAD_MUTEX_INITIALIZER or pthread_mutex_init) and destroyed, and lock/unlock return error codes that must be checked.",
+      "Source claim: unchecked lock failure can silently admit several threads into a critical section, so wrappers that assert success are the minimum, not a nicety.",
+      "Source claim: pthread_cond_wait takes the associated mutex, releases it while sleeping and reacquires it before returning, which is why the signaling thread can take the lock to change the predicate.",
+      "Source claim: the predicate must be rechecked in a while loop because some implementations may wake a waiter spuriously; a wakeup is a hint, not a guarantee.",
+      "Source claim: trylock and timedlock bound the wait, and timedlock with a zero timeout degenerates to trylock; both are recommended only for avoiding indefinite blocking.",
+      "Source claim: replacing a condition variable with a shared flag polled in a loop is both wasteful and error-prone; the cited study found roughly half of such ad hoc synchronizations buggy.",
+      "Inference: the API is small enough to memorize, so the chapter's guidance (initialize, check codes, never return stack pointers, always re-check predicates) is a protocol checklist rather than an interface reference.",
+      "Metadata: the representation carries the [VERSION 1.10] footer and a 2008-23 copyright line, consistent with the site table of contents listing version 1.10."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
+        "candidate": "Does every cross-thread handoff require a stated happens-before justification (lock, join or condition variable) rather than a shared flag polled in a loop?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+        "candidate": "Are task-lifetime rules explicit about who owns a result and when it is safe to free it, covering the stack-return and double-free failure modes?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md",
+        "candidate": "Is condition waiting described with a held lock and a re-check loop, so spurious wakeups and lost signals are covered rather than assumed away?"
+      }
+    ],
+    "remaining": "No raster figures inspected. The linked books and papers [B89, B97, B+96, K+96, X+10] were not read; main-race.c, main-deadlock.c, main-deadlock-global.c, main-signal.c and main-signal-cv.c were not built or run under helgrind, and no execution or measurement was performed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B078",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-locks.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/threads-locks.pdf",
+    "unit": "Complete chapter 28, Locks",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-10T18:20:41Z; 22 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 1117 lines / 22 pages; sections 28.1 Locks: The Basic Idea through 28.17 Summary, References, Homework (Simulation); figures 28.1-28.10; asides Dekker's and Peterson's Algorithms, More Reason to Avoid Spinning: Priority Inversion, and Tips Think About Concurrency as a Malicious Scheduler and Less Code Is Better Code (Lauer's Law); footnotes 1-3 on naming of test-and-set, the ostep-code repository and a print-copy aside; fourteen homework questions; raster figures not visually inspected",
+    "retrieved_lines": 1117,
+    "retrieved_words": 9588,
+    "representation_sha256": "0f2cbd9da6517e8cfd27998c9705112c0ababef68e70b057fd853a1c0fc29341",
+    "pages": 22,
+    "pdf_sha256": null,
+    "sections": [
+      "28.1 Locks: The Basic Idea",
+      "28.2 Pthread Locks",
+      "28.3 Building A Lock",
+      "28.4 Evaluating Locks",
+      "28.5 Controlling Interrupts",
+      "28.6 A Failed Attempt: Just Using Loads/Stores",
+      "28.7 Building Working Spin Locks with Test-And-Set",
+      "28.8 Evaluating Spin Locks",
+      "28.9 Compare-And-Swap",
+      "28.10 Load-Linked and Store-Conditional",
+      "28.11 Fetch-And-Add",
+      "28.12 Too Much Spinning: What Now?",
+      "28.13 A Simple Approach: Just Yield, Baby",
+      "28.14 Using Queues: Sleeping Instead Of Spinning",
+      "28.15 Different OS, Different Support",
+      "28.16 Two-Phase Locks",
+      "28.17 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 28.1: First Attempt: A Simple Flag (lock_t with int flag; test then set)",
+      "Figure 28.2: Trace: No Mutual Exclusion (two-thread interleaving showing both threads setting flag)",
+      "Figure 28.3: A Simple Spin Lock Using Test-and-set",
+      "Figure 28.4: Compare-and-swap (C pseudo-code)",
+      "Figure 28.5: Load-linked And Store-conditional (C pseudo-code)",
+      "Figure 28.6: Using LL/SC To Build A Lock",
+      "Figure 28.7: Ticket Locks (fetch-and-add ticket plus turn)",
+      "Figure 28.8: Lock With Test-and-set And Yield",
+      "Figure 28.9: Lock With Queues, Test-and-set, Yield, And Wakeup (guard, queue, park/unpark)",
+      "Figure 28.10: Linux-based Futex Locks (lowlevellock.h mutex_lock/mutex_unlock)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/threads-locks.md lines 1-1117",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: a lock is a variable whose state is free or held; lock() returns only when the caller owns it, and unlock() frees it or hands it to a waiter, giving the programmer a limited say over scheduling.",
+      "Source claim: disabling interrupts is simple but requires trusting arbitrary code with a privileged operation, does not stop threads on other CPUs, and can lose interrupts if held too long; the OS may still use masking internally.",
+      "Source claim: the naive flag lock fails because the test and the set are separate operations, so an interrupt between them lets both threads observe the flag as free and enter.",
+      "Source claim: test-and-set makes test and set one atomic operation, which is sufficient for mutual exclusion, but the resulting spin lock is unfair and can starve a waiter indefinitely.",
+      "Source claim: a spin lock on a single CPU needs preemption to make progress at all, and if the holder is preempted every other thread burns a full time slice spinning.",
+      "Source claim: compare-and-swap is strictly more powerful than test-and-set, but used as a simple spin lock it behaves identically; load-linked/store-conditional instead fails when an intervening store occurred.",
+      "Source claim: fetch-and-add supports a ticket lock, which is the first design in the chapter that guarantees progress, but it still spins and remains hostile to a preempted holder.",
+      "Source claim: yield replaces spinning with a context switch per attempt; with many contenders it costs many switches and still does not prevent starvation.",
+      "Source claim: the queue-based lock uses a guard spin lock around flag and queue manipulation, then parks the waiter; unlock passes the lock directly to the dequeued thread, so flag deliberately stays 1 and is never cleared in between.",
+      "Source claim: the wakeup/waiting race arises when a thread is unparked between queue_add and park, losing the wakeup; Solaris setpark() records the intent so a later park returns immediately, and a kernel-side atomic release is the alternative.",
+      "Source claim: Linux futex packs the held bit and the waiter count into one integer, fast-paths the uncontended case with a single atomic bit test-and-set, and only enters the kernel when a waiter has been recorded.",
+      "Source claim: a two-phase lock spins briefly and then sleeps; the correct split depends on hardware, thread count and workload, so no single general-purpose lock is best everywhere.",
+      "Source claim: priority inversion can hang a system even with correct mutual exclusion, because a high-priority spinner waits for a low-priority holder that a medium-priority runnable thread keeps from running; inheritance, a ceiling, or equal priorities mitigate it.",
+      "Metadata: the chapter footer still reads [VERSION 1.10] and the site table of contents also lists 1.10, while the copyright line reads 2008-25 and the PDF was published 2026-01-10, so this is a later re-publication of the same version."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
+        "candidate": "Does the guidance separate the three lock criteria (mutual exclusion, fairness/progress, cost) and require a stated granularity rather than one coarse lock?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-modes.md",
+        "candidate": "Is pool hand-off analyzed as a lock hand-off with queueing and wakeup cost, including what happens when the holder is preempted?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/benchmark-controls.md",
+        "candidate": "Does the benchmark method isolate lock contention by comparing uncontended, contended-on-one-CPU and contended-across-CPUs cases instead of reporting one aggregate throughput number?"
+      }
+    ],
+    "remaining": "No raster figures inspected. The referenced papers and code bases [D68, P81, MS91, H91, D+13, L09, S09, WG00] were not read; the x86.py simulator, flag.s, test-and-set.s, peterson.s, ticket.s, yield.s and test-and-test-and-set.s were not run, and no measurement was performed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B079",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-locks-usage.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/threads-locks-usage.pdf",
+    "unit": "Complete chapter 29, Lock-based Concurrent Data Structures",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:28:00Z; 16 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 1071 lines / 16 pages; sections 29.1-29.5, References and Homework (Code); Figures 29.1-29.11 covering seven code listings, one counter trace and three benchmark plots; three tip asides; six homework questions not executed; raster figures not visually inspected",
+    "retrieved_lines": 1071,
+    "retrieved_words": 5136,
+    "representation_sha256": "eab704f2007f78f543e9a9684a1d997a3f4eda544d83372d503ad8743a6ba8e3",
+    "pages": 16,
+    "pdf_sha256": null,
+    "sections": [
+      "29.1 Concurrent Counters",
+      "Simple But Not Scalable",
+      "Scalable Counting",
+      "29.2 Concurrent Linked Lists",
+      "Scaling Linked Lists",
+      "29.3 Concurrent Queues",
+      "29.4 Concurrent Hash Table",
+      "29.5 Summary",
+      "References",
+      "Homework (Code)"
+    ],
+    "figures": [
+      "Figure 29.1: A Counter Without Locks",
+      "Figure 29.2: A Counter With Locks",
+      "Figure 29.3: Tracing the Approximate Counters",
+      "Figure 29.4: Approximate Counter Implementation",
+      "Figure 29.5: Performance of Traditional vs. Approximate Counters",
+      "Figure 29.6: Scaling Approximate Counters",
+      "Figure 29.7: Concurrent Linked List",
+      "Figure 29.8: Concurrent Linked List: Rewritten",
+      "Figure 29.9: Michael and Scott Concurrent Queue",
+      "Figure 29.10: A Concurrent Hash Table",
+      "Figure 29.11: Scaling Hash Tables"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/threads-locks-usage.md lines 1-1071",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: wrapping every counter operation in one mutex is correct but does not scale; the chapter's four-CPU iMac benchmark grows from roughly 0.03 s for one thread to over 5 s for two threads doing one million updates each.",
+      "Source claim: the approximate counter keeps one local counter and lock per CPU plus a global counter and lock, transfers a local value to the global counter once it reaches threshold S, and therefore reads a value that may lag by at most NUMCPUS multiplied by S.",
+      "Source claim: the first linked-list insert unlocks on the malloc failure path, and the rewrite avoids that by allocating outside the critical section and giving lookup one exit path; the chapter reports that nearly 40% of studied Linux kernel bugs sat on rarely-taken paths.",
+      "Source claim: hand-over-hand (lock coupling) locking gives each node its own lock but the per-node acquire/release overhead usually makes it slower than one list lock, and the chapter suggests a hybrid that locks every k nodes as an open idea.",
+      "Source claim: the Michael and Scott queue uses separate head and tail locks plus an initial dummy node, so in the common case enqueue touches only the tail lock and dequeue only the head lock.",
+      "Source claim: the hash table uses one list and one lock per bucket (101 buckets in the example), and this bucket-level granularity, not the hashing itself, is credited with the observed scaling under four-thread updates.",
+      "Source claim (tip): more concurrency is not necessarily faster, because frequent lock acquisition adds overhead; the advice is to measure a simple and a complex variant rather than assume the complex one wins.",
+      "Inference: the bucket-lock table assumes a fixed bucket count, so any resize needs either a global stop-the-world step or per-bucket migration, which the chapter explicitly leaves as an exercise.",
+      "Inference: threshold S is a staleness budget for readers, so a monitoring consumer of get() can under-report by up to NUMCPUS times S and should not treat the value as exact.",
+      "Inference: these structures serialize mutation but say nothing about safe memory reclamation; the queue frees the retired dummy node after unlocking, which presumes no other thread still holds that pointer."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/scaling-models.md",
+        "candidate": "Does the scaling model treat lock granularity (single lock versus per-bucket or per-node locking) as a distinct mechanism behind a flattening throughput curve, rather than folding it into one contention coefficient?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
+        "candidate": "Does the shared-state page state that a thread-safe container protects individual operations but not a compound check-then-act invariant spanning several calls?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-modes.md",
+        "candidate": "Does the pool page name a single pool-wide lock as a scalability ceiling, and would per-partition or striped accounting change the acquisition path it describes?"
+      },
+      {
+        "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+        "candidate": "Does the in-process cache design discuss bucket- or segment-level locking and the resize step that reintroduces a global lock?"
+      }
+    ],
+    "remaining": "Explicit omissions: the three benchmark plots (Figures 29.5, 29.6, 29.11) were read only as extracted labels and were not visually inspected; linked papers, the Moir and Shavit survey, the Linux and Solaris kernel books and the homework code were not read or executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B080",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-cv.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/threads-cv.pdf",
+    "unit": "Complete chapter 30, Condition Variables",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-08T20:19:09Z; 19 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 1262 lines / 19 pages; sections 30.1-30.4, References and Homework (Code); Figures 30.1-30.15 covering thirteen code listings and two thread-trace tables; two tip asides; eleven homework questions not executed; raster figures not visually inspected",
+    "retrieved_lines": 1262,
+    "retrieved_words": 6576,
+    "representation_sha256": "11837e3346aa3b043dad50bff34beef090b70345a95482d2030d0350282a9f76",
+    "pages": 19,
+    "pdf_sha256": null,
+    "sections": [
+      "30.1 Definition and Routines",
+      "30.2 The Producer/Consumer (Bounded Buffer) Problem",
+      "A Broken Solution",
+      "Better, But Still Broken: While, Not If",
+      "The Single Buffer Producer/Consumer Solution",
+      "The Correct Producer/Consumer Solution",
+      "30.3 Covering Conditions",
+      "30.4 Summary",
+      "References",
+      "Homework (Code)"
+    ],
+    "figures": [
+      "Figure 30.1: A Parent Waiting For Its Child",
+      "Figure 30.2: Parent Waiting For Child: Spin-based Approach",
+      "Figure 30.3: Parent Waiting For Child: Use A Condition Variable",
+      "Figure 30.4: Parent Waiting: No State Variable",
+      "Figure 30.5: Parent Waiting: No Lock",
+      "Figure 30.6: The Put And Get Routines (v1)",
+      "Figure 30.7: Producer/Consumer Threads (v1)",
+      "Figure 30.8: Producer/Consumer: Single CV And If Statement",
+      "Figure 30.9: Thread Trace: Broken Solution (v1)",
+      "Figure 30.10: Producer/Consumer: Single CV And While",
+      "Figure 30.11: Thread Trace: Broken Solution (v2)",
+      "Figure 30.12: Producer/Consumer: Two CVs And While",
+      "Figure 30.13: The Correct Put And Get Routines",
+      "Figure 30.14: The Correct Producer/Consumer Synchronization",
+      "Figure 30.15: Covering Conditions: An Example"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/threads-cv.md lines 1-1262",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: a condition variable is an explicit queue of waiting threads; wait(c,m) assumes m is held, releases it and sleeps atomically, and reacquires it before returning, which is what closes the race between testing a predicate and going to sleep.",
+      "Source claim: removing the done state variable (Figure 30.4) loses the signal whenever the child finishes first, so the parent sleeps forever; the chapter credits the state variable, not the CV, with recording the condition.",
+      "Source claim: removing the lock (Figure 30.5) lets the parent be interrupted between the predicate check and the wait, so the child's signal arrives with no waiter and the parent sleeps forever.",
+      "Source claim: with one CV and several consumers, an if statement lets a woken consumer consume a value that a second consumer already took (Figure 30.9); a while loop fixes this because the woken thread re-checks the predicate under the lock.",
+      "Source claim: Mesa semantics make signal only a hint that state changed, so the woken thread may find the predicate false; Hoare semantics, where the woken thread runs immediately, is stronger but virtually never implemented.",
+      "Source claim: even with while loops, a single CV still deadlocks: a consumer's signal can wake another consumer while the producer sleeps, leaving all threads asleep (Figure 30.11); two CVs, empty and fill, make the wake-up direction explicit.",
+      "Source claim: the final bounded buffer uses a circular array with fill_ptr, use_ptr and count, producers waiting while count equals MAX and consumers while count equals zero, which also reduces context switches.",
+      "Source claim: covering conditions (Lampson and Redell's Pilot allocator) arise when the waiter cannot tell which sleeper fits: free(50) must wake the allocate(10) waiter, so the code uses broadcast and pays wake-ups that re-check and sleep again.",
+      "Source claim: spurious wake-ups occur in some thread packages, an additional reason to wrap every wait in a while loop rather than an if.",
+      "Inference: broadcast converts a missed wake-up into a performance cost, but it cannot repair a missing state variable or a wrong predicate; the chapter itself warns that needing broadcast where it should not be needed signals a bug."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/demand-blocking.md",
+        "candidate": "Does the demand page distinguish blocking a producer until capacity frees from rejecting or dropping work, and does it name lost-wakeup when a wait predicate is not re-checked after wake-up?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md",
+        "candidate": "Does the admission page describe how waiters are woken when capacity is released, and weigh a targeted wake-up against broadcast and its thundering-herd cost?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
+        "candidate": "Does the shared-state page require re-checking a wait predicate in a loop after every wake-up, and treat signaling as a hint rather than a guarantee?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-modes.md",
+        "candidate": "Does the pool page state whether connection waiters are woken one at a time or all at once, and what starvation or wake-up storm follows from that choice?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures were not visually inspected; cited papers (Dijkstra, Hoare, Lampson and Redell, the pthread_cond_signal man page) and the homework programs main-two-cvs-while.c, main-one-cv-while.c, main-two-cvs-if.c and main-two-cvs-while-extra-unlock.c were not read or executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B081",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-sema.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/threads-sema.pdf",
+    "unit": "Complete chapter 31, Semaphores",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-10T18:41:17Z; 20 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 1119 lines / 20 pages; sections 31.1-31.9 plus References and Homework (Code), with 8 subsections under 31.4 and 31.6; Figures 31.1-31.17 covering code listings and four thread-trace tables, three tips/asides (semaphore value, Hill's Law, generalization), seven homework questions; no raster figures in the chapter body; raster figures not visually inspected",
+    "retrieved_lines": 1119,
+    "retrieved_words": 7633,
+    "representation_sha256": "e28de8d9a87463d880a245404fd2dcd7e644c11cfb80d55d1eb5307e2f5a4fa7",
+    "pages": 20,
+    "pdf_sha256": null,
+    "sections": [
+      "31.1 Semaphores: A Definition",
+      "31.2 Binary Semaphores (Locks)",
+      "31.3 Semaphores For Ordering",
+      "31.4 The Producer/Consumer (Bounded Buffer) Problem",
+      "First Attempt",
+      "A Solution: Adding Mutual Exclusion",
+      "Avoiding Deadlock",
+      "At Last, A Working Solution",
+      "31.5 Reader-Writer Locks",
+      "31.6 The Dining Philosophers",
+      "Broken Solution",
+      "A Solution: Breaking The Dependency",
+      "31.7 Thread Throttling",
+      "31.8 How To Implement Semaphores",
+      "31.9 Summary",
+      "References",
+      "Homework (Code)"
+    ],
+    "figures": [
+      "Figure 31.1: Initializing A Semaphore",
+      "Figure 31.2: Semaphore: Definitions Of Wait And Post",
+      "Figure 31.3: A Binary Semaphore (That Is, A Lock)",
+      "Figure 31.4: Thread Trace: Single Thread Using A Semaphore",
+      "Figure 31.5: Thread Trace: Two Threads Using A Semaphore",
+      "Figure 31.6: A Parent Waiting For Its Child",
+      "Figure 31.7: Thread Trace: Parent Waiting For Child (Case 1)",
+      "Figure 31.8: Thread Trace: Parent Waiting For Child (Case 2)",
+      "Figure 31.9: The Put And Get Routines",
+      "Figure 31.10: Adding The Full And Empty Conditions",
+      "Figure 31.11: Adding Mutual Exclusion (Incorrectly)",
+      "Figure 31.12: Adding Mutual Exclusion (Correctly)",
+      "Figure 31.13: A Simple Reader-Writer Lock",
+      "Figure 31.14: The Dining Philosophers",
+      "Figure 31.15: The get_forks() And put_forks() Routines",
+      "Figure 31.16: Breaking The Dependency In get_forks()",
+      "Figure 31.17: Implementing Zemaphores With Locks And CVs"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/threads-sema.md lines 1-1119",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: a semaphore is an integer touched only by sem_wait() and sem_post(); sem_wait() decrements and blocks while the value is negative, sem_post() increments and wakes one waiter, and in Dijkstra's definition a negative value equals the number of waiting threads.",
+      "Source claim: initialization is best derived from the number of resources you are willing to give away immediately, credited to Perry Kivolowitz: 1 for a lock, 0 for ordering, MAX for empty buffer slots.",
+      "Source claim: with MAX greater than 1 the empty/full-only bounded buffer breaks because two producers can both execute buffer[fill] = value before either advances fill, so one datum is overwritten; inference: the failure needs a preemption precisely between the store and the index update, which is why it is rare in testing and not impossible in production.",
+      "Source claim: placing the mutex outside the empty/full waits deadlocks, because the consumer holds the mutex while blocking on full and the producer cannot reach sem_post(full) without that mutex; the working solution shrinks the mutex to surround put()/get() only.",
+      "Source claim: the simple reader-writer lock lets readers starve writers, since arriving readers only contend on the short internal lock while a writer waits on writelock; inference: the missing mechanism is writer preference, for example a gate semaphore that queued readers must also pass.",
+      "Source claim: the dining philosophers deadlock when every philosopher takes the left fork first; changing only philosopher 4 to take right-then-left breaks the wait cycle, at the cost of fairness and some concurrency rather than throughput.",
+      "Source claim: throttling is admission control, implemented by initializing a semaphore to the desired concurrency limit around a memory-intensive region so the sum of allocations cannot exceed physical memory and induce thrashing.",
+      "Source claim: the Zemaphore built from one mutex, one condition variable and a value never drops below zero, which the authors say matches current Linux but abandons Dijkstra's negative-value invariant; inference: the while-loop re-check around Cond_wait is what keeps that simplified value correct under spurious wakeups and stolen signals.",
+      "Source claim: building a condition variable out of semaphores is materially harder than the reverse, citing Birrell's Windows experience, and the authors use that asymmetry plus Lampson's 'Don't generalize; generalizations are generally wrong' to question semaphores as a strict generalization.",
+      "Source claim: reader-writer locks often add overhead and may not outperform simple locks (CB08), and Hill's Law, 'Big and dumb is better', is offered as the reason to try the simple lock first."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
+        "candidate": "Semaphore-as-single-primitive framing: one counter covers both mutual exclusion and event ordering, which the chapter uses to question whether locks and condition variables are separately necessary."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md",
+        "candidate": "Bounded-buffer permit accounting (empty=MAX, full=0) as the mechanism behind pool capacity and queue depth, including the rule that the mutex wraps only the buffer mutation, never the blocking wait."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/fleet-budgets.md",
+        "candidate": "Throttling as admission control: a semaphore initialized to the concurrency limit caps threads inside a resource-heavy region, the same shape as a fleet-wide permit budget."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/demand-blocking.md",
+        "candidate": "Hill's Law and the reader-writer overhead result as a caution against assuming richer synchronization primitives beat a simple lock under contention."
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures (none present in this chapter's body beyond the five-philosopher/table diagram), the linked papers and the Little Book of Semaphores, the downloadable homework skeletons (fork-join.c, rendezvous.c, barrier.c, reader-writer.c, reader-writer-nostarve.c, mutex-nostarve.c) and their test runs; no code was compiled or executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B082",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-bugs.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/threads-bugs.pdf",
+    "unit": "Complete chapter 32, Common Concurrency Problems",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.20; PDF Published Time 2026-06-21T17:15:09Z; 16 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 703 lines / 16 pages; sections 32.1-32.4 plus References and Homework (Code), with 10 subsections under 32.2 and 32.3; Figures 32.1-32.7 (one table, four code listings, one dependency graph), two unnumbered lock-demand tables and two unnumbered schedule tables, one tip (Tom West's Law), ten homework questions; raster figures not visually inspected",
+    "retrieved_lines": 703,
+    "retrieved_words": 6291,
+    "representation_sha256": "661bcef78df196279f954b214f21b2cb583571f4e5335ce2d15c74003de9f446",
+    "pages": 16,
+    "pdf_sha256": null,
+    "version_note": "The chapter footer prints [VERSION 1.20] on every page (for example line 66), and its copyright line reads 2008-26, while the site table of contents at /tmp/ostep/toc.md is the version 1.10 edition (Published Time 14 Nov 2023) and chapter 31's footer still prints [VERSION 1.10]. The chapter PDF was therefore revised after the table-of-contents snapshot used for this audit; the edition field records the printed 1.20, not the TOC's 1.10.",
+    "sections": [
+      "32.1 What Types Of Bugs Exist?",
+      "32.2 Non-Deadlock Bugs",
+      "Atomicity-Violation Bugs",
+      "Order-Violation Bugs",
+      "Non-Deadlock Bugs: Summary",
+      "32.3 Deadlock Bugs",
+      "Why Do Deadlocks Occur?",
+      "Conditions for Deadlock",
+      "Prevention",
+      "Circular Wait",
+      "Hold-and-wait",
+      "No Preemption",
+      "Mutual Exclusion",
+      "Deadlock Avoidance via Scheduling",
+      "Detect and Recover",
+      "32.4 Summary",
+      "References",
+      "Homework (Code)"
+    ],
+    "figures": [
+      "Figure 32.1: Bugs In Modern Applications",
+      "Figure 32.2: Atomicity Violation (atomicity.c)",
+      "Figure 32.3: Atomicity Violation Fixed (atomicity_fixed.c)",
+      "Figure 32.4: Ordering Bug (ordering.c)",
+      "Figure 32.5: Fixing The Ordering Violation (ordering_fixed.c)",
+      "Figure 32.6: Simple Deadlock (deadlock.c)",
+      "Figure 32.7: The Deadlock Dependency Graph"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/threads-bugs.md lines 1-703",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: Lu et al. classify 105 concurrency bugs from MySQL, Apache, Mozilla and OpenOffice into 74 non-deadlock and 31 deadlock bugs, with Mozilla contributing 41 non-deadlock and 16 deadlock cases and MySQL 14 and 9.",
+      "Source claim: 97% of the non-deadlock bugs in that study are either atomicity violations or order violations, which the authors use to argue that review and automated checking should concentrate on those two patterns.",
+      "Source claim: the MySQL atomicity example crashes because the non-NULL check and the fputs() use are not atomic against another thread setting proc_info to NULL; the fix locks the whole check-and-use region, not just the store.",
+      "Source claim: the Mozilla order violation assumes mThread is initialized before mMain() reads mThread->State; the fix adds a condition variable plus an mtInit state flag so the reader waits when it arrives first and proceeds when it arrives second.",
+      "Source claim: the four Coffman conditions (mutual exclusion, hold-and-wait, no preemption, circular wait) are jointly required, so each prevention technique is described as removing one of them.",
+      "Source claim: lock-address ordering lets a routine such as do_something(m1, m2) acquire two caller-supplied locks consistently regardless of argument order; inference: this presupposes a total order on addresses and a guarantee that m1 and m2 are distinct, which the code comment states as an assumption rather than checks.",
+      "Source claim: trylock-and-retry removes hold-and-wait but can livelock, mitigated by a random delay, and it must unwind any other resources acquired since the retry label, such as memory allocated after taking L1.",
+      "Source claim: the lock-free list insert spins on CompareAndSwap(&head, n->next, n) until it wins; inference: the listing omits reclamation of the node whose swap failed, so a real implementation must free or retire that node or it leaks under contention.",
+      "Source claim: scheduling-based avoidance needs advance knowledge of each thread's lock set and, in the second contention table, forces T1, T2 and T3 onto one processor, which removes deadlock by sacrificing parallelism; the authors call it viable mainly in embedded systems with full task knowledge.",
+      "Source claim: detect-and-recover runs a periodic resource-graph cycle check, which is standard in database systems but coarse for an operating system, where the pragmatic response to a rare freeze is a reboot (Tom West's Law)."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
+        "candidate": "Atomicity and order violations as the two dominant non-deadlock classes (97% of the studied bugs), giving a concrete checklist for reviewing check-then-act code around shared fields."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-modes.md",
+        "candidate": "Hold-and-wait deadlock in request paths that keep a pooled connection while calling a slow dependency, with lock ordering and trylock backoff as the two practical remedies and livelock as the cost of the latter."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+        "candidate": "Deadlock detection as periodic resource-graph cycle checking versus reboot-and-recover pragmatism, as a framing for thread-dump-based diagnosis and its limits."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+        "candidate": "Total ordering by lock address as a mechanical way to make multi-lock acquisition safe without global knowledge of the call graph."
+      }
+    ],
+    "remaining": "Explicit omissions: Figure 32.7's dependency graph was not visually inspected, the linked papers (Lu et al., Coffman et al., Herlihy, Jula et al.) and the Linux filemap.c ordering comment were not retrieved, the vector-* homework programs were neither read nor executed, and no bug was reproduced.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B083",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-events.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/threads-events.pdf",
+    "unit": "Complete chapter 33, Event-based Concurrency (Advanced)",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:29:16Z; 12 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 319 lines / 12 pages; sections 33.1-33.9, References and Homework (Code); Figure 33.1 plus eight inline code and command listings, two asides, one tip and one crux box; no tables; raster figures not visually inspected",
+    "retrieved_lines": 319,
+    "retrieved_words": 4637,
+    "representation_sha256": "b860413c1c6e93d34edc93296e40d516b6eeb0187e21168aa98121d57bb1928f",
+    "pages": 12,
+    "pdf_sha256": null,
+    "sections": [
+      "33.1 The Basic Idea: An Event Loop",
+      "33.2 An Important API: select() (or poll())",
+      "33.3 Using select()",
+      "33.4 Why Simpler? No Locks Needed",
+      "33.5 A Problem: Blocking System Calls",
+      "33.6 A Solution: Asynchronous I/O",
+      "33.7 Another Problem: State Management",
+      "33.8 What Is Still Difficult With Events",
+      "33.9 Summary",
+      "References",
+      "Homework (Code)"
+    ],
+    "figures": [
+      "Figure 33.1: Simple Code Using select()"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/threads-events.md lines 1-319",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: event-based concurrency is motivated by two problems, the difficulty of writing correct multi-threaded code and the programmer's weak control over what the OS schedules.",
+      "Source claim: the canonical event loop repeatedly fetches ready events and runs one handler at a time; because only one handler is active, the choice of which event to handle next is the scheduling decision.",
+      "Source claim: select() reports readability, writability and exceptional conditions across descriptor sets, rewrites those sets to the ready subset, and returns the number of ready descriptors.",
+      "Source claim: the timeout argument changes the waiting policy, with NULL blocking indefinitely and zero turning select() into an immediate poll; poll() offers a similar facility.",
+      "Source claim: the event-loop contract forbids blocking calls, because one handler waiting on a slow open() or read() stops every other connection, whereas a thread-based server lets other threads run during the wait.",
+      "Source claim: asynchronous I/O fills an aiocb with descriptor, offset, buffer and length, returns before completion, and is observed either by polling aio_error() or by a completion signal.",
+      "Source claim: when native asynchronous I/O is unavailable, a hybrid design can use events for network processing and a thread pool for outstanding I/O requests.",
+      "Source claim: state that a thread would keep on its stack must be packaged manually; a continuation keyed by the completing descriptor restores the socket descriptor needed to finish the event.",
+      "Source claim: multicore event servers must run handlers in parallel and therefore reintroduce locks, page faults are implicit blocking, and routines that change from non-blocking to blocking force handlers to be split.",
+      "Inference: select() readiness does not by itself prove a handler cannot block, so the no-blocking rule depends on non-blocking descriptors, bounded handler work and memory residency rather than on the polling API alone."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/demand-blocking.md",
+        "candidate": "Does the page distinguish explicit blocking calls from implicit blocking such as page faults when asserting that an event loop must never block?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md",
+        "candidate": "Does the asynchronous-API page treat continuation state and completion notification as explicit protocol responsibilities rather than hidden runtime magic?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md",
+        "candidate": "Does the execution-model comparison state when an event loop is preferable to thread-per-request, rather than presenting one model as strictly cheaper?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+        "candidate": "Does the diagnostic workflow treat page-fault stalls as a source of event-loop latency distinct from application-level blocking calls?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures in the PDF were not visually inspected; linked papers (Adya et al., Pai et al., Welsh et al., von Behren et al., Ousterhout) and node.js documentation were not read; the six homework exercises were not executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B084",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-dialogue.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/threads-dialogue.pdf",
+    "unit": "Complete chapter 34, Summary Dialogue on Concurrency",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:29:35Z; 2 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 57 lines / 2 pages; single titled dialogue, one footnote and page footer; no numbered sections, figures, tables, code, asides or homework; no raster figures present",
+    "retrieved_lines": 57,
+    "retrieved_words": 509,
+    "representation_sha256": "2cacc5c79139a82e44ef080572c74080588f09131b378cc6b908eb9684eab373",
+    "pages": 2,
+    "pdf_sha256": null,
+    "sections": [
+      "Summary Dialogue on Concurrency"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/threads-dialogue.md lines 1-57",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: the student's difficulty reasoning about thread interleaving opens the dialogue, and the professor concedes that even early published concurrent algorithms were sometimes wrong.",
+      "Source claim: the first recommendation is to keep concurrent designs simple, avoid complex thread interactions, and reuse proven patterns such as simple locking and producer-consumer queues.",
+      "Source claim: the second recommendation is to use concurrency only when absolutely needed and to avoid premature optimization.",
+      "Source claim: the third recommendation is to seek simplified parallel forms such as Map-Reduce, which the professor presents as avoiding manual locks and condition variables.",
+      "Source claim: the dialogue closes by urging further reading, code writing and practice, citing the roughly 10,000-hour expertise argument and a gamified deadlock exercise in a footnote.",
+      "Source claim: the chapter contains no mechanism, measurement, protocol or decision threshold; it is a motivational synthesis closing the concurrency part.",
+      "Inference: 'keep it simple' is not a decision procedure, because the chapter gives no test for when concurrency is absolutely needed and no cost model for the alternatives.",
+      "Inference: Map-Reduce is offered as an example of hidden coordination, not evidence that a framework removes data-distribution, retry or skew failure modes.",
+      "Inference: the dialogue does not endorse event loops as the simple option; the preceding chapter shows that event-driven code carries its own blocking and state-management hazards."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+        "candidate": "Does the coordination page give a decision rule for when concurrency is justified, or only mechanisms for making it correct?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md",
+        "candidate": "Does the execution-model page present cheaper threads as a reason to add concurrency, rather than as a cost reduction where concurrency is already justified?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/demand-blocking.md",
+        "candidate": "Does the nonblocking page acknowledge its own complexity cost, so reactive or event styles are not presented as the default simplification?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/task-lifetime.md",
+        "candidate": "Does the task-lifetime page distinguish added concurrency from added parallelism when justifying a design?"
+      }
+    ],
+    "remaining": "Explicit omissions: no raster figures are present; the linked gamified deadlock exercise and the cited Outliers book were not read; the dialogue contains no exercises to execute.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
   }
 ]

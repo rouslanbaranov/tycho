@@ -1,7 +1,7 @@
 # Foundational book reading
 
 Issue [#225](https://github.com/rouslanbaranov/tycho/issues/225). Updated 2026-10-24.
-**SRE whole-book reading complete; OSTEP CPU, memory/VM and swapping batches read;**
+**SRE whole-book reading complete; OSTEP CPU, memory/VM, swapping and concurrency batches read;**
 **wider reading and comparison in progress.** The owner prioritized foundational
 books over further technology-reference auditing. Earlier reference readings remain
 recorded; one whole book is now complete. The wider source-reading and Tycho
@@ -12,7 +12,7 @@ comparison obligations remain open.
 | Book | Actual progress | Next action |
 | --- | --- | --- |
 | Site Reliability Engineering | All 48 public book units read: 34 chapters, foreword, preface, five part introductions, six appendices and bibliography, with footnotes, tables, examples and embedded figures/formulas | Whole scoped book complete; compare exact passages with the frozen Tycho baseline and separately read linked publications; see `SRE-COMPLETION.md` |
-| Operating Systems: Three Easy Pieces | Chapters 1, 3-24 read completely (23 new units; chapter 2 earlier): CPU virtualization, scheduling, address spaces, memory API, translation, segmentation, free-space management, paging, swapping and complete VM systems. 24 numbered units total; raster figures not visually inspected | Continue chapters 25-34 (concurrency), then persistence and appendices |
+| Operating Systems: Three Easy Pieces | Chapters 1, 3-34 read completely (33 new units; chapter 2 earlier): CPU virtualization, scheduling, memory and paging, swapping and complete VM, and concurrency. 34 numbered units total; raster figures not visually inspected | Continue chapters 35-51 (persistence and distribution) and appendices |
 | Designing Data-Intensive Applications, 2nd edition | Publisher contents and short chapter 1 preview only | Full text requires lawful access; do not count the preview as chapter reading or silently substitute the first edition |
 | Distributed Systems, 4th edition | Author's access instructions examined; no book text obtained | Personalized download requires an email and human-verification step; no request submitted |
 | Other registered books | Not started in this audit | Continue `book-queue.json`; distinguish available complete texts from commercial previews |
@@ -192,3 +192,48 @@ linked papers, code and exercises were not executed.
 
 These remain mechanism and policy notes. Candidate comparisons for
 memory-related Tycho pages are extended in [comparisons.json](comparisons.json).
+
+## OSTEP continuation - concurrency
+
+Ten records B075-B084 add chapters 25-34: 6,667 retrieved lines, 51,357 words
+and 139 pages. The combined OSTEP continuation is 33 records: 12,845 lines,
+156,030 words and 408 pages. Raster figures were not visually inspected;
+linked papers, code and simulator exercises were not executed.
+
+- **Chapter 25:** the dialogue frames concurrency around threads that share an
+  address space; isolation is lost, so races and synchronization become the
+  central problems.
+- **Chapter 26:** threads and processes differ in address-space sharing;
+  interleavings can violate atomicity, and locks or condition variables only
+  bound the race if the full protocol is correct.
+- **Chapter 27:** the pthread API is small; create/join, mutex initialization,
+  error checking, condition-variable wait loops and object lifetime carry the
+  real correctness burden.
+- **Chapter 28:** locks are built from interrupt masking, test-and-set,
+  compare-and-swap, load-linked/store-conditional, ticket and queue designs.
+  The evaluation frame is mutual exclusion, fairness/progress and cost; priority
+  inversion is a correctness failure, not only a latency issue.
+- **Chapter 29:** lock-based counters, lists, queues and hash tables trade
+  coarse-grained simplicity against fine-grained concurrency; hand-over-hand
+  locking and per-bucket locks reduce contention but add protocol complexity.
+- **Chapter 30:** condition variables require a predicate loop and a signalling
+  protocol; Mesa semantics mean a woken thread must re-check, and producer/
+  consumer and covering conditions expose lost or spurious wakeups.
+- **Chapter 31:** semaphores encode both mutual exclusion and ordering through
+  their initial value; bounded buffers, reader-writer locks, dining philosophers
+  and throttling show how initialization and wait ordering create deadlocks or
+  starvation when used loosely.
+- **Chapter 32:** common bugs split into atomicity/order violations and
+  deadlocks; the four Coffman conditions, lock ordering, trylock, CAS retry and
+  detect-and-recover are distinct responses. The chapter footer is version 1.20
+  while the site table of contents says 1.10.
+- **Chapter 33:** event-based concurrency uses a single loop and nonblocking I/O
+  instead of one thread per connection; blocking calls, state-machine
+  fragmentation and multi-core scaling are its costs.
+- **Chapter 34:** the summary contrasts threads and events and rejects a single
+  universal concurrency design; the choice depends on blocking behavior,
+  workload and complexity.
+
+These are mechanism and policy notes, not measurements. Candidate comparisons
+for concurrency-related Tycho pages are extended in
+[comparisons.json](comparisons.json).
