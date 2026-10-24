@@ -14,13 +14,13 @@ index or edition file was changed.
   images. OSTEP: chapters 1-57, appendices A-H and the preface, in 65
   continuation records (20,189 lines, 323,810 words, 803 pages plus the earlier
   chapter 2 record). OSTEP raster figures were not visually inspected.
-- **147 reference records** in `readings.json`: 117 full reads, 9 partial, 19 blocked-full-text
+- **155 reference records** in `readings.json`: 125 full reads, 9 partial, 19 blocked-full-text
   and 2 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
-- **74 assessed comparisons** in `comparisons.json` against 43 canonical pages:
-  42 supported, 29 qualified, 3 not-addressed, 0 contradicted.
-- **Page matrix:** all 406 pages have a recorded review status; 51 are
-  comparison-assessed and 355 carry an explicit evidence gap
+- **76 assessed comparisons** in `comparisons.json` against 43 canonical pages:
+  44 supported, 29 qualified, 3 not-addressed, 0 contradicted.
+- **Page matrix:** all 406 pages have a recorded review status; 53 are
+  comparison-assessed and 353 carry an explicit evidence gap
   (`page-review-summary.json`). A recorded gap is not a pass.
 
 ## 2. What the evidence supports
@@ -179,7 +179,7 @@ C008) are optional additions, not defects.
 
 - **113 registered sources** are still at landing-or-abstract inspection. They
   are not full reads, even where their titles and URLs are registered.
-- **355 of 406 canonical pages** have no page-level comparison. Their matrix
+- **353 of 406 canonical pages** have no page-level comparison. Their matrix
   status is an explicit gap, not an inferred pass.
 - Linked publications, xv6 source, simulator code and exercises were not read or
   executed. Embedded raster figures were not visually inspected.
@@ -227,5 +227,5 @@ C008) are optional additions, not defects.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, does not claim that a
 first-party article is a benchmark, and does not claim that Tycho is complete or
-correct. The 113 landing-only sources and 355 unassessed pages are the dominant
+correct. The 113 landing-only sources and 353 unassessed pages are the dominant
 remaining uncertainty.
