@@ -6,8 +6,8 @@
 |---|---|---|
 | Complete source inventory reconciles register and external links | Partial | 247 sources and 406 documents represented; external-link inventory beyond the register is incomplete. |
 | Every source has a finite unit and honest full/partial/blocked status | Partial | 73 reference records plus 6 SRE reconciliations; 180 sources remain landing-only. |
-| Every accessible scoped source read completely | Not met | 180 landing-only sources, including RFC 9110, are unread; 14 pages blocked and 2 sources excluded. |
-| All 406 canonical documents have a review status | Partial | All 406 have a status; 23 are comparison-assessed and 383 are explicit gaps. |
+| Every accessible scoped source read completely | Not met | 179 landing-only sources, including RFC 9110, are unread; 14 pages blocked and 2 sources excluded. |
+| All 406 canonical documents have a review status | Partial | All 406 have a status; 24 are comparison-assessed and 382 are explicit gaps. |
 | Findings include exact source locations, anchors and confidence | Partial | 30 comparisons carry anchors and source records; most pages have no comparison. |
 | Deep research synthesis delivered | Yes, negative | `FINAL-SYNTHESIS.md` records the evidence and the unmet criteria. |
 | No book content changed, baseline verified | Yes | 681 tracked files match; no book, register, index or edition change. |
@@ -21,8 +21,8 @@ review acceptance. A closure would be an unsupported completion claim.
 
 ## Conditions for a future acceptance
 
-- Reconcile and read the remaining 180 landing-only sources, or record lawful
+- Reconcile and read the remaining 179 landing-only sources, or record lawful
   access limitations.
-- Reduce the 383 page gaps through bounded comparisons.
+- Reduce the 382 page gaps through bounded comparisons.
 - Complete the external-link census.
 - Obtain and verify an independent review on a bounded delta.

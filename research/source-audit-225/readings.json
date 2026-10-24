@@ -2949,12 +2949,66 @@
         }
       ],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R077",
+      "source_ids": [
+        "src.aws-idempotency"
+      ],
+      "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+      "unit": "Complete article: Making retries safe with idempotent APIs",
+      "revision": "Published page; article body read 2026-10-24; site chrome/cookie banner excluded",
+      "status": "full-scoped-text-read",
+      "coverage": "All 555 representation lines / 5157 words; article body lines 271-555 read completely; cookie/browse chrome identified and excluded; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.aws-idempotency.md lines 1-555",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked AWS APIs, SDK code and PDF not read; no implementation execution.",
+      "representation_sha256": "f2daf1552d06253c7547467d96f420145ae3eb3e658d1984dc5a6086951f6949",
+      "retrieved_lines": 555,
+      "retrieved_words": 5157,
+      "sections": [
+        "Introduction",
+        "Retrying and side effects",
+        "Reducing client complexity",
+        "Retries and semantic equivalence",
+        "Late arriving requests",
+        "Same client request ID, different intent",
+        "Conclusion"
+      ],
+      "notes": [
+        "Source claim: retrying a failed call is simple only when the operation has no additional side effects; a lost response can leave the caller unable to tell whether the effect happened.",
+        "Source claim: an idempotent operation allows retransmission without additional side effects; callers can treat non-validation errors as retryable.",
+        "Source claim: a caller-provided client request identifier is preferred over deriving a key from request parameters, because identical parameters can represent two legitimate creates.",
+        "Source claim: the service must atomically record the idempotency token and all mutating effects; otherwise it can create resources without recording the token or vice versa.",
+        "Source claim: a semantically equivalent response, not merely ResourceAlreadyExists, lets clients retry transparently; the token is echoed in responses and stored with the resource.",
+        "Source claim: late-arriving retries can return a semantically equivalent response even if the resource was later deleted; retention lasts the resource lifetime plus a late-arrival interval.",
+        "Source claim: same token with different parameters is a validation error; the service stores the original parameters to detect it.",
+        "Inference: this is a rigorous at-most-once API contract with real storage and validation cost, not a universal requirement for every API.",
+        "Inference: a token does not replace transactional storage; the atomicity requirement is the hard part."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "candidate": "Does the idempotency page separate method-level idempotence from a client request key and atomic token/effect storage?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "candidate": "Does the effect-identity page bind the key to principal, operation and immutable parameters?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
+          "candidate": "Does the dedup page require a durable authority that survives a crash between effect and response?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 43,
+    "full_reads": 44,
     "blocked": 14,
     "records": [
       "R015",
@@ -3015,9 +3069,13 @@
       "R070",
       "R071",
       "R072",
-      "R073"
+      "R073",
+      "R074",
+      "R075",
+      "R076",
+      "R077"
     ],
-    "scope": "JEP 444, JEP 491, twenty-nine public engineering articles, twelve documentation/paper units, fourteen blocked pages and two excluded internal team sites",
+    "scope": "JEP 444, JEP 491, thirty public engineering articles, twelve documentation/paper units, fourteen blocked pages and two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2
   }
