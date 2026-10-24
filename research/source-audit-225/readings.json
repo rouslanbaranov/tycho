@@ -2443,12 +2443,173 @@
         }
       ],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R065",
+      "source_ids": [
+        "src.tail-at-scale"
+      ],
+      "url": "https://cacm.acm.org/research/the-tail-at-scale/",
+      "unit": "Complete document: The Tail at Scale",
+      "revision": "Communications of the ACM 56(2), February 2013; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 207 lines / 4737 words; sections Why Variability Exists?, Component-Level Variability Amplified By Scale, Reducing Component Variability, Living with Latency Variability, Within Request Short-Term Adaptations, Cross-Request Long-Term Adaptations, Large Information Retrieval Systems, Mutations, Hardware Trends, Conclusion; figures not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/tail-full.md lines 1-207",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked papers, code and implementation behavior not read or executed; no benchmark or independent verification.",
+      "representation_sha256": "96fff479febdfc31938c7d759d5f30844fd6e266b428bef60d1c91add5d606d3",
+      "retrieved_lines": 207,
+      "retrieved_words": 4737,
+      "sections": [
+        "Why Variability Exists?",
+        "Component-Level Variability Amplified By Scale",
+        "Reducing Component Variability",
+        "Living with Latency Variability",
+        "Within Request Short-Term Adaptations",
+        "Cross-Request Long-Term Adaptations",
+        "Large Information Retrieval Systems",
+        "Mutations",
+        "Hardware Trends",
+        "Conclusion"
+      ],
+      "notes": [
+        "Source claim: shared resources, daemons, global resource sharing, maintenance and queueing create latency variability; fan-out amplifies rare slow components into a large fraction of slow user requests.",
+        "Source claim: in the illustrative 100-server fan-out with a 1% one-second tail per server, 63% of user requests exceed one second; a 2,000-server service with a 1-in-10,000 tail still has almost one in five slow requests.",
+        "Source claim: hedged requests send a second copy after a delay, cancel the loser, and can cut the 99.9th percentile from 1,800 ms to 74 ms for a 1,000-key BigTable read at about 2% extra requests.",
+        "Source claim: tied requests enqueue copies on multiple servers and use cross-server cancellation; they reduced median latency by 16% and the 99.9th percentile by nearly 40% in the reported file-system benchmark at under 1% disk overhead.",
+        "Source claim: micro-partitions, selective replication, latency-induced probation, good-enough results and canary requests address long-term imbalance and correlated failures.",
+        "Source claim: mutation-heavy operations can often move work off the critical path or use quorum protocols across a small number of replicas, which is inherently more tail-tolerant.",
+        "Inference: the percentile examples depend on independence assumptions; correlated slowness across replicas weakens hedging and tied requests.",
+        "Inference: the paper reports Google systems and benchmarks, not a universal guarantee that hedging is cheap or safe for writes."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/deadline-hedging.md",
+          "candidate": "Does the hedging page keep cancellation, independent tails, bounded speculative budget and shared-bottleneck risk explicit?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-experiments.md",
+          "candidate": "Does the experiment page distinguish a fan-out tail from a single-request slow replica?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tails-critical-path.md",
+          "candidate": "Does the critical-path page treat tail amplification as a function of fan-out width and independence?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R066",
+      "source_ids": [
+        "src.kafka-streams"
+      ],
+      "url": "https://kafka.apache.org/41/streams/architecture/",
+      "unit": "Complete document: Kafka Streams Architecture",
+      "revision": "Kafka 4.1 documentation; page flags 4.1 as an older version and links 4.3; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 69 lines / 1556 words; sections Stream Partitions and Tasks, Threading Model, Local State Stores, Fault Tolerance; figures not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.kafka-streams.md lines 1-69",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked papers, code and implementation behavior not read or executed; no benchmark or independent verification.",
+      "representation_sha256": "08139843e2df05d4686592698d08c9a7be91be3d6c3bc552e52ebd8358c20eb8",
+      "retrieved_lines": 69,
+      "retrieved_words": 1556,
+      "sections": [
+        "Stream Partitions and Tasks",
+        "Threading Model",
+        "Local State Stores",
+        "Fault Tolerance"
+      ],
+      "notes": [
+        "Source claim: a stream partition maps to a Kafka topic partition, and Kafka Streams breaks a topology into a fixed number of tasks, each assigned a stable set of input partitions.",
+        "Source claim: maximum application parallelism is bounded by the number of input partitions; extra instances launch but remain idle until a busy instance fails.",
+        "Source claim: threads execute one or more tasks independently; there is no shared state among threads, and partition assignment is handled by Kafka coordination.",
+        "Source claim: stateful tasks use local state stores plus a replicated changelog topic per store; log compaction bounds the changelog and replay restores state after task migration.",
+        "Source claim: standby replicas and rack-aware assignment reduce restore time and cross-rack traffic; Kafka 2.6+ can assign a task only to a caught-up instance when one exists.",
+        "Inference: the documentation describes mechanisms and defaults, not a measured recovery-time or throughput guarantee for a specific topology.",
+        "Inference: partition count is both a parallelism ceiling and a state/restore granularity choice; increasing it is not free."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/processor-recovery.md",
+          "candidate": "Does the recovery page separate task migration, changelog replay and standby state?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/checkpoints-time.md",
+          "candidate": "Does the checkpoint page distinguish a changelog from a checkpoint and name the restore boundary?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
+          "candidate": "Does the stateful page treat partition count as a parallelism and recovery decision?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R067",
+      "source_ids": [
+        "src.grpc"
+      ],
+      "url": "https://grpc.io/docs/what-is-grpc/core-concepts/",
+      "unit": "Complete document: gRPC Core concepts, architecture and lifecycle",
+      "revision": "Rolling gRPC documentation; retrieved 2026-10-24; no page revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 129 lines / 1489 words; sections Overview, Service definition, Using the API, Synchronous vs. asynchronous, RPC life cycle, Deadlines/Timeouts, RPC termination, Cancelling an RPC, Metadata, Channels; figures not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.grpc.md lines 1-129",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked papers, code and implementation behavior not read or executed; no benchmark or independent verification.",
+      "representation_sha256": "34f782ff7becb0f56c6b2e3efc603dc683119108ad59fd4026d241ed809876b1",
+      "retrieved_lines": 129,
+      "retrieved_words": 1489,
+      "sections": [
+        "Overview",
+        "Service definition",
+        "Using the API",
+        "Synchronous vs. asynchronous",
+        "RPC life cycle",
+        "Deadlines/Timeouts",
+        "RPC termination",
+        "Cancelling an RPC",
+        "Metadata",
+        "Channels"
+      ],
+      "notes": [
+        "Source claim: gRPC defines a service in an IDL (protocol buffers by default) and generates client and server stubs; it supports unary, server-streaming, client-streaming and bidirectional-streaming methods.",
+        "Source claim: gRPC guarantees message ordering within an individual RPC call; the two streams in a bidirectional call are independent.",
+        "Source claim: clients can set a deadline or timeout; the server can query how much time remains, but the API is duration- or deadline-based depending on language.",
+        "Source claim: client and server make independent local determinations of success, so a server-side success can be a client-side deadline failure.",
+        "Source claim: either side can cancel an RPC immediately, and cancellation terminates the call so no further work is done.",
+        "Source claim: metadata is a list of key-value pairs, with binary keys ending in -bin; channels have state such as connected and idle.",
+        "Inference: the overview does not specify retry, hedging or idempotency semantics; those require separate guides or application design.",
+        "Inference: a deadline is a propagation and termination mechanism, not proof that the server stopped side effects."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "candidate": "Does the deadline page distinguish deadline propagation from server-side cancellation and side-effect rollback?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+          "candidate": "Does the RPC contract page name streaming order and independent stream direction?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/offsets-effects.md",
+          "candidate": "Does the offsets page avoid treating a deadline as an exactly-once or idempotency mechanism?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 34,
+    "full_reads": 37,
     "blocked": 14,
     "records": [
       "R015",
@@ -2500,9 +2661,12 @@
       "R061",
       "R062",
       "R063",
-      "R064"
+      "R064",
+      "R065",
+      "R066",
+      "R067"
     ],
-    "scope": "JEP 444, JEP 491, twenty-nine public engineering articles, three official documentation/repository units, fourteen blocked pages and two excluded internal team sites",
+    "scope": "JEP 444, JEP 491, twenty-nine public engineering articles, six documentation/paper units, fourteen blocked pages and two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2
   }

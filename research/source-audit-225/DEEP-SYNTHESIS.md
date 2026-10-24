@@ -14,13 +14,13 @@ index or edition file was changed.
   images. OSTEP: chapters 1-57, appendices A-H and the preface, in 65
   continuation records (20,189 lines, 323,810 words, 803 pages plus the earlier
   chapter 2 record). OSTEP raster figures were not visually inspected.
-- **64 reference records** in `readings.json`: 45 full reads, 17 blocked-full-text
+- **67 reference records** in `readings.json`: 48 full reads, 17 blocked-full-text
   and 2 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
-- **22 assessed comparisons** in `comparisons.json` against 18 canonical pages:
-  8 supported, 12 qualified, 2 not-addressed, 0 contradicted.
-- **Page matrix:** all 406 pages have a recorded review status; 18 are
-  comparison-assessed and 388 carry an explicit evidence gap
+- **24 assessed comparisons** in `comparisons.json` against 19 canonical pages:
+  9 supported, 13 qualified, 2 not-addressed, 0 contradicted.
+- **Page matrix:** all 406 pages have a recorded review status; 19 are
+  comparison-assessed and 387 carry an explicit evidence gap
   (`page-review-summary.json`). A recorded gap is not a pass.
 
 ## 2. What the evidence supports
@@ -80,6 +80,12 @@ index or edition file was changed.
 - C022 (static stability vs R061) is supported: the page keeps the AWS account
   as a reported design approach and does not promise that every orchestrator
   shares its guarantees.
+- C023 (hedging vs R065) is supported: the page states cancellation, bounded
+  speculative work and the shared-bottleneck risk that the tail paper also
+  emphasizes.
+- C024 (Kafka Streams recovery vs R066) is qualified: the comparison table
+  matches changelog restore and task migration, while the source adds standby
+  replicas and rack-aware assignment not named in the table.
 
 ### Migration, cutover and architecture evolution
 
@@ -136,9 +142,9 @@ C008) are optional additions, not defects.
 
 ## 5. Coverage gaps
 
-- **197 registered sources** are still at landing-or-abstract inspection. They
+- **194 registered sources** are still at landing-or-abstract inspection. They
   are not full reads, even where their titles and URLs are registered.
-- **388 of 406 canonical pages** have no page-level comparison. Their matrix
+- **387 of 406 canonical pages** have no page-level comparison. Their matrix
   status is an explicit gap, not an inferred pass.
 - Linked publications, xv6 source, simulator code and exercises were not read or
   executed. Embedded raster figures were not visually inspected.
@@ -154,14 +160,14 @@ C008) are optional additions, not defects.
   sources have an honest disposition.
 - [x] Every full reference record has a finite unit, exact revision, access date,
   sections and omissions; blocked/excluded records do not claim content.
-- [ ] Every accessible scoped source read completely: 197 landing-only sources
+- [ ] Every accessible scoped source read completely: 194 landing-only sources
   remain, and 14 pages are blocked.
 - [ ] All 406 pages have an applicability/review status beyond an explicit gap:
-  18 assessed, 388 gaps.
+  19 assessed, 387 gaps.
 - [ ] Material explanations have source comparisons across every technical page:
-  22 comparisons exist; the applied case layer and most pages are unassessed.
+  24 comparisons exist; the applied case layer and most pages are unassessed.
 - [ ] Complete external-link inventory and finite units for every citation.
-- [x] Findings carry exact book anchors and source records for the 22 assessed
+- [x] Findings carry exact book anchors and source records for the 24 assessed
   comparisons; confidence and no-edit actions are recorded.
 - [ ] Deep synthesis final: this is an interim synthesis.
 - [x] Research artifacts reviewed for lexical boundary and whitespace; no
@@ -169,7 +175,7 @@ C008) are optional additions, not defects.
 
 ## 7. Priorities for the next batch
 
-1. Reconcile the 197 landing-or-abstract sources into finite units and read the
+1. Reconcile the 194 landing-or-abstract sources into finite units and read the
    highest-priority official documentation that Tycho cites repeatedly.
 2. Extend page-level comparisons from 14 to the pages with the strongest
    material claims: crash consistency, replication, overload, migration gates,
@@ -186,5 +192,5 @@ C008) are optional additions, not defects.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, does not claim that a
 first-party article is a benchmark, and does not claim that Tycho is complete or
-correct. The 197 landing-only sources and 388 unassessed pages are the dominant
+correct. The 194 landing-only sources and 388 unassessed pages are the dominant
 remaining uncertainty.
