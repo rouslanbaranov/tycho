@@ -1683,13 +1683,33 @@
       "basis": "Tycho page line 1 control-plane section; R366.",
       "conclusion": "R366 does not address the page's control-plane failure model. It neither supports nor contradicts the static-stability argument.",
       "assessment_limits": "Bounded comparison; Docker overview only, no control-plane source inspected."
+    },
+    {
+      "id": "C088",
+      "book_page": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md",
+      "book_anchor": "line 1",
+      "source_id": "src.boot-virtual",
+      "source_record": "R368",
+      "source_unit": "Spring Boot Virtual threads section",
+      "observation": "The page argues that virtual threads make waiting cheaper but do not create downstream database capacity. R368 states that virtual threads require Java 21+, that thread-pool properties stop applying, and that virtual threads are daemons requiring keep-alive; it does not discuss downstream capacity or admission control.",
+      "support": "qualified",
+      "severity": "none",
+      "proposed_action": "No correction; keep the capacity claim as Tycho reasoning rather than a Spring Boot finding.",
+      "status": "assessed",
+      "assessment": "qualified",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho page line 1 integrated decision; R368 virtual-threads section.",
+      "conclusion": "R368 supports the version gate and the thread-pool-property change. The page's downstream-capacity and admission argument is not addressed by the Spring Boot section.",
+      "finding": "candidate scope note",
+      "assessment_limits": "Bounded comparison; one short documentation section, no load experiment.",
+      "candidate_support": "qualified"
     }
   ],
   "assessment_date": "2026-10-24",
   "assessment_summary": {
-    "total": 87,
+    "total": 88,
     "supported": 47,
-    "qualified": 36,
+    "qualified": 37,
     "not_addressed": 4,
     "contradicted": 0,
     "note": "Assessments are bounded comparisons against the frozen Tycho baseline; they are not independent review, book findings or permission to edit."
