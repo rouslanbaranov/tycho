@@ -14,11 +14,11 @@ index or edition file was changed.
   images. OSTEP: chapters 1-57, appendices A-H and the preface, in 65
   continuation records (20,189 lines, 323,810 words, 803 pages plus the earlier
   chapter 2 record). OSTEP raster figures were not visually inspected.
-- **169 reference records** in `readings.json`: 130 full reads, 18 partial, 19 blocked-full-text
+- **175 reference records** in `readings.json`: 135 full reads, 19 partial, 19 blocked-full-text
   and 2 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
-- **78 assessed comparisons** in `comparisons.json` against 43 canonical pages:
-  46 supported, 29 qualified, 3 not-addressed, 0 contradicted.
+- **79 assessed comparisons** in `comparisons.json` against 43 canonical pages:
+  47 supported, 29 qualified, 3 not-addressed, 0 contradicted.
 - **Page matrix:** all 406 pages have a recorded review status; 55 are
   comparison-assessed and 351 carry an explicit evidence gap
   (`page-review-summary.json`). A recorded gap is not a pass.

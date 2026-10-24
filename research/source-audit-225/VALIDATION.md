@@ -207,7 +207,7 @@ No independent review or source-to-book completeness is claimed.
 ## Comparison assessment - 2026-10-24
 
 Sixteen candidate comparisons from the OSTEP reading were assessed against the
-frozen Tycho baseline. Result: seventy-eight assessed comparisons: forty-six supported,
+frozen Tycho baseline. Result: seventy-nine assessed comparisons: forty-seven supported,
 twenty-nine qualified, three not-addressed and zero contradicted. Two JEP-to-book
 comparisons were added after the reference batch: JEP 491 provenance and JEP 444
 socket interruption. Each assessment records the exact book
@@ -228,7 +228,7 @@ action. No book page was edited.
 
 ## Reference-source batch - 2026-10-24
 
-155 records R015-R169 extend the reference ledger. One hundred twenty-seven are
+161 records R015-R175 extend the reference ledger. One hundred thirty-two are
 full-scoped reads: JEP 444, JEP 491, thirty public engineering articles
 and seventeen documentation/paper units in the src.m9-* series, plus ten delegated records. Fourteen publisher pages returned no readable
 article body and are recorded as blocked-full-text, not inferred. Two internal
@@ -271,7 +271,7 @@ a96c6b7 are outside that attempted review's stated HEAD.
 - The 406-page census records a review status for every canonical page:
   55 are comparison-assessed and 351 carry an explicit evidence gap. The
   per-page list is in page-review-summary.json; a gap is not a pass.
-- The reference ledger has 169 records: 130 full reads, 18 partial, 19 blocked and 2
+- The reference ledger has 175 records: 135 full reads, 19 partial, 19 blocked and 2
   excluded internal team sites. All 45 baseline fetch-incomplete sources are
   accounted for: 29 full, 14 blocked, 2 excluded, 0 unaccounted.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
