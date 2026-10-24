@@ -56,3 +56,32 @@ An unlisted change, or a further change to an already revised payload, still fai
 The original manifests remain byte-identical, so their historical protection is not
 rewritten. The routing index and edition inventory are regenerated after the
 authorized change.
+
+### Pre-flight for a bounded change
+
+`python3 scripts/book_change.py --plan` is a read-only pre-flight for a page
+edit. It reports changed book pages, missing directory or enrichment revision
+entries, stale derived artifacts and the ordered rebuild/review steps;
+`--strict` exits non-zero while anything blocking remains. It never writes,
+never authorizes a revision and does not replace `premerge_check.py`, claim
+review or independent review. The plan reports remaining work relative to the
+recorded edition inventory; a change whose derived artifacts were already
+refreshed may show no changed pages. Source-commit ancestry checks need a full
+git checkout whose history contains the recorded source commit; exported or
+shallow trees that omit it report those checks as unavailable.
+
+Ownership stays with the existing contracts: identity and metadata in
+[METADATA-IDENTITY-CONTRACT](METADATA-IDENTITY-CONTRACT.md), heading, section
+and passage indexing in [SECTION-FTS-INDEX](SECTION-FTS-INDEX.md), page
+structure, splitting and citation discipline in
+[EDITORIAL-CONTRACT](EDITORIAL-CONTRACT.md), atlas and edition mechanics in
+[PATTERN-ATLAS-CONTRACT](PATTERN-ATLAS-CONTRACT.md), and branch/PR discipline
+in [AGENTS.md](../AGENTS.md). If this section and an owning contract disagree,
+the contract wins.
+
+For a text-only correction, keep `id`, `canonical_path`, `parent_id`,
+`source_ids` and level-2 headings stable; changing any of them, adding or
+removing pages, or changing evidence is a structural or evidence revision and
+needs its own review. Record the authorized before/after hashes as described
+above, then rebuild in the order the plan prints. A revision belongs to one
+issue; do not mix unrelated pages in one change.
