@@ -37917,9 +37917,9 @@
       "url": "https://grafana.com/docs/mimir/latest/references/architecture/",
       "unit": "Single documentation page: Grafana Mimir advanced architecture (references/architecture index hub)",
       "revision": "official documentation overview, page captured 2026-10-24",
-      "status": "partial-scoped-text-read",
+      "status": "full-scoped-text-read",
       "reader": "delegated-reader/deepseek-harness-b23",
-      "coverage": "Registered page read in full: body is lines 84-103 = 20 lines / 71 words, i.e. 3.0% of the 2371-word capture. Body content: H1, one-sentence introduction, a ten-entry topic index, and the feedback widget. Excluded as navigation/footer chrome: site banners and promo (L6-L31, L53-L68), search UI (L33-L51), site-wide automated-reader notice pointing at llms.txt (L70-L76), breadcrumb (L80), product/version selectors (L82, L115), full documentation nav tree (L111-L771), promotional sidebar and newsletter (L773-L909), footer link columns (L910-L998), consent widget and badges (L999-L1056).",
+      "coverage": "Mimir advanced-architecture index plus all ten linked architecture pages, read as R355-R364.",
       "retrieval_refs": [
         "/tmp/B23/raw/mimir.md:84-103",
         "/tmp/B23/raw/mimir.md:78-80 and 115 (title/breadcrumb/version context)",
@@ -37983,7 +37983,8 @@
           "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md",
           "candidate": "Relate the page to this chapter; no edit under #225."
         }
-      ]
+      ],
+      "representation_gap": null
     },
     {
       "id": "R354",
@@ -38076,12 +38077,888 @@
           "candidate": "Relate the page to this chapter; no edit under #225."
         }
       ]
+    },
+    {
+      "id": "R355",
+      "source_ids": [
+        "src.mimir"
+      ],
+      "url": "https://grafana.com/docs/mimir/latest/references/architecture/binary-index-header/",
+      "unit": "Single documentation page: Grafana Mimir binary index-header (References > Advanced architecture), local markdown representation raw/binary-index-header.md, 1076 lines / 2587 words, sha256 6e2a7bdfaa40bc4ab37b85f8bc74dafa4a62663f6c42061aea1e41f82bd42d70",
+      "revision": "Grafana Mimir documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page read in full: all 1076 lines of the local capture inspected. Article scope is lines 84-117 = 34 lines / 260 words (10.1% of the 2587-word capture), read line by line. Lines 1-83 are the extractor wrapper (Title, URL Source, Markdown Content) plus GrafanaCON/ObservabilityCON banners, search widget and site header; lines 119-1076 are the 'Was this page helpful' widget, 'Related resources from Grafana Labs' promos, the ten-volume documentation sidebar, Grafana Cloud banners, newsletter, footer and cookie-consent markup. All of that chrome is excluded from claims. The fenced `none` layout block (L103-117) is text and was read; the 'Copy' icon at L101 is an extractor artifact.",
+      "retrieval_refs": [
+        "/tmp/B23b/manifest.json#R355 (hash/line/word verification)",
+        "/tmp/B23b/raw/binary-index-header.md:84-117 (article scope, read in full)",
+        "/tmp/B23b/raw/binary-index-header.md:1-1076 (full capture inspected; chrome classified)",
+        "https://grafana.com/docs/mimir/latest/references/architecture/binary-index-header/ (registered source URL; local representation used, not re-fetched)"
+      ],
+      "omissions": "Other Grafana documentation pages outside this batch not read, including the linked store-gateway component page and the Prometheus TSDB index format document; no experiment, no runtime observation, no image or diagram inspection beyond the in-page ASCII text.",
+      "representation_sha256": "6e2a7bdfaa40bc4ab37b85f8bc74dafa4a62663f6c42061aea1e41f82bd42d70",
+      "retrieved_lines": 1076,
+      "retrieved_words": 2587,
+      "body_words_excluding_chrome": 260,
+      "sections": [
+        {
+          "level": 1,
+          "heading": "Grafana Mimir binary index-header",
+          "lines": "84"
+        },
+        {
+          "level": 0,
+          "heading": "Purpose and construction (untitled body)",
+          "lines": "86-90"
+        },
+        {
+          "level": 2,
+          "heading": "Format (version 1)",
+          "lines": "92-99"
+        },
+        {
+          "level": 0,
+          "heading": "Index-header file layout (fenced diagram, not a heading)",
+          "lines": "101-117"
+        }
+      ],
+      "notes": [
+        "Source claim (L86): to query series inside blocks held in object storage, the store-gateway must obtain information about each block index; it builds an index-header for every block and stores it on local disk.",
+        "Source claim (L88): the header is built with a `GET` byte-range request covering specific sections of the block's index, and the store-gateway uses that header at query time.",
+        "Source claim (L90): downloading only those sections is described as computationally easy, so the index-header is not uploaded to object storage; when no local copy exists, store-gateway instances rebuild it from the block index, including the same instance after a rolling update that leaves no persistent disk.",
+        "Source claim (L94-97): format version 1 is a subset of the block index holding the Symbol Table, used to unintern string values, and the Posting Offset Table, used to look up postings.",
+        "Source claim (L99, L103-116): the file is terminated by a table of contents that is the entry point into the index; the layout orders magic 0xBAAAD792 (4 bytes), version 1 (1 byte), index version 2 (1 byte), an 8-byte posting-offset-table field, then the Symbol Table, the Posting Offset Table and the TOC.",
+        "Source claim (L110, L112): both tables are marked as exact copies of the corresponding sections of the original index, so the header duplicates index metadata rather than transforming it.",
+        "Inference: the design assumes re-reading a few index byte ranges is cheap relative to fetching a whole block index, but the page reports no sizes, latency figures, request counts or measurements.",
+        "Inference: no eviction, capacity, concurrency or invalidation policy for local index-header copies is stated; the only lifecycle rule given is rebuild-on-miss.",
+        "Inference: the page does not say how a header is invalidated when a block is replaced or deleted, nor whether any version negotiation exists beyond the single documented format version.",
+        "Capture note: 2327 of 2587 words (90%) are site chrome, so the page's architectural surface is two short paragraphs, a format list and a layout diagram; claims should not be generalized to store-gateway query behavior beyond index access."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/snapshot-access.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash (session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no findings or verdicts"
+    },
+    {
+      "id": "R356",
+      "source_ids": [
+        "src.mimir"
+      ],
+      "url": "https://grafana.com/docs/mimir/latest/references/architecture/bucket-index/",
+      "unit": "Single documentation page: Grafana Mimir bucket index (References > Advanced architecture), local markdown representation raw/bucket-index.md, 1113 lines / 3208 words, sha256 a28efadba68a0f309ea8fdffcf15574495327c7669acd05b6ceee4f8d6b5c125",
+      "revision": "Grafana Mimir documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page read in full: all 1113 lines of the local capture inspected. Article scope is lines 84-144 = 61 lines / 849 words (26.5% of the 3208-word capture), read line by line, including the footnote at L144 and the image reference at L123. Lines 1-83 are the extractor wrapper plus GrafanaCON/ObservabilityCON banners, search widget and site header; lines 146-1113 are the 'Was this page helpful' widget, 'Related resources' promos, the ten-volume documentation sidebar, Grafana Cloud banners, newsletter, footer and cookie-consent markup. All of that chrome is excluded from claims.",
+      "retrieval_refs": [
+        "/tmp/B23b/manifest.json#R356 (hash/line/word verification)",
+        "/tmp/B23b/raw/bucket-index.md:84-144 (article scope, read in full)",
+        "/tmp/B23b/raw/bucket-index.md:1-1113 (full capture inspected; chrome classified)",
+        "https://grafana.com/docs/mimir/latest/references/architecture/bucket-index/ (registered source URL; local representation used, not re-fetched)"
+      ],
+      "omissions": "Other Grafana documentation pages outside this batch not read, including the linked querier, store-gateway, compactor, ruler and shuffle-sharding pages; no experiment, no runtime observation, no inspection of the bucket-index-querier-workflow.png image beyond its caption text.",
+      "representation_sha256": "a28efadba68a0f309ea8fdffcf15574495327c7669acd05b6ceee4f8d6b5c125",
+      "retrieved_lines": 1113,
+      "retrieved_words": 3208,
+      "body_words_excluding_chrome": 849,
+      "sections": [
+        {
+          "level": 1,
+          "heading": "Grafana Mimir bucket index",
+          "lines": "84"
+        },
+        {
+          "level": 2,
+          "heading": "Benefits",
+          "lines": "88-98"
+        },
+        {
+          "level": 2,
+          "heading": "Structure of the index",
+          "lines": "100-109"
+        },
+        {
+          "level": 2,
+          "heading": "How it gets updated",
+          "lines": "111-115"
+        },
+        {
+          "level": 2,
+          "heading": "How it’s used by the querier",
+          "lines": "117-136"
+        },
+        {
+          "level": 2,
+          "heading": "How it’s used by the store-gateway",
+          "lines": "138-140"
+        },
+        {
+          "level": 0,
+          "heading": "Footnote 1: definition of 'almost up-to-date' (not a heading)",
+          "lines": "142-144"
+        }
+      ],
+      "notes": [
+        "Source claim (L86): the bucket index is a per-tenant file listing blocks and block deletion marks, stored in backend object storage, periodically updated by the compactor, and used by queriers, store-gateways and rulers in internal operational mode to discover blocks.",
+        "Source claim (L90): those components need an almost up-to-date view of the bucket; without the index they must periodically scan it for new blocks uploaded by ingesters or compactors and for blocks deleted or marked for deletion.",
+        "Source claim (L92-98): with the index enabled, querier, store-gateway and ruler look up the per-tenant index instead of issuing `list objects` calls; the listed benefits are fewer object-storage API calls, no list-objects calls from querier and store-gateway, and a querier that is ready immediately after startup without an initial bucket scan.",
+        "Source claim (L102-109): `bucket-index.json.gz` contains `blocks` (complete blocks, including those marked for deletion; partial blocks excluded), `block_deletion_marks`, and `updated_at`, a Unix timestamp in seconds recording the last write.",
+        "Source claim (L113): the compactor periodically scans the bucket and uploads an updated index; the cadence is set by `-compactor.cleanup-interval`.",
+        "Source claim (L115): the index is built and updated even when `-blocks-storage.bucket-store.bucket-index.enabled=false`, so it exists if an operator enables the feature on a live cluster; the page calls the resulting overhead not significant.",
+        "Source claim (L119-121): querier and ruler download the index lazily on first need and cache it in memory; the file is small, so lazy download is said not to affect first-query performance materially, and the optional metadata cache shares it for a short time across queriers and rulers.",
+        "Source claim (L125-132): an in-memory background process refreshes the cached index at `-blocks-storage.bucket-store.sync-interval`; a failed download is itself cached for `-blocks-storage.bucket-store.bucket-index.update-on-error-interval` so the backend is not flooded with retries.",
+        "Source claim (L134): an index unused for `-blocks-storage.bucket-store.bucket-index.idle-timeout` is dropped from memory and stops being refreshed, which the page ties to tenants being resharded when shuffle sharding is enabled.",
+        "Source claim (L136): at query time staleness is judged from `updated_at`; a query fails if the index is older than `-blocks-storage.bucket-store.bucket-index.max-stale-period`, a circuit breaker against partial results from a stale view.",
+        "Source claim (L140, L144): the store-gateway fetches the index at startup and periodically for each tenant in its shard and treats it as the source of truth for blocks and deletion marks; 'almost up-to-date' means lagging by less than `-compactor.deletion-delay`, because fetching an already-deleted block fails the query.",
+        "Inference: the page states that index maintenance overhead is not significant but supplies no measurement, and it does not describe how an index replacement is made atomic or how readers handle a partially visible update; the workflow diagram at L123 is an image reference that was not inspected."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/publication-consistency.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/snapshot-access.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash (session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no findings or verdicts"
+    },
+    {
+      "id": "R357",
+      "source_ids": [
+        "src.mimir"
+      ],
+      "url": "https://grafana.com/docs/mimir/latest/references/architecture/components/",
+      "unit": "Single documentation page: Grafana Mimir components (References > Advanced architecture), local markdown representation raw/components.md, 1005 lines / 1908 words, sha256 62dc5fc9261108ba939e7693b7190f98508f790b693912448848088d0805987c",
+      "revision": "Grafana Mimir documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page read in full: all 1005 lines of the local capture inspected. Article scope is lines 86-99 = 14 lines / 40 words (2.1% of the 1908-word capture): one heading, one sentence and a ten-item link list. Lines 1-85 are the extractor wrapper plus GrafanaCON/ObservabilityCON banners, search widget and site header; lines 101-1005 are the 'Was this page helpful' widget, 'Related resources' promos, the ten-volume documentation sidebar, Grafana Cloud banners, newsletter, footer and cookie-consent markup. All of that chrome is excluded from claims. The page is an index/stub: it carries no component descriptions.",
+      "retrieval_refs": [
+        "/tmp/B23b/manifest.json#R357 (hash/line/word verification)",
+        "/tmp/B23b/raw/components.md:86-99 (article scope, read in full)",
+        "/tmp/B23b/raw/components.md:1-1005 (full capture inspected; chrome classified)",
+        "https://grafana.com/docs/mimir/latest/references/architecture/components/ (registered source URL; local representation used, not re-fetched)"
+      ],
+      "omissions": "Other Grafana documentation pages outside this batch not read, including every linked component page (compactor, distributor, ingester, querier, query-frontend, query-scheduler, store-gateway, alertmanager, overrides-exporter, ruler); no experiment, no runtime observation.",
+      "representation_sha256": "62dc5fc9261108ba939e7693b7190f98508f790b693912448848088d0805987c",
+      "retrieved_lines": 1005,
+      "retrieved_words": 1908,
+      "body_words_excluding_chrome": 40,
+      "sections": [
+        {
+          "level": 1,
+          "heading": "Grafana Mimir components",
+          "lines": "86"
+        },
+        {
+          "level": 2,
+          "heading": "Component list (no section heading)",
+          "lines": "88-99"
+        }
+      ],
+      "notes": [
+        "Source claim (L88): the page's only prose sentence states that Grafana Mimir includes a set of components that interact to form a cluster.",
+        "Source claim (L90-96): the listed components are compactor, distributor, ingester, querier, query-frontend, query-scheduler and store-gateway.",
+        "Source claim (L97-99): alertmanager, overrides-exporter and ruler are each listed with an '(Optional)' prefix; the page does not explain what optionality changes operationally.",
+        "The page assigns no responsibilities, APIs, ports, state ownership or scaling model to any component; each item is a bare link to a child page.",
+        "Every child component page is outside this unit and was not read, so this page supports no claim about component behavior beyond existence and naming.",
+        "Inference: the list order loosely follows write path (distributor, ingester), read path (querier, query-frontend, query-scheduler, store-gateway), background compaction (compactor) and optional services last, but the page never states that grouping.",
+        "Inference: because the page is navigational, treating its list as an architecture description would overstate it; it is best cited only as an inventory.",
+        "Capture note: 1868 of 1908 words (97.9%) are site chrome; the article is 40 words, making this the thinnest page in the batch."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-cards.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash (session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no findings or verdicts"
+    },
+    {
+      "id": "R358",
+      "source_ids": [
+        "src.mimir"
+      ],
+      "url": "https://grafana.com/docs/mimir/latest/references/architecture/deployment-modes/",
+      "unit": "Single documentation page: Grafana Mimir deployment modes (references/architecture/deployment-modes)",
+      "revision": "Grafana Mimir documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "reader": "delegated-reader/deepseek-harness-b23b",
+      "coverage": "Registered page body read in full: L84-L146 = 63 lines / 505 words, 17.7% of the 2850-word capture (5.7% of 1113 lines); the remaining 2345 words are chrome. Body: H1, two-mode overview, `-target` switch, monolithic mode (`-modules`, one diagram), horizontally scaled monolithic mode note, microservices mode (two architecture diagrams, per-component `-target`, Kubernetes/Helm advice) and a ring-health / read-write-isolation note. Excluded as navigation, promotional and consent chrome: capture metadata (L1-L5), event banners (L6-L31), search overlay (L33-L51), site header (L53-L68), automated-reader notice (L70-L76), page title/breadcrumb/version badge (L78-L82), feedback and edit links (L148-L152), related-resource cards (L154-L158), documentation footer and product picker (L160-L164), full documentation nav tree (L166-L820), repeated promo blocks and 'On this page' table of contents (L822-L965), footer link columns and copyright (L967-L1052), cookie-consent widget (L1054-L1113).",
+      "retrieval_refs": [
+        "/tmp/B23b/raw/deployment-modes.md:84-146",
+        "/tmp/B23b/raw/deployment-modes.md:78-82 and 164 (title, breadcrumb, version context)",
+        "/tmp/B23b/manifest.json#R358 (line/word/SHA-256 verification)"
+      ],
+      "omissions": "Other Grafana documentation pages outside this batch not read (linked architecture hub, hash rings, zone-aware replication, Helm chart, component pages); diagram images at L109, L115, L138 and L142 are not text and their contents were not inspected; no experiment, no runtime observation, no repository evidence.",
+      "representation_sha256": "942d7181120b94457d3b0dcafedb471f61ba4600a5519e89234078cdc41cc519",
+      "retrieved_lines": 1113,
+      "retrieved_words": 2850,
+      "sections": [
+        {
+          "level": 1,
+          "heading": "Grafana Mimir deployment modes (two modes; `-target` selection via CLI flag or YAML)",
+          "lines": "84-91"
+        },
+        {
+          "level": 2,
+          "heading": "About monolithic mode (all components in one process; `-target=all`; `-modules`)",
+          "lines": "93-109"
+        },
+        {
+          "level": 3,
+          "heading": "Scale monolithic mode (several `-target=all` binaries; not recommended at large scale)",
+          "lines": "111-120"
+        },
+        {
+          "level": 2,
+          "heading": "About microservices mode (separate processes, independent scaling, granular failure domains; ring-health note; ingest-storage and classic diagrams; Kubernetes/Helm)",
+          "lines": "122-146"
+        }
+      ],
+      "notes": [
+        "Source claim: Mimir offers exactly two deployment modes - monolithic ('run all components in a single process for simple deployments') and microservices ('deploy components separately for maximum scalability and flexibility') (L86-L89).",
+        "Source claim: the mode is selected by the `-target` parameter, which can be set through a CLI flag or YAML configuration (L91).",
+        "Source claim: monolithic mode runs all required components in one process, is aimed at getting started and development, and is enabled with `-target=all`; `./mimir -modules` prints the component list (L95-L105).",
+        "Source claim: monolithic mode can be scaled horizontally by deploying several `-target=all` binaries, giving availability and scale without the configuration complexity of microservices mode, but the page notes all components scale together and this is not recommended for large-scale deployments (L113-L120).",
+        "Source claim: microservices mode is recommended for production, gives independent scaling and granular failure domains, and each process runs with a component-specific target such as `-target=ingester` or `-target=distributor`; every required component must be deployed (L124, L144).",
+        "Source claim: the page states that although read path (query-frontend, querier, store-gateway) and write path (distributor, ingester) run separately, a healthy ring is 'typically required' for queries: queriers consult the hash ring to discover ingesters, and unhealthy write components can fail the ring health check and therefore fail read queries (L126-L132).",
+        "Source claim: true read/write isolation is presented as conditional - it requires careful ring setting and failure-tolerance configuration, zone-aware replication and ring configuration, with a link to the zone-aware replication guide (L129-L132).",
+        "Source claim: two supported microservices architectures are named, ingest storage and classic, each with a diagram; deployment is recommended via Kubernetes and the mimir-distributed Helm chart (L134-L146).",
+        "Measurement: the body is 505 words / 63 lines, so 17.7% of capture words and 5.7% of capture lines; the manifest's 2850-word count must not be read as architecture prose volume.",
+        "Inference: this is a mode-selection overview only. It gives no per-component roles beyond read/write grouping, no ports, configuration values, capacity figures or migration procedure, so it cannot evidence component internals.",
+        "Inference: the ring-health note is the page's only failure-behavior statement and it is qualitative ('typically', 'may fail'); it supplies no thresholds, quorum arithmetic or measured impact.",
+        "No representation_gap recorded: the body appears complete for this page; the limitation is that four diagrams are images whose content is not captured as text (L109, L115, L138, L142)."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/compute-models.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-applicability-and-contraindications.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ]
+    },
+    {
+      "id": "R359",
+      "source_ids": [
+        "src.mimir"
+      ],
+      "url": "https://grafana.com/docs/mimir/latest/references/architecture/hash-ring/",
+      "unit": "Single documentation page: Grafana Mimir hash rings (references/architecture/hash-ring)",
+      "revision": "Grafana Mimir documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "reader": "delegated-reader/deepseek-harness-b23b",
+      "coverage": "Whole capture is article text: body L6-L161 = 156 lines / 1786 words (99.2% of the 1800-word capture; 96.9% of 161 lines). L1-L5 are extractor metadata (Title, URL Source, 'Markdown Content:'); L6 is an 'Open source' badge line. Read in full, including both series-sharding designs (ingest storage and classic), write and read paths, partition lifecycle, the four-ingester worked example and the service-discovery section. No navigation, footer or consent chrome is present in this representation.",
+      "retrieval_refs": [
+        "/tmp/B23b/raw/hash-ring.md:6-161",
+        "/tmp/B23b/raw/hash-ring.md:1-5 (extractor metadata)",
+        "/tmp/B23b/manifest.json#R359 (line/word/SHA-256 verification)"
+      ],
+      "omissions": "Other Grafana documentation pages outside this batch not read (architecture hub, component pages, zone-aware replication and shuffle-sharding configuration guides, key-value store page linked at L161); four diagram images at L101, L115, L141 and L145 are not text and were not inspected; no experiment, no runtime observation.",
+      "representation_sha256": "c740268fd3d6a4dba3210f896e5d7f644852c29f5f6d25c2164dc62cbd108b85",
+      "retrieved_lines": 161,
+      "retrieved_words": 1800,
+      "sections": [
+        {
+          "level": 1,
+          "heading": "Grafana Mimir hash rings (title from capture metadata L1; introductory text at L8-L15, no H1 in body)",
+          "lines": "1-15"
+        },
+        {
+          "level": 2,
+          "heading": "How the hash ring is used for sharding",
+          "lines": "17-35"
+        },
+        {
+          "level": 2,
+          "heading": "How series sharding works",
+          "lines": "37-39"
+        },
+        {
+          "level": 3,
+          "heading": "Series sharding in ingest storage architecture",
+          "lines": "41-55"
+        },
+        {
+          "level": 4,
+          "heading": "Write path",
+          "lines": "57-67"
+        },
+        {
+          "level": 4,
+          "heading": "Read path",
+          "lines": "69-79"
+        },
+        {
+          "level": 4,
+          "heading": "Partitions ring lifecycle",
+          "lines": "81-91"
+        },
+        {
+          "level": 5,
+          "heading": "Partition creation and activation",
+          "lines": "93-101"
+        },
+        {
+          "level": 5,
+          "heading": "Partition decommissioning and downscaling",
+          "lines": "103-115"
+        },
+        {
+          "level": 3,
+          "heading": "Series sharding in classic architecture",
+          "lines": "117-145"
+        },
+        {
+          "level": 2,
+          "heading": "How the hash ring is used for service discovery",
+          "lines": "147-161"
+        }
+      ],
+      "notes": [
+        "Source claim: hash rings are a distributed consistent-hashing scheme that Mimir uses 'for sharding, replication, and service discovery'; ring-based features are service discovery, heartbeat health check, optional zone-aware replication and optional shuffle sharding (L8-L15).",
+        "Source claim: five components join dedicated rings - ingesters (shard and replicate series), compactors (compaction jobs), store-gateways (blocks from long-term storage), optional rulers (rule groups) and optional alertmanagers (tenants) (L23-L27).",
+        "Source claim: the ring models data space as 32-bit unsigned integers; an instance owns token ranges and handles a hashed value when it owns the smallest registered token greater than the lookup token, wrapping after (2^32)-1 (L29-L33).",
+        "Source claim: on join or leave only a bounded portion moves, stated as 'on average, only n/m tokens move, where n is the total number of tokens (32-bit unsigned integer) and m is the number of instances' (L35). The parenthetical definition of n is internally odd and no derivation or measurement follows; recorded as written, not resolved.",
+        "Source claim (ingest storage, write): distributors hash each series with fnv32a, look up the partitions ring and write to the matching Kafka partition; Kafka handles replication; ingesters own partitions, one partition per ingester but multiple ingesters may own one partition for HA; a write succeeds when all series are committed to Kafka (L48-L67).",
+        "Source claim (ingest storage, read): the querier resolves the partitions ring, then the ingesters ring, then contacts one healthy owner per partition; consistency is stated as a quorum of 1, so each partition is queried only once (L73-L79).",
+        "Source claim (partition lifecycle): partitions are not live components but are managed by ingesters - created Pending, promoted Active after a grace period once they have an owner, moved Inactive for read-only draining, then removed when the last owner leaves; the rollout operator drives downscale through two ingester endpoints (L83-L113).",
+        "Source claim (classic write): the distributor replicates each series to the next RF-1 ingesters clockwise, RF defaults to 3, and a write succeeds at a quorum of 2 of 3; the worked example hashes a series to token 3, maps it to ingester #2 (token 4) among tokens 2/4/6/9 and replicates to ingesters #3 and #4 (L126-L143).",
+        "Source claim (service discovery): when a ring is used only for discovery, instances register presence and a heartbeat timestamp but no tokens; distributors (global rate limit divided by healthy instances), query-schedulers and optional overrides-exporters use rings this way (L151-L157).",
+        "Source claim: ring data structures are shared through a key-value store, configurable independently per component ring, with a link to the key-value store page (L159-L161).",
+        "Measurement: this is the only page in the batch with no site chrome - 1786 of 1800 words (99.2%) are article text. The capture has no H1 heading; the title appears only in L1 metadata, and body headings begin at H2 with explicit anchor links (L17, L37, L147).",
+        "Inference: the page describes two mutually exclusive series-sharding designs; statements such as quorum 1 over Kafka partitions and RF 3 with ring quorum belong to different architectures and must not be blended into one model."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ]
+    },
+    {
+      "id": "R360",
+      "source_ids": [
+        "src.mimir"
+      ],
+      "url": "https://grafana.com/docs/mimir/latest/references/architecture/key-value-store/",
+      "unit": "Single documentation page: Grafana Mimir key-value store (references/architecture/key-value-store)",
+      "revision": "Grafana Mimir documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "reader": "delegated-reader/deepseek-harness-b23b",
+      "coverage": "Registered page body read in full: L84-L122 = 39 lines / 203 words, 8.0% of the 2550-word capture (3.6% of 1090 lines); the remaining 2347 words are chrome. Body: H1, one-sentence definition and the two Mimir features needing a KV store, an H2 backend list, and three H3 backend descriptions (memberlist default, Consul, etcd). Excluded as navigation, promotional and consent chrome: capture metadata (L1-L5), event banners (L6-L31), search overlay (L33-L51), site header (L53-L68), automated-reader notice (L70-L76), page title/breadcrumb/version badge (L78-L82), feedback and edit links (L124-L128), related-resource cards (L130-L134), documentation footer and product picker (L136-L140), full documentation nav tree (L142-L796), promo blocks and table of contents (L798-L942), footer link columns and copyright (L944-L1029), cookie-consent widget (L1031-L1090).",
+      "retrieval_refs": [
+        "/tmp/B23b/raw/key-value-store.md:84-122",
+        "/tmp/B23b/raw/key-value-store.md:78-82 and 140 (title, breadcrumb, version context)",
+        "/tmp/B23b/manifest.json#R360 (line/word/SHA-256 verification)"
+      ],
+      "omissions": "Other Grafana documentation pages outside this batch not read (hash-ring page, memberlist and gossip protocol page, HA deduplication and hash-ring configuration guides); no experiment, no runtime observation, no repository evidence.",
+      "representation_sha256": "ae55519fa0179d0576750490bd91109ef668d16466f0bb42036de923266897b7",
+      "retrieved_lines": 1090,
+      "retrieved_words": 2550,
+      "sections": [
+        {
+          "level": 1,
+          "heading": "Grafana Mimir key-value store (definition; required for hash ring and optional distributor HA tracker)",
+          "lines": "84-89"
+        },
+        {
+          "level": 2,
+          "heading": "Supported key-value store backends (memberlist default, Consul, Etcd)",
+          "lines": "91-97"
+        },
+        {
+          "level": 3,
+          "heading": "Gossip-based memberlist protocol (default)",
+          "lines": "99-110"
+        },
+        {
+          "level": 3,
+          "heading": "Consul",
+          "lines": "112-116"
+        },
+        {
+          "level": 3,
+          "heading": "Etcd",
+          "lines": "118-122"
+        }
+      ],
+      "notes": [
+        "Source claim: a key-value store is defined as 'a database that stores data indexed by key', and Mimir requires one for the hash ring and for the optional distributor high-availability tracker (L86-L89).",
+        "Source claim: three backends are supported - the gossip-based memberlist protocol (default), Consul and Etcd (L93-L97).",
+        "Source claim: memberlist shares data peer-to-peer with 'no external dependency', is the recommended option, and is configured through the hash-rings configuration page (L101-L105).",
+        "Source claim: a note states that the gossip-based memberlist protocol is not supported for the optional distributor high-availability tracker (L107-L110).",
+        "Source claim: Consul and etcd each must be installed separately because the Mimir installation does not include them; both are configured through the hash-rings configuration page (L114-L122).",
+        "Source claim: the page names no consistency model, quorum, latency, sizing, upgrade or failover behavior for any backend; backend selection is described only by availability, dependencies and the HA-tracker caveat (whole body L84-L122).",
+        "Measurement: the body is 203 words / 39 lines, 8.0% of the 2550-word capture (3.6% of lines); 2347 words are chrome. This is the thinnest page in the batch.",
+        "Inference: the page functions as configuration routing rather than architecture exposition - its substantive content is a three-item backend list plus two installation caveats and one compatibility note.",
+        "Inference: the memberlist/HA-tracker incompatibility is the only explicit backend-selection constraint in this text; any stronger selection rule would have to come from linked pages outside this scope.",
+        "No representation_gap recorded: the short body appears complete; the absence of mechanism text is a property of the page, not a capture loss."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/coordination-failure.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ]
+    },
+    {
+      "id": "R361",
+      "source_ids": [
+        "src.mimir"
+      ],
+      "url": "https://grafana.com/docs/mimir/latest/references/architecture/memberlist-and-the-gossip-protocol/",
+      "unit": "Grafana Mimir advanced architecture — single page 'memberlist and the gossip protocol' (references/architecture/memberlist-and-the-gossip-protocol/), captured Markdown, article body sections 'Grafana Mimir memberlist and gossip protocol' and 'How memberlist propagates hash ring changes'",
+      "revision": "Grafana Mimir documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Read sequentially and completely: article body lines 84-103 (298 whitespace-token words), one H1 and one H2, seven paragraphs and a two-item numbered list. Lines 1-83 are extractor/capture header plus Grafana site chrome (title, URL, promo banners, search widget, header nav, automated-reader note, breadcrumb, 'Open source' badge); lines 104-1062 are post-article chrome (helpfulness widget, related-resource cards, docs sidebar navigation, footer columns, cookie consent/OneTrust dialog). Those 1,042 non-body lines were excluded from content analysis as navigation/footer/consent chrome; no article prose or heading before line 84 or after line 103 was found on rescan. No image placeholders and no extractor artifacts occur inside the body.",
+      "retrieval_refs": [
+        "manifest: /tmp/B23b/manifest.json entry R361 (lines 1062, words 2631, sha256 8af889364bd75700b0ffc634c6884d4b690a6e74fa949e918b077b140d885935)",
+        "representation: /tmp/B23b/raw/memberlist-and-the-gossip-protocol.md lines 84-103 (body read); lines 1-1062 scanned",
+        "verification: wc -l = 1062, wc -w = 2631, shasum -a 256 = 8af889364bd75700b0ffc634c6884d4b690a6e74fa949e918b077b140d885935"
+      ],
+      "omissions": "Other Grafana documentation pages outside this batch not read; no experiment",
+      "representation_gap": null,
+      "representation_sha256": "8af889364bd75700b0ffc634c6884d4b690a6e74fa949e918b077b140d885935",
+      "retrieved_lines": 1062,
+      "retrieved_words": 2631,
+      "sections": [
+        {
+          "level": 1,
+          "heading": "Grafana Mimir memberlist and gossip protocol",
+          "lines": "84-92",
+          "words": 132
+        },
+        {
+          "level": 2,
+          "heading": "How memberlist propagates hash ring changes",
+          "lines": "94-103",
+          "words": 166
+        }
+      ],
+      "notes": [
+        "Source claim (l.86): Memberlist is a Go library that manages cluster membership, node failure detection and message passing over a gossip protocol; it is described as eventually consistent, with network partitions only partially tolerated by trying to reach potentially dead nodes through multiple routes.",
+        "Source claim (l.88): by default Grafana Mimir uses memberlist to implement a key-value store that shares the hash-ring data structures between instances; this page names no alternative KV backend.",
+        "Source claim (l.90): each instance maintains a copy of the hash rings, updates the ring locally, propagates the change with memberlist, and merges locally generated with received updates to form the ring state it acts on.",
+        "Source claim (l.92): configuration is delegated to the separate 'configuring hash rings' page; this page documents only the memberlist gossip and pull-push options and gives no defaults, fan-out sizes or interval values.",
+        "Source claim (l.96-99): two propagation techniques are named — propagating only the differences introduced in recent changes, and propagating the full hash-ring data structure.",
+        "Source claim (l.101): every -memberlist.gossip-interval an instance randomly selects a subset of cluster instances bounded by -memberlist.gossip-nodes and sends only the latest changes; this is called frequent and the primary propagation path.",
+        "Source claim (l.103): every -memberlist.pullpush-interval an instance randomly selects one peer and transfers the full KV-store content including all rings, unless the interval is zero; afterwards both instances have the same content; it is costlier, performed less often, and reconciles rings periodically.",
+        "Inference: convergence is bounded by interval configuration and random peer selection, not by a stated guarantee; the page supplies no convergence time, gossip fan-out default, message size, failure-detector timeout or partition-healing behaviour, so quantitative membership claims should not be attributed to it.",
+        "Inference: 'eventually consistent' and 'partially tolerated' partitions (l.86, l.88) combined with merge-on-instance ring state imply interval-scale staleness can reach a reader, but the page never states what correctness an operator should assume during a partition — an explicit unknown.",
+        "Extraction note: the body is 298 of the capture's 2,631 words; the other 1,013 lines are Grafana site chrome (promo banners, site search, docs sidebar release-note navigation, footer, OneTrust consent) excluded as chrome. No body section, table or diagram appears missing, so no representation gap is recorded."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/agreement-failure.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-harness-subagent (parent session-339f3170-2943-4eff-877d-b6b465e229ef); research-only, no repository writes; not independent review"
+    },
+    {
+      "id": "R362",
+      "source_ids": [
+        "src.mimir"
+      ],
+      "url": "https://grafana.com/docs/mimir/latest/references/architecture/mimir-query-engine/",
+      "unit": "Grafana Mimir advanced architecture — single page 'Mimir query engine' (references/architecture/mimir-query-engine/), captured Markdown, article body sections 'How to enable MQE', 'Fallback to Prometheus engine', 'Query memory consumption limit' and 'Known differences compared to Prometheus engine'",
+      "revision": "Grafana Mimir documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Read sequentially and completely: article body lines 84-141 (897 whitespace-token words), one H1, four H2 and two H3 sections, 16 paragraphs and 8 bulleted items. Lines 1-83 are extractor/capture header plus Grafana site chrome (promo banners, search widget, header nav, automated-reader note, breadcrumb, 'Open source' badge); line 142 is a blank separator; lines 143-1111 are post-article chrome (helpfulness widget, related-resource cards, docs sidebar navigation, footer columns, cookie consent/OneTrust dialog). Those 1,053 non-body lines were excluded from content analysis; a rescan of lines 200-1111 found only site chrome, including a duplicated 'On this page' widget and event banners. No image placeholders and no extractor artifacts occur inside the body.",
+      "retrieval_refs": [
+        "manifest: /tmp/B23b/manifest.json entry R362 (lines 1111, words 3264, sha256 e29d9d331692b36d34b6f3b5cfa9df266eebcc4a7cf058317c4f3b3e1359f9b8)",
+        "representation: /tmp/B23b/raw/mimir-query-engine.md lines 84-141 (body read); lines 1-1111 scanned",
+        "verification: wc -l = 1111, wc -w = 3264, shasum -a 256 = e29d9d331692b36d34b6f3b5cfa9df266eebcc4a7cf058317c4f3b3e1359f9b8"
+      ],
+      "omissions": "Other Grafana documentation pages outside this batch not read; no experiment",
+      "representation_gap": null,
+      "representation_sha256": "e29d9d331692b36d34b6f3b5cfa9df266eebcc4a7cf058317c4f3b3e1359f9b8",
+      "retrieved_lines": 1111,
+      "retrieved_words": 3264,
+      "sections": [
+        {
+          "level": 1,
+          "heading": "Grafana Mimir query engine",
+          "lines": "84-88",
+          "words": 72
+        },
+        {
+          "level": 2,
+          "heading": "How to enable MQE",
+          "lines": "90-93",
+          "words": 29
+        },
+        {
+          "level": 2,
+          "heading": "Fallback to Prometheus' engine",
+          "lines": "94-101",
+          "words": 88
+        },
+        {
+          "level": 2,
+          "heading": "Query memory consumption limit",
+          "lines": "102-119",
+          "words": 285
+        },
+        {
+          "level": 2,
+          "heading": "Known differences compared to Prometheus' engine",
+          "lines": "120-123",
+          "words": 17
+        },
+        {
+          "level": 3,
+          "heading": "Binary operations that produce no series",
+          "lines": "124-138",
+          "words": 346
+        },
+        {
+          "level": 3,
+          "heading": "`topk` and `bottomk`",
+          "lines": "139-142",
+          "words": 60
+        }
+      ],
+      "notes": [
+        "Source claim (l.86): the Mimir Query Engine (MQE) is an alternative to Prometheus' query engine and can be used in queriers to evaluate PromQL queries.",
+        "Source claim (l.88): MQE is said to produce equivalent results, generally use less memory and CPU, and evaluate queries at least as fast; it supports all stable PromQL features and transparently falls back to Prometheus' engine for unsupported features.",
+        "Source claim (l.92): MQE is enabled by default; it is disabled with -querier.query-engine=prometheus or the equivalent YAML option.",
+        "Source claim (l.96-100): fallback is enabled by default; -querier.enable-query-engine-fallback=false disables it and then an unsupported query fails; the X-Mimir-Force-Prometheus-Engine: true header forces Prometheus' engine for a supported query, but only while fallback is enabled.",
+        "Source claim (l.104-106): MQE can enforce a per-query memory limit, estimating memory for the final result and intermediate calculations and stopping the query with err-mimir-max-estimated-memory-consumption-per-query when the estimate exceeds the configured limit.",
+        "Source claim (l.108-114): the estimate covers samples held in memory (raw samples decoded from chunks, intermediates and final result, plus some other large intermediate sources) and has stated limitations — series-label memory is ignored, chunks currently in memory are ignored while chunk count/bytes limits still apply, and native-histogram memory is assumed rather than calculated.",
+        "Source claim (l.116-118): no limit is enforced by default; -querier.max-estimated-memory-consumption-per-query or YAML sets the tenant-wide default, a per-tenant max_estimated_memory_consumption_per_query overrides it, 0 disables it, and the limit never applies when MQE is disabled, the query falls back, or the query uses Prometheus' engine.",
+        "Source claim (l.126-129): MQE uses series labels to skip binary-operation work — it skips both sides when the operation provably yields no series (foo{env=\"test\"} / bar{env=\"prod\"}), and skips unmatched series on one side (env=\"3\" ignored in the on(env) example).",
+        "Source claim (l.131-137): consequences are an 'aborted stream because query was cancelled' log line when streaming from ingesters/store-gateways stops early, missing counter annotations that Prometheus emits during series-data evaluation, and missing 'found duplicate series for the match group' errors when one side of a match group is empty.",
+        "Source claim (l.141): topk and bottomk results differ from Prometheus' engine when different series tie on sample values; Prometheus is described as non-deterministic across evaluations, and MQE's implementation differs as a result.",
+        "Inference: the page asserts 'equivalent results' (l.88) while documenting known differences (l.120-141); it supplies no numbers for estimate accuracy, estimator overhead, query-latency deltas or fallback frequency, so its memory and speed adjectives are unquantified claims.",
+        "Extraction note: the body is 897 of the capture's 3,264 words; remaining lines are Grafana site chrome (promo banners, duplicated in-page TOC widget, docs sidebar navigation, footer, OneTrust consent). No body section, table or diagram appears missing, so no representation gap is recorded."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/query-counterexamples.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/demand-blocking.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-harness-subagent (parent session-339f3170-2943-4eff-877d-b6b465e229ef); research-only, no repository writes; not independent review"
+    },
+    {
+      "id": "R363",
+      "source_ids": [
+        "src.mimir"
+      ],
+      "url": "https://grafana.com/docs/mimir/latest/references/architecture/ports/",
+      "unit": "Single documentation page: Grafana Mimir network ports (references/architecture/ports/), body heading 'About Grafana Mimir network ports' through the three-row default-ports table",
+      "revision": "Grafana Mimir documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "reader": "delegated-reader/deepseek-harness-b23b",
+      "coverage": "Registered representation read in full: 1057 lines / 2601 words, verified against manifest.json (line, word and SHA-256 all match). Article content is lines 84-98 = 15 lines / 272 words (10.5% of words). Excluded as site chrome: extractor header (L1-5), GrafanaCON/ObservabilityCON promo banners and search overlay (L6-52), site header and nav (L53-68), automated-reader notice pointing to llms.txt (L70-76), document title and breadcrumb (L78-82), feedback and related-resources promo (L100-110), the ~650-line documentation sidebar (L112-772), and footer, cookie banner and OneTrust consent panel (L774-1057). The article has no subsections: three introductory sentences plus one 3-row table (L94-98). No text was inferred from any other page.",
+      "retrieval_refs": [
+        "/tmp/B23b/raw/ports.md:84-98",
+        "/tmp/B23b/raw/ports.md:94-98 (table header and one row per port)",
+        "/tmp/B23b/raw/ports.md:116 (docs version label v3.2.x)",
+        "/tmp/B23b/manifest.json#R363 (hash, lines and words verified)"
+      ],
+      "omissions": "Other Grafana documentation pages outside this batch not read; no experiment. The component pages linked from the sidebar (Distributor, Ingester, Querier, Query-frontend, Store-gateway) were not read in this unit, nor were Grafana, Prometheus, Nginx or Kubernetes port references.",
+      "representation_sha256": "20d49f58284cdf2423c7c2a5b6a09af06a9bd21d3a5708bc0cd620659e16a7ca",
+      "retrieved_lines": 1057,
+      "retrieved_words": 2601,
+      "sections": [
+        {
+          "level": 1,
+          "heading": "About Grafana Mimir network ports",
+          "lines": "84-98"
+        }
+      ],
+      "notes": [
+        "Source claim (L86): Mimir uses several network ports for traffic between internal components, for external clients such as Prometheus and Grafana, and for overall cluster operation; port configuration is motivated by firewall setup and secure communication.",
+        "Source claim (L88): required ports vary slightly by deployment mode and by whether additional pieces such as Grafana or a load balancer are present, but the page does not enumerate those variants.",
+        "Source claim (L90, table L94-98): only three default ports are documented - 8080 HTTP API / remote write, 9095 internal gRPC, 7946 memberlist / gossip - and the 'Related components' column says 'All Mimir components' for each. The caption states the values can be changed in Mimir configuration.",
+        "Source claim (L96): 8080 is both the write entry (Prometheus remote write into the Distributor) and the read entry (Grafana and Prometheus queries via the Querier or Query-frontend); the page says it is 'not typically exposed' and normally runs behind an Nginx proxy, the GEM gateway, or Kubernetes ingress.",
+        "Source claim (L97): 9095 is the internal gRPC channel, with Distributor-to-Ingester and Querier-to-Ingester given as examples, and is described as essential for distributed deployments.",
+        "Source claim (L98): 7946 carries memberlist / gossip used for service discovery and for maintaining the consistent hash ring, and is described as critical for high availability and scaling.",
+        "Inference: the table is a minimal default set rather than an inventory. No health, metrics, admin, alertmanager, ruler, compactor or object-storage endpoints appear, and no TLS port or port-conflict guidance is given, even though L88 and L90 state the set is deployment-dependent.",
+        "Inference: because every row assigns the port to 'All Mimir components', the page cannot support a per-component port matrix or any claim about which process listens on which port in monolithic versus microservices mode.",
+        "Representation note: 1042 of 1057 lines and 2329 of 2601 words are chrome (promo banners, a ~650-line navigation sidebar, footer and OneTrust consent text); the article is 15 lines and 272 words with a single heading. The capture is the v3.2.x documentation set (version label L116; the GitHub edit link at L104 targets the release-3.2 branch).",
+        "The page carries no throughput, latency, connection-count or failure-mode figures, so nothing quantitative should be cited from it."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",
+          "candidate": "Candidate anchor for the proxy- or ingress-fronted HTTP entry and where TLS termination sits; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+          "candidate": "Candidate anchor for gossip-based discovery and hash-ring membership feeding backend selection; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/connections-draining.md",
+          "candidate": "Candidate anchor for internal gRPC transport and connection lifetime; no edit under #225."
+        },
+        {
+          "path": "book/security/identity-authorization-threat-models-and-isolation.md",
+          "candidate": "Candidate anchor for separating externally reachable from internal listeners and for trust-boundary wording; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/availability-zones-placement-and-failure-domains.md",
+          "candidate": "Candidate anchor for the availability claim the page attaches to the gossip port; no edit under #225."
+        }
+      ]
+    },
+    {
+      "id": "R364",
+      "source_ids": [
+        "src.mimir"
+      ],
+      "url": "https://grafana.com/docs/mimir/latest/references/architecture/query-sharding/",
+      "unit": "Single documentation page: Grafana Mimir query sharding (references/architecture/query-sharding/), body heading 'Grafana Mimir query sharding' through section 'Query statistics'",
+      "revision": "Grafana Mimir documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "reader": "delegated-reader/deepseek-harness-b23b",
+      "coverage": "Registered representation read in full: 1226 lines / 3594 words, verified against manifest.json (line, word and SHA-256 all match). Article content is lines 84-253 = 170 lines / 1213 words (33.7%), including ten code blocks (seven tagged promql, three tagged none). Excluded as site chrome: extractor header (L1-5), promo banners and search overlay (L6-52), site header and nav (L53-68), automated-reader llms.txt notice (L70-76), document title and breadcrumb (L78-82), feedback and related-resources promo (L255-269), documentation sidebar (L271-929), 'Read this in Grafana Cloud' plus feedback and 'On this page' table of contents (L931-949), and footer, cookie banner and OneTrust consent panel (L951-1226). Extractor artifacts noted, not treated as source text: the fence language tag 'promql' and a 'Copy code to clipboard' icon link are emitted as separate lines before each block (L100, L108, L123, L131, L146, L154, L220, L228, L236, L246); the figure at L176 survives only as an image URL with alt text 'Flow of a query with two shardable portions'; a blob: thumbnail URL at L265 is an artifact. No text was inferred from any other page.",
+      "retrieval_refs": [
+        "/tmp/B23b/raw/query-sharding.md:84-253",
+        "/tmp/B23b/raw/query-sharding.md:98-174 (three worked rewrite examples)",
+        "/tmp/B23b/raw/query-sharding.md:202-210 (cardinality estimation, experimental)",
+        "/tmp/B23b/raw/query-sharding.md:216-253 (verification and metrics)",
+        "/tmp/B23b/raw/query-sharding.md:271 (docs version label v3.2.x)",
+        "/tmp/B23b/manifest.json#R364 (hash, lines and words verified)"
+      ],
+      "omissions": "Other Grafana documentation pages outside this batch not read; no experiment. The linked HTTP API anchors for query and query_range, the query-frontend and querier component pages, and the configuration reference for the cited flags were not read, so flag semantics here rest on this page alone.",
+      "representation_sha256": "9ea297125d8c515a2f6b366156581e08858251e87056faa09e9e42e3af820141",
+      "retrieved_lines": 1226,
+      "retrieved_words": 3594,
+      "sections": [
+        {
+          "level": 1,
+          "heading": "Grafana Mimir query sharding",
+          "lines": "84-88"
+        },
+        {
+          "level": 2,
+          "heading": "Query sharding at glance",
+          "lines": "90-96"
+        },
+        {
+          "level": 3,
+          "heading": "Example 1: Full query is shardable",
+          "lines": "98-119"
+        },
+        {
+          "level": 3,
+          "heading": "Example 2: Inner part is shardable",
+          "lines": "121-142"
+        },
+        {
+          "level": 3,
+          "heading": "Example 3: Query with two shardable portions",
+          "lines": "144-176"
+        },
+        {
+          "level": 2,
+          "heading": "How to enable query sharding",
+          "lines": "178-194"
+        },
+        {
+          "level": 2,
+          "heading": "Operational considerations",
+          "lines": "196-200"
+        },
+        {
+          "level": 2,
+          "heading": "Cardinality estimation for query sharding (experimental)",
+          "lines": "202-210"
+        },
+        {
+          "level": 2,
+          "heading": "Verification",
+          "lines": "212-212"
+        },
+        {
+          "level": 3,
+          "heading": "Query statistics",
+          "lines": "214-253"
+        }
+      ],
+      "notes": [
+        "Source claim (L86): sharding runs one query across multiple machines by breaking the dataset into shards; each shard is queried by a partial query, the query-frontend distributes partial queries to different queriers in parallel, and the frontend aggregates the results into the full result.",
+        "Source claim (L88): query sharding is applied only to the query and query_range HTTP APIs, not to other read endpoints.",
+        "Source claim (L92-L94): shardability is partial. Associative aggregations (sum, min, max, count, avg) are shardable; absent, absent_over_time, histogram_quantile, sort_desc and sort are named as not shardable. A non-shardable full query can still have shardable inner parts.",
+        "Source claim (L96, L98-L174): partial queries are distinguished by a __query_shard__ label selector (1_of_4 ... 4_of_4 for a shard count of 4) and a concat() annotation marks where the frontend concatenates or merges partial results; the three worked examples rewrite sum(rate(...)), histogram_quantile(0.99, sum by(le) ...) and a two-legged ratio.",
+        "Source claim (L180): sharding is opt-in via -query-frontend.parallelize-shardable-queries=true.",
+        "Source claim (L182): each shardable portion becomes -query-frontend.query-sharding-total-shards partial queries, and multiple inner portions multiply, which the page says can lead to a query explosion; the default hard limit is 128 partial queries per input query, adjustable with -query-frontend.query-sharding-max-sharded-queries.",
+        "Source claim (L184-L186): with -query-frontend.split-queries-by-interval enabled, the cap applies to the time-split-then-shard-split total; the worked example is a cap of 128 over an 8-day range at 24h splitting giving 16 partial queries per day.",
+        "Source claim (L188-L194): once sharding is enabled in a microservices deployment the frontends do the aggregation, so PromQL engine parameters must also be set on the frontend: -querier.max-concurrent, -querier.timeout, -querier.max-samples, -querier.default-evaluation-interval, -querier.lookback-delta.",
+        "Source claim (L198-L200): parallelization lowers query processing time but raises load on queriers and their stores (ingesters for recent data, store-gateways for historic data) and on the chunk and index caching layer; the page recommends raising frontend parallelism by multiplying -querier.max-query-parallelism by -query-frontend.query-sharding-total-shards.",
+        "Source claim (L204-L210, labelled experimental): cardinality estimation uses series counts observed in previous executions of the same query over similar ranges; it is enabled with -query-frontend.query-sharding-target-series-per-shard plus the query-frontend.results-cache.* flags, which are needed even when results caching is off because estimates live in that cache. The target is advisory and can be exceeded when cardinality changes quickly; estimates only ever reduce shards and never raise them above the configured cap. Histogram cortex_query_frontend_cardinality_estimation_difference tracks estimate error.",
+        "Source claim (L216-L253): verification uses the frontend query-statistics field sharded_queries - 0 means unshardable or disabled, equal to the shard count means one leg, a multiple means several legs (32 with shard count 16 = two legs) - plus the ratio of cortex_frontend_query_sharding_rewrites_succeeded_total to _attempted_total and the histogram cortex_frontend_sharded_queries_per_query.",
+        "Inference: the page describes the mechanism, flags and load direction but gives no latency, throughput or cost figures, so it supports qualitative fan-out claims only; the one diagram (L176) is an image URL and its drawn flow was not read."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-latency-fanout-and-deadline-budgets.md",
+          "candidate": "Candidate anchor for query fan-out, per-shard partial work and aggregation on the critical path; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Candidate anchor for how a dataset is split into shards and how shard count is chosen; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-authority.md",
+          "candidate": "Candidate anchor for reusing results-cache state to hold cardinality estimates across runs; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/cardinality-retention.md",
+          "candidate": "Candidate anchor for series cardinality as the input to shard sizing; no edit under #225."
+        },
+        {
+          "path": "book/performance/workload-shape-and-scalability-laws.md",
+          "candidate": "Candidate anchor for the parallelism-versus-load trade-off stated in the operational section; no edit under #225."
+        }
+      ]
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 318,
+    "full_reads": 329,
     "blocked": 14,
     "records": [
       "R015",
@@ -38423,11 +39300,21 @@
       "R351",
       "R352",
       "R353",
-      "R354"
+      "R354",
+      "R355",
+      "R356",
+      "R357",
+      "R358",
+      "R359",
+      "R360",
+      "R361",
+      "R362",
+      "R363",
+      "R364"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
-    "partial_reads": 12
+    "partial_reads": 11
   }
 }
