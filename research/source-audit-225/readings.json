@@ -2660,12 +2660,76 @@
         }
       ],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R069",
+      "source_ids": [
+        "src.pgvector"
+      ],
+      "url": "https://raw.githubusercontent.com/pgvector/pgvector/master/README.md",
+      "unit": "Complete document: pgvector README",
+      "revision": "Rolling master README; installation example pins v0.8.7; retrieved 2026-10-24; no commit hash pinned",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1366 lines / 5394 words; sections Installation, Storing, Querying, Indexing, HNSW, IVFFlat, Filtering, Multitenancy, Iterative Scans, Quantization, Sparse/Hybrid, Performance, Scaling, Monitoring, Reference, Installation Notes, Upgrading",
+      "retrieval_refs": [
+        "/tmp/refs/src.pgvector.md lines 1-1366",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked examples, code and implementation behavior not read or executed; no benchmark or independent verification.",
+      "representation_sha256": "79a4c8134c2b4bf64c8f5ce8870c31bec551eee4ff4b86e28fe9d09b20b65887",
+      "retrieved_lines": 1366,
+      "retrieved_words": 5394,
+      "sections": [
+        "Installation",
+        "Getting Started",
+        "Storing",
+        "Querying",
+        "Indexing",
+        "HNSW",
+        "IVFFlat",
+        "Filtering",
+        "Multitenancy",
+        "Iterative Index Scans",
+        "Quantization",
+        "Performance",
+        "Scaling",
+        "Monitoring",
+        "Reference",
+        "Installation Notes",
+        "Upgrading"
+      ],
+      "notes": [
+        "Source claim: pgvector is a Postgres extension for exact and approximate nearest-neighbor search over dense, half-precision, binary and sparse vectors, using L2, inner product, cosine, L1, Hamming or Jaccard distance.",
+        "Source claim: without an index the search is exact; an HNSW or IVFFlat index trades recall for speed and can change query results.",
+        "Source claim: HNSW uses a multilayer graph with m and ef_construction build options and ef_search query option; IVFFlat uses lists and probes and should be built after data exists.",
+        "Source claim: with approximate indexes, filters are applied after the index scan, so a restrictive filter can return fewer rows; iterative scans, partial indexes and partitioning are mitigations.",
+        "Source claim: multitenancy should use partitioning or separate tables because a shared approximate index lets one tenant affect another tenant's recall and speed.",
+        "Source claim: binary/half-precision quantization and subvector indexing reduce working-set size, with re-ranking for recall; indexes need not fit in memory but usually perform better when they do.",
+        "Source claim: pgvector uses WAL, so replication and point-in-time recovery apply; vector dimensions and index types have documented limits.",
+        "Inference: the README is usage documentation, not a benchmark; recall and latency depend on data, parameters and workload.",
+        "Inference: filtering-after-scan is both a recall issue and an authorization-boundary issue; the docs describe mechanics, not an access-control guarantee."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-filters.md",
+          "candidate": "Does the filtering page treat post-index filtering as both a recall and an authorization boundary?"
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-hnsw-faiss-pgvector.md",
+          "candidate": "Does the engine page keep documentation claims separate from measured recall and latency?"
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-architecture.md",
+          "candidate": "Does the architecture page treat index build, memory and WAL as operational constraints?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 38,
+    "full_reads": 39,
     "blocked": 14,
     "records": [
       "R015",
@@ -2721,9 +2785,10 @@
       "R065",
       "R066",
       "R067",
-      "R068"
+      "R068",
+      "R069"
     ],
-    "scope": "JEP 444, JEP 491, twenty-nine public engineering articles, seven documentation/paper units, fourteen blocked pages and two excluded internal team sites",
+    "scope": "JEP 444, JEP 491, twenty-nine public engineering articles, eight documentation/paper units, fourteen blocked pages and two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2
   }
