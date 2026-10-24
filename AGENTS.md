@@ -113,3 +113,43 @@ tool invocation that retrieves sources, or change.
     State `human_review: not-performed` and `sufficient: 0` unless separate evidence exists.
     After the run, check `git status` and report hashes; if the reviewer wrote to the
     repository, stop, quarantine the changes and treat the review as contaminated.
+
+
+## Delegated full reading (DeepSeek Harness)
+
+22. **Delegate extraction, not judgment.** A reader child may read a bounded source
+    unit and return evidence. It must not produce book findings, support
+    classifications, severity or acceptance verdicts; those stay with the parent
+    and, where required, an independent Reviewer under rules 17-21.
+23. **One finite unit per child.** Define the unit before dispatch: exact edition
+    or live-page revision, public URL, local representation, line and word counts
+    and SHA-256. A whole documentation site or a book is not a unit; a bounded
+    chapter set may be one only when the manifest enumerates every page. The
+    child must not substitute a different edition, supplement missing text
+    silently or infer text from a search result. Record `representation_gap`
+    whenever the local representation lacks sections that the source contains.
+24. **Use a fixed record schema.** Each record must carry `source_id`, `unit`,
+    `revision`, `status`, `coverage`, `retrieved_lines`, `retrieved_words`,
+    `representation_sha256`, `sections`, `notes`, `omissions`,
+    `representation_gap` when applicable, `tycho_candidates` and a
+    reader/delegation label. Status is one of full-scoped-text-read,
+    partial-scoped-text-read, blocked-full-text or excluded-from-scope. Notes separate source
+    claims from inference; candidates are 3-6 existing book paths, not proposed
+    verdicts. The child must not write to the repository.
+25. **Validate mechanically and spot-check.** The parent recomputes the hash,
+    line and word counts, checks the schema, unique IDs, existing candidate
+    paths and every `representation_gap`, and reads at least one cited passage
+    per record. Chrome-heavy pages must state what was excluded. A child that
+    returns fewer than 3 candidates or omits a section is corrected or rejected;
+    its output is not merged on trust.
+26. **Keep comparisons centralized.** Children may supply source claims and
+    candidate pages, never a page-level comparison. The parent maps claims to
+    frozen baseline anchors and records support, severity and proposed action.
+    Scale in bounded batches (for example 2-4 sources per child, 2-3 children)
+    only after a pilot; do not dispatch the whole queue at once. Pilot records
+    stay outside the canonical ledger until the batch is accepted.
+27. **Record the delegation.** Preserve the manifest, child IDs, model/preset,
+    timestamps, hashes, parent corrections and the pilot outcome. State that
+    delegated reading is not independent review, human review, CI or source
+    completeness. Do not close a source-reading issue or claim whole-book
+    coverage from child summaries alone.
