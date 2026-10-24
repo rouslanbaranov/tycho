@@ -10703,12 +10703,1516 @@
       "chapter": "sre-workbook-08",
       "title": "Google SRE: What it Means Being On-Call?",
       "body_words_excluding_chrome": 9914
+    },
+    {
+      "id": "R156",
+      "source_ids": [
+        "src.sre-workbook"
+      ],
+      "url": "https://sre.google/workbook/incident-response/",
+      "unit": "SRE Workbook chapter 9, 'Incident Response' — public HTML page captured as Markdown at /tmp/B20/raw/sre-workbook-09.md; 356 lines, 7,518 words, sha256 f2a223483d663d17d5e15fb25a0f4f4ef37a7e20ea6fa6ed8e6d168538681dbb",
+      "revision": "SRE Workbook, public HTML inspected 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 356 lines (7,518 words; 7,506 body words after the 5-line capture header) were read sequentially in one pass. Lines 1-5 are reader metadata (Title, URL Source, Markdown Content) and were excluded from claims. The body runs lines 6-356: title and authors, introduction, Incident Management at Google, four case studies, Putting Best Practices into Practice, conclusion and two footnotes. All article prose is present. The local capture flattens the four case-study headings and their Context/Incident/Review labels, and the Incident Response Training and Drills headings; see representation_gap. No site navigation, cookie banner or footer chrome is present in the capture.",
+      "retrieval_refs": [
+        "/tmp/B20/manifest2.json#R156",
+        "/tmp/B20/raw/sre-workbook-09.md (read in full, lines 1-356)",
+        "https://sre.google/workbook/incident-response/ (HTTP 200; heading structure compared 2026-10-24)"
+      ],
+      "omissions": "Other SRE Workbook chapters outside this batch not read; no production experiment. No claim of whole-workbook coverage: the source remains partial until every chapter in its declared scope is read.",
+      "representation_gap": "Structure-only gap. The live HTML inspected 2026-10-24 has about 7,709 article tokens against about 7,637 local prose tokens; the difference is heading and footer text, not missing paragraphs. Absent from the local markdown: the h2 page label 'Chapter 9 - Incident Response', the four h5 case-study titles (Case Study 1: Software Bug—The Lights Are On but No One's (Google) Home; Case Study 2: Service Fault—Cache Me If You Can; Case Study 3: Power Outage—Lightning Never Strikes Twice…Until It Does; Case Study 4: Incident Response at PagerDuty), their Context/Incident/Review h6 labels, and the h5 headings Incident Response Training and Drills. All corresponding prose survives in the body; no passage was inferred or substituted.",
+      "representation_sha256": "f2a223483d663d17d5e15fb25a0f4f4ef37a7e20ea6fa6ed8e6d168538681dbb",
+      "retrieved_lines": 356,
+      "retrieved_words": 7518,
+      "sections": [
+        {
+          "name": "Capture header (Title, URL Source, Markdown Content)",
+          "lines": "1-5",
+          "note": "extraction metadata, not chapter prose"
+        },
+        {
+          "name": "Chapter title, authors and introduction",
+          "lines": "6-25",
+          "note": "structured incident management; four basic principles"
+        },
+        {
+          "name": "Incident Management at Google",
+          "lines": "27-58",
+          "note": "ICS origin; three Cs; IC/CL/OL roles"
+        },
+        {
+          "name": "Case Studies",
+          "lines": "60-300",
+          "note": "Google Home quota bug (62-104); GKE CreateCluster (106-195); Belgium power outage (197-246); PagerDuty NTP (248-300)"
+        },
+        {
+          "name": "Putting Best Practices into Practice",
+          "lines": "302-342",
+          "note": "training; communication channel; templates; contacts; incident criteria; drills"
+        },
+        {
+          "name": "Conclusion",
+          "lines": "344-352"
+        },
+        {
+          "name": "Footnotes 1-2",
+          "lines": "354-356",
+          "note": "working document for multi-person incidents; Weathering the Unexpected"
+        }
+      ],
+      "notes": [
+        "Source claim (L12-16): resolving an incident means mitigating impact and restoring service; managing it means coordinating responders and keeping communication flowing to responders and stakeholders; the chapter says many companies adapted emergency-response practice.",
+        "Source claim (L18-23): four basic principles — maintain a clear line of command, designate defined roles, keep a working record of debugging and mitigation, and declare incidents early and often.",
+        "Source claim (L29-41): Google's system derives from the Incident Command System, created in 1968 for wildfires; the 'three Cs' are coordinate response, communicate, and maintain control; PagerDuty and IMAG are presented as two adaptations.",
+        "Source claim (L45-58): the Incident Commander leads, Communications Lead and Operations Lead report to the IC; the IC assumes any undelegated role by default; the CL is the public face and may be folded back into the IC for small incidents.",
+        "Source claim (L64-104): in the Google Home quota incident the team mitigated three times but did not declare an incident, relied on weekend heroic effort, and resumed a rollout before root cause was known; the chapter argues early declaration and postponing the rollout would have shortened and organized the response. Inference: this is a retrospective narrative, not a measured comparison.",
+        "Source claim (L106-195): the GKE CreateCluster incident was paged at 6:41 a.m. and declared at 7:06 a.m.; after handover a formal IC structure was installed, with 41 unique IRC users, a 6h40m outage and 28 postmortem action items. Times are approximate and slightly inconsistent: L138 calls the incident 2.5 hours old at 9:10, while L171 says the formal structure went in two hours after the first page.",
+        "Source claim (L173-195): generic mitigations such as rollback or draining can stop user pain before root cause is known; the recommended active-incident order is assess impact, mitigate, root-cause, then fix and write a postmortem, followed later by drills.",
+        "Source claim (L197-246): in the 2015 Belgium lightning incident the disk-tray UPS did not transfer on the third and fourth strikes; Persistent Disk SRE declared a major incident, kept the IC role, and the chapter reports 0.000001% data loss from running GCE instances and only pending writes at risk.",
+        "Source claim (L248-300): PagerDuty's NTP clock-drift incident lasted over 10 hours with minimal customer impact; the IC assembled all dependent on-calls, rotated engineers and IC every four hours, and used PagerDuty, a dedicated Slack channel and recorded conference calls; training included Failure Friday and time-bound simulation games.",
+        "Source claim (L302-342): preparation recommendations include agreeing a channel, regular status updates, pre-approved templates, a contact list, incident criteria, periodic drills (DiRT, Wheel of Misfortune) and a post-drill report. Inference: these are experience-based practices; the chapter offers no adoption measurements.",
+        "Inference: the chapter explicitly says the full ICS approach may exceed a small organization's needs (L308), so its role model is presented as adaptable rather than mandatory; the case studies are drawn from two organizations and should not be generalized as controlled evidence."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-response-and-operational-change.md",
+          "candidate": "Relate the chapter's IC/CL/OL role model and escalation practice to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-contract.md",
+          "candidate": "Relate the chapter's response authority, declared roles and mitigation-first ordering to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md",
+          "candidate": "Relate the chapter's training, drills and DiRT/Wheel of Misfortune practice to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-evidence.md",
+          "candidate": "Relate the chapter's working record, war room and timeline reconstruction to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash (session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no findings or verdicts"
+    },
+    {
+      "id": "R157",
+      "source_ids": [
+        "src.sre-workbook"
+      ],
+      "url": "https://sre.google/workbook/postmortem-culture/",
+      "unit": "SRE Workbook chapter 10, 'Postmortem Culture: Learning from Failure' — public HTML page captured as Markdown at /tmp/B20/raw/sre-workbook-10.md; 351 lines, 4,394 words, sha256 53c5a813ef9ee816b7fb29355a082047df47db8fba3057b6f72aad69956c5740",
+      "revision": "SRE Workbook, public HTML inspected 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "All 351 lines (4,394 words; 4,375 body words after the 7-line capture header) were read sequentially in one pass. Lines 1-7 are reader metadata (Title, URL Source, Published Time, Markdown Content) and were excluded from claims. The body runs lines 8-351: introduction, the decommission case discussion, critiques of a bad and a good postmortem, organizational incentives, tools and templates, conclusion and one footnote. This is a partial read of the source chapter: the local representation omits the two embedded example postmortems, three note boxes and the 'A simple way to get started' block (see representation_gap), so the surrounding commentary is complete but the documents it critiques are not present. No site navigation, cookie banner or footer chrome is present in the capture. Full source coverage is not claimed.",
+      "retrieval_refs": [
+        "/tmp/B20/manifest2.json#R157",
+        "/tmp/B20/raw/sre-workbook-10.md (read in full, lines 1-351)",
+        "https://sre.google/workbook/postmortem-culture/ (HTTP 200; heading and token structure compared 2026-10-24)"
+      ],
+      "omissions": "Other SRE Workbook chapters outside this batch not read; no production experiment. No claim of whole-workbook coverage: the source remains partial until every chapter in its declared scope is read. Within this chapter, the two embedded example postmortems, three notes and the 'A simple way to get started' subsection are absent from the local representation and were not substituted.",
+      "representation_gap": "Substantive gap. The live HTML inspected 2026-10-24 has about 7,395 article tokens against about 4,375 local body words; roughly 3,000 tokens (about 40% of the article) are absent. Missing: the full 'Bad Postmortem' example (Postmortem: All Satellite Machines Sent to Diskerase, with owner, incident-date, executive-summary, impact, root-cause, recovery and timeline material), the full 'Good Postmortem' example, the 'Bad Postmortem' heading, the 'Postmortem: All Satellite Machines Sent to Diskerase' heading before the good example, three note boxes (including the Ben Treynor Sloss quotation that a postmortem without action is indistinguishable from no postmortem, and the note explaining that the example postmortem was fictionalized), the 'A simple way to get started' subsection, and most h5/h6 subsection headings (Why Is This Postmortem Bad/Better? and their children; Reward Postmortem Outcomes; Share Postmortems Openly; Respond to Postmortem Culture Failures; Postmortem Templates; Postmortem Tooling; and their children). Footnote 1 defines a kill switch but its marker is attached to an action item inside the missing good postmortem, so the local body has an unreferenced footnote. The missing text was not inferred or substituted.",
+      "representation_sha256": "53c5a813ef9ee816b7fb29355a082047df47db8fba3057b6f72aad69956c5740",
+      "retrieved_lines": 351,
+      "retrieved_words": 4394,
+      "sections": [
+        {
+          "name": "Capture header (Title, URL Source, Published Time, Markdown Content)",
+          "lines": "1-7",
+          "note": "extraction metadata, not chapter prose"
+        },
+        {
+          "name": "Chapter title, authors and introduction",
+          "lines": "8-24",
+          "note": "blameless culture; cultural and technical change; start small"
+        },
+        {
+          "name": "Case Study: decommission automation failure",
+          "lines": "26-58",
+          "note": "satellite rack diskerase; empty-list filter bug; latency impact; second incident three years later"
+        },
+        {
+          "name": "Bad-postmortem critique",
+          "lines": "60-132",
+          "note": "context, detail, action items, blame, language, ownership, audience, delay; the bad example document itself is absent"
+        },
+        {
+          "name": "Good-postmortem critique",
+          "lines": "134-204",
+          "note": "glossary, grouped and measurable action items, blamelessness, depth, promptness, concision; the good example document itself is absent"
+        },
+        {
+          "name": "Organizational Incentives",
+          "lines": "206-288",
+          "note": "leadership modelling; rewards; sharing; failure patterns"
+        },
+        {
+          "name": "Tools and Templates",
+          "lines": "290-345",
+          "note": "Google template and metadata; Requiem; action items as bugs; analysis; third-party tools"
+        },
+        {
+          "name": "Conclusion",
+          "lines": "347-349"
+        },
+        {
+          "name": "Footnote 1",
+          "lines": "351",
+          "note": "kill-switch definition; reference marker absent from local body"
+        }
+      ],
+      "notes": [
+        "Source claim (L14-18): the authors state that a truly blameless postmortem culture results in more reliable systems; introducing postmortems is as much cultural as technical; organizations can start with a basic procedure and tune it. Inference: the reliability benefit is asserted from experience, not demonstrated with a controlled comparison.",
+        "Source claim (L28-54): a routine satellite-rack decommission failed after diskerase; a retry passed an empty machine list, which the API treated as 'no filter', and the automation erased all satellite disks globally within minutes; users saw a slight latency increase for about two days while machines were reinstalled. A similar incident three years later had a smaller blast radius and rate, which the authors attribute to the original action items.",
+        "Source claim (L62-87): the bad example lacks context and glossary, numerical impact, root-cause depth, recovery detail, prioritized and measurable action items, and tracking bugs; most items are mitigative and one proposes making humans less error-prone.",
+        "Source claim (L89-119): the bad example names individuals in root cause, things-that-went-poorly and action items, and uses subjective or animated language; the authors argue this makes engineers risk-averse and may encourage covering up facts. Inference: the causal claim about cover-up behavior is plausible but not measured in the chapter.",
+        "Source claim (L121-132): the bad example lists four owners instead of one accountable owner plus collaborators, is shared only within the team, and was published four months after the incident; the authors recommend wide sharing, machine-readable tags and prompt publication.",
+        "Source claim (L138-168): the good example has a glossary, action items grouped by theme, quantified metrics linked to sources, and every action item has an owner, tracking number, priority, verifiable end state, and prevent/mitigate intent.",
+        "Source claim (L170-204): the good example blames no individual or team, focuses on system gaps across multiple teams, links its data, and was circulated less than a week after the incident; long raw sources are linked rather than pasted.",
+        "Source claim (L210-231): engineering leaders should model blameless language; a structured review process helps stop blameful framing; incentives should reward closing action items as well as writing postmortems, with peer bonuses, reviews and promotion as possible rewards.",
+        "Source claim (L233-255): the chapter lists celebration, public credit, a postmortem leaderboard and twice-yearly FixIt weeks as incentives, and recommends announcements, cross-team reviews, postmortem reading clubs, monthly process review, Wheel of Misfortune and weekly outage reports as sharing tactics.",
+        "Source claim (L257-288): failure patterns include disengagement, senior executives using blameful language, insufficient time to write quality postmortems, and repeated incidents that mirror earlier ones; suggested responses include blameless re-framing, protected time and cross-incident review.",
+        "Source claim (L290-345): Google's template and Apps Script tooling populate metadata; internal tooling is not externally available; Requiem has stored thousands of postmortems since 2009, action items become tracked bugs, and analysis charts cover volume, duration, detection, resolution and blast radius; several third-party tools are listed.",
+        "Inference: the chapter's quality criteria are normative practitioner guidance derived from example documents and organizational experience; it offers no measurement of postmortem quality or of the claimed reliability effect, and the two example postmortems that anchor the critique are not in the local representation."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-evidence.md",
+          "candidate": "Relate the chapter's postmortem-as-factual-artifact, chronology and competing-explanation critique to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md",
+          "candidate": "Relate blameless review, drills and organizational learning to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-response-and-operational-change.md",
+          "candidate": "Relate action-item ownership, follow-up and postmortem review to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-contract.md",
+          "candidate": "Relate accountability, single-owner action items and blameless framing to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash (session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no findings or verdicts"
+    },
+    {
+      "id": "R158",
+      "source_ids": [
+        "src.sre-workbook"
+      ],
+      "url": "https://sre.google/workbook/managing-load/",
+      "unit": "SRE Workbook chapter 11, 'Managing Load' — public HTML page captured as Markdown at /tmp/B20/raw/sre-workbook-11.md; 248 lines, 5,634 words, sha256 e074bfae5e29c1097d693a711868d0ee017d765d9c396de3588499b9d749b182",
+      "revision": "SRE Workbook, public HTML inspected 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 248 lines (5,634 words; 5,614 body words after the 7-line capture header) were read sequentially in one pass. Lines 1-7 are reader metadata (Title, URL Source, Published Time, Markdown Content) and were excluded from claims. The body runs lines 8-248: introduction, Google Cloud Load Balancing, the Pokémon GO case, autoscaling, combining load-management strategies, the Dressy case, conclusion and five footnotes. All article prose is present. The local capture omits the author byline, two case-study headings and most h5/h6 subsection labels; see representation_gap. No site navigation, cookie banner or footer chrome is present in the capture.",
+      "retrieval_refs": [
+        "/tmp/B20/manifest2.json#R158",
+        "/tmp/B20/raw/sre-workbook-11.md (read in full, lines 1-248)",
+        "https://sre.google/workbook/managing-load/ (HTTP 200; heading and token structure compared 2026-10-24)"
+      ],
+      "omissions": "Other SRE Workbook chapters outside this batch not read; no production experiment. No claim of whole-workbook coverage: the source remains partial until every chapter in its declared scope is read.",
+      "representation_gap": "Structure and metadata gap. The live HTML inspected 2026-10-24 has about 5,763 article tokens against about 5,687 local prose tokens; all prose paragraphs are present, and the difference is byline, heading and footer text. Absent from the local markdown: the author byline (four lead authors and two supporting authors), the h5 headings Case Study 1: Pokémon GO on GCLB and Case Study 2: When Load Shedding Attacks, and the h5/h6 subsection labels Anycast, Stabilized anycast, Maglev, Global Software Load Balancer, Google Front End, GCLB: Low Latency, GCLB: High Availability, Migrating to GCLB, Resolving the issue, Future-proofing, Working with Stateful Systems, Configuring Conservatively, Setting Constraints, Avoiding Overloading Backends, Avoiding Traffic Imbalance, What was happening?, What went wrong?, and Lessons learned. The local h2 headings Google Cloud Load Balancing, Autoscaling, Combining Strategies to Manage Load and Conclusion are h1 on the live page, so heading level is not reliable in this capture. No prose passage was inferred or substituted.",
+      "representation_sha256": "e074bfae5e29c1097d693a711868d0ee017d765d9c396de3588499b9d749b182",
+      "retrieved_lines": 248,
+      "retrieved_words": 5634,
+      "sections": [
+        {
+          "name": "Capture header (Title, URL Source, Published Time, Markdown Content)",
+          "lines": "1-7",
+          "note": "extraction metadata, not chapter prose"
+        },
+        {
+          "name": "Chapter title and introduction",
+          "lines": "8-14",
+          "note": "no service is fully available; combination of traffic-management tools"
+        },
+        {
+          "name": "Google Cloud Load Balancing",
+          "lines": "16-119",
+          "note": "anycast and stabilized anycast; Maglev; GSLB; GFE; SLA and canary; Pokémon GO case"
+        },
+        {
+          "name": "Autoscaling",
+          "lines": "121-171",
+          "note": "unhealthy instances; stateful systems; conservative configuration; constraints; kill switches; dependencies; shared quota; regional rebalancing"
+        },
+        {
+          "name": "Combining Strategies to Manage Load",
+          "lines": "173-230",
+          "note": "interaction examples; Dressy load-shedding feedback loop; precautions; RPC deadlines"
+        },
+        {
+          "name": "Conclusion",
+          "lines": "232-238"
+        },
+        {
+          "name": "Footnotes 1-5",
+          "lines": "240-248",
+          "note": "5-tuple; SLO/SLA link; cascading failures; consistent hashing; capacity redundancy"
+        }
+      ],
+      "notes": [
+        "Source claim (L10-14): no service is 100% available 100% of the time; demand can grow fifty-fold, a service can crash under a traffic spike, or a cable can be cut; the chapter advocates a combination of tools rather than one solution.",
+        "Source claim (L24-39): DNS load balancing relies on client cooperation; GCLB instead uses anycast and BGP, but nearby-user overload and route flaps that reset TCP sessions remain, so Maglev forwards packets to the frontend closest to the client ('stabilized anycast').",
+        "Source claim (L41-51): Maglev spreads packets across a pool via ECMP, gives N+1 redundancy, runs on commodity hardware, and uses a 5-tuple hash plus a connection-tracking table so connection state need not be shared across Maglev machines.",
+        "Source claim (L53-75): GSLB distributes connections to GFEs and requests to backends and can drain failed clusters; the GFE terminates TCP/SSL, health-checks backends and supports 'lame duck' removal; GCLB offers a 99.99% availability SLA and uses canarying.",
+        "Source claim (L77-95): Niantic load-tested to 5x its most optimistic estimate, but launch traffic was nearly 50x; within two days of migrating to GCLB, Pokémon GO became one of the largest GCLB services. NLB had required SSL termination and request buffering at Nginx and could not absorb SYN floods well.",
+        "Source claim (L97-119): after migration, true client demand was 200% higher than observed; slow backends plus GET retries stressed GFE SSL code and cut GCLB worldwide capacity by about 50%; synchronized client retries reached 20x the prior global RPS peak. Traffic SRE isolated and enlarged the Pokémon GO pool and applied administrative rate limits; Niantic later added jitter and truncated exponential backoff, and both organizations concluded load should be measured near the client.",
+        "Source claim (L127-146): autoscaling that averages utilization across unhealthy instances may never scale; mitigations are a load-balancer capacity metric, waiting for new instances to become healthy (cool-down), and autohealing with enough restart grace time.",
+        "Source claim (L148-161): stateful systems need task-level routing rather than more replicas; vertical autoscaling can absorb short hotspots but may overprovision low-traffic instances; scaling up matters more than scaling down; keep headroom from bottlenecks and bound the autoscaler with min/max and quota.",
+        "Source claim (L163-171): a kill switch and documented manual scaling are recommended; dependency analysis should precede autoscaling because backends, shared quota and per-zone quota can be overloaded by scale-out; regional rebalancing spreads zones and failure domains.",
+        "Source claim (L187-213): in the fictional Dressy case, load shedding returned errors that the utilization-aware load balancer read as lower per-request CPU cost, so it sent more traffic to the already failing region A; counting an error as 120% CPU utilization would reverse the signal. Inference: this is a constructed illustration of a feedback loop, not an observed production incident.",
+        "Source claim (L215-230): load balancing plus autoscaling can create a positive feedback loop that concentrates capacity near users; keep minimum instances per location, scale before shedding, and set RPC deadlines so servers stop work clients no longer need.",
+        "Inference: the chapter's architecture descriptions and the Pokémon GO postmortem are retrospective and vendor-specific; the recommendations are experience-based, and the chapter reports no controlled comparison of load-management configurations."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+          "candidate": "Relate the chapter's load-shedding, rate-limiting and graceful-degradation discussion to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-recovery.md",
+          "candidate": "Relate the Dressy feedback loop and coordinated shutdown triggers to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+          "candidate": "Relate unhealthy-instance averaging, scale-up/down asymmetry and kill switches to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/scaling-delay.md",
+          "candidate": "Relate the chapter's cool-down, capacity headroom and dependency analysis to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+          "candidate": "Relate minimum per-location capacity, quota bounds and redundancy reserves to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash (session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no findings or verdicts"
+    },
+    {
+      "id": "R159",
+      "source_id": "src.sre-workbook",
+      "source_ids": [
+        "src.sre-workbook"
+      ],
+      "url": "https://sre.google/workbook/non-abstract-design/",
+      "unit": "SRE Workbook chapter 12, System Design: Non-Abstract Large System Design — public HTML page captured as Markdown (local representation /tmp/B20/raw/sre-workbook-12.md)",
+      "revision": "SRE Workbook, public HTML inspected 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 373 lines / 5,253 words of the local representation were read sequentially and in order (lines 1-373): capture header, chapter title and authors, introduction, What Is NALSD?, Why \"Non-Abstract\"?, the AdWords CTR example through single-machine arithmetic, the distributed QueryStore/LogJoiner/ClickMap/QueryMap design, sharding, the multidatacenter consensus design, requirement checks, conclusion and footnotes 1-2. Lines 1-5 are the capture header (Title, URL Source, Markdown Content), not chapter prose; the page's own h2 banner (\"Chapter 12 - Introducing Non-Abstract Large System Design\", table-of-contents/navigation text) is absent from the capture and was not used. No site navigation, cookie banner or footer chrome is present in the capture. Complete read of the local representation, not a claim of complete source coverage: the public HTML inspected 2026-10-24 retains section headings that the Markdown capture flattens or drops (see representation_gap), although body prose was present in every section sampled.",
+      "retrieval_refs": [
+        {
+          "lines": "6-14",
+          "section": "Chapter title, authors and introduction",
+          "note": "reliability as most critical feature; NALSD as iterative design"
+        },
+        {
+          "lines": "16-26",
+          "section": "What Is NALSD? and Why \"Non-Abstract\"? (heading absent)",
+          "note": "capacity planning, component isolation, concrete resource estimates"
+        },
+        {
+          "lines": "28-34",
+          "section": "AdWords Example",
+          "note": "CTR definition; query log and click log; iterative design framing"
+        },
+        {
+          "lines": "36-64",
+          "section": "Design Process (heading absent)",
+          "note": "two phases; possible/better, feasible/resilient/better"
+        },
+        {
+          "lines": "66-82",
+          "section": "Initial Requirements (heading absent)",
+          "note": "two SLOs, 500,000 qps, 10,000 clicks/s, error budget"
+        },
+        {
+          "lines": "84-158",
+          "section": "One Machine (heading absent), with Calculations and Evaluation",
+          "note": "2 KB records, 86.4 TB/day, 2,500 disks, 1,563 machines, SPOFs"
+        },
+        {
+          "lines": "160-170",
+          "section": "Distributed System; MapReduce",
+          "note": "batch boundaries cannot join query and click across batches"
+        },
+        {
+          "lines": "172-219",
+          "section": "LogJoiner",
+          "note": "QueryStore, ClickMap, QueryMap; ~400 Mbps aggregate"
+        },
+        {
+          "lines": "221-267",
+          "section": "Sharded LogJoiner",
+          "note": "hash(query_id) mod N; QueryMap sharded by ad_id; duplicate shards"
+        },
+        {
+          "lines": "269-343",
+          "section": "Multidatacenter",
+          "note": "Paxos, 25 ms rounds, 40 ops/s, 25,500 tasks, 64 machines per datacenter"
+        },
+        {
+          "lines": "345-369",
+          "section": "Conclusion",
+          "note": "component separation by growth; four questions; practiced skill"
+        },
+        {
+          "lines": "371-373",
+          "section": "Footnotes 1-2",
+          "note": "Bigtable and Photon references"
+        }
+      ],
+      "omissions": "Other SRE Workbook chapters outside this batch not read; no production experiment",
+      "representation_sha256": "6fb8e2cb28b55fd3aeb6eb4dab85c0326126e4437e63fa99ba683117ffe9ade5",
+      "retrieved_lines": 373,
+      "retrieved_words": 5253,
+      "representation_gap": {
+        "kind": "heading-omission",
+        "sections": [
+          "Page banner \"Chapter 12 - Introducing Non-Abstract Large System Design\" (table-of-contents/navigation text)",
+          "\"Why 'Non-Abstract'?\" section heading (body present at L22-26)",
+          "\"Design Process\", \"Initial Requirements\", \"One Machine\" h5 headings",
+          "\"Calculations\", \"Evaluation\", \"MapReduce\", \"LogJoiner\", \"Sharded LogJoiner\", \"Multidatacenter\" h6 headings (Calculations and Evaluation survive only as italic run-in labels)"
+        ],
+        "evidence": "The public HTML inspected 2026-10-24 exposes an h2 banner and h1/h5/h6 section headings that the Markdown capture does not carry. A sampling comparison of the opening 80 words of each live article section against the capture matched at least 89% for every body section, so the omitted items are heading labels, not prose. The h2 banner section (129 words of table-of-contents and navigation text) was excluded as chrome.",
+        "impact": "Section structure is flatter than the published page. No substantive passage was detected as missing; all claims rest on captured prose. Status covers the local representation only.",
+        "content_lost": "Heading labels only; no contiguous omitted prose block detected"
+      },
+      "sections": [
+        {
+          "name": "Capture header (Title, URL Source, Markdown Content)",
+          "lines": "1-5",
+          "note": "extraction metadata, not chapter prose"
+        },
+        {
+          "name": "Chapter title and authors",
+          "lines": "6-10",
+          "note": "title captured as 'Introducing Non-Abstract Large System Design'; six authors plus editor"
+        },
+        {
+          "name": "Introduction",
+          "lines": "12-14"
+        },
+        {
+          "name": "What Is NALSD?",
+          "lines": "16-20",
+          "heading_present": true
+        },
+        {
+          "name": "Why \"Non-Abstract\"?",
+          "lines": "22-26",
+          "heading_present": false,
+          "note": "heading absent; three paragraphs present"
+        },
+        {
+          "name": "AdWords Example",
+          "lines": "28-32",
+          "heading_present": true,
+          "note": "problem statement and log schema follow from L66"
+        },
+        {
+          "name": "Design Process",
+          "lines": "34-64",
+          "heading_present": false,
+          "note": "two phases and five questions; heading absent"
+        },
+        {
+          "name": "Initial Requirements",
+          "lines": "66-82",
+          "heading_present": false,
+          "note": "advertiser questions, SLOs, traffic assumptions"
+        },
+        {
+          "name": "One Machine",
+          "lines": "84-112",
+          "heading_present": false,
+          "note": "single-machine SQL design"
+        },
+        {
+          "name": "Calculations: storage, IOPS and RAM",
+          "lines": "114-154",
+          "heading_present": false,
+          "note": "86.4 TB/day, 2,500 disks, 1,563 machines"
+        },
+        {
+          "name": "Evaluation: single points of failure",
+          "lines": "156-158",
+          "heading_present": false
+        },
+        {
+          "name": "Distributed System",
+          "lines": "160-343",
+          "heading_present": false,
+          "note": "introduces QueryStore, LogJoiner, ClickMap, QueryMap"
+        },
+        {
+          "name": "MapReduce",
+          "lines": "162-170",
+          "heading_present": false
+        },
+        {
+          "name": "LogJoiner",
+          "lines": "172-219",
+          "heading_present": false,
+          "note": "throughput arithmetic L196-209"
+        },
+        {
+          "name": "Sharded LogJoiner",
+          "lines": "221-267",
+          "heading_present": false,
+          "note": "shard key, replica pairs, single-datacenter SPOF"
+        },
+        {
+          "name": "Multidatacenter",
+          "lines": "269-343",
+          "heading_present": false,
+          "note": "consensus design, task arithmetic, requirement check"
+        },
+        {
+          "name": "Conclusion",
+          "lines": "345-369",
+          "heading_present": true
+        },
+        {
+          "name": "Footnotes 1-2",
+          "lines": "371-373"
+        }
+      ],
+      "notes": [
+        "Source claim (L14, L18): reliability is treated as the most critical feature of a production system; NALSD starts from the problem statement, gathers requirements, and iterates designs until one both meets the requirements and survives failure modes. Inference: NALSD is presented as a design discipline with a repeatable sequence, not a fixed template or a formula.",
+        "Source claim (L36-62): the basic design phase asks \"is it possible?\" and \"can we do better?\"; the scale-up phase asks \"is it feasible?\", \"is it resilient?\" and \"can we do better?\"; in practice the phases and questions are revisited out of order. Inference: the questions work as a review checklist applied to each candidate design rather than as strict waterfall stages.",
+        "Source claim (L75-82): the worked example assumes two SLOs (99.9% of dashboard queries under one second; 99.9% of CTR data under five minutes old), 500,000 search queries per second and 10,000 ad clicks per second, with an error budget. Inference: none of these numbers is a measurement; they are stated assumptions that the chapter carries through all iterations.",
+        "Source claim (L136-154): rounding each query-log entry to 2 KB yields 86.4 TB/day; at 200 IOPS per 4 TB HDD, 500,000 writes/s imply about 2,500 disks; at 64 GB RAM per machine, 100 TB implies 1,563 machines; even a single machine has many single points of failure. Inference: the results are sensitive to the 2 KB record assumption and to the assumed write-per-entry ratio, which the chapter itself flags as aggressive.",
+        "Source claim (L162-170): MapReduce scales horizontally but its non-overlapping batches cannot join a query in one batch with its click in another, so it cannot meet five-minute data freshness even though throughput is adequate. Inference: the disqualifying constraint is data affinity across batch boundaries, not compute capacity.",
+        "Source claim (L174-209): QueryStore holds query logs keyed by query_id; LogJoiner joins the click stream against QueryStore; ClickMap stores clicked queries by ad_id; QueryMap indexes all served queries by ad_id; aggregate LogJoiner traffic is about 400 Mbps. Inference: splitting clicked and shown data into two ad_id-keyed structures lets the expensive side (queries) scale independently of the cheap side (clicks).",
+        "Source claim (L221-239): sharding hashes query_id, takes the result modulo N, and sends the record to that shard so each LogJoiner receives a consistent subset; scaling is horizontal by adding LogJoiners. Inference: the shard key is chosen to match the join key, which keeps each join local to one shard.",
+        "Source claim (L253-261): QueryMap and ClickMap shard on ad_id because ad_id is known before any read or write; duplicating each log record to two shards keeps the pipeline running accurately when one LogJoiner or machine fails; two concurrent shard losses are covered by the error budget and by reprocessing. Inference: this is at-least-once processing with a bounded duplicate window, not exactly-once delivery.",
+        "Source claim (L267-285): a single datacenter is a single point of failure; the design uses three or five replicas with a consensus algorithm such as Paxos, and each write needs roughly one network round trip, estimated at 25 ms for fault-isolated datacenters, giving 40 sequential operations per second and at least 250 processes per datacenter at 10^4 clicks/s. Inference: the inter-datacenter latency assumption drives the entire process count; halving it would halve the task estimate.",
+        "Source claim (L287-315): replication doubles transactions to 20,000 clicks/s and 1,000,000 queries/s; 1.02 x 10^6 operations/s divided by 40 operations/s gives 25,500 tasks; 4 TB of map data gives 157 MB/task and 408 tasks per 64 GB machine; 16 Gbps aggregate gives 256 Mbps per machine, so roughly 64 machines and 4 TB RAM per datacenter suffice. Inference: the arithmetic assumes uniform task loading and ignores headroom for backlog, which the text acknowledges qualitatively.",
+        "Source claim (L321-339): the design is checked requirement by requirement (click rate, query rate, dashboard latency, freshness) and judged to scale. Inference: this is an analytical argument from assumptions, not an experimental validation; the chapter reports no measurement or production deployment.",
+        "Source claim (L347-369): the conclusion advises separating components by expected growth, avoiding dependencies on single hardware or software instances, and repeatedly asking the four questions; NALSD is a learned skill that must be practiced. Inference: the chapter's transferable content is the estimation-and-review method, while the AdWords design itself is an illustration."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md",
+          "candidate": "Relate the chapter's assumption-driven capacity arithmetic to this page; no edit under #225."
+        },
+        {
+          "path": "book/performance/workload-profiles-and-capacity-experiments.md",
+          "candidate": "Relate the chapter's workload inputs (query/click rates, record size) to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c06-capacity-operational-constraints-and-total-cost/operating-capacity.md",
+          "candidate": "Relate the chapter's resource-feasibility iteration to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "candidate": "Relate the chapter's query_id versus ad_id shard-key choice to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "candidate": "Relate the chapter's datacenter-level single point of failure and replica placement to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "candidate": "Relate the chapter's Paxos write-round-trip throughput bound to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated reader (DeepSeek Harness subagent session), one bounded unit, extraction only; not independent review, human review, CI or source-completeness evidence",
+      "chapter": "sre-workbook-12",
+      "title": "System Design: Non-Abstract Large System Design"
+    },
+    {
+      "id": "R160",
+      "source_id": "src.sre-workbook",
+      "source_ids": [
+        "src.sre-workbook"
+      ],
+      "url": "https://sre.google/workbook/data-processing/",
+      "unit": "SRE Workbook chapter 13, Improve and Optimize Data Processing Pipelines — public HTML page captured as Markdown (local representation /tmp/B20/raw/sre-workbook-13.md)",
+      "revision": "SRE Workbook, public HTML inspected 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "All 522 lines / 12,930 words of the local representation were read sequentially and in order (lines 1-522): capture header, introduction, pipeline applications (ETL, analytics, machine learning), best practices (SLOs, dependency failure, documentation, development lifecycle, hotspotting, autoscaling, access control, escalation), requirements and design (Table 13-1, idempotent and two-phase mutations, checkpointing, code patterns, maturity matrix), failure prevention and response, the Spotify event-delivery case study, conclusion and footnotes 1-8. Lines 1-7 are the capture header (Title, URL Source, Published Time, Markdown Content), not chapter prose; the page's h2 banner (\"Chapter 13 - Data Processing Pipelines\", table-of-contents/navigation text) is absent from the capture and was not used. No site navigation, cookie banner or footer chrome is present in the capture. Complete read of the local representation, not a claim of complete source coverage: the capture flattens most h5/h6 section headings and omits one short Spotify note (see representation_gap).",
+      "retrieval_refs": [
+        {
+          "lines": "8-14",
+          "section": "Introduction and chapter scope",
+          "note": "pipeline purpose; delayed or incorrect data as user-facing risk; SRE involvement"
+        },
+        {
+          "lines": "16-38",
+          "section": "Pipeline Applications; ETL",
+          "note": "stages, high-level specification, transformation use cases"
+        },
+        {
+          "lines": "40-42",
+          "section": "Data analytics: Shave the Yak",
+          "note": "BigQuery tables updated three times daily; job on new data"
+        },
+        {
+          "lines": "44-84",
+          "section": "Machine learning: Dressy",
+          "note": "five ML stages; streaming preprocessing; model serving; staleness triage"
+        },
+        {
+          "lines": "94-110",
+          "section": "Define and Measure Service Level Objectives",
+          "note": "freshness formats, correctness and golden data, per-stage pitfalls"
+        },
+        {
+          "lines": "112-118",
+          "section": "Plan for Dependency Failure (heading absent)",
+          "note": "SLA floors, DiRT regional outage, manual failover risk"
+        },
+        {
+          "lines": "120-136",
+          "section": "Create and Maintain Pipeline Documentation",
+          "note": "system diagrams, process documentation, playbook per alert"
+        },
+        {
+          "lines": "138-162",
+          "section": "Map Your Development Lifecycle (heading absent)",
+          "note": "prototype, 1% dry run, staging, canary, partial deployment ramp"
+        },
+        {
+          "lines": "164-180",
+          "section": "Reduce Hotspotting and Workload Patterns",
+          "note": "overloaded serving task, tablet, row locks, disk; isolation options"
+        },
+        {
+          "lines": "182-188",
+          "section": "Implement Autoscaling and Resource Planning",
+          "note": "peak provisioning versus autoscaling; storage and network cost"
+        },
+        {
+          "lines": "190-200",
+          "section": "Access control and escalation",
+          "note": "PII, least privilege, TTL; page only after automation is exhausted"
+        },
+        {
+          "lines": "206-233",
+          "section": "Table 13-1; idempotent and two-phase mutations; checkpointing",
+          "note": "exactly-once, windowing, rollback, two-phase mutation, partial state"
+        },
+        {
+          "lines": "245-282",
+          "section": "Pipeline production readiness and maturity matrix",
+          "note": "five characteristics scored 1-5 with milestone descriptions"
+        },
+        {
+          "lines": "290-305",
+          "section": "Delayed and corrupt data",
+          "note": "stale better than incorrect; two-step corruption response; selective reprocessing"
+        },
+        {
+          "lines": "336-419",
+          "section": "Spotify event delivery: design and SLOs",
+          "note": "hourly buckets, Pub/Sub, three-stage ETL, timeliness/skewness/completeness"
+        },
+        {
+          "lines": "455-467",
+          "section": "Spotify capacity planning and Autoscaler limits",
+          "note": "50% peak CPU target; runaway autoscaling workarounds"
+        },
+        {
+          "lines": "481-502",
+          "section": "Spotify deployment and incident handling",
+          "note": "staging, canaries, manual approval; manual redelivery and reshuffle"
+        }
+      ],
+      "omissions": "Other SRE Workbook chapters outside this batch not read; no production experiment",
+      "representation_sha256": "6ddf971447ddfd65ee622b327b7f0cbb9f6d7e87b174fc3fce1e4432cb29a48f",
+      "retrieved_lines": 522,
+      "retrieved_words": 12930,
+      "representation_gap": {
+        "kind": "heading-and-callout-omission",
+        "sections": [
+          "Page banner \"Chapter 13 - Data Processing Pipelines\" (table-of-contents/navigation text)",
+          "h5/h6 headings: Event Processing/Data Transformation to Order or Structure Data, Data Analytics, Machine Learning, Plan for Dependency Failure, Map Your Development Lifecycle, Plan Escalation Paths, What Features Do You Need?, Checkpointing, Code Patterns, Pipeline Production Readiness, Potential Failure Modes, Potential Causes, Event Delivery, Event Delivery System Operation (most survive only as run-in labels or not at all)",
+          "Spotify \"Note\" callout defining customer and end user (about 33 words, after the case-study byline)"
+        ],
+        "evidence": "The public HTML inspected 2026-10-24 exposes h1/h2/h5/h6 headings that the capture lacks; opening-80-word sampling matched 78-100% for most sections; the Machine Learning section scored 47% because of list formatting, and its full section text was checked manually and is present. Two body elements are genuinely absent: the Spotify note (\"In this case study, a 'customer' refers to the development teams within Spotify...\") and the heading labels. The live fetch was truncated at 100,000 bytes, so the sections from capacity planning through the conclusion could not be structurally compared, and their gap status is unverified.",
+        "impact": "Navigation structure is flatter than the published page and two definitions from the case-study note are missing. All other sampled prose is present. Status covers the local representation only.",
+        "content_lost": "About 33 words of case-study definitions plus heading labels; no other contiguous omitted prose block detected within the comparable range"
+      },
+      "sections": [
+        {
+          "name": "Capture header (Title, URL Source, Published Time, Markdown Content)",
+          "lines": "1-7",
+          "note": "extraction metadata, not chapter prose"
+        },
+        {
+          "name": "Introduction and chapter scope",
+          "lines": "8-14"
+        },
+        {
+          "name": "Pipeline Applications",
+          "lines": "16-84",
+          "heading_present": true
+        },
+        {
+          "name": "Pipeline stages and the ETL model",
+          "lines": "18-38",
+          "heading_present": false,
+          "note": "h5 Event Processing heading absent"
+        },
+        {
+          "name": "Data analytics: Shave the Yak",
+          "lines": "40-42",
+          "heading_present": false
+        },
+        {
+          "name": "Machine learning: Dressy",
+          "lines": "44-84",
+          "heading_present": false,
+          "note": "five-stage ML pipeline; Figure 13-1 steps"
+        },
+        {
+          "name": "Pipeline Best Practices",
+          "lines": "86-200",
+          "heading_present": true
+        },
+        {
+          "name": "Define and Measure Service Level Objectives",
+          "lines": "90-110",
+          "heading_present": true,
+          "note": "freshness, correctness, isolation, end-to-end measurement"
+        },
+        {
+          "name": "Plan for Dependency Failure",
+          "lines": "112-118",
+          "heading_present": false
+        },
+        {
+          "name": "Create and Maintain Pipeline Documentation",
+          "lines": "120-136",
+          "heading_present": true,
+          "note": "diagram, process docs, playbook entries"
+        },
+        {
+          "name": "Map Your Development Lifecycle",
+          "lines": "138-162",
+          "heading_present": false,
+          "note": "prototyping through partial deployment and production"
+        },
+        {
+          "name": "Reduce Hotspotting and Workload Patterns",
+          "lines": "164-180",
+          "heading_present": true
+        },
+        {
+          "name": "Implement Autoscaling and Resource Planning",
+          "lines": "182-188",
+          "heading_present": true
+        },
+        {
+          "name": "Access control and escalation",
+          "lines": "190-200",
+          "heading_present": true,
+          "note": "PII, least privilege, TTL; Plan Escalation Paths heading absent"
+        },
+        {
+          "name": "Pipeline Requirements and Design",
+          "lines": "202-282",
+          "heading_present": true
+        },
+        {
+          "name": "Table 13-1: recommended pipeline features",
+          "lines": "206-219",
+          "heading_present": true
+        },
+        {
+          "name": "Idempotent and Two-Phase Mutations",
+          "lines": "221-229",
+          "heading_present": true
+        },
+        {
+          "name": "Checkpointing",
+          "lines": "231-233",
+          "heading_present": false
+        },
+        {
+          "name": "Code patterns: shared libraries and smaller pipelines",
+          "lines": "235-243",
+          "heading_present": false
+        },
+        {
+          "name": "Pipeline production readiness and maturity matrix",
+          "lines": "245-282",
+          "heading_present": false,
+          "note": "five characteristics, 1-5 scale, Table 13-2"
+        },
+        {
+          "name": "Pipeline Failures: Prevention and Response",
+          "lines": "284-326",
+          "heading_present": true
+        },
+        {
+          "name": "Delayed data",
+          "lines": "290-296",
+          "heading_present": false
+        },
+        {
+          "name": "Corrupt data",
+          "lines": "298-305",
+          "heading_present": false
+        },
+        {
+          "name": "Dependencies, application/config errors, load growth, regional outage",
+          "lines": "307-326",
+          "heading_present": false
+        },
+        {
+          "name": "Case Study: Spotify",
+          "lines": "328-502",
+          "heading_present": true,
+          "note": "byline L330; note callout absent"
+        },
+        {
+          "name": "Events, hourly buckets and SLO types",
+          "lines": "332-346",
+          "heading_present": false
+        },
+        {
+          "name": "Event delivery system design and architecture",
+          "lines": "348-419",
+          "heading_present": true,
+          "note": "Pub/Sub, event types, three-stage ETL, timeliness/skewness/completeness"
+        },
+        {
+          "name": "Customer integration and support",
+          "lines": "421-481",
+          "heading_present": true,
+          "note": "managed service, limited API, ownership, documentation, monitoring, capacity, CI/CD"
+        },
+        {
+          "name": "Incident handling",
+          "lines": "483-502",
+          "heading_present": true
+        },
+        {
+          "name": "Conclusion",
+          "lines": "504-506",
+          "heading_present": true
+        },
+        {
+          "name": "Footnotes 1-8",
+          "lines": "508-522"
+        }
+      ],
+      "notes": [
+        "Source claim (L8-10): data processing pipelines turn unbounded, unordered, global-scale data sets into structured, indexed storage; delayed or incorrect data can manifest as expensive user-facing issues; SREs should be involved from early design so pipelines can be released, modified and run without customer impact. Inference: the chapter frames pipeline reliability as a lifecycle concern, not only an operations concern.",
+        "Source claim (L18-38): a pipeline can contain multiple stages, each a separate process with dependencies, often hidden behind a high-level specification such as Cloud Dataflow; ETL extracts, transforms and loads data for analysis or serving, with examples including ML preprocessing, event counting, billing reports and search indexing. Inference: the abstraction boundary between user logic and stage graph is where most operational complexity is hidden.",
+        "Source claim (L44-84): the Dressy example runs a five-stage ML pipeline (feature/label extraction, training, evaluation, serving, downstream decisions), uses streaming preprocessing into TensorFlow, requires a new product to appear in recommendations within 12 hours, and triages stale or missing models by checking input stalls, model quality, and whether a new or stale model is deployed. Inference: model freshness is treated as a data-pipeline SLO problem rather than a model-quality problem.",
+        "Source claim (L94-110): freshness SLOs take three forms (X% processed within Y, oldest data no older than Y, job completed within Y); correctness SLOs need golden data or backward-looking error targets; per-stage SLOs miss end-to-end customer experience and can hide cross-stage data loss. Inference: an end-to-end correctness signal is necessary because locally correct stages can still drop fields at a boundary.",
+        "Source claim (L112-118): pipeline owners should not over-depend on provider SLAs; they should design for the largest failure the SLA allows, may need to replicate across regions, and should practice regional failover (DiRT). The text notes manual failover can prolong an outage and that stale data may continue to be processed, requiring restore and reprocessing. Inference: dependency failure is treated as a planned scenario with an explicit recovery procedure.",
+        "Source claim (L122-162): three documentation categories are recommended — system diagrams with live status links, process documentation for common and rare tasks, and a playbook entry per alert linked from the alert itself. The development lifecycle then runs prototype and unit tests, a 1% dry run on production data, staging with representative data, integration and A/B comparison against known-good output, canarying, a partial deployment ramped about 1%/10%/50%/100%, and production promotion with rollback and bad-data marking. Inference: documentation and staged rollout serve the same goal — shrinking the time between introducing and detecting a defective change.",
+        "Source claim (L164-180): hotspotting arises from overloaded serving tasks, a hot storage tablet, row-lock contention, disk head contention, or a single large work unit; mitigations include blocking fine-grained records so the rest of the pipeline progresses, dynamic rebalancing, an emergency shutdown flag or config to skip matching input, restructuring access patterns, static allocation and coarser or finer lock granularity. Inference: isolation at the record or key range is the common mechanism behind these mitigations.",
+        "Source claim (L184-188): autoscaling avoids paying for peak capacity continuously and matters most for streaming and variable workloads, while batch jobs consume whatever is available; capacity planning must include storage, network and cross-region replication costs, and efficiency should be measured per stage even though the SLO is end-to-end. Inference: cost and reliability are optimized at different granularities (stage versus pipeline).",
+        "Source claim (L192-200): avoid PII in temporary storage or encrypt it, grant each stage minimal access to the previous stage's output, put TTLs on logs and PII, and use separate projects or instances for finer scoping; a system failure should not by itself page, because pages should arrive only after automated measures are exhausted, and SLO violations require fast response and proactive customer communication. Inference: the paging philosophy separates automated remediation from human escalation.",
+        "Source claim (L206-233): Table 13-1 recommends streaming or batch APIs, exactly-once semantics or idempotent work, two-phase mutation, windowing, multihoming, autoscaling, rollback, backup/restore, checkpointing and black-box monitoring; idempotent mutations make repeated execution safe, two-phase mutation stages mutations for validation before applying them, and checkpointing saves partial state so a preempted or failed job resumes. Inference: exactly-once is presented as optional when the work itself is idempotent.",
+        "Source claim (L290-305): delayed input can cause downstream jobs to run without necessary data, so stale data is almost always better than incorrect data; corrupt data is handled in two steps — stop further corruption, then restore a known-good version or reprocess, optionally selectively by user/account or from an intermediate checkpoint. Inference: the chapter prioritizes containment before repair because reprocessing is labor-intensive.",
+        "Source claim (L336-419, L455-467, L481-502): Spotify captures hundreds of billions of events daily and pays royalties from delivered events; events are partitioned into hourly buckets by type and time, Pub/Sub decouples collection from delivery, and a three-component ETL persists deduplicated buckets. SLOs cover timeliness, skewness and completeness, are measured externally, exclude data quality, and are split into three priority tiers. Capacity is planned at about 50% peak CPU; when CPU stops correlating with work, Autoscaler can scale indefinitely, so instances are capped and idle CPU is throttled. Deployments go staging then canaries with manual approval; completeness and skewness breaches are repaired by manual redelivery from the last good checkpoint and manual reshuffling, after which customers are advised to reprocess. Inference: the case study's delivery contract is deliberately narrow, and its data-repair path remains manual even though its failover is automated."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
+          "candidate": "Relate the chapter's event-time partitioning, windowing and delivery contract to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/checkpoints-time.md",
+          "candidate": "Relate the chapter's checkpointing, redelivery and skewness handling to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
+          "candidate": "Relate the chapter's freshness, correctness, timeliness and completeness SLOs to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "candidate": "Relate the chapter's hotspotting causes and fine-grained isolation to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+          "candidate": "Relate the chapter's autoscaling limits and runaway-scaling workarounds to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/canary-compatibility.md",
+          "candidate": "Relate the chapter's dry run, canary and partial-deployment ramp to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated reader (DeepSeek Harness subagent session), one bounded unit, extraction only; not independent review, human review, CI or source-completeness evidence",
+      "chapter": "sre-workbook-13",
+      "title": "Improve and Optimize Data Processing Pipelines"
+    },
+    {
+      "id": "R161",
+      "source_id": "src.sre-workbook",
+      "source_ids": [
+        "src.sre-workbook"
+      ],
+      "url": "https://sre.google/workbook/configuration-design/",
+      "unit": "SRE Workbook chapter 14, Configuration Design and Best Practices — public HTML page captured as Markdown (local representation /tmp/B20/raw/sre-workbook-14.md)",
+      "revision": "SRE Workbook, public HTML inspected 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "All 210 lines / 4,629 words of the local representation were read sequentially and in order (lines 1-210): capture header, introduction, what configuration is (reliability, philosophy versus mechanics), configuration philosophy (user-centric questions, mandatory and optional questions, defaults, power users), mechanics (separating configuration from resulting data, tooling and validation, ownership and change tracking, safe change application), conclusion and footnotes 1-8. Lines 1-7 are the capture header (Title, URL Source, Published Time, Markdown Content), not chapter prose; the page's h2 banner (\"Chapter 14 - Configuration Design and Best Practices\", table-of-contents/navigation text) is absent from the capture and was not used. No site navigation, cookie banner or footer chrome is present in the capture. Complete read of the local representation, not a claim of complete source coverage: the public HTML inspected 2026-10-24 carries section headings absent from the capture and one short callout on hermetic configuration that the capture omits entirely (see representation_gap); all other sampled body sections matched the capture.",
+      "retrieval_refs": [
+        {
+          "lines": "8-10",
+          "section": "Introduction",
+          "note": "configuration in initial setup and emergency reconfiguration; designer's perspective"
+        },
+        {
+          "lines": "12-24",
+          "section": "What Is Configuration?",
+          "note": "configuration as human-computer interface; software, data set, configuration; testable changes"
+        },
+        {
+          "lines": "26-32",
+          "section": "Configuration and Reliability",
+          "note": "humans configure; dramatic effect of one option; untested; incident pressure; aviation analogy"
+        },
+        {
+          "lines": "34-42",
+          "section": "Separating Philosophy and Mechanics",
+          "note": "philosophy independent of language; mechanics less generalizable; next chapter Jsonnet"
+        },
+        {
+          "lines": "44-58",
+          "section": "Configuration Philosophy; no configuration ideal",
+          "note": "reduce tunables; NASA control panel; cognitive load; Google adoption"
+        },
+        {
+          "lines": "60-76",
+          "section": "Configuration Asks Users Questions (heading absent)",
+          "note": "infrastructure-centric versus user-centric views; favors user-centric"
+        },
+        {
+          "lines": "78-84",
+          "section": "Questions Should Be Close to User Goals (heading absent)",
+          "note": "spectrum of inputs; tea analogy; high-level goals let implementation evolve"
+        },
+        {
+          "lines": "86-102",
+          "section": "Mandatory and Optional Questions",
+          "note": "defaults, dry-run default, dynamic thread/heap defaults, organ-donor default"
+        },
+        {
+          "lines": "104-112",
+          "section": "Escaping Simplicity (heading absent)",
+          "note": "power users; optional overrides; total configuration hours; revisit assumptions"
+        },
+        {
+          "lines": "114-140",
+          "section": "Mechanics: separate configuration and resulting data",
+          "note": "static protobuf/YAML/JSON target; DSL or Jsonnet compiles to data; metadata; avoid coupling"
+        },
+        {
+          "lines": "142-162",
+          "section": "Importance of Tooling (heading absent)",
+          "note": "semantic validation; syntax highlighting, linter, autoformatter"
+        },
+        {
+          "lines": "164-174",
+          "section": "Ownership and Change Tracking",
+          "note": "single owner per snippet; versioning; log changes and application"
+        },
+        {
+          "lines": "176-188",
+          "section": "Safe Configuration Change Application",
+          "note": "gradual deployment, rollback, protection against loss of operator control"
+        },
+        {
+          "lines": "190-194",
+          "section": "Conclusion",
+          "note": "configuration as API and UI design; Canary Analysis Service experience"
+        },
+        {
+          "lines": "196-210",
+          "section": "Footnotes 1-8",
+          "note": "Vicente, defaults research, Jsonnet, clang-format, deprecated-config rewriting"
+        }
+      ],
+      "omissions": "Other SRE Workbook chapters outside this batch not read; no production experiment",
+      "representation_sha256": "e16c106058d99568921bc928f0a940f12a181411b295976074dc3fe2e9a853e1",
+      "retrieved_lines": 210,
+      "retrieved_words": 4629,
+      "representation_gap": {
+        "kind": "heading-and-callout-omission",
+        "sections": [
+          "Page banner \"Chapter 14 - Configuration Design and Best Practices\" (table-of-contents/navigation text)",
+          "h5/h6 headings: Configuration Asks Users Questions, Questions Should Be Close to User Goals, Escaping Simplicity, Importance of Tooling, Semantic validation, Configuration syntax",
+          "Note callout inside Safe Configuration Change Application: configuration must be hermetic to roll forward and back (about 58 words, before the operator-control paragraph)"
+        ],
+        "evidence": "The public HTML inspected 2026-10-24 has 4,891 normalized text words (including chrome) and exposes six section headings absent from the capture. The string \"hermetic\" does not occur in the capture, and 8-gram comparison of the \"Note\" callout matched only 26%, while every other sampled body section matched 89-100%. The banner h2 section (130 words) is table-of-contents and navigation chrome and was excluded.",
+        "impact": "One substantive qualification is missing: a configuration that references external mutable resources is not hermetic and is hard to roll back. Section structure is also flatter. All remaining claims rest on captured prose; the missing callout was not inferred or reconstructed in the notes.",
+        "content_lost": "About 58 words of the hermetic-configuration callout plus heading labels; no other contiguous omitted prose block detected"
+      },
+      "sections": [
+        {
+          "name": "Capture header (Title, URL Source, Published Time, Markdown Content)",
+          "lines": "1-7",
+          "note": "extraction metadata, not chapter prose"
+        },
+        {
+          "name": "Introduction",
+          "lines": "8-10"
+        },
+        {
+          "name": "What Is Configuration?",
+          "lines": "12-24",
+          "heading_present": true
+        },
+        {
+          "name": "Configuration and Reliability",
+          "lines": "26-32",
+          "heading_present": true
+        },
+        {
+          "name": "Separating Philosophy and Mechanics",
+          "lines": "34-42",
+          "heading_present": true
+        },
+        {
+          "name": "Configuration Philosophy",
+          "lines": "44-58",
+          "heading_present": true,
+          "note": "ideal of no configuration; NASA panel; cognitive load"
+        },
+        {
+          "name": "Configuration Asks Users Questions",
+          "lines": "60-76",
+          "heading_present": false,
+          "note": "two perspectives; user-centric favored"
+        },
+        {
+          "name": "Questions Should Be Close to User Goals",
+          "lines": "78-84",
+          "heading_present": false,
+          "note": "input spectrum and tea analogy"
+        },
+        {
+          "name": "Mandatory and Optional Questions",
+          "lines": "86-102",
+          "heading_present": true
+        },
+        {
+          "name": "Escaping Simplicity",
+          "lines": "104-112",
+          "heading_present": false,
+          "note": "power-user overrides; total hours; revisit assumptions"
+        },
+        {
+          "name": "Mechanics of Configuration",
+          "lines": "114-188",
+          "heading_present": true
+        },
+        {
+          "name": "Separate Configuration and Resulting Data",
+          "lines": "118-140",
+          "heading_present": true,
+          "note": "interface compiles to static data; metadata; avoid tight coupling"
+        },
+        {
+          "name": "Importance of Tooling",
+          "lines": "142-162",
+          "heading_present": false,
+          "note": "semantic validation and syntax tooling"
+        },
+        {
+          "name": "Ownership and Change Tracking",
+          "lines": "164-174",
+          "heading_present": true
+        },
+        {
+          "name": "Safe Configuration Change Application",
+          "lines": "176-188",
+          "heading_present": true,
+          "note": "hermetic callout absent before L182"
+        },
+        {
+          "name": "Conclusion",
+          "lines": "190-194",
+          "heading_present": true
+        },
+        {
+          "name": "Footnotes 1-8",
+          "lines": "196-210"
+        }
+      ],
+      "notes": [
+        "Source claim (L8-14): configuring systems is a common SRE task that can be tiring and detailed, and it happens either during initial setup with ample time or during emergency reconfiguration under incident pressure; configuration is loosely defined as a human-computer interface for modifying system behavior. Inference: the chapter treats configuration design as an interface problem, so usability and reliability are linked.",
+        "Source claim (L16-24): systems have three components — software, data set and configuration — that are often not cleanly separated; configuration may be written in programming languages (mod_lua, XMonad's Haskell configuration) and data may contain code (stored procedures); a good interface allows quick, confident, testable changes. Inference: the boundary between configuration and code is a design choice, not a natural property.",
+        "Source claim (L28-32): humans are responsible for configuration, so its interface quality affects reliable operation; unlike code, a single configuration option can dramatically change functionality (a bad firewall rule can lock you out), configuration often lives in an untested environment, and changes may be made under pressure; early aircraft control design is offered as an analogy between usability and accidents. Inference: configuration deserves the review and testing effort normally given to code, but frequently does not receive it.",
+        "Source claim (L48-58): the ideal configuration is none at all — the system infers configuration from deployment, workload or existing configuration; historically mission-critical systems had many controls plus extensive operator training, which is no longer feasible; reducing controls reduces error surface and cognitive load, and Google's application of these principles produced broad adoption and low support cost. Inference: the 'no configuration' ideal functions as a direction of travel rather than an achievable target.",
+        "Source claim (L64-84): infrastructure-centric design offers as many knobs as possible, while user-centric design treats configuration questions as a chore to minimize; the chapter favors the user-centric view because it lowers onboarding effort and can improve adoption, and it places user inputs on a spectrum from stating goals to specifying implementation, illustrated by ordering tea. Inference: a high-level interface also lets the implementation improve over time without changing the user contract.",
+        "Source claim (L88-102): mandatory questions block all functionality and should be minimized; the easiest reduction is converting them to optional questions with safe defaults, which may be static or dynamically derived (thread count from cores, heap from container memory); defaults carry responsibility because most users keep them, illustrated by organ-donor opt-in versus opt-out ratios; optional questions without a clear use case should be removed. Inference: a default is a product decision with behavioral force, not a neutral placeholder.",
+        "Source claim (L104-112): power users can be served by optional overrides on top of high-level defaults (steep the tea for five minutes), by choosing a lowest-common-denominator complexity, or by accepting harder steps if that simplifies common cases; the chapter recommends optimizing total hours spent configuring across the organization, including decision paralysis and correction time, and revisiting product assumptions if many users need complexity. Inference: the cost model is organization-wide time, not per-change effort.",
+        "Source claim (L120-140): configuration questions ultimately reduce to static information; the recommended pattern is a high-level interface (Python DSL, Lua, Jsonnet or a web UI) that compiles to plain static data such as Protocol Buffers, YAML or JSON, with metadata recording provenance; static data can be queried for which parameters are used and by whom, and tight coupling between interface and internal formats should be avoided. Inference: separating interface from data enables tooling, analysis and multiple front ends without changing the runtime contract.",
+        "Source claim (L144-162): syntax validation is usually available, but semantic validation is the higher-value check (nonexistent directory, implausible RAM); misconfigurations should be prevented at commit time where possible; editors should offer syntax highlighting, a linter and an automatic formatter, which also reduce formatting debate and enable automated edits. Inference: shifting validation left converts post-deployment outages into rejected commits.",
+        "Source claim (L166-174): configuration can affect critical systems, so each snippet should have a clear owner, changes should be versioned (including changes made through web UI or APIs), and both the change and its application should be logged; when a configuration change is suspected in an incident, the full set of edits should be recoverable to support rollback and notification. Inference: ownership plus versioning is what makes a configuration change auditable and reversible.",
+        "Source claim (L176-188): a safe configuration change must be deployable gradually, rollbackable, and protected against loss of operator control; a global all-at-once push risks a 100% outage, rollback shortens incidents more reliably than patching, and systems should require confirmation for changes that could cut off the operator (screen resolution, firewall rules). Inference: these are the same safety properties as staged software rollout, applied to a change surface that is often untested.",
+        "Source claim (L192-194): configuration design carries aspects of both API and UI design and should be purposeful rather than a side effect of implementation; the Canary Analysis Service team spent about a month reducing mandatory questions and finding good optional answers, producing a simple, widely adopted system with little support need, though misconfigurations were not eliminated. Inference: the month of design work is presented as an upfront investment that paid back in adoption and support load."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
+          "candidate": "Relate the chapter's gradual, rollbackable configuration change properties to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+          "candidate": "Relate the chapter's staged push and operator-control safeguards to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/desired-state-exposure.md",
+          "candidate": "Relate the chapter's separation of configuration interface from static desired-state data to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+          "candidate": "Relate the chapter's treatment of configuration as API and UI design to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-response-and-operational-change.md",
+          "candidate": "Relate the chapter's emergency reconfiguration and change-attribution discussion to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated reader (DeepSeek Harness subagent session), one bounded unit, extraction only; not independent review, human review, CI or source-completeness evidence",
+      "chapter": "sre-workbook-14",
+      "title": "Configuration Design and Best Practices"
+    },
+    {
+      "id": "R162",
+      "source_id": "src.sre-workbook",
+      "source_ids": [
+        "src.sre-workbook"
+      ],
+      "url": "https://sre.google/workbook/configuration-specifics/",
+      "title": "Configuration Management Strategies for Teams",
+      "chapter": "sre-workbook-15",
+      "unit": "SRE Workbook chapter 15, Configuration Specifics - public HTML page captured as Markdown (local representation /tmp/B20/raw/sre-workbook-15.md)",
+      "revision": "SRE Workbook, public HTML inspected 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "All 424 lines / 5,843 words of the local representation were read sequentially (lines 1-424), from the Configuration Specifics heading through footnotes 1-5: configuration-induced replication and complexity toil, reduction strategies, critical properties and five pitfalls, Jsonnet integration, the Kubernetes YAML-to-Jsonnet template walkthrough, custom-application guidance, operating a configuration system, evaluation timing, defenses against abusive configuration, conclusion and footnotes. Lines 1-5 are the capture header (Title, URL Source, Markdown Content), not chapter prose; the capture contains no site navigation, cookie banner, footer or reader chrome. The capture omits one substantive sidebar, the author byline and most subsection headings (see representation_gap), so this is a complete read of the local representation, not complete source coverage.",
+      "retrieval_refs": [
+        {
+          "lines": "6-10",
+          "section": "Configuration Specifics introduction",
+          "note": "on-call must know where configuration lives; configuration-related toil"
+        },
+        {
+          "lines": "12-18",
+          "section": "Configuration-Induced Toil",
+          "note": "replication toil, configuration languages, complexity toil above about ten engineers"
+        },
+        {
+          "lines": "20-30",
+          "section": "Reducing Configuration-Induced Toil",
+          "note": "remove configuration, automate duplication, integrate and operate a language"
+        },
+        {
+          "lines": "32-40",
+          "section": "Critical properties",
+          "note": "tooling, hermetic evaluation, separation of config and data"
+        },
+        {
+          "lines": "42-56",
+          "section": "Pitfall 1 and Pitfall 2 prose",
+          "note": "data-only formats accreting language features; count attribute; string interpolation; YAML plus Jinja"
+        },
+        {
+          "lines": "58-70",
+          "section": "Pitfall 3, 4 and 5 prose",
+          "note": "domain-specific optimization, side effects, general-purpose scripting; HOCON, Flabbergast, Dhall, Jsonnet"
+        },
+        {
+          "lines": "72-94",
+          "section": "Integrating a Configuration Language",
+          "note": "three integration steps, multi-application output, filename-to-content map"
+        },
+        {
+          "lines": "96-140",
+          "section": "Integrating an Existing Application: Kubernetes",
+          "note": "YAML limits, anchors, example1.yaml, YAML values JSON cannot express"
+        },
+        {
+          "lines": "142-229",
+          "section": "Jsonnet template walkthrough",
+          "note": "templates.libsonnet, four instances, hidden fields, self, error, field overrides, conversion workflow"
+        },
+        {
+          "lines": "231-242",
+          "section": "Abstraction use cases",
+          "note": "environment variants and reusable infrastructure templates"
+        },
+        {
+          "lines": "244-306",
+          "section": "Integrating Custom Applications (In-House Software)",
+          "note": "one pure data file, named-entity objects, logical grouping, schema and domain validation"
+        },
+        {
+          "lines": "308-340",
+          "section": "Effectively Operating a Configuration System",
+          "note": "library versioning, source control, review, linting, unit tests"
+        },
+        {
+          "lines": "342-378",
+          "section": "When to Evaluate Configuration",
+          "note": "check-in, build-time and runtime evaluation with pros and cons"
+        },
+        {
+          "lines": "380-406",
+          "section": "Evaluation examples and abusive configuration",
+          "note": "ksonnet, Box.com Git hooks, Helm/Spinnaker; nontermination, Turing completeness, sandboxing"
+        },
+        {
+          "lines": "408-424",
+          "section": "Conclusion and footnotes 1-5",
+          "note": "critical properties; DSL transition; footnotes"
+        }
+      ],
+      "omissions": "Other SRE Workbook chapters outside this batch not read; no production experiment",
+      "representation_gap": {
+        "kind": "partial-text-and-heading-omission",
+        "sections": [
+          "A Very Quick Introduction to Jsonnet sidebar (278 words plus heading)",
+          "author byline (12 words)",
+          "17 of 18 h5 subsection headings",
+          "all 7 h6 Pros/Cons labels"
+        ],
+        "evidence": "The public HTML inspected 2026-10-24 contains 6,142 normalized words in the article body from the Configuration Specifics heading to the footnote block, versus 5,761 normalized words in the local Markdown body (lines 6-414, excluding the capture header and footnotes). A block-level comparison isolates one contiguous omitted inset: the sidebar A Very Quick Introduction to Jsonnet (six paragraphs, 278 words) plus its heading. The remaining difference is the 12-word byline By Dave Cunningham and Misha Brukman with Christophe Kalt and Betsy Beyer and about 85 words of subsection heading labels. All other body paragraphs match; only the Pitfall 3 heading survives.",
+        "impact": "About 4.6% of article words, the author attribution and most subsection structure are absent from the local representation. The remaining text was read in full; the missing passages were not inferred or substituted. Status covers the local representation only, not complete source coverage.",
+        "content_lost": "278 words in one sidebar, a 12-word byline, 17 h5 and 7 h6 heading labels"
+      },
+      "representation_sha256": "4eaf1801bd5d61403cff0e977ab0333ef021ccd4e876f7c8fff0c56c71e9a215",
+      "retrieved_lines": 424,
+      "retrieved_words": 5843,
+      "body_words_excluding_chrome": 5832,
+      "sections": [
+        {
+          "name": "Capture header (Title, URL Source, Markdown Content)",
+          "lines": "1-5",
+          "note": "extraction metadata, not chapter prose"
+        },
+        {
+          "name": "Configuration Specifics introduction",
+          "lines": "6-10"
+        },
+        {
+          "name": "Configuration-Induced Toil",
+          "lines": "12-18",
+          "note": "replication toil and complexity toil"
+        },
+        {
+          "name": "Reducing Configuration-Induced Toil",
+          "lines": "20-30"
+        },
+        {
+          "name": "Critical Properties and Pitfalls of Configuration Systems",
+          "lines": "32-70",
+          "note": "critical properties at L34-38; Pitfall 3 heading present at L58, other pitfall headings absent"
+        },
+        {
+          "name": "Integrating a Configuration Language",
+          "lines": "72-94"
+        },
+        {
+          "name": "Integrating an Existing Application: Kubernetes",
+          "lines": "96-242",
+          "note": "YAML example L113-136; Jsonnet template L142-207; override example L222-229"
+        },
+        {
+          "name": "Integrating Custom Applications (In-House Software)",
+          "lines": "244-306",
+          "note": "best practices and validation"
+        },
+        {
+          "name": "Effectively Operating a Configuration System",
+          "lines": "308-340",
+          "note": "versioning, source control, tooling, testing"
+        },
+        {
+          "name": "When to Evaluate Configuration",
+          "lines": "342-384",
+          "note": "check-in, build time, runtime"
+        },
+        {
+          "name": "Guarding Against Abusive Configuration",
+          "lines": "386-406",
+          "note": "resource exhaustion and sandboxing"
+        },
+        {
+          "name": "Conclusion",
+          "lines": "408-414"
+        },
+        {
+          "name": "Footnotes 1-5",
+          "lines": "416-424"
+        }
+      ],
+      "notes": [
+        "Source claim (L8-10): running production systems requires insight into how they are assembled; when something breaks, the on-call engineer must know where configuration lives and how to change it; unaddressed configuration work becomes toil, and the chapter points to Eliminating Toil. Inference: configuration operability is framed as an on-call prerequisite, not only a developer convenience.",
+        "Source claim (L12-18): configuration starts as a few INI, JSON, YAML or XML files; as applications, servers and variations multiply, edits must be replicated across locations and important differences hide among duplicated detail (replication toil); configuration languages remove duplication, but the config corpus then grows and complexity toil appears, typically above about ten engineers and compounding with growth. Inference: the two toil types are sequential, so a language can convert rather than eliminate toil.",
+        "Source claim (L22-30): options are to remove configuration when an application is custom-built and can assign defaults or vary values dynamically, to automate duplication away, or to adopt or improve a configuration language; the rest of the chapter covers integration, operation, evaluation timing and abuse prevention. Inference: removal is presented as a rare case and language adoption as the general path.",
+        "Source claim (L34-40): a configuration system needs tooling (linters, debuggers, formatters, IDE integration), hermetic evaluation for rollback and replay, and separation of configuration from data; Google built several systems that lacked these properties, and few popular systems avoid at least one listed pitfall. Inference: these are design requirements learned from failures, not measured acceptance criteria.",
+        "Source claim (L42-56): a format not intentionally designed as a language tends to accrete programming features, such as a count attribute that needs an external evaluator or string interpolation carrying checksums and base64 operations; YAML plus Jinja is hard for humans and tools to maintain and analyze, and ad hoc languages are less expressive than designed ones. Inference: the pitfall concerns unintentional semantics rather than any particular syntax.",
+        "Source claim (L58-70): domain-specific optimization can strand a small user base without tooling or learning resources; side effects such as DNS or build-version lookups violate hermeticity and config/data separation; general-purpose scripting languages are heavyweight and need sandboxing, and maintainers may not know them; reusable DSLs include HOCON, Flabbergast, Dhall and Jsonnet, and a style guide can restrict an overly powerful DSL. Inference: the recommendation is to adopt an existing DSL rather than design one.",
+        "Source claim (L72-94): integration means representing configuration data in the language, using language constructs to remove duplication, and writing or reusing a serializer; one evaluation can emit Nginx, Terraform, monitoring and disk-image configuration, and Jsonnet can emit a filename-to-content map. Inference: the claimed benefit is corpus-wide unification, which presupposes that every target format can be expressed.",
+        "Source claim (L96-140): Kubernetes ships no configuration language; YAML offers comments and concise syntax but only anchors for abstraction, which Kubernetes does not support, so four near-identical variants are stored separately; YAML can express NaN and non-string keys that JSON cannot, and Kubernetes rejects them because objects are JSON-encoded at the API. Inference: expressiveness beyond JSON is a portability hazard for generated configuration.",
+        "Source claim (L142-229): the Jsonnet template uses a hidden tier field (double colon), local service = self, and an error to force overrides; hidden fields can be referenced and overridden but are not emitted; templates allow overriding any parent field, whereas functions only parameterize. Inference: the hidden-field plus error pattern encodes a required-parameter contract inside the configuration language.",
+        "Source claim (L231-306): the conversion workflow is YAML to JSON, format, then add Jsonnet abstractions; abstraction suits per-environment variants and reusable infrastructure templates; custom applications should consume one pure data file, key named entities by name rather than array index, group logically related configuration, avoid interpreting custom string syntax, and validate generated data with schema and domain checks plus precommit hooks, because configuration changes dominate outage causes over time. Inference: validation is placed after evaluation to catch what syntax checks miss.",
+        "Source claim (L308-340): treat configuration as code: version template libraries (for example ksonnet.beta.2 path prefixes), keep configuration in source control for history, rollback and review, enforce style and linting, and unit-test libraries with assert or assertEqual; larger suites can use a community Jsonnet test framework. Inference: directory-based library versioning is a convention, not language support.",
+        "Source claim (L342-406): hermeticity makes Jsonnet interchangeable with expanded JSON, so evaluation can happen at check-in (reviewable and auditable, but unreadable, large, secret-bearing or conflict-prone JSON), at build time (controlled runtime and no desynchronization, but a more complex build and harder review), or at runtime (simple and supports user code, but adds footprint, delays bug discovery and requires trust); nonterminating or memory-hungry programs are easy even without Turing completeness, so untrusted evaluation should be sandboxed, for example in a separate process with ulimit or via the Go implementation. Inference: the choice trades reviewability against runtime flexibility rather than naming one best practice."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
+          "candidate": "Relate configuration-language integration and rollout of generated config to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/desired-state-exposure.md",
+          "candidate": "Relate hermetic evaluation and config/data separation to desired-state exposure; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md",
+          "candidate": "Relate versioned config libraries, review and source control to provenance and GitOps; no edit under #225."
+        },
+        {
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "candidate": "Relate generated-config validation and schema checks to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+          "candidate": "Relate build-time versus runtime config evaluation to progressive rollout; no edit under #225."
+        }
+      ],
+      "reader": "delegated reader (DeepSeek Harness subagent session), one bounded unit, extraction only; not independent review, human review, CI or source-completeness evidence"
+    },
+    {
+      "id": "R163",
+      "source_id": "src.sre-workbook",
+      "source_ids": [
+        "src.sre-workbook"
+      ],
+      "url": "https://sre.google/workbook/canarying-releases/",
+      "title": "Canary Release: Deployment Safety and Efficiency",
+      "chapter": "sre-workbook-16",
+      "unit": "SRE Workbook chapter 16, Canarying Releases - public HTML page captured as Markdown (local representation /tmp/B20/raw/sre-workbook-16.md)",
+      "revision": "SRE Workbook, public HTML inspected 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "All 267 lines / 5,924 words of the local representation were read sequentially (lines 1-267), from the Canarying Releases heading through footnotes 1-8: release engineering principles and benefits, shipping versus reliability, the canary definition and metaphor, the worked App Engine example of roll-forward versus canary deployment, canary implementation parameters, metric selection and attribution, dependencies and isolation, noninteractive systems, monitoring-data requirements, related techniques, conclusion and footnotes. Lines 1-5 are the capture header (Title, URL Source, Markdown Content), not chapter prose; the capture contains no site navigation, cookie banner, footer or reader chrome. Figures 16-1 to 16-4 are present only as webp image references and captions; the images themselves were not inspected, so figure-level claims are caption-level only. The capture also omits one substantive sidebar, the author byline and most subsection headings (see representation_gap); this is a complete read of the local representation, not complete source coverage.",
+      "retrieval_refs": [
+        {
+          "lines": "6-12",
+          "section": "Canarying Releases introduction",
+          "note": "release engineering definition; canary and control; canarying as A/B testing"
+        },
+        {
+          "lines": "14-36",
+          "section": "Release Engineering Principles",
+          "note": "reproducible, automated builds and tests, automated and small deployments"
+        },
+        {
+          "lines": "38-54",
+          "section": "Benefits and the virtuous cycle",
+          "note": "operational load, review, consistency, pipeline measurement; Figure 16-1"
+        },
+        {
+          "lines": "56-62",
+          "section": "Balancing Release Velocity and Reliability",
+          "note": "incidents triggered by binary or configuration pushes; SLOs and error budgets"
+        },
+        {
+          "lines": "64-70",
+          "section": "What Is Canarying?",
+          "note": "coal-mine metaphor; test coverage limits; instant global deployment spreads defects"
+        },
+        {
+          "lines": "72-92",
+          "section": "Release Engineering and Canarying",
+          "note": "three required capabilities; example frontend service and live versus release candidate"
+        },
+        {
+          "lines": "94-120",
+          "section": "A Roll Forward Deployment Versus a Simple Canary Deployment",
+          "note": "no-rollback failure; traffic splitting; per-version breakdown; Figures 16-2 to 16-4"
+        },
+        {
+          "lines": "122-134",
+          "section": "Minimizing Risk to SLOs and the Error Budget",
+          "note": "20% errors on 5% traffic; model assumptions and limits"
+        },
+        {
+          "lines": "136-158",
+          "section": "Choosing a Canary Population and Duration",
+          "note": "release velocity, one canary at a time, representativeness dimensions"
+        },
+        {
+          "lines": "160-172",
+          "section": "Selecting and Evaluating Metrics",
+          "note": "SLIs, false positives versus missed defects, stack-ranking, 400-level exclusion"
+        },
+        {
+          "lines": "174-190",
+          "section": "Metrics Should Be Representative and Attributable",
+          "note": "outliers, shared failure domains, process-level CPU metric, before/after risk"
+        },
+        {
+          "lines": "192-194",
+          "section": "Use a Gradual Canary for Better Metric Selection",
+          "note": "small first stage with clear failure signals, then larger population"
+        },
+        {
+          "lines": "196-202",
+          "section": "Dependencies and Isolation",
+          "note": "shared backends, client interactions, canary can harm control, absolute SLOs"
+        },
+        {
+          "lines": "204-214",
+          "section": "Canarying in Noninteractive Systems",
+          "note": "work-unit duration, same worker pool per unit, quality metrics"
+        },
+        {
+          "lines": "216-231",
+          "section": "Requirements on Monitoring Data",
+          "note": "per-population breakdown; metric interval no longer than canary duration"
+        },
+        {
+          "lines": "233-247",
+          "section": "Related techniques",
+          "note": "blue/green, artificial load generation, traffic teeing and their limits"
+        },
+        {
+          "lines": "249-267",
+          "section": "Conclusion and footnotes 1-8",
+          "note": "no panacea; testing evolves with the system; footnotes"
+        }
+      ],
+      "omissions": "Other SRE Workbook chapters outside this batch not read; no production experiment",
+      "representation_gap": {
+        "kind": "partial-text-and-heading-omission",
+        "sections": [
+          "Separating Components That Change at Different Rates sidebar (166 words plus heading)",
+          "author byline (18 words)",
+          "9 of 12 h5 subsection headings"
+        ],
+        "evidence": "The public HTML inspected 2026-10-24 contains 6,017 normalized words in the article body from the Canarying Releases heading to the footnote block, versus 5,824 normalized words in the local Markdown body (lines 6-251, excluding the capture header and footnotes). The 193-word difference matches one contiguous omitted inset - the sidebar Separating Components That Change at Different Rates (three paragraphs, 166 words) plus its 7-word heading - together with the 18-word byline. All other body paragraphs match, including the paragraphs whose headings the capture dropped. Nine h5 headings are absent: Separating Components That Change at Different Rates, Requirements of a Canary Process, Our Example Setup, Metrics Should Indicate Problems, Before/After Evaluation Is Risky, Use a Gradual Canary for Better Metric Selection, Blue/Green Deployment, Artificial Load Generation and Traffic Teeing; three h5 headings survive.",
+        "impact": "About 2.8% of article words, the author attribution and most subsection structure are absent from the local representation. The remaining text was read in full; the missing sidebar was not inferred or substituted. Status covers the local representation only, not complete source coverage.",
+        "content_lost": "166 words in one sidebar, an 18-word byline, 9 h5 heading labels"
+      },
+      "representation_sha256": "722e9d18205057b8c2345ddb8941b02756bf30d5833c18e877cb7cb1e93f9907",
+      "retrieved_lines": 267,
+      "retrieved_words": 5924,
+      "body_words_excluding_chrome": 5912,
+      "sections": [
+        {
+          "name": "Capture header (Title, URL Source, Markdown Content)",
+          "lines": "1-5",
+          "note": "extraction metadata, not chapter prose"
+        },
+        {
+          "name": "Canarying Releases introduction",
+          "lines": "6-12",
+          "note": "release engineering and canary definitions"
+        },
+        {
+          "name": "Release Engineering Principles",
+          "lines": "14-54",
+          "note": "five principles L16-36; benefits L38-50; Figure 16-1 at L52-54"
+        },
+        {
+          "name": "Balancing Release Velocity and Reliability",
+          "lines": "56-62"
+        },
+        {
+          "name": "What Is Canarying?",
+          "lines": "64-70"
+        },
+        {
+          "name": "Release Engineering and Canarying",
+          "lines": "72-92",
+          "note": "capabilities L80-86; example setup L88-92"
+        },
+        {
+          "name": "A Roll Forward Deployment Versus a Simple Canary Deployment",
+          "lines": "94-120",
+          "note": "Figures 16-2, 16-3 and 16-4 referenced at L100, L110, L118"
+        },
+        {
+          "name": "Canary Implementation",
+          "lines": "122-158",
+          "note": "Minimizing Risk L126-134; Choosing Population and Duration L136-158"
+        },
+        {
+          "name": "Selecting and Evaluating Metrics",
+          "lines": "160-194",
+          "note": "representativeness and attribution L174-190; gradual canary L192-194"
+        },
+        {
+          "name": "Dependencies and Isolation",
+          "lines": "196-202"
+        },
+        {
+          "name": "Canarying in Noninteractive Systems",
+          "lines": "204-214"
+        },
+        {
+          "name": "Requirements on Monitoring Data",
+          "lines": "216-231"
+        },
+        {
+          "name": "Related techniques",
+          "lines": "233-247",
+          "note": "Related Concepts heading absent locally; blue/green, artificial load, teeing"
+        },
+        {
+          "name": "Conclusion",
+          "lines": "249-251"
+        },
+        {
+          "name": "Footnotes 1-8",
+          "lines": "253-267"
+        }
+      ],
+      "notes": [
+        "Source claim (L8-10): release engineering covers processes and artifacts from repository to production; automation addresses repetitive toil, inconsistent manual steps, unknown rollout state and difficult rollback; canarying is a partial, time-limited deployment plus evaluation, with the changed portion called the canary and the remainder the control, effectively an A/B test. Inference: the definition requires both a traffic subset and a decision procedure, so a partial rollout without evaluation is not canarying.",
+        "Source claim (L16-36): the five principles are reproducible builds, automated builds, automated tests, automated deployments and small deployments. Inference: only the last constrains artifact content; the first four constrain the pipeline.",
+        "Source claim (L38-54): automation reduces operational load, enforces peer review and version control, yields consistent processes, and enables pipeline measurement such as time to production, release success rate, earlier defect detection and parallelization; the virtuous cycle is that more frequent releases mean smaller artifacts, cheaper rollback and faster fixes. Inference: the cycle is a causal argument, not a measured result in the chapter.",
+        "Source claim (L56-62): shipping and reliability are often treated as opposing goals, but 100% reliability is not the right target; in Google's experience most incidents are triggered by binary or configuration pushes, and SLOs plus error budgets let a team ship quickly while meeting reliability targets. Inference: the incident-share claim is experience-based and not quantified here.",
+        "Source claim (L64-70): the canary metaphor comes from coal mines; tests never cover every scenario and test environments differ from production, so an instant global deployment spreads any defect everywhere, whereas a canary exposes only part of production traffic and limits impact. Inference: canarying complements pre-production testing rather than replacing it.",
+        "Source claim (L72-92): canarying requires a way to deploy to a subset, an evaluation process, and integration into the release process; value appears when canaries detect bad candidates with high confidence and pass good releases without false positives; the worked example is an App Engine HTTP service with tunable error and latency behavior, compared as live versus release candidate. Inference: false positives are treated as a first-class failure mode because they erode trust in the gate.",
+        "Source claim (L94-120): without rollback, a bad deploy forces patching during the outage; a canary splits traffic by App Engine versions, load-balancer weights, proxy configuration or round-robin DNS; 20% errors on 5% of traffic yields about 1% overall error rate, so per-version breakdown is needed to see the defect; an automated comparison can pause, roll back or page a human. Inference: aggregate service metrics can hide a defective canary by dilution.",
+        "Source claim (L126-134): the canary risks only a small fragment of the error budget, bounded by time and population; the illustrative model assumes uniform load, full spending of the budget on canaries, a 100% failure rate and temporary sub-SLO availability; the authors call the model flawed but a solid starting point and recommend the simplest model that meets objectives. Inference: the arithmetic bounds exposure; it does not predict detection quality.",
+        "Source claim (L136-158): duration depends on release velocity; simultaneous canaries add mental effort and risk signal contamination, so only one should run at a time; representativeness depends on size and duration, traffic volume and homogeneity, time of day because performance defects need load, and the metrics chosen; past canary failure rates are a better basis than hypothetical worst cases. Inference: canary parameters are empirical and service-specific, not fixed constants.",
+        "Source claim (L160-172): success ratio alone is insufficient because latency or memory regressions also matter; SLIs are the starting point; defining acceptable behavior trades false positives against undetected bad canaries and must be revisited as the service evolves; metrics should be stack-ranked and limited to the top few (perhaps no more than a dozen); HTTP codes and latency beat CPU usage, and 400-level codes may be excluded with black-box checks added. Inference: metric count is itself a reliability cost because unmaintained metrics erode trust.",
+        "Source claim (L174-194): metrics must be attributable to the change and representative; outliers, differing kernels and oversubscribed machines can differ between canary and control; shared failure domains mean a bad canary can harm the control; process-level CPU time is better than host CPU; before/after canarying segments time and is noisy across weekday and weekend behavior; a gradual multi-stage canary uses a small first stage with clear failure signals, then a larger population. Inference: attribution depends on infrastructure comparability as much as on metric choice.",
+        "Source claim (L196-247): canary and control may share backends, networks, caches and clients, so a canary finding does not prove the canary is at fault and a bad canary can degrade the control; absolute SLOs are needed alongside A/B comparison; noninteractive canaries must span at least one work unit and keep each unit in one worker pool; monitoring must break metrics down by population and use intervals no longer than the canary; blue/green doubles resources and acts as before/after, artificial load has poor state coverage and can be dangerous in billing systems, and traffic teeing is representative but complex and can interfere in stateful systems. Inference: the chapter treats isolation and measurement design, not statistics, as the main practical constraints."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/canary-compatibility.md",
+          "candidate": "Relate canary population, duration and metric attribution to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+          "candidate": "Relate staged canary rollout and automated evaluation to this page; no edit under #225."
+        },
+        {
+          "path": "book/delivery/safe-rollout-and-recovery.md",
+          "candidate": "Relate rollback, before/after risk and related deployment techniques to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/budget-actions.md",
+          "candidate": "Relate error-budget exposure during canaries to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
+          "candidate": "Relate config pushes as an incident trigger and canarying config changes to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated reader (DeepSeek Harness subagent session), one bounded unit, extraction only; not independent review, human review, CI or source-completeness evidence"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 116,
+    "full_reads": 122,
     "blocked": 14,
     "records": [
       "R015",
@@ -10851,11 +12355,19 @@
       "R152",
       "R153",
       "R154",
-      "R155"
+      "R155",
+      "R156",
+      "R157",
+      "R158",
+      "R159",
+      "R160",
+      "R161",
+      "R162",
+      "R163"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
-    "partial_reads": 12
+    "partial_reads": 17
   }
 }
