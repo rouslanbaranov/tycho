@@ -79,3 +79,27 @@ management, paging, TLBs and smaller tables.
 Limitations: raster figures were not visually inspected; linked papers, code
 and exercises were not read or executed; the chapter 9 version discrepancy
 remains; no independent review or whole-book completion is claimed.
+
+## OSTEP swapping and complete VM continuation - 2026-10-24
+
+Four records B071-B074 add chapters 21-24: 996 retrieved lines, 21,631 words
+and 51 pages. The combined OSTEP continuation is 23 records: 6,178 lines,
+104,673 words and 269 pages. Chapters 21-22 cover swapping mechanisms and
+policies; chapter 23 covers VAX/VMS and Linux complete VM systems; chapter 24
+is the three-page summary dialogue.
+
+- All four records parse, have unique IDs B071-B074 and the same 22-field
+  shape; each matches the local line count, word count and SHA-256.
+- All candidate paths exist in the frozen baseline; `comparisons.json` now has
+  eight candidate comparisons, still questions rather than findings.
+- The read-only census passed again; 681 baseline files, 247 sources and 406
+  canonical documents remain represented.
+- `check_boundary.py` and `git diff --check` passed. The current-main V11 line
+  checker passes against this tree but does not validate research Markdown.
+- No book, source register, canonical metadata, index, edition or historical
+  report changed. Only the research directory is in the delta.
+
+Limitations: raster figures were not visually inspected; linked papers, code
+and exercises were not read or executed; chapter 9 prints version 1.20 and
+chapter 32 also prints 1.20 while the site table of contents says 1.10; no
+independent review or whole-book completion is claimed.

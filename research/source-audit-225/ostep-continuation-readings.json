@@ -1266,5 +1266,270 @@
     "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is framing, not technical evidence.",
     "reader": "Tycho agent; no independent review or execution.",
     "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B071",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys.pdf",
+    "unit": "Complete chapter 21, Beyond Physical Memory: Mechanisms",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:25:14Z; 11 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 295 lines / 11 pages; sections 21.1 Swap Space, 21.2 The Present Bit, 21.3 The Page Fault, 21.4 What If Memory Is Full?, 21.5 Page Fault Control Flow, 21.6 When Replacements Really Occur, 21.7 Summary, References, Homework (Measurement); figures 21.1-21.3 including the two pseudo-code listings, asides (Storage Technologies; Swapping Terminology and Other Things; Why Hardware Doesn't Handle Page Faults), Tip (Do Work in the Background), footnote 1 on the word daemon, and seven homework questions; raster figures not visually inspected",
+    "retrieved_lines": 295,
+    "retrieved_words": 4814,
+    "representation_sha256": "bc6b5421b55f0770bb0ebe23f5ed7445ebd669518c2596ea9349d0b8ca77ffdb",
+    "pages": 11,
+    "pdf_sha256": null,
+    "sections": [
+      "21.1 Swap Space",
+      "21.2 The Present Bit",
+      "21.3 The Page Fault",
+      "21.4 What If Memory Is Full?",
+      "21.5 Page Fault Control Flow",
+      "21.6 When Replacements Really Occur",
+      "21.7 Summary",
+      "References",
+      "Homework (Measurement)"
+    ],
+    "figures": [
+      "Figure 21.1: Physical Memory and Swap Space (text-rendered PFN and swap-block table; image not inspected)",
+      "Figure 21.2: Page-Fault Control Flow Algorithm (Hardware), 23-line pseudo-code listing",
+      "Figure 21.3: Page-Fault Control Flow Algorithm (Software), 7-line pseudo-code listing"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/vm-beyondphys.md lines 1-295",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: swap space is page-granular storage on a slower device; its size bounds the total number of pages in use system-wide at a given time.",
+      "Source claim: a present bit in the page-table entry distinguishes a mapped page that is in memory from one that is on disk, and the PTE field normally holding the PFN can instead hold the disk address.",
+      "Source claim: page faults are serviced in software even with a hardware-managed TLB, because disk latency makes handler overhead minor and hardware has no model of swap or I/O.",
+      "Source claim: the fault handler first needs a free frame, evicting through the replacement policy if none exists, then issues the read, marks the page present, records the PFN and retries the instruction.",
+      "Source claim: the faulting process blocks during I/O, letting the OS run other ready processes, so the fault latency is overlapped rather than removed.",
+      "Source claim: watermarks (low and high) with a background swap daemon keep memory proactively free and enable batched, clustered evictions that reduce seek and rotational cost.",
+      "Source claim: swap is not the only backing store; code pages from a binary can be discarded and later re-read from the file system instead of being written to swap.",
+      "Source claim: an incorrect eviction can slow a program by 10,000 to 100,000 times relative to memory speed, which is why the replacement decision is studied separately.",
+      "Inference: because faults are transparent and cost milliseconds, reclaim events appear as tail latency in a service while average throughput looks normal; the chapter describes the mechanism, not a measurement method.",
+      "Inference: swap or container memory limits act as a hard admission bound, since exceeding available backing store surfaces as allocation failure rather than graceful slowdown."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+        "candidate": "Does the OS/container accounting row separate minor from major page faults and resident-set size from JVM heap occupancy?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+        "candidate": "Before attributing a latency spike to garbage collection, does the diagnostic path rule out page-fault and reclaim stalls?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+        "candidate": "Is swap or a container memory limit treated as an admission bound rather than as free headroom in the capacity model?"
+      }
+    ],
+    "remaining": "No raster figures inspected. Linked papers, source code and the mem.c/vmstat exercises were not read or executed; no measurement was performed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF Representation; notes are original."
+  },
+  {
+    "id": "B072",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys-policy.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys-policy.pdf",
+    "unit": "Complete chapter 22, Beyond Physical Memory: Policies",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-10T20:58:10Z; 18 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 307 lines / 18 pages; sections 22.1 Cache Management through 22.12 Summary, References, Homework (Simulation); equation 22.1 (AMAT), figures 22.1-22.9 including five trace tables and four hit-rate charts, asides (Comparing Against Optimal Is Useful; Types of Cache Misses; Belady's Anomaly; Types of Locality), footnotes 1-2, and five homework questions; raster figures not visually inspected",
+    "retrieved_lines": 307,
+    "retrieved_words": 7326,
+    "representation_sha256": "60de7de551cf8ee885bf627cd308418ec248e216bcb7530b5a9378d2db62050c",
+    "pages": 18,
+    "pdf_sha256": null,
+    "sections": [
+      "22.1 Cache Management",
+      "22.2 The Optimal Replacement Policy",
+      "22.3 A Simple Policy: FIFO",
+      "22.4 Another Simple Policy: Random",
+      "22.5 Using History: LRU",
+      "22.6 Workload Examples",
+      "22.7 Implementing Historical Algorithms",
+      "22.8 Approximating LRU",
+      "22.9 Considering Dirty Pages",
+      "22.10 Other VM Policies",
+      "22.11 Thrashing",
+      "22.12 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 22.1: Tracing The Optimal Policy (text table of accesses, hits/misses, victims, cache state)",
+      "Figure 22.2: Tracing The FIFO Policy (text table)",
+      "Figure 22.3: Tracing The Random Policy (text table)",
+      "Figure 22.4: Random Performance Over 10,000 Trials (histogram; bars not visually inspected)",
+      "Figure 22.5: Tracing The LRU Policy (text table)",
+      "Figure 22.6: The No-Locality Workload (hit-rate versus cache-size chart; not visually inspected)",
+      "Figure 22.7: The 80-20 Workload (chart; not visually inspected)",
+      "Figure 22.8: The Looping Workload (chart; not visually inspected)",
+      "Figure 22.9: The 80-20 Workload With Clock (chart; not visually inspected)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/vm-beyondphys-policy.md lines 1-307",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: memory is a cache for virtual pages, so a replacement policy aims to minimize misses and maximize hits, evaluated through AMAT = TM + Pmiss x TD.",
+      "Source claim: with memory at roughly 100 ns and disk at roughly 10 ms, a 10% miss rate gives about 1 ms AMAT while a 0.1% miss rate gives about 10 microseconds, so disk cost dominates even a small miss rate.",
+      "Source claim: Belady's MIN evicts the page whose next reference is furthest in the future, yields the fewest possible misses, and is unusable in general because the future is unknown but valuable as a comparison baseline.",
+      "Source claim: FIFO evicts the first-in page, is trivial to implement, and suffers Belady's anomaly because it lacks the stack property: a larger cache can hit less.",
+      "Source claim: Random is simple and seed-dependent; it can match optimal on the toy trace, and on the looping-sequential workload it beats LRU and FIFO, which reach a 0% hit rate with a cache of 49 pages out of 50.",
+      "Source claim: LRU relies on recency and locality and matched optimal on the example trace, but perfect LRU needs accounting on every memory reference, and scanning timestamps over a million pages (4 GB at 4 KB) is prohibitive.",
+      "Source claim: the use (reference) bit plus a clock hand approximates LRU by clearing set bits and advancing until an unset bit is found, and a dirty bit lets the policy prefer clean pages whose eviction needs no writeback.",
+      "Source claim: workload shape decides the ranking: with no locality LRU, FIFO and Random tie; with an 80-20 skew LRU wins; with a loop every recency policy loses, which motivates scan-resistant designs such as ARC.",
+      "Source claim: beyond replacement, the VM subsystem chooses when to fetch (demand paging versus prefetching) and how to write back (clustering), and handles oversubscription by admission control over working sets or by an out-of-memory killer.",
+      "Inference: the chapter's own summary notes that cheap memory long made policy quality secondary, so on SSD-backed systems a policy change may move latency less than added capacity; neither is a guarantee."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+        "candidate": "Does the page explain miss-cost reasoning (hit rate times miss penalty) as a general cache argument, and where it stops applying inside a managed runtime?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/diagnostic-experiments.md",
+        "candidate": "Do the experiments sweep working-set size against a fixed memory budget, so that thrashing would be visible rather than inferred from one load point?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-response.md",
+        "candidate": "Is there guidance that a large sequential scan can displace a hot working set, motivating scan resistance or an isolation boundary?"
+      }
+    ],
+    "remaining": "No raster figures inspected; chart axes and captions were read as text only. Linked papers, the paging-policy.py simulator and the valgrind exercises were not read or executed, and no experiment was reproduced.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF Representation; notes are original."
+  },
+  {
+    "id": "B073",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-complete.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/vm-complete.pdf",
+    "unit": "Complete chapter 23, Complete Virtual Memory Systems",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:26:05Z; 19 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 301 lines / 19 pages; sections 23.1-23.3 and References, with 10 subsections; Figures 23.1-23.2, six asides/tips, four code/command listings; no homework; raster figures not visually inspected",
+    "retrieved_lines": 301,
+    "retrieved_words": 8520,
+    "representation_sha256": "7b15c54d91ffefdabdf6e0790d86f054fe400a9db42cb747b83c3889c9883a4c",
+    "pages": 19,
+    "pdf_sha256": null,
+    "sections": [
+      "23.1 VAX/VMS Virtual Memory",
+      "Memory Management Hardware",
+      "A Real Address Space",
+      "Page Replacement",
+      "Other Neat Tricks",
+      "23.2 The Linux Virtual Memory System",
+      "The Linux Address Space",
+      "Page Table Structure",
+      "Large Page Support",
+      "The Page Cache",
+      "Security And Buffer Overflows",
+      "Other Security Problems: Meltdown And Spectre",
+      "23.3 Summary",
+      "References"
+    ],
+    "figures": [
+      "Figure 23.1: The VAX/VMS Address Space",
+      "Figure 23.2: The Linux Address Space"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/vm-complete.md lines 1-301",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: VAX/VMS maps a 32-bit address space as per-process P0/P1 plus a shared system space S, with 512-byte pages and base/bounds registers selecting two user page tables.",
+      "Source claim: VMS places user page tables in kernel virtual memory so they can be swapped, so resolving a user translation may first require the system page table.",
+      "Source claim: the VAX PTE has no reference bit; VMS emulates one by making pages inaccessible and restoring protection on fault, then uses segmented FIFO with per-process RSS and global clean and dirty lists.",
+      "Source claim: VMS clusters dirty pages into larger writes and uses demand zeroing and copy-on-write to defer or eliminate copying work, including across fork and exec.",
+      "Source claim: Linux kernel logical addresses map directly to the start of physical memory and remain contiguous and non-swappable, whereas vmalloc addresses are virtually contiguous but physically scattered.",
+      "Source claim: x86-64 translates 48 active virtual-address bits through four levels; 2 MB and 1 GB huge pages mainly reduce TLB pressure but can cause internal fragmentation and amplify swap I/O.",
+      "Source claim: the unified Linux page cache holds file, metadata and anonymous pages, and 2Q active/inactive lists resist replacement pollution from large cyclic scans.",
+      "Source claim: NX, ASLR/KASLR and KPTI mitigate buffer-overflow, return-oriented-programming and speculative-execution attacks, each at a performance or compatibility cost and none completely.",
+      "Inference: these mechanisms govern physical frames and address translation, so page-cache or swap activity cannot be inferred from application heap occupancy alone.",
+      "Inference: ASLR, NX and KPTI are exploit-hardening layers rather than a tenant-isolation contract, and the chapter supplies no measured KPTI overhead for Tycho to reuse."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+        "candidate": "Does the page separate anonymous memory, file-backed page cache and swap activity when attributing process or container memory?"
+      },
+      {
+        "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+        "candidate": "Does the cache page discuss scan-resistant replacement, such as 2Q active/inactive lists, and the cost of promoting pages on re-reference?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/safe-agent-access-and-knowledge-isolation.md",
+        "candidate": "Does the isolation page distinguish exploit mitigations such as ASLR and NX from an enforced trust boundary?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+        "candidate": "Does the capacity model count huge-page internal fragmentation and swap I/O amplification rather than only expected TLB savings?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures in the PDF were not visually inspected; linked papers, code and the Levy/Lipman article were not read; no homework or exercises were executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF Representation; notes are original."
+  },
+  {
+    "id": "B074",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-dialogue.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/vm-dialogue.pdf",
+    "unit": "Complete chapter 24, Summary Dialogue on Memory Virtualization",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:26:24Z; 3 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 93 lines / 3 pages; complete dialogue text and footnotes; no figures or tables.",
+    "retrieved_lines": 93,
+    "retrieved_words": 971,
+    "representation_sha256": "32277afe83a7a8404769d1f04446177a9f32c94d26548f6a2dfcc3d95a4e69e8",
+    "pages": 3,
+    "pdf_sha256": null,
+    "sections": [
+      "Summary Dialogue on Memory Virtualization"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/vm-dialogue.md lines 1-93",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: all addresses visible to a user program are virtual; the OS hides physical placement.",
+      "Source claim: the TLB is a small hardware cache of translations and is what makes paging practical; a working set beyond TLB coverage causes repeated misses.",
+      "Source claim: a page table is a data structure; linear arrays, multi-level trees and pageable tables trade space against lookup cost.",
+      "Source claim: translation structures must match how programmers use address spaces; base/bounds was too inflexible and caused waste.",
+      "Source claim: swapping policies such as LRU are studied, but a real system (VMS) makes mechanisms and policy interaction concrete.",
+      "Inference: the anecdote about unexpectedly slow memory accesses illustrates model-driven diagnosis, not a measured TLB benchmark.",
+      "Inference: virtual-address invisibility is not the same as physical-memory isolation; the OS and hardware enforce the mapping.",
+      "The dialogue contains no benchmark or design guarantee; it is a synthesis of mechanisms."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+        "candidate": "Does the memory page keep TLB/page-table effects distinct from heap occupancy and RSS when explaining unexplained latency?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+        "candidate": "Does the diagnostic workflow consider TLB coverage or page-table walk cost before attributing a latency plateau to GC or CPU?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/latency-diagnosis.md",
+        "candidate": "Does the latency page preserve virtual-address and physical-residency ambiguity when interpreting memory stalls?"
+      }
+    ],
+    "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is a synthesis, not technical evidence.",
+    "reader": "Tycho agent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
   }
 ]

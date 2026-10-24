@@ -1,7 +1,7 @@
 # Foundational book reading
 
 Issue [#225](https://github.com/rouslanbaranov/tycho/issues/225). Updated 2026-10-24.
-**SRE whole-book reading complete; OSTEP CPU and memory/VM batches read;**
+**SRE whole-book reading complete; OSTEP CPU, memory/VM and swapping batches read;**
 **wider reading and comparison in progress.** The owner prioritized foundational
 books over further technology-reference auditing. Earlier reference readings remain
 recorded; one whole book is now complete. The wider source-reading and Tycho
@@ -12,7 +12,7 @@ comparison obligations remain open.
 | Book | Actual progress | Next action |
 | --- | --- | --- |
 | Site Reliability Engineering | All 48 public book units read: 34 chapters, foreword, preface, five part introductions, six appendices and bibliography, with footnotes, tables, examples and embedded figures/formulas | Whole scoped book complete; compare exact passages with the frozen Tycho baseline and separately read linked publications; see `SRE-COMPLETION.md` |
-| Operating Systems: Three Easy Pieces | Chapters 1, 3-20 read completely (19 new units; chapter 2 earlier): CPU virtualization, process API, limited direct execution, scheduling, address spaces, memory API, translation, segmentation, free-space management and paging. 20 numbered units total; raster figures not visually inspected | Continue chapters 21-24 (swapping and complete VM), then concurrency and persistence |
+| Operating Systems: Three Easy Pieces | Chapters 1, 3-24 read completely (23 new units; chapter 2 earlier): CPU virtualization, scheduling, address spaces, memory API, translation, segmentation, free-space management, paging, swapping and complete VM systems. 24 numbered units total; raster figures not visually inspected | Continue chapters 25-34 (concurrency), then persistence and appendices |
 | Designing Data-Intensive Applications, 2nd edition | Publisher contents and short chapter 1 preview only | Full text requires lawful access; do not count the preview as chapter reading or silently substitute the first edition |
 | Distributed Systems, 4th edition | Author's access instructions examined; no book text obtained | Personalized download requires an email and human-verification step; no request submitted |
 | Other registered books | Not started in this audit | Continue `book-queue.json`; distinguish available complete texts from commercial previews |
@@ -166,3 +166,29 @@ executed.
 
 These are mechanism and policy notes, not measurements. Candidate comparisons
 for memory-related Tycho pages are added to [comparisons.json](comparisons.json).
+
+## OSTEP continuation - swapping and complete VM
+
+Four records B071-B074 add chapters 21-24: 996 retrieved lines, 21,631 words
+and 51 pages. The combined OSTEP continuation is 23 records: 6,178 lines,
+104,673 words and 269 pages. Raster figures were not visually inspected;
+linked papers, code and exercises were not executed.
+
+- **Chapter 21:** swap space is page-granular backing storage; a present bit
+  and page-fault handler coordinate memory and disk. The handler needs a free
+  frame, may evict, starts the read, marks the page present and retries the
+  instruction; the faulting process blocks while others run.
+- **Chapter 22:** memory is a cache for virtual pages, so replacement policy
+  seeks to minimize misses. AMAT exposes disk cost even at low miss rates;
+  MIN is a comparison baseline, FIFO can suffer Belady's anomaly, random can
+  beat recency on loops, and LRU needs use/dirty bits and a clock approximation.
+- **Chapter 23:** VAX/VMS and Linux show complete VM systems. VMS uses P0/P1/S
+  spaces, kernel-resident page tables and emulated reference bits; Linux has
+  direct-map and vmalloc regions, four-level x86-64 translation, huge pages and
+  a unified page cache with 2Q lists. No independent measurement is provided.
+- **Chapter 24:** the summary connects virtual addresses, TLB coverage, page
+  tables as data structures and policy trade-offs. It preserves the distinction
+  between mechanisms and policies and does not claim a universal configuration.
+
+These remain mechanism and policy notes. Candidate comparisons for
+memory-related Tycho pages are extended in [comparisons.json](comparisons.json).

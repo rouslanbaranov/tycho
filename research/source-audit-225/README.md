@@ -8,10 +8,11 @@ The owner subsequently prioritized reading foundational books. Start with [book 
 
 Current SRE position: **48/48 public book units complete**, including all 34 numbered chapters, frontmatter, five part introductions, six appendices and bibliography. All examples, tables, footnotes and embedded images/formulas were read or visually inspected. See [completion scope and next research questions](SRE-COMPLETION.md). No source-to-book completeness claim follows from whole-book reading.
 
-Current OSTEP position: **chapters 1, 3-20 complete** (chapter 2 earlier);
-nineteen new records are in [the OSTEP continuation ledger](ostep-continuation-readings.json). CPU virtualization, memory API, translation,
-segmentation, free-space management and paging are read; raster figures were
-not visually inspected, and chapters 21-51 plus appendices remain.
+Current OSTEP position: **chapters 1, 3-24 complete** (chapter 2 earlier);
+twenty-three new records are in [the OSTEP continuation ledger](ostep-continuation-readings.json). CPU virtualization, memory API, translation,
+segmentation, free-space management, paging, swapping and complete VM systems
+are read; raster figures were not visually inspected, and chapters 25-51 plus
+appendices remain.
 
 The reading ledger links its [chapters 6–18 continuation](sre-continuation-readings.json) and [completion continuation](sre-completion-readings.json). Reading completion means the exact chapter, its examples, footnotes and embedded technical images; it does not include all publications linked from it. The [download fingerprints](reading-asset-fingerprints.json) identify the downloaded HTML/image representations for later revisiting, not an immutable publisher revision or proof of semantic reading.
 
