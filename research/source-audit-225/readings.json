@@ -37774,12 +37774,314 @@
         }
       ],
       "reader": "delegated-reader/deepseek-harness-subagent (parent session-339f3170-2943-4eff-877d-b6b465e229ef); research-only, no repository writes; not independent review"
+    },
+    {
+      "id": "R352",
+      "source_ids": [
+        "src.jaeger"
+      ],
+      "url": "https://www.jaegertracing.io/docs/latest/architecture/",
+      "unit": "Single documentation page: Jaeger v2 Architecture (docs/latest/architecture/), body sections Roles through Extensions",
+      "revision": "official documentation overview, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "reader": "delegated-reader/deepseek-harness-b23",
+      "coverage": "Registered page read in full: raw representation lines 8-144 = 137 lines / 1097 words (99.1% of the 1107-word capture). Lines 1-7 are extractor header (Title, URL Source, 'Markdown Content:', horizontal rule) and excluded. No navigation or footer chrome is present in this capture. Four architecture diagrams (lines 30, 36, 44, 78) are present only as image URLs with alt text 'Architecture'; their drawn content was not read.",
+      "retrieval_refs": [
+        "/tmp/B23/raw/jaeger.md:8-144",
+        "/tmp/B23/raw/jaeger.md:144 (last line)",
+        "/tmp/B23/manifest.json#R352 (hash/line/word verification)"
+      ],
+      "omissions": "Linked documentation pages outside the registered page not read (sampling, storage, deployment, custom distribution); no experiment or runtime observation; diagram images not transcribed or visually inspected.",
+      "representation_sha256": "9e5e55895b929bfe02180e614a97ac73ac3f8581e63423d02c9bc8f12642bc57",
+      "retrieved_lines": 144,
+      "retrieved_words": 1107,
+      "sections": [
+        {
+          "level": 2,
+          "heading": "Roles",
+          "lines": "10-20"
+        },
+        {
+          "level": 2,
+          "heading": "Architecture choices",
+          "lines": "22-36"
+        },
+        {
+          "level": 3,
+          "heading": "Direct to storage",
+          "lines": "26-30"
+        },
+        {
+          "level": 3,
+          "heading": "Via Kafka",
+          "lines": "32-36"
+        },
+        {
+          "level": 2,
+          "heading": "With OpenTelemetry Collector",
+          "lines": "38-66"
+        },
+        {
+          "level": 3,
+          "heading": "OpenTelemetry Collector as a sidecar / host agent",
+          "lines": "46-56"
+        },
+        {
+          "level": 3,
+          "heading": "OpenTelemetry Collector as a remote cluster",
+          "lines": "58-66"
+        },
+        {
+          "level": 2,
+          "heading": "Jaeger Binary",
+          "lines": "68-90"
+        },
+        {
+          "level": 3,
+          "heading": "Jaeger Components",
+          "lines": "80-90"
+        },
+        {
+          "level": 3,
+          "heading": "OpenTelemetry Components",
+          "lines": "92-144"
+        },
+        {
+          "level": 4,
+          "heading": "Receivers",
+          "lines": "94-104"
+        },
+        {
+          "level": 4,
+          "heading": "Processors",
+          "lines": "106-116"
+        },
+        {
+          "level": 4,
+          "heading": "Exporters",
+          "lines": "118-130"
+        },
+        {
+          "level": 4,
+          "heading": "Connectors",
+          "lines": "132-136"
+        },
+        {
+          "level": 4,
+          "heading": "Extensions",
+          "lines": "138-144"
+        }
+      ],
+      "notes": [
+        "Jaeger v2 is described as a single binary that can be configured into roles: collector, query, ingester, all-in-one, and agent (L8-L16).",
+        "The agent role is configured but not recommended; the page points to the standard OpenTelemetry Collector instead because other telemetry types likely need processing (L16).",
+        "Collector/query separation is presented as allowing independent read and write scaling plus different access and security policies; both all-in-one and collector/query are said to scale horizontally when an external backend is used (L18).",
+        "All-in-one with in-memory storage is positioned for development/testing because data is lost on restart; all-in-one with Badger may be used in production only for modest volumes and cannot scale horizontally (L20).",
+        "Direct-to-storage: collectors write straight to the backend, which must absorb average and peak traffic; an in-memory queue smooths short peaks, while a sustained spike may cause dropped data if storage cannot keep up (L24-L28).",
+        "Kafka variant: collectors use Kafka exporters, a separate ingester reads Kafka and writes storage, and multiple ingesters partition the load automatically; an ingester is described as a collector with a Kafka receiver instead of RPC receivers (L32-L34).",
+        "The Jaeger binary is built on the OpenTelemetry Collector framework and mixes official upstream components, contrib components, and Jaeger-specific components; custom distributions can be built with ocb (L68-L76).",
+        "Jaeger-specific components named: Storage Extension (shared storage hub), Storage Exporter, Query Extension, Adaptive Sampling Processor, and Remote Sampling Extension (L80-L90).",
+        "An OpenTelemetry Collector may precede Jaeger as sidecar/host agent or as a remote cluster; the stated sidecar benefit is simpler SDK endpoint configuration and local enrichment, with an extra marshal/unmarshal layer as the cost (L38-L56).",
+        "Remote-cluster placement adds sharding capability, exemplified by tail-based sampling, again at the cost of an extra marshaling layer (L58-L66).",
+        "The Filter Processor can drop spans and span events and is explicitly flagged as potentially causing broken traces; tail sampling and memory limiting appear as processors (L108-L116).",
+        "Inference: the page states topology and role trade-offs but no throughput, latency, retention or recovery figures, so no quantitative claim should be attributed to it; the four diagrams are referenced but not described in text (L30, L36, L44, L78)."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/trace-causality.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/sampling-trust.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/kafka-partitions-replication-and-contracts.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ]
+    },
+    {
+      "id": "R353",
+      "source_ids": [
+        "src.mimir"
+      ],
+      "url": "https://grafana.com/docs/mimir/latest/references/architecture/",
+      "unit": "Single documentation page: Grafana Mimir advanced architecture (references/architecture index hub)",
+      "revision": "official documentation overview, page captured 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "reader": "delegated-reader/deepseek-harness-b23",
+      "coverage": "Registered page read in full: body is lines 84-103 = 20 lines / 71 words, i.e. 3.0% of the 2371-word capture. Body content: H1, one-sentence introduction, a ten-entry topic index, and the feedback widget. Excluded as navigation/footer chrome: site banners and promo (L6-L31, L53-L68), search UI (L33-L51), site-wide automated-reader notice pointing at llms.txt (L70-L76), breadcrumb (L80), product/version selectors (L82, L115), full documentation nav tree (L111-L771), promotional sidebar and newsletter (L773-L909), footer link columns (L910-L998), consent widget and badges (L999-L1056).",
+      "retrieval_refs": [
+        "/tmp/B23/raw/mimir.md:84-103",
+        "/tmp/B23/raw/mimir.md:78-80 and 115 (title/breadcrumb/version context)",
+        "/tmp/B23/manifest.json#R353 (hash/line/word verification)"
+      ],
+      "omissions": "Linked documentation pages outside the registered page not read (deployment modes, ports, components, binary index-header, bucket index, hash rings, key-value store, memberlist, query sharding, query engine); no experiment or runtime observation; promotional and consent content deliberately excluded.",
+      "representation_sha256": "f8a60aa7f4b19dae9ac4549e2260dadbf250c76e89b82db7894a19e0503983ab",
+      "retrieved_lines": 1056,
+      "retrieved_words": 2371,
+      "sections": [
+        {
+          "level": 1,
+          "heading": "Grafana Mimir advanced architecture",
+          "lines": "84-86"
+        },
+        {
+          "level": 2,
+          "heading": "Topic index (10 entries: deployment modes, network ports, components, binary index-header, bucket index, hash rings, key-value store, memberlist and gossip protocol, query sharding, Mimir query engine)",
+          "lines": "88-97"
+        },
+        {
+          "level": 2,
+          "heading": "Page feedback widget (excluded as chrome from analysis)",
+          "lines": "99-103"
+        }
+      ],
+      "notes": [
+        "The registered URL is an index hub, not an exposition: apart from the H1 and one sentence, the body is a ten-item link list (L84-L97).",
+        "The only body sentence is: 'The following topics include in-depth overviews of the Grafana Mimir architecture.' (L86).",
+        "Index entries in order: deployment modes, network ports, components, binary index-header, bucket index, hash rings, key-value store, memberlist and gossip protocol, query sharding, Mimir query engine (L88-L97).",
+        "Breadcrumb locates the page under References > Advanced architecture, and the version selector reports v3.2.x (latest) (L80, L115).",
+        "The page contains no component roles, data flow, replication, scaling or failure behavior; every such claim would belong to a linked child page outside the registered scope (L86-L97).",
+        "A site-wide notice states that a Markdown version and llms.txt/llms-full.txt indexes exist for automated readers; this is site chrome, not page content (L70-L76).",
+        "Chrome dominates the capture: 1036 of 1056 lines and about 2300 of 2371 words lie outside the page body, which is why the manifest counts must not be read as architecture text volume (measured against lines 84-103).",
+        "The nav tree exposes the current component list (compactor, distributor, ingester, querier, query-frontend, query-scheduler, store-gateway, optional alertmanager, overrides-exporter, ruler) at L693-L729; this is navigation metadata and should not be cited as body text.",
+        "Inference: this page can evidence only the topic taxonomy and ordering of Mimir's advanced architecture, not any mechanism; citing the URL for a mechanism claim would overstate the scoped text.",
+        "No representation_gap is recorded: the capture appears to contain the full page body plus chrome. The limitation is substantive (index page), not a missing capture."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-pipelines-cardinality-and-retention.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/cardinality-retention.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/publication-consistency.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/observability/metrics-slo-timeseries-architecture.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ]
+    },
+    {
+      "id": "R354",
+      "source_ids": [
+        "src.prometheus"
+      ],
+      "url": "https://prometheus.io/docs/introduction/overview/",
+      "unit": "Single documentation page: Prometheus Overview (docs/introduction/overview/)",
+      "revision": "official documentation overview, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "reader": "delegated-reader/deepseek-harness-b23",
+      "coverage": "Registered page read in full: raw representation lines 6-61 = 56 lines / 685 words (98.7% of the 694-word capture). Lines 1-5 are extractor header (Title, URL Source, 'Markdown Content:') and excluded. No navigation or footer chrome is present in this capture. The single architecture diagram (line 49) is an image URL only; its content was not read.",
+      "retrieval_refs": [
+        "/tmp/B23/raw/prometheus.md:6-61",
+        "/tmp/B23/raw/prometheus.md:61 (last line)",
+        "/tmp/B23/manifest.json#R354 (hash/line/word verification)"
+      ],
+      "omissions": "Linked documentation pages outside the registered page not read (data model, PromQL, push gateway, exporters, Alertmanager, storage); no experiment or runtime observation; architecture diagram not transcribed or visually inspected.",
+      "representation_sha256": "6908f1f272a4b06ef0982384e96e692c9294695f0f09be5411af4077e1d8ca19",
+      "retrieved_lines": 61,
+      "retrieved_words": 694,
+      "sections": [
+        {
+          "level": 2,
+          "heading": "What is Prometheus?",
+          "lines": "6-12"
+        },
+        {
+          "level": 3,
+          "heading": "Features",
+          "lines": "14-24"
+        },
+        {
+          "level": 3,
+          "heading": "What are metrics?",
+          "lines": "26-30"
+        },
+        {
+          "level": 3,
+          "heading": "Components",
+          "lines": "32-43"
+        },
+        {
+          "level": 3,
+          "heading": "Architecture",
+          "lines": "45-51"
+        },
+        {
+          "level": 2,
+          "heading": "When does it fit?",
+          "lines": "53-57"
+        },
+        {
+          "level": 2,
+          "heading": "When does it not fit?",
+          "lines": "59-61"
+        }
+      ],
+      "notes": [
+        "Prometheus is described as an open-source monitoring and alerting toolkit built at SoundCloud, independent since 2012, and a CNCF hosted project since 2016, second after Kubernetes (L8).",
+        "Metrics are stored as time series: a recorded value with its timestamp and optional key-value labels (L10).",
+        "Listed features: multi-dimensional data model keyed by metric name and label pairs; PromQL; no distributed storage with autonomous single server nodes; pull collection over HTTP; push via an intermediary gateway; service discovery or static configuration; graphing and dashboards (L18-L24).",
+        "Ecosystem components: server (scrape and store), client libraries, push gateway for short-lived jobs, exporters, Alertmanager, and support tools; most are Go static binaries (L34-L43).",
+        "Architecture paragraph: Prometheus scrapes instrumented jobs directly or through the push gateway for short-lived jobs, stores samples locally, runs rules to record new series or generate alerts, and exposes data to Grafana or other API consumers (L51).",
+        "Fit: purely numeric time series, both machine-centric monitoring and highly dynamic service-oriented architectures; multi-dimensional collection and querying is named as the particular strength for microservices (L55).",
+        "Reliability posture: each server is standalone with no dependency on network storage or remote services, intended to remain usable during an outage and to need little supporting infrastructure (L57).",
+        "Non-fit: not for 100% accuracy such as per-request billing, because collected data is unlikely to be detailed and complete enough; the page recommends another system for billing and Prometheus for the rest (L59-L61).",
+        "Inference: 'no reliance on distributed storage' and 'single server nodes are autonomous' describe a single-server design and are not a claim of high availability; replication, HA pairs and remote long-term storage are not discussed on this page.",
+        "The only diagram is an image reference (assets/docs/architecture.svg) whose content is not transcribed; component relationships are stated only in the prose paragraph (L47-L51)."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-pipelines-cardinality-and-retention.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-semantics.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/observability/metrics-slo-timeseries-architecture.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ]
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 316,
+    "full_reads": 318,
     "blocked": 14,
     "records": [
       "R015",
@@ -38118,11 +38420,14 @@
       "R348",
       "R349",
       "R350",
-      "R351"
+      "R351",
+      "R352",
+      "R353",
+      "R354"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
-    "partial_reads": 11
+    "partial_reads": 12
   }
 }
