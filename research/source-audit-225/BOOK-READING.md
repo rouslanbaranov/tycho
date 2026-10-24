@@ -1,7 +1,7 @@
 # Foundational book reading
 
 Issue [#225](https://github.com/rouslanbaranov/tycho/issues/225). Updated 2026-10-24.
-**SRE whole-book reading complete; OSTEP chapters 1-57 read; appendices remain;**
+**SRE and OSTEP whole-book text reading complete; wider comparison in progress.**
 **wider reading and comparison in progress.** The owner prioritized foundational
 books over further technology-reference auditing. Earlier reference readings remain
 recorded; one whole book is now complete. The wider source-reading and Tycho
@@ -12,7 +12,7 @@ comparison obligations remain open.
 | Book | Actual progress | Next action |
 | --- | --- | --- |
 | Site Reliability Engineering | All 48 public book units read: 34 chapters, foreword, preface, five part introductions, six appendices and bibliography, with footnotes, tables, examples and embedded figures/formulas | Whole scoped book complete; compare exact passages with the frozen Tycho baseline and separately read linked publications; see `SRE-COMPLETION.md` |
-| Operating Systems: Three Easy Pieces | Chapters 1, 3-57 read completely (56 new units; chapter 2 earlier): CPU virtualization, memory, concurrency, persistence, distributed systems and security. Appendices A-H remain. Raster figures not visually inspected | Read appendices A-H; keep figure and exercise limits explicit |
+| Operating Systems: Three Easy Pieces | Whole scoped book text read: chapters 1-57, appendices A-H and the preface; 65 new units (chapter 2 earlier). Embedded raster figures were not visually inspected; linked publications remain separate | Compare exact passages with the frozen Tycho baseline; read linked publications separately |
 | Designing Data-Intensive Applications, 2nd edition | Publisher contents and short chapter 1 preview only | Full text requires lawful access; do not count the preview as chapter reading or silently substitute the first edition |
 | Distributed Systems, 4th edition | Author's access instructions examined; no book text obtained | Personalized download requires an email and human-verification step; no request submitted |
 | Other registered books | Not started in this audit | Continue `book-queue.json`; distinguish available complete texts from commercial previews |
@@ -328,3 +328,38 @@ linked papers, code and exercises were not executed.
 
 These are mechanism and policy notes, not measurements. Security comparisons
 are added to [comparisons.json](comparisons.json).
+
+## OSTEP completion - appendices and preface
+
+Nine records B108-B116 add appendices A-H and the preface: 1,243 retrieved
+lines, 21,920 words and 63 pages. The combined OSTEP continuation is 65
+records: 20,189 lines, 323,810 words and 803 pages. With chapter 2 read at the
+earlier checkpoint, the whole book has now been read as text.
+
+- **Appendix A:** the VMM dialogue explains the hypervisor layer beneath the OS
+  and why the material is placed in an appendix.
+- **Appendix B:** virtual machine monitors combine machine switches, trap
+  forwarding at reduced privilege, double address translation, shadow TLBs and
+  paravirtualization; the information gap is the central design constraint.
+- **Appendix C:** the monitors dialogue introduces a historical object-oriented
+  locking primitive; the main text uses C and POSIX threads instead.
+- **Appendix D:** monitors pair implicit locking with condition variables;
+  Hoare and Mesa semantics differ, a while-recheck closes wrong-waiter and
+  thundering-herd bugs, and language support varies.
+- **Appendix E:** the labs dialogue presents systems programming and xv6 kernel
+  projects as the practical learning path.
+- **Appendix F:** the C/UNIX tutorial covers compilation, linking, Make, gdb and
+  manual pages; it does not establish reproducible builds or execute anything.
+- **Appendix G:** systems projects include a shell, allocator, concurrent data
+  structures, a web server, a file-system checker and a file server.
+- **Appendix H:** xv6 projects include system calls, scheduling, virtual memory,
+  copy-on-write, mappings, kernel threads, extents, FFS, journaling and fsck.
+- **Preface:** the book frames virtualization, concurrency and persistence,
+  explains its teaching devices, and states the free-but-copyrighted terms. Its
+  footer prints version 1.20 while the citation and site list 1.10.
+
+Whole-book scope: chapters 1-57, appendices A-H and the preface were read as
+text. The table of contents was used for navigation; the dedication was not
+treated as a technical reading unit. Embedded raster figures were not visually
+inspected, linked publications were not read, and no exercise was executed.
+This is text-complete reading, not a visual or experimental reproduction.

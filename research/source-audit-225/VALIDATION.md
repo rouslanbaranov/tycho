@@ -177,3 +177,29 @@ Limitations: raster figures were not visually inspected; linked papers, code
 and exercises were not read or executed; chapter 9 and chapter 32 print version
 1.20 while the site table of contents says 1.10; no independent review or
 whole-book completion is claimed until the appendices are read.
+
+## OSTEP whole-book text completion - 2026-10-24
+
+Nine records B108-B116 add appendices A-H and the preface: 1,243 retrieved
+lines, 21,920 words and 63 pages. The combined OSTEP continuation is 65
+records: 20,189 lines, 323,810 words and 803 pages. Together with chapter 2
+from the earlier checkpoint, the whole book has been read as text.
+
+- All nine records parse, have unique IDs B108-B116 and the same 22-field
+  shape; each matches the local line count, word count and SHA-256.
+- Whole-book scope: chapters 1-57, appendices A-H and the preface. The table of
+  contents was used for navigation; the dedication was not treated as a
+  technical reading unit.
+- All candidate paths exist in the frozen baseline; `comparisons.json` now has
+  sixteen candidate comparisons, still questions rather than findings.
+- The read-only census passed; 681 baseline files, 247 sources and 406
+  canonical documents remain represented. The boundary and whitespace checks
+  passed.
+- No book, source register, canonical metadata, index, edition or historical
+  report changed. Only the research directory is in the delta.
+
+Limitations: embedded raster figures were not visually inspected; linked
+publications, code and exercises were not read or executed; chapter 9, chapter
+32 and the preface print version 1.20 while the site table of contents says
+1.10. The reading is text-complete, not a visual or experimental reproduction.
+No independent review or source-to-book completeness is claimed.
