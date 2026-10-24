@@ -37542,12 +37542,244 @@
         }
       ],
       "reader": "delegated-reader/deepseek-flash; read 2026-10-24; parent session-339f3170-2943-4eff-877d-b6b465e229ef"
+    },
+    {
+      "id": "R350",
+      "source_id": "src.vespa",
+      "source_ids": [
+        "src.vespa"
+      ],
+      "url": "https://docs.vespa.ai/en/overview.html",
+      "unit": "Vespa Overview — single documentation overview page (captured markdown)",
+      "revision": "official documentation overview, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Read sequentially and completely: body lines 8–78 (1,689 whitespace-token words), all 11 headings and the untitled lead paragraph. Lines 1–7 are capture metadata (title, URL, published time, 'Markdown Content:') and were excluded from content analysis. The line-14 SVG diagram reference is a placeholder, not extractable prose, and was inspected but not counted as a section. No navigation, footer or related-links chrome appears in this capture.",
+      "retrieval_refs": [
+        "manifest: /tmp/B22/manifest.json entry R350",
+        "representation: /tmp/B22/raw/vespa.md lines 1-78",
+        "verification: wc -l = 78, wc -w = 1705, shasum -a 256 = 19c27e5ec20fea9332f66737b248e3694ef94756ed6029baf36f5ba5e833fd03"
+      ],
+      "omissions": "Linked documentation pages outside the overview not read; no experiment",
+      "representation_gap": null,
+      "representation_sha256": "19c27e5ec20fea9332f66737b248e3694ef94756ed6029baf36f5ba5e833fd03",
+      "retrieved_lines": 78,
+      "retrieved_words": 1705,
+      "sections": [
+        {
+          "heading": "Untitled lead (platform definition)",
+          "lines": "8-8",
+          "words": 72
+        },
+        {
+          "heading": "Introduction",
+          "lines": "10-15",
+          "words": 48
+        },
+        {
+          "heading": "Container clusters",
+          "lines": "16-19",
+          "words": 111
+        },
+        {
+          "heading": "Content clusters (introduction)",
+          "lines": "20-29",
+          "words": 286
+        },
+        {
+          "heading": "Schema",
+          "lines": "30-33",
+          "words": 68
+        },
+        {
+          "heading": "Application package",
+          "lines": "34-39",
+          "words": 188
+        },
+        {
+          "heading": "Vespa operations",
+          "lines": "40-49",
+          "words": 259
+        },
+        {
+          "heading": "The stateless container",
+          "lines": "50-55",
+          "words": 147
+        },
+        {
+          "heading": "Content clusters (operations)",
+          "lines": "56-61",
+          "words": 139
+        },
+        {
+          "heading": "Administration clusters and developer support",
+          "lines": "62-67",
+          "words": 133
+        },
+        {
+          "heading": "Application packages",
+          "lines": "68-73",
+          "words": 138
+        },
+        {
+          "heading": "Summary",
+          "lines": "74-78",
+          "words": 100
+        }
+      ],
+      "notes": [
+        "Source claim (l.8): Vespa targets low-latency computation over large data sets and stores/indexes structured, text and vector data so queries, selection, processing and machine-learned inference run at serving time.",
+        "Source claim (l.12, l.28): an application is stateless Java container clusters plus zero or more content clusters, with a separate admin/config cluster managing setup and change.",
+        "Source claim (l.18, l.52): containers host platform and application components, including indexing transformations, global query stages, an OSGi component model, dependency injection, handler chains, metrics/logging, HTTP and pluggable transports.",
+        "Source claim (l.22-26): content clusters store data and run queries/inference, rebalance in the background after scaling or node loss, remove faulty nodes from serving, and make writes visible after an ack 'after a few milliseconds'; writes are said to scale linearly.",
+        "Source claim (l.30-36): schemas define document fields, storage/indexing, and ranking and inference profiles; the application package fully declares clusters, schemas, models and components and is deployed or redeployed as one unit.",
+        "Source claim (l.42-48): operations include put/remove/field update, id lookup, boolean-combined select over free text, structured data and vector ANN, multi-stage ranking with expressions or ONNX models, sorting, grouping/aggregation, visit dumps and custom requests.",
+        "Source claim (l.58-60, l.64-70): data is replicated at configured redundancy; individual lookups route to the owning node while queries run as distributed multi-step algorithms; config changes are computed and rolled out without disrupting traffic, with ZooKeeper for singular consistent changes.",
+        "Inference: the page is a capability overview. It supplies no latency, throughput, availability or recovery measurements, no benchmark conditions and no topology sizing, so its performance adjectives cannot ground a quantitative claim.",
+        "Inference: 'scale linearly ... indefinitely' (l.26) is an unqualified vendor assertion; the page names no bottleneck, coordination cost or saturation point, so that limit should remain an explicit unknown in any Tycho use.",
+        "Extraction note: capture is clean prose; lines 1-7 are metadata and the line-14 SVG is a diagram placeholder. No navigation/footer chrome appears, and no section of the overview prose is missing."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-architecture.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/fusion-signals.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/scaling-delay.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-harness-subagent (parent session-339f3170-2943-4eff-877d-b6b465e229ef); research-only, no repository writes; not independent review"
+    },
+    {
+      "id": "R351",
+      "source_id": "src.milvus",
+      "source_ids": [
+        "src.milvus"
+      ],
+      "url": "https://milvus.io/docs/architecture_overview.md",
+      "unit": "Milvus Architecture Overview — single documentation overview page (captured markdown)",
+      "revision": "official documentation overview, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Read sequentially and completely: body lines 6–77 (1,073 whitespace-token words), including the API/flow table (four columns, three API categories) and both ordered flow lists. Lines 1–5 are capture metadata (title, URL, 'Markdown Content:') and were excluded from content analysis. The line-10 image reference and its duplicated caption token are extractor/caption artifacts, excluded from section analysis. No navigation, footer or sidebar chrome appears in this capture.",
+      "retrieval_refs": [
+        "manifest: /tmp/B22/manifest.json entry R351",
+        "representation: /tmp/B22/raw/milvus.md lines 1-77",
+        "verification: wc -l = 77, wc -w = 1082, shasum -a 256 = 2f9d5832b35a54299b2c7f174369642148ed3d292320afb0fe3b26fbe9cd78fa"
+      ],
+      "omissions": "Linked documentation pages outside the overview not read; no experiment",
+      "representation_gap": null,
+      "representation_sha256": "2f9d5832b35a54299b2c7f174369642148ed3d292320afb0fe3b26fbe9cd78fa",
+      "retrieved_lines": 77,
+      "retrieved_words": 1082,
+      "sections": [
+        {
+          "heading": "Opening: what Milvus is and architecture premise",
+          "lines": "6-15",
+          "words": 157
+        },
+        {
+          "heading": "Access layer / Proxy (untitled subsection)",
+          "lines": "16-20",
+          "words": 80
+        },
+        {
+          "heading": "Coordinator (untitled subsection)",
+          "lines": "21-29",
+          "words": 148
+        },
+        {
+          "heading": "Worker nodes: Streaming, Query, Data (untitled subsection)",
+          "lines": "30-37",
+          "words": 122
+        },
+        {
+          "heading": "Storage: meta, object, WAL (untitled subsection)",
+          "lines": "38-49",
+          "words": 252
+        },
+        {
+          "heading": "Data Flow and API Categories (heading + table)",
+          "lines": "50-59",
+          "words": 94
+        },
+        {
+          "heading": "Unheaded ordered list: search path",
+          "lines": "60-66",
+          "words": 107
+        },
+        {
+          "heading": "Unheaded ordered list: insert path",
+          "lines": "67-74",
+          "words": 85
+        },
+        {
+          "heading": "Unheaded further-reading links",
+          "lines": "75-77",
+          "words": 28
+        }
+      ],
+      "notes": [
+        "Source claim (l.6): Milvus is an open-source, cloud-native vector database for high-performance similarity search on massive vector data, built on Faiss, HNSW, DiskANN and SCANN.",
+        "Source claim (l.12-14): four main layers are mutually independent in scalability and disaster recovery and follow data-plane/control-plane disaggregation; shared storage plus disaggregated compute allows horizontal compute scaling, with Woodpecker as a zero-disk WAL and streaming separated from batch processing.",
+        "Source claim (l.16-19): stateless proxies form the access layer, expose one service address through Nginx, Kubernetes Ingress, NodePort or LVS, and aggregate and post-process intermediate results under an MPP model.",
+        "Source claim (l.21-28): exactly one Coordinator is active cluster-wide; it handles DDL/DCL and TSO/time-ticker, binds the WAL to Streaming Nodes, manages Query Node topology/load and query views, and distributes compaction/index tasks to Data Nodes.",
+        "Source claim (l.30-36): worker nodes are stateless executors — Streaming Node for shard-level consistency, growing-data query and seal conversion; Query Node for historical data loaded from object storage; Data Node for compaction and index building.",
+        "Source claim (l.38-48): storage comprises etcd metadata/snapshots/service registration, object storage (MinIO, S3, Azure Blob) for logs, indexes and intermediate results, and WAL (Kafka, Pulsar, Woodpecker) written before commit for recovery and consistency.",
+        "Source claim (l.52-73): APIs route DDL/DCL to the Coordinator, DML to Streaming Nodes and DQL to Query Nodes; search reduction is three-level (segments, then Streaming Node, then Proxy), and inserts are WAL-logged, sealed when full, compacted/indexed by Data Nodes and reloaded by Query Nodes.",
+        "Inference: this is an architecture overview, not evidence of realized latency, throughput, durability or failover behavior; it reports no measurements, test conditions or operational history.",
+        "Inference: the claim that exactly one Coordinator is active at any moment implies leader election and failover, but election protocol, failover duration, fencing and split-brain handling are not described — unknown from this page.",
+        "Inference: Woodpecker's zero-disk WAL and the planned cold-hot cache tier are forward-looking design claims; the page gives no availability, cost or recovery numbers.",
+        "Extraction note: line 10 repeats the image caption after the image link and was treated as an extractor artifact; the remaining lines 6-77 are substantive prose, table and ordered-list text, and no overview prose appears missing."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-architecture.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/publication-consistency.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/replication-acks.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/scaling-delay.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-harness-subagent (parent session-339f3170-2943-4eff-877d-b6b465e229ef); research-only, no repository writes; not independent review"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 314,
+    "full_reads": 316,
     "blocked": 14,
     "records": [
       "R015",
@@ -37884,7 +38116,9 @@
       "R346",
       "R347",
       "R348",
-      "R349"
+      "R349",
+      "R350",
+      "R351"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
