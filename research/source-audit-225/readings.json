@@ -5909,12 +5909,282 @@
         }
       ],
       "reader": "Delegated reader batch 12; parent validation pending."
+    },
+    {
+      "id": "R118",
+      "source_ids": [
+        "src.otel-traces"
+      ],
+      "url": "https://opentelemetry.io/docs/concepts/signals/traces/",
+      "unit": "Complete page: Traces (OpenTelemetry Concepts, Signals; one page of the declared four-page signals scope)",
+      "revision": "Live docs; retrieved 2026-10-24; page last modified 2026-01-14 (commit 6bf06ddb, line 1312); no immutable edition exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1331 lines / 7609 words read. Substantive body lines 1009-1300 = 1888 words including three JSON span examples and one sample span; lines 1-1008 and 1301-1331 = 5721 words of site chrome excluded from analysis (global header, language selector, theme toggle, full docs mega-menu, breadcrumb, On this page TOC, View Markdown/source/edit links, feedback widget, last-modified note, social links, copyright).",
+      "retrieval_refs": [
+        "/tmp/batch13/raw/src.otel-traces.md lines 1-1331",
+        "Jina reader capture (Title/URL Source/Markdown Content), accessed 2026-10-24"
+      ],
+      "omissions": "other OpenTelemetry docs outside the declared signals scope not read",
+      "representation_sha256": "1fc82c3920db21127ba9728cb9dbc93e0a174c75badfea5391934656dd93efab",
+      "retrieved_lines": 1331,
+      "retrieved_words": 7609,
+      "sections": [
+        "Traces — intro and span examples (1009-1117)",
+        "Tracer Provider (1121-1123)",
+        "Tracer (1125-1127)",
+        "Trace Exporters (1129-1131)",
+        "Context Propagation (1133-1135)",
+        "Spans (1137-1189)",
+        "Span Context (1191-1202)",
+        "Attributes (1204-1217)",
+        "Span Events (1219-1230)",
+        "When to use span events versus span attributes (1232-1239)",
+        "Span Links (1241-1253)",
+        "Span Status (1255-1269)",
+        "Span Kind (1271-1275)",
+        "Client (1277-1279)",
+        "Server (1281-1283)",
+        "Internal (1285-1287)",
+        "Producer (1289-1291)",
+        "Consumer (1293-1295)",
+        "Specification (1297-1299)"
+      ],
+      "notes": [
+        "Coverage claim: the body is lines 1009-1300 (1888 words), while lines 1-1008 and 1301-1331 are chrome (5721 words). Inference: only about a quarter of the file's words are page content, so whole-file word counts would overstate the prose by roughly four times and body ranges should be cited.",
+        "Source claim: the three JSON spans share trace_id 5b8aa5a2d2c872e8321cf37308d69df2 and encode hierarchy through parent_id; the root span has no parent_id (1023-1115, especially 1048). The page states the JSON is not a specific format and especially not OTLP/JSON (1017-1019). Inference: field names such as context and parent_id are pedagogical, not a wire schema.",
+        "Source claim: a trace is described as a collection of structured logs with context, correlation, hierarchy and more, potentially emitted by different processes, services, VMs and data centers (1117). Inference: the analogy explains end-to-end scope but does not imply logs and spans share retention, sampling or integrity semantics.",
+        "Source claim: a Tracer Provider is a factory for Tracers, initialized once with a lifecycle matching the application, and its initialization includes Resource and Exporter setup; some SDKs pre-initialize a global provider (1123). Tracers create spans (1127), and exporters send traces to stdout, the Collector or a vendor backend (1131). Inference: the page gives no provider shutdown, flush or export-failure behavior.",
+        "Source claim: context propagation is called the core concept enabling distributed tracing (1135), and span context is the serialized part propagated alongside Distributed Context and Baggage (1200). Inference: propagation mechanics are deferred to another page, so this unit cannot evidence trust-boundary or header behavior.",
+        "Source claim: spans carry name, parent span ID (empty for roots), start/end timestamps, span context, attributes, events, links and status (1139-1148). The sample span uses net.transport, net.peer.ip, http.method, http.target and similar attribute names (1164-1177). Inference: those names follow an older semantic-convention generation; the page does not date or version them, so reuse should be checked against current conventions.",
+        "Source claim: attributes may be added during or after span creation, but adding them at creation is preferred so SDK sampling can see them; keys must be non-null strings and values non-null string, boolean, float, integer or arrays of these (1206-1215). Semantic Attributes are recommended for common metadata (1217). Inference: creation-time sampling is implied rather than specified, and no attribute-count or size limit is given.",
+        "Source claim: a span event is a structured-log-like annotation at a meaningful single point in time; when the completion timestamp matters attach data as an event, otherwise as attributes (1221-1239). Inference: this is a rule of thumb without cost, cardinality or backend-query guidance.",
+        "Source claim: links associate one span with one or more spans, 'implying a causal relationship', and are presented for asynchronous queued work where the later trace's start time is unpredictable; links are optional (1243-1251). Inference: 'causal' is used informally, since a consumer span may start long after its producer (1295), so a link records association rather than guaranteed ordering or delivery.",
+        "Source claim: span status is Unset, Error or Ok; Unset means the tracked operation completed without error, while Ok is an explicit developer declaration that is usually unnecessary (1257-1269). Inference: the page concedes the Ok semantics are unintuitive; Unset conflates 'not set' with 'successful', which matters if status is used to derive error rates.",
+        "Source claim: five span kinds exist (Client, Server, Internal, Producer, Consumer), defaulting to Internal; a server span's parent is 'often' a remote client and a client's child 'usually' a server, whereas a consumer's parent is 'always' a producer and a producer's child is 'always' a consumer (1273). Inference: the 'always' wording excludes batch, fan-in and replay patterns that the page does not discuss.",
+        "Source claim: the footer records last modified 2026-01-14 by commit 6bf06ddb (1312). Inference: this is a documentation-repository commit, not a frozen specification edition; the live URL can change after the 2026-10-24 capture."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/trace-causality.md",
+          "candidate": "Candidate anchor for trace/span/request identity and causal limits: the source says a link implies a causal relationship (1243-1251) and that a consumer may start long after its producer (1295); the book page separates span link, trace ID and business identity and denies guaranteed causal consistency, so the mapping of 'implying' needs parent review."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md",
+          "candidate": "Candidate anchor for context propagation as the enabler of distributed tracing (1135) and for the book's warning that a missing span does not prove no effect; the source page supplies no sampling or loss mechanics."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/sampling-trust.md",
+          "candidate": "Candidate anchor for attribute timing under sampling: the source advises adding attributes at span creation so SDK sampling sees them (1210); the book page owns sampling policy and forged-context trust but does not discuss attribute timing."
+        },
+        {
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "candidate": "Candidate anchor for the structured-log analogy and span limits: the source calls traces structured logs with hierarchy (1117) and links causal association (1243); the book page argues a span's existence does not prove a committed effect and lists what a trace may fail to show."
+        }
+      ],
+      "reader": "Delegated reader batch 13; parent validation pending."
+    },
+    {
+      "id": "R119",
+      "source_ids": [
+        "src.otel-metrics"
+      ],
+      "url": "https://opentelemetry.io/docs/concepts/signals/metrics/",
+      "unit": "Complete page: Metrics (OpenTelemetry Concepts, Signals; one page of the declared four-page signals scope)",
+      "revision": "Live docs; retrieved 2026-10-24; page last modified 2026-07-02 (commit 6524d480, line 1131); no immutable edition exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1150 lines / 7148 words read. Substantive body lines 1001-1118 = 1444 words including one table; lines 1-1000 and 1119-1150 = 5704 words of site chrome excluded from analysis (global header, language selector, theme toggle, full docs mega-menu, breadcrumb, On this page TOC, View Markdown/source/edit links, feedback widget, last-modified note, social links, copyright).",
+      "retrieval_refs": [
+        "/tmp/batch13/raw/src.otel-metrics.md lines 1-1150",
+        "Jina reader capture (Title/URL Source/Markdown Content), accessed 2026-10-24"
+      ],
+      "omissions": "other OpenTelemetry docs outside the declared signals scope not read",
+      "representation_sha256": "1b6f632bd2e3e7bb5e2663788b6b46004a6a1bf57b9a1d89ae1512b22b91f89b",
+      "retrieved_lines": 1150,
+      "retrieved_words": 7148,
+      "sections": [
+        "Metrics — intro and definition (1001-1009)",
+        "Meter Provider (1011-1013)",
+        "Meter (1015-1017)",
+        "Metric Exporter (1019-1021)",
+        "Metric Instruments (1023-1044)",
+        "Aggregation (1046-1058)",
+        "Views (1060-1062)",
+        "Cardinality limits (1064-1078)",
+        "What the limit does not apply to (1080-1087)",
+        "Temporality and cardinality limits (1089-1096)",
+        "Language Support (1098-1114)",
+        "Specification (1116-1118)"
+      ],
+      "notes": [
+        "Coverage claim: the body is lines 1001-1118 (1444 words) and the chrome is 5704 words. Inference: the page is one of the shorter signals pages, and its central new material (cardinality limits) is concentrated in lines 1064-1096.",
+        "Source claim: a metric is a measurement of a service captured at runtime, and a metric event consists of the measurement plus its capture time and associated metadata (1005). Inference: the definition is event-shaped, but the rest of the page describes aggregate instruments and exported data points rather than individual events.",
+        "Source claim: application and request metrics indicate availability and performance; custom metrics can connect availability to user experience or the business; collected data can alert on an outage or trigger autoscaling (1007). Inference: the autoscaling claim is a use case, not a control-loop design, and the page supplies no thresholds or feedback analysis.",
+        "Source claim: a Meter Provider is a factory for Meters, initialized once with a lifecycle matching the application and including Resource and Exporter setup; some SDKs provide a global provider (1013). A Meter creates instruments (1017), and a Metric Exporter sends data to stdout, the Collector or a vendor backend (1021). Inference: shutdown, flush and multi-provider behavior are absent.",
+        "Source claim: an instrument is defined by name, kind and optional unit and description, with names and units chosen by the developer or taken from semantic conventions (1025-1032). Kinds are Counter, Asynchronous Counter, UpDownCounter, Asynchronous UpDownCounter, Gauge, Asynchronous Gauge and Histogram, with odometer, queue-length and fuel-gauge analogies (1036-1042). Inference: only Gauge is explicitly called synchronous; whether the other non-asynchronous kinds are synchronous is left implicit.",
+        "Source claim: aggregation combines many measurements into exact or estimated statistics over a time window; OTLP transports aggregated metrics; each instrument has a default aggregation that Views can override (1048). Inference: 'estimated' acknowledges histogram approximation but the page gives no error bounds or bucket guidance.",
+        "Source claim: metrics are intended to provide statistical aggregate information, unlike request tracing which captures request lifecycles (1050). The use-case list includes bytes by protocol, bytes per request, system-call duration, request-size trends, CPU or memory usage, average balance values and active requests (1052-1058). Inference: the list mixes counter, gauge and histogram shapes without mapping them, and 'average balance' is business data whose privacy implications the page does not address.",
+        "Source claim: cardinality is the number of unique attribute combinations; the SDK keeps a separate aggregation state (data point) per combination, so memory scales with combinations rather than request volume, and high-cardinality attributes such as user IDs or raw URL paths can cause unbounded growth (1066). The default limit is 2000 and can be overridden with a View (1068). Inference: the default is presented as SDK-wide without a spec version, so conformance should be checked per implementation.",
+        "Source claim: at the limit, additional combinations are not dropped outright; measurements are folded into a single overflow data point marked otel.metric.overflow=true, so no measurements are lost, memory is bounded, and the marker is common across SDKs, languages and backends (1070-1074). Inference: this is a specific, testable conformance claim that the page does not evidence with an implementation matrix.",
+        "Source claim: queries that filter or group by any attribute undercount after overflow because the entire attribute combination is replaced, not just the high-cardinality part; the worked example shows success=false being dropped along with url.path, so an error-rate alert can stop firing while the total stays correct (1076-1078). Inference: this is the page's most consequential operational warning and deserves explicit treatment wherever metric alerts are designed.",
+        "Source claim: the limit applies only to attributes supplied through the metrics API; Resource attributes such as service.name and instrumentation-scope attributes are not limited and remain on every data point including overflow (1082-1087). The page warns that this is not a reason to relocate measurement attributes and gives an entity/scope/measurement modeling rule (1087). Inference: the guidance is architectural rather than normative API text.",
+        "Source claim: for synchronous instruments, delta temporality resets state each cycle so the limit bounds only combinations active in one cycle, while cumulative temporality retains state so new combinations keep overflowing until the process restarts; asynchronous instruments differ and are out of scope (1091-1096). Inference: long-lived cumulative processes can saturate permanently after 2000 combinations, but the page offers no restart or mitigation advice."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-semantics.md",
+          "candidate": "Candidate anchor for instrument kinds, aggregation and temporality: the source lists seven instrument kinds (1034-1042) and says default aggregation is overridable by Views (1048); the book page owns sums, gauges, histograms, delta/cumulative conversion and reset handling."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/cardinality-retention.md",
+          "candidate": "Candidate anchor for cardinality cost: the source states one aggregation state per unique combination, a default limit of 2000 and the otel.metric.overflow=true marker (1066-1074); the book page has multiplicative series arithmetic and aggregation-loss guidance but no 2000 default or overflow marker, so the source adds a concrete mechanism to check."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-pipelines-cardinality-and-retention.md",
+          "candidate": "Candidate anchor for where the limit sits in the pipeline: the source treats it as SDK behavior (1068) and says Resource and instrumentation-scope attributes survive overflow (1087); the book page owns SDK/collector/store boundaries and bounded-label design."
+        },
+        {
+          "path": "book/observability/metrics-slo-timeseries-architecture.md",
+          "candidate": "Candidate anchor for the alerting consequence: the source says a success=false alert can stop firing after overflow while the overall total stays correct (1078); the book page owns SLI and alert design plus cardinality/storage cost and would need the overflow mechanism added."
+        }
+      ],
+      "reader": "Delegated reader batch 13; parent validation pending."
+    },
+    {
+      "id": "R120",
+      "source_ids": [
+        "src.otel-logs"
+      ],
+      "url": "https://opentelemetry.io/docs/concepts/signals/logs/",
+      "unit": "Complete page: Logs (OpenTelemetry Concepts, Signals; one page of the declared four-page signals scope)",
+      "revision": "Live docs; retrieved 2026-10-24; page last modified 2026-08-07 (commit c1611659, line 1234); no immutable edition exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1253 lines / 7453 words read. Substantive body lines 1007-1221 = 1722 words including two tables and seven code blocks; lines 1-1006 and 1222-1253 = 5731 words of site chrome excluded from analysis (global header, language selector, theme toggle, full docs mega-menu, breadcrumb, On this page TOC, View Markdown/source/edit links, feedback widget, last-modified note, social links, copyright).",
+      "retrieval_refs": [
+        "/tmp/batch13/raw/src.otel-logs.md lines 1-1253",
+        "Jina reader capture (Title/URL Source/Markdown Content), accessed 2026-10-24"
+      ],
+      "omissions": "other OpenTelemetry docs outside the declared signals scope not read",
+      "representation_sha256": "d8508f0a60c00d33bcf90067f1b51d8146a45a64e473e39ad04c250414179787",
+      "retrieved_lines": 1253,
+      "retrieved_words": 7453,
+      "sections": [
+        "Logs — intro and definition (1007-1011)",
+        "OpenTelemetry logs (1013-1017)",
+        "OpenTelemetry logs in the OpenTelemetry Collector (1019-1028)",
+        "OpenTelemetry logs for applications (1030-1032)",
+        "Language support (1034-1050)",
+        "Structured, unstructured, and semistructured logs (1052-1054)",
+        "Structured logs (1056-1111)",
+        "Unstructured logs (1113-1127)",
+        "Semistructured logs (1129-1139)",
+        "Checking whether logging is enabled (1141-1165)",
+        "OpenTelemetry logging components (1167-1169)",
+        "Log Appender / Bridge (1171-1175)",
+        "Logger Provider (1177-1181)",
+        "Logger (1183-1187)",
+        "Log Record Exporter (1189-1191)",
+        "Log Record (1193-1217)",
+        "Specification (1219-1221)"
+      ],
+      "notes": [
+        "Coverage claim: the body is lines 1007-1221 (1722 words) and the chrome is 5731 words. Inference: the body is roughly a quarter of the file, and the longest substantive run is the structured/unstructured/semistructured section (1052-1139).",
+        "Source claim: a log is a timestamped text record, either structured (recommended) or unstructured, with optional metadata; logs have the biggest legacy of the signals and most languages already have logging facilities (1011). Inference: the 'text record' definition sits awkwardly with the later arbitrary Body and attribute model and is not reconciled on the page.",
+        "Source claim: OpenTelemetry provides a Logs API and SDK for log records plus language SDKs and bridges; logs are anything sent through a Logging Provider, and events are a special type of logs such that all events are logs but not all logs are events (1015). Inference: this is a definitional taxonomy without a formal event schema, although EventName later appears as a log-record field (1215).",
+        "Source claim: OpenTelemetry is designed to work with existing logs, correlate them with other signals, add contextual attributes and normalize sources (1017). The Collector supplies receivers, filelogreceiver, transformprocessor and exporters to non-OpenTelemetry formats (1021-1026), and deploying a Collector as a general-purpose logging agent is frequently the first adoption step (1028). Inference: this is adoption guidance without measured cost or migration effort.",
+        "Source claim: application logs are created with any logging library; with autoinstrumentation or an SDK, OpenTelemetry automatically correlates existing logs with the active trace and span, wrapping the log body with their IDs (1032). Inference: 'wrapping the log body' conflicts with the top-level TraceId and SpanId fields listed later (1206-1207); the page does not clarify body injection versus field assignment.",
+        "Source claim: Logs are a stable signal; the table marks C++, C#/.NET, Java, PHP and Rust Stable, Go Release candidate, and Erlang/Elixir, JavaScript, Python, Ruby and Swift Development (1036-1050). Inference: this is an undated snapshot and differs from the metrics table, where Go, JavaScript and Python are Stable.",
+        "Source claim: JSON is not automatically structured; a structured log has a defined, consistent schema or typed fields that downstream systems can parse, and the textual encoding may be JSON, protobuf or another format (1054-1058). Common Log Format and CLF-plus-JSON hybrid examples are given, with filelogreceiver helpers for mixed formats (1097-1109). Inference: schema stability, not encoding, is the criterion, but no schema registry or enforcement mechanism is named.",
+        "Source claim: unstructured logs are human-readable and common in development but not preferred for production because parsing at scale needs regular expressions and custom parsers (1115-1127); semistructured logs have machine-readable key/value or delimited fields but no stable schema across emitters and may need mapping and type coercion (1129-1139). Inference: the three categories are presented as covering any log format, but the boundaries are judgment calls rather than formal tests.",
+        "Source claim: checking logger.Enabled before a logging call is usually unnecessary and not recommended because SDK calls have minimal overhead when disabled and the extra call hurts performance and readability (1143-1151). The API is useful only when evaluating the arguments is expensive (1153-1159), the guarded expression must be free of side effects, and the result should be evaluated per record rather than cached (1161-1163). Inference: the advice presumes an efficient SDK implementation; no benchmark is given for the performance claim.",
+        "Source claim: the Logs Bridge API should not be called by application developers but exists for logging-library authors to build appenders or bridges into a LogRecordExporter (1171-1175); Logger Provider and Logger are marked as Bridge API and for library authors only (1179, 1185). Inference: the page does not name the application-facing alternative beyond using a preferred logging library.",
+        "Source claim: a log record has named top-level fields (Timestamp, ObservedTimestamp, TraceId, SpanId, TraceFlags, SeverityText, SeverityNumber, Body, Resource, InstrumentationScope, Attributes, EventName) plus arbitrary resource and attribute fields (1195-1215); the Logs Data Model link gives more detail (1217). Inference: EventName supports the events-as-logs claim, but field types, requiredness and cardinality limits are not stated here.",
+        "Source claim: the footer records last modified 2026-08-07 by commit c1611659 (1234). Inference: this is a documentation-repository commit, not a frozen specification edition; the live URL can change after the 2026-10-24 capture."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-semantics.md",
+          "candidate": "Candidate anchor for separating operational logs, audit and lineage: the source defines logs as timestamped records and events as a special type of log (1011-1015); the book page's evidence-type table assigns different completeness, identity and failure modes to operational logs and business audit."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md",
+          "candidate": "Candidate anchor for the structured-log recommendation and its limits: the source prefers stable-schema structured logs in production (1058-1111); the book page argues a sampled trace or best-effort log cannot become an audit ledger merely through retention."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-integrity.md",
+          "candidate": "Candidate anchor for record verification and sensitive fields: the source lists Body and Attributes among log-record fields (1200-1215) and gives a structured example with username, IP, user agent and a masked password (1060-1095); the book page owns tamper evidence, redaction and retention boundaries."
+        },
+        {
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "candidate": "Candidate anchor for log/trace correlation: the source says SDKs wrap existing logs with trace and span IDs (1032) and lists TraceId, SpanId and ObservedTimestamp fields (1204-1213); the book page distinguishes origin from observation time and warns against fabricating trace IDs for background events."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/collection-privacy.md",
+          "candidate": "Candidate anchor for privacy of retained log content: the source's JSON example includes username, IP, user agent and request metadata (1060-1095); the book page owns minimization, redaction and access/retention boundaries for collected content."
+        }
+      ],
+      "reader": "Delegated reader batch 13; parent validation pending."
+    },
+    {
+      "id": "R121",
+      "source_ids": [
+        "src.otel-baggage"
+      ],
+      "url": "https://opentelemetry.io/docs/concepts/signals/baggage/",
+      "unit": "Complete page: Baggage (OpenTelemetry Concepts, Signals; one page of the declared four-page signals scope)",
+      "revision": "Live docs; retrieved 2026-10-24; page last modified 2026-02-22 (commit 4b5381a2, line 1044); no immutable edition exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1063 lines / 6183 words read. Substantive body lines 993-1031 = 488 words including headings and two image links (about 440 words of prose); the body is short relative to the file. Lines 1-992 and 1032-1063 = 5695 words of site chrome excluded from analysis (global header, language selector, theme toggle, full docs mega-menu, breadcrumb, On this page TOC, View Markdown/source/edit links, feedback widget, last-modified note, social links, copyright).",
+      "retrieval_refs": [
+        "/tmp/batch13/raw/src.otel-baggage.md lines 1-1063",
+        "Jina reader capture (Title/URL Source/Markdown Content), accessed 2026-10-24"
+      ],
+      "omissions": "other OpenTelemetry docs outside the declared signals scope not read",
+      "representation_sha256": "24e8e83c3acdc30e830460f14b830670ef26258bd1bcaaee3f93cbc6b7fd7945",
+      "retrieved_lines": 1063,
+      "retrieved_words": 6183,
+      "sections": [
+        "Baggage — intro and definition (993-999)",
+        "Example (1001-1009)",
+        "What should OTel Baggage be used for? (1010-1016)",
+        "Baggage security considerations (1017-1021)",
+        "Baggage is not the same as attributes (1023-1031)"
+      ],
+      "notes": [
+        "Coverage claim: the substantive body is only lines 993-1031, 488 words including headings and two image links, against 1063 lines and 6183 words for the whole representation; chrome is 5695 words, about 92 percent. Inference: this page is a short concept note wrapped in the site template, and its body should be quoted as a whole rather than sampled.",
+        "Source claim: baggage is contextual information that resides next to context; it is a key-value store that lets you propagate any data alongside context (995-997). Inference: 'any data' is unbounded on this page, with no size, type or count limit stated.",
+        "Source claim: baggage lets data cross services and processes and be available to add to traces, metrics or logs in those services (999). Inference: availability is not automatic attachment; the later attributes section confirms that baggage must be read and added explicitly.",
+        "Source claim: the example starts with a clientId at request start and wants it on all spans in a trace, some metrics in another service and some logs; context propagation carries the baggage and instrumentations automatically propagate baggage (1003-1007). Inference: automatic propagation concerns header flow, not conversion into telemetry attributes; the two SVG diagrams (1009, 1016) are present only as image links with alt text 'OTel Baggage'.",
+        "Source claim: baggage is best used for information typically available only at the start of a request and needed further downstream, such as account identification, user IDs, product IDs and origin IPs (1012); a user ID on a database span makes it easier to find which users see the slowest calls, and the same ID can appear in logs (1014). Inference: the examples are personal or tenant identifiers, which the later security section only partly addresses.",
+        "Source claim: automatic instrumentation includes baggage in most network requests; baggage and other trace-context parts are sent in HTTP headers and are visible to anyone inspecting network traffic; if traffic is restricted the risk may not apply, but downstream services could propagate baggage outside the network (1019). Inference: the risk model is boundary-dependent, and this page gives no filtering or allow-list mechanism.",
+        "Source claim: there are no built-in integrity checks to ensure baggage items are yours, so reading them requires caution (1021). Inference: this is an authenticity and integrity gap, not only confidentiality, and the page offers no verification recipe.",
+        "Source claim: baggage is a separate key-value store and is unassociated with attributes on spans, metrics or logs unless explicitly added; adding requires reading baggage and attaching values as attributes (1025-1027). Several languages provide Baggage Span Processors that add baggage data as span attributes at creation (1029). Inference: processor availability and behavior are language-specific and not listed.",
+        "Source claim: the page links the baggage specification for more information (1031) and the footer records last modified 2026-02-22 by commit 4b5381a2 (1044). Inference: wire format, size limits, propagation rules and normative security requirements are outside this unit; the live page may change after the 2026-10-24 capture."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/sampling-trust.md",
+          "candidate": "Candidate anchor for baggage trust: the source warns that baggage travels in HTTP headers and has no built-in integrity checks (1019-1021); the book page treats W3C Baggage as a separate specification with no authorization or confidentiality guarantee and supplies allow-list and stripping boundaries."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md",
+          "candidate": "Candidate anchor for the scope statement that untrusted baggage must not become an authorization decision; the source only says to exercise caution when reading (1021) and states no authorization rule."
+        },
+        {
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "candidate": "Candidate anchor for sensitive baggage content: the source says baggage is visible to network inspectors and downstream services may propagate it outside the network (1019); the book page lists baggage, tracestate and attributes as leakage paths and proposes minimum-field correlation."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/collection-privacy.md",
+          "candidate": "Candidate anchor for retention and access of propagated identifiers: the source's examples include user IDs, account IDs and origin IPs (1012); the book page owns minimization, redaction and cross-collection isolation, but not header propagation."
+        }
+      ],
+      "reader": "Delegated reader batch 13; parent validation pending."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 83,
+    "full_reads": 87,
     "blocked": 14,
     "records": [
       "R015",
@@ -6019,7 +6289,11 @@
       "R114",
       "R115",
       "R116",
-      "R117"
+      "R117",
+      "R118",
+      "R119",
+      "R120",
+      "R121"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
