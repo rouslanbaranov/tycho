@@ -5,9 +5,9 @@
 | Criterion | Status | Evidence |
 |---|---|---|
 | Complete source inventory reconciles register and external links | Partial | 247 sources and 406 documents represented; external-link inventory beyond the register is incomplete. |
-| Every source has a finite unit and honest full/partial/blocked status | Partial | 102 reference records plus 6 SRE reconciliations; 150 sources remain landing-only. |
-| Every accessible scoped source read completely | Not met | 150 landing-only sources remain; RFC 9110 is now read with labelled supplements; 14 pages blocked and 2 sources excluded. |
-| All 406 canonical documents have a review status | Partial | All 406 have a status; 37 are comparison-assessed and 369 are explicit gaps. |
+| Every source has a finite unit and honest full/partial/blocked status | Partial | 108 reference records plus 6 SRE reconciliations; 144 sources remain landing-only. |
+| Every accessible scoped source read completely | Not met | 144 landing-only sources remain; RFC 9110 is now read with labelled supplements; 14 pages blocked and 2 sources excluded. |
+| All 406 canonical documents have a review status | Partial | All 406 have a status; 38 are comparison-assessed and 368 are explicit gaps. |
 | Findings include exact source locations, anchors and confidence | Partial | 30 comparisons carry anchors and source records; most pages have no comparison. |
 | Deep research synthesis delivered | Yes, negative | `FINAL-SYNTHESIS.md` records the evidence and the unmet criteria. |
 | No book content changed, baseline verified | Yes | 681 tracked files match; no book, register, index or edition change. |
@@ -21,8 +21,8 @@ review acceptance. A closure would be an unsupported completion claim.
 
 ## Conditions for a future acceptance
 
-- Reconcile and read the remaining 150 landing-only sources, or record lawful
+- Reconcile and read the remaining 144 landing-only sources, or record lawful
   access limitations.
-- Reduce the 369 page gaps through bounded comparisons.
+- Reduce the 368 page gaps through bounded comparisons.
 - Complete the external-link census.
 - Obtain and verify an independent review on a bounded delta.

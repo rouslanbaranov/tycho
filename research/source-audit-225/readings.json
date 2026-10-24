@@ -4860,12 +4860,458 @@
         }
       ],
       "reader": "Delegated reader batch 8; parent validation pending."
+    },
+    {
+      "id": "R103",
+      "source_ids": [
+        "src.etcd-api-enrichment"
+      ],
+      "url": "https://etcd.io/docs/v3.6/learning/api_guarantees/",
+      "unit": "Complete page: etcd API guarantees",
+      "revision": "Live public docs, version-pinned to /docs/v3.6; retrieved 2026-10-24; no immutable revision exposed. Page footer records 'Last modified September 26, 2025' (commit 5e64060, PR #984) as the closest available revision marker.",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1023 lines / 4286 words read end to end. The page is mostly chrome: technical body is lines 915-996 (11 sections, ~1066 prose words once link targets are stripped, about 25% of the tokenised text); lines 1-350 are the site header plus version selector, 350-895 are the multi-version left navigation linked for nine doc versions (830 etcd.io links; 100+ each for v3.8, v3.7, v3.6), and lines 997-1023 are the feedback widget, last-modified note, social links and footer. Excluded from technical claims: the entire navigation tree, breadcrumb trailer (lines 910-913), 'Edit this page'/'Create child page' tools, 'On this page' anchor list (lines 896-908), and the feedback/footer block. Sections covered: APIs to consider; KV APIs; Durability; Strict serializability; Atomicity; Linearizability; Watch APIs; Lease APIs; etcd specific definitions; Operation completed; Revision.",
+      "retrieval_refs": [
+        "/tmp/batch9/raw/src.etcd-api-enrichment.md lines 1-1023",
+        "Body lines 915-996",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read: etcd API reference and concurrency API reference (Range/Put/Delete/Txn/Watch/Grant/KeepAlive), the 'why' page section 'notes on the usage of lock and lease', design-client and design-auth-v3, Jepsen consistency-model page, the Herlihy-Wing linearizability paper, and the Stanford leases paper. No cluster, lease, watch or compaction behaviour was executed. Representation artefact: 'Revoke' in the API list (line 934) is plain text with no target, unlike its six siblings.",
+      "representation_sha256": "928283b987d1b706452bf9c607d341cdfbe95cb8e2d1f9eaf33ecac5fe80ba40",
+      "retrieved_lines": 1023,
+      "retrieved_words": 4286,
+      "sections": [
+        "APIs to consider",
+        "KV APIs",
+        "Durability",
+        "Strict serializability",
+        "Atomicity",
+        "Linearizability",
+        "Watch APIs",
+        "Lease APIs",
+        "etcd specific definitions",
+        "Operation completed",
+        "Revision"
+      ],
+      "notes": [
+        "Source claim (line 919): etcd 'ensures the strongest consistency and durability guarantees for a distributed system'. Inference: this is the maintainers' specification of intent, offered without proof or measurement; it ranks the API contract, not a deployment.",
+        "Source claim (lines 945, 949): durability attaches to completed operations, all accessible data is durable, and a read never returns data that was not made durable. Inference: the guarantee is scoped to what the server committed through consensus, and the page separately concedes (line 992) that a client can be unsure whether its own operation completed.",
+        "Source claim (line 953): KV operations are atomic and occur in a total order consistent with real-time order, with the total order implied by revision. Inference: strict serializability is asserted per API surface, so combining etcd reads with an external store needs a separate argument the page does not make.",
+        "Source claim (line 955): operation order inside a transaction matches the listed order only when there are no nested TXNs; for nested TXNs the order of execution 'is not specified'. Inference: nested TXN is the single place where the page withdraws a guarantee, making transaction shape a correctness variable rather than style.",
+        "Source claim (line 961): atomicity extends to watch, because all events produced by one operation arrive in one watch response and partial events are never observed. Inference: watch atomicity is bounded by one operation, not by a multi-operation transaction.",
+        "Source claim (line 969): linearizability is the default for all other operations, while a client-selected 'serializable' mode may return quorum-stale data and skips live consensus. Inference: the stale-read mode is an explicitly supported downgrade, so a read path must record which mode produced a value.",
+        "Source claim (lines 975-980): watch guarantees are ordered by revision, unique, reliable within the available history window, atomic per revision, resumable from the last received revision, and bookmarkable. Inference: reliability and resumability are both conditioned on the history window that compaction truncates, so watch dependability is a retention property, not an absolute one.",
+        "Source claim (line 982): etcd 'does not ensure linearizability for watch operations' and users must verify event revisions. Inference: this refutes the common shorthand that etcd is linearizable period, and it is the sentence a lease/fence argument should rest on.",
+        "Source claim (line 941): in a correctly working cluster watch events are expected about 10 ms after the event, yet 'there is no limit' and events in unhealthy clusters 'might never arrive'. Inference: 10 ms is an expectation, not a bound or SLO; no timeout or latency budget should be derived from it.",
+        "Source claim (line 986): a lease is granted, attached by put, revoked, and expired by wall-clock TTL, with distributed locks as the primary use case; correct lock usage is deferred to a separate 'why' page. Inference: this page alone does not license a lock protocol, so the deferred page is a real evidence dependency rather than optional reading.",
+        "Source claim (line 992): an operation is complete once committed through consensus; a client may be uncertain after a timeout or network disruption, and etcd may abort operations during a leader election without sending abort responses to outstanding requests. Inference: ambiguous client outcomes are documented behaviour, so retry safety must come from operation identity, not from error signalling.",
+        "Source claim (line 996): each modifying operation gets one increasing revision, a transaction gets one revision however many keys it touched, and equal revisions mean 'concurrently' modified. Inference: revision is a transaction-ordering clock, not a per-key version counter, so it cannot stand in for an ETag-style single-key token. Scope note: all eleven sections come from 82 body lines, so this record covers a short normative page, not an implementation guide."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "candidate": "The page already cites this URL for 'KV ordering, leases and delayed watches'; add that watch notifications are explicitly non-linearizable, so a watch event is not a write fence, and record src.etcd-api-enrichment in the chapter source ledger."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/agreement-failure.md",
+          "candidate": "Sharpen the agreement-versus-linearizability section with etcd's own split: linearizable KV by default, an opted-in stale read mode, and no linearizability guarantee for watch."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md",
+          "candidate": "Contrast a local relational isolation level with etcd's strict-serializability claim and its nested-TXN ordering gap, as a case where the store specifies ordering only for a restricted transaction shape."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+          "candidate": "Use the 'operation completed' definition — timeout or partition leaves the client uncertain, and leader election can abort requests without an abort response — as a documented example of an ambiguous effect needing operation identity."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md",
+          "candidate": "Ask whether an etcd revision carried as a log-position token can supply monotonic reads across client reconnects, given that watches are resumable only inside the compaction window."
+        }
+      ],
+      "reader": "Delegated reader batch 9; parent validation pending."
+    },
+    {
+      "id": "R104",
+      "source_ids": [
+        "src.s3-conditional-enrichment"
+      ],
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes.html",
+      "unit": "Complete page: How to prevent object overwrites with conditional writes",
+      "revision": "Live public docs (Amazon S3 User Guide, 'latest' alias); retrieved 2026-10-24; no immutable revision exposed. The representation carries no last-modified date, no document version and no revision identifier.",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1765 lines / 7469 words read end to end. The page is mostly chrome: the technical body is lines 1439-1668 (six sections, ~2221 prose words once link targets are stripped, about 34% of the tokenised text). Lines 6-74 are the cookie-preferences and privacy-choices panels, 76-1438 are the AWS docs shell plus the whole Amazon S3 User Guide left navigation (831 S3 userguide links across buckets, objects, vectors, security and reference topics), and 1669-1765 are the feedback widget, related resources, next/previous topic links, site footer and two duplicated image lightbox modals. Excluded from technical claims: cookie and privacy panels, the entire navigation tree, breadcrumbs (lines 1428-1437), PDF/RSS/Markdown download links, the 'Agent Setup' promo, 'Focus mode' control, the help-us feedback prompts, and the lightbox repeats at lines 1755-1765. Sections covered: How to prevent object overwrites based on key names; Conditional Put/Copy/multipart upload Using the AWS CLI (If-None-Match); How to prevent overwrites if the object has changed; Conditional Put/Copy/multipart upload Using the AWS CLI (If-Match); Conditional write behavior; Conditional write scenarios (conditional writes during multipart uploads, concurrent deletes during multipart uploads).",
+      "retrieval_refs": [
+        "/tmp/batch9/raw/src.s3-conditional-enrichment.md lines 1-1765",
+        "Body lines 1439-1668",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked pages not read: PutObject, CopyObject and CompleteMultipartUpload API references; 'Enforce conditional writes on Amazon S3 buckets'; 'How to retrieve or copy objects based on metadata'; object-key naming; ETag/Content-MD5 integrity page; AWS CLI put-object/copy-object/complete-multipart-upload references; lifecycle AbortIncompleteMultipartUpload configuration. Two embedded scenario diagrams (conwrite_put_mpu.png, conwrite_delete_mpu.png) were not viewed; only their alt text was available. No request was executed against any bucket.",
+      "representation_sha256": "d5455bf5ce000b1d892585a06aaafb37376caf9e0e0acf56e689ad71d1912d2a",
+      "retrieved_lines": 1765,
+      "retrieved_words": 7469,
+      "sections": [
+        "How to prevent object overwrites based on key names",
+        "Conditional Put Using the AWS CLI (If-None-Match)",
+        "Conditional Copy Using the AWS CLI (If-None-Match)",
+        "Conditional multipart upload Using the AWS CLI (If-None-Match)",
+        "How to prevent overwrites if the object has changed",
+        "Conditional Put Using the AWS CLI (If-Match)",
+        "Conditional Copy Using the AWS CLI (If-Match)",
+        "Conditional multipart upload Using the AWS CLI (If-Match)",
+        "Conditional write behavior",
+        "Conditional write scenarios",
+        "Conditional writes during multipart uploads",
+        "Concurrent deletes during multipart uploads"
+      ],
+      "notes": [
+        "Source claim (lines 1459-1463, 1485): conditional writes attach an HTTP If-None-Match or If-Match header to WRITE requests, and If-None-Match with the '*' value makes the write fail when the key already exists. Inference: this is create-if-absent built on standard HTTP precondition semantics, so it cannot serve as a general compare-and-swap over mutable content.",
+        "Source claim (line 1469): conditional writes require AWS Signature Version 4. Inference: the capability is unavailable to any client still signing with a legacy scheme, so adoption is a client-migration dependency and not only a write-path edit.",
+        "Source claim (line 1491): If-None-Match 'only applies to the current version of an object in a version bucket'. Inference: a caller cannot express 'no version of this key has ever existed', so historical versions are invisible to this precondition.",
+        "Source claim (lines 1493, 1555): If-None-Match needs only s3:PutObject, while If-Match needs s3:PutObject and s3:GetObject. Inference: the two preconditions have different authorization footprints, so a least-privilege policy written for create-if-absent cannot silently support ETag preconditions.",
+        "Source claim (line 1553): an object's ETag is 'a string that's unique to the object and reflects a change to the object's content', and If-Match fails when the supplied value does not match. Inference: the strength of If-Match rests entirely on the caller's assumption that this ETag identifies the bytes it validated; the page promises nothing further about ETag derivation.",
+        "Source claim (line 1620): when several conditional writes target the same object name, the first write to finish succeeds and later writes get 412 Precondition Failed. Inference: 'first to finish' is a completion-order rule, so request arrival time cannot predict the winner.",
+        "Source claim (lines 1618, 1631-1636): if the current version is a delete marker or absent, If-None-Match succeeds while If-Match fails with 404 Not Found. Inference: the two headers disagree about what a missing or deleted object means, so status-code handling must be keyed to the header actually sent.",
+        "Source claim (lines 1622, 1629): a delete that completes before the conditional write yields 409 Conflict for If-None-Match but 404 Not Found for If-Match, and after a 409 a PutObject may be retried whereas a CompleteMultipartUpload must be re-initiated via CreateMultipartUpload. Inference: recovery cost differs by API, so a single generic retry wrapper would silently mishandle the multipart case.",
+        "Internal tension in the source (lines 1627-1629): the If-Match paragraph first says a 409 Conflict can occur with concurrent requests, then says a 404 Not Found is returned when a concurrent delete wins; the scenario note (line 1660) settles it as 404 for If-Match, while the multipart note (line 1648) reports 412 for both headers when a conditional completion loses. Inference: the page offers no single status-code table, so an implementation that assumes one code per header will misclassify some races.",
+        "Source claim (lines 1644-1650): conditional writes do not consider in-progress multipart uploads because those are not yet fully written objects, so a competing conditional PutObject can win and the later conditional CompleteMultipartUpload then fails with 412 for either header. Inference: an in-flight MPU confers no exclusivity, so 'I started the upload first' is not a lock.",
+        "Source claim (line 1668): AWS recommends an AbortIncompleteMultipartUpload lifecycle rule to bound the cost of incomplete uploads. Inference: the failure mode above creates a standing storage obligation, so enabling conditional multipart completion without that rule leaves a cost leak behind every lost race.",
+        "Scope and representation: the page covers preconditions only for PutObject, CopyObject and CompleteMultipartUpload (lines 1495-1501, 1557-1563) and makes no claim about read consistency, replication, directory buckets or non-S3 stores; the CLI examples are printed twice (inline under the explanatory heading, then under a 'Conditional ... Using the AWS CLI' heading at lines 1503-1541 and 1565-1611), which is a conversion artefact rather than extra guidance, and the source text contains the typo 'tnis' at lines 1535 and 1597."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/publication-consistency.md",
+          "candidate": "Tighten 'prevent replacement, not only duplication' with the exact scope: If-None-Match is create-if-absent against the current version only, first-completed writer wins, and a delete marker counts as absent — so the precondition protects one key at one instant, not a publication protocol."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/upload-integrity.md",
+          "candidate": "Add the documented resolution asymmetry — retry PutObject after 409, but re-run CreateMultipartUpload after 409 or 412 — plus the AbortIncompleteMultipartUpload obligation that a lost completion race leaves behind."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
+          "candidate": "Trace the delete-marker case: If-None-Match succeeds and If-Match returns 404 when the current version is a delete marker, so versioning and lifecycle policy change what a conditional write means."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "candidate": "Treat the precondition header as an effect-identity mechanism for create-once publication, and ask what identity survives when the caller must rebuild the request after a 412 instead of a retry."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/multiwriter-conflicts.md",
+          "candidate": "Use conditional-write 412/409/404 as a worked case of conflict-as-correct-result, where the store refuses the second writer instead of merging, and the caller must classify the refusal before retrying."
+        }
+      ],
+      "reader": "Delegated reader batch 9; parent validation pending."
+    },
+    {
+      "id": "R105",
+      "source_ids": [
+        "src.gcp-deletion-enrichment"
+      ],
+      "url": "https://docs.cloud.google.com/docs/security/deletion",
+      "unit": "Complete page: Data deletion on Google Cloud",
+      "revision": "Live public docs; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 85 lines / 2063 words. Sections: Data storage and replication; Data deletion pipeline (Stages 1-4); Deletion timeline; closing media-sanitization text. Chrome excluded: Jina title/URL header, 'Markdown Content:' marker and trailing image link; none carried technical claims. No representation gap: every heading is present and the page ends at its sanitization conclusion.",
+      "retrieval_refs": [
+        "/tmp/batch9/raw/src.gcp-deletion-enrichment.md lines 1-85",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked Terms of Service, Data Processing Addendum, default-encryption, infrastructure-security, NIST SP 800-88 Rev 1 and DoD 5220.22-M documents not read; pipeline diagram not rendered; linked product pages not read; no provider console inspection, independent test or execution.",
+      "representation_sha256": "91bd4862af3ef3be8d8afcdc1c0938cfd2203e271901d85785e141ccc7879c25",
+      "retrieved_lines": 85,
+      "retrieved_words": 2063,
+      "sections": [
+        "Data storage and replication",
+        "Data deletion pipeline: Stage 1, deletion request",
+        "Stage 2, soft deletion",
+        "Stage 3, logical deletion from active systems",
+        "Stage 4, expiration from backup systems",
+        "Deletion timeline",
+        "Media sanitization (untitled closing section)"
+      ],
+      "notes": [
+        "Source claim: the page describes Google Cloud's own secured deletion process, last updated May 2024 with a status-quo disclaimer (line 6). Inference: it is vendor self-description, not an independent audit; internal signal and facility claims are not externally corroborated in this representation.",
+        "Source claim: deletion is staged as request, soft deletion, logical deletion from active systems, then expiration from backups (lines 26-65). Inference: 'deleted' is ambiguous until the stage and the observable assertion are named.",
+        "Source claim: the timeline sets a 24-hour goal for marking, up to 30 days of recovery, about two months for active-system deletion, and backup expiry within six months (lines 69-73). Inference: these clocks overlap rather than simply sum; no per-object completion date is given.",
+        "Qualifier conflict: 'maximum period of about six months (180 days)' (line 69) mixes a bound with an approximation, and Stage 2 is a 'goal' (line 71). Inference: the text supports an order-of-magnitude six-month commitment, not a precise 180-day SLA; do not tighten it downstream.",
+        "Source claim: project deletion broadcasts a suspension signal keyed to project number and collects ACKs, with Bigtable tables in recovery up to 30 days (line 45). Inference: this is a distributed control protocol whose retry bounds, partial-failure handling and customer-visible evidence are unspecified.",
+        "Source claim: active systems use mark-and-sweep garbage collection and major compaction at regular intervals; Cloud Storage additionally uses cryptographic erasure (lines 51-55). Inference: compaction cadence, not the delete API call, sets physical reclamation time.",
+        "Unresolved wording: the text excludes Cloud Storage from the overwrite sentence, then says Cloud Storage is 'also' deleted through cryptographic erasure (lines 53-55). Inference: whether Cloud Storage blocks are overwritten as well is not settled by this page; retain the ambiguity.",
+        "Source claim: daily, weekly and monthly aggregate backups are retired on a predefined cycle, and data deleted from active systems is no longer copied into backups (lines 59-63). Inference: backup retention creates a deliberate deletion lag, and pre-deletion snapshots remain readable until expiry unless keys are destroyed.",
+        "Source claim: cryptographic erasure can make data unrecoverable before backup expiry (line 65), but key-copy inventory and shared-key blast radius are not discussed. Inference: 'erased' there means key-dependent unreadability; it is not evidence that ciphertext is absent.",
+        "Source claim: retired media are zero-overwritten with multi-step verification, otherwise crushed/deformed or shredded, citing NIST SP 800-88 Rev 1 and DoD 5220.22-M (lines 83-85). Inference: these are facility-process assertions; neither the standards nor the page supply per-device evidence to a customer.",
+        "Scope: 'customer data' is defined by reference to the Google Cloud Terms (line 8), and contractual deletion commitments live in the DPA (line 12), neither of which is in this representation. Inference: the page describes mechanics, not remedies or current universal deadlines.",
+        "Coverage limit: the pipeline diagram (line 77) was not rendered and no deletion, restore or media-sanitization exercise was run. Inference: the page can support a staged model and vocabulary, not a verified erasure outcome."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
+          "candidate": "Already cites this page (line 178); enrich its 'Deletion across derived state and restored backups' table with the four stages and the 30-day/two-month/six-month clocks, keeping the 'about' qualifier."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+          "candidate": "Contrast backup retention needed for restore/RPO with deletion propagation: a retained snapshot is both a recovery asset and a delayed-erasure liability."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
+          "candidate": "Already lists src.gcp-deletion-enrichment (line 43); add cryptographic erasure and version/backup expiry as distinct lifecycle completion states."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/collection-privacy.md",
+          "candidate": "Retention limits need a staged completion vocabulary (marked, logically deleted, key-destroyed, media-sanitized) instead of one 'deleted' flag."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/mvcc-snapshots-and-vacuum.md",
+          "candidate": "Mark-and-sweep and compaction are the vendor's active-storage deletion analogue: visibility (logical deletion) and space reclamation are separate clocks."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
+          "candidate": "RPO-driven backup cycles impose a deletion lag; recovery objectives and erasure commitments must be co-designed and separately evidenced."
+        }
+      ],
+      "reader": "Delegated reader batch 9; parent validation pending."
+    },
+    {
+      "id": "R106",
+      "source_ids": [
+        "src.temporal-version-enrichment"
+      ],
+      "url": "https://docs.temporal.io/workflow-execution",
+      "unit": "Complete page: Temporal Workflow Execution overview | Temporal Documentation",
+      "revision": "Live public docs; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 174 lines / 1645 words. Sections: What is a Workflow Execution?; Replays; Commands and awaitables; What is a Command?; Status; Workflow Execution Chain; Memo; State Transition; Workflow cache. Chrome excluded: on-page table of contents (lines 6-16), repeated 'Direct link to' anchor artifacts, SDK how-to link lists and image captions. No representation gap: all nine listed sections appear in the body, with 'Status' shortened from the ToC label.",
+      "retrieval_refs": [
+        "/tmp/batch9/raw/src.temporal-version-enrichment.md lines 1-174",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked determinism constraints, Event History, Command reference, gRPC proto, Continue-As-New, retry policies, workers/tasks and per-SDK replay pages not read; diagrams not rendered; no product version, quota beyond the 40 KB Memo limit, or execution test; no product use.",
+      "representation_sha256": "dab4363b7df17c48c786b172b855007b94f9ff7e38e06964a76467db5bb21d0f",
+      "retrieved_lines": 174,
+      "retrieved_words": 1645,
+      "sections": [
+        "What is a Workflow Execution?",
+        "Replays",
+        "Commands and awaitables",
+        "What is a Command?",
+        "Status (Open/Closed)",
+        "Workflow Execution Chain",
+        "What is a Memo?",
+        "What is a State Transition?",
+        "Workflow cache"
+      ],
+      "notes": [
+        "Source claim: a Workflow Execution is a durable, reliable, scalable function execution created by running a Workflow Definition; durability is defined as 'the absence of an imposed time limit' (lines 20, 36-38). Inference: this is a product-scoped definition, not a general distributed-systems definition.",
+        "Source claim: workflow code executes 'effectively once and to completion' (line 38), not exactly once. Inference: external side effects still need effect identity and idempotency; the page does not claim exactly-once effects.",
+        "Source claim: replay resumes progress by checking generated Commands against an existing Event History (line 54), while deterministic constraints are delegated to another page (line 56). Inference: replay correctness depends on deterministic workflow code, which this representation does not examine.",
+        "Source claim: an execution issues Commands and waits on Awaitables; a Worker batches Commands when the function can no longer progress without an Awaitable result (lines 68-79). Inference: the Command boundary is where workflow decisions become durable history entries.",
+        "Source claim: a Command is a requested action from Worker to Temporal Service after a Workflow Task Execution and is recorded as an Event; WorkflowTaskStarted and WorkflowTaskCompleted always bracket a completion request (lines 92-96). Inference: Event History is the audit substrate, but its retention and size limits are not stated here.",
+        "Source claim: status is Open (Running or Paused) or Closed (Cancelled, Completed, Continued-As-New, Failed, Terminated, Timed Out) (lines 106-128). Inference: Paused still counts as Open, so liveness checks must not equate Open with active progress.",
+        "Source claim: identity is Namespace plus Workflow Id plus Run Id, while a Chain shares a Workflow Id and links runs through Continue-As-New, Retries or Cron (lines 132-138). Inference: 'same workflow' is ambiguous unless run or chain scope is stated.",
+        "Source claim: Workflow Execution Timeout applies to the Chain and Workflow Run Timeout to a single run (line 140). Inference: timeout policy must be scoped to the same identity unit as retention and reporting.",
+        "Source claim: Memos are non-indexed, lack type safety, are eventually consistent, should not hold execution-critical data, and are limited to 40 KB on Temporal Cloud (lines 144-156). Inference: Memos are annotation, not workflow state.",
+        "Source claim: a simple workflow with two sequential Activities produces 11 State Transitions (two for start, four per Activity, one for completion), each recorded in a persistence store (lines 160-166). The arithmetic is internally consistent; inference: transition count is a cost and throughput driver the page does not quantify.",
+        "Source claim: Workers keep an in-memory LRU Workflow Cache, sticky queues route later tasks to the same Worker, and eviction forces Event History replay (lines 168-174). Inference: the cache is subordinate to history, so eviction affects latency rather than correctness.",
+        "Scope: the page is a conceptual overview that links determinism, Event History, Command reference, gRPC proto and SDK pages, none included here. Inference: it establishes vocabulary and mechanism shape, not version-specific behavior, limits or exactly-once delivery."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+          "candidate": "Already cites this URL (line 142); add Command/Awaitable batching, Open/Closed status and chain-versus-run identity, preserving the page's 'does not prove exactly once' caveat."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+          "candidate": "Separate workflow-state recovery through history replay from business compensation: a durable engine resumes the process but does not make external effects atomic."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+          "candidate": "Place Event History replay beside outbox and inbox as three durable-coordination mechanisms with different guarantees and different failure boundaries."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+          "candidate": "'Effectively once' is the source's own wording; use it to argue for effect identity at the Activity boundary rather than exactly-once delivery."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/task-lifetime.md",
+          "candidate": "Workflow lifetime outlives Worker, task and cache lifetimes; worker loss is recoverable by replay, not by transferring in-memory state."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-authority.md",
+          "candidate": "A Worker's LRU workflow cache is a latency optimization subordinate to Event History; eviction triggers replay rather than state loss."
+        }
+      ],
+      "reader": "Delegated reader batch 9; parent validation pending."
+    },
+    {
+      "id": "R107",
+      "source_ids": [
+        "src.owasp-key-enrichment"
+      ],
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Key_Management_Cheat_Sheet.html",
+      "unit": "Complete page: Key Management - OWASP Cheat Sheet Series",
+      "revision": "Live public docs; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "omissions": "Linked docs/code not read; no execution. Linked NIST, ASVS, RFC and companion cheat-sheet targets were not fetched.",
+      "reader": "Delegated reader batch 9; parent validation pending.",
+      "coverage": "All 299 lines / 4449 words; sections Introduction through References (27 headings incl. all subsections); chrome excluded (lines 1-7 reader title/URL/published-time header and permalink glyphs).",
+      "retrieval_refs": [
+        "/tmp/batch9/raw/src.owasp-key-enrichment.md lines 1-299",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "representation_sha256": "f537b140e32d711e68ba608e7dc36c244b77e5812aaba24a3d1f416f4e2cbcf9",
+      "retrieved_lines": 299,
+      "retrieved_words": 4449,
+      "sections": [
+        "Introduction",
+        "General Guidelines and Considerations",
+        "Key Selection",
+        "Algorithms and Protocols",
+        "Cryptographic hash functions",
+        "Symmetric-key algorithms",
+        "Asymmetric-key algorithms",
+        "Message Authentication Codes (MACs)",
+        "Digital Signatures",
+        "Key Encryption Keys",
+        "Key Strength",
+        "Memory Management Considerations",
+        "Perfect Forward Secrecy",
+        "Key Usage",
+        "Cryptographic Module Topics",
+        "Key Management Lifecycle Best Practices",
+        "Generation",
+        "Distribution",
+        "Storage",
+        "Cryptoperiods and Rotation",
+        "Escrow and Backup",
+        "Accountability and Audit",
+        "Key Compromise and Recovery",
+        "Zeroization and Destruction",
+        "Trust Stores",
+        "Cryptographic Key Management Libraries",
+        "References"
+      ],
+      "notes": [
+        "Source claim: this is implementation guidance for application key management, not a standard or certification; it cites NIST SP 800-57/800-133/800-38D, FIPS 140-2/140-3, FIPS 180/186/198 and OWASP ASVS 5.0. Inference: no compliance conclusion follows from this page alone.",
+        "Source claim: key selection starts from application security objectives (confidentiality at rest and in transit, device and data-origin authenticity, integrity, key-encryption keys), not from library availability. Inference: this supports a requirements-first gate before algorithm selection.",
+        "Source claim: a single key should serve one purpose; the stated reasons are cross-use weakening, blast-radius limitation and conflicting retention periods. Inference: purpose separation needs KMS key-usage policy or equivalent enforcement, which the page does not specify.",
+        "Source claim: representative cryptoperiods include symmetric data-encryption originator use up to 2 years (general low volume) or a day/week (high volume or link encryption), recipient decryption up to 3 years beyond originator use, signing keys 1-3 years, and static key-establishment pairs 1-2 years. Inference: these are risk-assessed examples, not universal defaults.",
+        "Source claim: with AES-GCM and random 96-bit IVs, each key is limited to at most 2^32 encryption operations across all devices sharing that key (NIST SP 800-38D Section 8.3). Inference: the cap is per key, so key sharding changes accounting but not the per-key limit.",
+        "Source claim: retiring a KEK requires rewrapping stored DEKs; rewrap leaves DEKs and their cryptoperiod/usage counters unchanged, while replacing a DEK for existing ciphertext requires re-encryption; managed services may retain old wrapping-key versions. Inference: rotation is several distinct operations and provider behavior must be verified per service.",
+        "Source claim: keys and secrets must never be committed to repositories or embedded in build artifacts; use a secrets manager/key vault, keep raw keys out of application code, and perform cryptographic operations inside the module boundary, with HSM/TPM preferred at higher assurance. Inference: this is a control objective, not evidence of vault authorization or audit quality.",
+        "Source claim: a compromise-recovery plan must name notification and recovery personnel, the re-key method, a key inventory, revocation-checking policy and re-key monitoring. Inference: plan existence is organizational evidence that document review cannot verify.",
+        "Source claim: destruction is the final lifecycle state; destroy all copies including backup, archive, escrow and memory copies; cryptographic erasure is acceptable only when all protecting keys and plaintext copies are gone; software overwrite is best-effort in managed runtimes. Inference: 'destroyed' is therefore probabilistic in garbage-collected runtimes and stronger with HSM zeroize.",
+        "Source claim: trust stores need controls against third-party root injection, integrity protection, authenticated key export and a secure update process. Inference: trust-store update is a supply-chain trust boundary comparable to artifact signing.",
+        "Source claim: 'Never escrow keys used for performing digital signatures' while encryption keys may be escrowed. Inference: the prohibition is stated absolutely; any exception needs separate authority and is not supported by this page.",
+        "Representation/quality: line 116 ends with an unmatched ')' after the NIST SP 800-57 reference and line 251 embeds 'i.' inside numbered item 8. These look like formatting defects, not technical assertions; no technical text appears absent."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+          "candidate": "Extend the cryptographic isolation row with key purpose separation, cryptoperiods, rewrap-versus-reencrypt and the HSM/module boundary as explicit conditions."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+          "candidate": "Add key-rotation/revocation, zeroization limits in managed runtimes and trust-store injection to the credential failure-mode list."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/build-identity.md",
+          "candidate": "Sharpen the distinction between artifact signing keys and release credentials with rotation, revocation and trust-root scope."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/promotion-authorization.md",
+          "candidate": "Qualify signature validity: a verified signature does not establish key-holder authority or authorization for a target environment."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c06-capacity-operational-constraints-and-total-cost/lifecycle-cost.md",
+          "candidate": "Add key custody, HSM, automated rotation and compromise-recovery drills as lifecycle operating-cost line items."
+        }
+      ]
+    },
+    {
+      "id": "R108",
+      "source_ids": [
+        "src.owasp-rest-enrichment"
+      ],
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html",
+      "unit": "Complete page: REST Security - OWASP Cheat Sheet Series",
+      "revision": "Live public docs; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "omissions": "Linked docs/code not read; no execution. Linked NIST, ASVS, RFC and companion cheat-sheet targets were not fetched.",
+      "reader": "Delegated reader batch 9; parent validation pending.",
+      "coverage": "All 268 lines / 3359 words; sections Introduction through References (22 headings incl. subsections); chrome excluded (lines 1-7 reader title/URL/published-time header and permalink glyphs); response-header tables sit under the Audit logs heading with no separate heading (text present; heading flattening only).",
+      "retrieval_refs": [
+        "/tmp/batch9/raw/src.owasp-rest-enrichment.md lines 1-268",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "representation_sha256": "f36ca42ffa2ae99bd9baba683f8b971a226fb0f2e3ec8558807c4fb190ec5111",
+      "retrieved_lines": 268,
+      "retrieved_words": 3359,
+      "sections": [
+        "Introduction",
+        "HTTPS",
+        "Access Control",
+        "JWT",
+        "API Keys",
+        "Restrict HTTP methods",
+        "Preventing Out-of-Order API Execution",
+        "Problem",
+        "Example",
+        "Prevention Guidance",
+        "Testing Checklist",
+        "Input validation",
+        "Validate content types",
+        "Validate request content types",
+        "Send safe response content types",
+        "Management endpoints",
+        "Error handling",
+        "Audit logs",
+        "CORS",
+        "Sensitive information in HTTP requests",
+        "HTTP Return Code",
+        "References"
+      ],
+      "notes": [
+        "Source claim: REST follows Fielding's dissertation, with resources identified by URIs, representations, client/server plus cache/resolver/tunnel connectors, statelessness and HATEOAS. Inference: these are definitional commitments, not security controls.",
+        "Source claim: 'stateless' refers to resource state, not session state, and stateful APIs plus client-to-backend state passing are out of scope or anti-patterns. Inference: the later JWT denylist recommendation adds server-side state, a tension the page does not reconcile.",
+        "Source claim: secure REST services must expose only HTTPS endpoints; mutually authenticated client certificates are suggested for highly privileged services. Inference: transport protection does not cover token storage, logging or endpoint compromise.",
+        "Source claim: access control should be decided locally at each endpoint while authentication is centralized in an IdP that issues access tokens. Inference: central issuance does not centralize object-level authorization.",
+        "Source claim: reject 'alg':'none'; prefer signatures over MACs because every MAC-validating service can mint tokens; verify integrity from local configuration, not the token header; require and validate iss/aud/exp per RFC 9068 and nbf where the profile requires it; denylist jti on explicit session termination. Inference: MAC trust-domain coupling is the key architectural point.",
+        "Source claim: API keys are required on every request to a protected endpoint, 429 is returned for excessive rate, keys are revoked on agreement violation, and API keys alone must not protect sensitive resources. Inference: API keys identify clients, not users or objects.",
+        "Source claim: allowlist HTTP methods, return 405 for non-matching requests, and authorize the method on collection, action and record; Java EE verb tampering is cited as a common misconfiguration. Inference: 405 discloses route existence, a trade-off against 404 that the page does not discuss.",
+        "Source claim: workflows such as create-validate-approve-finalize need server-side state-transition validation, explicit state machines, stage-bound tokens and rejection of out-of-order transitions, plus a four-question test checklist. Inference: per-endpoint authentication cannot detect sequence abuse, so workflow state becomes an authorization input.",
+        "Source claim: validate length/range/format/type, use strong types and regexes, reject unexpected content, cap request size with 413, log validation failures and use XXE-safe parsers. Inference: logging validation failures can itself create a sensitive-data channel if raw inputs are recorded.",
+        "Source claim: require a supported Content-Type on bodied requests and return 415, reserve 406 for response negotiation, never copy Accept into Content-Type, and declare consumes/produces explicitly. Inference: 406/415 confusion is a contract defect that changes client retry behavior.",
+        "Source claim: browser-facing responses should carry Cache-Control no-store (which the Cache API ignores), CSP frame-ancestors 'none', Content-Type, HSTS (initial HTTP remains exposed and trusted attacker certificates are not covered), nosniff and legacy X-Frame-Options; other headers matter only for HTML. Inference: 'all API responses' is broader than the stated browser rationale.",
+        "Source claim: return generic errors without stack traces; write audit logs before and after security events, log token-validation errors and sanitize log data against injection; use semantically appropriate status codes. Inference: durability, integrity and retention are unspecified, so this sheet alone cannot support an audit-evidence claim."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+          "candidate": "Add a status-code and content-negotiation table (405/406/413/415/429) as transport-contract evidence, kept distinct from domain effect."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "candidate": "Use the out-of-order workflow example as a negative test: sequence authorization is not supplied by per-endpoint authentication."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
+          "candidate": "Clarify that Content-Type and consumes/produces are compatibility contracts, not merely schema-version metadata."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md",
+          "candidate": "Cross-link JWT iss/aud/exp validation and API-key limitations to per-object and per-tenant authorization."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md",
+          "candidate": "Add log-injection sanitization and pre/post security-event logging as evidence-quality constraints on audit records."
+        }
+      ]
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 71,
+    "full_reads": 77,
     "blocked": 14,
     "records": [
       "R015",
@@ -4955,7 +5401,13 @@
       "R099",
       "R100",
       "R101",
-      "R102"
+      "R102",
+      "R103",
+      "R104",
+      "R105",
+      "R106",
+      "R107",
+      "R108"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
