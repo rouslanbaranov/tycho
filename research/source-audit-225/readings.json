@@ -6307,12 +6307,209 @@
         }
       ],
       "reader": "Delegated reader batch 14; parent validation pending."
+    },
+    {
+      "id": "R124",
+      "source_ids": [
+        "src.kafka"
+      ],
+      "url": "https://kafka.apache.org/41/design/design/",
+      "unit": "Complete page: Design (Apache Kafka 4.1 documentation design content page, https://kafka.apache.org/41/design/design/; excludes the separate /41/design/ section index)",
+      "revision": "Apache Kafka 4.1 documentation (URL path /41/; the page banner identifies it as an older version); retrieved 2026-10-24; the representation exposes no published timestamp or immutable revision",
+      "status": "full-scoped-text-read",
+      "coverage": "All 460 lines / 11,878 words read sequentially. Body lines 7-460 = 11,853 words across ten top-level sections: Motivation; Persistence; Efficiency; The Producer; The Consumer; Message Delivery Semantics; Using Transactions; Replication; Log Compaction; Quotas, plus the unheaded Kafka 4.1 share-groups preview at 216-240. Excluded as chrome: reader header lines 1-5 (7 words: Title, URL Source, Markdown Content) and the 4.1 older-version banner at line 6 (18 words). No site navigation or footer is present in this capture. No section is missing; the two log-compaction images are referenced as Image 1/2 without captions and were not rendered.",
+      "retrieval_refs": [
+        "/tmp/batch15/raw/src.kafka-design-content.md lines 1-460",
+        "Local reader capture with Title/URL Source/Markdown Content header, accessed 2026-10-24"
+      ],
+      "omissions": "other documentation outside the declared scope not read",
+      "representation_sha256": "68676a3ec7acf00bb52665bedc6b7b75b238d42a2bd01c9aa7c54ec07919eb56",
+      "retrieved_lines": 460,
+      "retrieved_words": 11878,
+      "sections": [
+        "Motivation (8-22)",
+        "Persistence: Don't fear the filesystem; Constant Time Suffices (24-51)",
+        "Efficiency: message-set batching, common binary format, sendfile/zero-copy, TLS limitation, end-to-end batch compression (53-94)",
+        "The Producer: Load balancing; Asynchronous send (96-108)",
+        "The Consumer: Push vs. pull; Consumer Position; Offline Data Load; Static Membership (110-152)",
+        "Message Delivery Semantics: at-most/at-least/exactly once, idempotent producer, transactions, read_committed (154-181)",
+        "Using Transactions: transactional producer/consumer configuration, exception classes, reset policy (183-214)",
+        "Unheaded Kafka 4.1 share-groups preview: cooperative record consumption, acquisition locks, per-partition lock limit (216-240)",
+        "Replication: replicated logs, ISR/quorums, unclean leader election, availability/durability, replica management (242-320)",
+        "Log Compaction: basics, guarantees, details, configuring the log cleaner (322-412)",
+        "Quotas: necessity, client groups, configuration precedence, bandwidth/request-rate quotas, enforcement (414-458)"
+      ],
+      "notes": [
+        "Provenance: this record is against the corrected content page /41/design/design/ (460 lines / 11,878 words); the earlier /41/design/ item is a separate 217-line / 753-word section index with only two child links and no design prose. The content page has no site navigation or footer; the only chrome is the 4.1 banner and reader header.",
+        "Source claim (10-22): Kafka was designed as a unified platform for real-time feeds, with high throughput, backlog handling, low latency, partitioned processing and fault tolerance; the authors describe the result as closer to a database log than a traditional messaging system.",
+        "Source claim (28-51): Kafka relies on the filesystem and pagecache instead of an in-process cache; all data is written immediately to a persistent log, a 32GB machine can use 28-30GB as cache, and restart keeps the cache warm; log reads and appends are O(1), avoiding BTree O(log N) operations and 10ms disk seeks. Inference: these are design arguments, not measurements performed in this page.",
+        "Source claim (53-86): efficiency work targets small I/O and byte copying; message sets amortize round trips, producer/broker/consumer share a binary format, and sendfile avoids user-space copies. Kafka disables sendfile when TLS/SSL is enabled because the TLS library runs in user space. Inference: the zero-copy path is conditional, so the throughput rationale does not apply unchanged to encrypted links.",
+        "Source claim (88-94): batch compression is end-to-end; the broker decompresses a batch to validate it (for example, record count against the header), then stores and forwards it compressed; GZIP, Snappy, LZ4 and Zstandard are supported. Inference: broker validation still costs decompression CPU, so compression saves network and disk rather than all broker work.",
+        "Source claim (98-122): producers send directly to the partition leader after metadata lookup and choose partitions randomly or by a key hash; consumers pull with an offset, can rewind, and use long-poll parameters to avoid busy-waiting. The authors reject an end-to-end pull/store-and-forward producer design because thousands of producers and disks would be an operational burden.",
+        "Source claim (126-152): broker-side per-message acknowledgement state is replaced by one committed offset per partition per consumer group, checkpointed periodically and rewindable; this makes acknowledgement cheap but makes replay an expected capability. Static membership adds persistent group instance IDs so administrative restarts do not trigger rebalances; duplicate IDs are fenced with FencedInstanceIdException.",
+        "Source claim (154-181): delivery is at-most-once, at-least-once or exactly-once; a message is committed when all in-sync replicas apply it; pre-0.11 resends could duplicate, while 0.11 adds an idempotent producer (producer ID plus sequence) and transactions across partitions. Consumer order of save/process selects at-most-once versus at-least-once; exactly-once is available inside Kafka read-process-write with read_committed, while external destinations require their own cooperation or two-phase commit.",
+        "Source claim (183-214): only the producer is transactional, but it can commit consumer offsets in the same transaction; the recommended setup is one producer per consumer, isolation.level=read_committed and enable.auto.commit=false, with transactional.id fencing a restarted instance. AbortableException requires abort plus explicit consumer-position reset; the page lists six exception categories and offers discard-and-recreate as a simple policy.",
+        "Source claim (216-240): Kafka 4.1 previews share groups, where partitions may be assigned to multiple consumers, records are acknowledged individually, delivery attempts are counted, and a time-limited acquisition lock (default 30s) plus group.share.partition.max.record.locks bounds in-flight records. Inference: this is a distinct consumption contract, not a configuration of traditional consumer groups; the representation gives it no heading.",
+        "Source claim (242-320): replication uses one leader and followers per partition; liveness requires a controller session and sufficient replication progress; the ISR is persisted, any ISR member is electable, and a write is committed only after all ISR members receive it. Kafka chooses ISR over majority quorum to tolerate f failures with f+1 replicas; unclean leader election is off by default since 0.11; acks=0/1/all and min.insync.replicas set the producer/durability trade-off. Inference: this page's ISR-only election wording does not include the later Eligible Leader Replicas rules cited on the book's replication page.",
+        "Source claim (322-458): log compaction retains at least the last value per key using background recopy, stable offsets and tombstones (delete markers expire after delete.retention.ms, default 24h); quotas limit per-client bandwidth and request-thread time, with eight-level precedence and broker-side delay plus channel muting. Inference: compaction changes what replay can reconstruct, and quotas protect broker capacity rather than isolating tenant data or authorization."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/partitions-producers.md",
+          "candidate": "The page's partition-ordering question already uses the design's Producer/Load balancing and Consumer/Consumer Position sections (65-89); add the source's direct-to-leader routing, metadata lookup, single-integer consumer offset, pull plus long poll, and rewind capability, while keeping the page's warning that partition order is not topic-wide order."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/replication-acks.md",
+          "candidate": "The page cites the design's Replication section but adds Eligible Leader Replicas from the operations page (53, 72-80); reconcile the design's ISR-only election and all-ISR commit wording (290-314) with that ELR caveat, and do not read this design page as covering ELR."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/offsets-effects.md",
+          "candidate": "The page already links the design page for delivery semantics and transactions (73, 85); add the source's exact scope: producer-ID/sequence deduplication, read_committed visibility, transactional.id, and the statement that external destinations need cooperation (168-181, 197-201). Preserve the page's conclusion that a Kafka transaction does not enclose a SQL or payment effect."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/README.md",
+          "candidate": "The chapter ledger E02 records only five design sections as inspected (100-104); update it against the full ten-section page, including Persistence, Efficiency, Log Compaction, Quotas and the 4.1 share-groups preview, or state explicitly why those sections remain outside the claim scope."
+        },
+        {
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "candidate": "The source scopes exactly-once delivery to Kafka read-process-write and says other destination systems generally require cooperation (177-181); use that sentence to qualify the outbox page's statement that broker producer idempotence or transactions cannot make an unrelated consumer's external effect globally exactly once (167, 231)."
+        }
+      ],
+      "reader": "Delegated reader batch 15; parent validation pending."
+    },
+    {
+      "id": "R125",
+      "source_ids": [
+        "src.temporal"
+      ],
+      "url": "https://docs.temporal.io/activity-definition",
+      "unit": "Complete page: Activity Definition | Temporal Documentation",
+      "revision": "Live public Temporal documentation; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 119 lines / 1,486 words read sequentially. Body lines 11-119 = 1,463 words; after excluding 30 words of SDK tab labels, 1,433 content words. Sections: definition and Standalone Activity use; Define an Activity function; Idempotency; Activity retry policy; Activity parameters; Activity Type; Register the Activity with a Worker; Best practices. Excluded as chrome: reader header lines 1-5 (11 words), the 'This page discusses' jump list at 6-10 (12 words), and SDK tab selectors at 20-26 and 97-104 (14 + 16 words). No site navigation or footer is present. The tab groups contain only the default Go code sample in this markdown capture; other language tabs are labels, not captured samples. No section is missing.",
+      "retrieval_refs": [
+        "/tmp/batch15/raw/src.temporal-activities.md lines 1-119",
+        "Local reader capture with Title/URL Source/Markdown Content header, accessed 2026-10-24"
+      ],
+      "omissions": "other documentation outside the declared scope not read",
+      "representation_sha256": "34a94aca56c7518558e88a63aa92fbcb1c89b90166699fd9782025db114b9d8c",
+      "retrieved_lines": 119,
+      "retrieved_words": 1486,
+      "sections": [
+        "Definition, Workflow step versus Standalone Activity, Activity Task Execution (12-14)",
+        "Define an Activity function; SDK examples (16-30)",
+        "Idempotency: motivation, replay/retry edge case, idempotency keys, granularity (32-71)",
+        "Activity retry policy: durable backoff, start_to_close timeout, observed-once completion, manual-retry caution (73-81)",
+        "Activity parameters: arguments and return values in Event History (83-85)",
+        "Activity Type: name versus function/method/class reference (87-89)",
+        "Register the Activity with a Worker: Task Queue, name mapping, Workflow and Standalone starts (91-110)",
+        "Best practices for defining Activities: serialization, idempotent writes, timeouts, heartbeats (112-119)"
+      ],
+      "notes": [
+        "Source claim (12-14): an Activity Definition is a normal function or method that executes one well-defined action; once registered with a Worker it can be started as a Workflow step or as a Standalone Activity, and it gives rise to an Activity Task Execution. Inference: definition (code), type (name) and execution (attempt) are distinct levels that the page separates later.",
+        "Source claim (16-30): examples exist for Go, Java, PHP, Python, TypeScript, .NET and Rust; the captured representation contains only the Go sample, `func YourSimpleActivity(ctx context.Context) error`. The other language tabs are present as labels but their code panels are not in this representation; no section is missing.",
+        "Source claim (32-51): Temporal recommends idempotent Activities; idempotence means repeated execution has the same result, with infrastructure-as-code provisioning and payment charging as examples. Activities are an atomic unit of execution and either complete or not; lack of idempotence can affect application correctness but does not cause a platform error.",
+        "Source claim (41): completed Activities do not re-execute during Workflow Replay, but an Activity is not recorded in Event History until it returns or errors; if the Worker crashes after success but before reporting, the Activity is retried. Inference: exactly-once history observation and at-least-once execution are compatible, so effect identity must survive an ambiguous completion.",
+        "Source claim (53-67): a three-step Activity (database lookup, microservice call, filesystem write) replays all three steps on retry; splitting it into three Activities narrows replay but grows Event History. Idempotency keys are enforced by the downstream service, and Workflow Run ID plus Activity ID is offered as a stable key across retries and unique across Workflow Executions.",
+        "Source claim (73-81): the retry mechanism provides durable execution and tracks exponential backoff even if a Worker crashes; start_to_close timeout is how the platform detects an inactive Activity. Temporal guarantees the Activity is observed as completed exactly once, but it may execute multiple times and may partially complete more than once. The page cautions against manual retry logic inside the Activity.",
+        "Source claim (83-89): function or method parameters and return values are recorded in the Workflow Execution's Event History; an Activity Type is a name that can identify the definition when starting an Activity, alternatively a function/method/class reference.",
+        "Source claim (91-110): an Activity Definition does not run until a Worker registers it and polls the Task Queue; registration maps the Activity Type name to the function, so callers can start by name without a code reference. One Worker can register many Activities, and one registration serves both Workflow and Standalone starts; Go and TypeScript can set the type name at registration, other SDKs at definition.",
+        "Source claim (112-119): arguments and return values must be serializable; writes should be idempotent; Activities have timeouts and retry policies and should either complete within a few minutes or heartbeat; at least one timeout, typically start_to_close, is required, and a shorter timeout detects and retries problems sooner.",
+        "Inference: the page defines per-Activity semantics but not Worker deployment routing, code-version pinning or history compatibility; those are the subject of the Worker Versioning page (R126), so this unit must not be read as an Activity versioning contract.",
+        "Representation note: the page has no diagrams or tables; it is prose, bullet lists, callouts and one Go code sample. Linked per-SDK how-to pages, retry-policy encyclopedia entries and the Standalone Activity page are outside this unit."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+          "candidate": "The page says durable-workflow guarantees depend on activity semantics (83, 105); the source makes an Activity an atomic unit and shows that one three-step Activity replays all three steps on retry (51-59). Add that granularity choice and its Event History cost to the workflow-recovery discussion."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+          "candidate": "The page lists retry identity and durable state (103-110) and workflow history upgrades (118-122), but not platform-managed Activity retries or the caution against hand-written retry loops; add the distinction between execution attempts and the platform's observed-once completion (41, 73-81)."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "candidate": "The source names Workflow Run ID plus Activity ID as an idempotency key but says the downstream service enforces it (63-67); use it as a concrete example in the page's separation of transport idempotency, application effect identity and outcome discovery (69-104), noting that the key is only as durable as the downstream deduplication store."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md",
+          "candidate": "The source says not to implement manual retries and relies on start_to_close timeout to detect a crashed Worker (75, 81), while the page builds an application-level retry budget and deadline model (49-55); use the source to distinguish platform-observed inactivity from an application retry loop."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "candidate": "The source requires at least one timeout, usually start_to_close, and heartbeat for long Activities (112-119); map that to the page's end-to-end budget and cancellation rules (50-66), while noting that a Temporal Activity timeout bounds one attempt, not the caller's total business deadline."
+        }
+      ],
+      "reader": "Delegated reader batch 15; parent validation pending."
+    },
+    {
+      "id": "R126",
+      "source_ids": [
+        "src.temporal"
+      ],
+      "url": "https://docs.temporal.io/worker-versioning",
+      "unit": "Complete page: Worker Versioning | Temporal Documentation",
+      "revision": "Live public Temporal documentation; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 140 lines / 1,435 words read sequentially. Body lines 6-140 = 1,424 words; after excluding the duplicated jump list at 8-13 (23 words), 1,401 content words. Sections: Worker Deployments; Worker Deployment Versions; Versioning behaviors (Pinned, Auto-Upgrade, Activity behavior across versions); Versioning Definitions (Current, Ramping, Target); Versioning statuses (Inactive, Active, Draining, Drained); Continue-as-new, Child Workflow, and Retry Semantics (ways new runs start, inheritance overview, child/continue-as-new/retry/cron scenarios, override inheritance). Excluded as chrome: reader header lines 1-5 (11 words) and the 'This page defines...' jump list at 8-13 (23 words); the line 6 introduction is retained. No site navigation or footer is present. No section is missing.",
+      "retrieval_refs": [
+        "/tmp/batch15/raw/src.temporal-versioning.md lines 1-140",
+        "Local reader capture with Title/URL Source/Markdown Content header, accessed 2026-10-24"
+      ],
+      "omissions": "other documentation outside the declared scope not read",
+      "representation_sha256": "79c4aa59ae091d8943cd79781c998edd22385132704a40160f3e8c000e1eb32a",
+      "retrieved_lines": 140,
+      "retrieved_words": 1435,
+      "sections": [
+        "Worker Deployments: logical service grouped for unified management (15-17)",
+        "Worker Deployment Versions: deployment name plus Build ID, shared build and environment (19-21)",
+        "Versioning behaviors: Pinned; Auto-Upgrade; Activity behavior across versions and Independent Activities (23-54)",
+        "Versioning Definitions: Current, Ramping and Target Worker Deployment Version (56-60)",
+        "Versioning statuses: Inactive, Active, Draining and Drained (62-69)",
+        "Continue-as-new, Child Workflow, and Retry Semantics: ways new runs start; inheritance overview; child workflow, continue-as-new, retry and cron scenarios; Versioning Override inheritance (71-140)"
+      ],
+      "notes": [
+        "Source claim (15-21): a Worker Deployment is a logical service grouping similar Workers for unified management, with a name and a series of Deployment Versions; each version is identified by deployment name plus Build ID, groups Workers that share code build and environment, and reports itself to the Temporal Server when polling.",
+        "Source claim (25-35): each Workflow Type can declare Pinned or Auto-Upgrade behavior. Pinned is guaranteed to complete on one Deployment Version and can be moved only with `temporal workflow update-options`; Auto-Upgrade moves to the latest version when the current version changes and must be kept replay-safe manually with patching.",
+        "Inference: Pinned removes replay exposure at the cost of leaving old Workers polling; Auto-Upgrade removes old-version residue at the cost of a permanent patching obligation. The page states both mechanisms but does not compare their operational costs.",
+        "Source claim (37-54): Activities generally start on their Workflow's version, the pinned version for Pinned workflows or the Target version for Auto-Upgrade workflows, moving the execution immediately before the Activity if needed. Independent Activities are the exception and start on their own Task Queue's Current or Ramping version; examples include a separate deployment, an unversioned queue, or a shared Activity from another deployment.",
+        "Source claim (56-60): Current is the default route for new and non-pinned work; other versions keep polling for pinned workflows and rollback. Ramping routes a configurable percentage [0,100] by Workflow ID, with the remainder on Current. Target is the next version, Current or Ramping; a 5% ramp to C gives each Workflow roughly a 5% chance of Target C based on its ID.",
+        "Source claim (62-69): version states are Inactive (exists only because a Worker polled), Active (Current or Ramping), Draining (open pinned workflows remain after loss of Current or Ramping), and Drained (all pinned workflows closed). Drained is not absolute: closed workflows can re-run code paths if queried within retention while Workers of that version still poll.",
+        "Source claim (71-105): new runs arise from Child Workflows, Continue-As-New, Retry Policy and Cron. Auto-Upgrade workflows never inherit versions; Pinned workflows pass their version to pinned children when the child's Task Queue belongs to that version. A Pinned parent's child first task runs in the parent's version; a Pinned child stays pinned, an Auto-Upgrade child changes behavior after the first task, and a child in a different Worker Deployment starts on that queue's Current version.",
+        "Source claim (107-132): a Pinned version crosses Continue-As-New runs unless the new run's Task Queue is outside the Worker Deployment; Auto-Upgrade does not inherit. Retry inheritance requires all three conditions: effectively pinned at retry time, inherited a pinned version at start, and running on a Task Queue in that version; otherwise no inheritance. Cron jobs never inherit versioning behavior or version.",
+        "Source claim (134-140): children, crons, retries and Continue-As-New inherit the source run's Versioning Override if the override is pinned and the new Workflow's Task Queue belongs to the override version; override inheritance is evaluated separately and takes precedence over the inherited base version.",
+        "Inference: inheritance is decided by Task Queue membership in the Worker Deployment, not by Workflow ID or parent-child relation alone; an inherited version that the queue does not serve falls back to Current. This makes deployment topology part of workflow semantics.",
+        "Inference: the page is a concept reference, not an implementation guide. It names SDK or CLI declaration and `update-options`, but gives no code, no default for undeclared Workflow Types, no retention or deployment limits, and no rollback procedure. The linked production Worker Versioning page and CLI reference are outside this unit."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+          "candidate": "The page says old histories need a compatible worker route and that worker-version routing is not prescribed (118-122, 142); the source supplies Pinned versus Auto-Upgrade, Deployment Versions and Draining/Drained states (25-35, 62-69). Add the explicit route while keeping the page's caution that versioning does not prove external effects exactly once."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
+          "candidate": "The page frames compatibility as old/new caller and server pairs (49-64); the source adds a third dimension: a Pinned workflow stays on an old Worker version while an Auto-Upgrade workflow moves. Use it to distinguish protocol compatibility from execution-history compatibility."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/canary-compatibility.md",
+          "candidate": "The source's Ramping percentage routes Workflows by Workflow ID, not a percentage of traffic, and rollback means changing Current or Ramping while pinned workflows drain (56-69); contrast this with the page's warning that a traffic percentage does not bound old-reader exposure (73, 84), without equating the two mechanisms."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+          "candidate": "The source makes version inheritance a property of workflow chains (children, Continue-As-New, retries, cron; 71-140), while the page treats durable-coordinator guarantees as conditional on versioned workflow-state persistence and activity semantics (81-89, 105). Add chain-level inheritance as a concrete case."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md",
+          "candidate": "The page's mixed-version reader/writer matrix covers data compatibility (51-67); the source's Active/Draining/Drained states are an analogous coexistence window for code. Use it to show why retiring an old Worker version requires proving no pinned workflows remain, not merely that no new traffic arrives."
+        }
+      ],
+      "reader": "Delegated reader batch 15; parent validation pending."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 89,
+    "full_reads": 92,
     "blocked": 14,
     "records": [
       "R015",
@@ -6423,7 +6620,10 @@
       "R120",
       "R121",
       "R122",
-      "R123"
+      "R123",
+      "R124",
+      "R125",
+      "R126"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
