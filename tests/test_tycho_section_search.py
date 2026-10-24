@@ -23,7 +23,12 @@ PAGE_A = (
     "# Alpha search page\n\nOverview discusses bounded retrieval and snapshots.\n\n"
     "## Retry budget {#retry-budget}\nRetry budget detail with token zebra.\n\n"
     "### Nested detail\nNested text stays in its parent section.\n\n"
-    "## Caching\nCache stampede and invalidation notes.\n"
+    "## Caching\nCache stampede and invalidation notes.\n\n"
+    "### Stampede guard\nQuasar guard uses a single-flight lease.\n\n"
+    "### Eviction\nEviction bounds resident memory.\n\n"
+    "### TTL\nTTL bounds staleness.\n\n"
+    "### Refresh\nRefresh loads ahead of demand.\n\n"
+    "### Single flight\nSingle flight coalesces concurrent misses.\n\n"
     "## Retry policy\nAnother retry note for truncation.\n"
 )
 PAGE_B = (
@@ -98,6 +103,71 @@ class SearchTests(unittest.TestCase):
         self.assertIn("token zebra", top["excerpt"])
         self.assertEqual(result["ranker_version"],
                          section_search.RANKER_VERSION)
+
+    def test_h3_match_maps_to_parent_h2_with_diagnostics(self):
+        self.build()
+        top = self.search("quasar", limit=1)["results"][0]
+        self.assertEqual(top["section_key"], "tycho.page.alpha#caching")
+        self.assertEqual(top["section_id"], "caching")
+        self.assertEqual(top["heading"], "Caching")
+        self.assertEqual(top["heading_level"], 2)
+        self.assertEqual(top["citation"], "book/a.md#caching")
+        self.assertEqual(top["match_source"], "h3-passage")
+        self.assertEqual(top["matched_passage_id"], "stampede-guard")
+        self.assertEqual(top["matched_passage_key"],
+                         "tycho.page.alpha#caching~stampede-guard")
+        self.assertEqual(top["matched_passage_heading"], "Stampede guard")
+        self.assertGreater(top["matched_passage_score"], 0)
+        self.assertLess(top["matched_passage_char_start"],
+                        top["matched_passage_char_end"])
+        self.assertIn("Quasar", top["matched_passage_excerpt"])
+        self.assertNotIn("matched_passage_id", self.search("zebra")["results"][0])
+
+    def test_h3_parent_read_keeps_parent_content_and_offsets(self):
+        self.build()
+        top = self.search("quasar", limit=1)["results"][0]
+        read = self.read(top["section_key"], 0, 5000)
+        self.assertEqual(read["section_id"], "caching")
+        self.assertEqual(read["citation"], "book/a.md#caching")
+        self.assertEqual(
+            read["content"],
+            PAGE_A[PAGE_A.index("## Caching"):PAGE_A.index("## Retry policy")])
+        self.assertEqual(read["document_char_start"], top["char_start"])
+        self.assertEqual(read["document_char_end"], top["char_end"])
+        self.assertIn("### Stampede guard", read["content"])
+        self.assertEqual(read["total_chars"],
+                         top["char_end"] - top["char_start"])
+        with self.assertRaises(section_search.SearchError) as caught:
+            self.read(top["matched_passage_key"], 0, 50)
+        self.assertEqual(caught.exception.status, "not-found")
+
+    def test_h3_filters_and_all_sections_do_not_duplicate_parent(self):
+        self.build()
+        for filters in ({"kind": "page"}, {"topic": "caching"},
+                        {"evidence_status": "source-linked"},
+                        {"path_prefix": "book/a"}):
+            self.assertEqual(self.search("quasar", **filters)["returned"], 1)
+        self.assertEqual(self.search("quasar", kind="landing")["status"],
+                         "no-results")
+        self.assertEqual(self.search("quasar", topic="deployment")["status"],
+                         "no-results")
+        self.assertEqual(self.search("quasar", path_prefix="book/b")["status"],
+                         "no-results")
+        sections = self.search("quasar", all_sections=True)
+        self.assertEqual(sections["returned"], 1)
+        keys = [item["section_key"] for item in sections["results"]]
+        self.assertEqual(len(keys), len(set(keys)))
+        self.assertEqual(sections["result_scope"], "all-sections")
+
+    def test_tampered_h3_row_count_is_unavailable(self):
+        self.build()
+        path = self.root / "generated" / section_fts_index.INDEX_NAME
+        with sqlite3.connect(path) as db:
+            db.execute("DELETE FROM passage_fts WHERE rowid=1")
+            db.commit()
+        with self.assertRaises(section_search.SearchError) as caught:
+            self.search("quasar")
+        self.assertEqual(caught.exception.status, "not-available")
 
     def test_limit_truncation_and_empty_result(self):
         self.build()

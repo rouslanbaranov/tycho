@@ -5,6 +5,12 @@ The canonical book and its metadata remain authoritative. This module only reads
 a published section index and the book bytes it pins. It never writes the book,
 the index, source evidence or another provider's data.
 
+H2 sections remain the public result and citation unit. Internal H3 passages are
+matched in a separate FTS table and mapped to their parent H2. A passage can
+select a better parent section within the same document, while cross-document
+order stays anchored to parent-H2 scores. Passage diagnostics never replace the
+parent section key, content or citation.
+
 Every query first recomputes the route snapshot and refuses a stale index. The
 deep structural verifier remains section_fts_index.py check; search performs a
 quick integrity/count check and the route-snapshot comparison.
@@ -24,8 +30,14 @@ import route_index
 import section_fts_index
 
 ROOT = Path(__file__).resolve().parents[1]
-RANKER_VERSION = "tycho-section-fts5-bm25-v4"
+RANKER_VERSION = "tycho-section-fts5-bm25-v5"
 CITATION_SCHEME = "tycho.section-key.v2"
+PASSAGE_SCORE_WEIGHT = 1.0
+SECTION_SEARCH_COLUMNS = (
+    "section_key", "document_id", "section_id", "path", "heading",
+    "heading_level", "title", "kind", "evidence_status", "char_start",
+    "char_end", "content",
+)
 TOKEN = section_fts_index.TOKEN
 
 
@@ -98,8 +110,13 @@ def open_snapshot(root, index_path=None):
                  "Section index manifest is malformed", "not-available")
         sections = db.execute("SELECT count(*) FROM sections").fetchone()[0]
         fts = db.execute("SELECT count(*) FROM fts").fetchone()[0]
+        passages = db.execute("SELECT count(*) FROM passages").fetchone()[0]
+        passage_fts = db.execute(
+            "SELECT count(*) FROM passage_fts").fetchone()[0]
         _require(sections == fts == manifest["section_count"],
                  "Section index row counts diverge", "not-available")
+        _require(passages == passage_fts == manifest["passage_count"],
+                 "H3 passage index row counts diverge", "not-available")
         scan = route_index.canonical_scan(root, allow_partial=True)
         if scan["snapshot_sha256"] != manifest["route_snapshot_sha256"]:
             raise SnapshotMismatch(
@@ -155,6 +172,35 @@ def unknown_term_rate(db, terms):
     return sum(1 for term in terms if term not in vocabulary) / len(terms)
 
 
+def sections_select(alias="s"):
+    return ",".join(alias + "." + column for column in SECTION_SEARCH_COLUMNS)
+
+
+def load_sections(db, keys):
+    """Load public parent rows for keys that an H3 candidate introduced."""
+    rows = {}
+    ordered = sorted(set(keys))
+    for start in range(0, len(ordered), 500):
+        chunk = ordered[start:start + 500]
+        sql = ("SELECT " + sections_select() + " FROM sections s"
+               " WHERE s.section_key IN (" + ",".join("?" * len(chunk)) + ")")
+        for row in db.execute(sql, chunk):
+            rows[row["section_key"]] = row
+    return rows
+
+
+def candidate_priority(candidate):
+    """Choose the public parent score and whether an H3 passage supplied it."""
+    h2_score = candidate["h2_score"]
+    passage = candidate["passage"]
+    if passage is None:
+        return h2_score, "parent-h2", None
+    passage_score = -passage["rank"]
+    if h2_score is None or passage_score * PASSAGE_SCORE_WEIGHT > h2_score:
+        return passage_score * PASSAGE_SCORE_WEIGHT, "h3-passage", passage_score
+    return h2_score, "parent-h2", passage_score
+
+
 def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
            path_prefix=None, index_path=None, all_sections=False, abstain=True):
     terms = normalize_terms(query)
@@ -184,35 +230,97 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                            " WHERE t.section_key = s.section_key AND t.topic = ?)")
             params.append(topic)
         weight_sql = ",".join(f"{value:g}" for value in bm25_weights())
-        sql = ("SELECT s.section_key,s.document_id,s.section_id,s.path,s.heading,"
-               "s.heading_level,s.title,s.kind,s.evidence_status,s.char_start,"
-               "s.char_end,s.content,bm25(fts,0.0," + weight_sql + ") AS rank"
+        sql = ("SELECT " + sections_select() + ",bm25(fts,0.0," + weight_sql
+               + ") AS rank"
                " FROM fts JOIN sections s ON s.section_key = fts.section_key"
                " WHERE fts MATCH ?")
         if filters:
             sql += " AND " + " AND ".join(filters)
         sql += " ORDER BY rank ASC, s.section_key ASC LIMIT ?"
         mode = "any-terms"
-        fetch = limit + 1 if all_sections else min(max(limit * 10, 50), 200)
+        fetch = min(max(limit * 10, 50), 200)
         rows = db.execute(
             sql, [match_expression(terms)] + params + [fetch]).fetchall()
+        candidates = {}
+        for row in rows:
+            candidates[row["section_key"]] = {
+                "section_key": row["section_key"],
+                "row": row,
+                "h2_score": -row["rank"],
+                "passage": None,
+            }
+        passage_sql = (
+            "SELECT p.passage_key,p.passage_id,p.parent_section_key,"
+            "p.parent_section_id,p.document_id,p.path,p.heading,"
+            "p.heading_level,p.title,p.content,p.body,p.char_start,p.char_end,"
+            "bm25(passage_fts,0.0," + weight_sql + ") AS rank"
+            " FROM passage_fts JOIN passages p"
+            " ON p.passage_key = passage_fts.passage_key"
+            " JOIN sections s ON s.section_key = p.parent_section_key"
+            " WHERE passage_fts MATCH ?")
+        if filters:
+            passage_sql += " AND " + " AND ".join(filters)
+        passage_sql += " ORDER BY rank ASC, p.passage_key ASC LIMIT ?"
+        passage_fetch = min(max(limit * 20, 100), 500)
+        passage_rows = db.execute(
+            passage_sql,
+            [match_expression(terms)] + params + [passage_fetch]).fetchall()
+        best_passages = {}
+        for passage in passage_rows:
+            key = passage["parent_section_key"]
+            current = best_passages.get(key)
+            if current is None or passage["rank"] < current["rank"]:
+                best_passages[key] = passage
+        missing = [key for key in best_passages if key not in candidates]
+        for key, row in load_sections(db, missing).items():
+            candidates[key] = {
+                "section_key": key,
+                "row": row,
+                "h2_score": None,
+                "passage": None,
+            }
+        for key, passage in best_passages.items():
+            if key in candidates:
+                candidates[key]["passage"] = passage
+        ordered = []
+        for candidate in candidates.values():
+            score, source, passage_score = candidate_priority(candidate)
+            ordered.append((score, source, passage_score, candidate))
+        ordered.sort(key=lambda item: (
+            -item[0], item[3]["row"]["section_key"]))
         if all_sections:
-            selected = rows[:limit]
-            truncated = len(rows) > limit
+            selected = ordered[:limit]
+            truncated = len(ordered) > limit
         else:
+            h2_candidates = [candidate for candidate in candidates.values()
+                             if candidate["h2_score"] is not None]
+            h2_candidates.sort(key=lambda candidate: (
+                -candidate["h2_score"],
+                candidate["row"]["section_key"]))
+            grouped = {}
+            for candidate in h2_candidates:
+                grouped.setdefault(
+                    candidate["row"]["document_id"], []).append(candidate)
+            extra = [candidate for candidate in candidates.values()
+                     if candidate["row"]["document_id"] not in grouped]
+            extra.sort(key=lambda candidate:
+                       -candidate_priority(candidate)[0])
+            for candidate in extra:
+                grouped.setdefault(
+                    candidate["row"]["document_id"], []).append(candidate)
             selected = []
-            seen = set()
-            for row in rows:
-                if row["document_id"] in seen:
-                    continue
-                seen.add(row["document_id"])
-                selected.append(row)
+            for group in grouped.values():
+                best = max(group, key=lambda candidate:
+                           candidate_priority(candidate)[0])
+                score, source, passage_score = candidate_priority(best)
+                selected.append((score, source, passage_score, best))
                 if len(selected) == limit + 1:
                     break
             truncated = len(selected) > limit
             selected = selected[:limit]
         results = []
-        for row in selected:
+        for score, source, passage_score, candidate in selected:
+            row = candidate["row"]
             content = row["content"]
             folded = content.casefold()
             body = content
@@ -220,7 +328,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                 body = content.partition("\n")[2] or content
                 if not any(term in body.casefold() for term in terms):
                     body = content
-            results.append({
+            item = {
                 "section_key": row["section_key"],
                 "document_id": row["document_id"],
                 "section_id": row["section_id"],
@@ -232,12 +340,26 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                 "evidence_status": row["evidence_status"],
                 "char_start": row["char_start"],
                 "char_end": row["char_end"],
-                "score": round(-row["rank"], 6),
+                "score": round(score, 6),
                 "score_kind": "bm25",
                 "matched_terms": [term for term in terms if term in folded],
                 "excerpt": excerpt(body, terms),
                 "citation": row["path"] + "#" + row["section_id"],
-            })
+                "match_source": source,
+            }
+            passage = candidate["passage"]
+            if passage is not None:
+                item.update({
+                    "matched_passage_id": passage["passage_id"],
+                    "matched_passage_key": passage["passage_key"],
+                    "matched_passage_heading": passage["heading"],
+                    "matched_passage_score": round(passage_score, 6),
+                    "matched_passage_char_start": passage["char_start"],
+                    "matched_passage_char_end": passage["char_end"],
+                    "matched_passage_excerpt": excerpt(
+                        passage["body"] or passage["content"], terms),
+                })
+            results.append(item)
         unknown = unknown_term_rate(db, terms)
         assessment = evidence_gate.assess(query, results, unknown)
         if assessment is None:
