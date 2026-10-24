@@ -39469,12 +39469,88 @@
         "read_at": "2026-10-24",
         "note": "Extraction only; no book findings, support classification or verdicts."
       }
+    },
+    {
+      "id": "R368",
+      "source_ids": [
+        "src.boot-virtual"
+      ],
+      "url": "https://docs.spring.io/spring-boot/reference/features/spring-application.html#features.spring-application.virtual-threads",
+      "unit": "Spring Boot reference, Virtual threads section",
+      "revision": "Spring Boot 4.0 reference, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered scope only: the H2 section 'Virtual threads' at raw/boot-virtual.md L419-L427, 9 lines / 226 whitespace-delimited words, SHA-256 4397a1d4dbcd4e72edfa489393a774d9711c7f1cab39797e990d90f4c66384df over the exact section slice including line terminators. Read sequentially and completely: heading (L419), four body paragraphs (L421, L423, L425, L427) and the blank separators. The file ends at L427 with a complete sentence and no truncation marker. Whole-file verification against /tmp/B25/manifest.json: 427 lines / 3154 words / SHA-256 fd49402af5b2e7ccf9632a584f29b6e4b5b33bf0bd8f057005e0184d97bae067, all matching. L1-L5 are extractor metadata (Title, URL Source, Markdown Content); L6-L417 are other sections of the same page, outside the registered scope and used only as context (the preceding 'Application Startup tracking' section ends at L417). No navigation, footer, related-links or feedback chrome appears in this capture. representation_sha256 is the registered section slice, not the full page capture.",
+      "retrieval_refs": [
+        "/tmp/B25/manifest.json#R368 (file lines 427, words 3154, sha256 fd49402af5b2e7ccf9632a584f29b6e4b5b33bf0bd8f057005e0184d97bae067)",
+        "/tmp/B25/raw/boot-virtual.md:419-427 (registered section slice; 9 lines, 226 words, 1725 bytes, sha256 4397a1d4dbcd4e72edfa489393a774d9711c7f1cab39797e990d90f4c66384df)",
+        "https://docs.spring.io/spring-boot/reference/features/spring-application.html#features.spring-application.virtual-threads (registered URL; captured 2026-10-24, not re-fetched this pass)"
+      ],
+      "omissions": "Other sections of the Spring Boot page and other documentation pages not read; no experiment",
+      "representation_gap": null,
+      "representation_sha256": "4397a1d4dbcd4e72edfa489393a774d9711c7f1cab39797e990d90f4c66384df",
+      "retrieved_lines": 9,
+      "retrieved_words": 226,
+      "sections": [
+        {
+          "level": 2,
+          "heading": "Virtual threads",
+          "lines": "419-427",
+          "words": 226,
+          "kind": "content"
+        }
+      ],
+      "notes": [
+        "Source claim (L421): virtual threads require Java 21 or later; Java 24 or later is strongly recommended for the best experience; they are enabled by setting the `spring.threads.virtual.enabled` property to `true`.",
+        "Source claim (L423): before enabling, the page advises reading the official Java virtual threads documentation, because some applications can experience lower throughput from 'Pinned Virtual Threads'; that page also explains detection with JDK Flight Recorder or the `jcmd` CLI.",
+        "Source claim (L425): when virtual threads are enabled, properties that configure thread pools no longer have an effect, because virtual threads are scheduled on a JVM-wide platform thread pool rather than on dedicated thread pools.",
+        "Source claim (L427): virtual threads are daemon threads and a JVM exits when all its threads are daemon. With virtual threads the scheduler thread is virtual and therefore daemon, so a `@Scheduled` bean cannot keep the JVM alive; the page says this can affect other technologies too and recommends `spring.main.keep-alive=true` to keep the JVM alive even if all threads are virtual.",
+        "Representation note: the manifest values were recomputed independently (427 lines / 3154 words / SHA-256 fd49402af5b2e7ccf9632a584f29b6e4b5b33bf0bd8f057005e0184d97bae067); the registered slice is 9 lines / 226 words / 1725 bytes / SHA-256 4397a1d4dbcd4e72edfa489393a774d9711c7f1cab39797e990d90f4c66384df. The section is the last block in the capture and ends with a period; no truncation marker is present.",
+        "Extraction note: L1-L5 are capture metadata and L6-L417 are other sections of the same page; neither is part of the registered scope. No site navigation, footer, related-links block or 'was this helpful' widget appears in this capture.",
+        "Version note: the mandated revision label is 'Spring Boot 4.0 reference, page captured 2026-10-24', but the capture's own startup log (L36) reports v4.1.2 and page API links target 4.1.2. The discrepancy is preserved; the page was not re-fetched.",
+        "Inference: the section states a Java version floor and a stronger Java 24 recommendation but gives no mechanism (such as JDK 24 monitor-pinning changes), no list of affected application shapes and no measured conditions, so the lower-throughput warning is a caution rather than a benchmark result.",
+        "Inference: 'properties which configure thread pools' is not enumerated, so which Spring Boot properties become inert (for example server executor, task execution, task scheduling or custom executors) versus which downstream pools remain capacity limits is not established by this section.",
+        "Inference: `spring.main.keep-alive=true` changes process-liveness semantics; the page does not discuss shutdown behaviour, deployment probes, or whether the flag can mask a missing non-daemon lifecycle owner.",
+        "Inference: this is framework configuration guidance, not a concurrency tutorial; it does not claim a throughput improvement, does not size carrier threads, and is silent on blocking JDBC, native calls and pinned-thread measurement procedures beyond pointing to the Java documentation."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/virtual-threads.md",
+          "candidate": "Existing page on virtual threads and release-specific pinning; candidate for the Java 24 recommendation and pinning caution."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/context-cancellation.md",
+          "candidate": "Existing page includes a Spring Boot virtual-thread mapping; candidate for the enabling property and liveness claims."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md",
+          "candidate": "Existing page on platform executors and virtual-thread capacity; candidate for the thread-pool-properties claim."
+        },
+        {
+          "path": "book/cases/netflix-java21-virtual-thread-pinning.md",
+          "candidate": "Existing case on Java 21 pinning and jcmd/JFR diagnosis; candidate for the detection claim."
+        },
+        {
+          "path": "book/cases/decisions/reactive-vs-virtual-threads.md",
+          "candidate": "Existing decision playbook; candidate for execution-model selection context."
+        },
+        {
+          "path": "book/execution/README.md",
+          "candidate": "Existing execution-model landing page; candidate for the reading route."
+        }
+      ],
+      "reader": {
+        "label": "delegated-reader",
+        "agent_id": "session-339f3170-2943-4eff-877d-b6b465e229ef",
+        "model": "deepseek-flash",
+        "read_at": "2026-10-24",
+        "note": "Extraction only; research-only; no book findings, support classification or verdicts. Delegated reading is not independent review."
+      }
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 331,
+    "full_reads": 332,
     "blocked": 14,
     "records": [
       "R015",
@@ -39829,7 +39905,8 @@
       "R364",
       "R365",
       "R366",
-      "R367"
+      "R367",
+      "R368"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
