@@ -46,7 +46,7 @@ are not met. The unresolved items are stated with exact counts below.
 
 ## 3. What is not complete
 
-- **127 registered sources remain landing-or-abstract only.** They are not full
+- **130 registered sources remain landing-or-abstract only.** They are not full
   reads, even where the title and URL are registered. This includes many official docs; RFC 9110 HTTP Semantics is now read with labelled supplements.
 - **359 of 406 canonical pages have no page-level comparison.** Their matrix
   status is an explicit gap, not an inferred pass.
@@ -72,7 +72,7 @@ overstate coverage. The branch remains a research checkpoint.
 
 ## 5. What would change the verdict
 
-1. Reconcile the 127 landing-only sources into finite units; for each, read the
+1. Reconcile the 130 landing-only sources into finite units; for each, read the
    complete unit or record a lawful access limitation.
 2. Extend page-level comparisons to the pages with material claims; the current
    ratio is 47 assessed to 359 gaps.

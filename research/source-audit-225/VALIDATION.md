@@ -286,7 +286,7 @@ a96c6b7 are outside that attempted review's stated HEAD.
 - FINAL-SYNTHESIS.md records the current evidence base and the unmet criteria.
 - ACCEPTANCE.md records verdict **not accepted**: 135 landing-only sources,
   365 page gaps, 18 blocked records and 2 excluded sources, and no independent review.
-- The five source records are reconciled to existing reading IDs
-  in source-coverage-reconciliation.json; three SRE chapters and two PostgreSQL units, and they are not new reads.
+- The six source records are reconciled to existing reading IDs
+  in source-coverage-reconciliation.json; three SRE chapters, two PostgreSQL units and the completed OSTEP book, and they are not new reads.
 - No book, source-register, index or edition file changed. The issue remains
   open; this is not a completion claim.

@@ -41,7 +41,7 @@ OpenTelemetry page.
 ## Counts are not moved by partial units
 
 Current canonical ledger: 130 records (106 full, 3 partial, 19 blocked, 2
-excluded); 127 landing-only sources. R116/R117 are partial and do not reduce
+excluded); 130 landing-only sources. R116/R117 are partial and do not reduce
 that count. Only a completed scope does.
 
 ## Scope decisions
