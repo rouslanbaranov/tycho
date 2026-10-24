@@ -2951,171 +2951,6 @@
       "reader": "Tycho agent; no independent review or execution."
     },
     {
-      "id": "R077",
-      "source_ids": [
-        "src.aws-idempotency"
-      ],
-      "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
-      "unit": "Complete article: Making retries safe with idempotent APIs",
-      "revision": "Published page; article body read 2026-10-24; site chrome/cookie banner excluded",
-      "status": "full-scoped-text-read",
-      "coverage": "All 555 representation lines / 5157 words; article body lines 271-555 read completely; cookie/browse chrome identified and excluded; images not visually inspected",
-      "retrieval_refs": [
-        "/tmp/refs/src.aws-idempotency.md lines 1-555",
-        "Jina reader, accessed 2026-10-24"
-      ],
-      "omissions": "Linked AWS APIs, SDK code and PDF not read; no implementation execution.",
-      "representation_sha256": "f2daf1552d06253c7547467d96f420145ae3eb3e658d1984dc5a6086951f6949",
-      "retrieved_lines": 555,
-      "retrieved_words": 5157,
-      "sections": [
-        "Introduction",
-        "Retrying and side effects",
-        "Reducing client complexity",
-        "Retries and semantic equivalence",
-        "Late arriving requests",
-        "Same client request ID, different intent",
-        "Conclusion"
-      ],
-      "notes": [
-        "Source claim: retrying a failed call is simple only when the operation has no additional side effects; a lost response can leave the caller unable to tell whether the effect happened.",
-        "Source claim: an idempotent operation allows retransmission without additional side effects; callers can treat non-validation errors as retryable.",
-        "Source claim: a caller-provided client request identifier is preferred over deriving a key from request parameters, because identical parameters can represent two legitimate creates.",
-        "Source claim: the service must atomically record the idempotency token and all mutating effects; otherwise it can create resources without recording the token or vice versa.",
-        "Source claim: a semantically equivalent response, not merely ResourceAlreadyExists, lets clients retry transparently; the token is echoed in responses and stored with the resource.",
-        "Source claim: late-arriving retries can return a semantically equivalent response even if the resource was later deleted; retention lasts the resource lifetime plus a late-arrival interval.",
-        "Source claim: same token with different parameters is a validation error; the service stores the original parameters to detect it.",
-        "Inference: this is a rigorous at-most-once API contract with real storage and validation cost, not a universal requirement for every API.",
-        "Inference: a token does not replace transactional storage; the atomicity requirement is the hard part."
-      ],
-      "tycho_candidates": [
-        {
-          "path": "book/distributed/transactional-outbox-and-idempotency.md",
-          "candidate": "Does the idempotency page separate method-level idempotence from a client request key and atomic token/effect storage?"
-        },
-        {
-          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
-          "candidate": "Does the effect-identity page bind the key to principal, operation and immutable parameters?"
-        },
-        {
-          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
-          "candidate": "Does the dedup page require a durable authority that survives a crash between effect and response?"
-        }
-      ],
-      "reader": "Tycho agent; no independent review or execution."
-    },
-    {
-      "id": "R078",
-      "source_ids": [
-        "src.pgbouncer"
-      ],
-      "url": "https://www.pgbouncer.org/config.html",
-      "unit": "Complete document: PgBouncer Configuration",
-      "revision": "Official configuration page published/modified 2026-10-14; retrieved 2026-10-24",
-      "status": "full-scoped-text-read",
-      "coverage": "All 1271 lines / 9376 words; generic settings, authentication, dangerous timeouts, network, databases, users, peers, file formats and examples",
-      "retrieval_refs": [
-        "/tmp/refs/src.pgbouncer.md lines 1-1271",
-        "Jina reader, accessed 2026-10-24"
-      ],
-      "omissions": "Linked PostgreSQL/PgBouncer guides and code not read; no deployment or benchmark.",
-      "representation_sha256": "ea75cdda2541173873db79f332de3e5eeab936eb31885dd07853bd4b448a40de",
-      "retrieved_lines": 1271,
-      "retrieved_words": 9376,
-      "sections": [
-        "Generic settings",
-        "Authentication settings",
-        "Dangerous timeouts",
-        "Low-level network settings",
-        "Section [databases]",
-        "Section [users]",
-        "Section [peers]",
-        "Include directive",
-        "Authentication file format",
-        "HBA file format",
-        "Ident map file format",
-        "Examples"
-      ],
-      "notes": [
-        "Source claim: PgBouncer maps many client connections to a smaller pool of server connections; pool_mode session, transaction or statement determines when a server connection is released.",
-        "Source claim: default_pool_size is per user/database pair, max_client_conn is separate, and file-descriptor limits can exceed max_client_conn by the number of server pools.",
-        "Source claim: transaction pooling is incompatible with session state (prepared statements, advisory locks, LISTEN, session GUCs) unless PgBouncer tracks or resets it.",
-        "Source claim: query_wait_timeout bounds queueing for a server; query_timeout cancels long queries; server_lifetime, server_idle_timeout and server_login_retry control connection reuse.",
-        "Source claim: prepared-statement tracking has memory and CPU cost, and a plan change can produce cached-plan errors that require RECONNECT.",
-        "Source claim: multiple PgBouncer processes can use SO_REUSEPORT with peering so cancellation requests reach the process that owns the query.",
-        "Source claim: TLS modes and auth types are configuration choices, not guarantees that the backend or client uses them.",
-        "Inference: the configuration page defines mechanism and defaults, not a fleet capacity model or a safe pool size for a workload.",
-        "Inference: a pool limit is a per-process/DB/user bound; the fleet ceiling and database heavy-write limit still need measurement."
-      ],
-      "tycho_candidates": [
-        {
-          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md",
-          "candidate": "Does the pool page distinguish per-process pool size from the fleet and database capacity limits?"
-        },
-        {
-          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/fleet-budgets.md",
-          "candidate": "Does the fleet budget page account for file descriptors, server pools and transaction pooling state?"
-        },
-        {
-          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-modes.md",
-          "candidate": "Does the pool-modes page list the session-state features transaction pooling breaks?"
-        }
-      ],
-      "reader": "Tycho agent; no independent review or execution."
-    },
-    {
-      "id": "R079",
-      "source_ids": [
-        "src.hikari-pool-sizing"
-      ],
-      "url": "https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing",
-      "unit": "Complete document: About Pool Sizing",
-      "revision": "HikariCP wiki page, raw markdown retrieved 2026-10-24; no revision pinned",
-      "status": "full-scoped-text-read",
-      "coverage": "All 89 lines / 1560 words; complete wiki page including formula, pool-locking and caveats",
-      "retrieval_refs": [
-        "/tmp/refs/hikari-sizing-raw.md lines 1-89",
-        "GitHub raw wiki, accessed 2026-10-24"
-      ],
-      "omissions": "Linked video and benchmarks not watched or rerun; no PostgreSQL experiment.",
-      "representation_sha256": "8d90ea97a9847b5cd7ed2390463ede07ea4d3669fa1612c050ffaf741f0a010a",
-      "retrieved_lines": 89,
-      "retrieved_words": 1560,
-      "sections": [
-        "10,000 Simultaneous Front-End Users",
-        "But why?",
-        "Limited Resources",
-        "The Formula",
-        "Pool-locking",
-        "Caveat Lector"
-      ],
-      "notes": [
-        "Source claim: a small pool saturated with waiting application threads is usually better than a large pool; a 10,000-user front end does not imply 10,000 database connections.",
-        "Source claim: the PostgreSQL starting formula is connections = (core_count * 2) + effective_spindle_count, with hyperthreads excluded and spindle count approaching zero when the working set is cached.",
-        "Source claim: I/O blocking can justify more connections than cores, but faster storage reduces blocking and therefore argues for fewer, not more, connections.",
-        "Source claim: the author reports PostgreSQL TPS flattening around 50 connections and says 96 may be too high unless the host has 16-32 cores; the 4-core/one-disk example is about 10 connections.",
-        "Source claim: pool-locking avoidance needs pool_size = Tn * (Cm - 1) + 1, which is a deadlock minimum, not an optimum.",
-        "Source claim: mixed long and short transactions may need two pools; a long-running job queue should be right-sized to the pool.",
-        "Inference: the formula is a starting point for load testing, not a universal capacity law; the author says pool sizing is deployment-specific.",
-        "Inference: the 50x latency improvement is a cited demonstration, not a controlled benchmark in this page."
-      ],
-      "tycho_candidates": [
-        {
-          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md",
-          "candidate": "Does the pool page treat a small saturated pool and a fleet/database budget as separate constraints?"
-        },
-        {
-          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/fleet-budgets.md",
-          "candidate": "Does the fleet budget page distinguish a per-process pool formula from the database connection ceiling?"
-        },
-        {
-          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-recovery.md",
-          "candidate": "Does the recovery page address pool-locking and long-running transaction pools?"
-        }
-      ],
-      "reader": "Tycho agent; no independent review or execution."
-    },
-    {
       "id": "R074",
       "source_ids": [
         "src.http-semantics"
@@ -3388,6 +3223,171 @@
       "reader": "Delegated reading subagent; no independent review or execution."
     },
     {
+      "id": "R077",
+      "source_ids": [
+        "src.aws-idempotency"
+      ],
+      "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+      "unit": "Complete article: Making retries safe with idempotent APIs",
+      "revision": "Published page; article body read 2026-10-24; site chrome/cookie banner excluded",
+      "status": "full-scoped-text-read",
+      "coverage": "All 555 representation lines / 5157 words; article body lines 271-555 read completely; cookie/browse chrome identified and excluded; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.aws-idempotency.md lines 1-555",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked AWS APIs, SDK code and PDF not read; no implementation execution.",
+      "representation_sha256": "f2daf1552d06253c7547467d96f420145ae3eb3e658d1984dc5a6086951f6949",
+      "retrieved_lines": 555,
+      "retrieved_words": 5157,
+      "sections": [
+        "Introduction",
+        "Retrying and side effects",
+        "Reducing client complexity",
+        "Retries and semantic equivalence",
+        "Late arriving requests",
+        "Same client request ID, different intent",
+        "Conclusion"
+      ],
+      "notes": [
+        "Source claim: retrying a failed call is simple only when the operation has no additional side effects; a lost response can leave the caller unable to tell whether the effect happened.",
+        "Source claim: an idempotent operation allows retransmission without additional side effects; callers can treat non-validation errors as retryable.",
+        "Source claim: a caller-provided client request identifier is preferred over deriving a key from request parameters, because identical parameters can represent two legitimate creates.",
+        "Source claim: the service must atomically record the idempotency token and all mutating effects; otherwise it can create resources without recording the token or vice versa.",
+        "Source claim: a semantically equivalent response, not merely ResourceAlreadyExists, lets clients retry transparently; the token is echoed in responses and stored with the resource.",
+        "Source claim: late-arriving retries can return a semantically equivalent response even if the resource was later deleted; retention lasts the resource lifetime plus a late-arrival interval.",
+        "Source claim: same token with different parameters is a validation error; the service stores the original parameters to detect it.",
+        "Inference: this is a rigorous at-most-once API contract with real storage and validation cost, not a universal requirement for every API.",
+        "Inference: a token does not replace transactional storage; the atomicity requirement is the hard part."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "candidate": "Does the idempotency page separate method-level idempotence from a client request key and atomic token/effect storage?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "candidate": "Does the effect-identity page bind the key to principal, operation and immutable parameters?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
+          "candidate": "Does the dedup page require a durable authority that survives a crash between effect and response?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R078",
+      "source_ids": [
+        "src.pgbouncer"
+      ],
+      "url": "https://www.pgbouncer.org/config.html",
+      "unit": "Complete document: PgBouncer Configuration",
+      "revision": "Official configuration page published/modified 2026-10-14; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1271 lines / 9376 words; generic settings, authentication, dangerous timeouts, network, databases, users, peers, file formats and examples",
+      "retrieval_refs": [
+        "/tmp/refs/src.pgbouncer.md lines 1-1271",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked PostgreSQL/PgBouncer guides and code not read; no deployment or benchmark.",
+      "representation_sha256": "ea75cdda2541173873db79f332de3e5eeab936eb31885dd07853bd4b448a40de",
+      "retrieved_lines": 1271,
+      "retrieved_words": 9376,
+      "sections": [
+        "Generic settings",
+        "Authentication settings",
+        "Dangerous timeouts",
+        "Low-level network settings",
+        "Section [databases]",
+        "Section [users]",
+        "Section [peers]",
+        "Include directive",
+        "Authentication file format",
+        "HBA file format",
+        "Ident map file format",
+        "Examples"
+      ],
+      "notes": [
+        "Source claim: PgBouncer maps many client connections to a smaller pool of server connections; pool_mode session, transaction or statement determines when a server connection is released.",
+        "Source claim: default_pool_size is per user/database pair, max_client_conn is separate, and file-descriptor limits can exceed max_client_conn by the number of server pools.",
+        "Source claim: transaction pooling is incompatible with session state (prepared statements, advisory locks, LISTEN, session GUCs) unless PgBouncer tracks or resets it.",
+        "Source claim: query_wait_timeout bounds queueing for a server; query_timeout cancels long queries; server_lifetime, server_idle_timeout and server_login_retry control connection reuse.",
+        "Source claim: prepared-statement tracking has memory and CPU cost, and a plan change can produce cached-plan errors that require RECONNECT.",
+        "Source claim: multiple PgBouncer processes can use SO_REUSEPORT with peering so cancellation requests reach the process that owns the query.",
+        "Source claim: TLS modes and auth types are configuration choices, not guarantees that the backend or client uses them.",
+        "Inference: the configuration page defines mechanism and defaults, not a fleet capacity model or a safe pool size for a workload.",
+        "Inference: a pool limit is a per-process/DB/user bound; the fleet ceiling and database heavy-write limit still need measurement."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md",
+          "candidate": "Does the pool page distinguish per-process pool size from the fleet and database capacity limits?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/fleet-budgets.md",
+          "candidate": "Does the fleet budget page account for file descriptors, server pools and transaction pooling state?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-modes.md",
+          "candidate": "Does the pool-modes page list the session-state features transaction pooling breaks?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R079",
+      "source_ids": [
+        "src.hikari-pool-sizing"
+      ],
+      "url": "https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing",
+      "unit": "Complete document: About Pool Sizing",
+      "revision": "HikariCP wiki page, raw markdown retrieved 2026-10-24; no revision pinned",
+      "status": "full-scoped-text-read",
+      "coverage": "All 89 lines / 1560 words; complete wiki page including formula, pool-locking and caveats",
+      "retrieval_refs": [
+        "/tmp/refs/hikari-sizing-raw.md lines 1-89",
+        "GitHub raw wiki, accessed 2026-10-24"
+      ],
+      "omissions": "Linked video and benchmarks not watched or rerun; no PostgreSQL experiment.",
+      "representation_sha256": "8d90ea97a9847b5cd7ed2390463ede07ea4d3669fa1612c050ffaf741f0a010a",
+      "retrieved_lines": 89,
+      "retrieved_words": 1560,
+      "sections": [
+        "10,000 Simultaneous Front-End Users",
+        "But why?",
+        "Limited Resources",
+        "The Formula",
+        "Pool-locking",
+        "Caveat Lector"
+      ],
+      "notes": [
+        "Source claim: a small pool saturated with waiting application threads is usually better than a large pool; a 10,000-user front end does not imply 10,000 database connections.",
+        "Source claim: the PostgreSQL starting formula is connections = (core_count * 2) + effective_spindle_count, with hyperthreads excluded and spindle count approaching zero when the working set is cached.",
+        "Source claim: I/O blocking can justify more connections than cores, but faster storage reduces blocking and therefore argues for fewer, not more, connections.",
+        "Source claim: the author reports PostgreSQL TPS flattening around 50 connections and says 96 may be too high unless the host has 16-32 cores; the 4-core/one-disk example is about 10 connections.",
+        "Source claim: pool-locking avoidance needs pool_size = Tn * (Cm - 1) + 1, which is a deadlock minimum, not an optimum.",
+        "Source claim: mixed long and short transactions may need two pools; a long-running job queue should be right-sized to the pool.",
+        "Inference: the formula is a starting point for load testing, not a universal capacity law; the author says pool sizing is deployment-specific.",
+        "Inference: the 50x latency improvement is a cited demonstration, not a controlled benchmark in this page."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md",
+          "candidate": "Does the pool page treat a small saturated pool and a fleet/database budget as separate constraints?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/fleet-budgets.md",
+          "candidate": "Does the fleet budget page distinguish a per-process pool formula from the database connection ceiling?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-recovery.md",
+          "candidate": "Does the recovery page address pool-locking and long-running transaction pools?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
       "id": "R080",
       "source_ids": [
         "src.postgres-wal"
@@ -3439,12 +3439,641 @@
         }
       ],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R081",
+      "source_ids": [
+        "src.otel-collector"
+      ],
+      "url": "https://opentelemetry.io/docs/collector/architecture/",
+      "unit": "Complete page: Architecture",
+      "revision": "Live documentation; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 308 lines / 1786 words; sections Pipelines, Receivers, Exporters, Processors, Running as an agent, Running as a gateway; Feedback site chrome excluded",
+      "retrieval_refs": [
+        "/tmp/pilot6/raw/src.otel-collector.md lines 1-308",
+        "Jina reader Markdown capture, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; Mermaid diagrams read as source text only, not rendered; no execution.",
+      "representation_sha256": "d90492e8af9e7f4b418ff1528b93b0d41bee55bd9d84211cfac817faae3948b3",
+      "retrieved_lines": 308,
+      "retrieved_words": 1786,
+      "sections": [
+        "Pipelines",
+        "Receivers",
+        "Exporters",
+        "Processors",
+        "Running as an agent",
+        "Running as a gateway"
+      ],
+      "notes": [
+        "Source claim: the Collector is an executable that receives, processes and exports telemetry, with one or more configured pipelines. Inference: the page defines configuration topology, not throughput, latency or delivery guarantees.",
+        "Source claim: each pipeline has receivers, optional processors and exporters, and operates on traces, metrics or logs; a mismatched component raises `pipeline.ErrSignalNotSupported` when configuration loads. Inference: this is load-time validation, not runtime fault isolation.",
+        "Source claim: all receivers push to the first processor; processors may transform, generate or drop data (for example sampling/filtering); each exporter gets a copy and the last processor uses a `fanoutconsumer`. Inference: a copy per exporter is fan-out, not durable replication, and dropping is intended behavior.",
+        "Source claim: one receiver can feed several pipelines and several pipelines can feed one exporter, using composite `type[/name]` keys. Inference: sharing a component changes topology but not the configured signal type or its state boundaries.",
+        "Source claim: referencing the same processor key in multiple pipelines reuses the configuration but creates an independent instance and state per pipeline; the same key must not repeat within one pipeline. Inference: tuning is shared across pipelines while runtime state is not.",
+        "Source claim: running as an agent is motivated by avoiding per-language exporter/zpage reimplementation, enabling export after deployment without redeploying applications, and central configuration push described tentatively as a possible future capability. Inference: the page does not assert that configuration push is implemented.",
+        "Source claim: a gateway deployment receives from agents, libraries or protocol-emitting tasks and forwards to one or more backends; the diagram also shows sidecar and daemonset agent placements. Inference: deployment placement changes failure domains, but the page gives no retry, queue or high-availability contract.",
+        "Representation artifact: line 174 joins the end of one Mermaid diagram to the next front-matter block (`Exporter`\"]]---`), and diagram labels contain `#quot;`/`#nbsp;` entities. Content remains recoverable; this is capture formatting, not missing prose.",
+        "Source inconsistency: line 180 says each transform processor is configured with `send_batch_size` of `10000`, but no such field appears in the immediately preceding configuration. Treat that number as unverified page text, not as the example's actual setting.",
+        "Scope limit: lines 302-308 are a feedback widget and were excluded from technical claims; the page contains no capacity numbers, queue-depth guidance, retry semantics or independent benchmark evidence."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-pipelines-cardinality-and-retention.md",
+          "candidate": "Add a compact topology note that a receiver may feed multiple pipelines, exporters receive fan-out copies, and same-key processors are independent per-pipeline instances; keep the existing warning that topology is not a durability guarantee."
+        },
+        {
+          "path": "book/observability/metrics-slo-timeseries-architecture.md",
+          "candidate": "In section 2, distinguish agent placements (sidecar/daemonset) from a gateway collector and state that the official architecture page claims deployment flexibility, not retry, buffering or lossless delivery."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md",
+          "candidate": "Note that a collector agent or gateway can forward spans from many processes but does not by itself establish sampling consistency or end-to-end completeness; these remain trace-pipeline obligations."
+        }
+      ],
+      "reader": "Pilot delegated reader; no independent review or execution."
+    },
+    {
+      "id": "R082",
+      "source_ids": [
+        "src.prometheus-storage"
+      ],
+      "url": "https://prometheus.io/docs/prometheus/latest/storage/",
+      "unit": "Complete page: Storage | Prometheus",
+      "revision": "Live documentation; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 180 lines / 2199 words (Python whitespace split; `wc -w` gives 2210 because 24 non-breaking spaces in the tree diagram join tokens); sections Local storage (On-disk layout, Compaction, Operational aspects, Right-Sizing Retention Size), Remote storage integrations (Overview, Existing integrations), Backfilling from OpenMetrics format, Backfilling for Recording Rules (Limitations); no site chrome present",
+      "retrieval_refs": [
+        "/tmp/pilot6/raw/src.prometheus-storage.md lines 1-180",
+        "Jina reader Markdown capture, accessed 2026-10-24"
+      ],
+      "omissions": "Linked TSDB format, API and configuration docs not read; remote-integration diagram not rendered or interpreted; no execution.",
+      "representation_sha256": "4e23a88d1f1a4226c751b3f6dfc0c9d95b682843c027a2cf628af3ed8ae1bafa",
+      "retrieved_lines": 180,
+      "retrieved_words": 2199,
+      "sections": [
+        "Local storage",
+        "On-disk layout",
+        "Compaction",
+        "Operational aspects",
+        "Right-Sizing Retention Size",
+        "Remote storage integrations",
+        "Overview",
+        "Existing integrations",
+        "Backfilling from OpenMetrics format",
+        "Backfilling for Recording Rules",
+        "Limitations"
+      ],
+      "notes": [
+        "Source claim: samples are grouped into two-hour blocks containing chunks, metadata and an index; chunk segments are up to 512 MB by default; API deletions are recorded in tombstones rather than immediately removed. Inference: deletion does not immediately reclaim disk and depends on later compaction.",
+        "Source claim: the current head block is in memory, protected by a WAL of 128 MB segments; at least three WAL files are retained and high-traffic servers may keep more to cover two hours. Inference: WAL footprint scales with ingestion rate rather than a fixed byte budget.",
+        "Source claim: local storage is not clustered or replicated and is therefore not arbitrarily scalable or durable; snapshots are recommended for backup; excluding `chunks_head/`, `wal/` and `wbl/` yields a coherent backup at the cost of the WAL-covered range. Inference: a raw directory copy of a running server is not asserted to be consistent.",
+        "Source claim: compaction produces blocks spanning up to 10% of retention or 31 days, whichever is smaller; source and compacted blocks coexist so disk can briefly exceed `storage.tsdb.retention.size`. Inference: the configured size limit is not a hard instantaneous disk ceiling.",
+        "Source claim: retention time defaults to 15d only when neither time nor size is set; size defaults to 0/disabled; only persistent blocks are deleted to satisfy size although WAL and memory-mapped chunks count toward total size. Inference: minimum disk planning must cover peak WAL plus head chunks.",
+        "Source claim: about 1-2 bytes per sample on average and `needed_disk_space = retention_time_seconds * ingested_samples_per_second * bytes_per_sample`; reducing series is described as more effective than lengthening the scrape interval because of intra-series compression. Inference: the formula is explicitly rough and excludes index, WAL, replicas and query headroom.",
+        "Source claim: retention size should be at most 80-85% of allocated disk to absorb in-progress compaction duplication; expired blocks may take up to two hours to remove and must be fully expired. Inference: this is an operational heuristic, not a measured worst case for every workload.",
+        "Source claim: remote read/write use snappy-compressed protocol buffers over HTTP; remote read is not a stable API; remote read fetches raw series and all PromQL evaluation stays in the querying server, limiting scalability. Inference: remote read is not a distributed query engine and central evaluation remains a bottleneck.",
+        "Source claim: the remote-write receiver requires `--web.enable-remote-write-receiver` and serves `/api/v1/write`; backfilling into the head's last three hours is unsafe, native histograms and staleness markers are unsupported, and overlap handling for v2.38 and below needs a flag. Inference: backfill workflows must respect version-specific compatibility and cannot reconstruct every metric feature.",
+        "Source claim: recording-rule backfill limitations include duplicate blocks on repeated overlapping runs, evaluation of all rules, rule `interval` overriding `--eval-interval`, ignored alerts, and no visibility of earlier rules in the same group. Inference: dependent rules require staged backfills; the page does not claim transactional or idempotent backfill."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/cardinality-retention.md",
+          "candidate": "Add the 80-85% retention-size headroom rule and the source-and-compacted-block coexistence as an explicit capacity-budget line, marked as vendor guidance rather than a universal bound."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/restore-drills.md",
+          "candidate": "Use Prometheus snapshots as a concrete single-node TSDB example: a live raw copy may lose the WAL-covered range, and excluding WAL/head files trades coherence for lost recent samples."
+        },
+        {
+          "path": "book/observability/metrics-slo-timeseries-architecture.md",
+          "candidate": "Qualify the remote-storage option in section 7: remote read does not distribute PromQL evaluation, and remote write stability differs between spec 1.0 and experimental 2.0."
+        }
+      ],
+      "reader": "Pilot delegated reader; no independent review or execution."
+    },
+    {
+      "id": "R083",
+      "source_ids": [
+        "src.prom-alerting"
+      ],
+      "url": "https://prometheus.io/docs/alerting/latest/overview/",
+      "unit": "Complete page: Alerting overview — Prometheus",
+      "revision": "Live documentation; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 138 lines / 343 words; single content section 'Alerting overview' (lines 78–86, 76 words including its H1); site header, documentation navigation tree (lines 6–76), pagination and edit links (88–92), footers (96–98) and docs version selector (100–138) excluded from technical claims; no cookie or consent chrome present.",
+      "retrieval_refs": [
+        "/tmp/pilot6/raw/src.prom-alerting.md lines 1-138",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked Alertmanager configuration, high-availability, integrations and alerting-rules pages not read; no Prometheus or Alertmanager execution.",
+      "representation_sha256": "6b7311160e1747164b93be152d58da0e2d6f6ec121375d6acb72f2443f8ff6ef",
+      "retrieved_lines": 138,
+      "retrieved_words": 343,
+      "sections": [
+        "Alerting overview"
+      ],
+      "notes": [
+        "Source claim (line 80): alerting has two parts — alerting rules in Prometheus servers send alerts to an Alertmanager, which manages silencing, inhibition, aggregation and notification delivery.",
+        "Source claim (lines 82–86): three setup steps — configure Alertmanager, configure Prometheus to talk to it, create alerting rules in Prometheus.",
+        "Coverage fact: the technical prose is lines 78–86 (76 words including the H1); the 343-word file total is dominated by the documentation navigation tree, pagination, footers and version selector.",
+        "Inference from line 90: the edit link targets prometheus/alertmanager docs/overview.md, so this overview is Alertmanager-repo documentation served under prometheus.io/docs/alerting/latest/, not a Prometheus-server manual page.",
+        "Source silence: routing trees, grouping keys, deduplication, HA clustering, retry/backoff and alert states (inactive/pending/firing) are absent; linked pages were not read, so Tycho must not define those mechanisms from this source.",
+        "Inference: 'silencing' and 'inhibition' are suppression mechanisms and 'aggregation' here means alert grouping, not metric aggregation; the page gives no definitions, so any explanation must be presented as Tycho's own.",
+        "Source claim: notifications may go to email, on-call notification systems and chat platforms — a capability list, not a delivery guarantee; the page asserts no at-least-once or deduplication property.",
+        "Representation detail: the version selector lists 3.15 (latest) and 3.13 (LTS) at lines 100–138; the text is unpinned 'latest' prose with no revision hash.",
+        "Excluded chrome is header/nav (6–76), pagination and edit links (88–92), footers (96–98) and version list; no cookie banner appears in this capture.",
+        "No code blocks, commands, diagrams or configuration snippets occur, so configuration syntax and Alertmanager runtime behavior cannot be verified from this page."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
+          "candidate": "Add a boundary paragraph separating alert-rule evaluation in Prometheus servers from Alertmanager-side suppression, grouping and notification, limited to what the overview states."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-evidence.md",
+          "candidate": "Use the page's channel list (email, on-call, chat) to distinguish paging-channel choice from evidence capture, without asserting delivery guarantees."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-pipelines-cardinality-and-retention.md",
+          "candidate": "Note that alerting rules are evaluated by Prometheus servers against stored series, keeping rule evaluation distinct from ingestion and retention ownership; flag as inference."
+        }
+      ],
+      "reader": "Pilot delegated reader; no independent review or execution."
+    },
+    {
+      "id": "R084",
+      "source_ids": [
+        "src.aws-leases-enrichment"
+      ],
+      "url": "https://aws.amazon.com/builders-library/leader-election-in-distributed-systems/",
+      "unit": "Complete page: Leader Election in Distributed Systems — AWS Builder Center",
+      "revision": "Live documentation; retrieved 2026-10-24; published and last modified 2019-12-05; no immutable revision hash exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 100 lines / 2005 words; sections Introduction, Advantages and disadvantages of leader election, How Amazon elects a leader, Examples of systems using leader election at Amazon, What happens when the leader fails?, Best practices for leader election, Conclusion, Further reading; reader header lines 1–7 excluded; no site navigation chrome captured.",
+      "retrieval_refs": [
+        "/tmp/pilot6/raw/src.aws-leases-enrichment.md lines 1-100",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked DynamoDB lock-client source, ZooKeeper recipes, TLA+ material and cited papers not read; no lease, client or failure experiment executed.",
+      "representation_sha256": "bccdd28bf90426346497dcac4103b51a0527805b8139e46ba228bd80a2f55abd",
+      "retrieved_lines": 100,
+      "retrieved_words": 2005,
+      "sections": [
+        "Introduction",
+        "Advantages and disadvantages of leader election",
+        "How Amazon elects a leader",
+        "Examples of systems using leader election at Amazon",
+        "What happens when the leader fails?",
+        "Best practices for leader election",
+        "Conclusion",
+        "Further reading"
+      ],
+      "notes": [
+        "Source claim (lines 18–20): leader election gives one entity special powers and concentrates concurrency, simplifying reasoning and operations, while adding failure modes and scaling bottlenecks.",
+        "Source claim (line 22): alternatives are considered first — workflow services for data processing/workflows, idempotent APIs and optimistic locking where a single leader is unnecessary.",
+        "Source claim (line 47): leases keep the current leader in a single database, require periodic heartbeats, and permit takeover after heartbeats stop; leases are called the most widely used election mechanism at Amazon.",
+        "Source claim (lines 49–51): distributed systems use time only for human consumption; leases depend on local elapsed durations rather than synchronized wall clocks; leap seconds and drift from sustained CPU load are named hazards.",
+        "Source claim (lines 51–55): slow or lossy networks and garbage-collection pauses between checking a lock and doing work cause incorrect behavior; tested clients (DynamoDB lock client, ZooKeeper recipes) are preferred over custom implementations.",
+        "Source claim (lines 67–71): durability precedes announcement; idempotency lets a new leader redrive partially completed work; exactly-one leadership is impossible, and zero or two leaders occur during failures.",
+        "Source claim (line 73): at-most-one-leader systems must depose the outgoing leader before electing a new one, and a network partition makes 'failed' versus 'still working' undecidable.",
+        "Source claim (lines 79–84): check remaining lease time before side-effecting operations, avoid background-thread heartbeats, publish capacity metrics, keep a leadership audit trail, and model protocols in TLA+.",
+        "Inference: 'two leaders are tolerable when work is idempotent' is an availability/efficiency trade that still needs destination-side effect identity; the article quantifies no overlap window and bounds no duplicate effects.",
+        "Representation detail: the title says AWS Builder Center while the URL is aws.amazon.com/builders-library; line 57 is a plain-text heading; no author byline, figures or code samples appear; published and last-modified are both 2019-12-05."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "candidate": "Enrich the leases section with the lease record shape (one database holding the current leader plus heartbeat renewal) and the rule that an outgoing leader must be deposed before a new election when at-most-one ownership is required."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md",
+          "candidate": "Strengthen the clock-domain argument with the article's claim that only local elapsed duration is safe for leases, naming leap seconds and sustained-load drift."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/task-lifetime.md",
+          "candidate": "Add the background-heartbeat contraindication: a heartbeat thread that outlives the work thread retains a lease while doing nothing and cannot interrupt expired work."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+          "candidate": "Add durable-before-announced ordering as the precondition that makes redrive of partially completed leader work safe."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-cards.md",
+          "candidate": "Record leader election's single-point-of-scaling and single-point-of-trust costs, with sharding presented as scope reduction rather than removal."
+        }
+      ],
+      "reader": "Pilot delegated reader; no independent review or execution."
+    },
+    {
+      "id": "R085",
+      "source_ids": [
+        "src.microservices"
+      ],
+      "url": "https://martinfowler.com/articles/microservices.html",
+      "unit": "Partial page: Microservices (local representation; sidebars and some notes omitted)",
+      "revision": "Live page; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "partial-scoped-text-read",
+      "coverage": "All 218 lines / 5,405 words of the supplied Jina Markdown; introduction, all nine 'Characteristics' subsections and 'Are Microservices the Future?' read; sidebars/footnotes absent from the local representation are recorded as a gap and not used as evidence; site chrome/navigation excluded. The live page also contains seven in-article sidebars, footnotes 5-6 and 8, References and Further Reading, and a front-matter abstract/date that the local file omits (recorded as representation_gap; omitted text was not used as evidence).",
+      "retrieval_refs": [
+        "/tmp/batch6/raw/src.microservices.md lines 1-218",
+        "Jina reader, accessed 2026-10-24",
+        "Live HTML structure check at martinfowler.com, 2026-10-24 (gap enumeration only; no claims sourced from omitted text)"
+      ],
+      "omissions": "Linked docs/code not read; no execution. Omitted sidebars, footnotes 5/6/8, References and Further Reading were not reconstructed or treated as read.",
+      "representation_gap": "Local Jina extraction omits seven in-article sidebars ('How big is a microservice?', 'Microservices and SOA', 'Many languages, many options', 'Battle-tested standards and enforced standards', 'Make it easy to do the right thing', 'The circuit breaker and production ready code', 'Synchronous calls considered harmful'), footnotes 5, 6 and 8 (markers jump 4 to 7 and 7 to 9), the front-matter abstract/subtitle and date, the References and Further Reading sections, and the page table of contents. It also omits the related-article card linking 'Microservice Trade-Offs', which is recommendation chrome rather than article content. Technical claims in the missing article parts are outside this record. Coverage is complete for the supplied representation, not for the whole live article.",
+      "representation_sha256": "b061634c151c93db65dd5934bc12b11ceb1f42415e6d80860ffba8058968f760",
+      "retrieved_lines": 218,
+      "retrieved_words": 5405,
+      "sections": [
+        "Introduction and definition",
+        "Characteristics of a Microservice Architecture",
+        "Componentization via Services",
+        "Organized around Business Capabilities",
+        "Products not Projects",
+        "Smart endpoints and dumb pipes",
+        "Decentralized Governance",
+        "Decentralized Data Management",
+        "Infrastructure Automation",
+        "Design for failure",
+        "Evolutionary Design",
+        "Are Microservices the Future?"
+      ],
+      "notes": [
+        "Source claim (lines 10-12): the style is a suite of small services, each in its own process, communicating through lightweight mechanisms (often an HTTP resource API), organized around business capabilities, independently deployable, with minimal centralized management and possible polyglot languages and data stores.",
+        "Source claim (lines 30-32): the authors explicitly decline a formal definition; they describe common characteristics that most, not all, microservice architectures exhibit, and say they are not laying down a definition to conform to.",
+        "Source claim (lines 38-52): components are independently replaceable and upgradeable; libraries are in-process, services out-of-process. Independent deployability is the main reason for services, but remote calls cost more, need coarser APIs and make moving responsibilities harder. A service may still comprise several processes deployed together.",
+        "Source claim (lines 54-75): business-capability organization is contrasted with technology-layer teams; Conway's Law is invoked and cross-functional teams are illustrated with comparethemarket. The authors concede large monoliths can be modularized around capabilities but say the discipline is harder.",
+        "Source claim (lines 77-85): product-over-project ownership and 'you build, you run it' are presented as a preference, illustrated with Amazon and Netflix; the authors say the same approach can be taken with monoliths.",
+        "Source claim (lines 87-106): 'smart endpoints and dumb pipes' rejects ESB/BPEL-style central intelligence; HTTP resource APIs and lightweight messaging are the common protocols; binary protocols at extreme scale trade transparency for scale (footnote 7). Conversion from in-process calls must avoid chatty RPC.",
+        "Source claim (lines 128-142): decentralized data management means bounded contexts, per-service databases, polyglot persistence, transactionless coordination, eventual consistency and compensating operations; distributed transactions are called notoriously difficult.",
+        "Source claim (lines 166-178): any service call may fail, so clients must tolerate failure; this adds complexity compared with a monolith. Real-time and semantic monitoring, plus Netflix's Simian Army failure injection, are cited as responses.",
+        "Source claim (lines 180-194): replaceability and the 'pattern of change' drive decomposition; versioning is a last resort, with Tolerant Reader and consumer-driven contracts preferred; the Guardian is cited as adding services around a monolith API.",
+        "Source claim (lines 196-216): the conclusion is cautious optimism, not certainty: too little time has passed, boundaries are hard to refactor once remote, complexity can merely move into connections, and team skill confounds comparisons. The last paragraph recommends monolith-first while noting the advice 'isn't ideal'.",
+        "Inference: the article is a 2014 position piece built from practitioner experience and named examples, not a controlled study; it reports no measurements, base rates or failure statistics, so its characteristics are best treated as a vocabulary and hypothesis set.",
+        "Representation note: the local Jina file has extraction artifacts ('in-house .', 'coarser -grained') and omits the sidebars, front-matter abstract/date and notes listed in representation_gap. Chrome excluded: Jina header fields, site masthead/navigation, table of contents, related-article card, footer and the separate 'Microservices Guide' link."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md",
+          "candidate": "Does the chapter distinguish the article's nine observed characteristics from a normative definition, and does it preserve the authors' explicit refusal to define service size?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md",
+          "candidate": "Does the chapter test independent deployability separately from independent scalability and replaceability, as the article does when it calls deployability the main reason for services?"
+        },
+        {
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "candidate": "Does the service-orientation table represent decentralized data ownership and design-for-failure as first-class costs, not only deployment and ownership properties?"
+        },
+        {
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "candidate": "How should the chapter reconcile the article's 'versioning as a last resort' and Tolerant Reader preference with expand-migrate-contract compatibility gates?"
+        },
+        {
+          "path": "book/decisions/requirements-to-transition-decision-playbooks.md",
+          "candidate": "Are the article's organizational claims (business-capability teams, product ownership, build-and-run) kept out of architecture selection unless a requirement makes them decision-relevant?"
+        }
+      ],
+      "reader": "Delegated reader batch 6; parent validation pending."
+    },
+    {
+      "id": "R086",
+      "source_ids": [
+        "src.monolith-first"
+      ],
+      "url": "https://martinfowler.com/bliki/MonolithFirst.html",
+      "unit": "Complete page: bliki: Monolith First",
+      "revision": "Live page; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 51 lines / 1,177 words of the supplied Jina Markdown; opening anecdotal pattern, MicroservicePremium/Yagni argument, stable-boundaries argument, four execution routes, counterargument, epistemic caution, Further Reading, Notes and Acknowledgements read; site chrome/navigation excluded.",
+      "retrieval_refs": [
+        "/tmp/batch6/raw/src.monolith-first.md lines 1-51",
+        "Jina reader, accessed 2026-10-24",
+        "Live HTML structure check at martinfowler.com, 2026-10-24 (structure comparison only)"
+      ],
+      "omissions": "Linked docs/code not read; Sam Newman's linked case study not read; no execution.",
+      "representation_gap": "None in substantive prose: the live page's Further Reading, Notes and Acknowledgements match the local file, including the duplicate rendering of notes 1 and 2 (inline note blocks plus the Notes list). Omitted material is site chrome and metadata only: site masthead/navigation, the 'Microservices Guide' link, byline/tags and footer.",
+      "representation_sha256": "b8a1b006c844faafa5f4156edf9fc70a2b19592c5017c34447c07c70842b5626",
+      "retrieved_lines": 51,
+      "retrieved_words": 1177,
+      "sections": [
+        "Opening anecdotal pattern",
+        "Thesis: do not start with microservices",
+        "MicroservicePremium and monolith-first strategy",
+        "Yagni and feedback speed",
+        "Stable boundaries and Bounded Contexts",
+        "Execution routes: careful modular monolith; edge peel-off; full replacement; coarse-grained services",
+        "Counterargument and team experience",
+        "Epistemic caution",
+        "Further Reading",
+        "Notes",
+        "Acknowledgements"
+      ],
+      "notes": [
+        "Source claim (lines 8-11): the author reports a pattern from stories he has heard: almost all successful microservice stories began with a monolith that grew too big and was broken up, while almost all systems built as microservices from scratch ended in serious trouble.",
+        "Source claim (line 13): colleagues conclude you should not start a new project with microservices even if you are sure the application will be large enough to make microservices worthwhile.",
+        "Source claim (line 17): MicroservicePremium is the cost of managing a suite of services; it slows a team and is only useful for more complex systems, which grounds the monolith-first strategy.",
+        "Source claim (line 19): the Yagni argument prioritizes speed and feedback in the first phase; a simplistic version tests whether the idea is useful, and the microservice premium is a drag at that stage.",
+        "Source claim (lines 21-25): stable boundaries are the core difficulty; even experienced architects in familiar domains struggle, refactoring across services is much harder than in a monolith, and a monolith first reveals boundaries and builds MicroservicePrerequisites. Footnote 1 warns that arbitrary systems cannot be decomposed and that gradual successes required relatively good modular design.",
+        "Source claim (lines 23-31): four routes are described: a carefully modular monolith, peeling services off at the edges while a substantial monolith remains, replacing the monolith entirely (SacrificialArchitecture), and starting with a couple of coarse-grained services ('duolith'). The author says he would be more comfortable with the careful route if he had heard enough success stories.",
+        "Source claim (line 35): the counterargument favors starting with microservices to build team rhythm and scale ownership, especially for system replacements; the author concedes its force but says not to start that way unless the team has reasonable microservice experience.",
+        "Source claim (line 37): evidence is sparse and early, so advice must be treated as tentative 'however confidently they argue'. The page offers no sample, measurements or named failure cases beyond a Further Reading link.",
+        "Inference: 'almost all' is an anecdotal frequency claim without a denominator, selection rule or definition of 'serious trouble'; it cannot be converted into a probability or used to rank architectures.",
+        "Inference: the essay's monolith is a single deployable, not necessarily an unstructured codebase; the careful-modularity route it calls logical still depends on discipline the author says is uncommon.",
+        "Inference: monolith-first is a sequencing heuristic for greenfield work; the text does not claim it applies to existing distributed systems or that decomposition is always feasible.",
+        "Representation note: the local file matches the live page's substantive structure, including Further Reading, Notes and Acknowledgements. Footnote texts 1 and 2 appear twice because the live page also renders them in a Notes list. Chrome excluded: Jina header fields, site masthead/navigation, 'Microservices Guide' link, byline/tags and footer."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "candidate": "Does the chapter represent all four routes Fowler lists (careful modular monolith, edge peel-off, full replacement, coarse-grained 'duolith'), or only keep/modularize/extract?"
+        },
+        {
+          "path": "book/cases/decisions/monolith-vs-services.md",
+          "candidate": "Does the playbook record Fowler's caveat that even experienced architects struggle with early boundaries, and does it require evidence of modular discipline before a modular-first ADR?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+          "candidate": "Is the modular monolith presented as a boundary-discovery stage with a possible later extraction, rather than as a permanent verdict?"
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/modernization-options.md",
+          "candidate": "Does the options page include 'build a monolith you expect to discard' (sacrificial architecture) as a legitimate time-to-market route?"
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/contraindications-transition.md",
+          "candidate": "Does the contraindication analysis treat monolith-first as a tentative heuristic with sparse evidence, rather than a universal rule or a maturity ladder?"
+        }
+      ],
+      "reader": "Delegated reader batch 6; parent validation pending."
+    },
+    {
+      "id": "R087",
+      "source_ids": [
+        "src.jepsen-read-your-writes"
+      ],
+      "url": "https://jepsen.io/consistency/models/read-your-writes",
+      "unit": "Complete page: Read Your Writes",
+      "revision": "Live page; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 14 lines / 161 words; sections: definition and alias, same-process scope, sticky-availability claim, formal definition; Jina header and site chrome excluded",
+      "retrieval_refs": [
+        "/tmp/batch6/raw/src.jepsen-read-your-writes.md lines 1-14",
+        "Jina reader, accessed 2026-10-24",
+        "Live HTML heading and body cross-check at jepsen.io, 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution.",
+      "representation_gap": "None in technical prose: the live page body matches the extraction (three paragraphs plus the 'Formally' section). Omitted material is site chrome only: JEPSEN masthead, Blog/Analyses/Talks/Consistency/Services and Models/Phenomena/Dependencies menus, copyright footer and LLM-scraper note. The live page has no diagrams, tables or measurements.",
+      "representation_sha256": "dd0fb406f0df85a74d98c42f3eb39997463e055248f1255ce6a0278e9069e167",
+      "retrieved_lines": 14,
+      "retrieved_words": 161,
+      "sections": [
+        "Definition and alias (read my writes)",
+        "Same-process scope and cross-process counterexample",
+        "Availability classification: sticky available",
+        "Formally: Viotti-Vukolic session order and visibility order"
+      ],
+      "notes": [
+        "Source claim (line 6): read your writes, also called read my writes, requires that if a process writes w and then reads r, r must observe w's effects.",
+        "Source claim (line 8): the guarantee is explicitly same-process only; a successful write by process 1 creates no visibility promise for process 2.",
+        "Source claim (line 10): read your writes is sticky available — during a partition every node can make progress provided clients never change which server they talk to.",
+        "Source claim (line 14): Viotti and Vukolic define it so that session order, restricted to writes-to-reads, is a subset of the visibility order.",
+        "Inference: stickiness is a client-routing premise, not a replication-protocol property; a load balancer or failover that moves the client removes the stated availability basis.",
+        "Inference: the model constrains only reads that follow a write in the same session; a first read, or a session that never wrote, receives no freshness promise from it.",
+        "Inference: read your writes says nothing about ordering between successive reads, so a session can satisfy it and still regress behind its own earlier read of another object.",
+        "Inference: the page uses 'process' and 'session' interchangeably; reconnects, multiple tabs, devices and anonymous requests need an application-level mapping the source does not give.",
+        "Inference: sticky availability is a weaker classification than the total availability claimed for monotonic reads, so the two session models differ in availability as well as in what they constrain.",
+        "Representation note: no author byline, date, diagram, table or measurement appears on the live page; this is a definitional reference, not empirical evidence.",
+        "Chrome excluded from claims: Jina wrapper fields (Title, URL Source, Markdown Content) and live site masthead, two navigation menus and copyright footer; none carries technical content."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md",
+          "candidate": "Does the page state that read-your-writes is sticky available and that this availability rests on clients never switching servers?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md",
+          "candidate": "Does the chapter keep read-your-writes distinct from global freshness and linearizability so readers do not inflate the guarantee?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md",
+          "candidate": "Does the chapter separate read-your-writes from causal dependencies that cross sessions or objects?"
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "candidate": "Can a cache or read replica satisfy read-your-writes only when it carries the session's write position, and is that condition stated?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "candidate": "How should a lagging replica be excluded from serving a session whose requirement exceeds its applied position?"
+        }
+      ],
+      "reader": "Delegated reader batch 6; parent validation pending."
+    },
+    {
+      "id": "R088",
+      "source_ids": [
+        "src.jepsen-monotonic-reads"
+      ],
+      "url": "https://jepsen.io/consistency/models/monotonic-reads",
+      "unit": "Complete page: Monotonic Reads",
+      "revision": "Live page; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 14 lines / 150 words; sections: definition, same-process scope, total-availability claim, formal definition; Jina header and site chrome excluded",
+      "retrieval_refs": [
+        "/tmp/batch6/raw/src.jepsen-monotonic-reads.md lines 1-14",
+        "Jina reader, accessed 2026-10-24",
+        "Live HTML heading and body cross-check at jepsen.io, 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution.",
+      "representation_gap": "None in technical prose: the live page body matches the extraction (three paragraphs plus the 'Formally' section). Omitted material is site chrome only: JEPSEN masthead, Blog/Analyses/Talks/Consistency/Services and Models/Phenomena/Dependencies menus, copyright footer and LLM-scraper note. The live page has no diagrams, tables or measurements.",
+      "representation_sha256": "bcaaf8e6414a9c54019e4f9a90dc35c10642bf6f47ec360fa37fd2187fcb3345",
+      "retrieved_lines": 14,
+      "retrieved_words": 150,
+      "sections": [
+        "Definition: reads cannot go backwards",
+        "Same-process scope",
+        "Availability classification: totally available",
+        "Formally: Viotti-Vukolic session order and visibility order"
+      ],
+      "notes": [
+        "Source claim (line 6): monotonic reads ensures that after a process reads r1 then r2, r2 cannot observe a state prior to the writes reflected in r1; reads cannot go backwards.",
+        "Source claim (line 8): the model applies only to reads by the same process, not to operations performed by different processes.",
+        "Source claim (line 10): monotonic reads can be totally available — even during a network partition all nodes can make progress.",
+        "Source claim (line 14): Viotti and Vukolic define it over session order and visibility order; if a is visible to read b, and b precedes read c in the same process, a must be visible to c.",
+        "Inference: the formal condition is transitive across reads in one session, so it constrains the visibility set rather than the numeric or lexical ordering of returned values.",
+        "Inference: a legitimately later state with a smaller displayed number is not a violation; the book's session page states this caveat independently at line 76.",
+        "Inference: monotonic reads is silent on a session observing its own writes; read-your-writes is the separate guarantee and neither model implies the other.",
+        "Inference: total availability classifies the model, not an implementation SLA; a system may still time out, and the source gives no failure or latency semantics.",
+        "Inference: the model permits an arbitrarily stale first read; freshness relative to real time or to other sessions is outside the definition.",
+        "Inference: the page gives no mechanism; satisfying monotonic reads in practice needs a per-session record of the maximum observed position, which the source does not discuss.",
+        "Representation note: no author byline, date, diagram, table or measurement appears on the live page; this is a definitional reference, not empirical evidence.",
+        "Chrome excluded from claims: Jina wrapper fields (Title, URL Source, Markdown Content) and live site masthead, two navigation menus and copyright footer; none carries technical content."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md",
+          "candidate": "Does the page explain why monotonic reads can be totally available while read-your-writes is only sticky available?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md",
+          "candidate": "Does the chapter avoid treating monotonic reads as value monotonicity, such as a counter that only increases?"
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "candidate": "Does cache refresh preserve the session's highest observed position, or can a refresh silently move a session backwards?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md",
+          "candidate": "Is monotonic reads distinguished from causal consistency, given that it does not constrain cross-session visibility?"
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
+          "candidate": "Does the versioned-projection option claim monotonic read semantics without defining a session-position record?"
+        }
+      ],
+      "reader": "Delegated reader batch 6; parent validation pending."
+    },
+    {
+      "id": "R089",
+      "source_ids": [
+        "src.s3-multipart-enrichment"
+      ],
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html",
+      "unit": "Complete page: Uploading and copying objects using multipart upload in Amazon S3",
+      "revision": "Live page; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 222 lines / 3563 words; introduction, 10 H2 sections, five process subsections, both checksum tables, permissions table and Topics list; AWS docs header, left navigation, breadcrumbs, page-contents menu, locale selector, feedback and footer chrome excluded.",
+      "retrieval_refs": [
+        "/tmp/batch6/raw/src.s3-multipart-enrichment.md lines 1-222",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution.",
+      "representation_sha256": "211d3c4d708746d444ede26a894499e9d5499ef633b56d8e857da4e155b06534",
+      "retrieved_lines": 222,
+      "retrieved_words": 3563,
+      "sections": [
+        "Introduction and advantages",
+        "Multipart upload process",
+        "Multipart upload initiation",
+        "Parts upload",
+        "Multipart upload completion",
+        "Sample multipart upload calls",
+        "Multipart upload listings",
+        "Checksums with multipart upload operations",
+        "Concurrent multipart upload operations",
+        "Prevent uploading objects with identical key names during multipart upload",
+        "Multipart upload and pricing",
+        "API support for multipart upload",
+        "AWS Command Line Interface support for multipart upload",
+        "AWS SDK support for multipart upload",
+        "Multipart upload API and permissions",
+        "Checksums with multipart upload operations (second occurrence)",
+        "Topics"
+      ],
+      "notes": [
+        "Source claim: multipart upload splits one object into contiguous parts that can be uploaded independently and in any order, and a failed part can be retransmitted without affecting others. Inference: 'any order' describes transfer scheduling; completion still concatenates parts by ascending part number, so receive order is not object order.",
+        "Source claim: AWS recommends multipart upload for objects 100 MB or larger and lists throughput, recovery, pause/resume and unknown-final-size benefits. Inference: these are general recommendations, not service limits or a universal part-size choice; the page defers limits to a separate linked page.",
+        "Source claim: initiation returns an upload ID; part numbers range from 1 to 10,000; reusing a part number overwrites the prior part; and completion concatenates parts in ascending part-number order. Inference: the client must persist per-part receipts because the source explicitly says the listing is not authoritative for completion.",
+        "Source claim: when checksums are used, part numbers must be consecutive and begin at 1, and nonconsecutive numbers cause an HTTP 500 error. Inference: the earlier allowance for nonconsecutive part numbers is conditional, so checksum choice changes a protocol constraint that belongs in the upload state model.",
+        "Source claim: a completed multipart object's ETag is not necessarily an MD5 hash of its bytes, and full-object checksum validation can fail with BadDigest. Inference: ETag equality alone is not end-to-end content verification or a portable content digest.",
+        "Source claim: an initiated upload has no expiry; uncompleted parts are retained and billed until completion or abort; and aborting while part uploads are in flight does not guarantee immediate release. Inference: cleanup must coordinate quiescence and verify storage release rather than assume abort is synchronous.",
+        "Source claim: for concurrent uploads to the same key in a versioning-enabled bucket, the most recently initiated upload becomes current even if an earlier upload completes later; unversioned buckets can let another request take precedence. Inference: completion order and publication order are distinct, so application-level arbitration or a conditional write is required.",
+        "Source claim: conditional writes are available for PutObject and CompleteMultipartUpload to prevent overwriting an existing key. Inference: this addresses create-if-absent or precondition races, not crash recovery, session ownership or cross-store metadata publication.",
+        "Source claim: permissions differ by operation (s3:PutObject, s3:AbortMultipartUpload, s3:ListMultipartUploadParts and s3:ListBucketMultipartUploads), and missing KMS or SSE-C material can cause completion to create an object without a checksum. Inference: technical completion does not guarantee the integrity evidence the caller expects; checksum presence needs separate verification.",
+        "Source claim: ListParts returns at most 1,000 parts per request and excludes unfinished parts, while ListMultipartUploads returns at most 1,000 uploads and is for verification only. Inference: pagination and locally persisted receipts are required for large uploads."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/upload-integrity.md",
+          "candidate": "How should multipart session identity, part receipts, per-part ETags and a full-object checksum be kept distinct from the published object identity?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/publication-consistency.md",
+          "candidate": "What publication evidence resolves a successful complete response when the object is not yet visible or a later initiation supersedes it?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
+          "candidate": "Which owner, retention rule and cleanup evidence should retire incomplete parts and noncurrent versions without racing live uploads?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md",
+          "candidate": "How long should upload sessions and part receipts survive client retries, and when should an abort race become an explicit unknown?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+          "candidate": "Which request, staging, incomplete-part, early-delete and egress costs belong in a large-transfer capacity comparison?"
+        }
+      ],
+      "reader": "Delegated reader batch 6; parent validation pending."
+    },
+    {
+      "id": "R090",
+      "source_ids": [
+        "src.cell-boundaries"
+      ],
+      "url": "https://docs.aws.amazon.com/wellarchitected/latest/reducing-scope-of-impact-with-cell-based-architecture/what-is-a-cell-based-architecture.html",
+      "unit": "Complete page: What is a cell-based architecture?",
+      "revision": "Live page; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 34 lines / 644 words; full prose for the page introduction, 'A typical workload' and 'A workload with cell-based architecture'; AWS docs header, breadcrumbs, navigation, page-contents menu and feedback chrome excluded; three source figures are absent from the local representation.",
+      "retrieval_refs": [
+        "/tmp/batch6/raw/src.cell-boundaries.md lines 1-34",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution.",
+      "representation_sha256": "26fa92767a07789210aeb4a8406f343ee68fa618a6834a34b4ac1b4e83917858",
+      "retrieved_lines": 34,
+      "retrieved_words": 644,
+      "sections": [
+        "What is a cell-based architecture?",
+        "A typical workload",
+        "A workload with cell-based architecture"
+      ],
+      "representation_gap": "The live source contains three figures with captions that the local Markdown omits: 'Isolating failures using bulkheads' (ship diagram), 'A typical workload', and 'A cell-based architecture'. The local text at line 20 refers to 'the following diagram', but no diagram is present. No prose section appears missing; figure content was not read as text and is not treated as evidence here.",
+      "notes": [
+        "Source claim: cell-based architecture derives from ship bulkheads that subdivide a hull into watertight compartments. Inference: the analogy explains containment intent but does not show that software boundaries are equally watertight.",
+        "Source claim: fault-isolated boundaries restrict a failure's effect to a limited set of components, leaving components outside unaffected. Inference: 'unaffected' requires evidence that every shared dependency, routing path and operational tool sits outside the failing cell's blast radius.",
+        "Source claim: the partition key must align with the service grain and minimize cross-cell interactions, with customer ID and resource ID as examples. Inference: key selection governs hotspotting, migration cost and whether a request can be served by one cell; it is not a naming detail.",
+        "Source claim: a cell router distributes requests by partition key and presents one endpoint to clients. Inference: the router is a shared request-path dependency, so its mapping cache, staleness bound and behavior during control-plane loss need an explicit contract.",
+        "Source claim: each cell is independent, does not share state with other cells and handles a subset of workload requests. Inference: deployment separation alone does not prove state isolation; shared databases, queues, identity services, networks or control planes can violate the claim.",
+        "Source claim: with 10 cells serving 100 requests, a failure in one cell leaves 90% of requests unaffected. Inference: that arithmetic assumes even assignment, a one-cell blast radius, no shared dependency and no retry shift; it is an illustrative ratio, not a resilience guarantee.",
+        "Source claim: cells contain failures such as bad software updates and poison-pill requests. Inference: containment requires independent rollout cohorts, admission limits and bounded retries; a global deployment or shared queue can propagate the same fault.",
+        "Source claim: the architecture has a cell router, cells and a control plane that provisions, de-provisions and migrates customers; it may be zonal, regional or global; 30 hosts can remain 30 hosts. Inference: consolidation can reduce spare capacity and enlarge per-cell impact, while the control plane is both a cross-cell dependency and a privileged administrative concentration.",
+        "Source claim: a typical three-layer application serves 100% of clients and a failure or change affects 100%; the cell version partitions that workload. Inference: this is a conceptual comparison, and the source diagrams omitted from the local extract cannot be checked for topology or shared components.",
+        "Source claim: the router is described as the 'thinnest possible layer', responsible only for routing to the right cell. Inference: thin routing logic does not make the router operationally unimportant; migration still needs authoritative placement state and safe cutover rules not specified on this page."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
+          "candidate": "Which shared state, routing cache, queue or control-plane dependency can escape a nominally isolated cell?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "candidate": "Which dependency sets remain common across cells despite separate compute placement?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/availability-zones-placement-and-failure-domains.md",
+          "candidate": "How should cell placement compose with zone and region failure domains, and what user capability survives each loss?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "candidate": "How can one cell's poison request or bulkhead exhaustion consume shared capacity reserved for other cells?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/tenant-effects.md",
+          "candidate": "Which tenant-to-cell mapping, migration and stale-router paths can bypass tenant isolation during rebalancing?"
+        }
+      ],
+      "reader": "Delegated reader batch 6; parent validation pending."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 50,
+    "full_reads": 59,
     "blocked": 14,
     "records": [
       "R015",
@@ -3512,11 +4141,21 @@
       "R077",
       "R078",
       "R079",
-      "R080"
+      "R080",
+      "R081",
+      "R082",
+      "R083",
+      "R084",
+      "R085",
+      "R086",
+      "R087",
+      "R088",
+      "R089",
+      "R090"
     ],
-    "scope": "JEP 444, JEP 491, thirty public engineering articles, seventeen documentation/paper units, fourteen blocked pages and two excluded internal team sites",
+    "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
-    "partial_reads": 0
+    "partial_reads": 1
   }
 }

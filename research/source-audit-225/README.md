@@ -18,7 +18,7 @@ Comparison checkpoint: thirty-six candidate comparisons are assessed in
 source mechanisms not addressed and zero contradicted. These are bounded
 comparisons, not independent review, book findings or permission to edit.
 
-Reference batch 2026-10-24: fifty full reads, fourteen blocked pages and two
+Reference batch 2026-10-24: fifty-nine full reads, one partial, fourteen blocked pages and two
 excluded internal team sites. The full reads are JEP 444, JEP 491 and
 thirty public engineering articles and seventeen documentation/paper units in the
 src.m9-* series. Fourteen
