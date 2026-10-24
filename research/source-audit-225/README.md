@@ -13,14 +13,14 @@ appendices A-H and the preface; sixty-five new records are in [the OSTEP
 continuation ledger](ostep-continuation-readings.json). Embedded raster figures
 were not visually inspected, and linked publications remain separate.
 
-Comparison checkpoint: twenty-four candidate comparisons are assessed in
-[comparisons.json](comparisons.json): nine supported, thirteen qualified, two
+Comparison checkpoint: twenty-five candidate comparisons are assessed in
+[comparisons.json](comparisons.json): ten supported, thirteen qualified, two
 source mechanisms not addressed and zero contradicted. These are bounded
 comparisons, not independent review, book findings or permission to edit.
 
-Reference batch 2026-10-24: thirty-seven full reads, fourteen blocked pages and two
+Reference batch 2026-10-24: thirty-eight full reads, fourteen blocked pages and two
 excluded internal team sites. The full reads are JEP 444, JEP 491 and
-twenty-nine public engineering articles and six documentation/paper units in the
+twenty-nine public engineering articles and seven documentation/paper units in the
 src.m9-* series. Fourteen
 publisher pages returned no readable article body and are recorded as blocked,
 not read; two internal team sites are excluded as non-public. JEP 491 is now

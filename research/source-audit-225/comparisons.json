@@ -478,12 +478,31 @@
       "finding": "candidate enrichment, no defect",
       "proposed_action": "No edit under #225. If the owner later edits the table, consider naming changelog replay and standby state explicitly.",
       "assessment_limits": "Bounded comparison; documentation, not a recovery experiment."
+    },
+    {
+      "id": "C025",
+      "book_page": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/replication-acks.md",
+      "book_anchor": "line 53",
+      "source_id": "src.kafka-design",
+      "source_record": "R068",
+      "source_unit": "Apache Kafka Design",
+      "observation": "The page keeps ISR status, acks=all and min.insync.replicas as separate conditions and warns that a smaller ISR does not preserve the same guarantee. R068 documents ISR commit, acks=0/1/all, min.insync.replicas and the no-loss guarantee only while an ISR replica is alive.",
+      "support": "supported",
+      "severity": "none",
+      "status": "assessed",
+      "assessment": "supported",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho line 53; R068 Replication and Availability and Durability Guarantees.",
+      "conclusion": "The page is consistent with the design document and correctly bounds durability by live ISR membership.",
+      "finding": "none",
+      "proposed_action": "No correction.",
+      "assessment_limits": "Bounded comparison; documentation, not a failure experiment."
     }
   ],
   "assessment_date": "2026-10-24",
   "assessment_summary": {
-    "total": 24,
-    "supported": 9,
+    "total": 25,
+    "supported": 10,
     "qualified": 13,
     "not_addressed": 2,
     "contradicted": 0,

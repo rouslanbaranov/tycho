@@ -2604,12 +2604,68 @@
         }
       ],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R068",
+      "source_ids": [
+        "src.kafka-design"
+      ],
+      "url": "https://kafka.apache.org/41/design/design/",
+      "unit": "Complete document: Apache Kafka Design",
+      "revision": "Kafka 4.1 documentation; page flags 4.1 as older and links 4.3; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 460 lines / 11878 words; sections Motivation, Persistence, Efficiency, Producer, Consumer, Replication, Log Compaction, Quotas; diagrams not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.kafka-design.md lines 1-460",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked papers, code and implementation behavior not read or executed; no benchmark or independent verification.",
+      "representation_sha256": "68676a3ec7acf00bb52665bedc6b7b75b238d42a2bd01c9aa7c54ec07919eb56",
+      "retrieved_lines": 460,
+      "retrieved_words": 11878,
+      "sections": [
+        "Motivation",
+        "Persistence",
+        "Efficiency",
+        "The Producer",
+        "The Consumer",
+        "Replication",
+        "Log Compaction",
+        "Quotas"
+      ],
+      "notes": [
+        "Source claim: Kafka stores messages in a persistent log, relies on the filesystem pagecache for caching, and uses sequential reads/writes rather than per-consumer B-trees.",
+        "Source claim: batching, a shared binary message format and sendfile zero-copy reduce small I/O and byte copies; TLS disables the sendfile path.",
+        "Source claim: producers choose partitions by key hash or random assignment; asynchronous batching trades a small latency bound for throughput.",
+        "Source claim: consumers pull and control their offset, so a slow consumer falls behind rather than being pushed into overload.",
+        "Source claim: replication is per partition with a leader and followers; an in-sync replica set (ISR) is maintained, and a write is committed only after all ISR members receive it.",
+        "Source claim: acks=0/1/all and min.insync.replicas define the durability/availability trade-off; the no-loss guarantee holds only while at least one ISR replica stays alive.",
+        "Source claim: unclean leader election can restore availability at the cost of losing committed messages; log compaction retains the last value per key and preserves offsets.",
+        "Source claim: client quotas limit per-broker bandwidth or request-thread time and throttle violators by delaying responses and muting channels.",
+        "Inference: the document describes mechanisms and trade-offs, not measured throughput; the 4.1 docs are explicitly older than 4.3.",
+        "Inference: \"committed\" means all current ISR replicas, not all assigned replicas; a shrinking ISR weakens the durability claim."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/kafka-partitions-replication-and-contracts.md",
+          "candidate": "Does the partition page distinguish ISR commit from all assigned replicas and from producer acks?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/replication-acks.md",
+          "candidate": "Does the acknowledgment page keep acks, min.insync.replicas and unclean election as separate choices?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/offsets-effects.md",
+          "candidate": "Does the offsets page distinguish log compaction offset stability from consumer position?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 37,
+    "full_reads": 38,
     "blocked": 14,
     "records": [
       "R015",
@@ -2664,9 +2720,10 @@
       "R064",
       "R065",
       "R066",
-      "R067"
+      "R067",
+      "R068"
     ],
-    "scope": "JEP 444, JEP 491, twenty-nine public engineering articles, six documentation/paper units, fourteen blocked pages and two excluded internal team sites",
+    "scope": "JEP 444, JEP 491, twenty-nine public engineering articles, seven documentation/paper units, fourteen blocked pages and two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2
   }
