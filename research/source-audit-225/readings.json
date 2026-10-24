@@ -4068,12 +4068,393 @@
         }
       ],
       "reader": "Delegated reader batch 6; parent validation pending."
+    },
+    {
+      "id": "R091",
+      "source_ids": [
+        "src.pg17-locks-enrichment"
+      ],
+      "url": "https://www.postgresql.org/docs/17/explicit-locking.html",
+      "unit": "Complete page: 13.3. Explicit Locking",
+      "revision": "PostgreSQL 17; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 162 lines / 2859 words (wc -l and wc -w match manifest); sections 13.3 introduction, 13.3.1 Table-Level Locks incl. Table 13.2, 13.3.2 Row-Level Locks incl. Table 13.3, 13.3.3 Page-Level Locks, 13.3.4 Deadlocks, 13.3.5 Advisory Locks; Jina Reader title/URL/published-time header and heading permalink anchors excluded from technical claims; no navigation sidebar or cookie banner was present; no section gap.",
+      "retrieval_refs": [
+        "/tmp/batch7/raw/src.pg17-locks-enrichment.md lines 1-162",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution.",
+      "representation_sha256": "28b7a6553e779bb46a678fad6fddc644950e4094d3679b08a176c0cf8e88bf17",
+      "retrieved_lines": 162,
+      "retrieved_words": 2859,
+      "sections": [
+        "13.3 introduction: lock modes and pg_locks",
+        "13.3.1 Table-Level Locks and Table 13.2 Conflicting Lock Modes",
+        "13.3.2 Row-Level Locks and Table 13.3 Conflicting Row-Level Locks",
+        "13.3.3 Page-Level Locks",
+        "13.3.4 Deadlocks",
+        "13.3.5 Advisory Locks"
+      ],
+      "notes": [
+        "Source claim: explicit locking exists for application-controlled locking where MVCC does not give the desired behavior, and most commands also acquire appropriate locks automatically. Inference: lock waits can originate from ordinary SELECT, UPDATE, DELETE, INSERT or MERGE even when the application never issues LOCK.",
+        "Source claim: all eight listed modes are table-level locks even where the name contains 'row'; the names are historical and conflict behavior defines the semantics. Inference: migration and capacity analysis should map each exact statement to its actual mode rather than reason from a mode's label.",
+        "Source claim: only ACCESS EXCLUSIVE blocks SELECT without FOR UPDATE/SHARE, and ACCESS SHARE conflicts only with ACCESS EXCLUSIVE. Inference: plain read traffic is usually insulated from index builds and weaker DDL, but not from DROP TABLE, TRUNCATE, VACUUM FULL, CLUSTER or REFRESH MATERIALIZED VIEW without CONCURRENTLY.",
+        "Source claim: CREATE INDEX CONCURRENTLY acquires SHARE UPDATE EXCLUSIVE, while CREATE INDEX without CONCURRENTLY acquires SHARE; VACUUM without FULL, ANALYZE and REINDEX CONCURRENTLY also take SHARE UPDATE EXCLUSIVE. Inference: a concurrent build removes write blocking but still conflicts with maintenance and some ALTER forms, so it is not lock-free.",
+        "Source claim: a lock is normally held until transaction end, but savepoint rollback or an error escaping a PL/pgSQL exception block releases locks acquired after that point. Inference: idle-in-transaction sessions and exception-swallowing loops have materially different lock lifetimes, so active-query duration alone is an incomplete blocker diagnostic.",
+        "Source claim: row-level locks block writers and lockers of the same row but do not affect plain data querying; SELECT FOR UPDATE marks selected rows and can therefore cause disk writes. Inference: row-lock contention appears as write and update latency plus WAL/IO cost, not as read unavailability.",
+        "Source claim: PostgreSQL detects deadlocks automatically and aborts one involved transaction, but the victim is difficult to predict and should not be relied upon; consistent multi-object lock order and acquiring the most restrictive needed lock first are recommended. Inference: application retry must restart the whole logical transaction, and external effects must be deferred until commit.",
+        "Source claim: advisory locks have session-level and transaction-level forms; session-level locks survive a rollback and require explicit unlock, transaction-level locks release at transaction end, and repeated acquisition is reentrant. Inference: session-level advisory locks conflict with naive transaction-pooling assumptions because session affinity and cleanup are application responsibilities.",
+        "Source claim: advisory and regular locks share a pool sized by max_locks_per_transaction and max_connections, and exhaustion prevents granting any locks. Inference: advisory-lock keys consume a bounded cluster-wide resource and can affect unrelated sessions, so a bounded key space and cleanup protocol are architectural requirements.",
+        "Source claim: with LIMIT, SQL evaluation order can acquire advisory locks for rows the caller never receives, leaving dangling session locks until session end. Inference: row-returning lock calls need an ordered subquery or try-lock pattern plus an explicit unlock path; a query that looks bounded can still lock unbounded rows.",
+        "Source claim: page-level share/exclusive locks are internal, released immediately after a row is fetched or updated, and application developers normally need not be concerned. Inference: page locks are not an application tuning surface and should not be blamed for user-visible lock waits without measurement."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/ddl-events.md",
+          "candidate": "Does the DDL preflight distinguish exact table lock modes by statement, such as SHARE versus SHARE UPDATE EXCLUSIVE, instead of treating 'index creation' as one blocking class?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/storage-workload.md",
+          "candidate": "Should the deadlock guidance state that victim selection is unpredictable and that retry restarts the whole transaction, including effects and locks acquired before the abort?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md",
+          "candidate": "How should pool-mode selection account for session-level advisory locks and other session state that transaction pooling can relocate?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-response.md",
+          "candidate": "Is a database lock wait distinguishable from CPU saturation and queueing in the contended-authority diagnostic?"
+        },
+        {
+          "path": "book/data/postgresql-mvcc-indexes-and-query-plans.md",
+          "candidate": "Does the row/table/advisory lock sentence carry the caveat that only ACCESS EXCLUSIVE blocks plain SELECT while row locks block writers and lockers?"
+        }
+      ],
+      "reader": "Delegated reader batch 7; parent validation pending."
+    },
+    {
+      "id": "R092",
+      "source_ids": [
+        "src.pg17-concurrent-index-enrichment"
+      ],
+      "url": "https://www.postgresql.org/docs/17/sql-createindex.html",
+      "unit": "Complete page: CREATE INDEX",
+      "revision": "PostgreSQL 17; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 280 lines / 4089 words (wc -l and wc -w match manifest); sections Synopsis, Description, Parameters, Index Storage Parameters, Building Indexes Concurrently, Notes, Examples, Compatibility; Jina Reader title/URL/published-time header, 'Markdown Content:' marker and heading permalink artifacts excluded; no navigation sidebar or cookie banner was present; no section gap.",
+      "retrieval_refs": [
+        "/tmp/batch7/raw/src.pg17-concurrent-index-enrichment.md lines 1-280",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution.",
+      "representation_sha256": "d6afdefe62392c5b61fcaaf8de841bed56b7f87f12d10d030dc3ab54feb87e73",
+      "retrieved_lines": 280,
+      "retrieved_words": 4089,
+      "sections": [
+        "Synopsis",
+        "Description",
+        "Parameters",
+        "Index Storage Parameters",
+        "Building Indexes Concurrently",
+        "Notes",
+        "Examples",
+        "Compatibility"
+      ],
+      "notes": [
+        "Source claim: CONCURRENTLY builds the index without taking locks that prevent concurrent inserts, updates or deletes, whereas a standard build locks out writes but not reads. Inference: the availability differentiator is write blocking; read availability is not the distinguishing property.",
+        "Source claim: a concurrent build performs two table scans and additionally waits for existing transactions that could modify or use the index, so it requires more total work and takes significantly longer. Inference: 'online' trades elapsed time, CPU, I/O and WAL for write availability; a rollout budget must reserve the longer window.",
+        "Source claim: the index is entered as invalid in one transaction, two table scans occur in two more transactions, and the build waits after the second scan for snapshots predating it, including snapshots from concurrent builds on other tables when indexes are partial or use non-simple column references. Inference: concurrent builds are not independent background jobs; old snapshots and sibling builds can serialize completion.",
+        "Source claim: even after the command completes and marks the index valid, the index may not be immediately usable while transactions exist that predate the start of the build. Inference: 'command returned' and 'planner can use it' are distinct lifecycle events and should be checked separately.",
+        "Source claim: a deadlock or uniqueness violation during a scan fails CREATE INDEX but leaves an invalid index that is ignored for querying and still consumes update overhead; the recommended recovery is to drop it and retry, or REINDEX INDEX CONCURRENTLY. Inference: index existence is not evidence of a usable or cheap index; validity and cleanup need monitoring.",
+        "Source claim: for a unique concurrent index, uniqueness is enforced against other transactions once the second scan begins, so violations can surface in other queries before the index is usable, and a failure in the second scan leaves the invalid index enforcing uniqueness afterwards. Inference: failure is not a full rollback of every consequence, and 'drop and retry' can itself conflict with writes that the invalid index already rejects.",
+        "Source claim: only one concurrent index build can run on a table at a time; regular builds may run simultaneously with each other; schema modification is disallowed during the build; and CREATE INDEX CONCURRENTLY cannot run inside a transaction block. Inference: migration frameworks that wrap all DDL in one transaction must special-case this command, and parallel migration workers need a per-table exclusion rule.",
+        "Source claim: concurrent builds on partitioned tables are not supported, but each partition can be built concurrently and then the partitioned index created non-concurrently as a metadata-only operation. Inference: partitioned-index rollout requires per-partition scheduling plus a short parent-level lock, not a single cluster-wide concurrent command.",
+        "Source claim: CREATE INDEX CONCURRENTLY supports parallel builds without special restrictions, but only the first table scan is actually performed in parallel. Inference: parallel speedup for the concurrent form is partial and should not be extrapolated from regular parallel builds.",
+        "Source claim: INCLUDE adds non-key columns for index-only scans, duplicates table data, can exceed the maximum index tuple size, and disables B-tree deduplication; only B-tree, GiST and SP-GiST support INCLUDE. Inference: covering indexes need size and write-amplification tests, not only a read-path argument.",
+        "Source claim: B-tree fillfactor defaults to 90, lower values can smooth page splits with workload-dependent effect, and 100 is advised only for a table certain to remain static; B-tree deduplication defaults to ON. Inference: fillfactor and deduplication are workload hypotheses to measure, not universal defaults.",
+        "Source claim: creating an index on a partitioned table recurses by default and attaches equivalent partition indexes; ONLY suppresses recursion but leaves the parent index invalid until ALTER INDEX ATTACH PARTITION, while future partitions automatically receive matching indexes. Inference: ONLY creates a deliberate intermediate state that requires a follow-up step, not a finished deployment."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md",
+          "candidate": "Does the index-lifecycle page distinguish regular from concurrent builds by lock mode, scans, snapshot waits and expected elapsed time, rather than only calling the concurrent form 'not free'?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/no-return-recovery.md",
+          "candidate": "Should the forward-repair gate include a failed concurrent unique-index build that leaves an invalid index still enforcing uniqueness?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/ddl-events.md",
+          "candidate": "Does the DDL preflight require index-validity verification and cleanup evidence, not just lock mode and table-rewrite status?"
+        },
+        {
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "candidate": "How should the schema-evolution runbook handle CONCURRENTLY's transaction-block restriction and the per-partition staged build for partitioned tables?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/storage-workload.md",
+          "candidate": "Does the maintenance budget account for two scans, snapshot waits and the update overhead of an invalid index left by a failed build?"
+        }
+      ],
+      "reader": "Delegated reader batch 7; parent validation pending."
+    },
+    {
+      "id": "R093",
+      "source_ids": [
+        "src.pg17-vacuum-enrichment"
+      ],
+      "url": "https://www.postgresql.org/docs/17/routine-vacuuming.html",
+      "unit": "Complete page: 24.1. Routine Vacuuming",
+      "revision": "PostgreSQL 17 documentation; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 200 lines / 5611 words; sections 24.1.1 Vacuuming Basics, 24.1.2 Recovering Disk Space, 24.1.3 Updating Planner Statistics, 24.1.4 Updating the Visibility Map, 24.1.5 Preventing Transaction ID Wraparound Failures incl. 24.1.5.1 Multixacts and Wraparound, 24.1.6 The Autovacuum Daemon; Jina reader header (lines 1-7), '[#]' anchor glyphs and inline link targets excluded",
+      "retrieval_refs": [
+        "/tmp/batch7/raw/src.pg17-vacuum-enrichment.md lines 1-200",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution.",
+      "representation_sha256": "19d46e1e025ece97ded0a97e2570185ecb84c1e52c1ac356882baa7a5047623d",
+      "retrieved_lines": 200,
+      "retrieved_words": 5611,
+      "representation_gap": null,
+      "sections": [
+        "24.1.1 Vacuuming Basics",
+        "24.1.2 Recovering Disk Space",
+        "24.1.3 Updating Planner Statistics",
+        "24.1.4 Updating the Visibility Map",
+        "24.1.5 Preventing Transaction ID Wraparound Failures",
+        "24.1.5.1 Multixacts and Wraparound",
+        "24.1.6 The Autovacuum Daemon"
+      ],
+      "notes": [
+        "Source claim: standard VACUUM makes space reusable inside existing files but returns space to the OS only when trailing pages become entirely free and an exclusive lock is easily obtained; VACUUM FULL rewrites the table, takes ACCESS EXCLUSIVE and needs roughly table-sized extra disk (lines 21, 29, 39).",
+        "Source claim: autovacuum never issues VACUUM FULL (line 31), so it cannot lower a table's minimum size; the page frames the goal as steady-state space use rather than minimal size.",
+        "Source claim: XIDs are 32-bit, so every table in every database must be vacuumed at least once per two billion transactions (line 79); since 9.4 freezing sets a flag bit instead of overwriting xmin (line 85). Inference: the two-billion figure is a correctness horizon, not a safe operating interval.",
+        "Source claim: vacuum_freeze_table_age is effectively capped at 0.95 x autovacuum_freeze_max_age, and the multiplier is described as deliberate room to run a manual VACUUM first (line 97).",
+        "Source claim: raising autovacuum_freeze_max_age costs about two bits of pg_xact per transaction and corresponding pg_commit_ts history - about half a gigabyte and about 20GB at two billion, about 50MB and 2GB at the 200 million default (line 99). Inference: these are documentation estimates, not measurements, and were not verified here.",
+        "Source claim: warnings begin at forty million transactions from wraparound and new XID assignment stops below three million, leaving only read-only transactions startable (lines 121-131). The page presents both margins as fixed, with no tunable named.",
+        "Source claim: the documented recovery order is prepared transactions, long-running transactions, stale replication slots, a database-wide VACUUM, then autovacuum configuration; VACUUM FULL and VACUUM FREEZE are explicitly discouraged in that state (lines 133-137).",
+        "Textual oddity: step 4 (line 136) directs vacuuming of tables where 'relminxid' is oldest, but the page elsewhere defines only relfrozenxid (lines 103, 106, 119, 170) and relminmxid (line 149); the string relminxid occurs only at line 136. Quoted as-is, likely a documentation typo; not silently corrected.",
+        "Source claim: multixact IDs and their member lists are separate 32-bit spaces in pg_multixact; aggressive scans are forced above autovacuum_multixact_freeze_max_age and when member storage exceeds about 10GB, with wraparound near 20GB (lines 145-151). Inference: MXID pressure is not visible through the ordinary per-table age query shown for XIDs.",
+        "Source claim: vacuum, insert-vacuum and analyze thresholds are each base plus scale factor times reltuples, and the underlying counts come from the cumulative statistics system and are eventually consistent (lines 170-186); the page gives no bound on that lag.",
+        "Source claim: partitioned tables are not processed by autovacuum while their partitions are, autovacuum issues no ANALYZE on partitioned tables, and inheritance parents are analyzed only when the parent itself changes (lines 51, 69, 188).",
+        "Source claim: a lock request conflicting with autovacuum's SHARE UPDATE EXCLUSIVE hold interrupts it, except anti-wraparound runs, and the closing Warning says regularly running conflicting commands such as ANALYZE can prevent autovacuums from ever completing (lines 196-200). Inference: scheduling maintenance commands becomes a correctness-adjacent concern, not merely politeness."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/mvcc-snapshots-and-vacuum.md",
+          "candidate": "Does the chapter state autovacuum thresholds as base plus scale factor times reltuples, and what an operator can observe when a threshold is crossed late?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/storage-workload.md",
+          "candidate": "Should the wraparound runway (forty-million warning, three-million hard stop) appear as an explicit operational budget beside long-snapshot retention?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/README.md",
+          "candidate": "Where should vacuum I/O cost delay and worker-count balancing sit relative to the saturation accounting used in this chapter?"
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/README.md",
+          "candidate": "Is the 'must be vacuumed within N transactions' warning represented as an actionable signal with an owner, threshold and escalation path?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
+          "candidate": "Does the migration lifecycle account for ACCESS EXCLUSIVE table rewrites (VACUUM FULL, CLUSTER) inside a change window and their extra-disk requirement?"
+        }
+      ],
+      "reader": "Delegated reader batch 7; parent validation pending."
+    },
+    {
+      "id": "R094",
+      "source_ids": [
+        "src.kafka41-consumer-enrichment"
+      ],
+      "url": "https://kafka.apache.org/41/configuration/consumer-configs/",
+      "unit": "Complete page: Consumer Configs",
+      "revision": "Kafka 4.1 documentation; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1144 lines / 8817 words; the whole reference list as rendered - 112 named configuration entries plus one entry whose name heading is missing, grouped by importance (113 blocks: high 17, medium 48, low 48), alphabetical within the medium and low tiers and alphabetical after the two deserializers in the high tier; Jina reader header (lines 1-7), '[#]' anchor glyphs and inline link targets excluded",
+      "retrieval_refs": [
+        "/tmp/batch7/raw/src.kafka41-consumer-enrichment.md lines 1-1144",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution.",
+      "representation_sha256": "2d2f0b0d08135eaf2bb9cd205d2f7452a8b5502bba3f04c42183e43eda4a5e49",
+      "retrieved_lines": 1144,
+      "retrieved_words": 8817,
+      "representation_gap": "Lines 613-615: one configuration entry has no name heading in the representation - only its description ('Controls the acknowledgement mode for a share consumer', values implicit/explicit, default implicit) and its Type/Default/Valid Values table survive. Its key name is absent and is not asserted here. Count check: 113 'Importance' rows vs 112 '####' headings, so exactly one heading is missing; the block sits alphabetically between send.buffer.bytes and socket.connection.setup.timeout.max.ms.",
+      "sections": [
+        "High-importance consumer settings (17 entries)",
+        "Medium-importance consumer settings (48 entries)",
+        "Low-importance consumer settings (48 entries)",
+        "Unnamed share-consumer acknowledgement entry (line 614)"
+      ],
+      "notes": [
+        "Scope: the page is a flat reference list with no narrative introduction or worked example - 112 named entries plus one unnamed one, tiered by importance (113 blocks: high 17, medium 48, low 48). Verified: the medium and low tiers are strictly alphabetical and the high tier is alphabetical after key.deserializer and value.deserializer, which lead it. Inference: the ordering is editorial convention, not a statement about interaction between settings.",
+        "Representation gap: the entry at line 614 lost its name heading while keeping its description and table; the key is therefore unknown from this representation and no substitution was made.",
+        "Source claim: group.protocol selects 'classic' or 'consumer'; under 'consumer', heartbeat.interval.ms and session.timeout.ms are not supported because the broker controls them via group.consumer.heartbeat.interval.ms and group.consumer.session.timeout.ms (lines 64, 82). Inference: several other defaults on this page are silently inert in consumer-protocol groups.",
+        "Source claim: group.remote.assignor applies only when group.protocol is 'consumer' (line 252); group.instance.id makes a consumer a static member (line 243) and, on max.poll.interval.ms expiry, defers reassignment until the session timeout instead of rebalancing immediately (line 274).",
+        "Source claim: max.poll.interval.ms bounds idle time between poll() calls and a breach rebalances the group (line 274); max.poll.records defaults to 500 and does not change fetch behaviour, because records are cached per fetch and returned incrementally (line 283).",
+        "Source claim: isolation.level=read_committed caps reads at the last stable offset, one less than the offset of the first open transaction, so such consumers cannot read to the high watermark while transactions are in flight, and seekToEnd returns the LSO (lines 261-265).",
+        "Source claim: auto.offset.reset defaults to 'latest' and also accepts earliest, none and by_duration with an ISO-8601 duration; the page warns that adding partitions while set to latest can lose messages before offsets reset (lines 172-180).",
+        "Source claim: fetch.min.bytes defaults to 1 with fetch.max.wait.ms 500, and max.partition.fetch.bytes (1 MiB) plus fetch.max.bytes (50 MiB) are explicitly not hard caps because a first batch larger than the limit is still returned (lines 37, 73, 234).",
+        "Source claim: enable.metrics.push defaults to true, pushing client metrics to the cluster when a matching subscription exists (line 722). Inference: this is a default-on telemetry path with no correctness role, so a strict deployment must decide about it explicitly.",
+        "Source claim: TLS defaults are ssl.protocol TLSv1.3, ssl.enabled.protocols TLSv1.2,TLSv1.3, JKS for both stores, and ssl.endpoint.identification.algorithm 'https'; setting ssl.protocol to TLSv1.2 prevents TLSv1.3 use even if enabled (lines 641-681, 1106).",
+        "Source claim: every sasl.oauthbearer.assertion.* setting is ignored when sasl.oauthbearer.assertion.file is set (lines 384-449), and clientId, clientSecret and scope in JAAS are deprecated in favour of top-level settings with an explicit precedence order (lines 499-580).",
+        "Source claim: metadata.recovery.strategy defaults to 'rebootstrap', retriggered when no last-known broker is reachable for metadata.recovery.rebootstrap.trigger.ms (300000) or when the server requests it (lines 758-772). Inference: the page states mechanism and defaults only; it gives no measured latency, throughput or failure-rate guidance for any setting."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/offsets-effects.md",
+          "candidate": "Does the offset/effect analysis state which commit mode (enable.auto.commit versus manual) underpins each crash point it examines?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+          "candidate": "Should the consumer requirement profile name concrete levers - auto.offset.reset, fetch.min.bytes, max.poll.records - instead of leaving them to an appendix?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/partitions-producers.md",
+          "candidate": "Is max.poll.records and fetch sizing tied to the partition-as-load-unit argument, or left implicit?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md",
+          "candidate": "Should duplicate processing caused by max.poll.interval.ms expiry and rebalance be treated as a retry source with its own budget?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/replication-acks.md",
+          "candidate": "Does the acknowledgment/ISR page connect read_committed and the last stable offset to the visibility claims it makes?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tails-critical-path.md",
+          "candidate": "Should the fetch.min.bytes versus fetch.max.wait.ms trade-off be presented as a latency/throughput dial inside the tail-latency method?"
+        }
+      ],
+      "reader": "Delegated reader batch 7; parent validation pending."
+    },
+    {
+      "id": "R095",
+      "source_ids": [
+        "src.appconfig-rollout"
+      ],
+      "url": "https://docs.aws.amazon.com/appconfig/latest/userguide/appconfig-deploying.html",
+      "unit": "Complete page: Deploying a configuration - AWS AppConfig",
+      "revision": "AWS docs; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 629 lines / 3038 words; sections: Deploying a configuration; Deploy a configuration (console); Deploy a configuration (commandline); cookie, navigation, feedback and footer chrome excluded (lines 1-307 and 549-629).",
+      "retrieval_refs": [
+        "/tmp/batch7/raw/src.appconfig-rollout.md lines 1-629",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution.",
+      "representation_sha256": "3e7596fbbcf465a028a3762198b7fe9f72c4e8cdabda33e3de5580923c78f2d1",
+      "retrieved_lines": 629,
+      "retrieved_words": 3038,
+      "sections": [
+        "Deploying a configuration",
+        "Deploy a configuration (console)",
+        "Deploy a configuration (commandline)"
+      ],
+      "notes": [
+        "Source claim: a deployment starts through the StartDeployment API and carries the application, environment, configuration-profile and deployment-strategy identifiers, with the configuration version optional (l. 328).",
+        "Source claim: KmsKeyIdentifier is required for Secrets Manager secrets, S3 objects encrypted with a customer-managed key, and SecureString parameters encrypted with a customer-managed key; unencrypted configurations and those under an AWS-managed key do not require it (ll. 330-334).",
+        "Source claim: when KmsKeyIdentifier is supplied, the IAM principal needs kms:GenerateDataKey (l. 336). Inference: deployment authorization therefore spans AppConfig and KMS policy; this page does not state the exact key-policy conditions.",
+        "Source claim: AppConfig monitors distribution to all hosts, reports status and rolls back the configuration if distribution fails (l. 338).",
+        "Source claim: at most one configuration may deploy to an environment at a time, while one configuration per environment may deploy concurrently to different environments (l. 342). Inference: the constraint is per environment, not global.",
+        "Source claim: the console workflow selects configuration and version, strategy, optional description, optional encryption key and up to 50 tags (ll. 346-370).",
+        "Source claim: the CLI and PowerShell examples pass the same core identifiers plus description and tags (ll. 374-414). Observation: the examples omit KmsKeyIdentifier even though the introduction makes it mandatory for named encrypted sources; the examples are partial.",
+        "Source claim: the deployment response exposes growth type (linear or exponential), growth factor, final bake time, event log, percentage complete and timestamps (ll. 432-511). Inference: these fields imply staged percentage growth and a monitoring interval, but this page does not define their timing or alarm rules.",
+        "Representation observation: tabbed command output is flattened and duplicated across lines 430-547, and the JSON-like templates contain unquoted placeholders; no additional semantic claim is inferred from the duplication or formatting.",
+        "Inference: this page does not document idempotency tokens, retry behavior after an ambiguous response, approval policy, rollback criteria, data repair or an immutable documentation revision. Those remain external questions rather than implied guarantees."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
+          "candidate": "How should publication validation, host distribution, bake time and rollback be separated in a configuration control plane?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+          "candidate": "How do AppConfig growth type, growth factor and final bake time map to general canary analysis and stop gates?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/canary-compatibility.md",
+          "candidate": "Which durable effects can survive an AppConfig distribution failure and rollback?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/desired-state-exposure.md",
+          "candidate": "Is a configuration deployment an imperative operation record, a desired state, or a distinct third control plane?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/promotion-authorization.md",
+          "candidate": "How do IAM and KMS permissions constrain deployment authorization beyond AppConfig API access?"
+        }
+      ],
+      "reader": "Delegated reader batch 7; parent validation pending."
+    },
+    {
+      "id": "R096",
+      "source_ids": [
+        "src.appconfig-validation"
+      ],
+      "url": "https://docs.aws.amazon.com/appconfig/latest/userguide/appconfig-creating-configuration-and-profile-validators.html",
+      "unit": "Complete page: Understanding validators - AWS AppConfig",
+      "revision": "AWS docs; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 516 lines / 2295 words; sections: Understanding validators; AWS Lambda function validators; JSON Schema validators; cookie, navigation, feedback and footer chrome excluded (lines 1-307 and 436-516).",
+      "retrieval_refs": [
+        "/tmp/batch7/raw/src.appconfig-validation.md lines 1-516",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution.",
+      "representation_sha256": "692fb40a13f2acfd290bbbfe0d960a4500053dcc09facc52ce732410501a5a33",
+      "retrieved_lines": 516,
+      "retrieved_words": 2295,
+      "sections": [
+        "Understanding validators",
+        "AWS Lambda function validators",
+        "JSON Schema validators"
+      ],
+      "notes": [
+        "Source claim: a configuration profile may specify up to two validators, which must be created before the profile; validators are intended to enforce syntactic and semantic correctness (l. 328).",
+        "Source claim: Lambda validators are supported for feature flags and free-form configurations; JSON Schema validators are supported only for free-form configurations, while feature flags receive automatic JSON Schema validation (ll. 330-332).",
+        "Source claim: the Lambda event includes applicationId, configurationProfileId, configurationVersion, base64-encoded content and uri (ll. 342-352).",
+        "Source claim: AppConfig checks the Lambda response's X-Amz-Function-Error header, which Lambda sets when the function throws (l. 354). Inference: the documented failure contract is exception/header based; returning an 'invalid' body without an error header is not described as a failure signal.",
+        "Source claim: AppConfig invokes the validation Lambda for StartDeployment and ValidateConfigurationActivity, requires appconfig.amazonaws.com invoke permission, and limits runtime to 15 seconds including start-up latency (l. 402). Inference: cold-start time consumes the validation budget; timeout handling is unstated.",
+        "Source claim: a JSON Schema defines allowable properties, and configuration data in SSM documents must validate before being added; this page gives a draft-04 example with additionalProperties false, patternProperties and minProperties (ll. 406-424).",
+        "Source claim: SSM parameters do not require a validation method, although a Lambda check is recommended; SSM documents use ApplicationConfiguration and their schemas use ApplicationConfigurationSchema (ll. 430-432).",
+        "Source claim: inline JSON Schema support is version 4.X; another version requires a Lambda validator (l. 434). Inference: exact supported keywords and dialect behavior must be tested rather than assumed from the example.",
+        "Inference: the page specifies automatic JSON Schema verification for SSM-document creation, but does not state that every JSON Schema validator runs at every deployment; do not generalize the Lambda invocation points to all validator types.",
+        "Inference: 'semantic correctness' is only as strong as the chosen validator; a schema can constrain shape and local values but not cross-record behavior, consumer compatibility or operational side effects.",
+        "Representation observation: lines 1-307 and 436-516 are AWS chrome, and code samples are illustrative. No technical section appears absent; no representation gap is recorded."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
+          "candidate": "Where should a validator failure block publication, and where should exposure observation begin?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/canary-compatibility.md",
+          "candidate": "Which semantic or cross-version defects can pass schema validation and a canary?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+          "candidate": "How should a 15-second validation budget and at most two validators shape a progressive-delivery gate?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/promotion-authorization.md",
+          "candidate": "Who can approve validator exceptions, and how is approval bound to an exact configuration version?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/desired-state-exposure.md",
+          "candidate": "Does a validator establish artifact validity, consumer compatibility, or both?"
+        }
+      ],
+      "reader": "Delegated reader batch 7; parent validation pending."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 59,
+    "full_reads": 65,
     "blocked": 14,
     "records": [
       "R015",
@@ -4151,7 +4532,13 @@
       "R087",
       "R088",
       "R089",
-      "R090"
+      "R090",
+      "R091",
+      "R092",
+      "R093",
+      "R094",
+      "R095",
+      "R096"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
