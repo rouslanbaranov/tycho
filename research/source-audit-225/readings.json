@@ -2180,12 +2180,113 @@
       ],
       "tycho_candidates": [],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R060",
+      "source_ids": [
+        "src.aws-backoff"
+      ],
+      "url": "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/",
+      "unit": "Complete article: Timeouts, retries, and backoff with jitter",
+      "revision": "Published 2019-12-05; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 81 lines / 2324 words; sections Failures Happen, Timeouts, Retries and backoff, Jitter, Conclusion; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.aws-backoff.md lines 1-81",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "f7c1ada01c5b0a3ed9d344099e990c657a195295005a0d2303dc753b6d38709c",
+      "retrieved_lines": 81,
+      "retrieved_words": 2324,
+      "sections": [
+        "Failures Happen",
+        "Timeouts",
+        "Retries and backoff",
+        "Jitter",
+        "Conclusion"
+      ],
+      "notes": [
+        "Source claim: every cross-process call should have connection and request timeouts; too-high timeouts retain resources, too-low timeouts cause retries and can turn small latency increases into an outage.",
+        "Source claim: a practical timeout starts from the downstream latency distribution, for example accepting 0.1% false timeouts at p99.9, with padding for tight distributions and extra allowance for internet or connection setup.",
+        "Source claim: retries are selfish and can amplify overload; a five-layer stack with three retries per layer can multiply load by 243, so retrying at one layer is preferred for low-cost operations.",
+        "Source claim: exponential backoff should be capped, but a cap makes clients retry at a constant rate; limiting retry count and returning failure earlier is preferable.",
+        "Source claim: APIs with side effects need idempotency before retries are safe; client errors generally should not be retried, though eventual consistency blurs that boundary.",
+        "Source claim: jitter spreads correlated retries and periodic work; deterministic per-host jitter preserves reproducibility for diagnosis, while random jitter hides patterns.",
+        "Inference: the 0.1%/p99.9 choice is a policy trade-off, not a universal timeout formula; the article gives no adaptive control law.",
+        "Inference: the article is first-party operational guidance, not a controlled experiment; the 243x multiplication is arithmetic, not a measured incident."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md",
+          "candidate": "Does the retry page include retry amplification across layers and a cap on retry count?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/deadline-hedging.md",
+          "candidate": "Does the hedging/deadline page distinguish a timeout from a retry budget and a hedge?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-recovery.md",
+          "candidate": "Does the recovery page state that retries during overload can delay recovery?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R061",
+      "source_ids": [
+        "src.aws-static-stability"
+      ],
+      "url": "https://aws.amazon.com/builders-library/static-stability-using-availability-zones/",
+      "unit": "Complete article: Static stability using Availability Zones",
+      "revision": "Published 2019-12-05; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 135 lines / 3718 words; sections Static stability, Static stability patterns, Under the hood, Conclusion; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.aws-static-stability.md lines 1-135",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "5990fa72b6b9b6cd7ed73c5a7d6f91a9ce54a967177a26452f0022ef9ecc27f9",
+      "retrieved_lines": 135,
+      "retrieved_words": 3718,
+      "sections": [
+        "Static stability",
+        "Static stability patterns",
+        "Under the hood",
+        "Conclusion"
+      ],
+      "notes": [
+        "Source claim: static stability means the system keeps serving from already-provisioned capacity when a dependency is impaired, without taking a control-plane dependency in the recovery path.",
+        "Source claim: the control plane makes changes and the data plane runs existing resources; the data plane should keep its existing state when the control plane is unavailable.",
+        "Source claim: an active-active fleet across three Availability Zones is overprovisioned by 50%, so each zone runs at about 66% of tested capacity and no scaling is needed when one zone fails.",
+        "Source claim: a stateful active-standby design elects a standby in another zone instead of launching a replacement just in time; data durability still replicates hard state across zones.",
+        "Source claim: zonal call paths avoid multiplying gray-failure exposure; with three zones, regional-to-regional calls have (2/3)^N avoidance versus a constant 2/3 for zonal calls.",
+        "Source claim: zone-local foundational services such as NAT gateways keep an impairment inside one zone, at the cost of more zonal environments and routing configuration.",
+        "Inference: the 50% overprovisioning and 2/3 arithmetic are design examples, not measurements of every workload.",
+        "Inference: static stability trades steady-state cost and complexity for recovery that does not depend on a stressed control plane."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
+          "candidate": "Does the static-stability page distinguish preprovisioned capacity from reactive autoscaling?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md",
+          "candidate": "Does the placement page keep the data plane independent of control-plane availability?"
+        },
+        {
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "candidate": "Does the DR contract separate zonal isolation from cross-region durability and recovery?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 29,
+    "full_reads": 31,
     "blocked": 14,
     "records": [
       "R015",
@@ -2232,9 +2333,11 @@
       "R056",
       "R057",
       "R058",
-      "R059"
+      "R059",
+      "R060",
+      "R061"
     ],
-    "scope": "JEP 444, JEP 491, twenty-seven public engineering articles, fourteen blocked pages and two excluded internal team sites",
+    "scope": "JEP 444, JEP 491, twenty-nine public engineering articles, fourteen blocked pages and two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2
   }

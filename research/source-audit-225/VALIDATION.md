@@ -207,7 +207,7 @@ No independent review or source-to-book completeness is claimed.
 ## Comparison assessment - 2026-10-24
 
 Sixteen candidate comparisons from the OSTEP reading were assessed against the
-frozen Tycho baseline. Result: twenty assessed comparisons: six supported,
+frozen Tycho baseline. Result: twenty-two assessed comparisons: eight supported,
 twelve qualified, two not-addressed and zero contradicted. Two JEP-to-book
 comparisons were added after the reference batch: JEP 491 provenance and JEP 444
 socket interruption. Each assessment records the exact book
@@ -228,8 +228,8 @@ action. No book page was edited.
 
 ## Reference-source batch - 2026-10-24
 
-Forty-five records R015-R059 extend the reference ledger. Twenty-nine are
-full-scoped reads: JEP 444, JEP 491 and twenty-seven public engineering
+Forty-seven records R015-R061 extend the reference ledger. Thirty-one are
+full-scoped reads: JEP 444, JEP 491 and twenty-nine public engineering
 articles in the src.m9-* series. Fourteen publisher pages returned no readable
 article body and are recorded as blocked-full-text, not inferred. Two internal
 team sites are excluded-from-scope and were not accessed.
@@ -238,7 +238,7 @@ text was read and the duplicate blocks were verified by matching headings.
 R041 is a wiki page whose navigation chrome was identified and excluded from
 the architecture claim.
 
-- The twenty-seven articles total 5,130 lines and 71,564 words; the two JEPs total 563
+- The twenty-nine articles total 5,346 lines and 77,606 words; the two JEPs total 563
   lines and 9,941 words. Each full record carries the local representation
   SHA-256, line count, word count, sections and explicit omissions.
 - JEP 444 records M:N scheduling, the two JDK 21 pinning causes, diagnostics
@@ -268,14 +268,14 @@ a96c6b7 are outside that attempted review's stated HEAD.
 ## Page matrix and interim synthesis - 2026-10-24
 
 - The 406-page census records a review status for every canonical page:
-  16 are comparison-assessed and 390 carry an explicit evidence gap. The
+  18 are comparison-assessed and 388 carry an explicit evidence gap. The
   per-page list is in page-review-summary.json; a gap is not a pass.
-- The reference ledger has 59 records: 40 full reads, 17 blocked pages and 2
+- The reference ledger has 61 records: 42 full reads, 17 blocked pages and 2
   excluded internal team sites. All 45 baseline fetch-incomplete sources are
   accounted for: 29 full, 14 blocked, 2 excluded, 0 unaccounted.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
   two candidate page actions, the zero-contradiction result, the 202
-  landing-only sources, the 390 unassessed pages and the missing independent
+  landing-only sources, the 388 unassessed pages and the missing independent
   review. It does not claim #225 completion.
 - Boundary, whitespace, JSON, candidate-path and anchor checks passed. No book,
   source register, index or edition file changed.
