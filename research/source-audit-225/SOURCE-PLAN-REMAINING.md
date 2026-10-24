@@ -5,8 +5,8 @@
 
 ## Canonical count correction
 
-The register contains 247 sources. Readings and reconciliations cover 117
-register sources; 130 remain. The earlier 127 count was stale: it did not
+The register contains 247 sources. Readings and reconciliations cover 125
+register sources; 122 remain. The earlier 127 count was stale: it did not
 include the completed OSTEP whole-book reconciliation and mixed unregistered
 OpenTelemetry child-page IDs into the record count.
 
@@ -19,7 +19,7 @@ preview-only or blocked, not complete reads.
 - **Other single pages and patterns:** 35.
 - **Books and book-like pages:** 18.
 - **Source repositories:** 11.
-- **Papers:** 9.
+- **Papers:** 1 (B18 read eight of nine).
 - **Articles:** 1.
 
 The 18 "book" entries include commercial books and public pattern pages; they
@@ -27,7 +27,7 @@ must be split before reading.
 
 ## Batch order
 
-1. **B18 - papers (9).** Single PDFs: Lamport time, Raft, Paxos, Dynamo,
+1. **B18 - papers (1 remaining; 8 read).** Single PDFs: Lamport time, Raft, Paxos, Dynamo,
    Spanner, Bigtable, MapReduce, HNSW, TLA+ resources. Cheapest high-value batch.
 2. **B19 - standards and specifications.** OpenAPI, AsyncAPI, CloudEvents,
    W3C Trace Context, W3C Baggage, R2DBC, SLSA, OpenGitOps, TLA+.
@@ -68,7 +68,7 @@ must be split before reading.
 
 ## Next batch
 
-B18: read the nine papers. Each paper is a single PDF; split across three
-reader children (3 papers each). Parent validates hash, line/word counts,
-sections, and spot-checks claims. Expected landing reduction: up to 9 if all
-papers are public and complete.
+B18: eight papers were read and accepted; TLA+ resources remains.
+Each paper is a single PDF. The parent validates hash, line/word counts,
+sections and spot-checks claims. Expected landing reduction was up to 9;
+eight were accepted.

@@ -6927,12 +6927,1166 @@
         }
       ],
       "reader": "Parent-created blocked record; no independent review."
+    },
+    {
+      "id": "R131",
+      "source_ids": [
+        "src.lamport-time"
+      ],
+      "source_id": "src.lamport-time",
+      "url": "https://lamport.azurewebsites.net/pubs/time-clocks.pdf",
+      "unit": "Lamport, 'Time, Clocks, and the Ordering of Events in a Distributed System', Communications of the ACM 21(7):558-565, July 1978 — complete PDF text layer, 583 manifest lines / 8,291 words",
+      "revision": "Published paper; PDF text extracted 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Full scoped text read sequentially, every line: title/abstract block, Introduction, The Partial Ordering, Logical Clocks, Ordering the Events Totally, Anomalous Behavior, Physical Clocks, Conclusion, Appendix (proof of the theorem) and References (manifest lines 1-583; 576 newline-delimited lines). Excluded from all claims: running heads 'Communications of the ACM / July 1978 / Volume 21 / Number 7', page numbers 558-565, ACM copyright/permission and funding footnotes, and the opening fragment of the adjacent article ('Shallow Binding in Lisp 1.5') that the extractor placed in the page-565 second column from about line 511.",
+      "retrieval_refs": [
+        {
+          "type": "manifest",
+          "path": "/tmp/B18/manifest.json",
+          "entry": "R131"
+        },
+        {
+          "type": "local_text",
+          "path": "/tmp/B18/raw/src.lamport-time.txt",
+          "lines": 583,
+          "words": 8291,
+          "sha256": "e576a412c2bf71a26947ee6b5d84b021fba5c1533abce317c2e2932edad31acd"
+        },
+        {
+          "type": "local_pdf",
+          "path": "/tmp/B18/raw/src.lamport-time.pdf",
+          "bytes": 854562
+        },
+        {
+          "type": "url",
+          "url": "https://lamport.azurewebsites.net/pubs/time-clocks.pdf"
+        }
+      ],
+      "omissions": "References not separately followed; no reproduction or experiment",
+      "representation_gap": "Two-column layout is flattened into interleaved lines, so some headings sit at the end of an unrelated line; Figures 1-3 (space-time and tick-line diagrams) survive only as caption stubs and OCR noise ('Fig. 1.' with garbled labels), and relation/equation symbols are partly corrupted (e.g. '---~' for the happens-before arrow, '~' for ties). No section of the body is missing; the Appendix proof is present but its displayed inequalities are partly garbled. The page-565 second column also carries the start of the following article, which is not part of this unit.",
+      "representation_sha256": "e576a412c2bf71a26947ee6b5d84b021fba5c1533abce317c2e2932edad31acd",
+      "retrieved_lines": 583,
+      "retrieved_words": 8291,
+      "count_verification": {
+        "manifest_lines": 583,
+        "manifest_words": 8291,
+        "wc_newlines": 575,
+        "wc_words": 8291,
+        "form_feed_page_breaks": 8,
+        "splitlines": 583,
+        "newline_delimited_read_lines": 576,
+        "sha256_manifest": "e576a412c2bf71a26947ee6b5d84b021fba5c1533abce317c2e2932edad31acd",
+        "sha256_recomputed": "e576a412c2bf71a26947ee6b5d84b021fba5c1533abce317c2e2932edad31acd",
+        "match": true,
+        "note": "Manifest line count follows Python splitlines(), which treats the 8 form-feed page breaks (0x0c) as line boundaries; wc -l counts only 0x0a. Word counts agree exactly (wc -w = 8291)."
+      },
+      "sections": [
+        {
+          "title": "Title, abstract, key words",
+          "heading_line": 1,
+          "pages": "558"
+        },
+        {
+          "title": "Introduction",
+          "heading_line": 48,
+          "pages": "558"
+        },
+        {
+          "title": "The Partial Ordering",
+          "heading_line": 53,
+          "pages": "558-559"
+        },
+        {
+          "title": "Logical Clocks",
+          "heading_line": 126,
+          "pages": "559-560"
+        },
+        {
+          "title": "Ordering the Events Totally",
+          "heading_line": 201,
+          "pages": "560-561"
+        },
+        {
+          "title": "Anomalous Behavior",
+          "heading_line": 277,
+          "pages": "561-562"
+        },
+        {
+          "title": "Physical Clocks",
+          "heading_line": 329,
+          "pages": "562-564"
+        },
+        {
+          "title": "Conclusion",
+          "heading_line": 448,
+          "pages": "564"
+        },
+        {
+          "title": "Appendix — Proof of the Theorem",
+          "heading_line": 473,
+          "pages": "564-565"
+        },
+        {
+          "title": "References",
+          "heading_line": 557,
+          "pages": "565"
+        }
+      ],
+      "notes": [
+        {
+          "kind": "source_claim",
+          "text": "Defines 'happened before' (arrow) as the smallest relation closed under same-process order, message send-before-receipt and transitivity; events with neither a->b nor b->a are concurrent (lines 113-125)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "The Clock Condition (a->b implies C(a)<C(b), not the converse) follows from C1 (same-process monotonicity) and C2 (send precedes receipt), realised by IR1 (increment between events) and IR2 (timestamp messages; receiver advances past Tm) (lines 176-194)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Any clock system satisfying the Clock Condition yields a total order by comparing (Ci(a), process id) lexicographically; the order extends the partial order, is not unique, and different clocks give different total orders (lines 209-226)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Mutual exclusion is solved with timestamped request/acknowledgement/release messages and per-process request queues: a process may use the resource when its own request is ordered first in its queue and it has received a later-timestamped message from every other process; the algorithm has no central process or storage (lines 232-290)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "The total order supports replicated state machines: each process executes commands in timestamp order once it knows all commands with smaller timestamps; because every process must participate, failure of one process halts progress (lines 291-325)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Anomalous behavior occurs when the algorithm's order contradicts an order users perceive through channels outside the system (telephone example); remedies are to inject external precedence into timestamps or to use physical clocks meeting the Strong Clock Condition (lines 277-320)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Physical clocks must satisfy PC1 (rate error below kappa, kappa about 1e-6 for crystal clocks) and PC2 (mutual skew below epsilon), and are only ever reset forward; IR1'/IR2' reset to max(local clock, Tm + minimum delay) (lines 349-372, 423-427)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Theorem: for a strongly connected graph of diameter d where a message with unpredictable delay at most xi crosses every arc within tau seconds, PC2 holds with epsilon = d(2*kappa*tau + xi) for t > t0 + tau*d; the Appendix proves it via inequalities (1)-(12) (lines 411-431, 473-538)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Anomalous behavior is impossible if epsilon/(1-kappa) <= mu, where mu is a lower bound on interprocess transmission time (lines 428-433)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "The author argues failure is meaningful only relative to physical time, calls failure handling out of scope, and points to a separate method for tolerating process and link failure (lines 321-334)."
+        },
+        {
+          "kind": "inference",
+          "text": "Read as architecture guidance, the paper establishes causal ordering and deterministic command sequencing only; it contains no leader election, quorum commitment or crash-recovery protocol, so treating it as a consensus algorithm would overstate the source (inference from lines 232-334)."
+        }
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causality-ordering-and-consensus.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/agreement-failure.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader:subagent B18 (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only — not independent review, not human review, not source-completeness proof"
+    },
+    {
+      "id": "R132",
+      "source_ids": [
+        "src.raft"
+      ],
+      "source_id": "src.raft",
+      "url": "https://raft.github.io/raft.pdf",
+      "unit": "Ongaro and Ousterhout, 'In Search of an Understandable Consensus Algorithm (Extended Version)', May 2014 — complete PDF text layer, 1,157 manifest lines / 15,150 words",
+      "revision": "Published paper; PDF text extracted 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Full scoped text read sequentially, every line: abstract, Sections 1-12 (introduction, replicated state machines, critique of Paxos, designing for understandability, the Raft algorithm including 5.1-5.6, cluster membership, log compaction, client interaction, implementation and evaluation including 9.1-9.3, related work, conclusion, acknowledgments), References and the Figure 2/Figure 3/Figure 13 tables (manifest lines 1-1157; 1,140 newline-delimited lines). Excluded from all claims: page numbers 1-18 and the running footers of the extended-version note (the gray-bar margin marks that distinguish added material are not reproducible in text).",
+      "retrieval_refs": [
+        {
+          "type": "manifest",
+          "path": "/tmp/B18/manifest.json",
+          "entry": "R132"
+        },
+        {
+          "type": "local_text",
+          "path": "/tmp/B18/raw/src.raft.txt",
+          "lines": 1157,
+          "words": 15150,
+          "sha256": "412a1a4c340a54b252d530ce2b5759f05294922d5fed9164fd4e643b13111a30"
+        },
+        {
+          "type": "local_pdf",
+          "path": "/tmp/B18/raw/src.raft.pdf",
+          "bytes": 567533
+        },
+        {
+          "type": "url",
+          "url": "https://raft.github.io/raft.pdf"
+        }
+      ],
+      "omissions": "References not separately followed; no reproduction or experiment",
+      "representation_gap": "Two-column layout is flattened into interleaved lines, so section headings sometimes appear before the preceding section's body ends (e.g. the '9 Implementation and evaluation' heading at line 797 precedes the '8 Client interaction' heading at line 800). Figure 2, Figure 3 and Figure 13 survive as text tables; Figures 4-12 and 14-16 survive only as captions (server-state diagram, term timeline, log diagrams, configuration-change timelines, scatter plot, self-assessment histogram and two latency plots with fragmentary axis labels). No body section is missing.",
+      "representation_sha256": "412a1a4c340a54b252d530ce2b5759f05294922d5fed9164fd4e643b13111a30",
+      "retrieved_lines": 1157,
+      "retrieved_words": 15150,
+      "count_verification": {
+        "manifest_lines": 1157,
+        "manifest_words": 15150,
+        "wc_newlines": 1139,
+        "wc_words": 15150,
+        "form_feed_page_breaks": 18,
+        "splitlines": 1157,
+        "newline_delimited_read_lines": 1140,
+        "sha256_manifest": "412a1a4c340a54b252d530ce2b5759f05294922d5fed9164fd4e643b13111a30",
+        "sha256_recomputed": "412a1a4c340a54b252d530ce2b5759f05294922d5fed9164fd4e643b13111a30",
+        "match": true,
+        "note": "Manifest line count follows Python splitlines(), which treats the 18 form-feed page breaks (0x0c) as line boundaries; wc -l counts only 0x0a. Word counts agree exactly (wc -w = 15150)."
+      },
+      "sections": [
+        {
+          "title": "Title and abstract",
+          "heading_line": 1,
+          "pages": "1"
+        },
+        {
+          "title": "1 Introduction",
+          "heading_line": 21,
+          "pages": "1-2"
+        },
+        {
+          "title": "2 Replicated state machines",
+          "heading_line": 57,
+          "pages": "2"
+        },
+        {
+          "title": "3 What's wrong with Paxos?",
+          "heading_line": 72,
+          "pages": "2-3"
+        },
+        {
+          "title": "4 Designing for understandability",
+          "heading_line": 174,
+          "pages": "3"
+        },
+        {
+          "title": "5 The Raft consensus algorithm",
+          "heading_line": 154,
+          "pages": "3-4"
+        },
+        {
+          "title": "5.1 Raft basics",
+          "heading_line": 296,
+          "pages": "5"
+        },
+        {
+          "title": "5.2 Leader election",
+          "heading_line": 325,
+          "pages": "5-6"
+        },
+        {
+          "title": "5.3 Log replication",
+          "heading_line": 376,
+          "pages": "6-7"
+        },
+        {
+          "title": "5.4 Safety (5.4.1-5.4.3)",
+          "heading_line": 484,
+          "pages": "8-9"
+        },
+        {
+          "title": "5.5 Follower and candidate crashes",
+          "heading_line": 581,
+          "pages": "10"
+        },
+        {
+          "title": "5.6 Timing and availability",
+          "heading_line": 599,
+          "pages": "10"
+        },
+        {
+          "title": "6 Cluster membership changes",
+          "heading_line": 603,
+          "pages": "10-11"
+        },
+        {
+          "title": "7 Log compaction",
+          "heading_line": 686,
+          "pages": "11-13"
+        },
+        {
+          "title": "8 Client interaction",
+          "heading_line": 800,
+          "pages": "13"
+        },
+        {
+          "title": "9 Implementation and evaluation",
+          "heading_line": 797,
+          "pages": "13"
+        },
+        {
+          "title": "9.1 Understandability",
+          "heading_line": 810,
+          "pages": "13-14"
+        },
+        {
+          "title": "9.2 Correctness",
+          "heading_line": 868,
+          "pages": "14"
+        },
+        {
+          "title": "9.3 Performance",
+          "heading_line": 944,
+          "pages": "15"
+        },
+        {
+          "title": "10 Related work",
+          "heading_line": 943,
+          "pages": "15-16"
+        },
+        {
+          "title": "11 Conclusion",
+          "heading_line": 991,
+          "pages": "16"
+        },
+        {
+          "title": "12 Acknowledgments",
+          "heading_line": 1019,
+          "pages": "16-17"
+        },
+        {
+          "title": "References",
+          "heading_line": 1054,
+          "pages": "17-18"
+        }
+      ],
+      "notes": [
+        {
+          "kind": "source_claim",
+          "text": "Raft decomposes consensus into leader election, log replication, safety and membership change, and enforces a strong leader so log entries flow only from leader to followers (lines 57-71, 154-173)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Terms are consecutive integers that act as a logical clock: currentTerm increases monotonically, at most one leader exists per term, and any RPC carrying a higher term forces a server to adopt it and revert to follower (lines 286-325)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Leader election uses randomized timeouts from a fixed interval (for example 150-300 ms) to make split votes rare; a candidate needs a majority, and RequestVote carries lastLogIndex/lastLogTerm so voters reject candidates whose logs are less up to date (lines 189-253, 325-374, 484-503)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Log Matching (equal index and term imply identical prefixes) is enforced by the AppendEntries prevLogIndex/prevLogTerm consistency check with an induction argument; a leader repairs a follower by decrementing nextIndex and retrying (lines 376-446)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Only entries from the leader's current term are committed by counting replicas; committing one such entry commits all preceding entries indirectly, and a leader must not infer commitment of a previous-term entry from replica counts alone (Figure 8) (lines 399-417, 532-560)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Five properties are stated to hold at all times: Election Safety, Leader Append-Only, Log Matching, Leader Completeness and State Machine Safety (lines 259-273)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "The safety argument proves Leader Completeness by contradiction using a voter in the intersection of the electing majority and the committing majority, then derives State Machine Safety and identical application order (lines 561-580)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Timing requirement: broadcastTime much less than electionTimeout much less than MTBF; safety must not depend on timing, while availability inevitably does (lines 599-637)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Membership changes use joint consensus C_old,new requiring separate majorities of both configurations; new servers join first as non-voting members, and removed servers are neutralised by ignoring RequestVote within the minimum election timeout of hearing from a leader (lines 603-696)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Log compaction uses snapshots recording lastIncludedIndex, lastIncludedTerm and the latest configuration; InstallSnapshot streams chunks, and a follower receiving a prefix snapshot deletes covered entries but keeps later ones (lines 686-799, 699-736)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Client interaction: linearizable semantics are obtained with per-client serial numbers and cached responses to suppress duplicate execution; read-only requests require a committed no-op from the leader's term and a heartbeat majority check (lines 765-779, 800-818)."
+        },
+        {
+          "kind": "inference",
+          "text": "The user study (43 participants, mean 25.7 vs 20.8 out of 60, 4.9-point difference, 33 of 41 self-reports favoring Raft) measures learnability of two lecture-and-quiz presentations prepared by the authors, not runtime behavior or independent adoption (inference from lines 810-892)."
+        }
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causality-ordering-and-consensus.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader:subagent B18 (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only — not independent review, not human review, not source-completeness proof"
+    },
+    {
+      "id": "R133",
+      "source_ids": [
+        "src.paxos"
+      ],
+      "source_id": "src.paxos",
+      "url": "https://lamport.azurewebsites.net/pubs/paxos-simple.pdf",
+      "unit": "Lamport, 'Paxos Made Simple', 01 Nov 2001 — complete PDF text layer, 499 manifest lines / 4,716 words",
+      "revision": "Published paper; PDF text extracted 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Full scoped text read sequentially, every line: title, abstract, contents, Section 1 Introduction, Section 2 The Consensus Algorithm including 2.1-2.5, Section 3 Implementing a State Machine, and References (manifest lines 1-499; 486 newline-delimited lines). Excluded from all claims: page numbers 1-11, the duplicated contents list at lines 9-21, and the running title on page 1.",
+      "retrieval_refs": [
+        {
+          "type": "manifest",
+          "path": "/tmp/B18/manifest.json",
+          "entry": "R133"
+        },
+        {
+          "type": "local_text",
+          "path": "/tmp/B18/raw/src.paxos.txt",
+          "lines": 499,
+          "words": 4716,
+          "sha256": "d9b2d0110bec7d69525bde73a6bb6aa1ea633f41e2668653c7d31c2f3d05ecf4"
+        },
+        {
+          "type": "local_pdf",
+          "path": "/tmp/B18/raw/src.paxos.pdf",
+          "bytes": 95019
+        },
+        {
+          "type": "url",
+          "url": "https://lamport.azurewebsites.net/pubs/paxos-simple.pdf"
+        }
+      ],
+      "omissions": "References not separately followed; no reproduction or experiment",
+      "representation_gap": "None material for the argument: the document is single-column and has no figures or tables, so the body, numbered conditions (P1, P2, P2a, P2b, P2c, P1a) and phases are complete in text. Only page numbers, the contents list and line-wrap hyphenation are formatting artifacts; displayed maths is inline plain text and symbol spacing is occasionally lost.",
+      "representation_sha256": "d9b2d0110bec7d69525bde73a6bb6aa1ea633f41e2668653c7d31c2f3d05ecf4",
+      "retrieved_lines": 499,
+      "retrieved_words": 4716,
+      "count_verification": {
+        "manifest_lines": 499,
+        "manifest_words": 4716,
+        "wc_newlines": 485,
+        "wc_words": 4716,
+        "form_feed_page_breaks": 14,
+        "splitlines": 499,
+        "newline_delimited_read_lines": 486,
+        "sha256_manifest": "d9b2d0110bec7d69525bde73a6bb6aa1ea633f41e2668653c7d31c2f3d05ecf4",
+        "sha256_recomputed": "d9b2d0110bec7d69525bde73a6bb6aa1ea633f41e2668653c7d31c2f3d05ecf4",
+        "match": true,
+        "note": "Manifest line count follows Python splitlines(), which treats the 14 form-feed page breaks (0x0c) as line boundaries; wc -l counts only 0x0a. Word counts agree exactly (wc -w = 4716)."
+      },
+      "sections": [
+        {
+          "title": "Title, abstract, contents",
+          "heading_line": 1,
+          "pages": "1"
+        },
+        {
+          "title": "1 Introduction",
+          "heading_line": 22,
+          "pages": "1"
+        },
+        {
+          "title": "2 The Consensus Algorithm",
+          "heading_line": 36,
+          "pages": "1"
+        },
+        {
+          "title": "2.1 The Problem",
+          "heading_line": 37,
+          "pages": "1-2"
+        },
+        {
+          "title": "2.2 Choosing a Value",
+          "heading_line": 72,
+          "pages": "2-6"
+        },
+        {
+          "title": "2.3 Learning a Chosen Value",
+          "heading_line": 257,
+          "pages": "6-7"
+        },
+        {
+          "title": "2.4 Progress",
+          "heading_line": 289,
+          "pages": "7"
+        },
+        {
+          "title": "2.5 The Implementation",
+          "heading_line": 313,
+          "pages": "7-8"
+        },
+        {
+          "title": "3 Implementing a State Machine",
+          "heading_line": 336,
+          "pages": "8-10"
+        },
+        {
+          "title": "References",
+          "heading_line": 462,
+          "pages": "11"
+        }
+      ],
+      "notes": [
+        {
+          "kind": "source_claim",
+          "text": "Safety requirements are stated as: only a proposed value may be chosen, only a single value is chosen, and a process learns a value only if it has actually been chosen; liveness is deliberately not specified precisely (lines 44-53)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Model is asynchronous and non-Byzantine: agents run at arbitrary speed, may stop and restart, messages may take arbitrarily long, be duplicated or lost, but are not corrupted (lines 59-70)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Majorities intersect, so a single value per acceptor would suffice in the absence of failure, but P1 (accept the first proposal) plus majority choice forces acceptors to accept multiple numbered proposals (lines 77-110)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Safety is reduced in steps from P2 to P2a to P2b to the invariant P2c, which a proposer maintains by learning the highest-numbered proposal accepted in some majority and by extracting a promise not to accept lower-numbered proposals (lines 111-166)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "The algorithm runs in two phases: prepare (promise plus highest accepted proposal) and accept (value fixed by the highest-numbered response, or free if none); acceptors keep the highest accepted proposal and highest promised prepare in stable storage across restarts (lines 167-244, 219-225, 323-326)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Learning options are acceptors replying to every learner (acceptors x learners messages), a distinguished learner (sum of acceptors and learners), or a set of distinguished learners trading reliability against message count (lines 257-287)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Progress requires a distinguished proposer; two proposers can keep raising proposal numbers and starve each other, and the FLP result implies leader election must use randomness or real time, while safety holds regardless of election success (lines 289-311)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "In the implementation each process plays all roles, one leader acts as distinguished proposer and learner, proposal numbers come from disjoint per-proposer sets, and acceptors record intended responses before sending them (lines 313-333)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "The state machine is a sequence of consensus instances where the i-th chosen value is the i-th command; a leader that gets alpha commands ahead can leave a gap of up to alpha-1, filled with no-op commands, and phase 1 over infinitely many instances costs one short message (lines 336-431)."
+        },
+        {
+          "kind": "source_claim",
+          "text": "Reconfiguration is itself a state-machine decision: the set of servers implementing instance i+alpha is determined by the state after the i-th command, permitting arbitrary reconfiguration policies (lines 451-459)."
+        },
+        {
+          "kind": "inference",
+          "text": "The text is a derivation and specification, not an evaluation: it reports no measurements, implementation or failure-injection results, so it cannot evidence performance or operational behavior (inference from the whole document, especially lines 374-438)."
+        }
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/distributed-protocols.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/coordination-failure.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/multiwriter-conflicts.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/protocol-correctness.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader:subagent B18 (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only — not independent review, not human review, not source-completeness proof"
+    },
+    {
+      "id": "R134",
+      "source_ids": [
+        "src.dynamo"
+      ],
+      "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+      "unit": "Single paper: DeCandia et al., 'Dynamo: Amazon's Highly Available Key-value Store', SOSP 2007 (12 pages of text plus references); local PDF text extraction.",
+      "revision": "Published paper; PDF text extracted 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete extracted text, lines 1-1143 (Python splitlines convention; wc -l = 1127 newlines plus 16 form-feed page separators, no trailing newline). Covers title/abstract, sections 1-7, acknowledgements, references. Excluded: page headers, footers, duplicated page numbers and blank/column-layout artifacts. Figure images are not present in the extraction; captions are present.",
+      "retrieval_refs": [
+        "/tmp/B18/manifest.json#R134",
+        "/tmp/B18/raw/src.dynamo.txt",
+        "/tmp/B18/raw/src.dynamo.txt:1-1143",
+        "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+      ],
+      "omissions": "References not separately followed; no reproduction or experiment. Figure images (Figures 1-3 and 7, and the plots in Figures 4-6 and 8) are absent from the text extraction; captions and Table 1/Table 2 contents are present. Manifest title omits the possessive (\"Amazon's\"). Page headers, footers and page numbers excluded from claims.",
+      "representation_gap": null,
+      "representation_sha256": "6b7276428945da295f940185a494c478fc77210d702a3f943e6d44d86422d11b",
+      "retrieved_lines": 1143,
+      "retrieved_words": 14930,
+      "sections": [
+        {
+          "heading": "Title and Abstract",
+          "lines": "1-53"
+        },
+        {
+          "heading": "1. Introduction",
+          "lines": "55-121"
+        },
+        {
+          "heading": "2. Background (2.1 System Assumptions and Requirements, 2.2 Service Level Agreements, 2.3 Design Considerations)",
+          "lines": "123-259"
+        },
+        {
+          "heading": "3. Related Work (3.1 Peer to Peer Systems, 3.2 Distributed File Systems and Databases, 3.3 Discussion)",
+          "lines": "261-344"
+        },
+        {
+          "heading": "4. System Architecture (4.1-4.9, including partitioning, replication, data versioning, get/put execution, hinted handoff, replica synchronization, membership and failure detection)",
+          "lines": "346-585"
+        },
+        {
+          "heading": "5. Implementation",
+          "lines": "587-693"
+        },
+        {
+          "heading": "6. Experiences & Lessons Learned (6.1-6.6)",
+          "lines": "695-1004"
+        },
+        {
+          "heading": "7. Conclusions",
+          "lines": "1005-1029"
+        },
+        {
+          "heading": "Acknowledgements",
+          "lines": "1030-1037"
+        },
+        {
+          "heading": "References",
+          "lines": "1038-1143"
+        }
+      ],
+      "notes": [
+        "[claim] Dynamo is presented as a highly available key-value store for Amazon's platform that sacrifices consistency under certain failure scenarios and relies on object versioning plus application-assisted conflict resolution (lines 32-45).",
+        "[claim] The design synthesizes consistent hashing, vector clocks, a quorum-like replica synchronization protocol, and gossip-based membership/failure detection, with no central administration (lines 73-90).",
+        "[claim] The target is an 'always writeable' store: writes must not be rejected under failures, so conflict resolution complexity is pushed to reads (lines 207-236).",
+        "[claim] Reads and writes use a 'sloppy quorum' over the first N healthy nodes in the preference list, with hinted handoff for temporary failures and read repair for stale replicas (lines 500-510, 512-534, 670-675).",
+        "[claim] Anti-entropy uses Merkle trees, one per key range, to synchronize divergent replicas in the background (lines 500-535).",
+        "[claim] A typical production configuration is N=3 and (N,R,W)=(3,2,2); service SLAs are stated at the 99.9th percentile, and Dynamo targets 99.9% of requests within 300 ms (lines 696-697, 745-748, 764-768).",
+        "[claim] Reported production outcomes: 99.9995% of requests received successful responses and no data-loss event 'to date'; 99.94% of requests saw exactly one version (lines 873-875, 959-963).",
+        "[claim] Client-driven request coordination reduced 99.9th-percentile read/write latency from 68.9/68.5 ms to 30.4/30.4 ms in a 24-hour comparison (Table 2, lines 927-939).",
+        "[claim] The full-membership gossip model works at 'couple of hundreds of nodes' but is not trivially scalable to tens of thousands; hierarchical or O(1) DHT extensions are suggested (lines 992-1003).",
+        "[claim] Dynamo assumes a trusted, non-hostile environment with no authentication/authorization, targets objects usually under 1 MB, and is used within a single administrative domain (lines 106, 131-135, 329-332).",
+        "[inference] The operational percentages are operator-reported aggregates without raw distributions, so they document a deployment experience rather than a reproducible measurement; they should be cited as vendor claims.",
+        "[inference] The paper reports techniques and production lessons, not a head-to-head benchmark; latency numbers depend on the reported (3,2,2) configuration and hardware, so cross-system comparison is not supported by this text alone."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causality-ordering-and-consensus.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/multiwriter-conflicts.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated reader (DeepSeek Harness subagent); research-only under /tmp/delegated-reader-policy.md"
+    },
+    {
+      "id": "R135",
+      "source_ids": [
+        "src.spanner"
+      ],
+      "url": "https://research.google.com/archive/spanner-osdi2012.pdf",
+      "unit": "Single paper: Corbett et al., 'Spanner: Google's Globally-Distributed Database', OSDI 2012 (14 pages incl. references and Appendix A); local PDF text extraction.",
+      "revision": "Published paper; PDF text extracted 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete extracted text, lines 1-959 (Python splitlines convention; wc -l = 945 newlines plus 14 form-feed page separators, no trailing newline). Covers abstract, sections 1-8, acknowledgements, references and Appendix A (Paxos leader-lease management). Excluded: repeated 'Published in the Proceedings of OSDI 2012' footers and page numbers. Figure images are not present; captions and Tables 1-6 are present.",
+      "retrieval_refs": [
+        "/tmp/B18/manifest.json#R135",
+        "/tmp/B18/raw/src.spanner.txt",
+        "/tmp/B18/raw/src.spanner.txt:1-959",
+        "https://research.google.com/archive/spanner-osdi2012.pdf"
+      ],
+      "omissions": "References not separately followed; no reproduction or experiment. Figure images (Figures 1-6) are absent from the extraction; captions and all table contents are present. Page footers, page numbers and two-column reading-order artifacts excluded from claims.",
+      "representation_gap": null,
+      "representation_sha256": "dcc298cb35ef951e1b97e3808ed2d9e0575e162ade05011053b370112876165d",
+      "retrieved_lines": 959,
+      "retrieved_words": 11032,
+      "sections": [
+        {
+          "heading": "Title and Abstract",
+          "lines": "1-24"
+        },
+        {
+          "heading": "1 Introduction",
+          "lines": "26-89"
+        },
+        {
+          "heading": "2 Implementation (2.1 Spanserver Software Stack, 2.2 Directories and Placement, 2.3 Data Model)",
+          "lines": "91-256"
+        },
+        {
+          "heading": "3 TrueTime",
+          "lines": "258-305"
+        },
+        {
+          "heading": "4 Concurrency Control (4.1 Timestamp Management incl. 4.1.1-4.1.4; 4.2 Details incl. 4.2.1-4.2.4)",
+          "lines": "307-535"
+        },
+        {
+          "heading": "5 Evaluation (5.1 Microbenchmarks, 5.2 Availability, 5.3 TrueTime, 5.4 F1)",
+          "lines": "537-744"
+        },
+        {
+          "heading": "6 Related Work",
+          "lines": "745-769"
+        },
+        {
+          "heading": "7 Future Work",
+          "lines": "770-812"
+        },
+        {
+          "heading": "8 Conclusions",
+          "lines": "815-848"
+        },
+        {
+          "heading": "Acknowledgements",
+          "lines": "785-812"
+        },
+        {
+          "heading": "References",
+          "lines": "814-943"
+        },
+        {
+          "heading": "Appendix A: Paxos Leader-Lease Management",
+          "lines": "869-943"
+        }
+      ],
+      "notes": [
+        "[claim] Spanner is described as a scalable, multi-version, globally distributed, synchronously replicated database and the first system to distribute data at global scale while supporting externally consistent distributed transactions (lines 13-24, 62-67).",
+        "[claim] Data is sharded across Paxos state machines in datacenters; zones are the unit of administrative deployment and physical isolation, and a Spanner deployment is called a universe (lines 28-40, 100-110, 123-126).",
+        "[claim] TrueTime exposes clock uncertainty as a TTinterval; implementations use GPS and atomic clocks, with epsilon typically under 10 ms, a 1-7 ms sawtooth over a 30-second poll interval, and about 4 ms most of the time (lines 68-77, 260-283, 296-304).",
+        "[claim] Commit wait delays visibility of a commit until TT.after(s) holds, ensuring the assigned timestamp precedes the absolute commit time; the expected wait is at least 2*epsilon (lines 412-423, 500-507).",
+        "[claim] Read-only transactions are lock-free and execute at a chosen timestamp; replicas serve reads only when their safe time covers the read timestamp, with tsafe = min(tPaxos_safe, tTM_safe) (lines 337-352, 441-445).",
+        "[claim] Paxos leaders hold time-based leases (10 s default) with a disjointness invariant that supports monotonically increasing timestamps across leaders (lines 136-141, 315-330, 350-370).",
+        "[claim] Microbenchmarks on timeshared 4-core machines: one-replica write latency 9.4+/-0.6 ms with commit wait disabled, 14.4+/-1.0 ms at 1 replica with commit wait; snapshot-read throughput reaches 50.0+/-1.1 Kops/s at 5 replicas (Table 3, lines 515-522).",
+        "[claim] Two-phase commit remains reasonable to about 50 participants; mean latency rises from 17.0 ms at 1 participant to 42.7 ms at 50 and 150.5 ms at 200 (Table 4, lines 579-597, 616-621).",
+        "[claim] In the availability experiment, killing a non-leader zone had no visible effect (about 3-4% throughput loss), while killing the leader zone dropped completion nearly to zero until leaders were re-elected, with recovery around the 10-second lease horizon (lines 625-641, 655-660).",
+        "[claim] F1-perceived latencies over 24 hours: all reads mean 8.7 ms, single-site commit 72.3 ms, multi-site commit 103.0 ms, with large standard deviations (Table 6, lines 715-742).",
+        "[claim] Schema-change transactions are assigned a future timestamp and proceed without blocking unrelated reads/writes, relying on TrueTime to make 'at time t' meaningful (lines 491-511).",
+        "[inference] 'First system' and global-scale claims are the authors' characterization of Google's deployment; the paper reports no independent reproduction, and the design target of millions of machines and trillions of rows (lines 39-40) is not evidence of deployed scale."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/serializable-retry.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/availability-zones-placement-and-failure-domains.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated reader (DeepSeek Harness subagent); research-only under /tmp/delegated-reader-policy.md"
+    },
+    {
+      "id": "R136",
+      "source_ids": [
+        "src.bigtable"
+      ],
+      "url": "https://research.google.com/archive/bigtable-osdi06.pdf",
+      "unit": "Single paper: Chang et al., 'Bigtable: A Distributed Storage System for Structured Data', OSDI 2006 (14 pages incl. references); local PDF text extraction.",
+      "revision": "Published paper; PDF text extracted 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete extracted text, lines 1-842 (Python splitlines convention; wc -l = 828 newlines plus 14 form-feed page separators, no trailing newline). Covers abstract, sections 1-11, acknowledgements and references. Excluded: repeated 'To appear in OSDI 2006' footers and page numbers. Figure images are not present; captions and Tables 1-2 are present.",
+      "retrieval_refs": [
+        "/tmp/B18/manifest.json#R136",
+        "/tmp/B18/raw/src.bigtable.txt",
+        "/tmp/B18/raw/src.bigtable.txt:1-842",
+        "https://research.google.com/archive/bigtable-osdi06.pdf"
+      ],
+      "omissions": "References not separately followed; no reproduction or experiment. Figure images (Figures 1-6) are absent from the extraction; captions and both tables are present. Code examples in Figures 2-3 are retained as extracted text but may have lost formatting. Page footers and page numbers excluded from claims.",
+      "representation_gap": null,
+      "representation_sha256": "dea31c712bc21c003ab66c89d384bace8947b7b747d722741d39ee92eff99319",
+      "retrieved_lines": 842,
+      "retrieved_words": 11462,
+      "sections": [
+        {
+          "heading": "Title and Abstract",
+          "lines": "1-26"
+        },
+        {
+          "heading": "1 Introduction",
+          "lines": "28-47"
+        },
+        {
+          "heading": "2 Data Model (Rows, Column Families, Timestamps)",
+          "lines": "49-152"
+        },
+        {
+          "heading": "3 API",
+          "lines": "153-158"
+        },
+        {
+          "heading": "4 Building Blocks",
+          "lines": "159-232"
+        },
+        {
+          "heading": "5 Implementation (5.1 Tablet Location, 5.2 Tablet Assignment, 5.3 Tablet Serving, 5.4 Compactions)",
+          "lines": "233-339"
+        },
+        {
+          "heading": "6 Refinements (locality groups, compression, caching, Bloom filters, commit log, recovery, immutability)",
+          "lines": "340-436"
+        },
+        {
+          "heading": "7 Performance Evaluation",
+          "lines": "437-532"
+        },
+        {
+          "heading": "8 Real Applications (8.1 Google Analytics, 8.2 Google Earth, 8.3 Personalized Search)",
+          "lines": "533-624"
+        },
+        {
+          "heading": "9 Lessons",
+          "lines": "625-653"
+        },
+        {
+          "heading": "10 Related Work",
+          "lines": "654-726"
+        },
+        {
+          "heading": "11 Conclusions",
+          "lines": "742-755"
+        },
+        {
+          "heading": "Acknowledgements",
+          "lines": "727-740"
+        },
+        {
+          "heading": "References",
+          "lines": "741-842"
+        }
+      ],
+      "notes": [
+        "[claim] Bigtable is a sparse, distributed, persistent multi-dimensional sorted map indexed by (row:string, column:string, time:int64), with values treated as uninterpreted byte strings (lines 51-56, 90-100).",
+        "[claim] Reads and writes under a single row key are atomic; rows are kept in lexicographic order and dynamically partitioned into tablets that are the units of distribution and load balancing (lines 95-107).",
+        "[claim] Column families are the basic unit of access control and accounting; families should be few (hundreds at most), while a table may have an unbounded number of columns (lines 75-87).",
+        "[claim] Cells hold multiple 64-bit timestamped versions stored newest-first, with per-column-family garbage collection by version count or age (lines 109-144).",
+        "[claim] Bigtable supports single-row transactions and atomic read-modify-write on one row, but not general cross-row transactions; it also exposes counters, Sawzall scripts and MapReduce integration (lines 138-175).",
+        "[claim] Bigtable depends on GFS, a cluster management system, SSTables and Chubby; Chubby keeps five replicas with Paxos, and an extended Chubby outage makes Bigtable unavailable - measured at 0.0047% of server-hours across 14 clusters and 11 Chubby instances (0.0326% worst cluster) (lines 178-230).",
+        "[claim] Tablet location uses a three-level hierarchy (Chubby root pointer, root METADATA tablet, METADATA tablets); with 128 MB METADATA tablets the scheme addresses about 2^34 tablets (lines 235-244; the extraction loses the superscript and prints '234').",
+        "[claim] Tablets default to roughly 100-200 MB; a tablet server typically manages 10-1000 tablets, and minor/major compactions convert memtables to SSTables and eventually rewrite all SSTables into one (lines 185-187, 201-202, 301-339).",
+        "[claim] Single-server throughput is about 1212 random reads/s, 10811 in-memory random reads/s, 8850 random writes/s and 15385 scans/s for 1000-byte values; per-server rates fall at 50-500 servers while aggregate throughput grows more than 100x (Figure 6, lines 476-486, 544-567).",
+        "[claim] As of August 2006 there were 388 non-test clusters and about 24,500 tablet servers; 14 busy clusters with 8069 servers saw over 1.2 million requests/s, 741 MB/s inbound and 16 GB/s outbound RPC traffic (lines 573-582).",
+        "[claim] Reported lessons include failures beyond fail-stop/partition assumptions (memory and network corruption, clock skew, hung machines, asymmetric partitions), the value of delaying features, system-level monitoring, and simple designs in about 100,000 lines of non-test code (lines 645-652, 667-698).",
+        "[inference] The performance table mixes per-server and aggregate views and its clients and servers share machines, so the numbers demonstrate internal scalability rather than a portable benchmark; cross-system latency comparisons are not supported."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated reader (DeepSeek Harness subagent); research-only under /tmp/delegated-reader-policy.md"
+    },
+    {
+      "id": "R137",
+      "source_ids": [
+        "src.mapreduce"
+      ],
+      "url": "https://research.google.com/archive/mapreduce-osdi04.pdf",
+      "unit": "MapReduce: Simplified Data Processing on Large Clusters — OSDI 2004 paper, 13 printed pages: abstract, Sections 1-8 with subsections, acknowledgements, references [1]-[18], Appendix A; local plain-text PDF extraction at /tmp/B18/raw/src.mapreduce.txt",
+      "revision": "Published paper; PDF text extracted 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Read sequentially, all 851 extracted lines. Content: abstract; 1 Introduction; 2 Programming Model (2.1 Example, 2.2 Types, 2.3 More Examples); 3 Implementation (3.1 Execution Overview, 3.2 Master Data Structures, 3.3 Fault Tolerance incl. worker/master failure and semantics, 3.4 Locality, 3.5 Task Granularity, 3.6 Backup Tasks); 4 Refinements (4.1-4.9); 5 Performance (5.1-5.5); 6 Experience (6.1); 7 Related Work; 8 Conclusions; Acknowledgements; References; Appendix A. Excluded from claims: 13 running footers 'To appear in OSDI 2004' with page number 1-13, and column-formatting artifacts. Note: two-column extraction interleaves the columns, so sentences alternate between the printed left and right column; printed reading order was reconstructed from context, not from line order. Appendix A's C++ listing shares lines with the reference column and is fragmented by that interleaving. Figure captions 1-4 and Table 1 are present; figure interiors survive only as scattered axis tick labels, never as data series.",
+      "retrieval_refs": {
+        "manifest": "/tmp/B18/manifest.json#R137",
+        "text": "/tmp/B18/raw/src.mapreduce.txt",
+        "line_span": "1-851",
+        "verification": "sha256 and word count recomputed 2026-10-24; splitlines=851, newline-terminated lines=838, 13 form-feed page separators"
+      },
+      "omissions": "References not separately followed; no reproduction or experiment",
+      "representation_sha256": "c59e2b80bcd2feaa6913de17cad532dd789d53d87c1e07c90dc9494a1c627dbf",
+      "retrieved_lines": 851,
+      "retrieved_words": 9133,
+      "retrieved_newline_terminated_lines": 838,
+      "sections": [
+        {
+          "title": "Abstract",
+          "printed_pages": "1"
+        },
+        {
+          "title": "1 Introduction",
+          "printed_pages": "1-2"
+        },
+        {
+          "title": "2 Programming Model (2.1 Example, 2.2 Types, 2.3 More Examples)",
+          "printed_pages": "2-3"
+        },
+        {
+          "title": "3 Implementation (3.1 Execution Overview, 3.2 Master Data Structures, 3.3 Fault Tolerance, 3.4 Locality, 3.5 Task Granularity, 3.6 Backup Tasks)",
+          "printed_pages": "3-6"
+        },
+        {
+          "title": "4 Refinements (4.1 Partitioning Function, 4.2 Ordering Guarantees, 4.3 Combiner Function, 4.4 Input and Output Types, 4.5 Side-effects, 4.6 Skipping Bad Records, 4.7 Local Execution, 4.8 Status Information, 4.9 Counters)",
+          "printed_pages": "6-8"
+        },
+        {
+          "title": "5 Performance (5.1 Cluster Configuration, 5.2 Grep, 5.3 Sort, 5.4 Effect of Backup Tasks, 5.5 Machine Failures)",
+          "printed_pages": "8-10"
+        },
+        {
+          "title": "6 Experience (6.1 Large-Scale Indexing)",
+          "printed_pages": "10-11"
+        },
+        {
+          "title": "7 Related Work",
+          "printed_pages": "11-12"
+        },
+        {
+          "title": "8 Conclusions",
+          "printed_pages": "12"
+        },
+        {
+          "title": "Acknowledgements",
+          "printed_pages": "12"
+        },
+        {
+          "title": "References [1]-[18]",
+          "printed_pages": "12-13"
+        },
+        {
+          "title": "Appendix A: Word Frequency (C++ program listing)",
+          "printed_pages": "13"
+        }
+      ],
+      "notes": [
+        "[source claim] The model is map (k1,v1) -> list(k2,v2) and reduce (k2, list(v2)) -> list(v2); intermediate keys share the output domain, and the C++ implementation passes strings to user functions (L55-110).",
+        "[source claim] Input is split into M pieces of typically 16-64 MB and intermediate keys are partitioned into R pieces by a user-supplied function (default hash(key) mod R); M=200,000 with R=5,000 on 2,000 workers is given as a configuration they often use (L180-302).",
+        "[source claim] The master holds per-task state (idle, in-progress, completed) plus worker identity, and for each completed map task the locations and sizes of its R intermediate file regions, pushed incrementally to workers with in-progress reduce tasks; scheduling state is O(M+R) and per-pair state about one byte (L195-210, L280-291).",
+        "[source claim] Failure split: completed map tasks are reset to idle and re-executed because their output is on the failed machine's local disk, while completed reduce tasks are kept because their output is in a global file system; master checkpoints are described as easy to add, but this implementation aborts on master failure and leaves retry to clients (L211-260).",
+        "[inference] The availability argument therefore covers worker failure only; the paper gives no master-failure rate or failover measurement, so single-master abort is a stated design trade rather than an evaluated one.",
+        "[source claim] With deterministic operators the output equals a non-faulting sequential execution, achieved by private temporary files and atomic rename; with non-deterministic operators two reduce tasks may reflect different executions of the same map task (L263-291).",
+        "[source claim] Locality uses 64 MB input blocks with typically three replicas: a map task is scheduled on a machine holding a replica, otherwise near one (L261-280).",
+        "[source claim] Stragglers are mitigated by backup executions near job completion, said to raise resource use by no more than a few percent; the sort program is reported 44% slower without backups, 1283 s versus 891 s (L305-333, L569-583).",
+        "[source claim] The measurement cluster is about 1,800 machines, each two 2 GHz Xeon processors with hyper-threading, 4 GB memory, two 160 GB IDE disks and a gigabit link; grep over 10^10 100-byte records peaks above 30 GB/s with 1,764 workers and finishes in about 150 s including about one minute of startup; the sort uses M=15,000, R=4,000, writes 2 TB to two-way replicated storage and finishes in 891 s (L453-566).",
+        "[source claim] August 2004 job statistics: 29,423 jobs, average completion 634 s, 79,186 machine-days, 3,288 TB input read, 758 TB intermediate, 193 TB output, on average 157 machines and 1.2 worker deaths per job (L592-606, Table 1).",
+        "[source claim] Refinements include a combiner for partial merging on map machines, an optional bad-record skipping mode driven by a signal handler and a 'last gasp' UDP packet, and counters piggybacked on pings with duplicate executions de-duplicated (L336-450).",
+        "[inference] The 44% backup-task penalty and the 5% elapsed-time cost of killing 200 of 1,746 workers are single-run figures on one cluster with no reported repetition or variance, so they illustrate mechanism rather than estimate a general effect."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/scaling-models.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/cases/stripe-online-subscriptions-migration.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/README.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        }
+      ],
+      "representation_gap": null,
+      "reader": "Delegated reader B18 (DeepSeek Harness, deepseek-flash), read-only under /tmp/delegated-reader-policy.md; not independent or human review"
+    },
+    {
+      "id": "R138",
+      "source_ids": [
+        "src.hnsw"
+      ],
+      "url": "https://arxiv.org/pdf/1603.09320",
+      "unit": "Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs — IEEE manuscript version, 13 printed pages: abstract, Sections 1-8, Algorithms 1-5, Tables 1-3, Figures 1-15, 59 references, author biographies; local plain-text PDF extraction at /tmp/B18/raw/src.hnsw.txt",
+      "revision": "Published paper; PDF text extracted 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Read sequentially, all 1141 extracted lines. Content: abstract and index terms; 1 Introduction; 2 Related Works (2.1 Proximity graph techniques, 2.2 Navigable small world models); 3 Motivation; 4 Algorithm Description (Algorithms 1-5) with 4.1 Influence of the construction parameters; 4.2 Complexity analysis (4.2.1 Search, 4.2.2 Construction, 4.2.3 Memory); 5 Performance Evaluation (5.1 Comparison with baseline NSW, 5.2 Comparison in Euclid spaces, 5.3 Comparison in general spaces, 5.4 Comparison with product quantization based algorithms); 6 Discussion; 7 Acknowledgements; 8 References; author biographies. Excluded from claims: 7 'IEEE TRANSACTIONS ON JOURNAL NAME, MANUSCRIPT ID' headers, 6 'AUTHOR ET AL.: TITLE' headers and the page numbers carried with them, plus column-formatting artifacts. Two-column extraction interleaves the columns, so Algorithms 1-5, Tables 1-3 and the running text alternate between printed columns; figures 1-15 survive as captions and scattered axis tick labels only, so no plotted series was read or reconstructed.",
+      "retrieval_refs": {
+        "manifest": "/tmp/B18/manifest.json#R138",
+        "text": "/tmp/B18/raw/src.hnsw.txt",
+        "line_span": "1-1141",
+        "verification": "sha256 and word count recomputed 2026-10-24; splitlines=1141, newline-terminated lines=1128, 13 form-feed page separators"
+      },
+      "omissions": "References not separately followed; no reproduction or experiment",
+      "representation_sha256": "902ca627a8e0faaa6bb152fb8d7392de7905d55c017f7ec42691f4946939e8ad",
+      "retrieved_lines": 1141,
+      "retrieved_words": 11015,
+      "retrieved_newline_terminated_lines": 1128,
+      "sections": [
+        {
+          "title": "Abstract and Index Terms",
+          "printed_pages": "1"
+        },
+        {
+          "title": "1 Introduction",
+          "printed_pages": "1-2"
+        },
+        {
+          "title": "2 Related Works (2.1 Proximity graph techniques, 2.2 Navigable small world models)",
+          "printed_pages": "2-3"
+        },
+        {
+          "title": "3 Motivation",
+          "printed_pages": "2-4"
+        },
+        {
+          "title": "4 Algorithm Description (Algorithms 1-5)",
+          "printed_pages": "4-5"
+        },
+        {
+          "title": "4.1 Influence of the construction parameters",
+          "printed_pages": "5-7"
+        },
+        {
+          "title": "4.2 Complexity analysis (4.2.1 Search, 4.2.2 Construction, 4.2.3 Memory)",
+          "printed_pages": "7-8"
+        },
+        {
+          "title": "5 Performance Evaluation (5.1 Baseline NSW, 5.2 Euclid spaces, 5.3 General spaces, 5.4 Product quantization)",
+          "printed_pages": "8-11"
+        },
+        {
+          "title": "6 Discussion",
+          "printed_pages": "11"
+        },
+        {
+          "title": "7 Acknowledgements",
+          "printed_pages": "11"
+        },
+        {
+          "title": "8 References [1]-[59]",
+          "printed_pages": "11-13"
+        },
+        {
+          "title": "Author biographies",
+          "printed_pages": "13"
+        }
+      ],
+      "notes": [
+        "[source claim] HNSW is a fully graph-based K-ANNS index needing no auxiliary coarse-search structure; it builds a multi-layer proximity graph over nested subsets, and each element's top layer is l = floor(-ln(unif(0,1)) * mL), an exponentially decaying level distribution (L11-22, L243-270).",
+        "[source claim] Insertion (Alg. 1) greedily descends from the top layer with ef=1, then from min(L,l) to layer 0 uses efConstruction, connects the new element to M selected neighbours, and shrinks any neighbour's list above Mmax (Mmax0 at layer 0) (L243-270).",
+        "[source claim] Search (Alg. 5) uses ef=1 above layer 0 and a dynamic candidate list of size ef at layer 0; the layer search (Alg. 2) stops when the nearest candidate is farther than the furthest result, not after a fixed number of distance computations (L249-300).",
+        "[source claim] The neighbour heuristic (Alg. 4) keeps a candidate only if it is closer to the base element than any already selected neighbour; given enough candidates it yields the exact relative neighbourhood graph as a subgraph, and in 1D the exact Delaunay subgraph, which is the stated correspondence to a skip list (L207-241, L275-305).",
+        "[source claim] Recommended settings are mL = 1/ln(M) (skip-list p=1/M), Mmax0 = 2*M, M in 5-48 (6-48 in the memory section), and efConstruction = 100 for a reasonable index; setting Mmax0 = M is reported to penalise high-recall search (L306-350, L433-460, L611-626).",
+        "[source claim] Under an assumption of exact Delaunay graphs the expected steps per layer are bounded by S = 1/(1-exp(-mL)), independent of dataset size, giving O(log N) search and O(N log N) construction; the authors acknowledge the assumption is violated by approximate selection and rely on zero-layer backtracking, with simulations said to show unchanged scaling (L563-606).",
+        "[source claim] Memory per element is (Mmax0 + mL*Mmax) * bytes_per_link; with four-byte links and M in 6-48 this is about 60-450 bytes per object excluding the stored data (L611-626).",
+        "[source claim] Evaluation is single-threaded on a 4x Xeon E5-4650 v2, 128 GB RAM, GCC 5.3 with -Ofast, using ann-benchmark with 1,000 queries per dataset; baselines are NSW, FLANN, Annoy, VP-tree, FALCONN and Faiss PQ (L629-750, L911-936).",
+        "[source claim] Build cost: on a 200M SIFT subset HNSW is reported at 5.6 h and 64 GB peak with efConstruction=500, or 42 min with efConstruction=40, versus Faiss at 11-12 h and 23.5-30 GB; on 10M SIFT, efConstruction=100 builds in about 3 minutes on a 4x 2.4 GHz 10-core server, and construction parallelises with few synchronisation points and no measurable index-quality effect (Table 3, Fig. 15, L548-560, L864-936).",
+        "[source claim] Stated limitation: the fixed top-layer entry point prevents NSW-style distributed search because of higher-layer congestion; partitioning data across nodes is possible but total parallel throughput is said not to scale well, and skip-list-like distribution is left as a possibility (L923-943).",
+        "[inference] The headline comparisons are per-dataset query-time/recall curves from one machine generation and one query batch; the text reports no tail latency, concurrent-query throughput, filtered search, or supported update/delete path, and the Discussion lists element updates and removal as future work (L985-990), so those properties are outside what this unit demonstrates.",
+        "[inference] The vector-space comparison selects each baseline's best result within every recall range (L735-742), which works against HNSW; the reported lead is therefore unlikely to be an artefact of weak baseline tuning, though the margins remain specific to these datasets, parameter sweeps and one machine."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-hnsw-faiss-pgvector.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/exact-ann.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-filters.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/README.md",
+          "candidate": "Relate the paper mechanism to this page; no edit under #225."
+        }
+      ],
+      "representation_gap": null,
+      "reader": "Delegated reader B18 (DeepSeek Harness, deepseek-flash), read-only under /tmp/delegated-reader-policy.md; not independent or human review"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 95,
+    "full_reads": 103,
     "blocked": 14,
     "records": [
       "R015",
@@ -7050,7 +8204,15 @@
       "R127",
       "R128",
       "R129",
-      "R130"
+      "R130",
+      "R131",
+      "R132",
+      "R133",
+      "R134",
+      "R135",
+      "R136",
+      "R137",
+      "R138"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
