@@ -13,7 +13,7 @@ appendices A-H and the preface; sixty-five new records are in [the OSTEP
 continuation ledger](ostep-continuation-readings.json). Embedded raster figures
 were not visually inspected, and linked publications remain separate.
 
-Comparison checkpoint: eighty-five candidate comparisons are assessed in
+Comparison checkpoint: eighty-seven candidate comparisons are assessed in
 [comparisons.json](comparisons.json): forty-seven supported, thirty-two qualified, three
 source mechanisms not addressed and zero contradicted. These are bounded
 comparisons, not independent review, book findings or permission to edit.

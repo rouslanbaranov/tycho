@@ -8,7 +8,7 @@
 | Every source has a finite unit and honest full/partial/blocked status | Partial | 367 reference records plus 6 source reconciliations; 86 sources remain landing-only. |
 | Every accessible scoped source read completely | Not met | 86 landing-only sources remain; RFC 9110 is now read with labelled supplements; 19 blocked records (14 baseline pages) and 2 sources excluded. |
 | All 406 canonical documents have a review status | Partial | All 406 have a status; 61 are comparison-assessed and 345 are explicit gaps. |
-| Findings include exact source locations, anchors and confidence | Partial | 85 comparisons carry anchors and source records; most pages have no comparison. |
+| Findings include exact source locations, anchors and confidence | Partial | 87 comparisons carry anchors and source records; most pages have no comparison. |
 | Deep research synthesis delivered | Yes, negative | `FINAL-SYNTHESIS.md` records the evidence and the unmet criteria. |
 | No book content changed, baseline verified | Yes | 681 tracked files match; no book, register, index or edition change. |
 | Research artifacts independently reviewed | Not met | Reviewer-preset child returned no report; human review not performed. |
