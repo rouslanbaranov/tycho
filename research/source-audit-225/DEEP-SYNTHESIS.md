@@ -14,7 +14,7 @@ index or edition file was changed.
   images. OSTEP: chapters 1-57, appendices A-H and the preface, in 65
   continuation records (20,189 lines, 323,810 words, 803 pages plus the earlier
   chapter 2 record). OSTEP raster figures were not visually inspected.
-- **155 reference records** in `readings.json`: 125 full reads, 9 partial, 19 blocked-full-text
+- **155 reference records** in `readings.json`: 122 full reads, 12 partial, 19 blocked-full-text
   and 2 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
 - **76 assessed comparisons** in `comparisons.json` against 43 canonical pages:
