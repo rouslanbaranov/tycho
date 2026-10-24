@@ -30591,12 +30591,844 @@
         }
       ],
       "reader": "delegated-reader/B20h/deepseek-harness (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - no book findings, support classification, severity or verdict."
+    },
+    {
+      "id": "R274",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/puppet.html",
+      "unit": "AOSA Volume II, Chapter 18 \"Puppet\" (public HTML chapter), local representation /tmp/B20h/raw/puppet.txt lines 1-378",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-378: 6 numbered sections (18.1-18.6), 10 level-3 subsections under 18.3 and 18.4, 5 code blocks, 2 figure captions, no tables, footnotes or hyperlinks. Lines 1-9 are the site header, chapter title, author name and a promotional line; they remain in the hash, line and word totals but are excluded from the substantive section description. Live HTML fetched 2026-10-24 has the same six numbered sections and ten subsections, so no prose section is missing.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest9.json#R274",
+        "/tmp/B20h/raw/puppet.txt lines 1-378; sha256=80f3447b450e58a76838375d361c674b8781127fbea2e14d70e9ee6b48db4569; words=5600",
+        "https://aosabook.org/en/v2/puppet.html (HTTP 200, fetched 2026-10-24; live headings and 2 figure captions match the local representation, so no section is missing)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_gap": "Figures 18.1 and 18.2 are caption-only at line 99; the diagram images and any alt text are absent. Code blocks survive as literal text between [CODE] and [/CODE] markers. No tables, footnotes or links are present. Lines 1-9 retain header/promotional chrome, and 120 blank separator lines carry single trailing spaces from extraction; no prose is missing.",
+      "representation_sha256": "80f3447b450e58a76838375d361c674b8781127fbea2e14d70e9ee6b48db4569",
+      "retrieved_lines": 378,
+      "retrieved_words": 5600,
+      "sections": [
+        {
+          "title": "18.1. Introduction",
+          "level": 2,
+          "start_line": 11,
+          "end_line": 79
+        },
+        {
+          "title": "18.2. Architectural Overview",
+          "level": 2,
+          "start_line": 80,
+          "end_line": 120
+        },
+        {
+          "title": "18.3. Component Analysis",
+          "level": 2,
+          "start_line": 121,
+          "end_line": 303
+        },
+        {
+          "title": "18.4. Infrastructure",
+          "level": 2,
+          "start_line": 304,
+          "end_line": 350
+        },
+        {
+          "title": "18.5. Lessons Learned",
+          "level": 2,
+          "start_line": 351,
+          "end_line": 371
+        },
+        {
+          "title": "18.6. Conclusion",
+          "level": 2,
+          "start_line": 372,
+          "end_line": 378
+        }
+      ],
+      "notes": [
+        "Source claim: Puppet is a Ruby IT-management tool for datacenter automation, used from 2 to 50,000 machines; it reads a declarative specification and converges each host to it, doing nothing when already compliant, and prefers native system facilities such as yum and init.d on Red Hat and dmg and launchd on OS X (lines 14-20).",
+        "Source claim: Puppet credits CFEngine as the first general-purpose open-source configuration tool and ISconf for make-inspired explicit dependencies; resources are its primitives and must be unique per host per type and title, dependencies are first-class, and the Catalog is the resource graph that most of Puppet hangs off (lines 23-65).",
+        "Source claim: Puppet runs in client/server or serverless mode with internal network transparency; agents receive only their compiled catalog rather than raw modules, which enforces least privilege, separates the right to compile a configuration from the right to apply it, and permits disconnected operation (lines 86-89); the interchange types are Facts, Manifests, Catalogs and Reports plus files and certificates (lines 107-118).",
+        "Source claim: the External Node Classifier was added about two years after launch because classifying hosts is fundamentally different from configuring them; it returns the classes and parameters for a host and remained optional as of Puppet 2.7 (lines 139-142).",
+        "Source claim: the compiler combines a Racc-generated Yacc-style parser, a custom lexer because no open-source lexer generator existed, AST classes and a Compiler facade; manifests are lazily loaded, and the AST lets one server parse once and compile for many nodes (lines 151-160).",
+        "Source claim: compilation builds a temporary scope tree with dynamic scoping, which the author calls a long-standing nightmare, and emits a plain-data catalog; containment and dependency edges cannot coexist in SimpleGraph, so the same graph is converted between the two forms for different purposes (lines 178-187).",
+        "Source claim: the Transaction topologically sorts the graph and retrieves, compares and fixes each resource; ResourceHarness narrows the interface between Transaction and Resource; Puppet transactions deliberately lack atomicity (lines 196-219).",
+        "Source claim: the RAL is the oldest and hardest-to-change component; Puppet::Type conflates resource, resource type and type manager in under 2,000 lines; Providers separate type definition from getters and setters, enabling more than 30 package managers, and providers never decide to act, which is what makes simulation mode trustworthy (lines 225-286).",
+        "Source claim: parameters split into metaparameters, parameters and properties; reporting records events with timestamp, previous and new value, message and success, failure or simulation status, wraps them per resource in ResourceStatus, and sends metrics to the server (lines 289-301).",
+        "Source claim: plugins are downloaded at the start of every run; the Indirector is an IoC service locator exposing REST-like find, search, save and destroy, so switching from serverless to client/server is configuration rather than code; networking moved from XMLRPC to REST over two releases, JSON is replacing YAML for speed and portability, and XMLRPC is to be removed (lines 313-348).",
+        "Source claim: the lessons are that separation of language, RAL and transaction is the proudest achievement, extensibility uses the same interfaces offered to users, simplicity carries maintenance cost, configurability was taken too far, refactoring was too slow, and the language of design gave better decision criteria than the language of simplicity (lines 354-369).",
+        "Inference: the chapter explains architecture through a single-maintainer origin story (2004 prototype, Ruby chosen after a four-hour prototype); this is the author's retrospective framing and adoption or scale figures are asserted rather than measured (lines 56-77)."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/desired-state-exposure.md",
+          "candidate": "Candidate context for desired-state control, convergence and outcomes that remain outside a reconciler; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
+          "candidate": "Candidate context for declarative configuration change and version skew across processes; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Candidate context for the language/RAL/transaction separation and provider adapters; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-cards.md",
+          "candidate": "Candidate context for framework-first design and the conditional applicability of configuration-management patterns; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md",
+          "candidate": "Candidate context for the simplicity-versus-capability trade-off and its maintainability cost; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness"
+    },
+    {
+      "id": "R275",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/pypy.html",
+      "unit": "AOSA Volume II, Chapter 19 \"PyPy\" (public HTML chapter), local representation /tmp/B20h/raw/pypy.txt lines 1-281",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-281: 9 numbered sections (19.1-19.9), no level-3 subsections, 5 code blocks, 4 figure captions, no tables, footnotes or hyperlinks. Lines 1-9 are the site header, chapter title, author name and a promotional line; they remain in the hash, line and word totals but are excluded from the substantive section description. Live HTML fetched 2026-10-24 has the same nine sections and four figure captions, so no prose section is missing.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest9.json#R275",
+        "/tmp/B20h/raw/pypy.txt lines 1-281; sha256=8c7fe16a9ab998459ad0eee653b39fc3a87a90a016cbe3e84f97133cc7378f0e; words=5215",
+        "https://aosabook.org/en/v2/pypy.html (HTTP 200, fetched 2026-10-24; live headings and 4 figure captions match the local representation, so no section is missing)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_gap": "Figures 19.1-19.4 are caption-only at lines 65, 87, 213 and 252; the flow-graph, factorial, bailout and jitviewer images and any alt text are absent. Code blocks survive as literal text between [CODE] and [/CODE] markers. No tables, footnotes or links are present. Lines 1-9 retain header/promotional chrome, and 79 blank separator lines carry single trailing spaces from extraction; no prose is missing.",
+      "representation_sha256": "8c7fe16a9ab998459ad0eee653b39fc3a87a90a016cbe3e84f97133cc7378f0e",
+      "retrieved_lines": 281,
+      "retrieved_words": 5215,
+      "sections": [
+        {
+          "title": "19.1. A Little History",
+          "level": 2,
+          "start_line": 17,
+          "end_line": 22
+        },
+        {
+          "title": "19.2. Overview of PyPy",
+          "level": 2,
+          "start_line": 23,
+          "end_line": 31
+        },
+        {
+          "title": "19.3. The Python Interpreter",
+          "level": 2,
+          "start_line": 32,
+          "end_line": 60
+        },
+        {
+          "title": "19.4. The RPython Translator",
+          "level": 2,
+          "start_line": 61,
+          "end_line": 175
+        },
+        {
+          "title": "19.5. The PyPy JIT",
+          "level": 2,
+          "start_line": 176,
+          "end_line": 223
+        },
+        {
+          "title": "19.6. Design Drawbacks",
+          "level": 2,
+          "start_line": 224,
+          "end_line": 241
+        },
+        {
+          "title": "19.7. A Note on Process",
+          "level": 2,
+          "start_line": 242,
+          "end_line": 253
+        },
+        {
+          "title": "19.8. Summary",
+          "level": 2,
+          "start_line": 254,
+          "end_line": 268
+        },
+        {
+          "title": "19.9. Lessons Learned",
+          "level": 2,
+          "start_line": 269,
+          "end_line": 281
+        }
+      ],
+      "notes": [
+        "Source claim: PyPy is a Python implementation and a dynamic-language implementation framework, written almost entirely in Python except negligible C stubs, split into a Python interpreter written in RPython and the RPython translation toolchain (lines 11-26).",
+        "Source claim: because RPython is a strict subset, the interpreter runs untranslated on another Python implementation; this is very slow but allows fast testing and normal Python debugging, and most tests run both untranslated and translated (line 35).",
+        "Source claim: object spaces encapsulate all knowledge needed to represent and manipulate Python objects; the bytecode interpreter treats objects as black boxes and delegates, as in the BINARY_ADD example, which permits replacement representations, interception, thunking and tainting (lines 38-52); the standard objspace adds multimethod dispatch across multiple implementations per type, such as machine-word or arbitrary-precision longs, tagged pointers and string-specialised dictionaries (line 55); interp-level RPython is distinguished from app-level Python, and parts of the interpreter such as print are written app-level (line 58).",
+        "Source claim: the translator loads the RPython program, abstract-interprets it with the flow objspace into SSA flow graphs, annotates types, RTypes operations into a backend type system, optimises and hands off to the backend (lines 64-101).",
+        "Source claim: the flow objspace holds only variables and constants, constant-folds operations whose arguments are all constant, records every branch of conditional control flow, and treats modules as constants because they must be folded out (line 70).",
+        "Source claim: malloc removal flattens non-escaping allocations into scalars; the Euclidean-distance example loses two tuple mallocs and the field indirections, leaving int_sub, cast_int_to_float and direct_call operations (lines 104-161).",
+        "Source claim: inlining reduces final binary size by enabling more constant folding and malloc removal; the C backend rewrites exception handling as manual stack unwinding, inserts stack-depth checks found through call-graph cycles, and inserts garbage collection through a transformer that also adds write barriers automatically (lines 164-170).",
+        "Source claim: generated C is an intentionally ugly mess of gotos and obscure names, leaving loop optimisation and register allocation to the C compiler; collectors can be swapped by configuration and reference mistakes are avoided modulo transformer bugs (lines 170-173).",
+        "Source claim: vanilla PyPy runs up to four times slower than CPython because of objspace and multimethod indirection; the JIT is a tracing JIT generated by two hints, merge_point and can_enter_jit, after RTyping, with jitcodes serialised into the binary, a meta-interpreter that records guards, virtuals and virtualizables optimisations, blackhole bailout on guard failure and bridge retracing (lines 179-215).",
+        "Source claim: at the time of writing PyPy is a geometric average of five times faster than CPython; the JIT is not Python-specific and is used for the regular-expression engine and an experimental NumPy, and interp-level loops have been rewritten app-level for speed (lines 218-221).",
+        "Source claim: drawbacks are implicit typing, an unspecified and shifting RPython subset, whole-program translation taking about 40 minutes, extra JIT hints needed in practice, multi-layer debugging through GDB on generated C, and lowering passes that are not really independent (lines 227-239); process relies on test-driven development, CPython's regression suite, py.test, continuous integration, daily binaries and benchmarks, Mercurial branches, a fifth JIT attempt and tools such as jitviewer (lines 245-252).",
+        "Inference: the five-times and four-times figures are author-reported with no benchmark suite, hardware, warm-up or statistical method given, and the chapter describes one point in the project's history; architecture-as-accumulation, including five JIT attempts, is presented as a lesson rather than measured (lines 218-248)."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+          "candidate": "Candidate context for garbage-collection schemes, heap evidence and memory diagnostics; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+          "candidate": "Candidate context for evidence-first runtime diagnosis across interpreter and generated-code layers; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/benchmark-controls.md",
+          "candidate": "Candidate context for the reported five-times speed claim and benchmark comparability; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Candidate context for object-space and translation-backend abstraction boundaries; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/contraindications-transition.md",
+          "candidate": "Candidate context for abstraction cost, restricted-language limits and when a design should be reversed; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness"
+    },
+    {
+      "id": "R276",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/sqlalchemy.html",
+      "unit": "AOSA Volume II, Chapter 20 \"SQLAlchemy\" (public HTML chapter), local representation /tmp/B20h/raw/sqlalchemy.txt lines 1-509",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-509: 10 numbered sections (20.1-20.10), 14 level-3 subsections, 13 code blocks, 16 figure captions, no tables, footnotes or hyperlinks. Lines 1-9 are the site header, chapter title, author name and a promotional line; they remain in the hash, line and word totals but are excluded from the substantive section description. Line 278 begins with '#' but is a Python comment inside a code block, not a heading. Live HTML fetched 2026-10-24 has the same sections and sixteen figure captions, so no prose section is missing.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest9.json#R276",
+        "/tmp/B20h/raw/sqlalchemy.txt lines 1-509; sha256=6b84e1e0d935906176b3ece80172c21f8f2ec816fe805d3cb3c81b6bfafacc5b; words=8394",
+        "https://aosabook.org/en/v2/sqlalchemy.html (HTTP 200, fetched 2026-10-24; live headings and 16 figure captions match the local representation, so no section is missing)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_gap": "Figures 20.1-20.16 are caption-only at lines 48, 129, 138, 141, 156, 162, 180, 205, 248, 251, 351, 396, 432, 474, 480 and 489; the layer, dialect, expression-tree, compiler, mapping, loader, session and topological-sort diagrams and any alt text are absent. Code blocks survive as literal text between [CODE] and [/CODE] markers. Line 96 keeps the HTML entity &#64; in place of @ inside a connection-string example. No tables, footnotes or links are present. Lines 1-9 retain header/promotional chrome, and 140 blank separator lines carry single trailing spaces; no prose is missing.",
+      "representation_sha256": "6b84e1e0d935906176b3ece80172c21f8f2ec816fe805d3cb3c81b6bfafacc5b",
+      "retrieved_lines": 509,
+      "retrieved_words": 8394,
+      "sections": [
+        {
+          "title": "20.1. The Challenge of Database Abstraction",
+          "level": 2,
+          "start_line": 17,
+          "end_line": 43
+        },
+        {
+          "title": "20.2. The Core/ORM Dichotomy",
+          "level": 2,
+          "start_line": 44,
+          "end_line": 58
+        },
+        {
+          "title": "20.3. Taming the DBAPI",
+          "level": 2,
+          "start_line": 59,
+          "end_line": 145
+        },
+        {
+          "title": "20.4. Schema Definition",
+          "level": 2,
+          "start_line": 146,
+          "end_line": 166
+        },
+        {
+          "title": "20.5. SQL Expressions",
+          "level": 2,
+          "start_line": 167,
+          "end_line": 255
+        },
+        {
+          "title": "20.6. Class Mapping with the ORM",
+          "level": 2,
+          "start_line": 256,
+          "end_line": 367
+        },
+        {
+          "title": "20.7. Query and Loading Behavior",
+          "level": 2,
+          "start_line": 368,
+          "end_line": 400
+        },
+        {
+          "title": "20.8. Session/Identity Map",
+          "level": 2,
+          "start_line": 401,
+          "end_line": 454
+        },
+        {
+          "title": "20.9. Unit of Work",
+          "level": 2,
+          "start_line": 455,
+          "end_line": 493
+        },
+        {
+          "title": "20.10. Conclusion",
+          "level": 2,
+          "start_line": 494,
+          "end_line": 509
+        }
+      ],
+      "notes": [
+        "Source claim: SQLAlchemy is a database toolkit and ORM for Python introduced in 2005, built on the DBAPI, offering fluent complex SQL and object mapping plus a unit-of-work persistence system; it rejects database abstraction as concealment, requires the developer to consider the relational form, and calls itself a toolkit embracing leaky abstraction while automating repetitive work without removing control (lines 11-41).",
+        "Source claim: every layer is exposed as a public API split into Core, covering DBAPI interaction, SQL rendering and schema, and an ORM built on top; the explicit Core makes mapped attributes relate to Table, queries use the select construct, and rows arrive through ResultProxy, at the cost of more call-chain steps that SQLAlchemy mitigated by shortening chains, inlining and C code (lines 47-56).",
+        "Source claim: DBAPI is only a specification and varies in unicode handling, last-inserted-id retrieval, bound parameters and type behaviour; SQLAlchemy handles this with multi-level Dialect and ExecutionContext subclassing and connector mixins for multi-backend drivers such as pyodbc and zxjdbc, while Engine, Connection and ResultProxy mirror the DBAPI module, connection and cursor and a Pool procures and reuses DBAPI connections (lines 62-143).",
+        "Source claim: Table and Column are ORM-independent schema constructs collected in MetaData, following Fowler's Metadata Mapping, and dual-inherit from the schema and SQL expression packages, serving as FromClause and ColumnElement (lines 152-164).",
+        "Source claim: SQL expressions are parse trees the developer builds directly from ClauseElement nodes, inspired by SQLBuilder in Ian Bicking's SQLObject; operator overloading through ColumnOperators makes column('a') == 2 a SQL construct, and representing operators as objects rather than strings defers rendering to compilation when dialect information is known (lines 170-241).",
+        "Source claim: Compiled splits into SQLCompiler, DDLCompiler and TypeCompiler with per-dialect subclasses; visit methods recursively concatenate SQL while tracking anonymous identifiers, bound parameter names and subquery nesting, and ExecutionContext coerces the completed statement and bound values for the DBAPI (lines 247-253).",
+        "Source claim: classical mapping applies mapper() to an existing class and is called class instrumentation rather than arbitrary monkeypatching; Declarative uses a metaclass to build the Table and invoke the same mapper; version 0.4 moved SQL expression access from .c onto the mapped attributes, giving class-bound expressions and instance-bound data the same name (lines 268-325).",
+        "Source claim: InstrumentedAttribute is a descriptor delegating instance behaviour to AttributeImpl; Mapper holds MapperProperty objects whose LoaderStrategy controls deferred, eager or immediate loading and whose DependencyProcessor is chosen by relational geometry; the mapper graph is configured lazily and drives cascade, eager loading and flush ordering (lines 331-365).",
+        "Source claim: Query separates SQL rendering from data loading, traverses the mapper graph and lets each LoaderStrategy add columns and joins or produce row-population callables; loader callables introduced in 0.5 decide row handling once per query instead of per row, a large performance gain (lines 371-398).",
+        "Source claim: Session implements identity map and unit of work, evolving from a module-global thread-local objectstore.commit in 0.1 to Session in 0.2, autoflush and the transactional Session in 0.4, and expire-on-commit in 0.5; InstanceState keeps committed_state for change detection and collections subclass set, list and dict to track history (lines 404-446).",
+        "Source claim: unitofwork builds persistence commands and topologically sorts them at two levels, per-mapper buckets and then per-object batches for reference cycles, using a modified version of a cycle detector from Guido van Rossum's blog; batching reduces Python steps and DBAPI calls, and the 0.6 rewrite took weeks of design but days to implement (lines 458-491).",
+        "Inference: the chapter is a maintainer's architectural narrative; performance and maturity statements are qualitative, the 0.6 rewrite account is retrospective, and no measurements, failure data or independent review are presented (lines 398-491)."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-modeling-and-transaction-isolation.md",
+          "candidate": "Candidate context for relational modelling and the boundary between object and relational design; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-invariants.md",
+          "candidate": "Candidate context for identities, foreign-key constraints and ordering of persistence steps; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md",
+          "candidate": "Candidate context for dialect and DBAPI adapters that translate between database and application semantics; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/dependencies-ports.md",
+          "candidate": "Candidate context for the Core/ORM dependency direction and the port around DBAPI variability; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md",
+          "candidate": "Candidate context for connection pooling and end-to-end database budgets; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Candidate context for schema metadata, DDL generation and schema lifecycle; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness"
+    },
+    {
+      "id": "R277",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/twisted.html",
+      "unit": "AOSA Volume II, Chapter 21 \"Twisted\" (public HTML chapter), local representation /tmp/B20h/raw/twisted.txt lines 1-619",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text present in the local representation, lines 1-619 (619/619 lines, 5258/5258 words): 18 chapter headings (3 level-2 sections 21.1-21.3, 9 level-3 and 6 level-4 subsections), 11 code blocks, 2 referenced figures whose images are absent and 3 interface tables flattened to text, read sequentially. Lines 1-9 (volume masthead, chapter title, byline, promotional line) are chrome, excluded from the substantive summary but retained in the hash, line and word totals. Live HTML fetched 2026-10-24 (HTTP 200) has the same 18 headings, 11 pre blocks, 2 images and 3 tables.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest9.json#R277",
+        "/tmp/B20h/raw/twisted.txt lines 1-619; sha256=4620cb052f721221ef3fbd00db889c9ed334d60c6898a78231216b645dbbf773; words=5258",
+        "https://aosabook.org/en/v2/twisted.html (HTTP 200, fetched 2026-10-24; used only to confirm 18 headings, 11 code blocks, 2 images and 3 tables)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment. No Twisted installation, protocol test, benchmark or deployment was performed; the cited adopters, the ten-year anniversary claim and the sysadmin anecdote were not independently verified.",
+      "representation_gap": "Figures 21.1 (threading models) and 21.2 (callback chains) are referenced with captions but their images are absent from the text representation. Three interface tables (ITransport, IProtocol, IService) are flattened into run-together paragraphs, and code indentation is collapsed to one leading space inside [CODE] markers; comments beginning with # inside code blocks can be mistaken for headings by a naive scan. The live HTML has the same heading, code-block, image and table counts, so no prose section appears missing, but figure and table content cannot be read from the local text.",
+      "representation_sha256": "4620cb052f721221ef3fbd00db889c9ed334d60c6898a78231216b645dbbf773",
+      "retrieved_lines": 619,
+      "retrieved_words": 5258,
+      "sections": [
+        {
+          "title": "21.1. Why Twisted?",
+          "level": 2,
+          "start_line": 17,
+          "end_line": 56
+        },
+        {
+          "title": "21.2. The Architecture of Twisted",
+          "level": 2,
+          "start_line": 57,
+          "end_line": 545
+        },
+        {
+          "title": "Reusing Existing Applications",
+          "level": 3,
+          "start_line": 93,
+          "end_line": 104
+        },
+        {
+          "title": "The Reactor",
+          "level": 3,
+          "start_line": 105,
+          "end_line": 145
+        },
+        {
+          "title": "Managing Callback Chains",
+          "level": 3,
+          "start_line": 146,
+          "end_line": 277
+        },
+        {
+          "title": "Deferreds",
+          "level": 4,
+          "start_line": 226,
+          "end_line": 277
+        },
+        {
+          "title": "Transports",
+          "level": 3,
+          "start_line": 278,
+          "end_line": 286
+        },
+        {
+          "title": "Protocols",
+          "level": 3,
+          "start_line": 287,
+          "end_line": 353
+        },
+        {
+          "title": "Applications",
+          "level": 3,
+          "start_line": 354,
+          "end_line": 545
+        },
+        {
+          "title": "Service",
+          "level": 4,
+          "start_line": 366,
+          "end_line": 377
+        },
+        {
+          "title": "Application",
+          "level": 4,
+          "start_line": 378,
+          "end_line": 386
+        },
+        {
+          "title": "TAC Files",
+          "level": 4,
+          "start_line": 387,
+          "end_line": 439
+        },
+        {
+          "title": "twistd",
+          "level": 4,
+          "start_line": 440,
+          "end_line": 477
+        },
+        {
+          "title": "Plugins",
+          "level": 4,
+          "start_line": 478,
+          "end_line": 545
+        },
+        {
+          "title": "21.3. Retrospective and Lessons Learned",
+          "level": 2,
+          "start_line": 546,
+          "end_line": 619
+        },
+        {
+          "title": "Twisted Application Persistence",
+          "level": 3,
+          "start_line": 558,
+          "end_line": 579
+        },
+        {
+          "title": "web2: a lesson on rewrites",
+          "level": 3,
+          "start_line": 580,
+          "end_line": 600
+        },
+        {
+          "title": "Keeping Up with the Internet",
+          "level": 3,
+          "start_line": 601,
+          "end_line": 619
+        }
+      ],
+      "notes": [
+        "Source claim: Twisted grew out of glyph's 2000 text multiplayer game Twisted Reality, whose Java implementation used three threads per connection (input, output, logic) and suffered deadlocks, corrupted caches and unreliable locking; a Python select prototype proved simpler and more reliable (lines 20-23).",
+        "Source claim: Medusa and asyncore were rejected because asyncore is such a thin socket wrapper that portability stays the programmer's problem, it was increasingly unmaintained by 2001 and its Windows support was buggy; the stated goals then were event-driven rather than threaded execution, a uniform cross-platform interface to OS event notification, batteries-included protocols, RFC conformance with a test suite, multi-protocol composition and extensibility (lines 29-54).",
+        "Source claim: the chapter contrasts single-threaded, threaded and event-driven execution (Figure 21.1) and argues the event-driven model suits many largely independent tasks that block on I/O and removes synchronization when mutable data is shared (lines 63-90); the figure image is absent locally.",
+        "Source claim: the reactor is the core event loop that knows network, file-system and timer events; the pseudo-code polls with a timeout, merges expired timers and dispatches event.process(); poll is the default, with kqueue, epoll and IOCP reactors, the last maintained by Twisted because Python does not expose IOCP (lines 108-143).",
+        "Source claim: without an abstraction each asynchronous operation must register success and error callbacks by hand, and a missing callback leaves the reactor running forever; the toy synchronous and asynchronous URL fetchers show the try/except/else/finally correspondence (lines 149-221).",
+        "Source claim: the Deferred wraps a not-yet-available result and its callback and errback chains, is fired only once (re-firing raises), and is extended with addCallbacks and addBoth; the chapter says jQuery, Dojo and MochiKit borrowed the abstraction (lines 229-275).",
+        "Source claim: transports describe stream or datagram orientation, flow control and reliability and are decoupled from protocols so many protocols reuse one transport and a mock transport can capture writes; ITransport exposes write, writeSequence, loseConnection, getPeer and getHost, while IProtocol exposes makeConnection, connectionMade, dataReceived and connectionLost, illustrated by complete echo server and client code using factories and reactor.listenTCP/connectTCP (lines 281-351); both interfaces appear locally as flattened tables.",
+        "Source claim: the application infrastructure has four parts - Services (IService startService/stopService), Applications, TAC configuration files and the twistd utility - replacing hand-written reactor start/stop, daemonization, logging and privilege handling; the sample twistd log shows Twisted 11.0.0 on Python 2.7.1 (lines 357-475). The author adds that most large Twisted deployments still rewrite parts of these management and monitoring facilities because the architecture does not expose what system administrators need (lines 540-543). Inference (reader): that last point is an anecdote, not a measured survey.",
+        "Source claim: plugins implement IPlugin and register twistd subcommands, keeping only the plugin API stable so third parties can extend the CLI; twisted.cred plugs authentication into the same mechanism, and shipped plugins include web, dns, conch and mail (lines 481-537).",
+        "Source claim: TAP stored configuration and state as pickles, broke when classes changed, and required a matrix of upgraders; it was removed in favour of TAC files and plugins, with the lesson that persistent data needs an explicit schema (lines 555-577).",
+        "Source claim: the web2 rewrite was labelled experimental, was used by major projects and accidentally packaged by Debian, coexisted with twisted.web for years and was removed in 2011; the author says incremental backwards-compatible changes and deprecations would have been better (lines 583-598).",
+        "Source claim: maintaining many protocols is bounded by volunteer time - HTTP/1.1 support took 2005-2009 for a 1999 RFC, IPv6 was still unmerged in 2011, and Wokkel and WebSockets stayed outside core - while a strict test-driven policy and coding standards protect compatibility (lines 604-616)."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md",
+          "candidate": "Candidate context for representing a pending asynchronous result and its success/failure continuation; the Deferred callback and errback chain is the concrete case, while the page addresses async API contracts and cancellation."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/reactor-webflux-r2dbc-and-backpressure.md",
+          "candidate": "Candidate context for a single event loop that demultiplexes I/O and dispatches to handlers; the reactor and platform multiplexing backends are the concrete case, though the page covers JVM reactive execution."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
+          "candidate": "Candidate context for why removing locks does not by itself preserve shared invariants; the chapter's claim that event-driven code needs no synchronization when sharing mutable data is the concrete contrast."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/connections-draining.md",
+          "candidate": "Candidate context for transport shutdown semantics; ITransport.loseConnection writing pending data before closing is the concrete case, while the page addresses draining at the request-path level."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
+          "candidate": "Candidate context for a strict backwards-compatibility policy under slow protocol evolution; the HTTP/1.1 1999-to-2009 timeline and unmerged IPv6 work are the concrete case."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - no book findings, support classification, severity or verdict."
+    },
+    {
+      "id": "R278",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/yesod.html",
+      "unit": "AOSA Volume II, Chapter 22 \"Yesod\" (public HTML chapter), local representation /tmp/B20h/raw/yesod.txt lines 1-605",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text present in the local representation, lines 1-605 (605/605 lines, 6937/6937 words): 24 chapter headings (6 level-2 sections 22.1-22.6, 17 level-3 and 1 level-4 subsections), 15 code blocks, 2 referenced figures whose images are absent and 1 table flattened to text, read sequentially; the unmarked subheading 'Why the Name Shakespeare?' at line 194 is a plain paragraph. Lines 1-9 (volume masthead, chapter title, byline, promotional line) are chrome, excluded from the substantive summary but retained in the hash, line and word totals. Live HTML fetched 2026-10-24 (HTTP 200) has the same 24 headings, 15 pre blocks, 2 images and 1 table.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest9.json#R278",
+        "/tmp/B20h/raw/yesod.txt lines 1-605; sha256=b9d3a6207984a081c81fc158f7e3138e02b7e2141ae2ba85269c479ecc677f2d; words=6937",
+        "https://aosabook.org/en/v2/yesod.html (HTTP 200, fetched 2026-10-24; used only to confirm 24 headings, 15 code blocks, 2 images and 1 table)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment. No Yesod or GHC build, no warp benchmark or PONG reproduction, no template or Persistent application was run; the chapter's 2011-era status (1.0 pending) was not checked against later releases.",
+      "representation_gap": "Figures 22.1 (overall structure of a Yesod application) and 22.2 (Warp PONG benchmark) are referenced with captions but absent as images. The Persistent SQL/MongoDB mapping table (line 330) is flattened into one paragraph, code indentation is collapsed to one leading space inside [CODE] markers, and the subheading 'Why the Name Shakespeare?' at line 194 is not marked in the local text. The live HTML has the same heading, code-block, image and table counts, so no prose section appears missing.",
+      "representation_sha256": "b9d3a6207984a081c81fc158f7e3138e02b7e2141ae2ba85269c479ecc677f2d",
+      "retrieved_lines": 605,
+      "retrieved_words": 6937,
+      "sections": [
+        {
+          "title": "22.1. Compared to Other Frameworks",
+          "level": 2,
+          "start_line": 36,
+          "end_line": 47
+        },
+        {
+          "title": "22.2. Web Application Interface",
+          "level": 2,
+          "start_line": 48,
+          "end_line": 178
+        },
+        {
+          "title": "Datatypes",
+          "level": 3,
+          "start_line": 57,
+          "end_line": 75
+        },
+        {
+          "title": "Streaming",
+          "level": 3,
+          "start_line": 76,
+          "end_line": 94
+        },
+        {
+          "title": "Builder",
+          "level": 3,
+          "start_line": 95,
+          "end_line": 109
+        },
+        {
+          "title": "Handlers",
+          "level": 3,
+          "start_line": 110,
+          "end_line": 136
+        },
+        {
+          "title": "Middleware",
+          "level": 3,
+          "start_line": 137,
+          "end_line": 172
+        },
+        {
+          "title": "Wai-test",
+          "level": 3,
+          "start_line": 173,
+          "end_line": 178
+        },
+        {
+          "title": "22.3. Templates",
+          "level": 2,
+          "start_line": 179,
+          "end_line": 291
+        },
+        {
+          "title": "Types",
+          "level": 3,
+          "start_line": 200,
+          "end_line": 273
+        },
+        {
+          "title": "The Other Languages",
+          "level": 3,
+          "start_line": 274,
+          "end_line": 291
+        },
+        {
+          "title": "22.4. Persistent",
+          "level": 2,
+          "start_line": 292,
+          "end_line": 399
+        },
+        {
+          "title": "Terminology",
+          "level": 3,
+          "start_line": 308,
+          "end_line": 331
+        },
+        {
+          "title": "Type Safety",
+          "level": 3,
+          "start_line": 332,
+          "end_line": 352
+        },
+        {
+          "title": "Cross-Database Syntax",
+          "level": 3,
+          "start_line": 353,
+          "end_line": 364
+        },
+        {
+          "title": "Migrations",
+          "level": 3,
+          "start_line": 365,
+          "end_line": 373
+        },
+        {
+          "title": "Relations",
+          "level": 3,
+          "start_line": 374,
+          "end_line": 399
+        },
+        {
+          "title": "22.5. Yesod",
+          "level": 2,
+          "start_line": 400,
+          "end_line": 583
+        },
+        {
+          "title": "Routes",
+          "level": 3,
+          "start_line": 415,
+          "end_line": 449
+        },
+        {
+          "title": "Type-Safe URLs",
+          "level": 4,
+          "start_line": 450,
+          "end_line": 491
+        },
+        {
+          "title": "Handlers",
+          "level": 3,
+          "start_line": 492,
+          "end_line": 517
+        },
+        {
+          "title": "Widgets",
+          "level": 3,
+          "start_line": 518,
+          "end_line": 564
+        },
+        {
+          "title": "Subsites",
+          "level": 3,
+          "start_line": 565,
+          "end_line": 583
+        },
+        {
+          "title": "22.6. Lessons Learned",
+          "level": 2,
+          "start_line": 584,
+          "end_line": 605
+        }
+      ],
+      "notes": [
+        "Source claim: Yesod is a Haskell web framework that exploits static typing for safety and speed; the author argues the static/dynamic language dichotomy is false, that Haskell eliminates null-pointer exceptions and favours immutable data, and that its compiler catches more bugs than Java-style typing. Yesod resembles Rails and Django in following MVC, separating templates from logic, providing an ORM and using front-controller routing, but pushes error detection into compilation and uses Template Haskell to automate type-safe-URL boilerplate (lines 20-45).",
+        "Source claim: WAI exists because baking a server into a framework limits deployment options; it targets generality and performance, models an application as Request -> Response, keeps binary ByteString and textual Text separate, and stores raw query bytes plus parsed values (lines 51-73).",
+        "Source claim: a plain ByteString cannot hold whole request or response bodies at scale, so WAI uses enumerators (similar to Python generators) and an Application becomes Request -> Iteratee ByteString IO Response; builders then describe how to fill buffers, minimising system calls and copies, with blaze-builder tuned experimentally and headers prepended to the body (lines 79-107).",
+        "Source claim: handlers run WAI applications and include Warp, FastCGI, SCGI, CGI, Webkit, Launch and a test handler; Warp uses one GHC green thread per connection and GHC's asynchronous I/O over kqueue, epoll or select, giving event-driven performance without callbacks, and the chapter cites the PONG benchmark where Warp, Happstack and Snap lead (lines 113-134); both figures are absent locally.",
+        "Source claim: middleware is an application transformer (Application -> Application) such as gzip, jsonp, autohead and debug, stackable by modifying the request on the way in and the response on the way out; wai-test supplies mock requests and response assertions but does not remove the need for testing (lines 140-176).",
+        "Source claim: Yesod's Shakespearean template languages occupy a middle ground between arbitrary embedded code and argument-only templates; Hamlet, Julius, Cassius and Lucius are checked at compile time for well-formedness, variable resolution and type safety, and CSS/JavaScript compile into the executable with builder-based rendering (lines 182-197 and 274-289).",
+        "Source claim: interpolated Hamlet content must have type Html, so Text cannot be inserted directly; toHtml escapes entities (the script-tag example) while preEscapedText inserts verbatim to avoid double escaping, and toHtml is the default; type-safe URLs represent routes as a datatype such as FibRoute and are rendered to text by a function (lines 203-271).",
+        "Source claim: Persistent is backend-agnostic and fully type-checked, with escape hatches for backend-specific features and raw queries; PersistValue, PersistField, PersistEntity and PersistBackend compose the model, and a Person entity maps Text/Day/PNG fields to SQL VARCHAR/Date/BLOB or MongoDB fields (lines 295-330); the mapping table is flattened locally.",
+        "Source claim: every Persistent interaction is typed, so changing an entity declaration makes the compiler find affected code, which the author argues is stronger than test coverage; Persistent generates SQL schema, applies per-backend migrations (ALTER TABLE on PostgreSQL, table copy on SQLite, none on MongoDB), refuses destructive changes and reports unsafe operations, and typed IDs such as PersonId support relations (lines 335-397).",
+        "Source claim: Yesod's core contribution is declarative routing with explicit request methods, typed path parameters such as EntryId that are marshalled automatically (404 on parse failure), and type-safe URL values that eliminate malformed links; handlers are named methodResourceR, run in a Handler monad and return a HasReps value so one resource can serve HTML or JSON by Accept header (lines 403-515).",
+        "Source claim: widgets bundle HTML, CSS and JavaScript with their dependencies and can run handler code, then defaultLayout assembles the page; assets are either inlined or emitted as content-hashed external files for far-future caching, with JavaScript loaded asynchronously through yepnope.js, and subsites such as static files and authentication are added with one route line and reuse the site layout (lines 521-581).",
+        "Source claim: the lessons are that the delivered system diverges from the initial goal list, that lack of mastery should not block starting, and that project approachability, documented standards and automated build tooling matter when a single-author project becomes a team effort (lines 587-605). Inference (reader): the chapter is a framework author's design rationale, not a comparative benchmark study."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+          "candidate": "Candidate context for separating an application contract from server adapters; WAI Application, handlers and HasReps content negotiation are the concrete case."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/stream-contracts.md",
+          "candidate": "Candidate context for streaming request and response bodies with bounded buffers; enumerators, iteratees and builders are the concrete case."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Candidate context for automatic but deliberately limited schema migration; Persistent's per-backend rules and refusal of destructive operations are the concrete case."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "candidate": "Candidate context for content-hashed asset names enabling far-future caching; Yesod widget static-file naming is the concrete case, though the page addresses cache authority and freshness."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Candidate context for a narrow application/server port with multiple adapters; WAI backends (Warp, CGI, Webkit, test) and composable middleware are the concrete case."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - no book findings, support classification, severity or verdict."
+    },
+    {
+      "id": "R279",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/yocto.html",
+      "unit": "AOSA Volume II, Chapter 23 \"The Yocto Project\" (public HTML chapter), local representation /tmp/B20h/raw/yocto.txt lines 1-316",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text present in the local representation, lines 1-316 (316/316 lines, 5026/5026 words): 11 chapter headings (4 level-2 sections 23.1-23.4, 5 level-3 and 2 level-4 subsections), 7 code blocks and 3 referenced figures whose images are absent, read sequentially. Lines 1-9 (volume masthead, chapter title, byline, promotional line) are chrome, excluded from the substantive summary but retained in the hash, line and word totals. Live HTML fetched 2026-10-24 (HTTP 200) has the same 11 headings, 7 pre blocks, 3 images and no tables.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest9.json#R279",
+        "/tmp/B20h/raw/yocto.txt lines 1-316; sha256=20a143defdbd8749ac5eaa2d9f62647061816a7e9c8362989ebd480f7bd886dc; words=5026",
+        "https://aosabook.org/en/v2/yocto.html (HTTP 200, fetched 2026-10-24; used only to confirm 11 headings, 7 code blocks, 3 images and no tables)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment. No Poky or BitBake checkout, build, image generation or timing run was performed; the three-to-four-hour and 30-to-40-minute build times, the edison 1.1/1.13.3 version claims and the memory anecdotes were not reproduced.",
+      "representation_gap": "Figures 23.1 (high-level Poky task execution), 23.2 (BitBake layering) and 23.3 (BitBake IPC) are referenced with captions but absent as images. Code indentation is collapsed to one leading space inside [CODE] markers, and the do_configure_prepend block (lines 144-148) is split across lines so it is not valid shell as printed locally; # comments in recipes can also be mistaken for headings by a naive scan. The live HTML has the same heading, code-block and image counts, so no prose section appears missing.",
+      "representation_sha256": "20a143defdbd8749ac5eaa2d9f62647061816a7e9c8362989ebd480f7bd886dc",
+      "retrieved_lines": 316,
+      "retrieved_words": 5026,
+      "sections": [
+        {
+          "title": "23.1. Introduction to the Poky Build System",
+          "level": 2,
+          "start_line": 20,
+          "end_line": 172
+        },
+        {
+          "title": "Poky Build System Concepts",
+          "level": 3,
+          "start_line": 38,
+          "end_line": 120
+        },
+        {
+          "title": "Example BitBake recipe for grep",
+          "level": 3,
+          "start_line": 121,
+          "end_line": 172
+        },
+        {
+          "title": "23.2. BitBake Architecture",
+          "level": 2,
+          "start_line": 173,
+          "end_line": 282
+        },
+        {
+          "title": "BitBake IPC",
+          "level": 3,
+          "start_line": 182,
+          "end_line": 196
+        },
+        {
+          "title": "BitBake DataSmart Copy-on-Write Data Storage",
+          "level": 3,
+          "start_line": 197,
+          "end_line": 220
+        },
+        {
+          "title": "BitBake Scheduler",
+          "level": 3,
+          "start_line": 221,
+          "end_line": 282
+        },
+        {
+          "title": "Dependencies",
+          "level": 4,
+          "start_line": 230,
+          "end_line": 267
+        },
+        {
+          "title": "RunQueue",
+          "level": 4,
+          "start_line": 268,
+          "end_line": 282
+        },
+        {
+          "title": "23.3. Conclusion",
+          "level": 2,
+          "start_line": 283,
+          "end_line": 312
+        },
+        {
+          "title": "23.4. Acknowledgements",
+          "level": 2,
+          "start_line": 313,
+          "end_line": 316
+        }
+      ],
+      "notes": [
+        "Source claim: the Yocto Project gives embedded Linux developers a hardware-agnostic starting point of tools, processes, templates and methods; its core is the Poky build system, and the chapter focuses on BitBake, a Gentoo-Portage-inspired metadata-driven build tool shared by Yocto and OpenEmbedded (line 11).",
+        "Source claim: the lineage runs from the 2001 Sharp Zaurus and OpenZaurus on buildroot, through 2003 discussions that became OpenEmbedded (Larson, Lauer, Schurig), to Richard Purdie's Poky as a stabilized OpenEmbedded branch, and the November 2010 Linux Foundation announcement that created the Yocto Project and OE-Core coordination (lines 14-17).",
+        "Source claim: Poky release 1.1 'edison' can produce images from a minimal shell image to an LSB-compliant image with the Sato GMAE interface; layers add BSPs, software stacks or image types, and oe-init-build-env sets up the shell, generates configuration and checks prerequisites including Pseudo, a fakeroot replacement (lines 23-29).",
+        "Source claim: BitBake parses configuration, layers, classes and recipes, builds a weighted dependency chain so that tasks needed by the most other tasks run earlier, re-parses only changed metadata, then executes the queue across threads limited by BB_NUMBER_THREADS; the default task order is fetch, unpack, configure, cross-compile, split into packages, package as rpm/ipk/deb and assemble the root filesystem (lines 32-35).",
+        "Source claim: every aspect of a Poky build is controlled by metadata, either configuration files or non-executable recipes that declare description, version, license, upstream source, inherited build classes and extra or prepended/appended tasks; configuration splits into BitBake-wide files and per-layer files, with meta-yocto itself a layer over OE-Core's meta layer (lines 41-44).",
+        "Source claim: the worked layering example builds a Crownbay NAS with x32 by combining a Crownbay BSP layer, meta-x32, meta-baryon and an imaginary meta-myproject GUI layer; BBLAYERS in bblayers.conf lists them, and each layer's conf/layer.conf extends BBPATH and BBFILES and sets a collection name and priority (lines 47-93).",
+        "Source claim: BBCooker starts the build, parseConfigurationFiles reads bblayers.conf, then each layer.conf, then bitbake.conf for global variables and includes such as local.conf and machine configuration; the grep recipe shows LICENSE with LIC_FILES_CHKSUM, SRC_URI md5 and sha256 checksums, autotools/gettext inheritance, install-time renames and update-alternatives hooks (lines 98-168).",
+        "Source claim: BitBake 1.0 kept every recipe variable in one large dictionary, had no data cache or shared state, could not build incrementally, retried failed tasks later and restarted builds from scratch; version 1.13.3 adds a client-server architecture, a datastore, copy-on-write storage, shared state and much better dependency computation (lines 176-179).",
+        "Source claim: all builds start a user-interface instance (knotty by default, Hob as the graphical interface), which sends commands to a server (process server by default, XMLRPC also supported), which brings up the cooker; the cooker parses metadata, creates the runqueue and triggers the build, while the command module executes commands and emits events to the UI (lines 185-194).",
+        "Source claim: DataSmart uses Tom Ansell's copy-on-write dictionary so shared global variables are stored once and each recipe layer stores only its diff; lookups walk down the COW stack, and variables containing Python are validated with bb.codeparser for syntax and circular references, illustrated by the LIBCEXTENSION expression (lines 200-218).",
+        "Source claim: BitBake distinguishes build-time DEPENDS from runtime RDEPENDS and recognises internally dependent, DEPENDS-dependent, RDEPENDS-dependent and inter-task task dependencies; provider selection honours PREFERRED_PROVIDER and weights versions and dependents, then TaskData is converted into a weighted runqueue; the chapter reports three to four hours single-threaded versus 30-40 minutes with 14 threads and PARALLEL_MAKE -j 12 for core-image-minimal in 2011 (lines 224-280).",
+        "Source claim: the conclusion urges a written, flexible standards document (the inconsistent LICENSE values are the example), heavy front-end planning and modular design, and notes that earlier datastore planning might have avoided the low-memory problems; the acknowledgements credit BitBake, OpenEmbedded, OE-Core and Yocto contributors (lines 286-316). Inference (reader): the timing comparison is one machine and one image, not a controlled benchmark."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/build-identity.md",
+          "candidate": "Candidate context for tracing an artifact back to declared inputs; recipes, layers, SRC_URI checksums and BB_NUMBER_THREADS are the concrete case."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/provenance-subjects.md",
+          "candidate": "Candidate context for per-component source and license evidence; LICENSE fields, LIC_FILES_CHKSUM and md5/sha256 source checksums are the concrete case."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Candidate context for composing independent metadata layers over a core; BSP, distro and application layers (meta-intel, meta-x32, meta-baryon) are the concrete case."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+          "candidate": "Candidate context for dependency-ordered task execution across a worker pool; the weighted runqueue and BB_NUMBER_THREADS parallelism are the concrete case, though the page addresses cancellation and resource ownership."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+          "candidate": "Candidate context for memory pressure from duplicated per-recipe state; the BitBake 1.0 datastore and copy-on-write fix are the concrete case, while the page addresses runtime diagnosis."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - no book findings, support classification, severity or verdict."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 240,
+    "full_reads": 246,
     "blocked": 14,
     "records": [
       "R015",
@@ -30857,7 +31689,13 @@
       "R270",
       "R271",
       "R272",
-      "R273"
+      "R273",
+      "R274",
+      "R275",
+      "R276",
+      "R277",
+      "R278",
+      "R279"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
