@@ -14,12 +14,13 @@ claim that the entire documentation site was read.
 
 - **src.otel** - Signals index plus four signal pages; read 5/5; complete-scoped.
   R116 and R118-R121 accepted.
-- **src.citus** - Concepts, sharding, query execution; read 1/3; in progress.
-  Next: resolve sharding/query URLs and read them.
+- **src.citus** - Concepts (including query execution) plus distribution
+  column; read 2/2; complete-scoped.
+  R117 and R122 accepted.
 - **src.temporal** - Workflow execution, patching, activities, versioning;
   read 2/4; in progress. Next: activities and versioning.
-- **src.kafka** - Consumer config, design, producer config; read 1/3;
-  in progress. Next: design and producer config.
+- **src.kafka** - Consumer config, design, producer config; read 2/3;
+  in progress. Next: design.
 - **src.lucene** - Overview, indexing, search; read 0/3; planned.
   Next: resolve indexing/search URLs.
 - **src.nats** - JetStream concepts, streams, consumers; read 0/3; planned.
@@ -37,8 +38,8 @@ OpenTelemetry page.
 
 ## Counts are not moved by partial units
 
-Current canonical ledger: 121 records (98 full, 3 partial, 18 blocked, 2
-excluded); 134 landing-only sources. R116/R117 are partial and do not reduce
+Current canonical ledger: 123 records (100 full, 3 partial, 18 blocked, 2
+excluded); 133 landing-only sources. R116/R117 are partial and do not reduce
 that count. Only a completed scope does.
 
 ## Scope decisions needed

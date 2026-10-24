@@ -6179,12 +6179,140 @@
         }
       ],
       "reader": "Delegated reader batch 13; parent validation pending."
+    },
+    {
+      "id": "R122",
+      "source_ids": [
+        "src.citus"
+      ],
+      "url": "https://docs.citusdata.com/en/stable/sharding/data_modeling.html",
+      "unit": "Complete page: Choosing Distribution Column - Citus 13.0.1 documentation (one unit completing the declared Citus scope together with the concepts page R117)",
+      "revision": "Live Citus 13.0.1 documentation under /en/stable/; retrieved 2026-10-24; no immutable revision or publication date exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 221 lines / 2844 words read sequentially; body lines 8-221 = 2830 words. Excluded as chrome: reader header lines 1-5 and the lone Citus logo link at line 6 (14 words total), heading permalink glyphs and inline link targets. No navigation, footer or cookie text is present. Four diagrams occur only as external image links with alt text (lines 20, 80, 150, 189).",
+      "retrieval_refs": [
+        "/tmp/batch14/raw/src.citus-sharding.md lines 1-221",
+        "Local reader capture with Title/URL Source/Markdown Content header, accessed 2026-10-24"
+      ],
+      "omissions": "Other Citus documentation pages outside the declared Citus scope not read; no execution.",
+      "representation_sha256": "d0558555c9e409bf679165b153e4114a968231cd918f90379f6057ef57f21853",
+      "retrieved_lines": 221,
+      "retrieved_words": 2844,
+      "sections": [
+        "Introduction: distribution column choice (8-12)",
+        "Multi-Tenant Apps (14-32), incl. Best Practices (24-32)",
+        "Real-Time Apps (34-52), incl. Best Practices (42-52)",
+        "Timeseries Data (54-66), incl. Best Practices (60-66)",
+        "Table Co-Location (68-211): hash-distributed co-location (74-82), practical example (84-103), regular PostgreSQL comparison (105-120), distributing by ID (122-162), distributing by tenant (164-193), feature support (195-211)",
+        "Query Performance (213-221)"
+      ],
+      "notes": [
+        "Coverage claim: the page is nearly all prose and SQL examples, 2830 of 2844 words; only header, logo link and link-target syntax were excluded. The four diagrams are image links with alt text only (20, 80, 150, 189), so their visual content is outside the text representation. Inference: the page does not depend on the diagrams for its main argument, but a reader cannot verify the illustrated shard placement from this representation.",
+        "Source claim: the distribution column assigns table rows to shards and choosing it is 'one of the most important' modeling decisions; a correct choice groups related data on the same nodes, makes queries fast and supports all SQL features, while a wrong choice runs needlessly slowly and cannot support all SQL features across nodes (8-10). Inference: 'fast', 'slow' and 'all SQL features' are unqualified by workload, node count or measurement.",
+        "Source claim: multi-tenant modeling puts a tenant id on each table and routes a tenant-scoped query to the single worker holding that tenant's shard; best practices are to distribute by tenant_id, convert small cross-tenant tables to reference tables, and filter every application query by tenant_id (16-32). Inference: the routing benefit depends on every query carrying the tenant predicate; the page later admits tenant_id may need adding to unique constraints and join conditions (191).",
+        "Source claim: real-time modeling uses an entity id such as user, host or device; best practices are high cardinality, even distribution, distributing fact and dimension tables on common columns, and using reference tables for dimensions that cannot be co-located (38-50). Inference: cardinality and skew are not quantified, so the advice cannot be tested against a concrete key distribution from this page alone.",
+        "Source claim: using a timestamp as the distribution column is called the most common timeseries mistake because hash distribution scatters time and range queries then fan out; the recommendation is to distribute on tenant or entity id and use PostgreSQL table partitioning for time (56-64). Inference: the argument is specific to hash distribution; range distribution is not discussed on this page, so the conclusion should not be generalized to every distribution method.",
+        "Source claim: co-location means tables share a distribution column and shards with the same hash range stay on the same node, even after rebalance, so equal distribution-column values are on the same node across tables (70-78). Inference: this hash-range invariant carries the page's later SQL-feature claims; the rebalance guarantee is asserted but not demonstrated.",
+        "Source claim: the worked example distributes event by event_id and page by page_id, which forces two queries and application-side combination with per-shard overhead (124-160); distributing both by tenant_id with colocate_with => 'event' lets the original join run in one step on one node (164-191). Inference: the comparison is qualitative; no plan, latency, data volume or shard count is given.",
+        "Source claim: co-location unlocks full SQL on one co-located shard set, multi-statement transactions on that set, aggregation via INSERT..SELECT, foreign keys, distributed outer joins, and pushdown CTEs requiring PostgreSQL 12 or later (197-209). Inference: 'full list' is scoped to this page and version; features for queries spanning multiple shard sets are not enumerated here.",
+        "Source claim: Citus splits queries into fragment tasks that run on worker shards in parallel; a two-stage optimizer first rewrites queries into pushable commutative and associative form, then workers apply standard PostgreSQL planning to the fragments (215-219). Inference: the claim that performance is cumulative across cluster cores is a design argument, not a benchmark; the linked tuning page was not read.",
+        "Source claim: line 217 refers to choosing the right 'distribution method' as well as the right column, but the page only explains hash distribution (78). Inference: the unit covers column choice under hash distribution; range or other distribution methods are outside its text.",
+        "Revision claim: the rendered title says Citus 13.0.1 while the URL uses /en/stable/ (1-3). Inference: 'stable' is a moving alias, so this is live documentation and may change after the 2026-10-24 capture."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Candidate anchor for the key-choice criteria: the source ranks high cardinality, even distribution, join frequency and reference tables (44-50); the book page separates shard key, routing and replicas and treats co-location as conditional rather than free (51-57, 81-89, 130)."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "candidate": "Candidate anchor for connecting distribution-column choice to skew: the source says a low-cardinality or skewed column concentrates work on some nodes (44-46); the book page's hot-tenant counterexample tests that risk without assuming even key load."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
+          "candidate": "Candidate anchor for the creation-time constraint: the source fixes the column and co-location group in create_distributed_table (128-129, 171-172) and does not describe changing them; the book page owns moving ownership without conflicting writes."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-modeling-and-transaction-isolation.md",
+          "candidate": "Candidate anchor for the relational consequence: the source says tenant_id may need to appear in unique constraints and join conditions (191) and lists foreign keys and multi-statement transactions as co-location features (201-205); the book page owns constraint and isolation scope."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/scaling-models.md",
+          "candidate": "Candidate anchor for qualifying the performance claim: the source says parallel fragment tasks make throughput cumulative across cluster cores (215) and that the second planning phase is ordinary PostgreSQL behavior (219); the book page supplies conditional scaling models instead of vendor throughput assertions."
+        }
+      ],
+      "reader": "Delegated reader batch 14; parent validation pending."
+    },
+    {
+      "id": "R123",
+      "source_ids": [
+        "src.kafka"
+      ],
+      "url": "https://kafka.apache.org/41/configuration/producer-configs/",
+      "unit": "Complete page: Producer Configs (Apache Kafka 4.1 documentation; one unit of the declared producer/consumer/design scope)",
+      "revision": "Apache Kafka 4.1 documentation (URL path /41/); retrieved 2026-10-24; page header records Published Time Wed, 30 Sep 2026 20:37:13 GMT; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1146 lines / 9286 words read sequentially; body lines 8-1146 = 9270 words. The page is a flat reference list of 112 named producer configuration entries, each with a description and a Type/Default/Valid Values/Importance table: 14 high, 46 medium, 52 low. Verified 112 name headings, 112 importance rows and 112 tables, with no missing or duplicate names. Excluded as chrome: reader header lines 1-7 (16 words), empty '[#]' heading anchor links and inline link URL targets. No navigation, footer or narrative introduction is present.",
+      "retrieval_refs": [
+        "/tmp/batch14/raw/src.kafka-producer.md lines 1-1146",
+        "Local reader capture with Title/URL Source/Published Time/Markdown Content header, accessed 2026-10-24"
+      ],
+      "omissions": "other Kafka documentation outside the declared producer/consumer/design scope not read",
+      "representation_sha256": "01672a19814cbb1b217383a76bd670a5c37ab9aaae17753ac911472ff19335be",
+      "retrieved_lines": 1146,
+      "retrieved_words": 9286,
+      "sections": [
+        "High-importance producer settings: 14 entries, key.serializer through ssl.truststore.password (8-139)",
+        "Medium-importance producer settings: 46 entries, batch.size through ssl.truststore.type (140-641)",
+        "Low-importance producer settings: 52 entries, acks through transactional.id (642-1146)"
+      ],
+      "notes": [
+        "Coverage claim: this is a flat reference page with no introduction, worked example, navigation or footer; every one of the 112 entries has a name heading, description, and a Type/Default/Valid Values/Importance table. Inference: the importance tiers are editorial priority for typical use, not a statement about which settings interact; several correctness relationships have to be assembled across entries.",
+        "Structure claim: key.serializer and value.serializer lead the high tier, and the remaining entries are alphabetical within each tier (high 14, medium 46, low 52). Inference: the ordering is a lookup convention, not a dependency order; entries such as retries, acks, enable.idempotence and max.in.flight.requests.per.connection constrain one another only through their descriptions.",
+        "Source claim: bootstrap.servers is a host:port list with default '' and need not contain all brokers; buffer.memory defaults to 33554432 bytes and must cover records waiting to be sent, blocking for max.block.ms before failing; compression.type defaults to none with valid values none, gzip, snappy, lz4 and zstd (26-48). Inference: buffer.memory is explicitly not a hard memory bound because compression and in-flight requests use additional memory (39).",
+        "Source claim: retries defaults to 2147483647; a value above zero is required for idempotence; zero disables automatic retry and surfaces transient errors; the page recommends leaving it unset and controlling retry behavior with delivery.timeout.ms; with idempotence false and more than one in-flight request, retries can reorder records (55-61). Inference: the numerical default is effectively bounded by the delivery deadline, not by the retry count.",
+        "Source claim: batch.size defaults to 16384 bytes and zero disables batching; linger.ms defaults to 5 and adds up to that delay waiting for more records; both entries note the default changed from 0 to 5 in Apache Kafka 4.0, and broker backpressure can raise effective linger time (140-150, 220-228). Inference: batching and latency defaults are version-specific, so pre-4.0 tuning advice does not carry over unchanged.",
+        "Source claim: delivery.timeout.ms defaults to 120000 ms as an upper bound after send() returns, covering delay, acknowledgement wait and retriable failures, and should be at least request.timeout.ms plus linger.ms; max.block.ms defaults to 60000 ms and bounds send() metadata and buffer-allocation waits (211-219, 229-237). Inference: these form a deadline hierarchy, but the page states the recommended inequality without describing enforcement or validation.",
+        "Source claim: acks defaults to all and accepts all, -1, 0 and 1; 0 gives no server acknowledgement guarantee and disables retry knowledge, 1 can lose a record if the leader fails before replication, and all waits for the full in-sync replica set (642-650). Inference: the durability level is a producer setting only in combination with broker replication and ISR conditions, which this page does not define.",
+        "Source claim: enable.idempotence defaults to true and requires max.in.flight.requests.per.connection at most 5, retries above 0 and acks=all; conflicting settings disable idempotence when it was not explicitly enabled, while explicitly enabling it with conflicts throws ConfigException; max.in.flight.requests.per.connection defaults to 5 because the broker retains at most five batches per producer (657-661, 686-694). Inference: changing acks or retries can silently downgrade the default idempotence guarantee unless enable.idempotence is set explicitly.",
+        "Source claim: partitioner.class defaults to null; with no custom partitioner, a present key selects a partition by hash, otherwise records go to a sticky partition that changes after at least batch.size bytes; RoundRobinPartitioner has a known uneven-distribution issue (KAFKA-9965); partitioner.ignore.keys defaults false, adaptive partitioning defaults true and availability timeout defaults 0 (247-274, 772-783). Inference: partition assignment depends on key presence and accumulated bytes, so it is not a fixed mapping over time.",
+        "Source claim: transactional.id defaults to null; without it the producer is limited to idempotent delivery, and configuring it implies idempotence; transactions are recommended to require at least three brokers, adjustable through broker transaction.state.log.replication.factor; transaction.timeout.ms defaults to 60000 and a request above broker transaction.max.timeout.ms fails with InvalidTxnTimeoutException (1120-1146). Inference: transactional capability depends on cluster size and broker limits, not on the producer setting alone.",
+        "Source claim: 8 of the 14 high-importance entries are TLS key/truststore settings (ssl.key.password, ssl.keystore.certificate.chain, ssl.keystore.key, ssl.keystore.location, ssl.keystore.password, ssl.truststore.certificates, ssl.truststore.location, ssl.truststore.password) (68-139), while SASL and OAUTHBEARER settings occupy medium and low tiers (291-560, 826-1056). Inference: the tier label reflects broad client importance, not a security ranking; a secured deployment still has to read beyond the high tier.",
+        "Source claim: enable.metrics.push defaults to true and pushes client metrics when the cluster has a matching subscription; metric.reporters defaults to JmxReporter and metrics.recording.level to INFO (668-676, 731-762). Inference: client telemetry is on by default with no correctness role, so a restricted deployment must decide explicitly whether to keep it."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/partitions-producers.md",
+          "candidate": "Candidate anchor for producer routing: the source's default partitioner hashes a present key and otherwise uses a sticky partition that changes after batch.size bytes (251-253); the book page argues that partition-key choice is a correctness and scaling choice, not a transparent optimization (83-89)."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/replication-acks.md",
+          "candidate": "Candidate anchor for the durability setting: acks defaults to all in this Kafka 4.1 page (654), while the book page treats acks and min.insync.replicas as a trade-off whose guarantee also depends on ISR and leader election (53, 72-78)."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/offsets-effects.md",
+          "candidate": "Candidate anchor for the limits of idempotence and transactions: the source presents enable.idempotence and transactional.id as producer-side guarantees (657-661, 1138-1140); the book page states that neither encloses an unrelated database or external effect (71-86)."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md",
+          "candidate": "Candidate anchor for retry budgeting: the source recommends using delivery.timeout.ms rather than a retry count, with exponential retry backoff settings (57, 808-825); the book page requires a total absolute deadline and bounded attempt budget rather than an effectively unbounded retry default."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tails-critical-path.md",
+          "candidate": "Candidate anchor for the batching latency trade-off: the source states that linger.ms adds up to 5 ms by default and broker backpressure can raise it (222); the book page owns critical-path and percentile reasoning, which the producer page does not connect to end-to-end latency."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+          "candidate": "Candidate anchor for choosing a delivery contract: the producer page describes acks=0/1/all and idempotence mechanics but does not compare durable work queues with retained logs; the book page starts from what a consumer must own before selecting a family (51-64)."
+        }
+      ],
+      "reader": "Delegated reader batch 14; parent validation pending."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 87,
+    "full_reads": 89,
     "blocked": 14,
     "records": [
       "R015",
@@ -6293,7 +6421,9 @@
       "R118",
       "R119",
       "R120",
-      "R121"
+      "R121",
+      "R122",
+      "R123"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
