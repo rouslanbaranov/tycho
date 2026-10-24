@@ -18788,12 +18788,1036 @@
         }
       ],
       "reader": "delegated-reader B20f (DeepSeek Harness), parent session-339f3170-2943-4eff-877d-b6b465e229ef, read 2026-10-24"
+    },
+    {
+      "id": "R203",
+      "source_ids": [
+        "src.ir-introduction"
+      ],
+      "url": "https://web.archive.org/web/2023id_/http://nlp.stanford.edu/IR-book/pdf/07system.pdf",
+      "unit": "Chapter 7 'Computing scores in a complete search system', pp. 135-150, chapter PDF 07system.pdf",
+      "revision": "Introduction to Information Retrieval, online reading PDF, Wayback 2023",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete chapter text as extracted: chapter title and introduction, sections 7.1-7.4 including subsections 7.1.1-7.1.6 and 7.2.1-7.2.4, Figures 7.1-7.5, Equations 7.1-7.2, Exercises 7.1-7.10, references. Page headers, running heads, page numbers 135-150 and 17 form-feed page breaks excluded from analysis. Retrieved lines 717 by Unicode splitlines (700 newline-delimited; 17 form feeds).",
+      "omissions": "Other book chapters outside this batch not read; no reproduction or experiment",
+      "retrieval_refs": [
+        {
+          "file": "raw/07system.txt",
+          "lines": "7-26",
+          "label": "Chapter introduction"
+        },
+        {
+          "file": "raw/07system.txt",
+          "lines": "29-350",
+          "label": "7.1 Efficient scoring and ranking, 7.1.1-7.1.6, Figures 7.1-7.3"
+        },
+        {
+          "file": "raw/07system.txt",
+          "lines": "353-401",
+          "label": "Exercises 7.1-7.8"
+        },
+        {
+          "file": "raw/07system.txt",
+          "lines": "404-571",
+          "label": "7.2 Components of an IR system, 7.2.1-7.2.4, Figures 7.4-7.5"
+        },
+        {
+          "file": "raw/07system.txt",
+          "lines": "574-671",
+          "label": "Exercises 7.9-7.10, 7.3 vector space and query operator interaction"
+        },
+        {
+          "file": "raw/07system.txt",
+          "lines": "674-695",
+          "label": "7.4 References and further reading"
+        }
+      ],
+      "representation_sha256": "878f0588412f2c3c40fa540c40469de801f1f7a56510326d6f287aaf01a6f28b",
+      "retrieved_lines": 717,
+      "retrieved_words": 6002,
+      "sections": [
+        {
+          "id": "7",
+          "title": "Computing scores in a complete search system (chapter introduction)",
+          "lines": "7-26"
+        },
+        {
+          "id": "7.1",
+          "title": "Efficient scoring and ranking",
+          "lines": "29-98"
+        },
+        {
+          "id": "7.1.1",
+          "title": "Inexact top K document retrieval",
+          "lines": "103-134"
+        },
+        {
+          "id": "7.1.2",
+          "title": "Index elimination",
+          "lines": "136-164"
+        },
+        {
+          "id": "7.1.3",
+          "title": "Champion lists",
+          "lines": "166-182"
+        },
+        {
+          "id": "7.1.4",
+          "title": "Static quality scores and ordering",
+          "lines": "184-256"
+        },
+        {
+          "id": "7.1.5",
+          "title": "Impact ordering",
+          "lines": "258-303"
+        },
+        {
+          "id": "7.1.6",
+          "title": "Cluster pruning",
+          "lines": "305-350"
+        },
+        {
+          "id": "EX7.1",
+          "title": "Exercises 7.1-7.8",
+          "lines": "353-401"
+        },
+        {
+          "id": "7.2",
+          "title": "Components of an information retrieval system",
+          "lines": "404-413"
+        },
+        {
+          "id": "7.2.1",
+          "title": "Tiered indexes",
+          "lines": "415-441"
+        },
+        {
+          "id": "7.2.2",
+          "title": "Query-term proximity",
+          "lines": "443-472"
+        },
+        {
+          "id": "7.2.3",
+          "title": "Designing parsing and scoring functions",
+          "lines": "474-529"
+        },
+        {
+          "id": "7.2.4",
+          "title": "Putting it all together",
+          "lines": "532-571"
+        },
+        {
+          "id": "EX7.9",
+          "title": "Exercises 7.9-7.10",
+          "lines": "574-580"
+        },
+        {
+          "id": "7.3",
+          "title": "Vector space scoring and query operator interaction",
+          "lines": "583-671"
+        },
+        {
+          "id": "7.4",
+          "title": "References and further reading",
+          "lines": "674-695"
+        }
+      ],
+      "notes": [
+        "Source claim: the chapter recaps Figure 6.14 and notes that a two-term query vector has only two non-zero components, equal at 0.707; because only relative document scores matter, all non-zero query components can be set to 1 (Equation 7.1).",
+        "Source claim: Figure 7.1 FASTCOSINESCORE accumulates tf-idf weights over postings, divides each accumulated score by document length, and returns the top K; a heap builds in 2J comparisons and extracts each result in log J steps.",
+        "Source claim: inexact top-K retrieval uses two steps, finding a contender set A with K < |A| << N and then ranking A; the heuristics are suited to free-text queries but not to Boolean or phrase queries.",
+        "Source claim: index elimination traverses only high-idf postings (e.g. catcher and rye for 'catcher in the rye'), treating low-idf terms like stop words, and may require documents to contain many or all query terms; either option can yield fewer than K candidates.",
+        "Source claim: champion lists precompute the r highest-weight documents per term (fancy lists or top docs); global champion lists use g(d) + tf-idf and split postings into high and low lists scanned in that order.",
+        "Source claim: static quality g(d) is combined additively with the cosine score in Equation 7.2; ordering postings by decreasing g(d) still permits a single common-order traversal.",
+        "Source claim: impact ordering sorts each term's postings by decreasing tf, forcing term-at-a-time accumulation; it stops after r documents or a tf threshold and processes query terms by decreasing idf, optionally stopping when score changes are minimal.",
+        "Source claim: cluster pruning samples sqrt(N) random leaders, attaches each remaining document to its nearest leader (or b1 leaders), and at query time scores the b2 nearest leaders and their followers; Figure 7.3 illustrates the partition.",
+        "Source claim: tiered indexes use decreasing tf thresholds (20 for tier 1, 10 for tier 2) and fall back to lower tiers when too few results are found; proximity weighting uses the smallest window omega containing all query terms (4 for 'strained mercy' in the example) and can be a learned feature.",
+        "Source claim: a query parser may issue a phrase query, then two-term phrase queries, then a free-text query if fewer than ten documents are found; scores combine vector space, static quality and proximity through evidence accumulation, with machine-learned ranking increasingly used on the web.",
+        "Source claim: the complete system in Figure 7.5 includes a document cache for snippets, zone/field and positional indexes, spelling correction, and tiered indexes; vector space and Boolean, wildcard or phrase indexes are not freely interchangeable (p-norms could combine Boolean and vector queries, but no system does).",
+        "Inference, not source claim: the chapter frames top-K efficiency as an explicit exactness-versus-latency trade-off and defers learned ranking to Chapter 15; the ten-document parser threshold is an illustrative policy, not a measured constant."
+      ],
+      "representation_gap": [
+        "Figures 7.2, 7.3, 7.4 and 7.5: diagrams/screenshots absent; only captions and surrounding prose survive.",
+        "Equations 7.1 and 7.2: vector notation linearized with displaced arrows, tildes and absolute-value bars.",
+        "Figure 7.1: pseudocode survives as text but indentation and algorithm-box boundaries are approximate."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
+          "candidate": "Relate tiered and positional index structures to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/fusion-signals.md",
+          "candidate": "Relate multi-signal scoring to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/exact-ann.md",
+          "candidate": "Relate candidate pruning to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader B20f (DeepSeek Harness), parent session-339f3170-2943-4eff-877d-b6b465e229ef, read 2026-10-24"
+    },
+    {
+      "id": "R204",
+      "source_ids": [
+        "src.ir-introduction"
+      ],
+      "url": "https://web.archive.org/web/2023id_/http://nlp.stanford.edu/IR-book/pdf/08eval.pdf",
+      "unit": "Chapter 8 'Evaluation in information retrieval', pp. 151-175, chapter PDF 08eval.pdf",
+      "revision": "Introduction to Information Retrieval, online reading PDF, Wayback 2023",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete chapter text as extracted: chapter title and introduction, sections 8.1-8.8 including subsections 8.5.1 and 8.6.1-8.6.3, Figures 8.1-8.5, Tables 8.1-8.2, Equations 8.1-8.10, Exercises 8.1-8.10, references. Page headers, running heads, page numbers 151-175 and 25 form-feed page breaks excluded from analysis. Retrieved lines 1342 by Unicode splitlines (1317 newline-delimited; 25 form feeds).",
+      "omissions": "Other book chapters outside this batch not read; no reproduction or experiment",
+      "retrieval_refs": [
+        {
+          "file": "raw/08eval.txt",
+          "lines": "6-41",
+          "label": "Chapter introduction"
+        },
+        {
+          "file": "raw/08eval.txt",
+          "lines": "50-184",
+          "label": "8.1 IR system evaluation, 8.2 standard test collections"
+        },
+        {
+          "file": "raw/08eval.txt",
+          "lines": "187-427",
+          "label": "8.3 Unranked evaluation, Equations 8.1-8.6, Figure 8.1, Exercises 8.1-8.3"
+        },
+        {
+          "file": "raw/08eval.txt",
+          "lines": "430-757",
+          "label": "8.4 Ranked evaluation, Table 8.1, Figures 8.2-8.4, Equations 8.7-8.9, Exercises 8.4-8.9"
+        },
+        {
+          "file": "raw/08eval.txt",
+          "lines": "760-963",
+          "label": "8.5 Assessing relevance, 8.5.1, Table 8.2, Exercise 8.10"
+        },
+        {
+          "file": "raw/08eval.txt",
+          "lines": "966-1215",
+          "label": "8.6 System quality and user utility, 8.6.1-8.6.3, 8.7 results snippets, Figure 8.5"
+        },
+        {
+          "file": "raw/08eval.txt",
+          "lines": "1218-1312",
+          "label": "8.8 References and further reading"
+        }
+      ],
+      "representation_sha256": "fd71562e047cf08e4ab84714fcd83074580cac03da1fc4dc3f0e3406c87ef301",
+      "retrieved_lines": 1342,
+      "retrieved_words": 10140,
+      "sections": [
+        {
+          "id": "8",
+          "title": "Evaluation in information retrieval (chapter introduction)",
+          "lines": "6-41"
+        },
+        {
+          "id": "8.1",
+          "title": "Information retrieval system evaluation",
+          "lines": "50-108"
+        },
+        {
+          "id": "8.2",
+          "title": "Standard test collections",
+          "lines": "111-184"
+        },
+        {
+          "id": "8.3",
+          "title": "Evaluation of unranked retrieval sets (includes Figure 8.1, Exercises 8.1-8.3)",
+          "lines": "187-427"
+        },
+        {
+          "id": "8.4",
+          "title": "Evaluation of ranked retrieval results (includes Table 8.1, Figures 8.2-8.4, Exercises 8.4-8.9)",
+          "lines": "430-757"
+        },
+        {
+          "id": "8.5",
+          "title": "Assessing relevance (includes Table 8.2, Exercise 8.10)",
+          "lines": "760-862"
+        },
+        {
+          "id": "8.5.1",
+          "title": "Critiques and justifications of the concept of relevance",
+          "lines": "864-925"
+        },
+        {
+          "id": "8.6",
+          "title": "A broader perspective: System quality and user utility",
+          "lines": "966-975"
+        },
+        {
+          "id": "8.6.1",
+          "title": "System issues",
+          "lines": "977-1002"
+        },
+        {
+          "id": "8.6.2",
+          "title": "User utility",
+          "lines": "1006-1038"
+        },
+        {
+          "id": "8.6.3",
+          "title": "Refining a deployed system",
+          "lines": "1047-1075"
+        },
+        {
+          "id": "8.7",
+          "title": "Results snippets",
+          "lines": "1078-1215"
+        },
+        {
+          "id": "8.8",
+          "title": "References and further reading",
+          "lines": "1218-1312"
+        }
+      ],
+      "notes": [
+        "Source claim: a standard test collection has three parts, a document collection, a suite of information needs expressible as queries, and binary relevance judgments; 50 information needs is a rule-of-thumb minimum, and relevance is assessed against the information need rather than the query string.",
+        "Source claim: tuning parameters on the test collection overstates expected performance; the correct procedure is to tune on one or more development test collections and report results on a held-out test collection.",
+        "Source claim: standard collections include Cranfield (1398 aerodynamics abstracts, 225 queries, exhaustive judgments), TREC (6 CDs, 1.89 million documents, 450 topics; TREC 6-8 use 150 needs over about 528,000 documents), GOV2 (25 million pages), NTCIR, CLEF, Reuters-21578 (21,578 articles), RCV1 (806,791 documents) and 20 Newsgroups (18,941 articles after deduplication).",
+        "Source claim: precision is tp/(tp+fp) and recall is tp/(tp+fn); accuracy is inappropriate because over 99.9% of documents are usually nonrelevant; F is the weighted harmonic mean, with F1 = 2PR/(P+R), beta < 1 emphasizing precision and beta > 1 emphasizing recall.",
+        "Source claim: ranked evaluation uses the saw-tooth precision-recall curve, interpolated precision p_interp(r) = max over r' >= r, 11-point interpolated average precision (used in the first eight TREC Ad Hoc evaluations), MAP (Equation 8.8), precision at k, R-precision (equal to the break-even point), ROC curves and NDCG for graded relevance (Equation 8.9).",
+        "Source claim: MAP has good discrimination and stability but varies widely across information needs (0.1-0.7); precision at k is the least stable common measure and does not average well; R-precision is highly correlated with MAP despite measuring one curve point.",
+        "Source claim: pooling judges the top k results of several systems and other sources; kappa corrects observed agreement for chance using pooled marginals; the worked Table 8.2 gives P(A)=0.925, P(E)=0.665 and kappa=0.776, with above 0.8 good, 0.67-0.8 fair, and below 0.67 dubious agreement.",
+        "Source claim: relevance judgments are idiosyncratic; INEX, some TREC tracks and NTCIR use ordinal 3-4 class relevance; marginal relevance and diversity matter because duplicate or redundant documents reduce utility (Carbonell and Goldstein 1998).",
+        "Source claim: system benchmarks include indexing speed, search latency as a function of index size, query-language expressiveness and collection size; user-utility proxies include return rate, time to purchase, productivity, and A/B testing of one changed variable on 1-10% of traffic with clickthrough log analysis.",
+        "Source claim: result snippets are static (first sentences, selected zones, metadata) or dynamic query-dependent windows (KWIC); dynamic summaries improve usability but cannot be precomputed, so systems cache whole documents or a fixed prefix (about 10,000 characters), and stale caches misrepresent updated documents.",
+        "Representation gap: Figures 8.1-8.4 are plots reduced to scattered axis labels and numbers; Tables 8.1-8.2 are flattened but readable; Equations 8.8-8.9 lose summation limits and placement; Figure 8.5's bold-italic highlighting of the source passage is lost.",
+        "Inference, not source claim: the chapter treats MAP as the community default while conceding that no single measure captures user utility; the 50-topic minimum and kappa cutoffs are stated as rules of thumb, not universal thresholds."
+      ],
+      "representation_gap": [
+        "Figures 8.1, 8.2, 8.3 and 8.4: graph curves and axes survive only as scattered labels and numbers.",
+        "Equations 8.8 and 8.9: nested summations, limits and normalization factors are displaced when linearized.",
+        "Figure 8.5: snippet text is present, but bold-italic marking of selected source text is lost.",
+        "Tables 8.1 and 8.2: readable in flattened form; row/column alignment relies on spacing."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-judgments.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-evaluation.md",
+          "candidate": "Relate metric and snapshot design to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/snapshot-access.md",
+          "candidate": "Relate reproducible evaluation snapshots to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md",
+          "candidate": "Relate benchmark validity to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader B20f (DeepSeek Harness), parent session-339f3170-2943-4eff-877d-b6b465e229ef, read 2026-10-24"
+    },
+    {
+      "id": "R205",
+      "source_ids": [
+        "src.ir-introduction"
+      ],
+      "url": "https://web.archive.org/web/2023id_/http://nlp.stanford.edu/IR-book/pdf/09expand.pdf",
+      "unit": "Chapter 9 'Relevance feedback and query expansion', pp. 177-194, chapter PDF 09expand.pdf",
+      "revision": "Introduction to Information Retrieval, online reading PDF, Wayback 2023",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete chapter text as extracted: chapter title and introduction, sections 9.1-9.3 including subsections 9.1.1-9.1.8 and 9.2.1-9.2.3, Figures 9.1-9.8, Equations 9.1-9.4, Exercises 9.1-9.7, references. Page headers, running heads, page numbers 177-194 and 19 form-feed page breaks excluded from analysis. Retrieved lines 1081 by Unicode splitlines (1062 newline-delimited; 19 form feeds).",
+      "omissions": "Other book chapters outside this batch not read; no reproduction or experiment",
+      "retrieval_refs": [
+        {
+          "file": "raw/09expand.txt",
+          "lines": "7-37",
+          "label": "Chapter introduction"
+        },
+        {
+          "file": "raw/09expand.txt",
+          "lines": "46-264",
+          "label": "9.1 Relevance feedback, 9.1.1 Rocchio, Figures 9.1-9.4, Equations 9.1-9.3"
+        },
+        {
+          "file": "raw/09expand.txt",
+          "lines": "268-408",
+          "label": "9.1.2-9.1.4, Equation 9.4, Exercises 9.1-9.2"
+        },
+        {
+          "file": "raw/09expand.txt",
+          "lines": "411-581",
+          "label": "9.1.5-9.1.8, Figure 9.5, Exercises 9.3-9.6"
+        },
+        {
+          "file": "raw/09expand.txt",
+          "lines": "583-961",
+          "label": "9.2 Global methods, 9.2.1-9.2.2, Figures 9.6-9.8"
+        },
+        {
+          "file": "raw/09expand.txt",
+          "lines": "963-1057",
+          "label": "9.2.3 Automatic thesaurus, Exercise 9.7, 9.3 references"
+        }
+      ],
+      "representation_sha256": "2f63490163b537561ef1fa450fd1427e7b4bfff3622665294626c10dd8ba51d5",
+      "retrieved_lines": 1081,
+      "retrieved_words": 7278,
+      "sections": [
+        {
+          "id": "9",
+          "title": "Relevance feedback and query expansion (chapter introduction)",
+          "lines": "7-37"
+        },
+        {
+          "id": "9.1",
+          "title": "Relevance feedback and pseudo relevance feedback",
+          "lines": "46-83"
+        },
+        {
+          "id": "9.1.1",
+          "title": "The Rocchio algorithm for relevance feedback",
+          "lines": "85-264"
+        },
+        {
+          "id": "9.1.2",
+          "title": "Probabilistic relevance feedback",
+          "lines": "268-289"
+        },
+        {
+          "id": "9.1.3",
+          "title": "When does relevance feedback work?",
+          "lines": "291-365"
+        },
+        {
+          "id": "9.1.4",
+          "title": "Relevance feedback on the web",
+          "lines": "367-392"
+        },
+        {
+          "id": "EX9.1",
+          "title": "Exercises 9.1-9.2",
+          "lines": "403-408"
+        },
+        {
+          "id": "9.1.5",
+          "title": "Evaluation of relevance feedback strategies",
+          "lines": "411-471"
+        },
+        {
+          "id": "9.1.6",
+          "title": "Pseudo relevance feedback",
+          "lines": "473-489"
+        },
+        {
+          "id": "9.1.7",
+          "title": "Indirect relevance feedback",
+          "lines": "492-517"
+        },
+        {
+          "id": "9.1.8",
+          "title": "Summary",
+          "lines": "519-537"
+        },
+        {
+          "id": "EX9.3",
+          "title": "Exercises 9.3-9.6",
+          "lines": "539-581"
+        },
+        {
+          "id": "9.2",
+          "title": "Global methods for query reformulation",
+          "lines": "583-586"
+        },
+        {
+          "id": "9.2.1",
+          "title": "Vocabulary tools for query reformulation",
+          "lines": "588-596"
+        },
+        {
+          "id": "9.2.2",
+          "title": "Query expansion (includes Figures 9.6-9.8)",
+          "lines": "598-961"
+        },
+        {
+          "id": "9.2.3",
+          "title": "Automatic thesaurus generation",
+          "lines": "963-1011"
+        },
+        {
+          "id": "EX9.7",
+          "title": "Exercise 9.7",
+          "lines": "1013-1016"
+        },
+        {
+          "id": "9.3",
+          "title": "References and further reading",
+          "lines": "1018-1057"
+        }
+      ],
+      "notes": [
+        "Source claim: synonymy lowers recall; global methods (thesaurus/WordNet expansion, automatic thesaurus generation, spelling correction) are independent of the query, while local methods (relevance feedback, pseudo/blind feedback, indirect feedback) adapt to the initial result set.",
+        "Source claim: the relevance-feedback loop issues a short query, returns initial results, collects relevant/nonrelevant marks, recomputes the information-need representation and displays revised results; iterations are possible, and image search (the bike query) is used as an intuitive example.",
+        "Source claim: the Rocchio optimal query is the difference between relevant and nonrelevant centroids (Equation 9.2); the practical modified query is alpha*q0 + beta*centroid(Dr) - gamma*centroid(Dnr) (Equation 9.3), with negative term weights set to zero; typical values are alpha=1, beta=0.75, gamma=0.15.",
+        "Source claim: positive feedback is more valuable than negative, so gamma < beta; Ide dec-hi, using only the highest-ranked judged nonrelevant document, is reported as the most consistent variant; many systems allow only positive feedback (gamma=0).",
+        "Source claim: probabilistic feedback estimates P(x_t=1|R) from the known relevant set (Equation 9.4) but preserves no memory of the original query; relevance feedback mainly raises recall and assumes relevant documents cluster, failing for misspellings, cross-language retrieval, vocabulary mismatch and multimodal relevant sets (Burma/Myanmar, disjunctive answers, felines).",
+        "Source claim: relevance feedback saw little web use; Excite dropped it, about 4% of sessions used it in Spink et al. (2000), about 70% of users looked only at the first page, and results improved about two thirds of the time; clickstream data and link structure are indirect feedback.",
+        "Source claim: evaluating feedback on all documents inflates gains (about 50% in MAP) because judged-relevant documents are ranked higher; residual-collection evaluation can show lower performance; a two-collection design or time-based user study is fairer, and at least five judged documents are recommended for stability.",
+        "Source claim: pseudo relevance feedback assumes the top k results are relevant and applies feedback automatically; it beat global analysis in the reported TREC ad hoc results (Figure 9.5: lnc.ltc 64.2% to 72.7%, Lnu.ltu 74.2% to 87.0% precision at 50, adding 20 terms) and risks query drift (copper mines toward Chile).",
+        "Source claim: query expansion sources include a controlled vocabulary (MeSH/UMLS; PubMed maps cancer to neoplasms), a manual thesaurus (UMLS metathesaurus, Statistics Canada), automatic co-occurrence thesauri (C = AA^T, with Figure 9.8 neighbors) and query-log mining; the Yahoo! example is interactive, the PubMed example automatic.",
+        "Source claim: automatic thesaurus quality is mixed; ambiguity creates false positives and negatives (Apple computer expanding to Apple red fruit computer), and expansion raises recall but can reduce precision (interest rate expanding to fascinate evaluate); expansion is less successful than relevance feedback, perhaps comparable to pseudo feedback but easier to explain.",
+        "Source claim: references credit Salton (1971b), Rocchio (1971) and Ide (1971); Blair and Maron (1985) are quoted on users' inability to predict document wording; WordNet is identified as the common computational thesaurus.",
+        "Inference, not source claim: the chapter presents feedback as recall-oriented and interaction-heavy, which explains its weak adoption in single-interaction web search; its reported gains come from 1990s TREC collections, not from current systems."
+      ],
+      "representation_gap": [
+        "Figure 9.1: two image-search result screenshots absent; only the caption survives.",
+        "Figures 9.3 and 9.4: vector-space diagrams absent; only captions and prose descriptions survive.",
+        "Figure 9.6: the Yahoo! interface screenshot on page 190 is extracted as thousands of isolated characters and spaces; the suggested queries cannot be reconstructed.",
+        "Equations 9.1-9.4: fractions, summations over document sets and superscripts are displaced in linearized text.",
+        "Figure 9.2: ranked lists, query terms and weights are readable, but the plus and asterisk marks are separated from their rows.",
+        "Figure 9.8: thesaurus neighbor table is readable; the LSI derivation behind it is only referenced."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
+          "candidate": "Relate synonym expansion and precision risk to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/fusion-signals.md",
+          "candidate": "Relate query reformulation and multiple signals to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-judgments.md",
+          "candidate": "Relate judged query sets to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/exact-ann.md",
+          "candidate": "Relate recall trade-offs to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader B20f (DeepSeek Harness), parent session-339f3170-2943-4eff-877d-b6b465e229ef, read 2026-10-24"
+    },
+    {
+      "id": "R206",
+      "source_ids": [
+        "src.ir-introduction"
+      ],
+      "url": "https://web.archive.org/web/2023id_/http://nlp.stanford.edu/IR-book/pdf/10xml.pdf",
+      "unit": "Chapter 10 'XML retrieval', pp. 195-218, chapter PDF 10xml.pdf",
+      "revision": "Introduction to Information Retrieval, online reading PDF, Wayback 2023",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete chapter text as extracted: chapter title and introduction, sections 10.1-10.7 including the query-by-example passage, Tables 10.1-10.4, Figures 10.1-10.11 (captions plus extractable labels), Equations (10.1)-(10.2), and Exercises 10.1-10.11, references. Page headers, running heads, page numbers 195-218 and 24 form-feed page breaks excluded from analysis.",
+      "retrieval_refs": [
+        {
+          "file": "raw/10xml.txt",
+          "lines": "6-126",
+          "label": "Chapter introduction"
+        },
+        {
+          "file": "raw/10xml.txt",
+          "lines": "128-311",
+          "label": "10.1 Basic XML concepts, Figures 10.1-10.4"
+        },
+        {
+          "file": "raw/10xml.txt",
+          "lines": "313-570",
+          "label": "10.2 Challenges in XML retrieval, Figures 10.5-10.7"
+        },
+        {
+          "file": "raw/10xml.txt",
+          "lines": "572-786",
+          "label": "10.3 A vector space model, Figures 10.8-10.10, Equations 10.1-10.2"
+        },
+        {
+          "file": "raw/10xml.txt",
+          "lines": "788-996",
+          "label": "10.4 Evaluation of XML retrieval, Tables 10.2-10.4"
+        },
+        {
+          "file": "raw/10xml.txt",
+          "lines": "999-1062",
+          "label": "10.5 Text-centric vs. data-centric XML"
+        },
+        {
+          "file": "raw/10xml.txt",
+          "lines": "1071-1155",
+          "label": "10.6 References and further reading"
+        },
+        {
+          "file": "raw/10xml.txt",
+          "lines": "1158-1204",
+          "label": "10.7 Exercises 10.1-10.11"
+        }
+      ],
+      "representation_sha256": "9ec7899bae1f7b398441c2a760e220325d5fa05eefc63d6f96173c3a0176efc8",
+      "retrieved_lines": 1233,
+      "retrieved_words": 9474,
+      "sections": [
+        {
+          "id": "10",
+          "title": "XML retrieval (chapter introduction)",
+          "lines": "6-126"
+        },
+        {
+          "id": "10.1",
+          "title": "Basic XML concepts",
+          "lines": "128-311"
+        },
+        {
+          "id": "10.2",
+          "title": "Challenges in XML retrieval",
+          "lines": "313-570"
+        },
+        {
+          "id": "10.3",
+          "title": "A vector space model for XML retrieval",
+          "lines": "572-786"
+        },
+        {
+          "id": "10.4",
+          "title": "Evaluation of XML retrieval",
+          "lines": "788-996"
+        },
+        {
+          "id": "10.5",
+          "title": "Text-centric vs. data-centric XML retrieval",
+          "lines": "999-1062"
+        },
+        {
+          "id": "10.6",
+          "title": "References and further reading",
+          "lines": "1071-1155"
+        },
+        {
+          "id": "10.7",
+          "title": "Exercises",
+          "lines": "1158-1204"
+        }
+      ],
+      "notes": [
+        "Source claim: structured retrieval means ranked search over structured documents; Table 10.1 leaves the retrieval model, main data structure and query language for structured retrieval as '?' and says there is no consensus, although many researchers expect XQuery to become the query standard.",
+        "Source claim: an XML document is an ordered labelled tree of elements and attributes; the chapter uses only a small XPath subset (child, descendant, root paths), XML DTD/Schema notions, and treats XML as a text encoding rather than data-centric data exchange.",
+        "Source claim: NEXI combines // paths, relational attribute constraints handled by pre- or post-filtering, and an about() ranking clause; only ranking under the about constraint is treated in the chapter.",
+        "Source claim: the structured document retrieval principle requires returning the most specific element that answers the query, but it is hard to implement: for title#\"Macbeth\" the play title is preferred over the scene title, and for \"Macbeth's castle\" the scene is the likely target.",
+        "Source claim: indexing-unit strategies are non-overlapping pseudodocuments, top-down retrieval of a largest element then postprocessing, bottom-up retrieval of leaves then extension, or indexing all elements; all leave nested, redundant results, so restriction and collapsing strategies are discussed.",
+        "Source claim: idf should be computed per XML-context/term pair because author#\"Gates\" differs from section#\"Gates\"; sparse data forces the compromise of conditioning on the parent node only, which still conflates some contexts.",
+        "Source claim: schema heterogeneity (creator vs. author; intervening firstname/lastname nodes) and user ignorance of schemas motivate extended queries that interpret parent-child edges as descendant edges, and motivate treating structural constraints as hints rather than strict filters.",
+        "Source claim: SIMNOMERGE scores with the context resemblance function CR(cq,cd) = (1+|cq|)/(1+|cd|) for matching paths and 0 otherwise, sums CR-weighted term weights, and divides by the document's summed squared weights; it is not a true cosine and can exceed 1.0 (Exercise 10.11).",
+        "Source claim: SIMMERGE relaxes matching in three ways (collect statistics from all resembling contexts, merge document structural terms with non-zero resemblance, further relax CR); INEX 2002 average precision is 0.271 for SIMMERGE versus 0.242 for SIMNOMERGE.",
+        "Source claim: INEX 2002 used 12,107 IEEE articles, 494 MB, 1,532 average nodes per document, average depth 6.9, and 30 CO plus 30 CAS topics; relevance is two-dimensional, component coverage (E/S/L/N) times topical relevance (3/2/1/0), quantized by Q into 1.00/0.75/0.50/0.25/0.00.",
+        "Source claim: graded coverage/relevance judgments lower measured effectiveness relative to binary evaluation; a top-ranked component with graded 0.6 yields interpolated precision 0.6 at recall 0.00 where a binary judgment yields 1.0.",
+        "Source claim: structure helps precision at the top of the list (P@5 0.2000 vs. 0.3265, +63.3%; P@10 0.1820 vs. 0.2531, +39.1%) but almost not at all at k=30 (+0.3%) in an INEX 2003/2004 language-model system; recall may suffer from structural filtering."
+      ],
+      "omissions": "Other book chapters outside this batch not read; no reproduction or experiment",
+      "representation_gap": [
+        "Figures 10.2-10.8 and 10.11: tree/diagram edges absent; nodes survive as labels on separate lines, so parent-child and dashed descendant relations must be inferred from the prose.",
+        "Figure 10.5: partitioning diagram reduced to caption; the dashed non-overlapping indexing units and their extents are not recoverable.",
+        "Equations (10.1) and (10.2): piecewise brace, fractions and summation limits displaced across lines; CR and SIMNOMERGE notation only approximately recoverable.",
+        "Figure 10.9 pseudocode survives line by line; Figure 10.10 posting lists survive as bracketed pairs but the arrow layout is flattened."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-judgments.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader B20f (DeepSeek Harness), parent session-339f3170-2943-4eff-877d-b6b465e229ef, read 2026-10-24"
+    },
+    {
+      "id": "R207",
+      "source_ids": [
+        "src.ir-introduction"
+      ],
+      "url": "https://web.archive.org/web/2023id_/http://nlp.stanford.edu/IR-book/pdf/11prob.pdf",
+      "unit": "Chapter 11 'Probabilistic information retrieval', pp. 219-235, chapter PDF 11prob.pdf",
+      "revision": "Introduction to Information Retrieval, online reading PDF, Wayback 2023",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete chapter text as extracted: chapter title and introduction, sections 11.1-11.5 including subsections 11.2.1-11.2.2, 11.3.1-11.3.4 and 11.4.1-11.4.4, Equations (11.1)-(11.34), contingency tables (11.14) and (11.19), Figure 11.1, Exercises 11.1-11.4, references. Page headers, running heads, page numbers 219-235 and 17 form-feed page breaks excluded from analysis.",
+      "retrieval_refs": [
+        {
+          "file": "raw/11prob.txt",
+          "lines": "6-51",
+          "label": "Chapter introduction"
+        },
+        {
+          "file": "raw/11prob.txt",
+          "lines": "54-110",
+          "label": "11.1 Review of basic probability theory, Equations 11.1-11.5"
+        },
+        {
+          "file": "raw/11prob.txt",
+          "lines": "112-176",
+          "label": "11.2 Probability Ranking Principle, 11.2.1-11.2.2, Equations 11.6-11.7"
+        },
+        {
+          "file": "raw/11prob.txt",
+          "lines": "179-374",
+          "label": "11.3 BIM and 11.3.1 ranking derivation, Equations 11.8-11.18"
+        },
+        {
+          "file": "raw/11prob.txt",
+          "lines": "376-477",
+          "label": "11.3.2-11.3.3 probability estimates, Equations 11.19-11.22"
+        },
+        {
+          "file": "raw/11prob.txt",
+          "lines": "479-619",
+          "label": "11.3.4 relevance feedback, Equations 11.23-11.29, Exercises 11.1-11.4"
+        },
+        {
+          "file": "raw/11prob.txt",
+          "lines": "622-860",
+          "label": "11.4 Appraisal and extensions, 11.4.1-11.4.4, Equations 11.30-11.34, Figure 11.1"
+        },
+        {
+          "file": "raw/11prob.txt",
+          "lines": "863-886",
+          "label": "11.5 References and further reading"
+        }
+      ],
+      "representation_sha256": "0d1677ba342ed3b00b3fd0133e7b1f18b473f6b2a5dd930a6704754cea15d136",
+      "retrieved_lines": 908,
+      "retrieved_words": 7449,
+      "sections": [
+        {
+          "id": "11",
+          "title": "Probabilistic information retrieval (chapter introduction)",
+          "lines": "6-51"
+        },
+        {
+          "id": "11.1",
+          "title": "Review of basic probability theory",
+          "lines": "54-110"
+        },
+        {
+          "id": "11.2",
+          "title": "The Probability Ranking Principle",
+          "lines": "112-176"
+        },
+        {
+          "id": "11.2.1",
+          "title": "The 1/0 loss case",
+          "lines": "113-164"
+        },
+        {
+          "id": "11.2.2",
+          "title": "The PRP with retrieval costs",
+          "lines": "165-176"
+        },
+        {
+          "id": "11.3",
+          "title": "The Binary Independence Model",
+          "lines": "179-619"
+        },
+        {
+          "id": "11.3.1",
+          "title": "Deriving a ranking function for query terms",
+          "lines": "256-374"
+        },
+        {
+          "id": "11.3.2",
+          "title": "Probability estimates in theory",
+          "lines": "376-434"
+        },
+        {
+          "id": "11.3.3",
+          "title": "Probability estimates in practice",
+          "lines": "436-477"
+        },
+        {
+          "id": "11.3.4",
+          "title": "Probabilistic approaches to relevance feedback",
+          "lines": "479-600"
+        },
+        {
+          "id": "11.4",
+          "title": "An appraisal and some extensions",
+          "lines": "622-860"
+        },
+        {
+          "id": "11.4.1",
+          "title": "An appraisal of probabilistic models",
+          "lines": "623-662"
+        },
+        {
+          "id": "11.4.2",
+          "title": "Tree-structured dependencies between terms",
+          "lines": "664-706"
+        },
+        {
+          "id": "11.4.3",
+          "title": "Okapi BM25: a non-binary model",
+          "lines": "708-817"
+        },
+        {
+          "id": "11.4.4",
+          "title": "Bayesian network approaches to IR",
+          "lines": "819-860"
+        },
+        {
+          "id": "11.5",
+          "title": "References and further reading",
+          "lines": "863-886"
+        }
+      ],
+      "notes": [
+        "Source claim: the Probability Ranking Principle ranks documents by decreasing probability of relevance P(R=1|d,q); under 1/0 loss this is optimal (Theorem 11.1, proof cited to Ripley 1996), but optimality requires correctly known probabilities, which never hold in practice.",
+        "Source claim: with retrieval costs, the next document is the one minimizing C0·P(R=0|d) − C1·P(R=1|d); the chapter then sets cost models aside rather than evaluating them.",
+        "Source claim: the Binary Independence Model represents documents and queries as binary term-incidence vectors and assumes term independence given the query; the chapter states it is exactly the multivariate Bernoulli Naive Bayes model of Section 13.3.",
+        "Source claim: ranking by the odds of relevance lets the query-constant prior and denominator drop out; the Naive Bayes product then yields RSV = sum over query terms present of c_t, with c_t = log[p_t(1−u_t)/(u_t(1−p_t))], a log odds ratio acting as term weight.",
+        "Source claim: probability estimates come from a 2x2 contingency table of document counts (s, df−s, S−s, N−df), with 1/2 added to each cell; this is presented as maximum a posteriori estimation under a uniform Bayesian prior, not merely an ad hoc fix.",
+        "Source claim: approximating u_t by df_t/N and dropping the (1−u_t) factor gives log(N/df_t), a theoretical justification for idf; p_t must instead be guessed, e.g. Croft-Harper's constant 0.5, or Greiff's p_t = 1/3 + (2/3)·df_t/N.",
+        "Source claim: probabilistic relevance feedback iterates estimate, retrieve, judge, re-estimate; with few judged documents a Bayesian update p_t^(k+1) = (|VR_t| + κ·p_t^(k))/(|VR| + κ) is preferred, with κ around 5; pseudo-feedback substitutes the top-|V| set for judged relevant documents.",
+        "Source claim: the chapter lists four BIM assumptions (Boolean representation, term independence, non-query terms irrelevant, independent document relevance) and says probabilistic models historically had neat ideas but did not win on performance until BM25.",
+        "Source claim: BM25 adds document term frequency and length via parameters k1 and b (and query frequency via k3); reasonable settings without tuning are k1 and k3 between 1.2 and 2 and b = 0.75; the alternative idf (11.31) can go negative for terms in more than half the documents, so a floor of 0 is used.",
+        "Source claim: BM25 was widely adopted after strong TREC results (Spärck Jones et al. 2000), and with relevance judgments (11.34) the first factor becomes the full relevance-feedback weight rather than idf.",
+        "Source claim: Turtle and Croft's Bayesian network splits a large precomputed document network (documents to terms to thesaurus concepts) from a small per-query network with noisy AND/OR operators; it underlies InQuery and generalized Boolean and probabilistic models.",
+        "Inference, not source claim: the chapter's own narrative supports reading BM25 as a pragmatic extension of a model whose strict assumptions are acknowledged as false, rather than as a derivation from the BIM."
+      ],
+      "omissions": "Other book chapters outside this batch not read; no reproduction or experiment",
+      "representation_gap": [
+        "Figure 11.1: dependency-tree nodes appear as isolated labels x1-x7 with no arrows; the parent-child dependency structure named in the caption is not recoverable from the figure.",
+        "Equations (11.4), (11.8)-(11.18) and (11.30)-(11.34): multi-line fractions, products and summation limits are displaced; exact grouping must be reconstructed from prose.",
+        "Contingency tables (11.14) and (11.19): row/column values survive but cell alignment is approximate, so column totals must be checked against the text.",
+        "No raster content is present in the extracted text; all figures are caption plus labels only."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/fusion-signals.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-judgments.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c06-search-and-question-routes-for-architecture-agents/question-routes-for-architecture-analysis.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader B20f (DeepSeek Harness), parent session-339f3170-2943-4eff-877d-b6b465e229ef, read 2026-10-24"
+    },
+    {
+      "id": "R208",
+      "source_ids": [
+        "src.ir-introduction"
+      ],
+      "url": "https://web.archive.org/web/2023id_/http://nlp.stanford.edu/IR-book/pdf/12lmodel.pdf",
+      "unit": "Chapter 12 'Language models for information retrieval', pp. 237-252, chapter PDF 12lmodel.pdf",
+      "revision": "Introduction to Information Retrieval, online reading PDF, Wayback 2023",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete chapter text as extracted: chapter title and introduction, sections 12.1-12.5 including subsections 12.1.1-12.1.3 and 12.2.1-12.2.3, Equations (12.1)-(12.15), Examples 12.1-12.3, Figures 12.1-12.5, Exercises 12.1-12.9, references. Page headers, running heads, page numbers 237-252 and 17 form-feed page breaks excluded from analysis.",
+      "retrieval_refs": [
+        {
+          "file": "raw/12lmodel.txt",
+          "lines": "7-30",
+          "label": "Chapter introduction"
+        },
+        {
+          "file": "raw/12lmodel.txt",
+          "lines": "33-177",
+          "label": "12.1 Language models and 12.1.1 finite automata, Figures 12.1-12.3, Examples 12.1-12.2"
+        },
+        {
+          "file": "raw/12lmodel.txt",
+          "lines": "179-276",
+          "label": "12.1.2-12.1.3 types of models and multinomial distributions, Equations 12.4-12.7"
+        },
+        {
+          "file": "raw/12lmodel.txt",
+          "lines": "279-299",
+          "label": "Exercises 12.1-12.5"
+        },
+        {
+          "file": "raw/12lmodel.txt",
+          "lines": "302-353",
+          "label": "12.2 Query likelihood model and 12.2.1, Equation 12.8"
+        },
+        {
+          "file": "raw/12lmodel.txt",
+          "lines": "355-507",
+          "label": "12.2.2 Estimating query generation probability, Equations 12.9-12.13, Example 12.3"
+        },
+        {
+          "file": "raw/12lmodel.txt",
+          "lines": "510-560",
+          "label": "12.2.3 Ponte and Croft's experiments, Figure 12.4"
+        },
+        {
+          "file": "raw/12lmodel.txt",
+          "lines": "564-621",
+          "label": "Exercises 12.6-12.9"
+        },
+        {
+          "file": "raw/12lmodel.txt",
+          "lines": "624-704",
+          "label": "12.3 Language modeling versus other approaches"
+        },
+        {
+          "file": "raw/12lmodel.txt",
+          "lines": "707-792",
+          "label": "12.4 Extended language modeling approaches, Figure 12.5, Equations 12.14-12.15"
+        },
+        {
+          "file": "raw/12lmodel.txt",
+          "lines": "795-832",
+          "label": "12.5 References and further reading"
+        }
+      ],
+      "representation_sha256": "edf0fb65e14419cd036f85d7b0fbbf9f4c5bd4ab7f60439b574a5e751c0bd606",
+      "retrieved_lines": 854,
+      "retrieved_words": 6687,
+      "sections": [
+        {
+          "id": "12",
+          "title": "Language models for information retrieval (chapter introduction)",
+          "lines": "7-30"
+        },
+        {
+          "id": "12.1",
+          "title": "Language models",
+          "lines": "33-276"
+        },
+        {
+          "id": "12.1.1",
+          "title": "Finite automata and language models",
+          "lines": "35-177"
+        },
+        {
+          "id": "12.1.2",
+          "title": "Types of language models",
+          "lines": "179-226"
+        },
+        {
+          "id": "12.1.3",
+          "title": "Multinomial distributions over words",
+          "lines": "228-276"
+        },
+        {
+          "id": "12.2",
+          "title": "The query likelihood model",
+          "lines": "302-621"
+        },
+        {
+          "id": "12.2.1",
+          "title": "Using query likelihood language models in IR",
+          "lines": "303-353"
+        },
+        {
+          "id": "12.2.2",
+          "title": "Estimating the query generation probability",
+          "lines": "355-507"
+        },
+        {
+          "id": "12.2.3",
+          "title": "Ponte and Croft's Experiments",
+          "lines": "510-560"
+        },
+        {
+          "id": "12.3",
+          "title": "Language modeling versus other approaches in IR",
+          "lines": "624-704"
+        },
+        {
+          "id": "12.4",
+          "title": "Extended language modeling approaches",
+          "lines": "707-792"
+        },
+        {
+          "id": "12.5",
+          "title": "References and further reading",
+          "lines": "795-832"
+        }
+      ],
+      "notes": [
+        "Source claim: the language modeling approach ranks documents by P(q|Md), the probability that a document's language model generates the query, instead of modeling P(R=1|q,d); a document matches if its model is likely to generate the query, which happens when the document contains the query words often.",
+        "Source claim: a language model is a probability measure over strings from a vocabulary; a one-state probabilistic automaton with emission probabilities and a STOP probability is the unigram case, and the STOP decision is needed for the distribution to sum to 1.",
+        "Source claim: Example 12.1 computes P(frog said that toad likes frog) ≈ 1.573e-12 including continuation/stop factors; omitting STOP makes reported numbers only proportional to probabilities but leaves likelihood ratios and rankings unchanged when STOP is fixed.",
+        "Source claim: IR uses unigram models because document-level samples are too sparse for bigram or grammar-based models, and because unigram topic matching is often sufficient; data sparseness losses tend to outweigh gains from richer models (bias-variance tradeoff).",
+        "Source claim: under a multinomial unigram model the multinomial coefficient is constant for a given query and is dropped; documents are treated as classes in a multinomial Naive Bayes formulation.",
+        "Source claim: the query likelihood model uses P(d|q) = P(q|d)P(d)/P(q), ignores P(q) and often P(d), and so ranks by P(q|d); the chapter notes a genuine prior could encode authority, length, genre, newness or readership.",
+        "Source claim: MLE P(t|Md) = tf_t,d / Ld gives zero probability to absent query terms, producing strict conjunctive semantics; but the deeper problem is that smoothing is not only for zeros, since it implements a major part of term weighting (Exercise 12.8).",
+        "Source claim: two smoothing methods are presented: linear interpolation (Jelinek-Mercer) Pmix = λ·Pmle(t|Md) + (1−λ)·Pmle(t|Mc), and Bayesian/Dirichlet smoothing (tf + α·P(t|Mc))/(Ld + α); λ and α control smoothing strength and may depend on query length.",
+        "Source claim: Example 12.3 with two documents and λ = 1/2 gives P(revenue down|d1) = 3/256 and P(revenue down|d2) = 1/256, so d1 ranks above d2.",
+        "Source claim: Ponte and Croft (1998) report the first LM retrieval experiments; their model was multivariate Bernoulli rather than the multinomial mixture presented here, and their comparison with tf-idf over TREC topics 202-250 gives average precision 0.2233 vs. 0.1868 (+19.55%), with significance marked mainly at higher recall levels.",
+        "Source claim: the chapter's comparison says the document/collection mixture behaves somewhat like idf, that LM lacks an explicit relevance variable (making feedback and user preferences harder), and that the evidence may not justify replacing a well-tuned vector-space system.",
+        "Source claim: extensions include document-likelihood models (relevance model with pseudo-feedback), KL-divergence model comparison (12.14, whose scores are not comparable across queries), and translation models (12.15) that generate query words via T(t|v) for synonymy and cross-language retrieval."
+      ],
+      "omissions": "Other book chapters outside this batch not read; no reproduction or experiment",
+      "representation_gap": [
+        "Figure 12.1: finite-automaton states and arcs are absent; only the example strings ('I wish', 'I wish I wish', ...) and the caption survive.",
+        "Figures 12.2, 12.3: emission-probability tables survive as aligned numbers, but layout relative to state q1 is flattened.",
+        "Figure 12.5: the three-way diagram (query likelihood, document likelihood, model comparison) reduces to labels (a), (b), (c) and box names; arrows and query/document positions are lost.",
+        "Equations (12.1)-(12.15): products, fractions and summation limits are linearized; e.g. (12.7) multinomial coefficient and (12.12) mixture product require reconstruction from prose.",
+        "Figure 12.4: precision table values and asterisks survive, but column alignment of significance marks is approximate."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/fusion-signals.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-judgments.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-architecture.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader B20f (DeepSeek Harness), parent session-339f3170-2943-4eff-877d-b6b465e229ef, read 2026-10-24"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 169,
+    "full_reads": 175,
     "blocked": 14,
     "records": [
       "R015",
@@ -18983,7 +20007,13 @@
       "R199",
       "R200",
       "R201",
-      "R202"
+      "R202",
+      "R203",
+      "R204",
+      "R205",
+      "R206",
+      "R207",
+      "R208"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
