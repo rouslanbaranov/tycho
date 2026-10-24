@@ -2724,12 +2724,129 @@
         }
       ],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R070",
+      "source_ids": [
+        "src.otel-metrics-model"
+      ],
+      "url": "https://opentelemetry.io/docs/specs/otel/metrics/data-model/",
+      "unit": "Complete document: OpenTelemetry Metrics Data Model",
+      "revision": "OpenTelemetry specification page; status mixed/stable sections; retrieved 2026-10-24; no page revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 804 lines / 8395 words; sections Overview, Events => Data Stream => Timeseries, Model Details, Metric Points, Exemplars, Data point flags, Single-Writer, Temporality, Resets and Gaps, Overlap, Stream Manipulations; diagrams not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.otel-metrics-model.md lines 1-804",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked guides, code and implementation behavior not read or executed; no benchmark or independent verification.",
+      "representation_sha256": "48033a418e8c9dd9dfab51cd79e2d8f02b942adcfb62e3d65e7961eb67cbddba",
+      "retrieved_lines": 804,
+      "retrieved_words": 8395,
+      "sections": [
+        "Overview",
+        "Events => Data Stream => Timeseries",
+        "Model Details",
+        "Metric Points",
+        "Exemplars",
+        "Data point flags",
+        "Single-Writer",
+        "Temporality",
+        "Resets and Gaps",
+        "Overlap",
+        "Stream Manipulations"
+      ],
+      "notes": [
+        "Source claim: the model separates the event, timeseries and OTLP stream layers, and every OTLP stream has a decomposable aggregate function so temporal and spatial reaggregation is semantically defined.",
+        "Source claim: metric identity is resource, scope, name and identifying data-point properties; description is not identifying, while histogram bucket boundaries and exponential-histogram scale are extrinsic.",
+        "Source claim: point kinds are Sum, Gauge, Histogram and ExponentialHistogram; a monotonic Sum maps to a Counter, a non-monotonic Sum to a Gauge, and Summary is legacy.",
+        "Source claim: Sum, Histogram and ExponentialHistogram support delta or cumulative temporality; StartTimeUnixNano is strongly recommended to interpret rates and resets.",
+        "Source claim: the single-writer principle requires one logical writer per stream; overlapping or duplicate writers are an error state, and receivers should deduplicate or surface the conflict.",
+        "Source claim: resets and gaps are encoded through timestamps; cumulative streams with unknown start time can overcount rate if the first point is lost.",
+        "Source claim: delta-to-cumulative conversion is stateful and must reach one destination; alignment gaps or overlaps trigger reset or deduplication decisions.",
+        "Inference: the spec defines transport semantics, not a guarantee that a backend preserves them after ingestion or query.",
+        "Inference: single-writer and temporality choices are correctness constraints, not merely collector configuration."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-semantics.md",
+          "candidate": "Does the metric-semantics page keep units, temporality, reset handling and single-writer identity as separate conditions?"
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/cardinality-retention.md",
+          "candidate": "Does the cardinality page distinguish identity attributes from non-identifying description or bucket metadata?"
+        },
+        {
+          "path": "book/observability/metrics-slo-timeseries-architecture.md",
+          "candidate": "Does the SLO page avoid treating a backend aggregation as semantically equivalent to the OTLP stream?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R071",
+      "source_ids": [
+        "src.rabbitmq"
+      ],
+      "url": "https://www.rabbitmq.com/docs/reliability",
+      "unit": "Complete document: RabbitMQ Reliability Guide",
+      "revision": "Rolling RabbitMQ documentation; retrieved 2026-10-24; no page revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 124 lines / 1994 words; sections Overview, What Can Fail?, Connection Failures, Acknowledgements and Confirms, Heartbeats, Data Safety on the RabbitMQ Side, Clustering and Queue Content Replication, Data Safety on the Publisher Side, Data Safety on the Consumer Side, Unprocessable Deliveries, Consumer Cancel Notification, Federation and Shovel, Monitoring and Health Checks; diagrams not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.rabbitmq.md lines 1-124",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked guides, code and implementation behavior not read or executed; no benchmark or independent verification.",
+      "representation_sha256": "4b332fa0c0d505b77fca5da26c3ec7bbd8bb3e36722b70982bfaf6e4b3029a2f",
+      "retrieved_lines": 124,
+      "retrieved_words": 1994,
+      "sections": [
+        "Overview",
+        "What Can Fail?",
+        "Connection Failures",
+        "Acknowledgements and Confirms",
+        "Heartbeats",
+        "Data Safety on the RabbitMQ Side",
+        "Clustering and Queue Content Replication",
+        "Data Safety on the Publisher Side",
+        "Data Safety on the Consumer Side",
+        "Unprocessable Deliveries",
+        "Consumer Cancel Notification",
+        "Federation and Shovel",
+        "Monitoring and Health Checks"
+      ],
+      "notes": [
+        "Source claim: reliable delivery is a joint responsibility of brokers, publishers and consumers; network failures, node crashes and application errors are all in scope.",
+        "Source claim: acknowledgements and publisher confirms signal receipt and transfer of ownership, not merely TCP delivery; without them the guarantee is at-most-once, with them at-least-once.",
+        "Source claim: durable queues and persistent messages are required for broker-side restart safety; quorum queues and streams replicate queue state with a leader and followers.",
+        "Source claim: a publisher that does not receive a confirm may retransmit, so duplicates are possible and consumers must deduplicate or be idempotent.",
+        "Source claim: redelivery sets a redelivered flag, but the absence of the flag guarantees only that the message was not seen before; rejected messages can be requeued or dead-lettered.",
+        "Source claim: heartbeats detect dead TCP connections; monitoring and health checks cover slower failures, with false positives if checks are excessive.",
+        "Inference: the guide describes mechanisms and contracts, not a measured delivery guarantee for a specific deployment.",
+        "Inference: at-least-once plus retry makes consumer idempotency or dedup a correctness requirement, not an optimization."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+          "candidate": "Does the messaging page separate broker acknowledgement from the consumer durable effect?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+          "candidate": "Does the workflow page treat redelivery and duplicate effects as expected failure modes?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+          "candidate": "Does the selection page distinguish retention, replication and consumer acknowledgement?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 39,
+    "full_reads": 41,
     "blocked": 14,
     "records": [
       "R015",
@@ -2786,9 +2903,11 @@
       "R066",
       "R067",
       "R068",
-      "R069"
+      "R069",
+      "R070",
+      "R071"
     ],
-    "scope": "JEP 444, JEP 491, twenty-nine public engineering articles, eight documentation/paper units, fourteen blocked pages and two excluded internal team sites",
+    "scope": "JEP 444, JEP 491, twenty-nine public engineering articles, ten documentation/paper units, fourteen blocked pages and two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2
   }
