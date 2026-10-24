@@ -24046,12 +24046,922 @@
       ],
       "representation_gap": "Figures 5.1-5.4 exist in the HTML as images but only captions survive in the text. Four C-preprocessor lines at column 1 (#ifdef linux L68, #endif L70, #ifdef HAS_FEATURE L80, #endif L82) are mis-rendered as Markdown H1 headings; the code text itself is present. No section text is missing.",
       "reader": "delegated-reader/deepseek-flash (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - not independent review, human review, CI or whole-book coverage"
+    },
+    {
+      "id": "R235",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/eclipse.html",
+      "unit": "R235 / Eclipse (AOSA Volume I, chapter 6)",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full: 100% of the assigned chapter file (607/607 lines, 7,766/7,766 words; SHA-256 matched). All numbered sections 6.1-6.5, their subsections and the footnotes are accounted for in this chapter only. Analysis excluded L1-L8 (volume title, chapter title, byline and site banner); counts cover the whole local file, including 267 whitespace-only spacer lines and extractor [CODE] markers. No whole-volume claim.",
+      "retrieval_refs": [
+        "https://aosabook.org/en/v1/eclipse.html",
+        "local:/tmp/B20h/raw/eclipse.txt#L1-L607",
+        "local:/tmp/B20h/raw/eclipse.html",
+        "manifest:/tmp/B20h/manifest2.json#R235"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_sha256": "8eb5d2dd358e8ffebc9431f80d9b8bebeaeb6c899923c7d95ce79c4850217a01",
+      "retrieved_lines": 607,
+      "retrieved_words": 7766,
+      "sections": [
+        "Untitled introduction (L11)",
+        "6.1. Early Eclipse (L26)",
+        "6.1.1. Platform (L41)",
+        "6.1.2. Java Development Tools (JDT) (L277)",
+        "6.1.3. Plug-in Development Environment (PDE) (L286)",
+        "6.2. Eclipse 3.0: Runtime, RCP and Robots (L292)",
+        "6.2.1. Runtime (L295)",
+        "6.2.2. Rich Client Platform (RCP) (L386)",
+        "6.3. Eclipse 3.4 (L401)",
+        "6.3.1. p2 Concepts (L491)",
+        "6.4. Eclipse 4.0 (L509)",
+        "6.4.1. Model Workbench (L521)",
+        "6.4.2. Cascading Style Sheets Styling (L530)",
+        "6.4.3. Dependency Injection (L536)",
+        "6.4.4. Application Services (L577)",
+        "6.5. Conclusion (L583)",
+        "Footnotes (L601)"
+      ],
+      "notes": [
+        "Source claim: the June 2010 Helios release covered over 39 projects and 490 committers from over 40 companies; Eclipse 1.0 appeared on 7 November 2001 as an extensible framework rather than a fixed tool set, with the SDK as its self-hosting proof of concept (L11-L14).",
+        "Source claim: early code derived from VisualAge for Java, and the first committers were paid employees of IBM subsidiary OTI; a vendor consortium (Borland, IBM, Merant, QNX, Rational, RedHat, SuSE, TogetherSoft) backed the effort before the 2004 Eclipse Foundation (L17-L20).",
+        "Source claim: a plugin is a JAR plus manifest, with its own class loader and explicit requires imports; extension points let outsiders contribute while exported packages define public API and everything else remains private (L44-L77).",
+        "Source claim: the runtime scans manifests at startup to build an in-memory extension registry, caches it to disk, and uses lazy activation so plugin classes load only when a contribution is used (L141-L187).",
+        "Source claim: the workbench is perspectives, views and editors built on SWT and JFace; SWT was chosen as a native toolkit after OTI's negative experience with Swing, a decision the chapter says split the Java community (L199-L220).",
+        "Source claim: JDT ships its own compiler, originally contributed from VisualAge Micro Edition, because tooling and extension points needed compiler internals; its incremental builder uses a resource delta and build state, recompiling dependents after structural changes (L280-L283). Source claim: PDE Build generated Ant scripts to assemble plugins because no existing Java build system understood the plugin format (L289).",
+        "Source claim: Eclipse 3.0's Equinox replaced the home-grown runtime with OSGi after rejecting JMX and Jakarta Avalon; OSGi was chosen for semantic versioning, explicit package exports, class loading and a broader community, with a compatibility layer for old plugins (L298-L313).",
+        "Source claim: the manifest gained Bundle-SymbolicName, Require-Bundle version ranges and a required execution environment; OSGi defines installed/resolved/starting/active/stopping/uninstalled states, four-part versions and dynamically registered services distinct from startup-registered extensions (L339-L360).",
+        "Source claim: community use of a platform subset produced RCP; bundles were split for that use case, with Mars Rover, Bioclipse and Dutch Railway cited as adopters (L389-L398).",
+        "Source claim: Update Manager could only update whole features and could not provision platform executables or license files, so p2 arrived in March 2008 with installable units, separated metadata/artifact repositories, profiles, director/planner/engine and touchpoints, enabling rollback and install-time constraint resolution (L404-L506).",
+        "Source claim: Eclipse 4.0 (July 2010 early adopter) pursued an EMF model workbench, CSS styling, hierarchical IEclipseContext dependency injection with JSR-330 annotations, and small application services ('the twenty things'), retaining a compatibility layer; the conclusion concedes the API grew too large and documentation was neglected (L512-L595).",
+        "Inference: this is a participant history by an Eclipse committer; adoption, performance and ecosystem-growth statements are not independently measured in the chapter, and the figures are dated to 2010."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/dependencies-ports.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/module-enforcement.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/cases/shopify-packwerk-boundary-evolution.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "representation_gap": "Figures 6.1-6.12 exist in the HTML as img elements; the local text preserves only their captions. [CODE]/[/CODE] markers are extractor artifacts; all 11 HTML pre blocks are present, some author-abbreviated (e.g. '[: : :]'). No section text is missing.",
+      "reader": "delegated-reader/deepseek-flash (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - not independent review, human review, CI or whole-book coverage"
+    },
+    {
+      "id": "R236",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/hdfs.html",
+      "unit": "R236 / The Hadoop Distributed File System (AOSA Volume I, chapter 8)",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full: 100% of the assigned chapter file (346/346 lines, 6,899/6,899 words; SHA-256 matched). All numbered sections 8.1-8.6, their subsections, the acknowledgment and the footnotes are accounted for in this chapter only. Analysis excluded L1-L8 (volume title, chapter title, byline and site banner); counts cover the whole local file, including 228 whitespace-only spacer lines. No code blocks occur in this chapter. No whole-volume claim.",
+      "retrieval_refs": [
+        "https://aosabook.org/en/v1/hdfs.html",
+        "local:/tmp/B20h/raw/hdfs.txt#L1-L346",
+        "local:/tmp/B20h/raw/hdfs.html",
+        "manifest:/tmp/B20h/manifest2.json#R236"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_sha256": "c9768c1ef6fc3502b0ff0be6133a760b5d15cca493a1e973df9232d02dd8b6af",
+      "retrieved_lines": 346,
+      "retrieved_words": 6899,
+      "sections": [
+        "Untitled introduction (L11)",
+        "8.1. Introduction (L14)",
+        "8.2. Architecture (L26)",
+        "8.2.1. NameNode (L29)",
+        "8.2.2. Image and Journal (L35)",
+        "8.2.3. DataNodes (L50)",
+        "8.2.4. HDFS Client (L80)",
+        "8.2.5. CheckpointNode (L98)",
+        "8.2.6. BackupNode (L110)",
+        "8.2.7. Upgrades and Filesystem Snapshots (L125)",
+        "8.3. File I/O Operations and Replica Management (L146)",
+        "8.3.1. File Read and Write (L152)",
+        "8.3.2. Block Placement (L185)",
+        "8.3.3. Replication Management (L212)",
+        "8.3.4. Balancer (L224)",
+        "8.3.5. Block Scanner (L242)",
+        "8.3.6. Decommissioning (L254)",
+        "8.3.7. Inter-Cluster Data Copy (L260)",
+        "8.4. Practice at Yahoo! (L266)",
+        "8.4.1. Durability of Data (L281)",
+        "8.4.2. Features for Sharing HDFS (L293)",
+        "8.4.3. Scaling and HDFS Federation (L308)",
+        "8.5. Lessons Learned (L323)",
+        "8.6. Acknowledgment (L332)",
+        "Footnotes (L338)"
+      ],
+      "notes": [
+        "Source claim: HDFS is designed for very large data sets and high-bandwidth streaming; Yahoo! clusters span 40,000 servers holding 40 PB, with the largest cluster at 4,000 servers, and 100 other organizations report using Hadoop (L11-L20).",
+        "Source claim: metadata and application data are separated — a single NameNode per cluster holds namespace inodes and block locations while DataNodes store replicas; files are split into large blocks (typically 128 MB, three replicas), and replication substitutes for RAID (L23-L32).",
+        "Source claim: the namespace image lives in RAM, the persistent checkpoint is never updated in place, and a write-ahead journal records each transaction and is flushed and synced before acknowledgment; multiple transactions are batched to amortize the sync, and redundant copies sit on independent volumes and remote NFS (L38-L47).",
+        "Source claim: each DataNode replica is two local files (data plus metadata/checksums/generation stamp); a handshake checks namespace ID and software version, storage IDs survive restarts, block reports arrive hourly, and 3-second heartbeats carry commands because the NameNode never initiates connections (L53-L77).",
+        "Source claim: reads ask the NameNode for block locations sorted by topology distance and fall back to the next replica on failure; writes use a single-writer lease, a node-to-node packet pipeline, and an optional hflush for visibility guarantees (L89-L179).",
+        "Source claim: checksums are computed by the writer, stored beside each block, and verified by readers and by each DataNode's block scanner; corrupt replicas are not deleted until good copies reach the replication factor (L173-L179, L245-L251).",
+        "Source claim: default placement puts the first replica on the writer's node and the next two on different nodes in another rack, with later replicas random under one-per-node and two-per-rack limits; pipeline order follows proximity (L194-L209).",
+        "Source claim: replication management prioritizes blocks with one replica, avoids reducing rack diversity, and treats a single-rack block as mis-replicated; the balancer moves replicas between utilization extremes while preserving replica and rack counts, and DistCp copies data as a MapReduce job (L215-L263).",
+        "Source claim: example 4,000-node clusters have 11 PB raw storage (3.7 PB usable at three replicas), about 65 million files and 80 million blocks; 0.8% of nodes fail monthly, re-replication of a node's 60,000 replicas takes about two minutes, the scanner finds about 20 bad replicas per fortnight, and a full power-on restart loses a handful of blocks (L269-L290).",
+        "Source claim: sharing features include POSIX-like permissions without execute bits or sticky bits, Kerberos-based credentials, space and namespace quotas, and HAR archives; NameNode heap limits namespace and storage scale, so federation introduces independent namespaces sharing Block Pools, with client-side mount tables for a unified view (L296-L320).",
+        "Source claim: the authors attribute success to a small team, a simple architecture of replicated blocks, periodic block reports and central metadata, and avoiding full POSIX semantics; in-memory metadata avoids complex locking but caps scale, Java's object overhead and GC hurt the NameNode while avoiding pointer bugs, and failover remained manual when the chapter was written (L326-L329).",
+        "Inference: this is a vendor experience report from Yahoo!; the durability probabilities, failure rates and cluster statistics are operational recollections rather than a reproducible experiment, and the chapter dates to roughly 2010-2011."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/recovery-objects.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/upload-integrity.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "representation_gap": "Figures 8.1-8.3 exist in the HTML as img elements; the local text preserves only their captions. The chapter contains no code blocks. No section text is missing.",
+      "reader": "delegated-reader/deepseek-flash (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - not independent review, human review, CI or whole-book coverage"
+    },
+    {
+      "id": "R237",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/llvm.html",
+      "unit": "R237 / LLVM (AOSA Volume I, chapter 11)",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full: 100% of the assigned chapter file (445/445 lines, 7,045/7,045 words; SHA-256 matched). All numbered sections 11.1-11.7, their subsections and the footnotes are accounted for in this chapter only. Analysis excluded L1-L8 (volume title, chapter title, byline and site banner); counts cover the whole local file, including 246 whitespace-only spacer lines and extractor [CODE] markers. No whole-volume claim.",
+      "retrieval_refs": [
+        "https://aosabook.org/en/v1/llvm.html",
+        "local:/tmp/B20h/raw/llvm.txt#L1-L445",
+        "local:/tmp/B20h/raw/llvm.html",
+        "manifest:/tmp/B20h/manifest2.json#R237"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_sha256": "787893226ed14e82ec961188f3b1b8288eb2de7c558e34ac8626b49f63be0f49",
+      "retrieved_lines": 445,
+      "retrieved_words": 7045,
+      "sections": [
+        "Untitled introduction (L11)",
+        "11.1. A Quick Introduction to Classical Compiler Design (L23)",
+        "11.1.1. Implications of this Design (L38)",
+        "11.2. Existing Language Implementations (L56)",
+        "11.3. LLVM's Code Representation: LLVM IR (L77)",
+        "11.3.1. Writing an LLVM IR Optimization (L139)",
+        "11.4. LLVM's Implementation of Three-Phase Design (L210)",
+        "11.4.1. LLVM IR is a Complete Code Representation (L219)",
+        "11.4.2. LLVM is a Collection of Libraries (L231)",
+        "11.5. Design of the Retargetable LLVM Code Generator (L282)",
+        "11.5.1. LLVM Target Description Files (L291)",
+        "11.6. Interesting Capabilities Provided by a Modular Design (L338)",
+        "11.6.1. Choosing When and Where Each Phase Runs (L344)",
+        "11.6.2. Unit Testing the Optimizer (L365)",
+        "11.6.3. Automatic Test Case Reduction with BugPoint (L396)",
+        "11.7. Retrospective and Future Directions (L411)",
+        "Footnotes (L429)"
+      ],
+      "notes": [
+        "Source claim: LLVM began in December 2000 as reusable libraries with well-defined interfaces, in contrast to monolithic language implementations; the chapter presents broad reuse across static and JIT-compiled languages and special-purpose products, including OpenCL, as the outcome (L11-L20).",
+        "Source claim: the classical three-phase compiler separates a language-specific front end, a target-independent optimizer and a target-specific back end; this yields N+M rather than N*M implementations, widens the contributor community and lets front-end and back-end specialists work separately (L26-L53).",
+        "Source claim: the chapter evaluates prior reuse strategies — JVM/.NET bytecode forces JIT, GC and a particular object model, C-as-backend breaks exception handling, debugging and tail calls, and GCC remains monolithic with global state, layering problems and leaky abstractions (L59-L74).",
+        "Source claim: LLVM IR is a typed, RISC-like, three-address virtual instruction set with infinite named temporaries, defined in three isomorphic forms (textual .ll, in-memory structures, binary bitcode), with llvm-as and llvm-dis converting between text and bitcode (L80-L136).",
+        "Source claim: most optimizations follow pattern-match, safety-check, transform; SimplifySubInst implements X-0, X-X and (X*2)-X via C++ template matchers, and a dispatcher calls per-opcode helpers from passes that replace all uses with the simplified value (L142-L207).",
+        "Source claim: LLVM IR is the only optimizer interface and is self-contained, so a front end can emit text and pipe it through any optimizer/codegen sequence; GCC's GIMPLE is not self-contained because debug info and operands reach back to the source-level tree (L213-L228).",
+        "Source claim: LLVM is a set of libraries, not a monolithic compiler; each pass is a C++ class with a create function, passes live in archive libraries, and only referenced passes are linked, while PassManager satisfies declared dependencies; clients choose pass order and policy and may add language-specific passes (L234-L279).",
+        "Source claim: the code generator decomposes into instruction selection, register allocation, scheduling, layout and assembly emission, with per-target overrides (x86 pressure scheduling and x87 stack pass, PowerPC latency scheduling, ARM constant pools); declarative .td files processed by tblgen generate selector, allocator, encoder/decoder and parser support from one instruction description (L285-L335).",
+        "Source claim: bitcode serialization enables link-time optimization (-flto/-O4) and install-time optimization; textual IR plus the modular optimizer enables single-pass regression tests with opt and FileCheck, and BugPoint automates test-case reduction and fault isolation for crashes and miscompilations (L347-L408).",
+        "Source claim: modularity began as self-defense against getting the design wrong, and LLVM accepts API-breaking changes while offering stable C wrappers and backward-compatible bitcode; remaining work includes subsetting the still-monolithic code generator and improving generated code, with LLDB cited as a reuse example and calcification as the risk (L414-L426).",
+        "Inference: the author is LLVM's founder; the comparisons with GCC and claims about adoption, code quality and productivity are advocacy and recollection, not measurements reported in this chapter."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/semantic-translation.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/views-tradeoffs.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/decision-discriminators.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "representation_gap": "Figures 11.1-11.7 exist in the HTML as img elements; the local text preserves only their captions. [CODE]/[/CODE] markers are extractor artifacts; all 9 HTML pre blocks are present, some author-abbreviated ('…', '⋮ ⋮ ⋮'). No section text is missing.",
+      "reader": "delegated-reader/deepseek-flash (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - not independent review, human review, CI or whole-book coverage"
+    },
+    {
+      "id": "R238",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/mercurial.html",
+      "unit": "AOSA Volume I, Chapter 12 \"Mercurial\" (public HTML chapter), local representation /tmp/B20h/raw/mercurial.txt lines 1-339",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-339: 16 headings (12.1-12.6 including subsections), 3 figure captions, 1 table and 1 code block, through Lessons Learned. The file also contains a 3-line site header/author line and one promotional line (lines 1-8); no navigation or footer chrome beyond that.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest2.json#R238",
+        "/tmp/B20h/raw/mercurial.txt lines 1-339; sha256=72c6147059064813f45b9012b7c6e27697924db19cc8ae03f1a4a70b667fcc30; words=6538",
+        "https://aosabook.org/en/v1/mercurial.html (HTTP 200, fetched 2026-10-24; used only to compare heading and figure sets)"
+      ],
+      "omissions": "Other AOSA Volume I chapters outside batch B20h (R235-R237 and any later chapter) were not read; no production experiment, benchmark, repository clone or Mercurial run was performed; figure images and alt text are absent from the local representation.",
+      "representation_gap": "Non-textual gap only: Figures 12.1-12.3 are present as captions without images or alt text, and Table 12.1's grid is flattened to a single row of cell values at line 124. No prose section is missing; the heading set matches the live HTML fetched 2026-10-24.",
+      "representation_sha256": "72c6147059064813f45b9012b7c6e27697924db19cc8ae03f1a4a70b667fcc30",
+      "retrieved_lines": 339,
+      "retrieved_words": 6538,
+      "sections": [
+        {
+          "title": "12.1. A Short History of Version Control",
+          "level": 2,
+          "start_line": 14,
+          "end_line": 31
+        },
+        {
+          "title": "12.1.1. Centralized Version Control",
+          "level": 3,
+          "start_line": 32,
+          "end_line": 52
+        },
+        {
+          "title": "12.1.2. Distributed Version Control",
+          "level": 3,
+          "start_line": 53,
+          "end_line": 82
+        },
+        {
+          "title": "12.2. Data Structures",
+          "level": 2,
+          "start_line": 83,
+          "end_line": 88
+        },
+        {
+          "title": "12.2.1. Challenges",
+          "level": 3,
+          "start_line": 89,
+          "end_line": 119
+        },
+        {
+          "title": "12.2.2. Fast Revision Storage: Revlogs",
+          "level": 3,
+          "start_line": 120,
+          "end_line": 137
+        },
+        {
+          "title": "12.2.3. The Three Revlogs",
+          "level": 3,
+          "start_line": 138,
+          "end_line": 190
+        },
+        {
+          "title": "12.2.4. The Working Directory",
+          "level": 3,
+          "start_line": 191,
+          "end_line": 199
+        },
+        {
+          "title": "12.3. Versioning Mechanics",
+          "level": 2,
+          "start_line": 200,
+          "end_line": 205
+        },
+        {
+          "title": "12.3.1. Branches",
+          "level": 3,
+          "start_line": 206,
+          "end_line": 223
+        },
+        {
+          "title": "12.3.2. Tags",
+          "level": 3,
+          "start_line": 224,
+          "end_line": 238
+        },
+        {
+          "title": "12.4. General Structure",
+          "level": 2,
+          "start_line": 239,
+          "end_line": 271
+        },
+        {
+          "title": "12.5. Extensibility",
+          "level": 2,
+          "start_line": 272,
+          "end_line": 277
+        },
+        {
+          "title": "12.5.1. Writing Extensions",
+          "level": 3,
+          "start_line": 278,
+          "end_line": 305
+        },
+        {
+          "title": "12.5.2. Hooks",
+          "level": 3,
+          "start_line": 306,
+          "end_line": 320
+        },
+        {
+          "title": "12.6. Lessons Learned",
+          "level": 2,
+          "start_line": 321,
+          "end_line": 339
+        }
+      ],
+      "notes": [
+        "Source claim: the opening history presents SCCS (1975), RCS (1982), CVS (1986) and Subversion (2000) as centralized systems, then motivates distributed VCS by offline commits, network round trips, merge tracking and a single integration point (lines 20-59).",
+        "Source claim: changesets form a directed acyclic graph with root, merge and head revisions because parallel commits make a total temporal order impossible; SHA-1 hashes over contents, parents and metadata make ancestry verifiable, while local revision numbers are clone-specific (lines 62-80).",
+        "Source claim: Matt Mackall's April 2005 mail set goals of simplicity, scalability and efficiency, naming CPU speed, disk/memory capacity, bandwidth and disk seek rate as limits, with seek rate and WAN bandwidth as current bottlenecks (lines 92-106).",
+        "Source claim: a revlog is an index file plus a data file; fixed 64-byte records (6+2+4+4+4+4+4+4+32) allow constant-time access by local revision number, zlib-compressed deltas are chained only until cumulative delta size justifies a new base, and the 32-byte hash leaves room beyond SHA-1 (lines 123-135, Table 12.1).",
+        "Source claim: three revlog layers — changelog, manifest and filelog — connect by node ids; appending filelogs first, then the manifest, then the changelog keeps readers consistent, and explicit locks prevent concurrent appends (lines 141-188).",
+        "Source claim: the dirstate records the checked-out revision, holds two parents during a merge, and caches modification times, sizes and add/remove/merge states to speed status and diff traversal (lines 194-197).",
+        "Source claim: branching moved from separate clones to named branches stored in changeset metadata with a close marker, while Git-style references are imitated by the bookmarks extension; tags are append-only lines in a versioned .hgtags file where the newest node wins and the null node deletes a tag (lines 209-236).",
+        "Source claim: the command path is dispatch to ui (configuration, extension loading, global options), then an optional localrepo, then one function per command in commands, described by a cmdtable; extensions add cmdtable/uisetup/reposetup, wrap repositories, monkeypatch, or define aliases, and hooks are shell or in-process Python with pre/post/controlling variants (lines 251-318).",
+        "Source claim: the lessons are Python's interpreter-startup cost against expressiveness and portability, the deliberate immutability of published changesets, revlog efficiency offset by expensive renames and an underused per-file DAG, and a small, learnable command set (lines 324-336).",
+        "Representation observation: Table 12.1 is flattened into one line of cell values (line 124) and Figures 12.1-12.3 survive only as captions; the 16 headings otherwise match the live HTML fetched on 2026-10-24.",
+        "Inference: the chapter is design rationale rather than measurement; it reports no benchmark figures for revlog or command performance, so no performance claim should be attributed to it."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/storage-workload.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/build-identity.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness"
+    },
+    {
+      "id": "R239",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/jitsi.html",
+      "unit": "AOSA Volume I, Chapter 10 \"Jitsi\" (public HTML chapter), local representation /tmp/B20h/raw/jitsi.txt lines 1-554",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-554: 18 headings (10.1-10.8 plus Footnotes), 4 figure captions, 7 code blocks, lessons learned and 4 footnotes. The file includes a 3-line site header/author line and one promotional line (lines 1-8).",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest2.json#R239",
+        "/tmp/B20h/raw/jitsi.txt lines 1-554; sha256=8cf3190187b866908c50f391b57bfca1f6bdcf79af16487208cc17d695628243; words=5532",
+        "https://aosabook.org/en/v1/jitsi.html (HTTP 200, fetched 2026-10-24; used only to compare heading and figure sets)"
+      ],
+      "omissions": "Other AOSA Volume I chapters outside batch B20h were not read; no production experiment, build of Jitsi or OSGi runtime test was performed; figure images and alt text are absent from the local representation.",
+      "representation_gap": "Non-textual gap only: Figures 10.1-10.4 are present as captions without images or alt text; elided list excerpts use the ellipsis glyph '⋮ ⋮ ⋮' (lines 206, 214, 229); footnote superscripts are flattened into words. No prose section is missing; the heading set matches the live HTML fetched 2026-10-24.",
+      "representation_sha256": "8cf3190187b866908c50f391b57bfca1f6bdcf79af16487208cc17d695628243",
+      "retrieved_lines": 554,
+      "retrieved_words": 5532,
+      "sections": [
+        {
+          "title": "10.1. Designing Jitsi",
+          "level": 2,
+          "start_line": 14,
+          "end_line": 34
+        },
+        {
+          "title": "10.2. Jitsi and the OSGi Framework",
+          "level": 2,
+          "start_line": 35,
+          "end_line": 155
+        },
+        {
+          "title": "10.3. Building and Running a Bundle",
+          "level": 2,
+          "start_line": 156,
+          "end_line": 236
+        },
+        {
+          "title": "10.4. Protocol Provider Service",
+          "level": 2,
+          "start_line": 237,
+          "end_line": 248
+        },
+        {
+          "title": "10.4.1. Operation Sets",
+          "level": 3,
+          "start_line": 249,
+          "end_line": 274
+        },
+        {
+          "title": "10.4.2. Accounts, Factories and Provider Instances",
+          "level": 3,
+          "start_line": 275,
+          "end_line": 286
+        },
+        {
+          "title": "10.5. Media Service",
+          "level": 2,
+          "start_line": 287,
+          "end_line": 304
+        },
+        {
+          "title": "10.5.1. Capture, Streaming, and Playback",
+          "level": 3,
+          "start_line": 305,
+          "end_line": 319
+        },
+        {
+          "title": "10.5.2. Codecs",
+          "level": 3,
+          "start_line": 320,
+          "end_line": 331
+        },
+        {
+          "title": "10.5.3. Connecting with the Protocol Providers",
+          "level": 3,
+          "start_line": 332,
+          "end_line": 394
+        },
+        {
+          "title": "10.6. UI Service",
+          "level": 2,
+          "start_line": 395,
+          "end_line": 470
+        },
+        {
+          "title": "10.7. Lessons Learned",
+          "level": 2,
+          "start_line": 471,
+          "end_line": 488
+        },
+        {
+          "title": "10.7.1. Java Sound vs. PortAudio",
+          "level": 3,
+          "start_line": 489,
+          "end_line": 506
+        },
+        {
+          "title": "10.7.2. Video Capture and Rendering",
+          "level": 3,
+          "start_line": 507,
+          "end_line": 521
+        },
+        {
+          "title": "10.7.3. Video Encoding and Decoding",
+          "level": 3,
+          "start_line": 522,
+          "end_line": 530
+        },
+        {
+          "title": "10.7.4. Others",
+          "level": 3,
+          "start_line": 531,
+          "end_line": 539
+        },
+        {
+          "title": "10.8. Acknowledgments",
+          "level": 2,
+          "start_line": 540,
+          "end_line": 545
+        },
+        {
+          "title": "Footnotes",
+          "level": 2,
+          "start_line": 546,
+          "end_line": 554
+        }
+      ],
+      "notes": [
+        "Source claim: three constraints drove the design — one interface across protocols, cross-platform operation, and developer-friendliness through independent, replaceable, switchable parts — leading Jitsi (then SIP Communicator) to OSGi on Apache Felix instead of a bespoke plugin framework (lines 17-33).",
+        "Source claim: bundles are JARs, services are exported Java interfaces with implementations hidden in parallel impl packages, and activators receive a BundleContext to register or look up services, shown end to end with ConfigurationService (lines 41-150).",
+        "Source claim: deployment needs manifest headers (Bundle-Activator, Import-Package, Export-Package), an Ant bundle target in build.xml, and felix.client.run.properties start levels, with fileaccess at 30 starting before configuration at 40, plus system-package extras for OS-specific JRE packages (lines 159-234).",
+        "Source claim: ProtocolProviderService has one instance per account, a ProtocolProviderFactory per protocol creates and registers providers, and account wizards sit in GUI plugin bundles rather than protocol bundles (lines 240-285).",
+        "Source claim: OperationSets expose optional protocol capabilities so the UI can query support before offering actions; OperationSetPersistentPresence was split from presence because some protocols cannot store contact lists server-side (lines 252-272).",
+        "Source claim: SIP and XMPP are signalling protocols while RTP carries media, and all media code lives in MediaService under service.neomedia and impl.neomedia, whose 'neo' prefix records a complete rewrite (lines 290-299).",
+        "Source claim: a MediaDevice supports a single MediaType (a webcam with microphone appears as two devices) and a MediaStream binds one device to one peer, so an audio/video call uses two streams; codec choice trades bandwidth, quality and CPU among iLBC, Speex, G.729, G.722 and H.264 (lines 308-329).",
+        "Source claim: protocol bundles configure media identically — getDevices(MediaType, MediaUseCase), getSupportedFormats(), an offer/answer exchange using SDP, then a StreamConnector and MediaStream with target, direction, format and start (lines 335-388).",
+        "Source claim: UI plugins register PluginComponent OSGi services filtered by Container.CONTAINER_ID, and UIService discovers and inserts them, illustrated by the OTR padlock and contact-menu entries (lines 401-468).",
+        "Source claim: the lessons are that Java performance was adequate and its portability and community reach were real gains, while native code was driven by OS integration — JavaSound's device-selection limits and OSS backend led to PortAudio, missing JRE video capture led to in-house V4L2/QTKit/DirectShow grabbers, and encoding uses FFmpeg (lines 474-537).",
+        "Source claim: acknowledgments credit Yana Stamcheva for every diagram, and four footnotes point to source access plus PortAudio, LTI-CIVIL and a retained non-default option (lines 540-554).",
+        "Representation observation: Figures 10.1-10.4 are captions only, elided list excerpts appear as the ellipsis glyphs at lines 206, 214 and 229, and footnote superscripts are flattened into adjacent words such as 'PortAudio2' and 'Larson3'; the 18 headings match the live HTML fetched on 2026-10-24."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/module-enforcement.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/stream-contracts.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-latency-fanout-and-deadline-budgets.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness"
+    },
+    {
+      "id": "R240",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/nosql.html",
+      "unit": "AOSA Volume I, Chapter 13 \"The NoSQL Ecosystem\" (public HTML chapter), local representation /tmp/B20h/raw/nosql.txt lines 1-560",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-560: 47 headings (13.1-13.7 plus Footnotes), 2 figure captions, no code blocks, and 17 footnotes. The file includes a 3-line site header/author line and one promotional line (lines 1-8).",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest2.json#R240",
+        "/tmp/B20h/raw/nosql.txt lines 1-560; sha256=2c95c57d43c9f876d35bd35757997ccbae987c020628fdd709c24ad7ee593d08; words=9780",
+        "https://aosabook.org/en/v1/nosql.html (HTTP 200, fetched 2026-10-24; used only to compare heading and figure sets)"
+      ],
+      "omissions": "Other AOSA Volume I chapters outside batch B20h were not read; no production experiment, database deployment or benchmark was performed; figure images and alt text are absent, and system descriptions are as of the chapter's writing.",
+      "representation_gap": "Non-textual gap only: Figures 13.1-13.2 are captions without images or alt text; superscripts are flattened ('2^61' rendered as '261' at line 369) and footnote markers merge with names. No prose section is missing; the heading set matches the live HTML fetched 2026-10-24 (47 headings).",
+      "representation_sha256": "2c95c57d43c9f876d35bd35757997ccbae987c020628fdd709c24ad7ee593d08",
+      "retrieved_lines": 560,
+      "retrieved_words": 9780,
+      "sections": [
+        {
+          "title": "13.1. What's in a Name?",
+          "level": 2,
+          "start_line": 17,
+          "end_line": 25
+        },
+        {
+          "title": "13.1.1. SQL and the Relational Model",
+          "level": 3,
+          "start_line": 26,
+          "end_line": 52
+        },
+        {
+          "title": "13.1.2. NoSQL Inspirations",
+          "level": 3,
+          "start_line": 53,
+          "end_line": 67
+        },
+        {
+          "title": "13.1.3. Characteristics and Considerations",
+          "level": 3,
+          "start_line": 68,
+          "end_line": 104
+        },
+        {
+          "title": "13.2. NoSQL Data and Query Models",
+          "level": 2,
+          "start_line": 105,
+          "end_line": 110
+        },
+        {
+          "title": "13.2.1. Key-based NoSQL Data Models",
+          "level": 3,
+          "start_line": 111,
+          "end_line": 125
+        },
+        {
+          "title": "Key-Value Stores",
+          "level": 4,
+          "start_line": 126,
+          "end_line": 134
+        },
+        {
+          "title": "Key-Data Structure Stores",
+          "level": 4,
+          "start_line": 135,
+          "end_line": 140
+        },
+        {
+          "title": "Key-Document Stores",
+          "level": 4,
+          "start_line": 141,
+          "end_line": 149
+        },
+        {
+          "title": "BigTable Column Family Stores",
+          "level": 4,
+          "start_line": 150,
+          "end_line": 161
+        },
+        {
+          "title": "13.2.2. Graph Storage",
+          "level": 3,
+          "start_line": 162,
+          "end_line": 167
+        },
+        {
+          "title": "13.2.3. Complex Queries",
+          "level": 3,
+          "start_line": 168,
+          "end_line": 173
+        },
+        {
+          "title": "13.2.4. Transactions",
+          "level": 3,
+          "start_line": 174,
+          "end_line": 191
+        },
+        {
+          "title": "13.2.5. Schema-free Storage",
+          "level": 3,
+          "start_line": 192,
+          "end_line": 197
+        },
+        {
+          "title": "13.3. Data Durability",
+          "level": 2,
+          "start_line": 198,
+          "end_line": 206
+        },
+        {
+          "title": "13.3.1. Single-server Durability",
+          "level": 3,
+          "start_line": 207,
+          "end_line": 215
+        },
+        {
+          "title": "Control fsync Frequency",
+          "level": 4,
+          "start_line": 216,
+          "end_line": 224
+        },
+        {
+          "title": "Increase Sequential Writes by Logging",
+          "level": 4,
+          "start_line": 225,
+          "end_line": 233
+        },
+        {
+          "title": "Increase Throughput by Grouping Writes",
+          "level": 4,
+          "start_line": 234,
+          "end_line": 239
+        },
+        {
+          "title": "13.3.2. Multi-server Durability",
+          "level": 3,
+          "start_line": 240,
+          "end_line": 257
+        },
+        {
+          "title": "13.4. Scaling for Performance",
+          "level": 2,
+          "start_line": 258,
+          "end_line": 272
+        },
+        {
+          "title": "13.4.1. Do Not Shard Until You Have To",
+          "level": 3,
+          "start_line": 273,
+          "end_line": 278
+        },
+        {
+          "title": "Read Replicas",
+          "level": 4,
+          "start_line": 279,
+          "end_line": 287
+        },
+        {
+          "title": "Caching",
+          "level": 4,
+          "start_line": 288,
+          "end_line": 299
+        },
+        {
+          "title": "13.4.2. Sharding Through Coordinators",
+          "level": 3,
+          "start_line": 300,
+          "end_line": 308
+        },
+        {
+          "title": "13.4.3. Consistent Hash Rings",
+          "level": 3,
+          "start_line": 309,
+          "end_line": 314
+        },
+        {
+          "title": "Hash Rings by Example",
+          "level": 4,
+          "start_line": 315,
+          "end_line": 326
+        },
+        {
+          "title": "Replicating Data",
+          "level": 4,
+          "start_line": 327,
+          "end_line": 332
+        },
+        {
+          "title": "Achieving Better Distribution",
+          "level": 4,
+          "start_line": 333,
+          "end_line": 344
+        },
+        {
+          "title": "13.4.4. Range Partitioning",
+          "level": 3,
+          "start_line": 345,
+          "end_line": 353
+        },
+        {
+          "title": "The BigTable Way",
+          "level": 4,
+          "start_line": 354,
+          "end_line": 371
+        },
+        {
+          "title": "Handling Failures",
+          "level": 4,
+          "start_line": 372,
+          "end_line": 380
+        },
+        {
+          "title": "Range Partitioning-based NoSQL Projects",
+          "level": 4,
+          "start_line": 381,
+          "end_line": 395
+        },
+        {
+          "title": "13.4.5. Which Partitioning Scheme to Use",
+          "level": 3,
+          "start_line": 396,
+          "end_line": 407
+        },
+        {
+          "title": "13.5. Consistency",
+          "level": 2,
+          "start_line": 408,
+          "end_line": 413
+        },
+        {
+          "title": "13.5.1. A Little Bit About CAP",
+          "level": 3,
+          "start_line": 414,
+          "end_line": 437
+        },
+        {
+          "title": "13.5.2. Strong Consistency",
+          "level": 3,
+          "start_line": 438,
+          "end_line": 465
+        },
+        {
+          "title": "13.5.3. Eventual Consistency",
+          "level": 3,
+          "start_line": 466,
+          "end_line": 471
+        },
+        {
+          "title": "Versioning and Conflicts",
+          "level": 4,
+          "start_line": 472,
+          "end_line": 480
+        },
+        {
+          "title": "Conflict Resolution",
+          "level": 4,
+          "start_line": 481,
+          "end_line": 489
+        },
+        {
+          "title": "Read Repair",
+          "level": 4,
+          "start_line": 490,
+          "end_line": 495
+        },
+        {
+          "title": "Hinted Handoff",
+          "level": 4,
+          "start_line": 496,
+          "end_line": 501
+        },
+        {
+          "title": "Anti-Entropy",
+          "level": 4,
+          "start_line": 502,
+          "end_line": 507
+        },
+        {
+          "title": "Gossip",
+          "level": 4,
+          "start_line": 508,
+          "end_line": 513
+        },
+        {
+          "title": "13.6. A Final Word",
+          "level": 2,
+          "start_line": 514,
+          "end_line": 519
+        },
+        {
+          "title": "13.7. Acknowledgments",
+          "level": 2,
+          "start_line": 520,
+          "end_line": 525
+        },
+        {
+          "title": "Footnotes",
+          "level": 2,
+          "start_line": 526,
+          "end_line": 560
+        }
+      ],
+      "notes": [
+        "Source claim: NoSQL is framed as an ecosystem of complementary and competing tools rather than a single system, with the inclusive 'Not Only SQL' reading; the chapter advises retaining relational databases where their modelling and guarantees fit (lines 11-50).",
+        "Source claim: BigTable and Dynamo are the two named inspirations — sorted multi-column data with range partitioning and strict consistency versus key-to-blob storage with eventual consistency — and systems such as HBase, Voldemort and Cassandra mix them (lines 56-65).",
+        "Source claim: the decision roadmap lists data and query model, durability, scalability, partitioning, consistency, transactions, single-server performance and analytical workloads, and states that the last three receive least attention (lines 83-102).",
+        "Source claim: the data models covered are key-value, key-data-structure (Redis), key-document (CouchDB, MongoDB, Riak), BigTable column families with timestamped cells (HBase, Cassandra supercolumns) and graph stores; transactions are usually key-level only, with Redis MULTI/WATCH as the exception (lines 108-195).",
+        "Source claim: single-server durability rests on fsync control, sequential logging and group commit; the text cites 100-200 random seeks per second and 30-100 MB/s sequential writes, and describes log-structured merge trees, Riak's log-structured hash table and CouchDB's append-only B+tree with periodic compaction (lines 201-237).",
+        "Source claim: multi-server durability spans asynchronous master-slave replication with possible loss (Redis), replica sets (MongoDB), HDFS-backed HBase writes to two or more nodes, and tunable N/W replication in Riak, Cassandra and Voldemort, with rack awareness and asynchronous cross-datacenter copying (lines 243-255).",
+        "Source claim: sharding is key-based by default; the chapter recommends exhausting read replicas and caching (Memcached, cited at tens of terabytes in one deployment) before sharding, then presents coordinator-based sharding via Lounge/BigCouch and Gizzard (lines 261-306).",
+        "Source claim: consistent hash rings map H(key) mod L onto server ranges, replicate to following servers, and use virtual nodes (Riak) or more partitions than servers (Voldemort) to even load; Cassandra keeps the ring but offers an order-preserving partitioner and load-based adjustment (lines 312-342).",
+        "Source claim: range partitioning maintains routing metadata, as in BigTable tablets of 100-200 MB in a three-level hierarchy with Chubby, or ZooKeeper in open source; HBase, MongoDB (config nodes using two-phase commit) and Gizzard follow variants, and hot ranges can be split or moved (lines 348-405).",
+        "Source claim: CAP (Brewer; Gilbert-Lynch) forces partition tolerance and a choice between consistency and availability; strong consistency is expressed as R+W>N with coordinator acknowledgements, and HDFS uses W=N with R=1 (lines 411-463).",
+        "Source claim: eventual consistency uses vector clocks for conflict detection, per-system resolution (Voldemort returns siblings, Cassandra takes the newest timestamp, Riak supports both, CouchDB is hybrid), read repair, hinted handoff with differing quorum accounting, Merkle-tree anti-entropy and gossip (lines 469-511).",
+        "Representation observation: Figures 13.1-13.2 are captions only, superscripts are flattened so 2^61 appears as '261' (line 369) and footnote markers attach to names ('HBase1', 'MongoDB10'), and line 454's 'R=2} so that R+W3}' is defective in the live HTML itself, while line 444 states R+W>N correctly."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/distributed-protocols.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 201,
+    "full_reads": 207,
     "blocked": 14,
     "records": [
       "R015",
@@ -24273,7 +25183,13 @@
       "R231",
       "R232",
       "R233",
-      "R234"
+      "R234",
+      "R235",
+      "R236",
+      "R237",
+      "R238",
+      "R239",
+      "R240"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
