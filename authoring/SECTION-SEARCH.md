@@ -1,9 +1,10 @@
-# Snapshot-bound section search and bounded reads (E07-04)
+# Snapshot-bound section search and bounded reads (E07-04, E17-70)
 
-> Issue [#50](https://github.com/rouslanbaranov/tycho/issues/50), M4. **Status 2026-10-22:**
-> local implementation over the #49 section snapshot; not merged, not independently
-> reviewed, not an MCP or production service. No held-out relevance evaluation exists;
-> the in-sample smoke below is a diagnostic.
+> Issue [#50](https://github.com/rouslanbaranov/tycho/issues/50), M4; H3 parent-H2
+> retrieval added for E17-70. **Status 2026-10-24:** local implementation over the #49
+> section snapshot; not merged, not independently reviewed, not an MCP or production
+> service. No held-out human relevance evaluation exists; the measurements below are
+> diagnostics.
 
 ## Scope and authority
 
@@ -11,8 +12,9 @@
 deterministic [section index](SECTION-FTS-INDEX.md) and of the canonical book bytes that
 index pins. It performs two operations:
 
-- **search** returns ranked section candidates with a bounded excerpt and a citation;
-- **read** returns an exact codepoint range from one selected section.
+- **search** returns ranked parent-H2 section candidates with a bounded excerpt, an
+  optional internal H3 passage diagnostic, and a citation;
+- **read** returns an exact codepoint range from one selected parent-H2 section.
 
 The canonical Markdown and its frontmatter remain authoritative. The tool never edits the
 book, rebuilds the index implicitly, fetches sources, runs embeddings or writes evidence.
@@ -23,17 +25,18 @@ It is lexical retrieval only: semantic/hybrid retrieval (#52–#55), evidence re
 
 Every search and read call:
 
-1. opens `generated/sections-fts-v3.sqlite` in read-only mode;
-2. runs `PRAGMA quick_check`, validates the manifest and compares stored section and FTS
-   row counts with the manifest;
+1. opens `generated/sections-fts-v4.sqlite` in read-only mode;
+2. runs `PRAGMA quick_check`, validates the manifest and compares stored section, FTS,
+   passage and passage-FTS row counts with the manifest;
 3. recomputes `route_index.canonical_scan` and compares its snapshot SHA with the
    manifest's pinned route snapshot;
 4. refuses the call when the book or metadata changed after the index was published.
 
 The deep structural verifier remains `section_fts_index.py check`, which reparses every
-section and compares offsets, content, topics and the FTS payload. Search deliberately
-does not reparse all sections per query; the route snapshot covers every page byte and
-every metadata value, so a stale index cannot silently answer.
+section and H3 passage and compares parent mappings, offsets, content, topics and both
+FTS payloads. Search deliberately does not reparse all sections per query; the route
+snapshot covers every page byte and every metadata value, so a stale index cannot
+silently answer.
 
 Failure is explicit: a stale snapshot raises `snapshot-mismatch`; a missing, corrupted or
 incompatible index raises `not-available`; unknown section IDs raise `not-found`.
@@ -55,13 +58,20 @@ is an any-term OR query: BM25 decides which section explains the most terms, and
 `match_mode` is always `any-terms`. This is recall-oriented; it does not prove that every
 term was relevant.
 
-By default the adapter returns the best section per document so the first page lists
-distinct candidate pages. `all_sections=true`, or `--all-sections` on the CLI, returns every
-matching section instead; `result_scope` reports which mode produced the page.
+H2 sections and internal H3 passages are matched in separate FTS tables. An H3 match is
+mapped to its parent H2 before any public result is built. Within one document, the
+best parent selected by parent-H2 or passage score becomes the single candidate; across
+documents, order remains anchored to the parent-H2 score so the H2 baseline is not
+silently reranked. By default the adapter returns that best section per document so the
+first page lists distinct candidate pages. `all_sections=true`, or `--all-sections` on the
+CLI, returns unique matching parent sections instead; `result_scope` reports which mode
+produced the page.
 
-Ranking uses FTS5 BM25 with field weights title 4, heading 3 and body 1. The reported
-`score` is the negated BM25 value, so a higher score means a better match. Ties break by
-`section_key`. The ranker version is `tycho-section-fts5-bm25-v3`; scores from other
+Ranking uses FTS5 BM25 with field weights title 5, heading 2 and body 0.25. The reported
+`score` is the negated BM25 value, so a higher score means a better match. When an H3
+passage supplies the selected parent, `score` is the passage BM25 value and
+`match_source` is `h3-passage`; otherwise the parent-H2 score is used. Ties break by
+`section_key`. The ranker version is `tycho-section-fts5-bm25-v5`; scores from other
 rankers or snapshots are not comparable.
 
 Supported filters are `kind`, `topic`, `evidence_status` and `path_prefix`. A path prefix
@@ -69,11 +79,14 @@ must be a relative path under `book/`; absolute paths, backslashes and `..` segm
 rejected. Filters are applied before the result limit, so a filtered zero-hit result means
 "no section in this filter", not "no such knowledge".
 
-Each result carries the document and section IDs, canonical path, heading and level, title,
-kind, evidence status, section offsets, matched terms, a whitespace-normalized excerpt of at
-most 240 characters, the score and the ranker version. `truncated` says whether more
-matches exist beyond `limit`; the initial limit is a routing heuristic, not an evidence
-ceiling.
+Each result carries the parent document and section IDs, canonical path, heading and
+level, title, kind, evidence status, parent section offsets, matched terms, a
+whitespace-normalized excerpt of at most 240 characters, the score and the ranker version.
+An H3 match adds `matched_passage_id`, `matched_passage_key`,
+`matched_passage_heading`, `matched_passage_score`, parent-relative passage offsets and a
+passage excerpt. These diagnostics never change `section_key`, `section_id`, `content`,
+offsets or the citation. `truncated` says whether more matches exist beyond `limit`; the
+initial limit is a routing heuristic, not an evidence ceiling.
 
 Citations use `path#section_id` and `citation_scheme: tycho.section-key.v2`. This is a
 stable snapshot-scoped identifier, not a guarantee that the same string is a valid GitHub
@@ -89,12 +102,14 @@ python3 scripts/section_search.py evidence --claim claim.same-intent-retry
 python3 scripts/section_search.py evidence --document <document_id>
 ~~~
 
-A read validates the section key, offset and budget, rechecks the snapshot and the
-document SHA, and returns the requested codepoint range. `offset` and `next_offset` are
-relative to the section; `document_char_start` and `document_char_end` are relative to the
-whole page. `truncated` and `next_offset` expose bounded continuation. A document that
-changed after publication is refused as `snapshot-mismatch`; the adapter never slices a
-newer file with an older offset.
+A read validates the parent section key, offset and budget, rechecks the snapshot and
+the document SHA, and returns the requested codepoint range from the unchanged H2
+section, including any H3 headings inside it. Internal passage keys are diagnostics, not
+read identifiers. `offset` and `next_offset` are relative to the section;
+`document_char_start` and `document_char_end` are relative to the whole page.
+`truncated` and `next_offset` expose bounded continuation. A document that changed after
+publication is refused as `snapshot-mismatch`; the adapter never slices a newer file with
+an older offset.
 
 Limits: `limit` 1–20, `budget_chars` 1–5,000, excerpt at most 240 characters, and no full
 document is returned by search. Offsets are Unicode codepoint offsets, not UTF-8 bytes.
@@ -115,7 +130,7 @@ outcomes only. It does not return source text, permitted excerpts or an answer v
 
 | Status | Meaning |
 |---|---|
-| `ok` | At least one section matched and every consistency check passed. |
+| `ok` | At least one parent section matched and every consistency check passed. |
 | `no-results` | The query is valid but no section matched under the filters. |
 | `invalid-request` | Bad query, limit, offset, budget, filter or path prefix. |
 | `not-found` | The requested section or evidence ID is absent from this snapshot. |
@@ -128,33 +143,54 @@ snapshot, index and filter scope.
 ## Retrieval-contract coverage and gaps
 
 The implementation currently provides the contract's search identifier, path, heading,
-bounded excerpt, score kind, ranker version, filters, truncation and snapshot identity, and
-the read offsets, hash check, truncation and next offset. Not implemented yet: opaque
-cursors, estimated totals, permitted excerpts, lexical-plus-evidence quality measurement,
-vector or hybrid ranking, per-result semantic confidence and MCP envelopes (#57–#60). The
-bounded evidence operation exists; these remaining gaps are not implied to be complete.
+bounded excerpt, score kind, ranker version, filters, truncation and snapshot identity,
+optional H3 passage diagnostics, and the read offsets, hash check, truncation and next
+offset. Not implemented yet: opaque cursors, estimated totals, permitted excerpts,
+lexical-plus-evidence quality measurement, vector or hybrid ranking, per-result semantic
+confidence and MCP envelopes (#57–#60). The bounded evidence operation exists; these
+remaining gaps are not implied to be complete.
 
-## Measured local evidence — 2026-10-22
+## Measured local evidence — 2026-10-24
 
 | Observation | Value |
 |---|---|
-| Indexed documents and sections | 423 and 2,753 |
-| Index snapshot | `448b35fef9e7bcea60d59c775c6390e74f1271ffa4f89363dd834f716c86bbaf` |
-| CLI search, warm local run | about 1.11 s end to end |
-| CLI read, warm local run | about 1.12 s end to end |
-| Dominant cost | route-snapshot revalidation, not FTS5 matching |
-| Unit tests | 11 offline search/read tests |
-| Pilot navigation smoke | hit@1 5/25, hit@3 11/25, hit@5 17/25 (in-sample) |
+| Indexed documents, sections and H3 passages | 423, 2,753 and 504 |
+| Index snapshot | `8c797c532e473f079aa32da5986e85b27ba311c1bbb259af27fd0ee25d548182` |
+| Unit tests | 20 offline search/read tests |
 | Runtime | Python 3.9.6, SQLite 3.54.0 |
 
-The timings are single-machine observations including interpreter startup and metadata
-validation. They are not a benchmark, a latency SLO or a capacity forecast.
+The timings and retrieval measurements are single-machine diagnostics, not a benchmark,
+latency SLO or capacity forecast.
+
+### H3 parent-H2 retrieval diagnostic
+
+The H3 layer was compared with the same H2-only baseline on qrels v2 (155 answerable
+items of 220) and the phase-3 filtered answerable set (19 items), at limit 10 and 5
+respectively, with abstention disabled to isolate retrieval:
+
+| Measurement | H2 baseline | H3 parent mapping |
+|---|---:|---:|
+| qrels v2 section hit@1 | 0.4000 | 0.4000 |
+| qrels v2 section hit@5 | 0.7806 | 0.7806 |
+| qrels v2 section MRR | 0.5516 | 0.5516 |
+| qrels v2 page hit@5 | 0.8129 | 0.8129 |
+| qrels v2 nDCG@10 | 0.6091 | 0.6091 |
+| phase-3 section hit@5 | 10/19 (0.5263) | 11/19 (0.5789) |
+| phase-3 dev section hit@5 | 7/13 (0.5385) | 8/13 (0.6154) |
+| phase-3 page hit@5 | 15/19 (0.7895) | 15/19 (0.7895) |
+
+Phase-3 labels are agent-authored and agent-adjudicated; the 19-item answerable set is a
+small challenge set, not training data or human review. The gain is concentrated in
+selecting a more specific parent H2 within an already retrieved document. The refusal gate
+was not retrained. Because a passage can supply the selected parent score, gate features
+can shift; no claim is made that retention or false-answer counts are unchanged.
 
 ## Verification boundary
 
 The tests use synthetic two-page snapshots and mocked route scans. They cover ranking,
-any-term matching, per-document dedupe, filters, validation, stale refusal, tampered row
-counts, bounded reads and offset continuation. They do not prove relevance on the 423-page
+any-term matching, H3 parent mapping and diagnostics, parent read behavior, per-document
+dedupe, filters, validation, stale refusal, tampered section and passage row counts,
+bounded reads and offset continuation. They do not prove relevance on the 423-page
 corpus, answer quality, citation correctness, concurrency behavior or performance under
 load. The 25-question smoke is in-sample against author-created labels, not a held-out
 benchmark or qrels set. No independent review, gold relevance set or CI result is claimed.

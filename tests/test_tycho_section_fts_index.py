@@ -3,6 +3,7 @@
 No external corpus, YAML/schema dependencies, real book rewriting or network.
 """
 import hashlib
+import json
 from pathlib import Path
 import sqlite3
 import sys
@@ -18,9 +19,10 @@ PAGE_A = (
     "---\nid: tycho.page.alpha\nkind: page\ntitle: Alpha page\n---\n"
     "# Alpha page\n\nOverview text about bounded retrieval.\n\n"
     "## Retry policy {#retry-anchor}\nRetry detail with token zebra.\n\n"
-    "### Nested detail\nNested text stays in its parent section.\n\n"
+    "### Nested detail {#nested-anchor}\nNested text stays in its parent section.\n\n"
+    "### Nested detail\nSecond nested note.\n\n"
     "## Retry\nSecond retry section.\n\n"
-    "~~~python\n## Not A Heading\n~~~\n"
+    "~~~python\n## Not A Heading\n### Not A Passage\n~~~\n"
 )
 PAGE_B = (
     "---\nid: tycho.page.beta\nkind: landing\ntitle: Beta landing\n---\n"
@@ -98,6 +100,117 @@ class SectionIndexTests(unittest.TestCase):
         self.assertFalse(idx.body_of(rows[1]).startswith("## Retry policy"))
         self.assertIn("token zebra", idx.body_of(rows[1]))
 
+    def test_h3_passages_need_parent_h2_and_stable_keys(self):
+        page = self.docs()[0]
+        text = self.a.read_text(encoding="utf-8")
+        rows = idx.parse_sections(page, text)
+        passages = idx.parse_passages(rows[1])
+        self.assertEqual([p["passage_id"] for p in passages],
+                         ["nested-anchor", "nested-detail"])
+        self.assertEqual(
+            [p["passage_key"] for p in passages],
+            ["tycho.page.alpha#retry-anchor~nested-anchor",
+             "tycho.page.alpha#retry-anchor~nested-detail"])
+        self.assertEqual(
+            [p["heading"] for p in passages],
+            ["Nested detail", "Nested detail"])
+        self.assertEqual([p["heading_level"] for p in passages], [3, 3])
+        for passage in passages:
+            self.assertEqual(passage["parent_section_key"],
+                             rows[1]["section_key"])
+            self.assertEqual(passage["parent_section_id"], "retry-anchor")
+            self.assertEqual(passage["document_id"], page["id"])
+            self.assertEqual(passage["path"], page["path"])
+            self.assertEqual(passage["char_start"],
+                             text.index(passage["content"]))
+            self.assertEqual(
+                text[passage["char_start"]:passage["char_end"]],
+                passage["content"])
+            self.assertFalse(passage["body"].startswith("### "))
+            self.assertEqual(passage["body"],
+                             passage["content"].partition("\n")[2])
+        self.assertIn("Second nested note", passages[1]["content"])
+        self.assertEqual(idx.parse_passages(rows[2]), [])
+        with self.assertRaisesRegex(ValueError, "level-2 parent"):
+            idx.parse_passages(rows[0])
+
+    def test_published_index_contains_internal_passages_and_parent_mapping(self):
+        self.publish(full=True)
+        path = self.root / "generated" / idx.INDEX_NAME
+        with sqlite3.connect(path) as db:
+            manifest = json.loads(db.execute(
+                "SELECT value FROM meta WHERE key='manifest'").fetchone()[0])
+            self.assertEqual(manifest["format_version"], 4)
+            self.assertEqual(manifest["passage_count"], 2)
+            self.assertEqual(manifest["section_count"], 4)
+            self.assertEqual(db.execute(
+                "SELECT count(*) FROM sections").fetchone()[0], 4)
+            self.assertEqual(db.execute(
+                "SELECT count(*) FROM passages").fetchone()[0], 2)
+            rows = db.execute(
+                "SELECT passage_key,passage_id,parent_section_key,"
+                "parent_section_id,heading,heading_level,content,body,"
+                "char_start,char_end FROM passages ORDER BY passage_key"
+            ).fetchall()
+            self.assertEqual([row[1] for row in rows],
+                             ["nested-anchor", "nested-detail"])
+            for key, passage_id, parent_key, parent_id, heading, level, \
+                    content, body, start, end in rows:
+                self.assertEqual(key, parent_key + "~" + passage_id)
+                self.assertEqual(parent_key,
+                                 "tycho.page.alpha#retry-anchor")
+                self.assertEqual(parent_id, "retry-anchor")
+                self.assertEqual(heading, "Nested detail")
+                self.assertEqual(level, 3)
+                self.assertTrue(content.startswith("### "))
+                self.assertEqual(body, content.partition("\n")[2])
+                self.assertLess(start, end)
+            self.assertEqual(db.execute(
+                "SELECT count(*) FROM passage_fts").fetchone()[0], 2)
+            self.assertEqual(
+                db.execute("SELECT count(*) FROM fts").fetchone()[0], 4)
+            topics = db.execute(
+                "SELECT section_key FROM section_topics"
+                " WHERE topic='search-architecture' ORDER BY section_key"
+            ).fetchall()
+            self.assertEqual([row[0] for row in topics],
+                             ["tycho.page.alpha#overview",
+                              "tycho.page.alpha#retry",
+                              "tycho.page.alpha#retry-anchor"])
+
+    def test_tampered_passage_payload_is_rejected(self):
+        self.publish()
+        path = self.root / "generated" / idx.INDEX_NAME
+        with sqlite3.connect(path) as db:
+            key = db.execute(
+                "SELECT passage_key FROM passage_fts LIMIT 1").fetchone()[0]
+            db.execute("UPDATE passage_fts SET body='tampered-passage'"
+                       " WHERE passage_key=?", (key,))
+            db.commit()
+        with self.assertRaisesRegex(ValueError, "corrupt/incompatible"):
+            self.verify()
+        with self.assertRaisesRegex(ValueError, "corrupt/incompatible"):
+            self.publish()
+
+    def test_incompatible_index_format_is_not_reused(self):
+        self.assertEqual(idx.VERSION, 4)
+        self.assertTrue(idx.INDEX_NAME.endswith("v4.sqlite"))
+        self.publish()
+        path = self.root / "generated" / idx.INDEX_NAME
+        with sqlite3.connect(path) as db:
+            raw = db.execute(
+                "SELECT value FROM meta WHERE key='manifest'").fetchone()[0]
+            manifest = json.loads(raw)
+            manifest["format_version"] = 3
+            db.execute("UPDATE meta SET value=? WHERE key='manifest'",
+                       (idx.canonical_json(manifest),))
+            db.commit()
+        with self.assertRaisesRegex(ValueError, "corrupt/incompatible"):
+            self.publish()
+        fresh = self.publish(full=True)
+        self.assertEqual(fresh["outcome"], "published")
+        self.assertEqual(self.verify()["snapshot"], fresh["snapshot"])
+
     def test_full_incremental_and_unchanged_are_reproducible(self):
         a_before = self.a.read_bytes()
         b_before = self.b.read_bytes()
@@ -130,8 +243,10 @@ class SectionIndexTests(unittest.TestCase):
 
     def test_changed_document_requires_new_snapshot_and_reuses_unchanged(self):
         old = self.publish()
-        self.a.write_text(self.a.read_text() + "\n## Extra\nNew note.\n",
-                          encoding="utf-8")
+        self.a.write_text(
+            self.a.read_text() + "\n## Extra\nNew note.\n\n"
+            "### Extra passage\nNew H3 note.\n",
+            encoding="utf-8")
         with patch.object(idx.route_index, "canonical_scan",
                           side_effect=self.fake_scan):
             with self.assertRaisesRegex(ValueError, "stale"):
@@ -139,6 +254,11 @@ class SectionIndexTests(unittest.TestCase):
         new = self.publish()
         self.assertNotEqual(old["snapshot"], new["snapshot"])
         self.assertEqual(new["reused_documents"], 1)
+        self.assertEqual(new["passages"], 3)
+        with sqlite3.connect(self.root / "generated" / idx.INDEX_NAME) as db:
+            keys = [row[0] for row in db.execute(
+                "SELECT passage_key FROM passages ORDER BY passage_key")]
+        self.assertIn("tycho.page.alpha#extra~extra-passage", keys)
         self.assertEqual(self.verify()["snapshot"], new["snapshot"])
 
     def test_tampered_fts_payload_is_rejected(self):
