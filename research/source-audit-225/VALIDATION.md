@@ -228,14 +228,17 @@ action. No book page was edited.
 
 ## Reference-source batch - 2026-10-24
 
-Eighteen records R015-R032 extend the reference ledger. Sixteen are full-scoped
-reads: JEP 444, JEP 491 and fourteen public engineering articles in the
-src.m9-* series. Two publisher pages (src.m9-n05 and src.m9-n06) returned a
-Cloudflare challenge and are recorded as blocked-full-text, not inferred.
+Thirty records R015-R044 extend the reference ledger. Twenty-six are full-scoped
+reads: JEP 444, JEP 491 and twenty-four public engineering articles in the
+src.m9-* series. Four publisher pages (src.m9-n05, src.m9-n06, src.m9-sp02 and
+src.m9-sp03) returned no readable article body and are recorded as
+blocked-full-text, not inferred.
 R024 and R032 each repeat the article body in the representation; their unique
 text was read and the duplicate blocks were verified by matching headings.
+R041 is a wiki page whose navigation chrome was identified and excluded from
+the architecture claim.
 
-- The fourteen articles total 3,227 lines and 42,707 words; the two JEPs total 563
+- The twenty-four articles total 4,791 lines and 60,054 words; the two JEPs total 563
   lines and 9,941 words. Each full record carries the local representation
   SHA-256, line count, word count, sections and explicit omissions.
 - JEP 444 records M:N scheduling, the two JDK 21 pinning causes, diagnostics

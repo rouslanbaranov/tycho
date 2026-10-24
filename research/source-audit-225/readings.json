@@ -1169,12 +1169,569 @@
         }
       ],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R033",
+      "source_ids": [
+        "src.m9-a01"
+      ],
+      "url": "https://airbnb.tech/infrastructure/migrating-airbnbs-jvm-monorepo-to-bazel/",
+      "unit": "Complete article: Migrating Airbnb's JVM Monorepo to Bazel",
+      "revision": "Live publisher page; migration reported as 4.5 years; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 197 lines / 2673 words; sections Why Bazel?, How did we migrate?, Proof of concept, Scaling builds and tests, Automated build file generation, Porting build logic, Third-party library multi-version support, Migrating the deploys, What did we learn?; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-a01.md lines 1-197",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "f6a521e616b30c80ac37382c921dce8ed90635ecafbeee183af0ad9ad544b297",
+      "retrieved_lines": 197,
+      "retrieved_words": 2673,
+      "sections": [
+        "Why Bazel?",
+        "How did we migrate?",
+        "Proof of concept",
+        "Scaling builds and tests",
+        "Automated build file generation",
+        "Porting build logic",
+        "Third-party library multi-version support",
+        "Migrating the deploys",
+        "What did we learn?"
+      ],
+      "notes": [
+        "Source claim: the JVM monorepo holds tens of millions of lines of Java, Kotlin and Scala; the migration took 4.5 years and reported build CSAT rising from 38% to 68%.",
+        "Source claim: reported gains include 3-5x faster local build/test, 2-3x faster IDE sync and 2-3x faster development deploys.",
+        "Source claim: Gradle builds exceeded 20 minutes locally and p90 pre-merge CI was 35 minutes; sharding heuristics underutilized machines and duplicated work.",
+        "Source claim: Bazel sandboxing removed undeclared filesystem access, while remote execution used short-lived identical workers and remote caching.",
+        "Source claim: Bazel and Gradle co-existed, and an automated build-file generator maintained both graphs; the generator created far more targets than Gradle projects.",
+        "Source claim: multiple third-party library versions and reflection-loaded classes caused deployment failures; version syncing and reflection parsing reduced them to a small percentage.",
+        "Source claim: the main lesson was to migrate before optimizing granularity and to imitate the previous build by default during migration.",
+        "Inference: build-time and CSAT figures are first-party before/after observations, not a controlled benchmark; co-existing builds and concurrent infrastructure changes are not isolated."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/benchmark-controls.md",
+          "candidate": "Does the benchmark page distinguish a build-system migration before/after from a controlled performance comparison?"
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md",
+          "candidate": "Does the transition page support co-existence and fallback while a build graph is migrated?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/module-enforcement.md",
+          "candidate": "Does the enforcement page connect a generated dependency graph to build correctness rather than treating it as architecture proof?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R034",
+      "source_ids": [
+        "src.m9-cf01"
+      ],
+      "url": "https://blog.cloudflare.com/making-super-slurper-five-times-faster/",
+      "unit": "Complete article: Making Super Slurper 5x faster with Workers, Durable Objects, and Queues",
+      "revision": "Published 2025-04-10; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 118 lines / 1974 words; sections Initial architecture and performance bottlenecks, New architecture: Workers, Queues, and Durable Objects, Processing layer, Database layer, Results, Challenges; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-cf01.md lines 1-118",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "466b702e0fa64286b7bedd50d0fc25d2ad62879eaaf1098f2ccb4b9a091f34f8",
+      "retrieved_lines": 118,
+      "retrieved_words": 1974,
+      "sections": [
+        "Initial architecture and performance bottlenecks",
+        "New architecture: Workers, Queues, and Durable Objects",
+        "Processing layer",
+        "Database layer",
+        "Results",
+        "Challenges"
+      ],
+      "notes": [
+        "Source claim: the migration tool had moved petabytes of object data, but its Kubernetes-based design shared core data-center capacity and hit concurrency limits at tens of pods.",
+        "Source claim: the redesign used Workers, Queues and SQLite-backed Durable Objects; the proof of concept was slower for small transfers but matched and exceeded the old system at millions of objects.",
+        "Source claim: a 75,000-object test fell from 15m30s to 3m25s, and production migrations showed up to 5x improvement.",
+        "Source claim: Queues provide at-least-once delivery, so duplicate messages are contained by listing sequence IDs, per-object locks, transactional counters and a target-existence check.",
+        "Source claim: each account has a job Durable Object, a batch Durable Object tracks object state, and sharding works around SQLite DO storage limits; transient failures retry and exhausted messages go to a DLQ.",
+        "Inference: the 5x result is a first-party migration benchmark with one object count and production anecdotes, not a general throughput model.",
+        "Inference: at-least-once delivery plus idempotent transfer moves the correctness burden to object-key identity, locking and existence checks; those checks are not free."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
+          "candidate": "Does the dedup page name the authority that decides whether an object was already transferred?"
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
+          "candidate": "Does the cutover page cover duplicate messages, locks and a final existence check during migration?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md",
+          "candidate": "Does the retry page distinguish transient retry from a dead-letter path and its operational owner?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R035",
+      "source_ids": [
+        "src.m9-li01"
+      ],
+      "url": "https://engineering.linkedin.com/kafka/running-kafka-scale",
+      "unit": "Complete article: Running Kafka At Scale",
+      "revision": "Live publisher page; describes 2015-scale operations; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 80 lines / 1892 words; sections What is Kafka?, How Big is Big?, Queuing, Metrics, Logging, Tracking, Tiers and Aggregation, Auditing Completeness, Bringing It All Together, Moving Forward; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-li01.md lines 1-80",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "854cc7275769ae12b572bf0f95f7a7f5489016c21a5bae765ad3a827c4329770",
+      "retrieved_lines": 80,
+      "retrieved_words": 1892,
+      "sections": [
+        "What is Kafka?",
+        "How Big is Big?",
+        "Queuing",
+        "Metrics",
+        "Logging",
+        "Tracking",
+        "Tiers and Aggregation",
+        "Auditing Completeness",
+        "Bringing It All Together",
+        "Moving Forward"
+      ],
+      "notes": [
+        "Source claim: the Kafka ecosystem carries over 800 billion messages and 175 TB per day, with 650 TB consumed, peaks over 13 million messages/s and 1,100 brokers in more than 60 clusters.",
+        "Source claim: messages are split into queuing, metrics, logging and tracking categories, each with separate clusters and retention policies.",
+        "Source claim: a tiered topology uses local clusters and aggregate clusters, with mirror makers copying forward once per data center to avoid loops and reduce cross-datacenter cost.",
+        "Source claim: Kafka Audit compares producer counts, per-cluster consumer counts and critical-consumer counts to detect loss or duplication across tiers.",
+        "Source claim: custom TrackerProducer and consumer libraries centralize headers, schema registration, auditing and Avro deserialization.",
+        "Inference: the counts are first-party operational figures from one company and time; they are not a Kafka benchmark.",
+        "Inference: tiering reduces cross-datacenter copies but multiplies the number of places where messages can disappear; auditing completeness is a separate obligation from broker replication."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/kafka-partitions-replication-and-contracts.md",
+          "candidate": "Does the partition page distinguish broker replication from end-to-end message completeness across tiers?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
+          "candidate": "Does the dedup page require a count or identity audit rather than assuming at-least-once delivery is enough?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+          "candidate": "Does the queueing page treat throughput and retention as workload properties rather than a product guarantee?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R036",
+      "source_ids": [
+        "src.m9-me01"
+      ],
+      "url": "https://engineering.fb.com/2013/06/25/core-infra/tao-the-power-of-the-graph/",
+      "unit": "Complete article: TAO: The power of the graph",
+      "revision": "Published 2013-06-25; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 70 lines / 2330 words; sections Memcache and MySQL, Objects and associations, TAO data model and API, Implementation, Consistency; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-me01.md lines 1-70",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "dbbe6ad799921120be353ae14f3533cbfab4b6fc92267667c68818efc05a85a3",
+      "retrieved_lines": 70,
+      "retrieved_words": 2330,
+      "sections": [
+        "Memcache and MySQL",
+        "Objects and associations",
+        "TAO data model and API",
+        "Implementation",
+        "Consistency"
+      ],
+      "notes": [
+        "Source claim: the social-graph workload is read-dominated, hard to partition and prone to hot items; a memcache-plus-MySQL design pushed cache consistency and data modeling onto product engineers.",
+        "Source claim: TAO exposes typed objects and associations, inverse edges, point/range/count queries and a deliberately simple API without server-side traversal or set intersection.",
+        "Source claim: data is partitioned into hundreds of thousands of shards, with optional collocation and shard migration/cloning to smooth hotspots.",
+        "Source claim: clients hit follower caches, misses fill from leader caches, leaders talk to MySQL, and writes go through followers to leaders with write-through cache updates.",
+        "Source claim: eventual consistency is the default, single-primary per shard with MySQL replication; read-after-write is best-effort with high probability, and strong consistency is an opt-in cost.",
+        "Inference: the article is a design overview; the linked USENIX paper, not this page, carries the detailed performance evidence.",
+        "Inference: a simple API shifts traversal and intersection cost to clients, which is a deliberate trade-off rather than an absence of complexity."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/graph-data-models-and-traversal.md",
+          "candidate": "Does the graph page distinguish a storage API from traversal and set-intersection policy?"
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "candidate": "Does the hot-key page include shard migration and leader/follower cache tiers as mitigation?"
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "candidate": "Does the index-lifecycle page treat eventual consistency as a visibility policy with an explicit read-after-write limit?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R037",
+      "source_ids": [
+        "src.m9-me03"
+      ],
+      "url": "https://engineering.fb.com/2026/05/12/data-infrastructure/migrating-data-ingestion-systems-at-meta-scale/",
+      "unit": "Complete article: Migrating Data Ingestion Systems at Meta Scale",
+      "revision": "Published 2026-05-12; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 131 lines / 2038 words; sections The Migration Challenge, Ensuring a Seamless Transition, The Migration Lifecycle, Shadow Phase, Reverse Shadow Phase, Migration Cleanup, Data Quality Tooling, Rollout and Rollback, Large-Scale Migration; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-me03.md lines 1-131",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "e603601eaa389213e0f0c57302b0ed9692469e606878e8f53a7179dd9ede4240",
+      "retrieved_lines": 131,
+      "retrieved_words": 2038,
+      "sections": [
+        "The Migration Challenge",
+        "Ensuring a Seamless Transition",
+        "The Migration Lifecycle",
+        "Shadow Phase",
+        "Reverse Shadow Phase",
+        "Migration Cleanup",
+        "Data Quality Tooling",
+        "Rollout and Rollback",
+        "Large-Scale Migration"
+      ],
+      "notes": [
+        "Source claim: the ingestion system moves several petabytes of social-graph data per day from MySQL into a warehouse; the migration moved 100% of the workload and deprecated the legacy system.",
+        "Source claim: each job passed a lifecycle with row-count and checksum equality, no landing-latency regression and no resource-utilization regression before promotion.",
+        "Source claim: the shadow phase delivered to a shadow table; the reverse-shadow phase swapped which system wrote production while the old system became the shadow.",
+        "Source claim: CDC means bad data can propagate into newly generated data, so bad partitions are marked, delta landing stops, target partitions are rebuilt from older partitions and backfill repairs them.",
+        "Source claim: automation promoted or demoted tens of thousands of jobs from lifecycle signals, while migration batches were selected by throughput, priority and known-issue status.",
+        "Inference: checksums and row counts establish equality for the tested partitions, not semantic equivalence for every downstream consumer.",
+        "Inference: reverse shadowing preserves a rollback path but doubles write work and extends the period in which two systems must be operated."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
+          "candidate": "Does the cutover page require row/checksum, latency and resource gates before reverse shadowing?"
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/rollback-data.md",
+          "candidate": "Does the rollback page address CDC propagation and repair of already-landed bad partitions?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
+          "candidate": "Does the dedup page distinguish a repairs-by-backfill path from replaying the same write twice?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R038",
+      "source_ids": [
+        "src.m9-me02"
+      ],
+      "url": "https://engineering.fb.com/2013/04/15/core-infra/scaling-memcache-at-facebook/",
+      "unit": "Complete article: Scaling memcache at Facebook",
+      "revision": "Published 2013-04-15; page summarizes the NSDI 2013 paper; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 202 lines / 1199 words; sections Scaling memcache at Facebook; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-me02.md lines 1-202",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "4b44e6d149c4302c4447d513b5d88c8438dad717cbeec9080a67500248785596",
+      "retrieved_lines": 202,
+      "retrieved_words": 1199,
+      "sections": [
+        "Scaling memcache at Facebook"
+      ],
+      "notes": [
+        "Source claim: memcached was installed in 2005 to relieve growing database queries and page-load latency.",
+        "Source claim: the cache infrastructure serves billions of requests per second for a social graph with over a trillion objects and connections.",
+        "Source claim: the graph is hard to partition, queries fan out widely and hot objects receive orders of magnitude more traffic; rapid product changes continually alter load.",
+        "Source claim: the page is a short summary and points to the NSDI 2013 paper for the technical design.",
+        "Inference: the page itself does not contain the paper's cache-consistency, lease, or region topology details; citing it as if it did would overclaim.",
+        "Inference: billions of requests per second is a first-party operational scale claim, not a benchmark or a general memcached result."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "candidate": "Does the hot-key page separate cache scale from the consistency and stampede mechanisms the paper describes?"
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
+          "candidate": "Does the stale-fill page state the freshness bound and the read-after-write behavior?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+          "candidate": "Does the queueing page treat fan-out and hot-object concentration as workload, not capacity?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R039",
+      "source_ids": [
+        "src.m9-sh04"
+      ],
+      "url": "https://shopify.engineering/helix",
+      "unit": "Complete article: Helix: The internal tool powering our Shopify app's native migration",
+      "revision": "Live publisher page; describes a 2026 migration; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 125 lines / 1863 words; sections What is Helix?, The loop at a glance, Checkpoints that can be reviewed at a glance, Reviews are gates instead of advice, Gate 1: Behavior, Gate 2: The UI review gate, Gate 3: The adversarial reviews gate, Gate 4: An engineer closes the loop, Helix can also run autonomously, Beyond migration; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-sh04.md lines 1-125",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "6a42b26832dac842357bf8459574ffa31f5417d13c66235c452533f95677c1b3",
+      "retrieved_lines": 125,
+      "retrieved_words": 1863,
+      "sections": [
+        "What is Helix?",
+        "The loop at a glance",
+        "Checkpoints that can be reviewed at a glance",
+        "Reviews are gates instead of advice",
+        "Gate 1: Behavior",
+        "Gate 2: The UI review gate",
+        "Gate 3: The adversarial reviews gate",
+        "Gate 4: An engineer closes the loop",
+        "Helix can also run autonomously",
+        "Beyond migration"
+      ],
+      "notes": [
+        "Source claim: Helix uses LLMs to migrate screens from React Native to native Swift/Kotlin, starting with a migration already completed for a smaller app.",
+        "Source claim: work is split into small checkpoints; each must pass behavior tests, a visual review against the reference app, two adversarial code reviews and an engineer gate before commit.",
+        "Source claim: the behavior gate uses a CLI without a simulator; the UI gate uses a multimodal model to list differences with severity and location and treats fixable differences as blockers.",
+        "Source claim: feedback is retained so later checkpoints can run with less oversight, and autonomous mode can skip engineer approval while keeping the same gates.",
+        "Source claim: every checkpoint ends in a commit with archived UI reviews, tests and reviewer verdicts, rather than one large diff.",
+        "Inference: the article is a first-party process description, not a controlled study of defect rates, review quality or migration speed.",
+        "Inference: gates can enforce only what the tests and reviewers can observe; visual equivalence and architecture conformance remain bounded by those instruments."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
+          "candidate": "Does the cutover page use small checkpoints with explicit evidence before advancing?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/module-enforcement.md",
+          "candidate": "Does the enforcement page distinguish an architecture standard from an automated gate that can verify it?"
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md",
+          "candidate": "Does the decision page treat an agent-generated change as a proposal requiring evidence, not as acceptance?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R040",
+      "source_ids": [
+        "src.m9-n01"
+      ],
+      "url": "https://about.netflix.com/en/news/completing-the-netflix-cloud-migration",
+      "unit": "Complete article: Completing the Netflix Cloud Migration",
+      "revision": "Published 2016-02-12; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 42 lines / 954 words; sections Completing the Netflix Cloud Migration; page chrome/navigation identified but not treated as article content; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n01.md lines 1-42",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "5d9422dfc9284c8d22b42cd2753c0d8690978540a80da3598b44f151e02f6aa8",
+      "retrieved_lines": 42,
+      "retrieved_words": 954,
+      "sections": [
+        "Completing the Netflix Cloud Migration"
+      ],
+      "notes": [
+        "Source claim: the cloud migration began in 2008 after a database corruption interrupted DVD shipments for three days; the last streaming data-center bits were shut down in January 2016.",
+        "Source claim: the company chose a cloud-native rewrite rather than a forklift, moving from a monolith to hundreds of microservices and denormalized NoSQL data.",
+        "Source claim: reported benefits include eight times the streaming members, three orders of magnitude more viewing, rapid elasticity and availability approaching four nines.",
+        "Source claim: the authors say cost reduction was not the main goal, but cloud cost per streaming start was a fraction of the data-center cost.",
+        "Source claim: seven years were needed because the operating model, budgeting, release coordination and skills changed along with the architecture.",
+        "Inference: this is a first-party executive retrospective, not a controlled comparison of data-center and cloud reliability or cost.",
+        "Inference: the availability and cost claims lack a stated measurement window, baseline and workload normalization."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md",
+          "candidate": "Does the transition page distinguish a lift-and-shift from an operating-model rewrite?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/compute-models.md",
+          "candidate": "Does the compute-model page treat elasticity as a capacity mechanism rather than a reliability guarantee?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/benchmark-controls.md",
+          "candidate": "Does the benchmark page require a baseline and normalized workload before accepting a cost or availability claim?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R041",
+      "source_ids": [
+        "src.m9-n08"
+      ],
+      "url": "https://github.com/Netflix/zuul/wiki/How-It-Works-2.0",
+      "unit": "Complete article: How It Works 2.0 (Zuul)",
+      "revision": "GitHub wiki; last edited 2026-07-08; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 502 lines / 1410 words; sections Architectural Overview, Filters; page chrome/navigation identified but not treated as article content; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n08.md lines 1-502",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "700c54585d7e2d5aa2842a080c0e04d9df999fbf11b6e3ac3a5350b3e7856918",
+      "retrieved_lines": 502,
+      "retrieved_words": 1410,
+      "sections": [
+        "Architectural Overview",
+        "Filters"
+      ],
+      "notes": [
+        "Source claim: Zuul 2.0 is a Netty server that runs inbound filters, proxies through a Netty client and runs outbound filters.",
+        "Source claim: sync and async filters exist; because the server runs on an event loop, a filter must never block, and blocking work belongs on a separate thread pool.",
+        "Source claim: inbound filters handle authentication, routing and request decoration; endpoint filters can return static responses or proxy; outbound filters add metrics or response decoration.",
+        "Inference: the page is a short architecture note, not a complete implementation or performance report.",
+        "Inference: the no-blocking rule is a contract on filter authors; the framework cannot prove that an arbitrary filter obeys it.",
+        "Inference: the wiki does not specify filter ordering beyond the inbound/endpoint/outbound sequence or define failure behavior for an exception in each phase."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/context-cancellation.md",
+          "candidate": "Does the cancellation page distinguish a nonblocking event-loop contract from a guaranteed nonblocking implementation?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/scheduler-context.md",
+          "candidate": "Does the scheduler page treat a blocking call as a contract violation rather than a performance tuning issue?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md",
+          "candidate": "Does the adapter page treat a filter chain as a boundary with explicit ordering and failure semantics?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R042",
+      "source_ids": [
+        "src.m9-n10"
+      ],
+      "url": "https://netflix.github.io/dgs/announcements/",
+      "unit": "Complete article: DGS Framework announcements",
+      "revision": "Release notes through DGS 10.0.0 (2024-12-17); retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 97 lines / 1014 words; sections DGS 10.0.0, DGS 8.5.0, DGS 8.0.0, DGS 7.0.0, DGS 6.0.0, Upcoming 6.x; page chrome/navigation identified but not treated as article content; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n10.md lines 1-97",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "49c87d79af8eded84455f1c93f4d80cda7e4ea68d33415c63fd421518779b3e0",
+      "retrieved_lines": 97,
+      "retrieved_words": 1014,
+      "sections": [
+        "DGS 10.0.0",
+        "DGS 8.5.0",
+        "DGS 8.0.0",
+        "DGS 7.0.0",
+        "DGS 6.0.0",
+        "Upcoming 6.x"
+      ],
+      "notes": [
+        "Source claim: DGS 10.0.0 removed the legacy modules in favor of the Spring for GraphQL integration and a renamed starter.",
+        "Source claim: the March 2024 integration allowed DGS and Spring for GraphQL features to be mixed and used Spring web transports; most services migrated without code changes.",
+        "Source claim: the release notes list deleted modules and classes, a Kotlin 2.1/K2 move, and a shift to the GraphQL-over-SSE RFC with a new endpoint path.",
+        "Source claim: earlier major versions moved to graphql-java 20/21, Spring Boot 3/JDK 17, and changed exception-handler and dataloader context APIs.",
+        "Inference: these are maintainer release notes, not evidence that every consumer migrated cleanly or that performance is unchanged in every workload.",
+        "Inference: a major-version removal is a compatibility boundary; the note that \"most\" services needed no changes is not a guarantee for all consumers."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
+          "candidate": "Does the compatibility page treat major-version module removal as a public contract change?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/coexistence-retirement.md",
+          "candidate": "Does the coexistence page require a migration path for every removed module, not only the common case?"
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md",
+          "candidate": "Does the transition page distinguish framework integration from application migration?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R043",
+      "source_ids": [
+        "src.m9-sp02"
+      ],
+      "url": "https://www.engineering.atspotify.com/2025/11/spotifys-background-coding-agent-part-1",
+      "unit": "Complete article: 1,500+ PRs: Background Coding Agent (2025)",
+      "revision": "Live publisher page; access attempted 2026-10-24; no article body obtained",
+      "status": "blocked-full-text",
+      "coverage": "No article text retrieved; the response contained no readable body.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-sp02.md lines 1-41",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Publisher page returned no readable article body. No full text, figures, linked articles or code were read; no execution or verification.",
+      "blocked_reason": "No readable article body returned",
+      "notes": [
+        "Access attempt on 2026-10-24 returned no readable article body.",
+        "No source claim was read.",
+        "No coverage or comparison is claimed.",
+        "A lawful alternative copy or publisher access is required."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R044",
+      "source_ids": [
+        "src.m9-sp03"
+      ],
+      "url": "https://www.engineering.atspotify.com/2026/4/background-coding-agents-dataset-migrations-honk-part-4",
+      "unit": "Complete article: Dataset Migration with Background Agents (2026)",
+      "revision": "Live publisher page; access attempted 2026-10-24; no article body obtained",
+      "status": "blocked-full-text",
+      "coverage": "No article text retrieved; the response contained no readable body.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-sp03.md lines 1-41",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Publisher page returned no readable article body. No full text, figures, linked articles or code were read; no execution or verification.",
+      "blocked_reason": "No readable article body returned",
+      "notes": [
+        "Access attempt on 2026-10-24 returned no readable article body.",
+        "No source claim was read.",
+        "No coverage or comparison is claimed.",
+        "A lawful alternative copy or publisher access is required."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 16,
+    "full_reads": 26,
     "blocked": 2,
     "records": [
       "R015",
@@ -1194,9 +1751,21 @@
       "R029",
       "R030",
       "R031",
-      "R032"
+      "R032",
+      "R033",
+      "R034",
+      "R035",
+      "R036",
+      "R037",
+      "R038",
+      "R039",
+      "R040",
+      "R041",
+      "R042",
+      "R043",
+      "R044"
     ],
-    "scope": "JEP 444, JEP 491, fourteen public engineering articles and two blocked publisher pages",
+    "scope": "JEP 444, JEP 491, twenty-four public engineering articles and four blocked publisher pages",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit."
   }
 }
