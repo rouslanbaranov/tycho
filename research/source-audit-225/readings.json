@@ -39683,12 +39683,269 @@
         "writes": "only /tmp/B24b/records/",
         "scope_note": "extraction only; no findings, support classification or severity assigned"
       }
+    },
+    {
+      "id": "R370",
+      "source_ids": [
+        "src.sigstore"
+      ],
+      "url": "https://docs.sigstore.dev/about/overview/",
+      "unit": "Sigstore documentation 'Overview' page (About > Overview), one page captured as raw/sigstore.md",
+      "revision": "official documentation overview, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete scoped page text read sequentially from /tmp/B24c/raw/sigstore.md lines 1-95 (95 lines, 1066 words). The page body (lines 28-95) is 1004 words: an unheaded introduction followed by six H2 sections. Excluded chrome totals 62 words: extraction preamble lines 1-5 (7 words: 'Title: Overview', 'URL Source', 'Markdown Content:'), breadcrumb navigation 'Home > About > Overview' lines 6-8 (6 words), a duplicate section-link list lines 10-15 (21 words), the 'On this page' table of contents lines 17-24 (25 words) and the Sigstore logo image reference line 26 (3 words of alt text). No site sidebar, footer, cookie banner or edit-this-page link appears in the capture. No content section of the captured page is missing; no representation gap.",
+      "retrieval_refs": [
+        "/tmp/B24c/manifest.json:3-10 (id, source_id, file, url, lines 95, words 1066, sha256)",
+        "/tmp/B24c/raw/sigstore.md:1-95 (full capture, read in one sequential pass)",
+        "/tmp/B24c/raw/sigstore.md:28-30 (definition, ephemeral keys, public log; OpenSSF stewardship)",
+        "/tmp/B24c/raw/sigstore.md:32-40 (why cryptographic signing; three attack vectors)",
+        "/tmp/B24c/raw/sigstore.md:42-56 (keypair weaknesses; signed/associated/witnessed model)",
+        "/tmp/B24c/raw/sigstore.md:66-72 (keyless flow; four verification checks)",
+        "/tmp/B24c/raw/sigstore.md:76-84 (installation prerequisite and entry-point links)",
+        "https://docs.sigstore.dev/about/overview/ (live heading cross-check on 2026-10-24: H1 Overview, six H2 headings matching the capture, and the same body paragraphs)"
+      ],
+      "omissions": "Linked documentation pages outside the registered page not read; no experiment",
+      "representation_gap": null,
+      "representation_sha256": "5600cb22c4fef370d4844d04a52d7de244f55c84f5c70361778b780e4f847da2",
+      "retrieved_lines": 95,
+      "retrieved_words": 1066,
+      "sections": [
+        {
+          "heading": "extraction preamble (Title, URL Source, Markdown Content)",
+          "level": "chrome",
+          "lines": "1-5",
+          "words": 7,
+          "excluded": true
+        },
+        {
+          "heading": "breadcrumb navigation: Home > About > Overview",
+          "level": "chrome",
+          "lines": "6-8",
+          "words": 6,
+          "excluded": true
+        },
+        {
+          "heading": "section-link list (duplicate of page contents)",
+          "level": "chrome",
+          "lines": "10-15",
+          "words": 21,
+          "excluded": true
+        },
+        {
+          "heading": "On this page (table of contents)",
+          "level": "chrome",
+          "lines": "17-24",
+          "words": 25,
+          "excluded": true
+        },
+        {
+          "heading": "Sigstore logo image reference (alt text only)",
+          "level": "chrome",
+          "lines": "26",
+          "words": 3,
+          "excluded": true
+        },
+        {
+          "heading": "Unheaded introduction: definition and project stewardship",
+          "level": "intro",
+          "lines": "28-30",
+          "words": 142
+        },
+        {
+          "heading": "Why cryptographic signing?",
+          "level": "h2",
+          "lines": "32-40",
+          "words": 84
+        },
+        {
+          "heading": "Why Sigstore?",
+          "level": "h2",
+          "lines": "42-62",
+          "words": 307
+        },
+        {
+          "heading": "How Sigstore works",
+          "level": "h2",
+          "lines": "64-74",
+          "words": 273
+        },
+        {
+          "heading": "How to use Sigstore",
+          "level": "h2",
+          "lines": "76-84",
+          "words": 118
+        },
+        {
+          "heading": "Contributing",
+          "level": "h2",
+          "lines": "86-90",
+          "words": 70
+        },
+        {
+          "heading": "Learn more",
+          "level": "h2",
+          "lines": "92-95",
+          "words": 10
+        }
+      ],
+      "notes": [
+        "Source claim (28): Sigstore is an open-source project for software supply-chain security that signs and verifies release files, container images, binaries and SBOMs; signatures use ephemeral signing keys so keys need not be managed, and signing events are recorded in a tamper-resistant public log.",
+        "Source claim (30): the project is backed by the OpenSSF under the Linux Foundation with contributions from Google, Red Hat, Chainguard, GitHub and Purdue University, is 100% open source and free, and the community operates a public-good non-profit service. This is a project-provenance statement, not evidence of governance, funding or support terms.",
+        "Source claim (34-40): unsigned software is exposed to typosquatting, compromised hosting sites and tampering after publication; digital signatures let consumers trace an artifact to its source and detect alteration after signing.",
+        "Source claim (44-50): traditional keypair signing has identity, key-management and revocation weaknesses — verifying who signed, protecting the private key while publishing the public key, and redistributing keys after compromise.",
+        "Source claim (52-56): Sigstore moves from key-based to identity-based signing; with full capabilities an artifact is signed by Cosign, associated with an identity through Fulcio, and witnessed by recording signing information in Rekor.",
+        "Source claim (58-62): 'keyless' or 'ephemeral key' signing means verification relies on the transparency log rather than keys; the claimed benefits are convenience (no key management or rotation), CI automation and public auditability.",
+        "Source claim (66-68): the client creates a keypair and sends a certificate signing request to Fulcio with the public key and a verifiable OIDC token carrying an email, service account or CI workflow identity; Fulcio verifies the token and issues a short-lived certificate bound to that identity and public key; services never obtain the private key, which is discarded after a single signing.",
+        "Source claim (70): the artifact digest, signature and certificate are persisted in Rekor, described as an immutable append-only ledger; identity owners can monitor use of their identity and a downloader can confirm the certificate was valid at signing time.",
+        "Source claim (72): verification checks the artifact signature with the certificate's public key, checks the certificate identity against an expected identity, validates the certificate signature against Sigstore's root of trust, and verifies proof of inclusion in Rekor.",
+        "Inference: 'keyless' here means no long-lived signing keys, not the absence of cryptography — a short-lived X.509 certificate and a root of trust still mediate verification; the page does not specify certificate lifetime, clock-skew tolerance, revocation or log-availability behavior.",
+        "Inference/artifact: the page is conceptual and links out for installation, Quick Start, blob and container signing, verification and CI (78-84); it gives no commands, policy language, identity-provider configuration or failure procedure, so operational claims cannot be grounded in this unit. Navigation links appear twice (10-15 and 17-24) and both blocks were excluded as chrome."
+      ],
+      "tycho_candidates": [
+        "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/sbom-attestation-and-release-verification.md",
+        "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/provenance-subjects.md",
+        "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/promotion-authorization.md",
+        "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/build-identity.md",
+        "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md",
+        "book/security/identity-authorization-threat-models-and-isolation.md"
+      ],
+      "reader": {
+        "label": "delegated-reader",
+        "harness": "DeepSeek Harness",
+        "model": "deepseek-flash",
+        "parent_agent_id": "session-339f3170-2943-4eff-877d-b6b465e229ef",
+        "policy_ref": "/tmp/delegated-reader-policy.md",
+        "retrieved_at": "2026-10-24T20:54:06Z",
+        "writes": "only /tmp/B24c/records/",
+        "scope_note": "extraction only; no findings, support classification, severity or acceptance verdicts assigned"
+      }
+    },
+    {
+      "id": "R371",
+      "source_ids": [
+        "src.opentofu"
+      ],
+      "url": "https://opentofu.org/docs/intro/",
+      "unit": "OpenTofu documentation 'Getting started' introduction page (/docs/intro/), one page captured as raw/opentofu.md",
+      "revision": "official documentation overview, page captured 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "Complete captured page text read sequentially from /tmp/B24c/raw/opentofu.md lines 1-44 (44 lines, 610 words). Captured body lines 6-44 is 600 words: an H2 introduction carrying the provider model and three-stage workflow, five H3 subsections and an unheaded closing community paragraph. Excluded chrome is 10 words at lines 1-5 (extraction preamble: 'Title: Getting started | OpenTofu', 'URL Source', 'Markdown Content:'). The capture contains no site header, sidebar, breadcrumb, footer or edit link. All captured prose was read; the capture is nevertheless missing three heading boundaries and one Tip callout present on the live page, recorded under representation_gap.",
+      "retrieval_refs": [
+        "/tmp/B24c/manifest.json:13-20 (id, source_id, file, url, lines 44, words 610, sha256)",
+        "/tmp/B24c/raw/opentofu.md:1-44 (full capture, read in one sequential pass)",
+        "/tmp/B24c/raw/opentofu.md:6-12 (definition; provider and API model; public registry)",
+        "/tmp/B24c/raw/opentofu.md:14-18 (write, plan, apply; dependency ordering example)",
+        "/tmp/B24c/raw/opentofu.md:20-22 (registry, Terraform Plugin SDK, immutable approach)",
+        "/tmp/B24c/raw/opentofu.md:24-26 (plan approval; state file as source of truth)",
+        "/tmp/B24c/raw/opentofu.md:28-30 (declarative end state; resource graph; parallelism)",
+        "/tmp/B24c/raw/opentofu.md:32-38 (modules; VCS and cloud backend)",
+        "/tmp/B24c/raw/opentofu.md:40-44 (community channels and contribution links)",
+        "https://opentofu.org/docs/intro/ (live structure cross-check on 2026-10-24: H1 'What is OpenTofu?', H2 'How does OpenTofu work?', 'Why OpenTofu?', 'Community', and a Tip callout; paragraph prose matches the capture)"
+      ],
+      "omissions": "Linked documentation pages outside the registered page not read; no experiment",
+      "representation_gap": {
+        "detected_at": "2026-10-24",
+        "method": "live-page retrieval compared with the registered capture at heading and callout level; paragraph prose compared for the same page",
+        "detail": "The live page renders H1 'What is OpenTofu?' followed by H2 sections 'How does OpenTofu work?' and 'Why OpenTofu?', then a 'Community' H2 before the closing paragraph, plus a Tip callout ('Learn more about OpenTofu use cases and how OpenTofu compares to alternatives'). The capture preserves the paragraph prose verbatim but drops those three heading boundaries and the Tip callout, so the body text lacks section structure the source presents.",
+        "missing_sections": [
+          "How does OpenTofu work? (heading only; prose retained)",
+          "Why OpenTofu? (heading only; five H3 subsections retained)",
+          "Community (heading only; closing paragraph retained)"
+        ],
+        "missing_content": "Tip callout with two links (use cases; comparison to alternatives), about 14 words",
+        "missing_prose_paragraphs": 0,
+        "impact": "Section-level citation for the two H2 areas and the Tip callout cannot be made from the capture; prose claims within them remain readable at the capture's line ranges."
+      },
+      "representation_sha256": "8ff09c0fa5855e2084c09657e83c9f2df03e8d96578324318d5431bfbf8fe7c8",
+      "retrieved_lines": 44,
+      "retrieved_words": 610,
+      "sections": [
+        {
+          "heading": "extraction preamble (Title, URL Source, Markdown Content)",
+          "level": "chrome",
+          "lines": "1-5",
+          "words": 10,
+          "excluded": true
+        },
+        {
+          "heading": "What is OpenTofu? (definition, provider model and three-stage workflow)",
+          "level": "h2",
+          "lines": "6-18",
+          "words": 272
+        },
+        {
+          "heading": "Manage any infrastructure",
+          "level": "h3",
+          "lines": "20-22",
+          "words": 57
+        },
+        {
+          "heading": "Track your infrastructure",
+          "level": "h3",
+          "lines": "24-26",
+          "words": 67
+        },
+        {
+          "heading": "Automate changes",
+          "level": "h3",
+          "lines": "28-30",
+          "words": 64
+        },
+        {
+          "heading": "Standardize configurations",
+          "level": "h3",
+          "lines": "32-34",
+          "words": 41
+        },
+        {
+          "heading": "Collaborate",
+          "level": "h3",
+          "lines": "36-38",
+          "words": 70
+        },
+        {
+          "heading": "Unheaded closing: community welcome and contribution links",
+          "level": "closing",
+          "lines": "40-44",
+          "words": 29
+        }
+      ],
+      "notes": [
+        "Source claim (8): OpenTofu is an infrastructure-as-code tool for defining cloud and on-prem resources in human-readable configuration files that can be versioned, reused and shared, then provisioned and managed through a consistent lifecycle workflow; it covers low-level compute, storage and networking as well as higher-level DNS and SaaS features.",
+        "Source claim (10-12): resources are created and managed through platform APIs; providers extend coverage to any accessible API; the community has written thousands of providers listed in the Public OpenTofu Registry, including AWS, Azure, GCP, Kubernetes, Helm, GitHub, Splunk and DataDog.",
+        "Source claim (14-18): the core workflow is write (define resources across providers), plan (an execution plan of create, update or destroy derived from existing infrastructure and configuration) and apply (execute approved operations in dependency order; the VPC example recreates the VPC before scaling its virtual machines).",
+        "Source claim (22): the Public OpenTofu Registry supplies providers and the Terraform Plugin SDK can be used to write new ones; OpenTofu is described as taking an immutable approach to infrastructure, reducing upgrade and modification complexity. The immutability link points to an external explainer that was not read.",
+        "Source claim (26): OpenTofu generates a plan and prompts for approval before modifying infrastructure, and keeps a state file that acts as the source of truth for the environment and drives the change calculation.",
+        "Source claim (30): configuration is declarative — it describes the end state rather than step-by-step instructions; OpenTofu builds a resource graph, determines dependencies and creates or modifies non-dependent resources in parallel.",
+        "Source claim (34, 38): reusable modules package configurable infrastructure collections and can come from the public registry or be written locally; configuration can be committed to a version control system, and a cloud backend runs OpenTofu in a consistent environment while providing shared state, secret access, role-based access control and a private registry.",
+        "Observation/representation gap: the live page fetched on 2026-10-24 shows H1 'What is OpenTofu?' plus H2 sections 'How does OpenTofu work?', 'Why OpenTofu?' and 'Community' and a Tip callout pointing to use cases and comparisons; the capture keeps all paragraph prose but drops those three heading boundaries and the callout.",
+        "Inference: the page is an introduction only — it gives no backend or state-locking configuration, plan-file format, drift-detection mechanics, provider protocol, CLI commands or failure semantics, and states no OpenTofu version; those would require linked pages outside this unit.",
+        "Inference: the page does not state OpenTofu's relationship to Terraform beyond referencing the Terraform Plugin SDK; compatibility, fork history or migration guidance cannot be sourced from this text."
+      ],
+      "tycho_candidates": [
+        "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
+        "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/desired-state-exposure.md",
+        "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md",
+        "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md",
+        "book/deployment/multi-region-disaster-recovery-contracts.md",
+        "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/compute-models.md"
+      ],
+      "reader": {
+        "label": "delegated-reader",
+        "harness": "DeepSeek Harness",
+        "model": "deepseek-flash",
+        "parent_agent_id": "session-339f3170-2943-4eff-877d-b6b465e229ef",
+        "policy_ref": "/tmp/delegated-reader-policy.md",
+        "retrieved_at": "2026-10-24T20:54:06Z",
+        "writes": "only /tmp/B24c/records/",
+        "scope_note": "extraction only; no findings, support classification, severity or acceptance verdicts assigned"
+      }
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 333,
+    "full_reads": 334,
     "blocked": 14,
     "records": [
       "R015",
@@ -40045,11 +40302,13 @@
       "R366",
       "R367",
       "R368",
-      "R369"
+      "R369",
+      "R370",
+      "R371"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
-    "partial_reads": 12
+    "partial_reads": 13
   }
 }
