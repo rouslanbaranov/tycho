@@ -31622,12 +31622,483 @@
         }
       ],
       "reader": "delegated-reader/B20h/deepseek-harness (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - no book findings, support classification, severity or verdict."
+    },
+    {
+      "id": "R282",
+      "source_ids": [
+        "src.cassandra"
+      ],
+      "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/overview.html",
+      "unit": "Registered page: Apache Cassandra - Architecture Overview (single documentation page; not the Cassandra documentation site)",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page only, not the whole documentation site: local capture of the Cassandra 'Architecture Overview' page, lines 1-74 (638 words), read sequentially and completely, including the untitled introduction, Features and Operating sections. Extractor preamble (Title, URL Source, Published Time, 'Markdown Content:') retained; site navigation, footer, cookie/consent chrome and all other documentation pages excluded and not read.",
+      "retrieval_refs": [
+        "local: /tmp/B21/raw/cassandra.md lines 1-74",
+        "url: https://cassandra.apache.org/doc/latest/cassandra/architecture/overview.html",
+        "passages: lines 8-28 (introduction, design objectives), 30-66 (Features), 68-74 (Operating)"
+      ],
+      "omissions": "Related documentation pages outside the registered page not read; no experiment. The CQL DDL reference and the Dynamo, Bigtable and SEDA papers linked from the page were not read, and no benchmark or cluster observation was performed.",
+      "representation_sha256": "694a34b4d1c494d80bb3af2b3913232545dd6c2a6f5728b5a957cf4fd051c4b3",
+      "retrieved_lines": 74,
+      "retrieved_words": 638,
+      "sections": [
+        {
+          "heading": "Introduction and design objectives (untitled)",
+          "lines": "8-28"
+        },
+        {
+          "heading": "Features",
+          "lines": "30-66"
+        },
+        {
+          "heading": "Operating",
+          "lines": "68-74"
+        }
+      ],
+      "notes": [
+        "Source claim (lines 8-12): Cassandra is presented as an open-source, distributed NoSQL database implementing a partitioned wide-column storage model with eventually consistent semantics; it was initially designed at Facebook using a staged event-driven architecture and combines Dynamo-style distribution and replication with a Bigtable-style data and storage engine model.",
+        "Source claim (lines 14-28): the page lists seven design objectives: full multi-primary database replication; global availability at low latency; scaling out on commodity hardware; linear throughput increase with each additional processor; online load balancing and cluster growth; partitioned key-oriented queries; and flexible schema.",
+        "Source claim (lines 32-42): CQL organizes data as keyspace (replication strategy across datacenters, container for tables) -> table (rows and columns, partitioned by the partition key, new columns addable with zero downtime) -> partition (the mandatory part of the primary key identifying the node that stores the row) -> row (partition key plus optional clustering keys) -> column (a typed single datum).",
+        "Source claim (lines 38 and 44-58): the page states that all performant queries supply the partition key, and lists collection types, user-defined types, tuples, functions and aggregates, storage-attached indexing (SAI) for secondary indexes, local secondary indexes (2i), single-partition lightweight transactions with atomic compare-and-set semantics, and experimental materialized views.",
+        "Source claim (lines 60-66): Cassandra explicitly chooses not to implement operations requiring cross-partition coordination - cross-partition transactions, distributed joins, foreign keys and referential integrity - because such coordination is described as typically slow and hard to provide highly available global semantics.",
+        "Source claim (lines 68-74): configuration lives in cassandra.yaml (editable by hand or configuration management; some settings changeable live, others require restart); nodetool drives the live control interface, auditlogviewer views audit logs, and fqltool views, replays and compares full query logs; atomic point-in-time snapshots and incremental backups are supported out of the box.",
+        "Inference (reader, not stated on the page): the overview describes product-level design intent and data-model vocabulary; it does not document internals such as gossip, hinted handoff, compaction, consistency levels or quorum arithmetic, so this page alone cannot support mechanism-level claims about those.",
+        "Inference (reader): the combination of multi-primary replication, eventually consistent semantics and no cross-partition coordination implies per-partition conflict handling, but the page does not name a conflict-resolution rule; asserting last-write-wins or per-column reconciliation would over-read this page.",
+        "Representation note: the capture keeps the extractor preamble (Title, URL Source, Published Time 'Wed, 26 Aug 2026 07:20:02 GMT', 'Markdown Content:') but no navigation, footer or cookie chrome; heading anchors render as empty links on lines 30 and 68, an extractor artifact rather than page text.",
+        "Representation note (lines 48 and 54): the bullet 'User-defined types, functions and aggregates' appears twice in the source list; the duplication is preserved as captured and is not a reading loss.",
+        "Scope note: 'Linear throughput increase with each additional processor' (line 22) is a design objective asserted by the page; the page reports no measurement or benchmark, and this record makes no performance claim."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/multiwriter-conflicts.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/cases/discord-cassandra-scylladb-messages.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        }
+      ],
+      "reader": "Delegated reader (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef), research-only, records written under /tmp/B21/records/"
+    },
+    {
+      "id": "R283",
+      "source_ids": [
+        "src.clickhouse"
+      ],
+      "url": "https://clickhouse.com/docs/development/architecture",
+      "unit": "Registered page: ClickHouse - Architecture Overview (single documentation page; not the ClickHouse documentation site)",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page only, not the whole documentation site: local capture of the ClickHouse 'Architecture Overview' page, lines 1-147 (5498 words), read sequentially and completely across all 21 headings plus the untitled introduction. Five lines longer than the read tool's 2000-character cap (lines 38, 63, 119, 143, 147) were recovered verbatim from the same local file before counting. No site navigation, footer or cookie chrome is present in the capture.",
+      "retrieval_refs": [
+        "local: /tmp/B21/raw/clickhouse.md lines 1-147",
+        "url: https://clickhouse.com/docs/development/architecture",
+        "passages: lines 6 (vectorized execution), 8-26 (Columns, Field, Leaky abstractions, Data types, Block), 40-59 (Tables, Parsers, Interpreters), 81-101 (Configuration, Context), 103-135 (Threads and jobs, Concurrency control), 137-147 (Distributed query execution, Merge tree, Replication)"
+      ],
+      "omissions": "Related documentation pages outside the registered page not read; no experiment. The linked IProcessor.h header, function reference pages and I/O implementation sources were not read, and no benchmark or cluster observation was performed.",
+      "representation_sha256": "85417289d0d5ec19004cddf803437663e9ee0978c17f4778300054389f460eef",
+      "retrieved_lines": 147,
+      "retrieved_words": 5498,
+      "sections": [
+        {
+          "heading": "Introduction: column-oriented storage and vectorized query execution (untitled)",
+          "lines": "6"
+        },
+        {
+          "heading": "Columns",
+          "lines": "8-10"
+        },
+        {
+          "heading": "Field",
+          "lines": "12-14"
+        },
+        {
+          "heading": "Leaky abstractions",
+          "lines": "16-18"
+        },
+        {
+          "heading": "Data types",
+          "lines": "20-22"
+        },
+        {
+          "heading": "Block",
+          "lines": "24-26"
+        },
+        {
+          "heading": "Processors",
+          "lines": "28-30"
+        },
+        {
+          "heading": "Formats",
+          "lines": "32-34"
+        },
+        {
+          "heading": "I/O",
+          "lines": "36-38"
+        },
+        {
+          "heading": "Tables",
+          "lines": "40-49"
+        },
+        {
+          "heading": "Parsers",
+          "lines": "51-55"
+        },
+        {
+          "heading": "Interpreters",
+          "lines": "57-59"
+        },
+        {
+          "heading": "Functions",
+          "lines": "61-63"
+        },
+        {
+          "heading": "Aggregate functions",
+          "lines": "65-69"
+        },
+        {
+          "heading": "Server",
+          "lines": "71-79"
+        },
+        {
+          "heading": "Configuration",
+          "lines": "81-83"
+        },
+        {
+          "heading": "Context",
+          "lines": "85-101"
+        },
+        {
+          "heading": "Threads and jobs",
+          "lines": "103-119"
+        },
+        {
+          "heading": "Concurrency control",
+          "lines": "121-135"
+        },
+        {
+          "heading": "Distributed query execution",
+          "lines": "137-139"
+        },
+        {
+          "heading": "Merge tree",
+          "lines": "141-143"
+        },
+        {
+          "heading": "Replication",
+          "lines": "145-147"
+        }
+      ],
+      "notes": [
+        "Source claim (line 6): ClickHouse is described as a true column-oriented DBMS that stores data by columns and dispatches operations on arrays ('vectorized query execution'); the page traces array programming to APL and VectorWise, contrasts vectorization with runtime code generation, and states that ClickHouse uses vectorized execution with limited initial runtime code-generation support.",
+        "Source claim (lines 8-10): `IColumn` represents in-memory column chunks; almost all operations are immutable (filter for WHERE/HAVING, permute for ORDER BY, cut for LIMIT); concrete layouts are usually contiguous arrays, while String and Array columns use two vectors (values plus offsets); `ColumnConst` stores one value but looks like a column.",
+        "Source claim (lines 12-18): `Field` is a discriminated union of UInt64, Int64, Float64, String and Array, and per-value access via `operator[]`/`insert` is slower than bulk methods; 'leaky abstractions' let specialized routines cast to a concrete `IColumn` and read or fill its internal array directly (for example `ColumnUInt64::getData`), and `Field` loses type width because UInt8..UInt64 all appear as UInt64.",
+        "Source claim (lines 20-26): `IDataType` owns serialization/deserialization in binary and text and stores only metadata; it is loosely coupled to `IColumn` (DataTypeUInt32 and DataTypeDateTime both use ColumnUInt32, and DataTypeUInt8 may use ColumnUInt8 or ColumnConstUInt8). A `Block` is a set of (IColumn, IDataType, column name) triples; function results are appended as new columns, unneeded columns are removed rather than modified, and blocks are created per processed chunk.",
+        "Source claim (lines 40-49): `IStorage` represents tables, with engines such as StorageMergeTree and StorageMemory; `read` takes columns, the AST and a desired stream count and returns a `Pipe` of Processors; `QueryProcessingStage` reports which parts of the query the storage already computed; `StorageDistributed` may preprocess remotely, and `TableFunction`s return a temporary `IStorage` for a FROM clause.",
+        "Source claim (lines 51-59): a hand-written recursive-descent parser builds an AST (parser generators are not used 'for historical reasons'); interpreters turn the AST into a QueryPipeline - pulling for SELECT, pushing for INSERT, completed for INSERT SELECT. The page states that `InterpreterSelectQueryAnalyzer` with `QueryTree` has been the default since 24.3, the only analysis option since 26.9 (when `enable_analyzer` became obsolete and frozen at 1), and the only analyzer since 26.10; ExpressionAnalyzer remains for standalone expressions such as TTL, sharding keys, defaults and projections.",
+        "Source claim (lines 61-69): ordinary functions keep row counts and run on Blocks rather than individual rows, so they are not short-circuited; strong typing means functions must explicitly support each type combination (for example `plus` is template-instantiated across numeric type pairs). Aggregate functions are stateful through `IAggregateFunction`, states live in an `Arena` memory pool for high-cardinality GROUP BY, can be serialized for distributed execution or disk spill, and their serialized format is not versioned, with backward compatibility required because `AggregatingMergeTree` is used in production.",
+        "Source claim (lines 81-101): configuration uses Poco `AbstractConfiguration`, is merged from XML/YAML files by `ConfigProcessor`, and can be reloaded by `ConfigReloader` or `SYSTEM RELOAD CONFIG`; settings form a context hierarchy (global, session, query, background) merged in six ordered steps from global defaults through query SETTINGS, with later sources overriding earlier ones.",
+        "Source claim (lines 103-135): work runs on several thread pools (server, global, IO, background schedule, preemptable) built on the global pool with priority queues; `ConcurrencyControl` introduces CPU 'slots' limited by `concurrent_threads_soft_limit_num`, with free/granted/acquired states, `allocate(1, max_threads)` guaranteeing at least one slot per query, and runtime adjustment of the limit.",
+        "Source claim (lines 137-139): a `Distributed` table stores no data and acts as a view over local tables; SELECT is rewritten, remote nodes process only to a mergeable stage, and results are merged. The page states there is no global query plan - each node has a local plan for its part - and that reshuffling data between servers for high-cardinality GROUP BY or large JOINs is not supported and remains future work.",
+        "Source claim (lines 141-147): MergeTree parts are immutable, ordered by primary key, with a sparse `primary.idx` (one key per `index_granularity`, usually 8192 rows) and `column.mrk` marks; background merges reduce part count and cause write amplification; MergeTree is explicitly not an LSM tree because it has no memtable or log. Replication is per-table via `ReplicatedMergeTree` and a ZooKeeper path, asynchronous multi-master and conflict-free because ClickHouse does not support UPDATEs; inserts are not quorum-acknowledged by default (data can be lost on node failure) unless `insert_quorum` is enabled, and replication is physical (compressed parts, not queries).",
+        "Coverage and representation note: 'Processors' (lines 28-30) and 'Formats' (lines 32-34) are one-line pointers to `IProcessor.h` in the published page, not omissions of this capture; five long lines exceeded the read tool's display cap and were re-read verbatim from the local file; headings are plain text with no navigation or footer chrome. Inference (reader): the page is a developer-oriented architecture overview with uneven depth, so sections such as Columns and Merge tree are mechanism-level while Processors and Formats are placeholders."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-saturation-and-scaling-laws.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        }
+      ],
+      "reader": "Delegated reader (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef), research-only, records written under /tmp/B21/records/"
+    },
+    {
+      "id": "R284",
+      "source_ids": [
+        "src.memcached"
+      ],
+      "url": "https://docs.memcached.org/",
+      "unit": "Registered page: Memcached - Overview landing page at docs.memcached.org (single documentation page; not the memcached documentation site)",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page only, not the whole documentation site: local capture of the docs.memcached.org landing/'Memcached Overview' page, lines 1-61 (542 words), read sequentially and completely from the tagline through 'Cache Invalidation'. Extractor preamble (Title, URL Source, 'Markdown Content:') retained; site navigation, sidebar, footer and cookie chrome are absent from the capture and all other documentation pages were not read.",
+      "retrieval_refs": [
+        "local: /tmp/B21/raw/memcached.md lines 1-61",
+        "url: https://docs.memcached.org/",
+        "passages: lines 6-12 (overview), 14-25 (How Does It Work?, What is it Made Up Of?), 29-61 (Design Philosophy subsections)"
+      ],
+      "omissions": "Related documentation pages outside the registered page not read; no experiment. The linked memcached.org about page, the tutorial at /tutorialcachingstory/, the new_lru.txt algorithm document and protocol/client pages were not read, and no cache benchmark or deployment was performed.",
+      "representation_sha256": "6a748608f93a32cd1d6c2246c25066063ffbb6c22396f8bdc644b335ec2d04b0",
+      "retrieved_lines": 61,
+      "retrieved_words": 542,
+      "sections": [
+        {
+          "heading": "Overview (untitled)",
+          "lines": "6-12"
+        },
+        {
+          "heading": "How Does It Work?",
+          "lines": "14-18"
+        },
+        {
+          "heading": "What is it Made Up Of?",
+          "lines": "20-25"
+        },
+        {
+          "heading": "Design Philosophy",
+          "lines": "29"
+        },
+        {
+          "heading": "Simple Key/Value Store",
+          "lines": "31-33"
+        },
+        {
+          "heading": "Logic Half in Client, Half in Server",
+          "lines": "35-39"
+        },
+        {
+          "heading": "Servers are Disconnected From Each Other",
+          "lines": "41-43"
+        },
+        {
+          "heading": "O(1)",
+          "lines": "45-49"
+        },
+        {
+          "heading": "Forgetting is a Feature",
+          "lines": "51-57"
+        },
+        {
+          "heading": "Cache Invalidation",
+          "lines": "59-61"
+        }
+      ],
+      "notes": [
+        "Source claim (lines 6-10): memcached is described as a free and open-source, high-performance, distributed memory object caching system, generic in nature but intended to speed up dynamic web applications by alleviating database load; it is an in-memory key-value store for small arbitrary data (strings, objects) produced by database calls, API calls or page rendering, with a simple design and client APIs for most popular languages.",
+        "Source claim (lines 14-18): the page frames memcached as a developer tool, explicitly 'not a code accelerator, nor database middleware', and redirects readers who are installing an application to that application's documentation; it links a separate tutorial for core concepts.",
+        "Source claim (lines 20-25): the system is composed of client software given a list of available servers, a client-based hashing algorithm that chooses a server from the key, server software that stores values with their keys in an internal hash table, and LRU logic that decides when to evict old data or reuse memory when out of memory.",
+        "Source claim (lines 31-33): the server does not care what the data looks like; items consist of a key, an expiration time, optional flags and raw data, and the server does not understand data structures, so values must be pre-serialized; some commands (incr/decr) may operate on the underlying data in a simple manner.",
+        "Source claim (lines 35-39): responsibility is split - clients understand which server to read from or write to for an item and what to do when a server cannot be contacted, while servers store and fetch items and manage when to evict or reuse memory.",
+        "Source claim (lines 41-43): servers are unaware of each other - no crosstalk, synchronization, broadcasting or replication; adding servers increases available memory, and cache invalidation is simplified because clients delete or overwrite data directly on the server that owns it.",
+        "Source claim (lines 45-49): all commands are implemented to be as fast and lock-friendly as possible for near-deterministic query speeds; the page asserts that queries on slow machines should run well under 1 ms and that high-end servers can serve millions of keys per second.",
+        "Source claim (lines 51-57): memcached is by default a least-recently-used cache with per-item expiration; the page presents expiration and eviction as deliberate features for limiting stale data or retaining frequently requested information, states there are no garbage-collector pauses and that free space is lazily reclaimed, and links an external new_lru.txt document for the latest algorithm.",
+        "Inference (reader, not stated on the page): because servers neither replicate nor synchronize and items expire or are evicted, the page positions memcached as a non-authoritative, loss-tolerant cache; it states no durability, replication or consistency guarantee, and any such guarantee would be an over-read.",
+        "Inference (reader): client-side hashing plus a server list implies that changing cluster membership changes the key-to-server mapping and can invalidate many entries at once; the page does not discuss consistent hashing or resharding behavior, so that topic is outside this page.",
+        "Representation note: the capture contains only body text and inline links, with no navigation, sidebar, footer or cookie chrome; headings carry inline self-anchor links (for example '[](https://docs.memcached.org/#o1)') that are extractor artifacts, not visible page text.",
+        "Scope note: the page explicitly defers detail to external material (memcached.org/about, the tutorial, and new_lru.txt for LRU); those references are recorded in omissions and were not read for this record."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/scaling/local-distributed-caching-and-invalidation.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Relate the page to this page; no edit under #225."
+        }
+      ],
+      "reader": "Delegated reader (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef), research-only, records written under /tmp/B21/records/"
+    },
+    {
+      "id": "R285",
+      "source_id": "src.stripe-idempotency",
+      "source_ids": [
+        "src.stripe-idempotency"
+      ],
+      "url": "https://docs.stripe.com/api/idempotent_requests",
+      "chapter": "stripe-idempotency",
+      "title": "Idempotent Requests",
+      "unit": "Stripe API Reference page 'Idempotent requests', local markdown representation /tmp/B21/raw/stripe.md, 464 lines / 3,150 words, sha256 517533766272e8a3b3823be69a08a78cef7bfae4a6fc5af762c4a547bd65eda1; registered unit is the idempotency section only, not the mixed API Reference capture",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "All 464 local lines read sequentially. Registered scope is the Idempotent requests section: prose L235-247 (345 words) plus its cURL example at L275 (21 words), 366 words in scope. The remaining 2,784 words are unrelated Stripe API Reference material (overview, authentication, error attributes and status codes, response expansion, include-dependent fields, metadata, request identifiers, Connect, versioning, enums) and were excluded from claims. 'Was this section helpful?' widgets and repeated language-tab lists are chrome and excluded. No idempotency heading is retained, and the example is displaced from its prose by chrome.",
+      "retrieval_refs": [
+        "/tmp/B21/manifest.json#R285 (lines 464, words 3150, sha256 517533766272e8a3b3823be69a08a78cef7bfae4a6fc5af762c4a547bd65eda1)",
+        "/tmp/B21/raw/stripe.md (read in full, L1-464)",
+        "https://docs.stripe.com/api/idempotent_requests (HTTP 200, 2026-10-24; document title 'Idempotent requests | Stripe API Reference' confirmed in head, but locale/JS shell prevented body comparison)"
+      ],
+      "omissions": "Related Stripe pages outside the registered page not read: API v2 idempotency overview, error handling and low-level retry guidance, API versioning, and all other API Reference sections. No experiment, no request replay, no live API call. Other pages of the Stripe documentation site not read; no whole-site or whole-API-reference claim.",
+      "representation_gap": "The capture is a mixed extractor merge, not a clean capture of the registered page. The idempotency prose has no heading, sits between the 'Expanding responses' and 'Include-dependent response values' sections, and its cURL example is separated at L275 by language-tab chrome. Extractor metadata says 'Title: Enums | Stripe API Reference' and 'Published Time: Wed, 10 Sep 2025', neither matching the registered page title nor the 2026-09-30 API version named in the text. No internal truncation marker exists and the section reads as a complete definition-to-method-scope sequence, but a mixed capture cannot certify that nothing from the page is missing; live body comparison failed because the fetch returned a German-locale JS shell.",
+      "representation_sha256": "517533766272e8a3b3823be69a08a78cef7bfae4a6fc5af762c4a547bd65eda1",
+      "retrieved_lines": 464,
+      "retrieved_words": 3150,
+      "in_scope_words": 366,
+      "sections": [
+        "Extractor metadata and unrelated API overview/authentication chrome, excluded (L1-234)",
+        "Idempotency purpose: retry safety for create and update requests (L235)",
+        "Client-supplied idempotency key in request options (L237)",
+        "API v1 saved-response replay versus API v2 retry-to-completion semantics (L239)",
+        "Key generation, entropy, 255-character limit and sensitive-data caution (L241)",
+        "API v1 24-hour retention, pruning and parameter-match enforcement (L243)",
+        "API v1 persistence boundary after endpoint execution starts; validation and concurrent-conflict retries (L245)",
+        "API v1 method scope: POST accepts keys; GET and DELETE keys ineffective (L247)",
+        "Helpfulness widget and repeated language tabs, chrome excluded (L249-274)",
+        "cURL create-customer example with Idempotency-Key header (L275)",
+        "Unrelated include, metadata, request-ID, Connect, versioning and enums material, excluded (L276-464)"
+      ],
+      "notes": [
+        "Source claim (L235): the API supports idempotency for safely retrying requests without performing the same operation twice; use a key when creating or updating an object so that a connection error can be retried without a second object or a repeated update.",
+        "Source claim (L237, L275): an idempotent request adds an `IdempotencyKey` element to request options; the retained cURL example sends `Idempotency-Key: KG5LxwFBepaKHyUD` on a customer-create POST.",
+        "Source claim (L239): for API v1 Stripe saves the status code and body of the first request with a given key after endpoint execution begins, and same-key retries return the saved response including 500 errors. For API v2, retries do not repeat successful operations; failed or partially failed work is retried to completion where possible, the response is updated, and an error explains a retry that cannot succeed.",
+        "Source claim (L241): the client generates the key; V4 UUIDs or another sufficiently random string are suggested to avoid collisions; keys are up to 255 characters; sensitive data such as email addresses or personal identifiers should not be used as keys.",
+        "Source claim (L243): for API v1, keys may be removed automatically once at least 24 hours old; reuse after pruning generates a new request; the idempotency layer compares incoming parameters with the original and errors on mismatch to prevent accidental misuse.",
+        "Source claim (L245): for API v1, results are saved only after endpoint execution begins. Parameter-validation failures or conflicts with a concurrently executing request save no idempotent result because no endpoint initiation occurred, so those requests may be retried.",
+        "Source claim (L247): for API v1 all POST requests accept idempotency keys; keys on GET and DELETE have no effect because those methods are idempotent by definition.",
+        "Adjacent context outside the registered section (L152, L161): the API error reference says HTTP 409 can indicate reuse of the same idempotent key, and `idempotency_error` occurs when a key is reused on a request whose endpoint or parameters differ from the first. This is recorded as surrounding-capture context only, not as unit content.",
+        "Inference: the section documents server-side replay and duplicate-suppression semantics but says nothing about key storage, replication, crash recovery or multi-region behavior; 'after endpoint execution begins' is a save boundary, not an exactly-once guarantee.",
+        "Inference: the v1/v2 asymmetry is explicit. The 24-hour pruning rule and the 255-character limit are stated for v1 only, so neither should be generalized to v2 without another source.",
+        "Inference: partial status reflects the mixed representation and missing heading, not a detected gap in the seven prose paragraphs; page-level completeness cannot be certified from this capture."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+          "candidate": "Adjacent to retry safety and ambiguous effects; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md",
+          "candidate": "Adjacent to idempotency-key retention and pruning; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
+          "candidate": "Adjacent to the authority that recognizes duplicate requests; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/intent-identity.md",
+          "candidate": "Adjacent to client-generated request identity; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "candidate": "Adjacent to effect identity in public API contracts; relation only, no verdict."
+        },
+        {
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "candidate": "Adjacent to local transaction, outbox and duplicate side effects; relation only, no verdict."
+        }
+      ],
+      "reader": "delegated reader R285 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R286",
+      "source_id": "src.postgres-logical",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "url": "https://www.postgresql.org/docs/current/logical-replication.html",
+      "chapter": "postgres-logical",
+      "title": "Chapter 29. Logical Replication",
+      "unit": "PostgreSQL 18 documentation, Chapter 29 'Logical Replication' landing page, local markdown representation /tmp/B21/raw/postgres-logical.md, 30 lines / 369 words, sha256 b51e795edab90a2cb78c50e69f10763fd1978807522d9c7bc6f82a93000c3044; landing page only, not the chapter subpages",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "All 30 local lines read sequentially. Substantive prose L8-30 (356 words) is complete: definition and contrast with physical replication, publish/subscribe model, initial snapshot and change stream, use cases, and subscriber/conflict behavior. L1-7 are extractor metadata and the 'Markdown Content:' label; no site navigation, footer or cookie chrome is present. A live spot-check on 2026-10-24 confirms the same prose and identifies the edition as PostgreSQL 18 (current). The live page's Table of Contents lists sections 29.1-29.14, which the capture omits. Chapter scope remains one landing page of fifteen top-level units (landing plus fourteen sections); subpages were not read.",
+      "retrieval_refs": [
+        "/tmp/B21/manifest.json#R286 (lines 30, words 369, sha256 b51e795edab90a2cb78c50e69f10763fd1978807522d9c7bc6f82a93000c3044)",
+        "/tmp/B21/raw/postgres-logical.md (read in full, L1-30)",
+        "https://www.postgresql.org/docs/current/logical-replication.html (HTTP 200, 2026-10-24; PostgreSQL 18 current; body prose and TOC spot-checked)"
+      ],
+      "omissions": "Chapter subpages not read: 29.1 Publication (incl. 29.1.1 Replica Identity), 29.2 Subscription (29.2.1-29.2.3), 29.3 Logical Replication Failover, 29.4 Row Filters (29.4.1-29.4.7), 29.5 Column Lists (29.5.1), 29.6 Generated Column Replication, 29.7 Conflicts, 29.8 Restrictions, 29.9 Architecture (29.9.1 Initial Snapshot), 29.10 Monitoring, 29.11 Security, 29.12 Configuration Settings (29.12.1-29.12.2), 29.13 Upgrade (29.13.1-29.13.3), 29.14 Quick Setup. Other PostgreSQL documentation outside Chapter 29 not read; no experiment.",
+      "representation_gap": "The local capture omits the landing page's Table of Contents (29.1-29.14 and their subsections), which is present on the live page. No chapter subpage is included, so the registered chapter unit is represented by its overview only. The captured landing prose matches the live page; no prose block was found missing. A chapter-level completeness claim is therefore not supported.",
+      "representation_sha256": "b51e795edab90a2cb78c50e69f10763fd1978807522d9c7bc6f82a93000c3044",
+      "retrieved_lines": 30,
+      "retrieved_words": 369,
+      "in_scope_words": 356,
+      "sections": [
+        "Extractor metadata and 'Markdown Content:' label, excluded (L1-7)",
+        "Definition and contrast with physical replication (L8)",
+        "Publish/subscribe model, subscribers, publications and cascading re-publication (L10)",
+        "Initial snapshot, continuous change stream, ordering and transactional consistency (L12)",
+        "Typical use cases (L14-28)",
+        "Subscriber independence and conditions for conflicts (L30)",
+        "Chapter table of contents, absent locally; live page lists 29.1-29.14"
+      ],
+      "notes": [
+        "Source claim (L8): logical replication replicates data objects and their changes based on their replication identity, usually a primary key, in contrast to physical replication's exact block addresses and byte-by-byte copying; PostgreSQL supports both concurrently and logical replication permits fine-grained control over data replication and security.",
+        "Source claim (L10): logical replication uses a publish-and-subscribe model with one or more subscribers subscribing to one or more publications on a publisher node; subscribers pull data and may re-publish it for cascading replication or more complex configurations.",
+        "Source claim (L12): replication typically starts by taking a snapshot of table data on the publisher database and copying it to the subscriber; changes since the initial copy are then sent continually and applied in the publisher's order, with transactional consistency guaranteed for publications within a single subscription. The text calls this transactional replication.",
+        "Source claim (L16-28): cited use cases are sending incremental changes in a database or subset, firing triggers per change on the subscriber, consolidating multiple databases (for example for analytics), replicating across major versions, replicating across platforms (Linux to Windows example), giving different user groups access, and sharing a database subset among databases.",
+        "Source claim (L30): the subscriber behaves like any other PostgreSQL instance and can itself publish; a subscriber treated as read-only by an application yields no conflicts from a single subscription, but other writes by an application or other subscribers to the same tables can create conflicts.",
+        "Inference: this is a conceptual chapter overview. Operational detail on publications, subscriptions, slots, failover, row filters, column lists, generated columns, conflicts, restrictions, architecture, monitoring, security, configuration and upgrades lives in the fourteen subpages and is not in this unit.",
+        "Inference: the transactional-consistency guarantee is explicitly qualified to publications within a single subscription, so it does not imply global ordering across subscriptions or freedom from write conflicts.",
+        "Representation note: the live PostgreSQL 18 page matches the captured prose at L8-30 and adds a Table of Contents for 29.1-29.14 that the local markdown lacks; the chapter therefore remains partial even though no landing-page prose gap was detected.",
+        "Inference: the phrase 'When logical replication of a table typically starts' describes a usual initial-sync path rather than a universal guarantee for every table state; the details are deferred to subpages.",
+        "No measurements, benchmarks, failure experiments or operational procedures are reported on this landing page."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Adjacent to PostgreSQL WAL and physical/logical replication; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "candidate": "Adjacent to physical versus logical replication and recovery boundaries; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/README.md",
+          "candidate": "Adjacent to replication, lag and restore evidence; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "candidate": "Adjacent to replication safety and progress under failures; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
+          "candidate": "Adjacent to change data capture and changelog replay; relation only, no verdict."
+        },
+        {
+          "path": "book/cases/uber-mezzanine-pg-to-schemaless.md",
+          "candidate": "Adjacent to a PostgreSQL data-ownership migration with a compatibility seam; relation only, no verdict."
+        }
+      ],
+      "reader": "delegated reader R286 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 248,
+    "full_reads": 251,
     "blocked": 14,
     "records": [
       "R015",
@@ -31896,11 +32367,16 @@
       "R278",
       "R279",
       "R280",
-      "R281"
+      "R281",
+      "R282",
+      "R283",
+      "R284",
+      "R285",
+      "R286"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
-    "partial_reads": 9
+    "partial_reads": 11
   }
 }
