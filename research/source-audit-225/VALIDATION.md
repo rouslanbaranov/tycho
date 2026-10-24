@@ -252,3 +252,12 @@ text was read and the duplicate blocks were verified by matching headings.
 Limits: raster images were not visually inspected; linked articles, code and
 internal systems were not read; blocked pages remain unread; no execution or
 independent review is claimed.
+
+## Reviewer attempt - 2026-10-24
+
+An independent Reviewer-preset child (0f036025-7d17-4a8c-9034-a207434a2a9e)
+was asked to audit the comparison assessments and reference records at HEAD
+d65652d. The child returned no report before the bounded stop. No verdict,
+finding, acceptance or independent review is claimed. human_review is
+not-performed and sufficient is 0. The latest commits b95af3e, dad953d and
+a96c6b7 are outside that attempted review's stated HEAD.
