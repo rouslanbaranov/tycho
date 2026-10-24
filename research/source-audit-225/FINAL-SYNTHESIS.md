@@ -46,10 +46,10 @@ are not met. The unresolved items are stated with exact counts below.
 
 ## 3. What is not complete
 
-- **178 registered sources remain landing-or-abstract only.** They are not full
+- **174 registered sources remain landing-or-abstract only.** They are not full
   reads, even where the title and URL are registered. This includes RFC 9110
   HTTP Semantics and many official docs.
-- **381 of 406 canonical pages have no page-level comparison.** Their matrix
+- **379 of 406 canonical pages have no page-level comparison.** Their matrix
   status is an explicit gap, not an inferred pass.
 - **14 pages remain blocked** and 2 sources are excluded; no summary is inferred
   from a challenge page.
@@ -64,7 +64,7 @@ The #225 acceptance criteria require every accessible scoped source to be read
 completely, all 406 pages to have an applicability/review status beyond an
 explicit gap, material explanations to have source comparisons, and the research
 artifacts to be independently reviewed. The audit currently has 180 unread
-landing sources, 381 unassessed pages and no independent review. Reading a book
+landing sources, 379 unassessed pages and no independent review. Reading a book
 and accounting for the 45 baseline fetch-incomplete sources does not satisfy
 those criteria.
 
@@ -73,10 +73,10 @@ overstate coverage. The branch remains a research checkpoint.
 
 ## 5. What would change the verdict
 
-1. Reconcile the 178 landing-only sources into finite units; for each, read the
+1. Reconcile the 174 landing-only sources into finite units; for each, read the
    complete unit or record a lawful access limitation.
 2. Extend page-level comparisons to the pages with material claims; the current
-   ratio is 25 assessed to 381 gaps.
+   ratio is 27 assessed to 379 gaps.
 3. Complete the external-link inventory and map every citation to a source ID or
    an explicit unresolved gap.
 4. Run an independent Reviewer batch on a bounded delta and verify its report.
@@ -87,4 +87,4 @@ overstate coverage. The branch remains a research checkpoint.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, claim that a first-party
 article is a benchmark, or claim that Tycho is correct. The 180 landing-only
-sources and 381 unassessed pages are the dominant remaining uncertainty.
+sources and 379 unassessed pages are the dominant remaining uncertainty.

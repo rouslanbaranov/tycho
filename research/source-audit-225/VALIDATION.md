@@ -207,7 +207,7 @@ No independent review or source-to-book completeness is claimed.
 ## Comparison assessment - 2026-10-24
 
 Sixteen candidate comparisons from the OSTEP reading were assessed against the
-frozen Tycho baseline. Result: thirty-two assessed comparisons: fifteen supported,
+frozen Tycho baseline. Result: thirty-five assessed comparisons: eighteen supported,
 fifteen qualified, two not-addressed and zero contradicted. Two JEP-to-book
 comparisons were added after the reference batch: JEP 491 provenance and JEP 444
 socket interruption. Each assessment records the exact book
@@ -228,9 +228,9 @@ action. No book page was edited.
 
 ## Reference-source batch - 2026-10-24
 
-Sixty-one records R015-R078 extend the reference ledger. Forty-five are
+Sixty-five records R015-R079 extend the reference ledger. Forty-eight are
 full-scoped reads: JEP 444, JEP 491, thirty public engineering articles
-and thirteen documentation/paper units in the src.m9-* series. Fourteen publisher pages returned no readable
+and sixteen documentation/paper units in the src.m9-* series. Fourteen publisher pages returned no readable
 article body and are recorded as blocked-full-text, not inferred. Two internal
 team sites are excluded-from-scope and were not accessed.
 R024 and R032 each repeat the article body in the representation; their unique
@@ -238,8 +238,8 @@ text was read and the duplicate blocks were verified by matching headings.
 R041 is a wiki page whose navigation chrome was identified and excluded from
 the architecture claim.
 
-- The thirty articles total 5,901 lines and 82,763 words; thirteen documentation/
-  paper units add 8,183 lines and 87,420 words; the two JEPs total 563
+- The thirty articles total 5,901 lines and 82,763 words; sixteen documentation/
+  paper units add 10,981 lines and 119,174 words; the two JEPs total 563
   lines and 9,941 words. Each full record carries the local representation
   SHA-256, line count, word count, sections and explicit omissions.
 - JEP 444 records M:N scheduling, the two JDK 21 pinning causes, diagnostics
@@ -269,14 +269,14 @@ a96c6b7 are outside that attempted review's stated HEAD.
 ## Page matrix and interim synthesis - 2026-10-24
 
 - The 406-page census records a review status for every canonical page:
-  25 are comparison-assessed and 381 carry an explicit evidence gap. The
+  27 are comparison-assessed and 379 carry an explicit evidence gap. The
   per-page list is in page-review-summary.json; a gap is not a pass.
-- The reference ledger has 75 records: 56 full reads, 17 blocked pages and 2
+- The reference ledger has 79 records: 59 full reads, 1 partial, 17 blocked and 2
   excluded internal team sites. All 45 baseline fetch-incomplete sources are
   accounted for: 29 full, 14 blocked, 2 excluded, 0 unaccounted.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
   two candidate page actions, the zero-contradiction result, the 202
-  landing-only sources, the 381 unassessed pages and the missing independent
+  landing-only sources, the 379 unassessed pages and the missing independent
   review. It does not claim #225 completion.
 - Boundary, whitespace, JSON, candidate-path and anchor checks passed. No book,
   source register, index or edition file changed.

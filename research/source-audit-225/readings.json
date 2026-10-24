@@ -3062,12 +3062,335 @@
         }
       ],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R079",
+      "source_ids": [
+        "src.hikari-pool-sizing"
+      ],
+      "url": "https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing",
+      "unit": "Complete document: About Pool Sizing",
+      "revision": "HikariCP wiki page, raw markdown retrieved 2026-10-24; no revision pinned",
+      "status": "full-scoped-text-read",
+      "coverage": "All 89 lines / 1560 words; complete wiki page including formula, pool-locking and caveats",
+      "retrieval_refs": [
+        "/tmp/refs/hikari-sizing-raw.md lines 1-89",
+        "GitHub raw wiki, accessed 2026-10-24"
+      ],
+      "omissions": "Linked video and benchmarks not watched or rerun; no PostgreSQL experiment.",
+      "representation_sha256": "8d90ea97a9847b5cd7ed2390463ede07ea4d3669fa1612c050ffaf741f0a010a",
+      "retrieved_lines": 89,
+      "retrieved_words": 1560,
+      "sections": [
+        "10,000 Simultaneous Front-End Users",
+        "But why?",
+        "Limited Resources",
+        "The Formula",
+        "Pool-locking",
+        "Caveat Lector"
+      ],
+      "notes": [
+        "Source claim: a small pool saturated with waiting application threads is usually better than a large pool; a 10,000-user front end does not imply 10,000 database connections.",
+        "Source claim: the PostgreSQL starting formula is connections = (core_count * 2) + effective_spindle_count, with hyperthreads excluded and spindle count approaching zero when the working set is cached.",
+        "Source claim: I/O blocking can justify more connections than cores, but faster storage reduces blocking and therefore argues for fewer, not more, connections.",
+        "Source claim: the author reports PostgreSQL TPS flattening around 50 connections and says 96 may be too high unless the host has 16-32 cores; the 4-core/one-disk example is about 10 connections.",
+        "Source claim: pool-locking avoidance needs pool_size = Tn * (Cm - 1) + 1, which is a deadlock minimum, not an optimum.",
+        "Source claim: mixed long and short transactions may need two pools; a long-running job queue should be right-sized to the pool.",
+        "Inference: the formula is a starting point for load testing, not a universal capacity law; the author says pool sizing is deployment-specific.",
+        "Inference: the 50x latency improvement is a cited demonstration, not a controlled benchmark in this page."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md",
+          "candidate": "Does the pool page treat a small saturated pool and a fleet/database budget as separate constraints?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/fleet-budgets.md",
+          "candidate": "Does the fleet budget page distinguish a per-process pool formula from the database connection ceiling?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-recovery.md",
+          "candidate": "Does the recovery page address pool-locking and long-running transaction pools?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R074",
+      "source_ids": [
+        "src.http-semantics"
+      ],
+      "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
+      "unit": "Partial RFC 9110, HTTP Semantics (local representation; 14 sections absent)",
+      "revision": "RFC 9110 (June 2022); retrieved 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "All 6240 representation lines / 64633 words read, but 14 numbered (sub)sections listed in the TOC have no body text in the representation. This is a partial read, not complete RFC 9110.",
+      "retrieval_refs": [
+        "/tmp/refs/src.http-semantics.md lines 1-6240",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Representation gaps (present in TOC, absent from body): 3.7 Intermediaries; 4.2 heading (HTTP-Related URI Schemes; 4.2.1-4.2.5 present); 5.6.5 Comments; 6.3 Header Fields; 6.6 Message Metadata with 6.6.1 Date and 6.6.2 Trailer; 8.2 Representation Metadata; 8.3.1 Media Type; 8.5.1 Language Tags; 17.2 Risks of Intermediaries; 18.1 URI Scheme Registration; 18.5 Authentication Scheme Registration; 18.8 Media Type Registration; Appendix B.1, B.6, B.7, B.8. Also omitted from reading: link targets and anchor URLs stripped by the reader normalizer; linked specifications (RFC 9111 Caching, 9112 HTTP/1.1, 9113 HTTP/2, 9114 HTTP/3, 3986 URI, 5234 ABNF, 6125, 7616/7617, 6265 Cookie, 8941) not read; no implementation, server, proxy or benchmark execution.",
+      "representation_sha256": "6d9b878ba62acd431b18b7355a0cc34d8207b1ae7402058a99ea61ee40433747",
+      "retrieved_lines": 6240,
+      "retrieved_words": 64633,
+      "sections": [
+        "1 Introduction (1.1 Purpose, 1.2 History and Evolution, 1.3 Core Semantics, 1.4 Specifications Obsoleted)",
+        "2 Conformance (2.1 Syntax Notation, 2.2 Requirements Notation, 2.3 Length Requirements, 2.4 Error Handling, 2.5 Protocol Version)",
+        "3 Terminology and Core Concepts (3.1-3.6, 3.8, 3.9; 3.7 absent)",
+        "4 Identifiers in HTTP (4.1, 4.2.1-4.2.5, 4.3-4.3.5)",
+        "5 Fields (5.1-5.4, 5.5, 5.6, 5.6.1-5.6.4, 5.6.6, 5.6.7; 5.6.5 absent)",
+        "6 Message Abstraction (6.1, 6.2, 6.4, 6.4.1, 6.4.2, 6.5, 6.5.1, 6.5.2; 6.3 and 6.6 absent)",
+        "7 Routing HTTP Messages (7.1-7.8)",
+        "8 Representation Data and Metadata (8.1, 8.3, 8.3.2, 8.3.3, 8.4-8.8.3; 8.2, 8.3.1, 8.5.1 absent)",
+        "9 Methods (9.1, 9.2.1-9.2.3, 9.3.1-9.3.8)",
+        "10 Message Context (10.1.1-10.1.5, 10.2.1-10.2.4)",
+        "11 HTTP Authentication (11.1-11.5, 11.6.1-11.6.3, 11.7.1-11.7.3)",
+        "12 Content Negotiation (12.1-12.3, 12.4.1-12.4.3, 12.5.1-12.5.5)",
+        "13 Conditional Requests (13.1.1-13.1.5, 13.2.1, 13.2.2)",
+        "14 Range Requests (14.1-14.6)",
+        "15 Status Codes (15.1-15.6.6, including 15.3.7.1-15.3.7.3)",
+        "16 Extending HTTP (16.1-16.7)",
+        "17 Security Considerations (17.1, 17.3-17.16.4; 17.2 absent)",
+        "18 IANA Considerations (18.2, 18.3, 18.4, 18.6, 18.7, 18.9, 18.10)",
+        "19 References (19.1 Normative, 19.2 Informative)",
+        "Appendix A Collected ABNF",
+        "Appendix B Changes from Previous RFCs (B.2-B.5, B.9)",
+        "Acknowledgements",
+        "Index",
+        "Authors' Addresses"
+      ],
+      "notes": [
+        "Source claim (2.2, 2.5): conformance is scoped to the roles an implementation plays and to the messaging syntax version in use, while core semantics are shared across HTTP/1.1, HTTP/2 and HTTP/3. Inference: any Tycho statement of the form 'HTTP requires X' is under-specified unless it names the role (client, origin, proxy, cache) and the version; benchmark results cannot be generalized from one role to another.",
+        "Source claim (9.2.1-9.2.2): safety and idempotency describe the effect the client requested, not server-side logging, revision history or other incidental side effects; PUT, DELETE and the safe methods are idempotent, POST is not. Inference: retry experiments must define the observable intended effect and the failure window (before or after the response), because a method name alone does not establish that a replay is safe.",
+        "Source claim (9.2.2): a proxy MUST NOT automatically retry non-idempotent requests, a client SHOULD NOT retry a failed automatic retry, and clients may guess retryability after connection loss before any response part arrives. Inference: duplicate-work measurements need attempt provenance (client, proxy, gateway) and the exact failure point; otherwise duplicated load is attributed to the server or to the method rather than to a retry policy.",
+        "Source claim (8.6, 5.3, 7.6.1): Content-Length must match the actual framing, duplicate identical values may be collapsed, inconsistent values risk request smuggling, and hop-by-hop fields listed in Connection must be removed by intermediaries. Inference: framing validity and intermediary stripping are preconditions for interpreting throughput or error-rate results; a benchmark that tolerates malformed framing measures a different system than the protocol describes.",
+        "Source claim (12.5.5): Vary expands the cache key, a proxy MUST NOT generate '*', and a response with Vary must not satisfy a later request with different selecting-field values. Inference: cache hit ratio is a property of the request population and Vary, not of the origin alone; Tycho cache claims should report Vary and the request mix rather than a single hit percentage.",
+        "Source claim (8.8.1, 13.1.1-13.1.2, 13.2.2): strong comparison is mandatory for If-Match and weak comparison for If-None-Match; preconditions are evaluated in a fixed order (If-Match, If-Unmodified-Since, If-None-Match, If-Modified-Since, If-Range) and only when the unconditional response would be 2xx or 412. Inference: 304 versus 412 outcomes depend jointly on validator strength and evaluation order, so conditional-request benchmarks that conflate them cannot separate cache validation from lost-update protection.",
+        "Source claim (14.2, 14.4, 17.15): Range is optional and may be ignored, satisfiable byte ranges yield 206 with Content-Range, unsatisfiable sets yield 416, overlapping or many small ranges are a denial-of-service vector, and 206 parts may be coalesced or reordered. Inference: partial-content throughput depends on server coalescing policy and client range pattern; a single 'range support' boolean is not a meaningful conformance or performance claim.",
+        "Source claim (15.5.20): a 421 Misdirected Request may be retried by a client even when the method is not idempotent, and a proxy MUST NOT generate 421. Inference: this is an explicit exception to retry conservatism and a plausible source of retry amplification in multi-origin connection reuse; Tycho retry cases should state whether 421 handling is in scope.",
+        "Source claim (15.6.4, 10.2.3): 503 indicates temporary overload or maintenance and MAY carry Retry-After as either an HTTP-date or delay-seconds; 3xx responses may also carry Retry-After as a minimum wait. Inference: neither field obliges the client to wait, so 'overload protection' claims must measure client compliance and queueing behavior, not treat Retry-After as a scheduling contract.",
+        "Source claim (11.3-11.5): authentication is a stateless challenge-response framework; a protection space is the origin plus the realm value, and credentials may be reused across requests in that space. Inference: credential-reuse tests must scope by origin and realm (including multiple challenges with the same scheme), not by hostname string; scope errors inflate apparent authentication reuse or leakage.",
+        "Version-sensitive points (5.1, 2.5, 7.8, 9.3.6, 15.2): field semantics do not change between minor versions of a major version, extension points are version-independent, but HTTP/1.0 clients must not receive 1xx and must ignore Upgrade; CONNECT uses authority-form and forbids Content-Length/Transfer-Encoding in 2xx. Inference: Tycho should tag HTTP claims with the version whose wire behavior is being described, because several statements here are explicitly version-conditioned.",
+        "Representation fidelity: the local Markdown omits 14 TOC-listed (sub)sections, including 3.7 Intermediaries, 6.3 Header Fields, 6.6/6.6.1/6.6.2 Date and Trailer metadata, 8.2/8.3.1/8.5.1 representation metadata and media type, and 17.2 intermediary risk. Inference: conclusions about proxy/gateway roles, Date semantics, header-section processing or media-type parsing cannot be sourced from this file alone and require the authoritative RFC before being used in the book.",
+        "Status downgraded from full to partial because the representation omits 14 sections; no supplemental official text was read for this record."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+          "candidate": "Method safety/idempotency and status-code classes as contract terms; separate semantics from HTTP/1.1 wire behavior when describing API compatibility."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "candidate": "Retry eligibility grounded in 9.2.2 (proxy MUST NOT retry non-idempotent; no retry of a failed retry) and the 421 exception in 15.5.20; require attempt provenance in retry measurements."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-acceptance.md",
+          "candidate": "Validator strength and comparison functions (8.8.1, 13.1.1-13.1.2), Vary as cache-key expansion (12.5.5), and 304 header requirements (15.4.5) as acceptance criteria for cache layers."
+        },
+        {
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "candidate": "Distinguish protocol-level idempotency (intended effect, 9.2.2) from storage-level exactly-once claims; state which failure window and which actor (client, proxy, gateway) is covered."
+        }
+      ],
+      "reader": "Delegated reading subagent; no independent review or execution."
+    },
+    {
+      "id": "R075",
+      "source_ids": [
+        "src.rfc9111-enrichment"
+      ],
+      "url": "https://www.rfc-editor.org/rfc/rfc9111.html",
+      "unit": "Scoped RFC 9111 sections 3, 4 and 5 (register-scoped; not the whole RFC)",
+      "revision": "RFC 9111, HTTP Caching, June 2022 (obsoletes RFC 7234); retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Local representation: all 856 lines / 8,647 words read. Sections 3 (lines 240-317, 78 lines / 1,234 words) and 4 (lines 318-557, 240 lines / 4,150 words) read there in full. Section 5 is absent from the local file and was read in full from the official RFC 9111 text rendering (485 lines / 2,914 words, offsets 48,626-68,673). ABNF and note blocks read as text; sections 3-5 contain no diagrams.",
+      "retrieval_refs": [
+        "/tmp/refs/src.rfc9111-enrichment.md lines 1-856",
+        "Jina reader, accessed 2026-10-24",
+        "https://www.rfc-editor.org/rfc/rfc9111.txt section 5 (supplemental official text), accessed 2026-10-24"
+      ],
+      "representation_gap": "Section 5 Field Definitions (5.1 Age through 5.5 Warning) is absent from /tmp/refs/src.rfc9111-enrichment.md: the body jumps from the end of 4.4 (line 556) to section 6 (line 558), and section 5 appears only in the Table of Contents (lines 88-140). The 3.2 heading is also missing although its body text is present at lines 283-298. Supplemental section 5 was read from the official rfc-editor.org text on 2026-10-24 (485 lines, 2,914 words); it is not covered by the representation hash.",
+      "omissions": "Linked RFCs (9110, 9112, 5861, 6265, 7234) and implementation code not read; no cache, proxy or benchmark execution; sections 1, 2 and 6-9 read for context only and not claimed as unit coverage.",
+      "representation_sha256": "2c653599e063266e41a30a3e51586a906731368482796d3c68225b311f173c00",
+      "retrieved_lines": 856,
+      "retrieved_words": 8647,
+      "sections": [
+        "1 Introduction (context only)",
+        "2 Overview of Cache Operation (context only)",
+        "3 Storing Responses in Caches",
+        "3.1 Storing Header and Trailer Fields",
+        "3.2 Updating Stored Header Fields (heading absent; body read)",
+        "3.3 Storing Incomplete Responses",
+        "3.4 Combining Partial Content",
+        "3.5 Storing Responses to Authenticated Requests",
+        "4 Constructing Responses from Caches",
+        "4.1 Calculating Cache Keys with the Vary Header Field",
+        "4.2 Freshness",
+        "4.2.1 Calculating Freshness Lifetime",
+        "4.2.2 Calculating Heuristic Freshness",
+        "4.2.3 Calculating Age",
+        "4.2.4 Serving Stale Responses",
+        "4.3 Validation",
+        "4.3.1 Sending a Validation Request",
+        "4.3.2 Handling a Received Validation Request",
+        "4.3.3 Handling a Validation Response",
+        "4.3.4 Freshening Stored Responses upon Validation",
+        "4.3.5 Freshening Responses with HEAD",
+        "4.4 Invalidating Stored Responses",
+        "5 Field Definitions (supplemental official text)",
+        "5.1 Age",
+        "5.2 Cache-Control",
+        "5.2.1 Request Directives",
+        "5.2.1.1 max-age",
+        "5.2.1.2 max-stale",
+        "5.2.1.3 min-fresh",
+        "5.2.1.4 no-cache",
+        "5.2.1.5 no-store",
+        "5.2.1.6 no-transform",
+        "5.2.1.7 only-if-cached",
+        "5.2.2 Response Directives",
+        "5.2.2.1 max-age",
+        "5.2.2.2 must-revalidate",
+        "5.2.2.3 must-understand",
+        "5.2.2.4 no-cache",
+        "5.2.2.5 no-store",
+        "5.2.2.6 no-transform",
+        "5.2.2.7 private",
+        "5.2.2.8 proxy-revalidate",
+        "5.2.2.9 public",
+        "5.2.2.10 s-maxage",
+        "5.2.3 Extension Directives",
+        "5.2.4 Cache Directive Registry",
+        "5.3 Expires",
+        "5.4 Pragma",
+        "5.5 Warning"
+      ],
+      "notes": [
+        "Source claim: section 3 makes storage conditional on conjunctive requirements -- understood method, final status, understood 206/304 or must-understand, no no-store, shared-cache private and Authorization rules, and at least one cacheability signal; a cache extension can override them (lines 242-266).",
+        "Source claim: section 3.1 requires storing all received header fields including unrecognized ones, excepts Connection-nominated, proxy-specific and no-cache/private-named fields, and says trailers may be stored separately or discarded but MUST NOT be merged with headers.",
+        "Source claim: section 3.3 permits storing an incomplete 200 or a 206 as incomplete only when Range and Content-Range are understood, the response is marked incomplete, and reuse waits until completion or a wholly contained range request.",
+        "Source claim: section 4 lists reuse preconditions (target URI, method, Vary-nominated fields, no unvalidated no-cache, and fresh, stale-permitted or validated) and requires generating Age whenever a stored response is served without validation.",
+        "Source claim: section 4.2 defines freshness as freshness_lifetime > current_age; section 4.2.1 orders lifetime sources as s-maxage for shared caches, then max-age, then Expires minus Date, then heuristic, and prefers the first occurrence or stale on duplicates and the most restrictive directive on conflict.",
+        "Source claim: section 4.2.2 forbids heuristics when an explicit expiration exists, limits them to heuristically cacheable or explicitly cacheable responses, and only encourages a heuristic value near 10 percent of the Last-Modified interval.",
+        "Source claim: section 4.2.3 computes current_age from apparent_age or corrected_age_value plus resident time; a cache without a clock MUST revalidate stored responses on every use (section 4).",
+        "Source claim: section 4.3 validation uses ETag and Last-Modified preconditions; a 304 updates identified stored responses, a full response replaces them, and a 5xx during validation may be forwarded or treated as failure with stale service or retry.",
+        "Source claim: section 4.4 requires invalidating the target URI after a non-error response to an unsafe method, permits but does not require invalidating Location and Content-Location URIs, and forbids cross-origin invalidation.",
+        "Source claim (supplemental 5.2): directives are unidirectional and proxies must pass them through; request directives are advisory while response directives in 5.2.2 must be obeyed; 5.2.2.2 must-revalidate forbids stale reuse even when disconnected and calls for an error, and 5.2.2.10 s-maxage overrides max-age and Expires for shared caches with proxy-revalidate semantics.",
+        "Source claim (supplemental 5.3-5.5): invalid Expires values including 0 mean already expired, max-age makes Expires ignored, Pragma is deprecated, and Warning is obsoleted; the 5.2.2.7 note says private controls storage location, not message privacy.",
+        "Inference: these are protocol conditions on storing and reusing a response, not evidence of hit rate, latency, origin protection or measured cache effectiveness; such claims need separate measurement, and the local file alone could not support any section 5 directive claim."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+          "candidate": "Does the edge-cache page keep freshness lifetime, age and validation separate from revocation and access visibility, rather than treating a TTL as an authorization boundary?"
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-acceptance.md",
+          "candidate": "Does the cache acceptance page treat HTTP directives as constraints on reuse rather than guarantees of origin protection, hit rate or latency?"
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
+          "candidate": "Does the stampede page distinguish request collapsing (section 4) from an origin admission budget, which RFC 9111 does not specify?"
+        }
+      ],
+      "reader": "Delegated reading subagent; no independent review or execution."
+    },
+    {
+      "id": "R076",
+      "source_ids": [
+        "src.rfc9113-enrichment"
+      ],
+      "url": "https://www.rfc-editor.org/rfc/rfc9113.html",
+      "unit": "Scoped RFC 9113 sections 5, 6.8 and 8 (register-scoped; not the whole RFC)",
+      "revision": "RFC 9113, HTTP/2, June 2022 (obsoletes RFC 7540); retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Local representation: 1,853 lines / 21,547 words; scoped text read there: section 5 (lines 402-642, 241 lines / 4,328 words), section 6.8 (lines 927-983, 57 lines / 987 words) and section 8 (lines 1,150-1,396, 247 lines / 3,553 words), including the headerless 8.6 body. Sections 8.2 and 8.3 are absent locally and were read in full from the official RFC 9113 text rendering (245 lines / 1,666 words, lines 2,484-2,728). Figures 2 and 10 and the example frame diagrams read as text.",
+      "retrieval_refs": [
+        "/tmp/refs/src.rfc9113-enrichment.md lines 402-642, 927-983, 1150-1396",
+        "Jina reader, accessed 2026-10-24",
+        "https://www.rfc-editor.org/rfc/rfc9113.txt sections 8.2-8.3 (supplemental official text), accessed 2026-10-24"
+      ],
+      "representation_gap": "Sections 8.2 HTTP Fields (8.2.1 Field Validity, 8.2.2 Connection-Specific Header Fields, 8.2.3 Compressing the Cookie Header Field) and 8.3 HTTP Control Data (8.3.1 Request Pseudo-Header Fields, 8.3.2 Response Pseudo-Header Fields) are absent from /tmp/refs/src.rfc9113-enrichment.md: 8.1.1 ends at line 1192 and 8.4 begins at line 1194. The 8.6 heading is missing although its body (101 Switching Protocols) is present at lines 1270-1272. Section 9 is absent between 8.8 (line 1396) and section 10 (line 1397), outside the assigned scope. Supplemental 8.2-8.3 read from the official rfc-editor.org text on 2026-10-24; it is not covered by the representation hash.",
+      "omissions": "RFC 7540 (deprecated priority text), RFC 8441, RFC 9218, RFC 9110 and RFC 9111 not read; no HTTP/2 client, server, proxy or load test executed; sections 1-4, 6.1-6.7, 6.9-6.10, 7 and 9-12 read only as context or not at all and are not claimed.",
+      "representation_sha256": "ecd4e9bfec114651bd5010957739a1fc0ab2c516daf56e895517c4e14fab9b57",
+      "retrieved_lines": 1853,
+      "retrieved_words": 21547,
+      "sections": [
+        "5 Streams and Multiplexing",
+        "5.1 Stream States",
+        "5.1.1 Stream Identifiers",
+        "5.1.2 Stream Concurrency",
+        "5.2 Flow Control",
+        "5.2.1 Flow-Control Principles",
+        "5.2.2 Appropriate Use of Flow Control",
+        "5.2.3 Flow-Control Performance",
+        "5.3 Prioritization",
+        "5.3.1 Background on Priority in RFC 7540",
+        "5.3.2 Priority Signaling in This Document",
+        "5.4 Error Handling",
+        "5.4.1 Connection Error Handling",
+        "5.4.2 Stream Error Handling",
+        "5.4.3 Connection Termination",
+        "5.5 Extending HTTP/2",
+        "6.8 GOAWAY",
+        "8 Expressing HTTP Semantics in HTTP/2",
+        "8.1 HTTP Message Framing",
+        "8.1.1 Malformed Messages",
+        "8.2 HTTP Fields (supplemental official text)",
+        "8.2.1 Field Validity (supplemental official text)",
+        "8.2.2 Connection-Specific Header Fields (supplemental official text)",
+        "8.2.3 Compressing the Cookie Header Field (supplemental official text)",
+        "8.3 HTTP Control Data (supplemental official text)",
+        "8.3.1 Request Pseudo-Header Fields (supplemental official text)",
+        "8.3.2 Response Pseudo-Header Fields (supplemental official text)",
+        "8.4 Server Push",
+        "8.4.1 Push Requests",
+        "8.4.2 Push Responses",
+        "8.5 The CONNECT Method",
+        "8.6 The Upgrade Header Field (body read; heading absent)",
+        "8.7 Request Reliability",
+        "8.8 Examples",
+        "8.8.1 Simple Request",
+        "8.8.2 Simple Response",
+        "8.8.3 Complex Request",
+        "8.8.4 Response with Body",
+        "8.8.5 Informational Responses"
+      ],
+      "notes": [
+        "Source claim: section 5 defines a stream as an independent bidirectional frame sequence; client-initiated streams use odd identifiers, server-initiated even, identifier zero is connection control, and identifiers increase monotonically and are never reused (5, 5.1.1).",
+        "Source claim: section 5.1 defines idle, reserved (local/remote), open, half-closed (local/remote) and closed states; frames not expressly permitted are connection errors by default, PRIORITY may appear in any state, and unknown extension frames cannot be judged (5.1).",
+        "Source claim: section 5.1.2 counts open and half-closed streams against SETTINGS_MAX_CONCURRENT_STREAMS but excludes reserved streams; exceeding the peer limit is a stream error of PROTOCOL_ERROR or REFUSED_STREAM, and REFUSED_STREAM signals that automatic retry is intended.",
+        "Source claim: section 5.2 flow control is per-hop and credit-based through WINDOW_UPDATE, starts at 65,535 octets for each stream and the connection, applies only to DATA frames, and is controlled by the receiver while the sender must respect advertised limits.",
+        "Source claim: sections 5.2.2-5.2.3 say a maximum 2^31-1 window with prompt WINDOW_UPDATE effectively disables flow control, endpoints MUST read frames promptly or risk deadlock on critical frames, and window sizing must account for the bandwidth-delay product.",
+        "Source claim: section 5.3 deprecates RFC 7540 priority signaling, retains the frame fields and mandatory handling for interoperability, and encourages an alternative scheme such as RFC 9218 where priority signaling matters.",
+        "Source claim: section 6.8 GOAWAY carries a last-stream-ID and error code; receivers MUST NOT open new streams, streams above the boundary are treated as unprocessed and may be retried on a new connection, and a sender MUST NOT increase the last-stream-ID across successive GOAWAY frames.",
+        "Source claim: section 6.8 recommends an initial GOAWAY with last-stream-ID 2^31-1 and NO_ERROR, a wait of at least one round trip, then a second GOAWAY with the updated boundary; after GOAWAY, HEADERS, PUSH_PROMISE and CONTINUATION must be minimally processed for HPACK consistency and DATA must count toward connection flow control.",
+        "Source claim: section 8.1 frames a message as HEADERS plus CONTINUATION, zero or more DATA, and optional trailer HEADERS; content-length mismatch, pseudo-headers in trailers, and a post-final HEADERS frame without END_STREAM make a message malformed, and intermediaries must not forward malformed messages.",
+        "Source claim (supplemental 8.2): field names must be lowercase; 8.2.1 mandates minimal validation of names and values to prevent request smuggling; 8.2.2 forbids connection-specific header fields including Connection, Keep-Alive, Transfer-Encoding and Upgrade, with TE: trailers as the only exception.",
+        "Source claim (supplemental 8.3): pseudo-headers must precede regular fields, must not repeat or cross request/response context, and requests require :method, :scheme and :path while responses require :status; 8.7 ties GOAWAY and REFUSED_STREAM to safe automatic retry of unprocessed requests.",
+        "Inference: the GOAWAY boundary is a per-hop statement that a stream might have been processed, not an application rollback; retry safety above the boundary is a transport claim, while flow-control windows bound bytes in transit rather than application demand or durable buffering."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/connections-draining.md",
+          "candidate": "Does the draining page keep GOAWAY's last-stream-ID as a per-hop processed boundary, separate from application commit and downstream side effects?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+          "candidate": "Does the balancing page distinguish connection-level selection from per-stream concurrency, given that one multiplexed connection can carry most requests while peers carry one each?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md",
+          "candidate": "Does the streaming page separate HTTP/2 transport flow-control windows from application demand, backpressure and durable replay?"
+        }
+      ],
+      "reader": "Delegated reading subagent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 45,
+    "full_reads": 48,
     "blocked": 14,
     "records": [
       "R015",
@@ -3133,10 +3456,12 @@
       "R075",
       "R076",
       "R077",
-      "R078"
+      "R078",
+      "R079"
     ],
-    "scope": "JEP 444, JEP 491, thirty public engineering articles, thirteen documentation/paper units, fourteen blocked pages and two excluded internal team sites",
+    "scope": "JEP 444, JEP 491, thirty public engineering articles, sixteen documentation/paper units including scoped RFC 9111/9113 and partial RFC 9110, fourteen blocked pages and two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
-    "excluded": 2
+    "excluded": 2,
+    "partial_reads": 1
   }
 }
