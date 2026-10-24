@@ -191,7 +191,7 @@ from the earlier checkpoint, the whole book has been read as text.
   contents was used for navigation; the dedication was not treated as a
   technical reading unit.
 - All candidate paths exist in the frozen baseline; `comparisons.json` now has
-  sixteen candidate comparisons, still questions rather than findings.
+  sixteen candidate comparisons at that checkpoint, still questions rather than findings.
 - The read-only census passed; 681 baseline files, 247 sources and 406
   canonical documents remain represented. The boundary and whitespace checks
   passed.
@@ -207,8 +207,10 @@ No independent review or source-to-book completeness is claimed.
 ## Comparison assessment - 2026-10-24
 
 Sixteen candidate comparisons from the OSTEP reading were assessed against the
-frozen Tycho baseline. Result: five supported, nine qualified, two
-not-addressed and zero contradicted. Each assessment records the exact book
+frozen Tycho baseline. Result: eighteen assessed comparisons: six supported,
+ten qualified, two not-addressed and zero contradicted. Two JEP-to-book
+comparisons were added after the reference batch: JEP 491 provenance and JEP 444
+socket interruption. Each assessment records the exact book
 anchor, the OSTEP record and sections, a bounded conclusion, and a proposed
 action. No book page was edited.
 
@@ -218,8 +220,34 @@ action. No book page was edited.
   "qualified" means the page is consistent but uses a different boundary or
   terminology; "not-addressed" names a source mechanism the page does not use.
   None is a contradiction or a finding of error.
-- All sixteen anchors and candidate paths exist in the frozen baseline; the
+- All eighteen anchors and candidate paths exist in the frozen baseline; the
   JSON parses and the lexical boundary check passes.
 - The assessments are bounded to the named passages. They are not a
   claim-level audit of whole pages, independent review, owner acceptance or
   permission to edit the book.
+
+## Reference-source batch - 2026-10-24
+
+Nine records R015-R023 extend the reference ledger. Seven are full-scoped
+reads: JEP 444, JEP 491 and five public engineering articles (source ids
+src.m9-st01, src.m9-u03, src.m9-sp01, src.m9-sh01 and src.m9-di01). Two
+publisher pages (src.m9-n05 and src.m9-n06) returned a Cloudflare challenge
+and are recorded as blocked-full-text, not inferred.
+
+- The five articles total 596 lines and 10,260 words; the two JEPs total 563
+  lines and 9,941 words. Each full record carries the local representation
+  SHA-256, line count, word count, sections and explicit omissions.
+- JEP 444 records M:N scheduling, the two JDK 21 pinning causes, diagnostics
+  and compatibility changes. JEP 491 records monitor ownership against the
+  virtual thread, residual pinning and the removal of the trace-pinned
+  diagnostic; its page has no publication timestamp and no delivering-JDK
+  statement, so those are not invented.
+- The article records are first-party accounts. They are not benchmarks,
+  independent verification or general claims about every deployment.
+- All candidate paths exist in the frozen baseline; JSON parses; the lexical
+  boundary check and whitespace check pass. No book, source register, index,
+  edition or historical report changed.
+
+Limits: raster images were not visually inspected; linked articles, code and
+internal systems were not read; blocked pages remain unread; no execution or
+independent review is claimed.

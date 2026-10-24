@@ -13,10 +13,18 @@ appendices A-H and the preface; sixty-five new records are in [the OSTEP
 continuation ledger](ostep-continuation-readings.json). Embedded raster figures
 were not visually inspected, and linked publications remain separate.
 
-Comparison checkpoint: sixteen candidate comparisons are assessed in
-[comparisons.json](comparisons.json): five supported, nine qualified, two
+Comparison checkpoint: eighteen candidate comparisons are assessed in
+[comparisons.json](comparisons.json): six supported, ten qualified, two
 source mechanisms not addressed and zero contradicted. These are bounded
 comparisons, not independent review, book findings or permission to edit.
+
+Reference batch 2026-10-24: seven full reads and two blocked pages. The full
+reads are JEP 444, JEP 491 and five public engineering articles
+(src.m9-st01, src.m9-u03, src.m9-sp01, src.m9-sh01 and src.m9-di01). Two
+publisher pages (src.m9-n05 and src.m9-n06) returned a Cloudflare challenge and
+are recorded as blocked, not read. JEP 491 is now read in full: its record
+supplies the canonical body that earlier book pages flagged as not retrievable.
+This is reading evidence, not a book edit or an independent review.
 
 The reading ledger links its [chapters 6–18 continuation](sre-continuation-readings.json) and [completion continuation](sre-completion-readings.json). Reading completion means the exact chapter, its examples, footnotes and embedded technical images; it does not include all publications linked from it. The [download fingerprints](reading-asset-fingerprints.json) identify the downloaded HTML/image representations for later revisiting, not an immutable publisher revision or proof of semantic reading.
 
