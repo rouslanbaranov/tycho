@@ -13,6 +13,11 @@ appendices A-H and the preface; sixty-five new records are in [the OSTEP
 continuation ledger](ostep-continuation-readings.json). Embedded raster figures
 were not visually inspected, and linked publications remain separate.
 
+Comparison checkpoint: sixteen candidate comparisons are assessed in
+[comparisons.json](comparisons.json): five supported, nine qualified, two
+source mechanisms not addressed and zero contradicted. These are bounded
+comparisons, not independent review, book findings or permission to edit.
+
 The reading ledger links its [chapters 6–18 continuation](sre-continuation-readings.json) and [completion continuation](sre-completion-readings.json). Reading completion means the exact chapter, its examples, footnotes and embedded technical images; it does not include all publications linked from it. The [download fingerprints](reading-asset-fingerprints.json) identify the downloaded HTML/image representations for later revisiting, not an immutable publisher revision or proof of semantic reading.
 
 ## Inventory

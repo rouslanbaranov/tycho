@@ -203,3 +203,23 @@ publications, code and exercises were not read or executed; chapter 9, chapter
 32 and the preface print version 1.20 while the site table of contents says
 1.10. The reading is text-complete, not a visual or experimental reproduction.
 No independent review or source-to-book completeness is claimed.
+
+## Comparison assessment - 2026-10-24
+
+Sixteen candidate comparisons from the OSTEP reading were assessed against the
+frozen Tycho baseline. Result: five supported, nine qualified, two
+not-addressed and zero contradicted. Each assessment records the exact book
+anchor, the OSTEP record and sections, a bounded conclusion, and a proposed
+action. No book page was edited.
+
+- Every assessment has a named book page and anchor, a source record and
+  section, a support classification and an explicit limit.
+- "Supported" means the page's claim is consistent with the source mechanism;
+  "qualified" means the page is consistent but uses a different boundary or
+  terminology; "not-addressed" names a source mechanism the page does not use.
+  None is a contradiction or a finding of error.
+- All sixteen anchors and candidate paths exist in the frozen baseline; the
+  JSON parses and the lexical boundary check passes.
+- The assessments are bounded to the named passages. They are not a
+  claim-level audit of whole pages, independent review, owner acceptance or
+  permission to edit the book.

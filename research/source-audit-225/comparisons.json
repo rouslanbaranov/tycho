@@ -2,7 +2,7 @@
   "schema_version": 1,
   "date": "2026-10-24",
   "baseline": "6754bac6e26faa57d65a301a60be10b3da93f65b",
-  "status": "candidate-comparisons-not-findings",
+  "status": "assessed-candidate-comparisons",
   "scope": "OSTEP CPU and scheduling batch against frozen Tycho pages; candidate questions, not claim-level completeness",
   "comparisons": [
     {
@@ -15,8 +15,14 @@
       "observation": "The page correctly says the carrier scheduler is not a backpressure mechanism. OSTEP cache-affinity and queue-topology discussion explains why more runnable tasks do not imply more capacity, but the page does not need to import OS scheduler detail.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "No correction. Optional bounded cross-reference only if it improves the page.",
-      "status": "candidate"
+      "proposed_action": "No correction.",
+      "status": "assessed",
+      "assessment": "supported",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 51-53; OSTEP ch.10 §10.3-10.5.",
+      "conclusion": "The page correctly treats carrier scheduling as a performance mechanism, not a capacity or backpressure contract; OSTEP ch.10 shows cache affinity and queue topology affect scheduling performance without creating capacity.",
+      "finding": "none; optional cross-reference only",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C002",
@@ -28,8 +34,14 @@
       "observation": "Tycho uses mean residence time and rejects substituting p99 into Little's Law. OSTEP response time is first-run latency, distinct from completion/turnaround; Tycho's boundary is admission-to-exit, so the metrics should not be conflated.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "Keep the boundary wording; if OS scheduling is cited later, name the first-response versus completion distinction explicitly.",
-      "status": "candidate"
+      "proposed_action": "No correction; name first-response versus completion if OS scheduling is cited.",
+      "status": "assessed",
+      "assessment": "qualified",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 99-126; OSTEP ch.7 §7.2 and §7.6.",
+      "conclusion": "Tycho uses mean admission-to-exit residence time and rejects substituting p99 into Little's Law. OSTEP distinguishes turnaround (completion) from response time (first run); the two are compatible only when the metric boundary is named.",
+      "finding": "candidate terminology note",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C003",
@@ -41,8 +53,14 @@
       "observation": "Tycho discusses serial work, locks, hot keys and coherence. OSTEP adds a concrete single global run-queue lock as a scaling bottleneck and a topology alternative; the page does not currently use a scheduler queue as its example.",
       "support": "not-addressed",
       "severity": "none",
-      "proposed_action": "Candidate example only; no correction without a measured Tycho scenario.",
-      "status": "candidate"
+      "proposed_action": "Optional example only; no measured Tycho scenario exists.",
+      "status": "assessed",
+      "assessment": "not-addressed",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 67-86; OSTEP ch.10 §10.4-10.5.",
+      "conclusion": "Tycho discusses serial work, locks and coherence but not a single global run-queue lock or queue-topology scaling limit. OSTEP ch.10 supplies a concrete mechanism the page could use as an example; absence is not an error.",
+      "finding": "candidate-addition, not a defect",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C004",
@@ -54,8 +72,14 @@
       "observation": "OSTEP list-delete race corroborates the page's claim that coherence and a concurrency-safe collection do not enforce a multi-step business invariant; a lock or atomic transaction still covers the full check-and-commit decision.",
       "support": "supported",
       "severity": "none",
-      "proposed_action": "No correction. Optional citation if a primary-source example is useful.",
-      "status": "candidate"
+      "proposed_action": "No correction.",
+      "status": "assessed",
+      "assessment": "supported",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 51-55; OSTEP ch.10 §10.2.",
+      "conclusion": "The page requires an atomic transaction or state-owner protocol for a multi-step invariant. OSTEP ch.10's list race shows coherence does not enforce compound atomicity; locks cover only the critical section.",
+      "finding": "none",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C005",
@@ -67,8 +91,14 @@
       "observation": "The memory page separates managed heap, native memory, stacks, mappings and RSS. OSTEP address space is a virtual layout, not a resident-set measurement; the two can be compared only with an explicit translation and residency boundary.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "No correction. Keep virtual size, reserved memory, RSS and live heap distinct when citing OS memory vocabulary.",
-      "status": "candidate"
+      "proposed_action": "No correction; keep virtual size, reserved memory, RSS and live heap separate.",
+      "status": "assessed",
+      "assessment": "qualified",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 49-53; OSTEP ch.13 §13.3-13.4.",
+      "conclusion": "Tycho keeps managed heap, native memory, stacks, mappings and RSS distinct. OSTEP address space is a virtual layout, not a resident-set measurement; the terms should not be mapped one-to-one.",
+      "finding": "candidate terminology note",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C006",
@@ -80,8 +110,14 @@
       "observation": "The diagnostic page keeps GC pauses, RSS growth, native buffers and connection waits separate. OSTEP memory API focuses on allocation ownership, lifetime and invalid frees; those are different failure classes from managed retention and paging.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "No correction. The page already avoids treating heap occupancy as a diagnosis.",
-      "status": "candidate"
+      "proposed_action": "No correction; the page already avoids treating heap occupancy as diagnosis.",
+      "status": "assessed",
+      "assessment": "qualified",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 71-82; OSTEP ch.14 §14.1-14.5.",
+      "conclusion": "Tycho separates GC pauses, RSS growth, native buffers and connection waits. OSTEP memory API focuses on allocation ownership, lifetime and invalid frees; these are different failure classes.",
+      "finding": "none",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C007",
@@ -93,8 +129,14 @@
       "observation": "Tycho describes a VM as a guest-OS/hypervisor isolation boundary. OSTEP process address-space protection is a narrower mechanism inside one OS; the two isolation claims should not be treated as interchangeable.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "No correction. Name the boundary (process, guest OS or host) whenever isolation is claimed.",
-      "status": "candidate"
+      "proposed_action": "No correction; name the boundary whenever isolation is claimed.",
+      "status": "assessed",
+      "assessment": "qualified",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 61-64; OSTEP ch.13 §13.4.",
+      "conclusion": "Tycho describes a VM as a guest-OS/hypervisor isolation boundary. OSTEP process address-space protection is a narrower mechanism inside one OS; the two isolation claims are not interchangeable.",
+      "finding": "candidate boundary note",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C008",
@@ -106,8 +148,14 @@
       "observation": "The latency page decomposes wall-clock time and lists GC, native memory, blocking and dependency waits. OSTEP adds TLB coverage and page-table walk cost as possible memory-stall causes; those are not visible in heap occupancy or GC pause data.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "No correction. Keep TLB/page-table effects as a diagnostic hypothesis when memory stalls do not fit heap or GC evidence.",
-      "status": "candidate"
+      "proposed_action": "Optional addition only when memory stalls do not fit heap or GC evidence.",
+      "status": "assessed",
+      "assessment": "not-addressed",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 49-87; OSTEP ch.24.",
+      "conclusion": "Tycho's latency hypotheses include JVM/runtime/OS scheduling and native memory but not TLB coverage or page-table walk cost. OSTEP ch.24 adds that diagnostic hypothesis; absence is not a contradiction.",
+      "finding": "candidate diagnostic hypothesis",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C009",
@@ -119,8 +167,14 @@
       "observation": "Tycho says a JVM-local semaphore cannot serialize writes across replicas and requires a state-owner protocol. OSTEP lock mechanics corroborate the narrower claim that mutual exclusion covers one critical section, not a distributed business invariant.",
       "support": "supported",
       "severity": "none",
-      "proposed_action": "No correction. Keep the scope distinction between a local lock and distributed authority.",
-      "status": "candidate"
+      "proposed_action": "No correction.",
+      "status": "assessed",
+      "assessment": "supported",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 51-55; OSTEP ch.28 §28.1-28.2.",
+      "conclusion": "Tycho correctly limits a JVM-local lock to one process and requires distributed authority for cross-replica invariants. OSTEP ch.28 shows mutual exclusion covers one critical section only.",
+      "finding": "none",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C010",
@@ -132,8 +186,14 @@
       "observation": "Tycho explains that publishOn/subscribeOn and boundedElastic move work but do not make a blocking driver asynchronous. OSTEP event-based concurrency shows the same boundary from the OS side: one event loop and nonblocking I/O, with blocking calls as the failure mode.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "No correction. The two levels (OS event loop and Reactor scheduler) should not be conflated.",
-      "status": "candidate"
+      "proposed_action": "No correction; keep OS event loop and Reactor scheduler distinct.",
+      "status": "assessed",
+      "assessment": "qualified",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 50-54; OSTEP ch.33 §33.1-33.5.",
+      "conclusion": "Tycho says scheduler choice does not make a synchronous driver nonblocking. OSTEP's event loop shows the same boundary from the OS side: one loop plus nonblocking I/O, with blocking calls as the failure mode.",
+      "finding": "none",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C011",
@@ -145,8 +205,14 @@
       "observation": "Tycho asks what is durable when a primary acknowledges. OSTEP journaling makes the same point at the file-system layer: a transaction-end commit and ordered data-before-commit are protocol conditions, not properties implied by writing a log.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "No correction. Keep acknowledgment, log commit and data durability as separate claims.",
-      "status": "candidate"
+      "proposed_action": "No correction; keep acknowledgment, log commit and data durability separate.",
+      "status": "assessed",
+      "assessment": "qualified",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 51-60; OSTEP ch.42 §42.3.",
+      "conclusion": "Tycho asks what is durable at COMMIT acknowledgment. OSTEP journaling makes the same point at the file-system layer: TxE commit and ordered data-before-commit are protocol conditions, not implied by writing a log.",
+      "finding": "none",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C012",
@@ -158,8 +224,14 @@
       "observation": "Tycho distinguishes replica and acknowledgment conditions for durability and availability. OSTEP reliable messaging shows why an acknowledgment can be lost after the effect and why duplicate delivery is a separate problem; exactly-once is conditional, not automatic.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "No correction. Keep acknowledgment, replication and effect identity as separate obligations.",
-      "status": "candidate"
+      "proposed_action": "No correction; keep acknowledgment, replication and effect identity separate.",
+      "status": "assessed",
+      "assessment": "qualified",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 46-60; OSTEP ch.48 §48.2-48.5.",
+      "conclusion": "Tycho distinguishes replica and acknowledgment conditions. OSTEP reliable messaging explains lost acknowledgments and duplicate delivery; exactly-once is conditional, not automatic.",
+      "finding": "none",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C013",
@@ -171,8 +243,14 @@
       "observation": "Tycho starts from protected outcomes and an explicit threat model. OSTEP connects that stance to OS-controlled resources and the cost of complete mediation; the two are compatible, and neither establishes a specific adversarial capability by itself.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "No correction. Keep the threat model explicit and name the boundary being enforced.",
-      "status": "candidate"
+      "proposed_action": "No correction.",
+      "status": "assessed",
+      "assessment": "supported",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 51-60; OSTEP ch.53 §53.2-53.4.",
+      "conclusion": "Tycho starts from protected assets, principals and trust boundaries. OSTEP ch.53 grounds the same stance in OS-controlled resources and complete mediation, without establishing a specific adversary capability.",
+      "finding": "none",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C014",
@@ -184,8 +262,14 @@
       "observation": "Tycho separates identity, authorization and isolation. OSTEP access control shows the same separation at the reference-monitor level: authentication establishes a principal, authorization decides an access, and the enforcement mechanism has its own cost and revocation limits.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "No correction. Do not let an authentication result stand in for an authorization decision.",
-      "status": "candidate"
+      "proposed_action": "No correction; do not let authentication stand in for authorization.",
+      "status": "assessed",
+      "assessment": "supported",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 50-60; OSTEP ch.55 §55.1-55.3.",
+      "conclusion": "Tycho separates identity, authorization and isolation. OSTEP access control shows authentication establishes a principal while authorization decides a specific access; the enforcement mechanism has its own cost and revocation limits.",
+      "finding": "none",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C015",
@@ -197,8 +281,14 @@
       "observation": "Tycho separates concurrency-safe data structures from business invariants. OSTEP monitors show that implicit locking still needs a predicate and wake-up discipline; automatic exclusion does not establish the invariant either.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "No correction. Keep the predicate and wake-up protocol explicit when discussing monitors or condition variables.",
-      "status": "candidate"
+      "proposed_action": "No correction; keep predicate and wake-up protocol explicit.",
+      "status": "assessed",
+      "assessment": "qualified",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 51-55; OSTEP appendix D §D.2-D.6.",
+      "conclusion": "Tycho separates concurrency-safe structures from business invariants. OSTEP monitors show automatic locking still needs a predicate and wake-up discipline; automatic exclusion does not establish the invariant either.",
+      "finding": "none",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     },
     {
       "id": "C016",
@@ -210,8 +300,23 @@
       "observation": "Tycho treats a VM as a guest-OS/hypervisor isolation boundary. OSTEP adds trap forwarding, double address translation and shadow TLBs as the mechanism behind that boundary; the deployment label alone does not prove the boundary holds.",
       "support": "qualified",
       "severity": "none",
-      "proposed_action": "No correction. Name the hypervisor mechanism when making an isolation claim.",
-      "status": "candidate"
+      "proposed_action": "No correction; name the hypervisor mechanism in isolation claims.",
+      "status": "assessed",
+      "assessment": "qualified",
+      "assessed_at": "2026-10-24",
+      "basis": "Tycho lines 61-64; OSTEP appendix B §B.3-B.5.",
+      "conclusion": "Tycho treats a VM as a guest-OS/hypervisor boundary. OSTEP adds trap forwarding, double address translation and shadow TLBs as the mechanism behind it; a deployment label does not prove the boundary holds.",
+      "finding": "none",
+      "assessment_limits": "Candidate comparison, not a claim-level audit of the whole page or source."
     }
-  ]
+  ],
+  "assessment_date": "2026-10-24",
+  "assessment_summary": {
+    "total": 16,
+    "supported": 5,
+    "qualified": 9,
+    "not_addressed": 2,
+    "contradicted": 0,
+    "note": "Assessments are bounded comparisons against the frozen Tycho baseline; they are not independent review, book findings or permission to edit."
+  }
 }
