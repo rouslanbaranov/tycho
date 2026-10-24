@@ -4449,12 +4449,423 @@
         }
       ],
       "reader": "Delegated reader batch 7; parent validation pending."
+    },
+    {
+      "id": "R097",
+      "source_ids": [
+        "src.pg17-time-enrichment"
+      ],
+      "url": "https://www.postgresql.org/docs/17/datatype-datetime.html",
+      "unit": "Complete page or bounded chapter set: 8.5. Date/Time Types",
+      "revision": "PostgreSQL 17 documentation (docs/17, section 8.5); retrieved 2026-10-24; no immutable revision exposed (the Jina wrapper's Published Time 2026-08-13 is a fetch timestamp, not a document revision)",
+      "status": "full-scoped-text-read",
+      "coverage": "All 345 lines / 4658 words; sections 8.5 (Table 8.9), 8.5.1 with 8.5.1.1 Dates, 8.5.1.2 Times, 8.5.1.3 Time Stamps, 8.5.1.4 Special Values (Tables 8.10-8.13), 8.5.2 Date/Time Output (Tables 8.14-8.15), 8.5.3 Time Zones, 8.5.4 Interval Input (Tables 8.16-8.17), 8.5.5 Interval Output (Table 8.18); excluded from technical claims: Jina wrapper header lines 1-7 (Title, URL Source, Published Time, Markdown Content), appended heading anchors of the form [#](...), the empty-text link artefact at line 161, and collapsed table captions such as 'Table 8.9.Date/Time Types'; no cookie or navigation chrome was present in the representation",
+      "retrieval_refs": [
+        "/tmp/batch8/raw/src.pg17-time-enrichment.md lines 1-345",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read (Sections 9.9, B.4-B.6, 4.1.2.7, 52.31-52.32, runtime-config client parameters); no execution of any SQL shown.",
+      "representation_sha256": "4acaa3b85ed335fd75e9cab485cffe8012e1a8e3924a3f68ffe87860bb329a27",
+      "retrieved_lines": 345,
+      "retrieved_words": 4658,
+      "sections": [
+        "8.5 Date/Time Types (Table 8.9)",
+        "8.5.1 Date/Time Input",
+        "8.5.1.1 Dates (Table 8.10)",
+        "8.5.1.2 Times (Tables 8.11-8.12)",
+        "8.5.1.3 Time Stamps",
+        "8.5.1.4 Special Values (Table 8.13)",
+        "8.5.2 Date/Time Output (Tables 8.14-8.15)",
+        "8.5.3 Time Zones",
+        "8.5.4 Interval Input (Tables 8.16-8.17)",
+        "8.5.5 Interval Output (Table 8.18)"
+      ],
+      "notes": [
+        "Source claim (line 8): PostgreSQL supports the full SQL date/time type set and counts dates by the Gregorian calendar even in years before its introduction. Inference: this is a documented proleptic-calendar convention; this reader did not execute any calendar conversion to confirm it.",
+        "Source claim (Table 8.9, lines 12-19): fixed storage sizes (timestamp 8 bytes, date 4, timetz 12, interval 16) with 1 microsecond resolution and ranges 4713 BC to 294276 AD. Inference: the 8-byte/1us design is what bounds the upper instant, so range headroom is a physical consequence rather than a policy choice.",
+        "Source claim (line 27): fractional-second precision p is optional, defaults to no explicit bound, and is allowed from 0 to 6. Inference: an unbounded default still cannot exceed 6 stored digits, so 'unbounded' means 'not declared', not 'arbitrary precision'.",
+        "Source claim (lines 47, 231-235): the standard's time-with-time-zone type has 'questionable usefulness' because an offset without a date cannot follow daylight-saving rules, and PostgreSQL explicitly does not recommend it. Inference: any schema retaining timetz is carrying a legacy-compatibility decision that needs an owner, not a neutral type choice.",
+        "Source claim (lines 147-159): PostgreSQL never inspects literal content to infer type, so TIMESTAMP '2004-10-19 10:23:54+02' is timestamp without time zone and the offset is silently ignored. Inference: the loss is silent at parse time, so this is a correctness hazard for literals embedded in application code rather than a formatting detail.",
+        "Source claim (lines 161-163): timestamptz input is converted to UTC, the stated or assumed zone is not retained, and output is always rendered in the session TimeZone. Inference: the stored value is an instant only; preserving 'the zone the user meant' requires a separate column, which the section does not discuss.",
+        "Source claim (lines 169, 188): infinity and -infinity are represented specially and displayed unchanged, while now/today/tomorrow/yesterday are converted at read time and can become stale in prepared statements, views and function definitions. Inference: infinity values participate in ordering and range predicates, so retention and 'expired' queries must decide explicitly how they treat them.",
+        "Source claim (line 227): IANA (Olson) data supplies historical rules and future times assume the latest known rules continue indefinitely. Inference: correctness for past and future DST depends on the tzdata shipped with the installation, making it an operational update dependency rather than a static schema property.",
+        "Source claim (lines 243-249): abbreviations denote a fixed offset, full names can imply DST rules, and some abbreviations have meant different offsets in different years (MSK example), interpreted as of the specified date. Inference: abbreviations are unsafe as durable stored values or cross-system contract terms; full names plus an explicit zone column are the defensible option.",
+        "Source claim (line 299): interval is stored as three integral fields (months, days, microseconds) kept separate because month length varies and a DST day can have 23 or 25 hours. Inference: interval is a calendar-field aggregate, not elapsed physical time, so billing or timeout durations need a stated convention.",
+        "Source claim (lines 295-297, 308): unmarked quantities depend on the fields specification, fields to the right of the least significant one are silently discarded, fractional units are converted assuming 30-day months and 24-hour days, and sign handling differs between sql_standard and the traditional interpretation. Inference: interval literals are context- and setting-dependent, which is a portability hazard for stored literals.",
+        "Source silence: the section says nothing about clock sources, monotonicity, NTP, or using timestamps as ordering tokens. Inference: nothing here supports treating a stored timestamptz as evidence of event order, which is a question for the book's causal-ordering material rather than this page."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-invariants.md",
+          "candidate": "Which temporal type (date, timestamp, timestamptz) can carry an invariant, given that timestamptz stores an instant and renders in the session zone?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md",
+          "candidate": "Does a stored timestamptz establish ordering, or only record an instant supplied by an unverified clock?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Is changing a column between timestamp and timestamptz a semantic migration rather than a widening, since the meaning of existing values changes?"
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-semantics.md",
+          "candidate": "Which bucketing and retention questions follow from 1 microsecond resolution, 4713 BC lower bound, and non-retained input zones?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md",
+          "candidate": "How do range predicates and DST-sensitive interval arithmetic on timestamp columns interact with index access paths?"
+        },
+        {
+          "path": "book/data/postgresql-mvcc-indexes-and-query-plans.md",
+          "candidate": "Which date/time typing claims should the PostgreSQL reader entry carry, and which belong to a dedicated temporal page?"
+        }
+      ],
+      "reader": "Delegated reader batch 8; parent validation pending."
+    },
+    {
+      "id": "R098",
+      "source_ids": [
+        "src.pg17-numeric-enrichment"
+      ],
+      "url": "https://www.postgresql.org/docs/17/datatype-numeric.html",
+      "unit": "Complete page or bounded chapter set: 8.1. Numeric Types",
+      "revision": "PostgreSQL 17 documentation (docs/17, section 8.1); retrieved 2026-10-24; no immutable revision exposed (the Jina wrapper's Published Time 2026-08-13 is a fetch timestamp, not a document revision)",
+      "status": "full-scoped-text-read",
+      "coverage": "All 189 lines / 2490 words; sections 8.1 (Table 8.2), 8.1.1 Integer Types, 8.1.2 Arbitrary Precision Numbers, 8.1.3 Floating-Point Types, 8.1.4 Serial Types, including both Notes and the rounding comparison query and its 8-row output; excluded from technical claims: Jina wrapper header lines 1-7 (Title, URL Source, Published Time, Markdown Content), appended heading anchors of the form [#](...), and collapsed table captions such as 'Table 8.2.Numeric Types'; no cookie or navigation chrome was present in the representation",
+      "retrieval_refs": [
+        "/tmp/batch8/raw/src.pg17-numeric-enrichment.md lines 1-189",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read (Sections 4.1.2, 9, 5.3, 9.17); the shown SELECT/ROUND example was not executed, so its 8-row output is reported as source text only.",
+      "representation_sha256": "647c44b0d0de2d07effc3456572e2f2b15f0018b665e06bb75343dde75043662",
+      "retrieved_lines": 189,
+      "retrieved_words": 2490,
+      "sections": [
+        "8.1 Numeric Types (Table 8.2)",
+        "8.1.1 Integer Types",
+        "8.1.2 Arbitrary Precision Numbers",
+        "8.1.3 Floating-Point Types",
+        "8.1.4 Serial Types"
+      ],
+      "notes": [
+        "Source claim (Table 8.2, lines 12-23): exact ranges and storage sizes, including numeric's up to 131072 digits before and 16383 after the decimal point, real at 6 digits and double precision at 15 digits of precision. Inference: the digit counts are implementation limits, not design targets, and the table's precision column for floats is decimal digits, not exactness.",
+        "Source claim (line 37): numeric calculations are exact where possible (addition, subtraction, multiplication) but 'very slow' compared with integer or floating-point types. Inference: the exactness/throughput trade-off is workload-specific and must be measured, since the section gives no ratio or benchmark.",
+        "Source claim (line 37) also recommends numeric 'especially for storing monetary amounts'. Inference: the type removes binary representation error but does not remove rounding-policy choices, so a monetary claim still depends on declared scale and rounding rules the section describes separately.",
+        "Source claim (line 57): the maximum precision that can be explicitly declared is 1000, while an unconstrained numeric is governed by Table 8.2's storage limits. Inference: declared precision is a schema-level cap that users often confuse with the much larger physical limit.",
+        "Source claim (lines 65-73, 77): since PostgreSQL 15 a numeric column may declare a negative scale (NUMERIC(2,-3) rounds to thousands) or a scale larger than precision (NUMERIC(3,5) holds only fractional values), and such declarations are outside the SQL standard and may not be portable. Inference: these forms encode a business rounding rule inside a type declaration, which is a modeling decision with portability cost.",
+        "Source claim (lines 99-115): numeric rounds ties away from zero while real and double precision round ties to the nearest even number, illustrated by -3.5 to 3.5. Inference: the same aggregate or reconciliation computed in numeric versus float8 can disagree exactly at .5 boundaries, so cross-type comparisons need an explicit conversion policy.",
+        "Source claim (lines 119-127): real and double precision are IEEE 754 implementations, inexact, and 'comparing two floating-point values for equality might not always work as expected'. Inference: floating-point columns used as keys, join predicates or idempotency tokens are a contract hazard, not merely a precision concern.",
+        "Source claim (lines 131-143): output defaults to shortest-precise decimal (at most 17 significant digits for float8, 9 for float4), and extra_float_digits can restore rounded output (0 gives 6 or 15 digits; negative values reduce further). Inference: text renderings of floats depend on server version and session parameter, so exported text is not a stable interchange representation.",
+        "Source claim (lines 95, 155): PostgreSQL treats NaN as equal to itself and greater than all non-NaN values, for both numeric and floating-point types, to allow sorting and tree-based indexes. Inference: this deliberately contradicts IEEE comparison semantics and therefore affects range predicates, ORDER BY, and any 'greater than' retention or threshold logic.",
+        "Source claim (lines 165-179): smallserial, serial and bigserial are not true types but notational conveniences expanding to a sequence, an integer column with NOT NULL DEFAULT nextval(...), and ALTER SEQUENCE ... OWNED BY. Inference: sequences are separate schema objects, so grants, backups, and migration tooling must handle them explicitly rather than assuming a single column.",
+        "Source claim (line 183): gaps can appear even without deletes because a value allocated from the sequence is used up when the inserting transaction rolls back. Inference: serial values must not be read as counts, ordering guarantees, or gapless identifiers in an external contract.",
+        "Source claim (line 187): serial/serial4 create integer columns, bigserial/serial8 create bigint, smallserial/serial2 create smallint. Inference: the choice is a range decision made at design time, and the section is silent on the table-rewrite and downtime cost of changing it later."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-invariants.md",
+          "candidate": "Where does exact-versus-inexact numeric type choice belong: a relational invariant, a CHECK constraint, or an application contract?"
+        },
+        {
+          "path": "book/data/postgresql-mvcc-indexes-and-query-plans.md",
+          "candidate": "Which numeric storage-size, NaN-ordering and comparison claims belong in the PostgreSQL reader entry?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md",
+          "candidate": "Is widening integer to bigint a rewrite-class change, and how does serial's owned-sequence dependency complicate rollback?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/storage-workload.md",
+          "candidate": "How does numeric's variable two-bytes-per-four-digits storage plus overhead change capacity and WAL estimates?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Does adding or narrowing numeric precision/scale, or adopting a negative scale, count as a semantic migration rather than a type tweak?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md",
+          "candidate": "How do NaN ordering and typmod changes affect index usability and planner selectivity estimates on numeric columns?"
+        }
+      ],
+      "reader": "Delegated reader batch 8; parent validation pending."
+    },
+    {
+      "id": "R099",
+      "source_ids": [
+        "src.pg17-collation-enrichment"
+      ],
+      "url": "https://www.postgresql.org/docs/17/collation.html",
+      "unit": "Complete page or bounded chapter set: 23.2. Collation Support",
+      "revision": "PostgreSQL 17; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 323 lines / 4207 words; sections 23.2 intro, 23.2.1, 23.2.2 (23.2.2.1-23.2.2.4), 23.2.3 (23.2.3.1-23.2.3.4) read in full; 23.2.3.5 absent from representation (see representation_gap); no navigation, cookie or footer chrome present in this extraction",
+      "retrieval_refs": [
+        "/tmp/batch8/raw/src.pg17-collation-enrichment.md lines 1-323",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs (CREATE COLLATION, pg_import_system_collations, UTS #10/#35, ICU user guides) and server code not read; no SQL executed; final subsection absent from the retrieved file.",
+      "representation_gap": "23.2.3.5 External References for ICU is missing: the file ends at line 323 after the 23.2.3.4 EBCDIC example. The live page checked 2026-10-24 contains it as a short pointer list (UTS #35, BCP 47, CLDR repository, ICU user guides) introduced as a brief overview. No PostgreSQL behavior text appears to be lost, but the page is not complete as represented.",
+      "representation_sha256": "09528cc153a55aba270d249f8b3063d7629e8496e048e42feca2c9686929743b",
+      "retrieved_lines": 323,
+      "retrieved_words": 4207,
+      "sections": [
+        "23.2 Collation Support (intro)",
+        "23.2.1 Concepts",
+        "23.2.2 Managing Collations",
+        "23.2.2.1 Standard Collations",
+        "23.2.2.2 Predefined Collations (libc and ICU)",
+        "23.2.2.3 Creating New Collation Objects (libc, ICU, copying)",
+        "23.2.2.4 Nondeterministic Collations",
+        "23.2.3 ICU Custom Collations",
+        "23.2.3.1 ICU Comparison Levels (Table 23.1)",
+        "23.2.3.1.1 Collation Level Examples",
+        "23.2.3.2 Collation Settings for an ICU Locale (Table 23.2)",
+        "23.2.3.3 Collation Settings Examples",
+        "23.2.3.4 ICU Tailoring Rules",
+        "23.2.3.5 External References for ICU (absent from representation)"
+      ],
+      "notes": [
+        "Source: the page frames collation as per-column or per-operation override of database-level LC_COLLATE and LC_CTYPE, which cannot be changed after database creation (line 8).",
+        "Source: derivation is three-tier: any explicit COLLATE must agree and wins; otherwise matching implicit collation or the default; conflicting non-default implicit collations yield an indeterminate collation that errors only where the operation needs it (lines 20-26).",
+        "Source: an operator that ignores collation, such as ||, still propagates the combined input collation, so ORDER BY a || b fails while ORDER BY a || 'foo' sorts under de_DE (lines 62-72).",
+        "Source: distinct collation objects are incompatible even when behavior is identical; comparing C with POSIX raises an error, and mixing stripped and non-stripped names is discouraged (lines 117-121).",
+        "Source: libc collations bind LC_COLLATE and LC_CTYPE plus the database encoding; ICU collations map to one named collator and are encoding-independent (lines 78-80).",
+        "Source: ucs_basic and C are described as stable across versions, pg_c_utf8 as stable within a major version, and unicode (UCA with the default element table, equivalent to the ICU root locale) may change with a different ICU build (lines 87-93).",
+        "Inference: the page qualifies stability by provider and version, so a persisted ordering or uniqueness contract needs provider and version, not only a locale name.",
+        "Source: predefined collations come from operating-system locales discovered by initdb at cluster initialization; locales added later need CREATE COLLATION or pg_import_system_collations (lines 105, 111-113).",
+        "Source: nondeterministic collations are opt-in via deterministic = false and may treat different byte sequences as equal; all predefined collations and user-defined collations by default are deterministic (lines 177-188).",
+        "Source: listed costs of nondeterministic collations are a performance penalty, no B-tree deduplication, and no pattern matching; normalize and is normalized are offered as an alternative with different trade-offs (lines 188-192).",
+        "Inference: an equality-semantics change therefore reaches indexes, uniqueness constraints and pattern predicates, not only ORDER BY.",
+        "Source: ICU behavior is set through BCP 47 tags with an -x-icu suffix and keys co, ka, kb, kc, kf, kn, kk, kr, ks, kv; many settings need deterministic = false, and ka-shifted gates several of them (lines 247-270)."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-invariants.md",
+          "candidate": "Does the text-equality section name the collation provider and version behind an ordering contract, and separate object-identity conflicts (C versus POSIX) from comparison-behavior drift?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md",
+          "candidate": "Should the index page record that nondeterministic collations forfeit B-tree deduplication and pattern matching, so changing equality semantics also changes index options?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md",
+          "candidate": "Does plan lifecycle explain why an index built under one collation cannot serve an ORDER BY under another, and what plan evidence would reveal that?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/semantic-compatibility.md",
+          "candidate": "Is changing a column collation classified as a semantic migration, with reindex/rebuild and old/new reader compatibility, alongside enum and split-field changes?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/semantic-translation.md",
+          "candidate": "Does the adapter boundary treat a locale-dependent sort key as a versioned contract when producer and consumer may resolve different collations or ICU builds?"
+        }
+      ],
+      "reader": "Delegated reader batch 8; parent validation pending."
+    },
+    {
+      "id": "R100",
+      "source_ids": [
+        "src.pg17-replication-enrichment"
+      ],
+      "url": "https://www.postgresql.org/docs/17/runtime-config-replication.html",
+      "unit": "Complete page or bounded chapter set: 19.6. Replication",
+      "revision": "PostgreSQL 17 (page footer shows 17.11); retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 256 lines / 4540 words; sections 19.6 intro and 19.6.1-19.6.4; site navigation, version selector and breadcrumb (lines 8-32), correction form and site footer (lines 245-256) excluded from technical claims",
+      "retrieval_refs": [
+        "/tmp/batch8/raw/src.pg17-replication-enrichment.md lines 1-256",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs (26.2 streaming replication, Chapter 29 logical replication, pg_replication_slots view, slot functions) and server code not read; no replication, failover or SQL executed.",
+      "representation_gap": "none",
+      "representation_sha256": "a4d491853a657a7333910357b395101c58316b3a9185ee94ac106354530240a5",
+      "retrieved_lines": 256,
+      "retrieved_words": 4540,
+      "sections": [
+        "19.6 Replication (intro: streaming and logical scope)",
+        "19.6.1 Sending Servers",
+        "19.6.2 Primary Server",
+        "19.6.3 Standby Servers",
+        "19.6.4 Subscribers"
+      ],
+      "notes": [
+        "Source: the section scopes streaming replication (primary and standby, with cascading standbys also sending) and logical replication (publishers and subscribers, one server can be both) (lines 40-44).",
+        "Source: sending-server parameters keep their role and meaning after a standby becomes primary, and the primary is always a sending server (line 48). Inference: these settings must be provisioned on every promotion candidate, not only the current primary.",
+        "Source: max_wal_senders defaults to 10, 0 disables replication, it is start-only, abrupt disconnects can leave an orphaned slot until timeout, and a standby must set it at least as high as the primary or queries are disallowed (lines 51-53).",
+        "Source: max_replication_slots defaults to 10, is start-only, and setting it below existing slots prevents startup; the same parameter name also applies on subscribers with a different meaning (lines 56-58, 217-220). Inference: one identifier carries two separate capacity budgets.",
+        "Source: wal_keep_size is a minimum retention with default 0 (no extra segments); the sender may still remove a needed segment and terminate the connection, and archive recovery can rescue the standby (lines 82-84).",
+        "Source: max_slot_wal_keep_size defaults to -1 (unlimited); if a slot restart_lsn falls too far behind, required WAL may be removed and the standby may be unable to continue (line 87). Inference: unlimited retention is a storage commitment, not a safety guarantee.",
+        "Source: wal_sender_timeout defaults to 60 seconds, 0 disables it, and different values per geographic location are explicitly suggested for low- and high-latency standbys (lines 90-92).",
+        "Source: synchronous_standby_names accepts FIRST n (priority) and ANY n (quorum over the listed standbys), the legacy bare list equals FIRST 1, * matches any name, and duplicate names have indeterminate priority (lines 106-124). Inference: this is a commit-wait set over named standbys, not a voter majority.",
+        "Source: synchronized_standby_slots makes logical WAL senders wait for named physical slots, logical replication stops if those slots are missing or invalidated, and those standbys need sync_replication_slots = true (lines 134-137, 208-211).",
+        "Source: max_standby_archive_delay and max_standby_streaming_delay default to 30 seconds with -1 meaning wait forever; the page stresses each is a per-segment or post-receipt budget, not a maximum query runtime (lines 158-166).",
+        "Source: recovery_min_apply_delay delays only commit records, is honored except in crash recovery, accumulates WAL, delays hot_standby_feedback, and with synchronous_commit = remote_apply makes every COMMIT wait (lines 189-204). Inference: a freshness buffer also becomes a commit-latency and storage knob.",
+        "Source: subscriber defaults are 4 logical workers (start-only, drawn from max_worker_processes), 2 sync workers per subscription (one per table), and 2 parallel apply workers per subscription (lines 222-243). Inference: the 4-worker default interacts with max_worker_processes, whose sizing this page does not state."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "candidate": "Does the retention section separate wal_keep_size (minimum, best-effort) from max_slot_wal_keep_size (slot cap) and state that neither guarantees a stalled consumer can resume?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+          "candidate": "Does the acknowledgment page name the synchronous_standby_names wait set (FIRST n versus ANY n) and distinguish receipt from apply for each commit policy?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "candidate": "Is PostgreSQL synchronous replication presented as a commit-wait set over named standbys rather than a voter majority, including the * wildcard and duplicate-name indeterminacy?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "candidate": "Should failover sequencing include sync_replication_slots and synchronized_standby_slots preconditions before a logical subscriber is pointed at a promoted standby?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+          "candidate": "Does the capacity envelope carry retained WAL from slot retention and deliberately delayed replay (recovery_min_apply_delay) as storage and freshness commitments?"
+        }
+      ],
+      "reader": "Delegated reader batch 8; parent validation pending."
+    },
+    {
+      "id": "R101",
+      "source_ids": [
+        "src.postgres17-mvcc-pages"
+      ],
+      "url": "https://www.postgresql.org/docs/17/mvcc-intro.html",
+      "unit": "Complete page or bounded chapter set: 13.1. Introduction + 13.2. Transaction Isolation (bounded two-page set concatenated from mvcc-intro and transaction-iso)",
+      "revision": "PostgreSQL 17 docs; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 170 lines / 3,996 words; bounded two-page concatenation - 13.1 Introduction (mvcc-intro.html, lines 1-12) followed by 13.2 Transaction Isolation with subsections 13.2.1-13.2.3 (transaction-iso.html, lines 13-170); Jina header fields, empty-link anchors, heading anchor artifacts and bibliography link markup excluded as chrome; no representation gap identified (headings run 13.1, 13.2, 13.2.1-13.2.3 and each subsection closes naturally).",
+      "retrieval_refs": [
+        "/tmp/batch8/raw/src.postgres17-mvcc-pages.md lines 1-170",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked docs/code not read; no execution. Not read: SET TRANSACTION, pg_locks, the GUC pages, biblio entries [berenson95] and [ports12], and the sequence/serial sections referenced from the Important note.",
+      "representation_sha256": "cb69b7d392d8c48424092a44cc10489ec54104244f1a6325d7651918b5278ec4",
+      "retrieved_lines": 170,
+      "retrieved_words": 3996,
+      "sections": [
+        "13.1 Introduction",
+        "13.2 Transaction Isolation: SQL-standard levels, prohibited phenomena, Table 13.1, SET TRANSACTION, sequence caveat",
+        "13.2.1 Read Committed Isolation Level",
+        "13.2.2 Repeatable Read Isolation Level",
+        "13.2.3 Serializable Isolation Level"
+      ],
+      "notes": [
+        "Source claim (lines 8-12, 13.1): MVCC gives each SQL statement a snapshot (a 'database version'), prevents statements from seeing inconsistent data written by concurrent transactions, and minimizes lock contention because read locks never conflict with write locks; the no-blocking guarantee is said to hold even at Serializable via SSI.",
+        "Source claim (lines 20-36): the SQL standard defines Serializable semantically (same effect as some one-at-a-time order) and the other three levels by prohibited phenomena - dirty read, nonrepeatable read, phantom read, serialization anomaly - and the standard's definition of Serializable is said to rule out all four.",
+        "Source claim (lines 40-49, Table 13.1): PostgreSQL accepts all four level names but implements three behaviors - Read Uncommitted is mapped to Read Committed - and its Repeatable Read forbids phantom reads, a stronger guarantee the standard permits because it states only minimum prohibitions.",
+        "Source claim (lines 51-55): an explicit Important note carves sequences (and serial counters) out of transaction isolation: their changes are immediately visible to other transactions and are not rolled back on abort.",
+        "Source claim (lines 59-61): Read Committed takes a fresh snapshot per command; SELECT sees only data committed before the query began, while UPDATE/DELETE/SELECT FOR UPDATE/SHARE may encounter a concurrently updated row, wait for the other transaction, and then re-evaluate the WHERE clause against the updated version.",
+        "Source claim (lines 63-67): ON CONFLICT DO UPDATE can update a row no version of which is conventionally visible to the command; ON CONFLICT DO NOTHING can skip an insert for the same reason; MERGE re-evaluates its actions from the first action against the updated row and raises a uniqueness error rather than restarting MATCHED evaluation.",
+        "Source claim (lines 69-87): a Read Committed updating command can see an inconsistent snapshot (concurrent effects on the rows it touches but not on other rows), which the page calls unsuitable for complex search conditions; its two example DELETE statements show when this matters.",
+        "Source claim (lines 93-99): Repeatable Read fixes the snapshot at the first non-transaction-control statement of the transaction, not per statement; it prevents all Table 13.1 phenomena except serialization anomalies, and applications must be prepared to retry.",
+        "Source claim (lines 99-109): a Repeatable Read transaction that tries to modify or lock a row changed after its snapshot is rolled back with 'could not serialize access due to concurrent update'; only updating transactions might need retry, because read-only transactions at this level never have serialization conflicts; a read-only control-record/detail-record example shows the view is stable but not serial.",
+        "Source claim (lines 111-115): Repeatable Read is identified as academic Snapshot Isolation, distinguished from serializability and from other products' naming, and the page records that before 9.1 Serializable requests produced exactly today's Repeatable Read behavior.",
+        "Source claim (lines 119-152): Serializable is SSI - Repeatable Read plus monitoring for read/write dependencies, using non-blocking predicate locks visible in pg_locks as SIReadLock; the mytab SUM example produces SQLSTATE 40001 'could not serialize access due to read/write dependencies among transactions'; read data must not be trusted until commit except in DEFERRABLE read-only transactions; SIRead locks may be coarsened and are often kept past commit; even SSI can surface unique-constraint violations absent from true serial execution.",
+        "Inference: this is a mechanism-and-guarantee reference, not an evaluation; it reports no overhead measurements, failure rates, or benchmarks for SSI versus locking, and the tuning bullets (max_pred_locks_per_*, random_page_cost, cpu_tuple_cost) are advisory and workload-dependent. Representation note: lines 134 and 138 render 'class``= 2' with a doubled backtick, an extraction artifact that does not change meaning."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/serializable-retry.md",
+          "candidate": "Does the retry guidance state that only updating transactions need retry at Repeatable Read, that read-only transactions never hit serialization conflicts there, and that Serializable read results are only trustworthy after commit except in DEFERRABLE read-only transactions?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/mvcc-snapshots-and-vacuum.md",
+          "candidate": "Does the chapter distinguish per-statement snapshots (Read Committed) from per-transaction snapshots (Repeatable Read) and record the documented non-transactional sequence exception?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/transaction-isolation-and-sagas.md",
+          "candidate": "Does the isolation discussion use PostgreSQL's documented mapping (three distinct implemented behaviors; Read Uncommitted equals Read Committed) instead of the SQL standard's four nominal levels?"
+        },
+        {
+          "path": "book/data/postgresql-mvcc-indexes-and-query-plans.md",
+          "candidate": "Should the data page record SSI predicate locks in pg_locks (SIReadLock) and their coarsening under max_pred_locks_* pressure as observable evidence alongside query plans?"
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-invariants.md",
+          "candidate": "Does the invariant discussion cover the documented control-record/detail-record case where Repeatable Read yields a stable but non-serial view, and the read-only anomaly it implies?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md",
+          "candidate": "Does the chapter separate serialization anomaly from the three read phenomena and use the mytab SUM/class example as a discriminator rather than as proof of serializability?"
+        }
+      ],
+      "reader": "Delegated reader batch 8; parent validation pending."
+    },
+    {
+      "id": "R102",
+      "source_ids": [
+        "src.temporal-patching-enrichment"
+      ],
+      "url": "https://docs.temporal.io/patching",
+      "unit": "Complete page or bounded chapter set: Patching | Temporal Documentation",
+      "revision": "Temporal docs; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "full-scoped-text-read",
+      "coverage": "All 79 lines / 1,150 words; Patching definition, the four replay/non-replay behavior cases, the two-unexpected-behaviors summary, deployment implications and the if/elif recommendation read; Jina header fields, zero-width-space heading anchors and 'Direct link to' titles excluded as chrome; code samples flattened but present.",
+      "retrieval_refs": [
+        "/tmp/batch8/raw/src.temporal-patching-enrichment.md lines 1-79",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked SDK/patching docs and code samples not read; no execution; no live-page comparison.",
+      "representation_gap": "No content section appears absent; the only loss is formatting - the two code samples at lines 75 and 79 are flattened into single-line inline code, so newlines and indentation are gone though branches and comments remain legible.",
+      "representation_sha256": "ee255edc7e0e6f4940bf5b148638c36a724c0cff765e6632a7c29f4f57db1816",
+      "retrieved_lines": 79,
+      "retrieved_words": 1150,
+      "sections": [
+        "What is Patching?",
+        "Detailed description of the patched() function",
+        "Behavior when not replaying",
+        "Behavior when replaying with marker before-or-at current location",
+        "Behavior when replaying with marker after current location",
+        "Behavior when replaying with no marker for that patch ID",
+        "A summary of the two potentially unexpected behaviors",
+        "Implications of the behaviors",
+        "Recommendations"
+      ],
+      "notes": [
+        "Source claim (line 10): a Patch is a logical branch in a Workflow for one change, compared to a feature flag; its purpose is to apply code to new Workflow Executions without disrupting in-progress ones.",
+        "Source claim (line 14): the detailed semantics that follow are scoped to the patched() function in the Python, .NET, and Ruby SDKs; the page does not describe equivalent primitives in other SDKs.",
+        "Source claim (lines 18-21): when not replaying, the first encounter adds a marker to the event history, upserts a search attribute and returns true; later blocks see the marker, leave history unchanged and return true.",
+        "Source claim (lines 27-33): when replaying with a marker at the same location, the execution writes a marker to the replay event history and returns true; if the marker is earlier in the history, it returns true without modifying the replay history.",
+        "Source claim (line 37): a marker after the current execution point means the new patch is too early; the execution attempts to write the marker and throws a non-deterministic exception because replay and original histories differ.",
+        "Source claim (lines 41-45): when replaying with no marker for that ID, patched() returns false and adds nothing - and all later calls with that ID also return false, even after replay ends, contradicting the non-replay 'always true' rule; the page flags this as the caveat to its earlier description.",
+        "Source claim (lines 51-56): the summary states two unexpected behaviors - history after the current location matters (a later marker gives non-determinism, an absent marker gives false), and a miss during replay latches false for the remainder of that execution.",
+        "Source claim (lines 60-67): after a deploy, in-flight executions replay to their shutdown point and do not follow patched branches; afterwards they use new code only if no patched() call with that ID occurred during replay, otherwise they run non-patched code. The stated rationale is that later patched code depending on earlier patched code must keep the old path, while independent new code may switch.",
+        "Source claim (line 69): the documented consequence is explicit - a Workflow does not always run the newest code; it does so only when not replaying, or when replay is surpassed and the ID never appeared in the replay.",
+        "Source claim (lines 73-77): the recommendation is to put the newest version first in an if/elif chain of patched('v3'), patched('v2') and else, because when not replaying patched() returns true; the counterexample shows v2-first making new executions take v2 and never reach v3.",
+        "Inference: the page explains one SDK family's runtime behavior; it states no cross-SDK equivalence, no policy for eventually removing old patches or markers, no limits on patch-ID proliferation, and no production failure data. The 'marker plus search attribute' mechanism is described operationally, not as a schema or query contract.",
+        "Representation note: heading anchors include a zero-width space and 'Direct link to ...' titles; code samples are flattened as described in representation_gap. No claim here rests on indentation."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+          "candidate": "Does the durable-workflow page treat code versioning of in-flight executions as a first-class compatibility problem, distinct from compensating-action design?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+          "candidate": "Does the failure page include non-determinism from history/code mismatch as a failure class distinct from timeouts, task failures and retry exhaustion?"
+        },
+        {
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "candidate": "Should progressive delivery cover long-lived workflow code as a compatibility surface with its own deploy-time branching rule (newest branch first)?"
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/canary-compatibility.md",
+          "candidate": "Does canary compatibility account for executions that span a deploy and replay old history, where rolling back code may not restore prior behavior?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+          "candidate": "Does the messaging-versus-durable-workflow comparison note that replay determinism constrains how new code may be introduced into running executions?"
+        }
+      ],
+      "reader": "Delegated reader batch 8; parent validation pending."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 65,
+    "full_reads": 71,
     "blocked": 14,
     "records": [
       "R015",
@@ -4538,7 +4949,13 @@
       "R093",
       "R094",
       "R095",
-      "R096"
+      "R096",
+      "R097",
+      "R098",
+      "R099",
+      "R100",
+      "R101",
+      "R102"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
