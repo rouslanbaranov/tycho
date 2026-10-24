@@ -16829,12 +16829,1346 @@
         }
       ],
       "reader": "B20e delegated reader R187 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); corrected extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R188",
+      "source_id": "src.secure-reliable",
+      "source_ids": [
+        "src.secure-reliable"
+      ],
+      "url": "https://google.github.io/building-secure-and-reliable-systems/raw/ch13.html",
+      "chapter": "bsr-ch13",
+      "title": "Testing Code",
+      "unit": "Building Secure and Reliable Systems, Chapter 13 'Testing Code', corrected raw-HTML extraction /tmp/B20raw/raw/ch13.txt, 919 lines / 10,970 words, sha256 8b6d5716b6927d85bab610a5aeb399ef49043bbc69d17387d03b24b1dda63d62",
+      "revision": "Building Secure and Reliable Systems, raw HTML 2023, corrected extraction",
+      "status": "full-scoped-text-read",
+      "coverage": "Read all 919 local lines sequentially in three passes (L1-320, L321-640, L641-919). Manifest3b verification: 919 lines / 10,970 words / sha256 8b6d5716b6927d85bab610a5aeb399ef49043bbc69d17387d03b24b1dda63d62 match the file exactly. The chapter retains 33 headings, 6 [ASIDE] blocks, 3 [NOTE] blocks, 21 [CODE] blocks and an [ENDNOTES] block with 12 endnotes; each marker block contains authored prose or code. The three [NOTE] open markers and the [ENDNOTES] open marker have no closing tags, but their text follows immediately and the endnotes run to EOF. Excluded as extractor artifacts only: example-number placeholders at L39, L451 and L530; the flattened sanitizer list at L175; figure captions without images (Figures 13-1 to 13-4); and authored [...] elisions inside tool output. No section is missing; representation_gap is null.",
+      "retrieval_refs": [
+        "/tmp/B20raw/manifest3b.json#R188 (lines 919, words 10970, sha256 8b6d5716b6927d85bab610a5aeb399ef49043bbc69d17387d03b24b1dda63d62)",
+        "/tmp/B20raw/raw/ch13.txt (read in full, L1-919)",
+        "https://google.github.io/building-secure-and-reliable-systems/raw/ch13.html"
+      ],
+      "omissions": "Other book chapters outside this batch not read; no production experiment.",
+      "representation_gap": null,
+      "representation_sha256": "8b6d5716b6927d85bab610a5aeb399ef49043bbc69d17387d03b24b1dda63d62",
+      "retrieved_lines": 919,
+      "retrieved_words": 10970,
+      "sections": [
+        "Front matter, byline and roadmap [ASIDE]: testing as a reliability and security aid (L1-27)",
+        "Unit Testing: xUnit setup/teardown, GoogleTest IsPrime snippet and CI placement (L30-55)",
+        "Writing Effective Unit Tests: hermetic tests, quota example and parameterized cases (L58-67)",
+        "When to Write Unit Tests: tests with code, mutation review, TDD, coverage limits and the testing-time [NOTE] (L70-91)",
+        "How Unit Testing Affects Code: testability refactors, mocks/stubs/fakes and overabstraction (L94-118)",
+        "Correctness Validation [ASIDE]: GCC torture tests, Wycheproof vectors and RFC parser suites (L121-135)",
+        "Integration Testing: real dependencies, orchestration, the sensitive-data [NOTE] and QA endpoints (L138-159)",
+        "Dynamic Program Analysis: sanitizers, ASan shadow memory/red zones and a use-after-free report (L162-226)",
+        "Performance Tradeoffs in Dynamic Program Analysis [ASIDE]: orders-of-magnitude cost and nightly pipelines (L229-237)",
+        "Fuzz Testing: engine/driver/target, benefits [ASIDE], dictionaries, corpora, coverage, crash metadata and timeouts (L240-302)",
+        "Known Safe Functions [ASIDE]: sanitizer annotations, shallow crashes and false negatives (L305-313)",
+        "Heartbleed ASan excerpt, sanitizer limits, binary-only fuzzing and multiple engines (L316-358)",
+        "Writing Effective Fuzz Drivers: libFuzzer entry point and practices to avoid (L361-396)",
+        "An Example Fuzzer: Knusperli, Bazel/ASan build, driver iterations and measured runs (L399-584)",
+        "Continuous Fuzzing: ClusterFuzz and OSS-Fuzz (L587-605)",
+        "Static Program Analysis: depth/cost and false-positive/false-negative tradeoffs (L608-623)",
+        "Automated Code Inspection Tools: linters, AST matching, Clang-Tidy and Error Prone examples (L626-809)",
+        "Integration of Static Analysis in the Developer Workflow: Tricorder/Shipshape and code-review findings (L812-831)",
+        "Reverse Engineering and Test Input Generation [ASIDE]: decompilers, Ghidra and concolic testing/KLEE (L833-844)",
+        "Abstract Interpretation: intervals, CFGs and Frama-C/Infer/AbsInt/ASI (L847-863)",
+        "Formal Methods and Conclusion: safety/liveness properties and workflow integration (L865-880)",
+        "Endnotes 1-12 (L883-919)"
+      ],
+      "notes": [
+        "Source claim (L24-27): some mistakes and edge cases are inevitable; testing techniques have different cost-benefit profiles, and fuzzing random requests can harden both security and reliability by exposing many edge cases, while systems that cannot be patched quickly need thorough up-front testing.",
+        "Source claim (L33-55, 61-85): unit tests isolate components; xUnit frameworks define setup/teardown and result formats; the GoogleTest snippet checks 0/1/2/3 for primality. Effective tests are fast, reliable, hermetic and security-focused (negative quota, overflow, malformed input); tests accompany code or are written first under TDD, and mutation-style review asks whether tests fail when a condition is forced true or false. Reader note: the chapter states that full coverage does not prove a project bug-free.",
+        "Source claim (L91, 97-118): writing tests can take longer than writing the code, but early testing lowers debugging cost; testability requires intercepting external calls; mocks, stubs and fakes need consistent vocabulary, and overabstracted tests assert call order rather than behavior. Service-owned fake implementations are recommended so the abstraction tracks the real service.",
+        "Source claim (L127-133): correctness suites compare independent implementations: GCC's torture tests, Wycheproof cryptographic vectors against known attacks, and RFC parser suites that check drop-in replacements produce equivalent observable outputs.",
+        "Source claim (L141-156): integration tests replace fakes with real dependencies, are slower and flakier, and should not mirror production databases containing sensitive data; seed nonsensitive data and use a QA endpoint so tests do not create spurious production side effects.",
+        "Source claim (L165-180, 199-226): AddressSanitizer instruments a binary, tracks shadow memory, poisons red zones and freed memory, and reports a 1-byte heap-use-after-free read with allocation and free stacks; UndefinedBehaviorSanitizer, ThreadSanitizer, MemorySanitizer and LeakSanitizer cover other bug classes. Reader note: extraction flattened the sanitizer list at L175 into one line, but all four entries remain.",
+        "Source claim (L235): instrumented binaries can be orders of magnitude slower than native ones, so many projects run sanitizer-enhanced pipelines nightly rather than on every change.",
+        "Source claim (L243-311): fuzzing passes generated inputs through a driver to a target; dictionaries, seed corpora, coverage feedback and timeouts improve reach; crash metadata aids triage. 'Known safe' sanitizer annotations can hide deeper bugs, so they are recommended only after careful review.",
+        "Source claim (L316-355): the Heartbleed ASan excerpt reports a 65,535-byte heap-buffer-overflow read; sanitizers cannot instrument handwritten assembly, and binary-only libraries may need QEMU/AFL-style CPU-level instrumentation at a speed cost. Source claim (L596-605): ClusterFuzz manages VM pools, deduplicates and retests crashes, and OSS-Fuzz reportedly found over a thousand bugs within five months of its December 2016 launch.",
+        "Source claim (L375-396): libFuzzer drivers should avoid nondeterminism, slow logging or disk I/O, intentional crashes and checksum guards, using -DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION for fuzzer-friendly builds. Source claim (L402-584): the Knusperli example builds an ASan libFuzzer target with Bazel; an empty-corpus run executed 3,138,182 inputs at cov 151, a JPEG seed raised cov to 169, and splitting the input to choose JpegReadMode lowered throughput to 2,827 exec/s while raising cov to 196. Reader note: these are authored example measurements, not reproduced here.",
+        "Source claim (L611-705, 815-831): static analysis trades depth against cost and false positives against false negatives, and is undecidable in general; Clang-Tidy AST matching and Error Prone illustrate warnings and auto-fixes such as sizeof-pointer-memaccess and modernize-use-nullptr. Tricorder reportedly ran about 50,000 code-review changes per day with 146 analyzers over 30+ languages and targeted a user-perceived false-positive rate of at most 10%.",
+        "Source claim (L839-871): decompilers/disassemblers and concolic testing (KLEE) reuse program analysis for reverse engineering and input generation; abstract interpretation uses intervals and control-flow graphs, with Frama-C, Infer, AbsInt and Android's App Security Improvement program as examples; formal methods suit safety-critical and cryptographic protocol verification."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/security-tests.md",
+          "candidate": "Adjacent to synthetic attack design and security decision gates; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/protocol-correctness.md",
+          "candidate": "Adjacent to protocol verification and correctness evidence; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/agent-negative-tests.md",
+          "candidate": "Adjacent to negative tests and limit evidence; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md",
+          "candidate": "Adjacent to test methodology and validity of measured evidence; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/experiment-contract.md",
+          "candidate": "Adjacent to discriminating experiments and evidence thresholds; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md",
+          "candidate": "Adjacent to CI/CD gates that consume test results; relation only, no verdict."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash (session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no findings or verdicts"
+    },
+    {
+      "id": "R189",
+      "source_id": "src.secure-reliable",
+      "source_ids": [
+        "src.secure-reliable"
+      ],
+      "url": "https://google.github.io/building-secure-and-reliable-systems/raw/ch14.html",
+      "chapter": "bsr-ch14",
+      "title": "Deploying Code",
+      "unit": "Building Secure and Reliable Systems, Chapter 14 'Deploying Code', corrected raw-HTML extraction /tmp/B20raw/raw/ch14.txt, 926 lines / 9,111 words, sha256 09b7d8b79ed4c6a52286ad47d0928059a9a52441aa266fb2a752f574d6479388",
+      "revision": "Building Secure and Reliable Systems, raw HTML 2023, corrected extraction",
+      "status": "full-scoped-text-read",
+      "coverage": "Read all 926 local lines sequentially in three passes (L1-310, L311-620, L621-926). Manifest3b verification: 926 lines / 9,111 words / sha256 09b7d8b79ed4c6a52286ad47d0928059a9a52441aa266fb2a752f574d6479388 match the file exactly. The chapter retains 34 headings, 5 [ASIDE] blocks, 1 [CODE] block and an [ENDNOTES] block with 21 endnotes; every marker block contains authored text. The [ENDNOTES] open marker has no closing tag, but the notes run to EOF. Excluded as extractor artifacts only: flattened tables at L322 and L849 (row content preserved, cell boundaries lost); cross-reference placeholders at L321, L599, L607 and L721; flattened bullet lists (for example L251, L398-401 and L607); and figure captions without images (Figures 14-1 to 14-8). No section is missing; representation_gap is null.",
+      "retrieval_refs": [
+        "/tmp/B20raw/manifest3b.json#R189 (lines 926, words 9111, sha256 09b7d8b79ed4c6a52286ad47d0928059a9a52441aa266fb2a752f574d6479388)",
+        "/tmp/B20raw/raw/ch14.txt (read in full, L1-926)",
+        "https://google.github.io/building-secure-and-reliable-systems/raw/ch14.html"
+      ],
+      "omissions": "Other book chapters outside this batch not read; no production experiment.",
+      "representation_gap": null,
+      "representation_sha256": "09b7d8b79ed4c6a52286ad47d0928059a9a52441aa266fb2a752f574d6479388",
+      "retrieved_lines": 926,
+      "retrieved_words": 9111,
+      "sections": [
+        "Front matter, byline and roadmap [ASIDE]: deployment controls across the software lifecycle (L1-24)",
+        "Concepts and Terminology: VCS/CI/CD, broad build and test definitions, deployment examples and scope (L27-129)",
+        "Threat Model: benign insiders, malicious insiders, compromised insiders and common supply-chain threats (L132-214)",
+        "Best Practices: mandatory code review, automation, verifying artifacts and configuration-as-code (L217-289)",
+        "Don't Check In Secrets! [ASIDE]: secret management, service-only access and separate credentials (L292-315)",
+        "Securing Against the Threat Model: threat/mitigation/limitation table and four unaddressed threats (L318-350)",
+        "Trusting Third-Party Code [ASIDE]: review depth, internal copies and vulnerability monitoring (L353-373)",
+        "Binary Provenance: motivating incident example and recommended fields (L376-413)",
+        "Code Signing [ASIDE]: signature value, key protection and treating signing as a deployment (L415-429)",
+        "Provenance-Based Deployment Policies: example rules, three verification steps (L432-557)",
+        "Verifiable Builds: requirements, trusted-service, rebuild-it-yourself and rebuilder-quorum architectures, and the hermetic/reproducible/verifiable [ASIDE] (L560-665)",
+        "Implementing Verifiable Builds: untrusted inputs as RCE-by-design, privilege separation and hermetic inputs (L668-725)",
+        "Deployment Choke Points: Kubernetes control plane, admission webhooks and proxy placement (L727-740)",
+        "Post-Deployment Verification: policy changes, fail-open, breakglass, dry run and forensic logs (L742-778)",
+        "Practical Advice: one step at a time, actionable errors, unambiguous provenance and policies, breakglass (L781-842)",
+        "Securing Against the Threat Model, Revisited: advanced mitigation table (L845-851)",
+        "Conclusion (L854-860)",
+        "Endnotes 1-21 (L863-926)"
+      ],
+      "notes": [
+        "Source claim (L21-24): controls around source, build and test are ineffective if an adversary can deploy directly; deployment systems should reject artifacts that do not originate from the proper software supply chain, and each step should offer proof that it executed properly.",
+        "Source claim (L65-129): a build is any transformation of input artifacts to output artifacts, a test is a special case producing a logical result, and a deployment is any assignment of an artifact to an environment, including configuration changes, package publication, VM boot and Kubernetes updates. Post-deployment changes are declared out of scope.",
+        "Source claim (L135-212): the threat model covers benign insiders, malicious insiders and external attackers who compromise insider accounts; examples include accidental vulnerabilities, backdoors, local unreviewed builds, harmful configuration, modified binaries, stolen signing keys, outdated code, misconfigured CI, build-script key exfiltration and a backdoored compiler.",
+        "Source claim (L223-238): code review is multi-party authorization because no individual may submit alone; it must be mandatory and comprehensive enough to avoid rubber-stamping, and it is a defense-in-depth measure with known limits rather than a complete security control.",
+        "Source claim (L241-268): automation gives a consistent repeatable process and removes human error, but the automation itself must be locked down and its configuration peer reviewed; verifying artifacts rather than people requires proof that every automated step occurred. The GKE Binary Authorization example accepts only signed images, but the approach still assumes the CI/CD system and signing keys are secure.",
+        "Source claim (L274-312): configuration deserves the same versioning, review and testing as code; secrets must never be checked in or embedded in source, should live in a secret manager or KMS, and should be accessible to services but not humans, with separate credentials where human access is valid.",
+        "Source claim (L321-350): the threat-mitigation table maps code review, automated builds, configuration-as-code, provenance checks, ACLs and key management to the listed threats, while acknowledging residual risks such as collusion, compromised accounts, breakglass bypass and configuration that cannot be treated as code. Four threats remain for the advanced section: stale code, arbitrary source repositories, build-script key theft and a backdoored toolchain.",
+        "Source claim (L385-412): binary provenance should describe authenticity, outputs, inputs (sources, dependencies, command and environment), input metadata, debug information and versioning; anything not covered by the build or source review, such as compiler flags or a custom compiler, enlarges the verifier's attack surface. Debian's deb-buildinfo is cited as a concrete format.",
+        "Source claim (L438-555): provenance-based policies reduce implicit assumptions and allow one signing key per build step; evaluation verifies provenance authenticity, binding to the artifact hash, and all policy rules. The JWT example checks a signature, an RFC 6920 subject hash and an exact source URI; in-toto is named as a standard.",
+        "Source claim (L562-665): verifiable builds require trustworthy provenance and should consider workstation compromise, tamper detection, build isolation, truthful provenance, nonadministrator control of build steps, source snapshots and reproducibility. Three architectures are described: trusted build service, rebuild-it-yourself and a quorum of rebuilders; hermetic, reproducible and verifiable are defined separately, with reproducibility usually requiring hermeticity.",
+        "Source claim (L671-725): user-defined build steps are effectively remote code execution by design, so privilege separation keeps the signing key and orchestrator outside the build sandbox; unauthenticated dependencies are another subversion path, so hermetic builds declare all inputs up front and only the orchestrator fetches them. Deployment decisions must occur at choke points such as the Kubernetes control plane or an admission webhook.",
+        "Source claim (L742-842): post-deployment verification is needed for policy changes, fail-open decisions, breakglass, dry runs and forensics, and logs must capture enough state to re-evaluate policy. Practical lessons include rolling out one control at a time, actionable rejection messages, unambiguous provenance after one empty-file query returned 497,129 records and the system could only report that none matched (poor errors, plus a 100 ms SLO breach), a single applicable policy, and rare, alarmed, audited breakglass events."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md",
+          "candidate": "Adjacent to CI/CD architecture, provenance and deployment flow; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/build-identity.md",
+          "candidate": "Adjacent to build boundaries and artifact identity; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/provenance-subjects.md",
+          "candidate": "Adjacent to artifact subjects, provenance and component inventories; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/sbom-attestation-and-release-verification.md",
+          "candidate": "Adjacent to supply-chain evidence and release verification; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
+          "candidate": "Adjacent to configuration as a reviewed deployment artifact; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md",
+          "candidate": "Adjacent to threat models and authenticated identity for deployment actors; relation only, no verdict."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash (session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no findings or verdicts"
+    },
+    {
+      "id": "R190",
+      "source_id": "src.secure-reliable",
+      "source_ids": [
+        "src.secure-reliable"
+      ],
+      "url": "https://google.github.io/building-secure-and-reliable-systems/raw/ch15.html",
+      "chapter": "bsr-ch15",
+      "title": "Investigating Systems",
+      "unit": "Building Secure and Reliable Systems, Chapter 15 'Investigating Systems', corrected raw-HTML extraction /tmp/B20raw/raw/ch15.txt, 883 lines / 10,822 words, sha256 2575548802aaa0fbf9c9767a29febf3a3b251dd874defe3f61087de6681eb164",
+      "revision": "Building Secure and Reliable Systems, raw HTML 2023, corrected extraction",
+      "status": "full-scoped-text-read",
+      "coverage": "Read all 883 local lines sequentially in three passes (L1-300, L301-600, L601-883). Manifest3b verification: 883 lines / 10,822 words / sha256 2575548802aaa0fbf9c9767a29febf3a3b251dd874defe3f61087de6681eb164 match the file exactly. The chapter retains 43 headings, 6 [ASIDE] blocks, 5 [NOTE] blocks and an [ENDNOTES] block with 14 endnotes; every marker block contains authored prose. The [NOTE] and [ENDNOTES] open markers have no closing tags, but their text follows immediately and the endnotes run to EOF. Excluded as extractor artifacts only: the flattened privacy bullet list at L650 (all five topics remain), flattened bullet lists elsewhere, the caption for Figure 15-1 without its image, and the merged endnote marker '9404' at L868, which is endnote 9 followed by '404'. No section is missing; representation_gap is null.",
+      "retrieval_refs": [
+        "/tmp/B20raw/manifest3b.json#R190 (lines 883, words 10822, sha256 2575548802aaa0fbf9c9767a29febf3a3b251dd874defe3f61087de6681eb164)",
+        "/tmp/B20raw/raw/ch15.txt (read in full, L1-883)",
+        "https://google.github.io/building-secure-and-reliable-systems/raw/ch15.html"
+      ],
+      "omissions": "Other book chapters outside this batch not read; no production experiment.",
+      "representation_gap": null,
+      "representation_sha256": "2575548802aaa0fbf9c9767a29febf3a3b251dd874defe3f61087de6681eb164",
+      "retrieved_lines": 883,
+      "retrieved_words": 10822,
+      "sections": [
+        "Front matter, byline, roadmap [ASIDE] and the debugger terminology [NOTE] (L1-30)",
+        "From Debugging to Investigation: Wilkes quotation and debugging's reputation (L33-43)",
+        "Example: Temporary Files: Spanner quota, tiny files, dentry cache, kernel behavior and the investigation's lessons (L46-139)",
+        "Debugging Techniques: knowing the system, horses versus zebras, bit flips at scale, DIMM provenance and zebra examples (L143-208)",
+        "Data Corruption and Checksums [ASIDE]: ECC, machine checks, CRC versus cryptographic hashes and checksum scope (L211-258)",
+        "Set aside time for debugging, operational-overload [NOTE] and recording observations and expectations (L261-297)",
+        "Know what's normal: abort/DNS noise, OOM baselines, normalized deviance and fresh perspectives (L300-328)",
+        "Reproduce the bug and isolate the problem, including the thread-stack example (L331-359)",
+        "Correlation versus causation and latent bugs exposed by deployment (L362-374)",
+        "Test hypotheses with data, observability/Dapper and the Systems Performance [NOTE] (L377-389)",
+        "Reread the docs and practice debugging, including DiRT and penetration tests (L392-411)",
+        "What to Do When You're Stuck: improve observability, take a break, clean up code, delete legacy, stop when things go wrong and tighten access (L414-517)",
+        "Collaborative Debugging: driver/note taker rules, Wheel of Misfortune and psychological safety (L520-568)",
+        "How Security Investigations and Debugging Differ: adversary focus, legal involvement and the Recognizing a Compromise [ASIDE] (L571-622)",
+        "Collect Appropriate and Useful Logs: immutable remote logging, the line printer and privacy tradeoffs (L625-650)",
+        "Determine Which Security Logs to Retain: OS, host agents, antivirus [ASIDE], application, cloud, asset inventory [ASIDE] and network/DNS/proxy logs (L652-731)",
+        "Budget for Logging: 100 TB example, graceful-degradation [ASIDE] and signal/noise, compression, warm/cold and rotation strategies (L734-776)",
+        "Robust, Secure Debugging Access: reliability, emergency credentials, impersonation endpoints and sensitive metadata (L780-804)",
+        "Conclusion: systematic debugging, specialist investigations, centralized logs, iteration and designing for safety (L807-838)",
+        "Endnotes 1-14 (L841-883)"
+      ],
+      "notes": [
+        "Source claim (L30, 33-43, 46-139, 264): 'debugger' here means a human, not GDB; debugging has a poor reputation but is learnable and systematic. The temporary-files outage required 5-10 hours, hypothesis-driven reproduction, and revealed that every component was working as intended; the first responder initially misdiagnosed it as user error.",
+        "Source claim (L165-208): rare 'zebra' failures become routine at scale; a 25,000-machine service with 400,000 RAM chips and a 0.1% yearly uncorrectable-error rate could see 400 occurrences a year. A DIMM failure cluster was traced to one provider's clean-room problem, and other zebras include a 64-bit cache-key collision, int64-to-int truncation after 2^32 requests, a distributed rebalancer bug and superlinear dynamic-linker loading.",
+        "Source claim (L217-256): ECC RAM corrects most corruption, uncorrectable errors raise machine checks, and checksums protect against hardware and software failures. CRC cost and protection differ from cryptographic hashes, and checksum scope matters: a value-only checksum can pass when a buggy server returns the wrong value, so including the key in both value and checksum catches that case.",
+        "Source claim (L279-297): write down observations separately from theories, including rejected theories, because investigations may last minutes or months; notes enable handoff and can later establish which actions were the attacker's and which were investigators', sometimes for legal purposes.",
+        "Source claim (L303-328): debuggers must distinguish expected behavior from faults: shutdown aborts and Chrome's random DNS probes look suspicious but are normal, and a two-week OOM baseline showed an outage did not change the daily rate. Normalized deviance, operational overload and alert fatigue create blind spots, so teams rotate on-call staff, listen to newcomers and use Red Teams.",
+        "Source claim (L334-383): reproduce outside production where possible, isolate to the smallest failing subset, and treat correlation as a lead rather than proof. A deployment can expose latent bugs in old code, and one slow web server was caused by logging every input and calling sync, not by its backends; Dapper/Zipkin traces and observability are recommended for distributed latency.",
+        "Source claim (L417-517): when stuck, improve observability (Bigtable mutex stats, structured logging, Dapper), take a break, clean up code and enable warnings, or delete an unmaintained legacy system. Applications should fail closed when causes are far from effects, and access controls should be tightened even for nonsensitive systems so investigators can rule out accidental writes.",
+        "Source claim (L523-568): collaborative debugging uses one driver and one note taker while the audience decides each action, which exposes experienced engineers' uncertainty and builds psychological safety. Wheel of Misfortune exercises add a test giver and test taker and can be theoretical or practical, but practical setups require nontrivial work.",
+        "Source claim (L574-622): security investigations pivot from system behavior to the adversary's other activity and possible next moves; adding code, deleting systems or removing suspicious files can alert an attacker, and one attacker responded by deleting the entire system. Indicators of compromise include missing or corrupted logs, account-focused hypotheses, unexplained behavior, abnormal file types and deliberately hidden files.",
+        "Source claim (L631-650): logs should be immutable and written remotely to a centralized distributed server, ideally with an immutable audit trail. Privacy topics to settle include logging depth, retention, access/audit controls, anonymization or pseudonymization, and encryption; a cited 2018 study puts average compromise discovery at about 200 days, and insider investigations have used OS logs going back years.",
+        "Source claim (L661-776): useful sources include OS logs, HIDS/host agents, application logs, cloud audit logs and CASBs, NIDS/IPS, DNS and web-proxy logs. The chapter questions antivirus value, notes that one system held 100 TB of mostly unused logs, and recommends graceful degradation through summarization, signal-to-noise filtering, compression, warm/cold tiers and intelligent rotation.",
+        "Source claim (L783-804, 810-838): logging can fail or be disrupted, so emergency credentials kept offline and alarmed are a reliability tradeoff; debugging endpoints such as user impersonation need security controls, and metadata can be sensitive because access patterns reveal behavior. The conclusion repeats that debugging is systematic, security investigations need specialists, centralized logging is critical, and systems should be designed for safe access."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md",
+          "candidate": "Adjacent to structured logging, audit evidence and lineage; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-integrity.md",
+          "candidate": "Adjacent to retention, integrity and contradictory records; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-evidence.md",
+          "candidate": "Adjacent to incident chronology and competing explanations; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md",
+          "candidate": "Adjacent to practice and recovery readiness; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/trace-causality.md",
+          "candidate": "Adjacent to trace identity and causal interpretation; relation only, no verdict."
+        },
+        {
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "candidate": "Adjacent to tracing, structured logs and trustworthy audit; relation only, no verdict."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash (session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no findings or verdicts"
+    },
+    {
+      "id": "R191",
+      "source_id": "src.secure-reliable",
+      "source_ids": [
+        "src.secure-reliable"
+      ],
+      "url": "https://google.github.io/building-secure-and-reliable-systems/raw/ch16.html",
+      "chapter": "bsr-ch16",
+      "title": "Disaster Planning",
+      "unit": "Building Secure and Reliable Systems, Chapter 16 'Disaster Planning', corrected raw-HTML extraction /tmp/B20raw/raw/ch16.txt, 715 lines / 8,010 words, sha256 f6138c9f356139ce957b11536c380a9e52545c0c228f4a12902cf2a3a2fab2fc",
+      "revision": "Building Secure and Reliable Systems, raw HTML 2023, corrected extraction",
+      "status": "full-scoped-text-read",
+      "coverage": "Read all 715 local lines sequentially in two passes (L1-360, L361-715). Manifest3b verification: 715 lines / 8,010 words / sha256 f6138c9f356139ce957b11536c380a9e52545c0c228f4a12902cf2a3a2fab2fc match the file exactly. The corrected extraction retains all 35 headings, four [ASIDE] blocks (chapter summary; single points of failure; team morale; compromised email/IM communications) and the [ENDNOTES] block, all with authored prose. The chapter has no [NOTE] or [CODE] blocks. Figure 16-1 survives as a caption only (image not represented). The read tool's 2,000-character per-line truncation at L504 was resolved by re-extracting the full 2,831-character paragraph. Bullet glyphs, blank lines and heading levels are extractor normalizations, not content omissions. No representation gap.",
+      "retrieval_refs": [
+        "/tmp/B20raw/manifest3b.json#R191 (lines 715, words 8010, sha256 f6138c9f356139ce957b11536c380a9e52545c0c228f4a12902cf2a3a2fab2fc)",
+        "/tmp/B20raw/raw/ch16.txt (read in full, L1-715)",
+        "https://google.github.io/building-secure-and-reliable-systems/raw/ch16.html"
+      ],
+      "omissions": "Other book chapters outside this batch not read; no production experiment.",
+      "representation_sha256": "f6138c9f356139ce957b11536c380a9e52545c0c228f4a12902cf2a3a2fab2fc",
+      "retrieved_lines": 715,
+      "retrieved_words": 8010,
+      "sections": [
+        "Front matter, summary aside and introduction (L1-27)",
+        "Defining 'Disaster': forms of disaster and the disaster/crisis equivalence (L30-74)",
+        "Dynamic Disaster Response Strategies: phases, exit criteria and the preparation checklist (L77-122)",
+        "Disaster Risk Analysis: critical operations, resources, scenario ranking and the risk matrix (L125-152)",
+        "Setting Up an Incident Response Team: staffing models, roles and the single-point-of-failure aside (L155-208)",
+        "Team charter, scope and the morale aside (L211-234)",
+        "Severity and priority models and operating parameters (L237-276)",
+        "Response plans, communications and the compromised-communications aside (L279-337)",
+        "Playbooks and documentation access/update mechanisms (L340-355)",
+        "Prestaging systems and people: access, configuration, training and procedures (L358-433)",
+        "Testing: automated-system audits and tabletop exercises (L435-504)",
+        "Testing response in production: fault injection, personnel, multicomponent and system-wide failures (L506-546)",
+        "Red Team testing and evaluating responses (L548-599)",
+        "Google examples: 2019 earthquake exercise, DiRT breakglass and 2018 kernel vulnerabilities (L601-677)",
+        "Conclusion and endnotes 1-8 (L679-715)"
+      ],
+      "notes": [
+        "Source claim (L30-74): 'disaster' and 'crisis' are used interchangeably for any situation warranting an incident declaration; the chapter lists natural disasters, infrastructure failures or misconfigurations, service outages, threshold degradations, extended attacker access, unauthorized data disclosure and urgent patching, and warns that a small event can trigger a full response.",
+        "Source claim (L125-152): risk analysis must identify mission-essential, mission-important and nonessential systems, technological and human response resources, and per-system scenarios ranked by likelihood, frequency and impact; a standardized probability-by-impact matrix guards against groupthink, and assessments should be repeated as sites, hazards and fault tolerance change.",
+        "Source claim (L155-208): IR staffing may be dedicated, dual-hat or outsourced; roles include incident commander, SREs, public relations, customer support, legal, privacy engineers, forensic specialists and security engineers, and these are roles rather than people. The single-point-of-failure aside calls for empowered delegates, including across time zones.",
+        "Source claim (L211-276): a charter states mission, scope and success; severity and priority both use 0-4 scales where 0 is most severe or highest priority, severity normally stays fixed while priority can fall as cleanup proceeds, and operating parameters define initial response and triage times plus SLO-based interruption of routine work.",
+        "Source claim (L279-355): response plans cover reporting, triage, SLOs, roles, outreach and communications; playbooks hold end-to-end procedures and need frequent revision. The compromised-communications aside notes that an attacker may read the response channel, so backup channels and operational security matter.",
+        "Source claim (L358-433): prestaging includes predetermined emergency access, forensic agents, log retention, duplicate backup hardware and air-gapped fallback paths, plus training in IMAG, employee reporting/escalation and a finite first-responder window (a 15-minute example is offered). The chapter cites roughly 200 days as the industry average for detecting intrusions and tells readers to consult counsel on retention law.",
+        "Source claim (L435-599): audits cover backups and restores, logs, patching, alerts and communications; tabletops are nonintrusive and a 60-minute exercise typically has 10-20 decision points; production testing covers single-component fault injection (an Envoy filter example), unavailable personnel, multicomponent failures and full failovers. Red Teams test detection and response without advance notice, and evaluation uses measured responses, blameless postmortems, artifact feedback and color teams.",
+        "Source claim (L601-677): Google reports a 2019 San Francisco earthquake exercise, a DiRT breakglass test observed by the detection team, and the 2018 SegmentSmack/FragmentSmack kernel vulnerabilities (CVE-2018-5390/5391) mitigated by ksplice under a code freeze. Reader inference: these are the authors' self-reported organizational examples; the chapter gives no independent measurements.",
+        "Extraction check: four [ASIDE] blocks (L13-21, L197-205, L220-228, L313-334) and the [ENDNOTES] block (L691-715) contain authored prose; the chapter has no [NOTE] or [CODE] blocks. Figure 16-1 is a caption only. All 35 headings and eight endnotes are present, so no representation gap was found; the chapter has no [NOTE] blocks, so no closing-marker question arises."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md",
+          "candidate": "Adjacent to exercising incident playbooks and recovery readiness before an incident; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-response-and-operational-change.md",
+          "candidate": "Adjacent to integrated incident planning and operational change; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
+          "candidate": "Adjacent to disaster recovery objectives and planning; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/restore-drills.md",
+          "candidate": "Adjacent to restore drills and tested recovery procedures; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-evidence.md",
+          "candidate": "Adjacent to evidence retention and signal detection after exercises; relation only, no verdict."
+        }
+      ],
+      "reader": "B20e delegated reader R191 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); corrected extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R192",
+      "source_id": "src.secure-reliable",
+      "source_ids": [
+        "src.secure-reliable"
+      ],
+      "url": "https://google.github.io/building-secure-and-reliable-systems/raw/ch17.html",
+      "chapter": "bsr-ch17",
+      "title": "Crisis Management",
+      "unit": "Building Secure and Reliable Systems, Chapter 17 'Crisis Management', corrected raw-HTML extraction /tmp/B20raw/raw/ch17.txt, 881 lines / 10,825 words, sha256 1830ddee21399a5a0680c239390dd633ae09ba3b27fc505e0c643bd9237cadf6",
+      "revision": "Building Secure and Reliable Systems, raw HTML 2023, corrected extraction",
+      "status": "full-scoped-text-read",
+      "coverage": "Read all 881 local lines sequentially in three passes (L1-300, L301-600, L601-881). Manifest3b verification: 881 lines / 10,825 words / sha256 1830ddee21399a5a0680c239390dd633ae09ba3b27fc505e0c643bd9237cadf6 match the file exactly. The corrected extraction retains all 37 headings, six [ASIDE] blocks, both [CODE] blocks (an illustrative HTTP request line at L288-291 and the incident-commander while loop at L433-453) and the [NOTE] block at L534, all with authored text. The [NOTE] open marker has no closing tag in this extraction, but its single book-recommendation paragraph is complete before the next heading. The seven endnotes run to EOF. Figures 17-1 and 17-2 survive as captions only (images not represented). The read tool's 2,000-character per-line truncation at L526 was resolved by re-extracting the full 2,316-character paragraph. No representation gap.",
+      "retrieval_refs": [
+        "/tmp/B20raw/manifest3b.json#R192 (lines 881, words 10825, sha256 1830ddee21399a5a0680c239390dd633ae09ba3b27fc505e0c643bd9237cadf6)",
+        "/tmp/B20raw/raw/ch17.txt (read in full, L1-881)",
+        "https://google.github.io/building-secure-and-reliable-systems/raw/ch17.html"
+      ],
+      "omissions": "Other book chapters outside this batch not read; no production experiment.",
+      "representation_sha256": "1830ddee21399a5a0680c239390dd633ae09ba3b27fc505e0c643bd9237cadf6",
+      "retrieved_lines": 881,
+      "retrieved_words": 10825,
+      "sections": [
+        "Front matter, summary aside and introduction: inevitability, transparency and notification pressure (L1-34)",
+        "Is It a Crisis or Not? triage and the emergency-medical analogy (L36-46)",
+        "Triaging the Incident: three ransomware organizations and assessment questions (L48-117)",
+        "Compromises Versus Bugs, the CVD aside and risky CVE examples (L119-142)",
+        "Taking Command: panic, IMAG/ICS, declaration and the incident commander role (L145-182)",
+        "Establishing the incident team: operations, management, legal and communications leads (L184-198)",
+        "Operational Security: purpose, mistakes, good practices, auto-fetching tools and the imminent-risk exception (L199-320)",
+        "The Investigative Process: forensic techniques, timeline, email-attack example, sharding and stopping point (L322-413)",
+        "Keeping Control: parallelizing, the IC while loop and the OODA loop (L415-457)",
+        "Handovers and morale: shift limits, follow-the-sun rotations and team care (L459-526)",
+        "Communications: misunderstandings, hedging, meetings and tiered information (L528-744)",
+        "Putting It All Together: cloud-account compromise from triage to closure (L746-851)",
+        "Conclusion and endnotes 1-7 (L854-881)"
+      ],
+      "notes": [
+        "Source claim (L24-34): security incidents are treated as inevitable; the chapter cites the 'two types of companies' maxim and argues that transparency expectations plus regulations such as GDPR and customer contracts now push notification within 24 hours or less, while cloud, BYOD and IoT reduce asset visibility.",
+        "Source claim (L36-117): triage decides whether an escalation is a false positive, an easily corrected problem or a complex targeted compromise; three ransomware scenarios show the same threat producing a playbook response in a mature organization and a crisis in a weakly defended one. Assessment questions cover data value, trust relationships, compensating controls and commodity versus targeted malware.",
+        "Source claim (L119-142): vulnerabilities are bugs that good design should contain, but extreme-risk bugs are run as incidents, especially under coordinated vulnerability disclosure; Spectre/Meltdown, glibc, Stagefright, Shellshock and Heartbleed are named. The CVD aside cites ISO 29147:2018 and a balance among vendor time, reporter wishes and users.",
+        "Source claim (L145-198): IMAG/ICS provides command, control and communications; an incident starts with an explicit declaration and an IC who acknowledges the role, supported by an operations lead and optional management, legal and communications leads. Running or rushing at the start is discouraged because a security attacker may react to response actions.",
+        "Source claim (L199-320): OpSec keeps response activity secret; the IC owns confidentiality, members acknowledge guidelines, and remote forensic agents avoid logging into compromised hosts. Common mistakes include using monitored email, logging into compromised servers, touching command-and-control infrastructure, locking accounts or taking systems offline too early, and letting analysis workstations use credentials an attacker may hold; the auto-fetch aside shows a chat link-expander request in an attacker's log, and Apple's 2019 FaceTime shutdown illustrates accepting downtime for imminent risk.",
+        "Source claim (L322-413): forensics covers disk and memory imaging, file carving, log analysis and malware analysis, assembled into a timeline; an email-attack aside traces a browser extension to a file server; large investigations split into forensics, reversing and hunting teams, and remediation starts when new leads slow. Reader inference: the popcorn analogy is illustrative, not a measured stopping rule.",
+        "Source claim (L415-526): the IC should not perform hands-on work but should parallelize remediation and postmortem preparation; a while-loop checklist and OODA loop structure recurring reviews. Handovers follow a structured agenda, shifts are capped at 12 continuous hours, follow-the-sun rotations are described, and morale measures include food, sleep, destress activities, burnout watch and leading by example.",
+        "Source claim (L528-744): communication failures come from implicit assumptions, jargon and hedging; meetings should be small, agenda-led and minuted, with a note taker. Information is tiered for executives, the IR team, other personnel, customers and legal, and a communications lead prepares statements to prevent conflicting messages; the [NOTE] recommends Morgan (2018) and Alda (2017).",
+        "Source claim (L746-851): the closing walkthrough is explicitly hypothetical: a cloud service account compromise handled with a new cloud environment, a San Francisco-to-London handover and a coin-mining cleanup. Reader inference: it demonstrates process, not a production experiment or a measured outcome. Extraction check: all six [ASIDE] blocks contain authored prose, both [CODE] blocks contain authored illustrative text, the [NOTE] at L534 lacks a closing tag but its paragraph is complete, and the seven endnotes run to EOF; Figures 17-1 and 17-2 are captions only. No representation gap."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-contract.md",
+          "candidate": "Adjacent to incident declaration, response authority and bounded actions; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md",
+          "candidate": "Adjacent to incident exercises and on-call practice; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-evidence.md",
+          "candidate": "Adjacent to forensic chronology and competing explanations; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-response-and-operational-change.md",
+          "candidate": "Adjacent to containment and operational change during response; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-integrity.md",
+          "candidate": "Adjacent to log retention and integrity relied on by forensics; relation only, no verdict."
+        }
+      ],
+      "reader": "B20e delegated reader R192 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); corrected extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R193",
+      "source_id": "src.secure-reliable",
+      "source_ids": [
+        "src.secure-reliable"
+      ],
+      "url": "https://google.github.io/building-secure-and-reliable-systems/raw/ch18.html",
+      "chapter": "bsr-ch18",
+      "title": "Recovery and Aftermath",
+      "unit": "Building Secure and Reliable Systems, Chapter 18 'Recovery and Aftermath', corrected raw-HTML extraction /tmp/B20raw/raw/ch18.txt, 627 lines / 9,777 words, sha256 60781fc492ba32213d30718ded64fcb9fe5ce18a622218d8cce8c96fd023c2c8",
+      "revision": "Building Secure and Reliable Systems, raw HTML 2023, corrected extraction",
+      "status": "full-scoped-text-read",
+      "coverage": "Read all 627 local lines sequentially in two passes (L1-300, L301-627). Manifest3b verification: 627 lines / 9,777 words / sha256 60781fc492ba32213d30718ded64fcb9fe5ce18a622218d8cce8c96fd023c2c8 match the file exactly. The corrected extraction retains all 30 headings, five [ASIDE] blocks (chapter summary; roles and responsibilities; repeating risks; BeyondCorp quarantine; seizing the opportunity), the two [NOTE] blocks at L158 and L220, and the [ENDNOTES] block, all with authored prose. Both [NOTE] open markers lack closing tags in this extraction, but each note's content is complete before the surrounding body text resumes. The nine endnotes run to EOF. Figures 18-1, 18-2 and 18-3 survive as captions only (checklist images not represented). The chapter has no [CODE] blocks. No representation gap.",
+      "retrieval_refs": [
+        "/tmp/B20raw/manifest3b.json#R193 (lines 627, words 9777, sha256 60781fc492ba32213d30718ded64fcb9fe5ce18a622218d8cce8c96fd023c2c8)",
+        "/tmp/B20raw/raw/ch18.txt (read in full, L1-627)",
+        "https://google.github.io/building-secure-and-reliable-systems/raw/ch18.html"
+      ],
+      "omissions": "Other book chapters outside this batch not read; no production experiment.",
+      "representation_sha256": "60781fc492ba32213d30718ded64fcb9fe5ce18a622218d8cce8c96fd023c2c8",
+      "retrieved_lines": 627,
+      "retrieved_words": 9777,
+      "sections": [
+        "Front matter, summary aside and introduction: the attacker distinguishes security recovery (L1-37)",
+        "Recovery logistics: separate teams, structure, remediation lead and information management (L39-93)",
+        "Recovery timeline: immediate versus investigation-first recovery (L95-105)",
+        "Planning the recovery: scoping affected assets and attacker TTPs (L107-132)",
+        "Recovery considerations: attacker response, compromised tooling, variants, reintroduction and mitigation options (L134-271)",
+        "Recovery checklists and the template (L273-283)",
+        "Initiating the recovery: isolation/quarantine and the BeyondCorp aside (L285-318)",
+        "System rebuilds, software upgrades and data sanitization (L320-345)",
+        "Recovery data, backups, corruption and credential/secret rotation (L347-401)",
+        "After the recovery: postmortems, action items and short-term versus long-term initiatives (L403-475)",
+        "Worked examples: compromised cloud instances, large-scale phishing and complex targeted attack (L477-592)",
+        "Conclusion and endnotes 1-9 (L594-627)"
+      ],
+      "notes": [
+        "Source claim (L16-36): recovery from a security incident differs from reliability recovery because a persistent attacker can reengage during recovery; recovery is usually performed by the engineers who build and operate the system, with security specialists called in for forensics and nuanced decisions, and the chapter emphasizes tradeoffs between disrupting the attacker and observing them.",
+        "Source claim (L39-93): recovery should be handled by a different team from the investigation, because investigation is long, recovery may start in parallel and the skills differ; the IC/OL appoint a remediation lead who builds the checklist and team. Information must be available to recovery staff but hidden from the attacker, using air-gapped storage, notecards and later independent providers; dedicated note takers or technical writers help.",
+        "Source claim (L95-105): recovery timing ranges from immediate for denial-of-service or mission-critical systems to after the investigation for an attacker with full control; planning may overlap execution but should not be skipped, and post-recovery work should start as soon as recovery ends.",
+        "Source claim (L107-132): recovery needs a complete list of affected systems, networks and data plus the attacker's TTPs; a compromised configuration distribution system puts every recipient in scope. The mitigation doc and postmortem set short-term versus long-term actions, and recovery should assume the attacker may still be watching.",
+        "Source claim (L134-271): the chapter poses open questions about how the attacker will respond, whether recovery tooling is compromised, what attack variants exist, whether recovery reintroduces vectors, and which mitigation is least bad. Examples include rebuilding six systems without knowing the initial access, a quarantined clean network, 20 servers sharing a flawed package, golden images, and backups that already contain attacker changes; the [NOTE] at L158 advises waiting for full understanding unless the attacker is actively causing harm.",
+        "Source claim (L273-318): checklists map tasks to skills, include commands and rollback steps, and are shared so work can be parallelized; quarantine can be host- or network-level, and the BeyondCorp aside presents zero-trust isolation as making quarantine easier. Leaving compromised assets online is described as pernicious technical debt that needs visible marking and monitoring.",
+        "Source claim (L320-401): reinstalling from known good images is usually preferred over deleting malware; hardware-backed boot verification and automated release systems simplify rebuilds, while Bazel, Chef and Helm are named as open source build, configuration and deployment options. Sanitization compares known good copies and checksums, uses binary provenance and checks application data; recovery tools should keep tested defaults, monitoring logs can bound how far back to restore, and credentials such as SSH, SSL, API and administrator secrets must be rotated in a planned order, with SSO, 2FA and password-history risks discussed.",
+        "Source claim (L403-475): postmortems should list action items with owners, cover security-specific detection and protection questions, and separate short-term fixes from long-term program changes; the quiet period between incidents is the opportunity to improve posture. Reader inference: the sequence from incident to steady state is presented as an ideal, not as a measured organizational outcome.",
+        "Source claim (L477-592): the worked examples cover compromised cloud VMs, a seven-day phishing campaign in which 70% of employees fall for the attack, and a complex targeted intrusion stealing SSL keys and siphoning $0.02 per transaction; Figures 18-1 to 18-3 are checklist templates shown as captions only. Extraction check: the five [ASIDE] blocks contain authored prose and the two [NOTE] blocks contain complete authored paragraphs without closing tags; all 30 headings and nine endnotes are present, so no representation gap was found."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
+          "candidate": "Adjacent to measured RTO/RPO and state reconciliation after recovery; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/restore-drills.md",
+          "candidate": "Adjacent to demonstrated restore rather than backup success; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+          "candidate": "Adjacent to backup, restore and recovery drills; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md",
+          "candidate": "Adjacent to recovery readiness and exercise acceptance; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+          "candidate": "Adjacent to credential and permission rotation and isolation during recovery; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/build-identity.md",
+          "candidate": "Adjacent to binary provenance and artifact identity used when sanitizing builds; relation only, no verdict."
+        }
+      ],
+      "reader": "B20e delegated reader R193 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); corrected extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R194",
+      "source_id": "src.secure-reliable",
+      "source_ids": [
+        "src.secure-reliable"
+      ],
+      "url": "https://google.github.io/building-secure-and-reliable-systems/raw/ch19.html",
+      "unit": "Chapter 19, Case Study: Chrome Security Team (one chapter of Building Secure and Reliable Systems, raw HTML)",
+      "revision": "Building Secure and Reliable Systems, raw HTML 2023, corrected extraction",
+      "status": "full-scoped-text-read",
+      "coverage": "All 156 lines and 3,324 words of the assigned local representation were read sequentially from L1 to L156. Recomputed SHA-256 over the file equals the manifest value 89d13444917772011a9750bb8cf2e43e7bbccc080db51f4dee5c6d08f95b1f98; the file has 156 newline-terminated lines and 3,324 whitespace-delimited words. The corrected extraction preserves 1 [ASIDE] block (64 prose words), 0 [NOTE], 0 [CODE], and 1 [ENDNOTES] block (1 authored entry, 14 prose words), each containing authored text. [ASIDE] is closed by [/ASIDE]; [ENDNOTES] is emitted without a closing marker in this extractor convention and is bounded by end of file. The 9 headings match the HTML inventory, and a normalized fingerprint check found all 44 paragraph/heading/list blocks of the HTML in the text. The chapter has no tables, figures, or images. Minor extractor artifacts (the missing space after the endnote number) were ignored; no authored text was excluded. External links, cited works, and the endnote reference were not opened.",
+      "retrieval_refs": [
+        {
+          "lines": "L1-L10",
+          "topic": "chapter label, title, author, and contributing editors"
+        },
+        {
+          "lines": "L13-L18",
+          "topic": "aside: early centralized security work and case-study scope"
+        },
+        {
+          "lines": "L21-L42",
+          "topic": "2006 browser goal, security challenges, and 2008 launch"
+        },
+        {
+          "lines": "L45-L46",
+          "topic": "team stages v0.1 through v3.0 and the 2013 mission offsite"
+        },
+        {
+          "lines": "L48-L54",
+          "topic": "five evergreen focus areas, accountable leads, and hiring"
+        },
+        {
+          "lines": "L57-L60",
+          "topic": "recruiting networks, diverse backgrounds, and non-security expertise"
+        },
+        {
+          "lines": "L66-L87",
+          "topic": "security as team responsibility, engineer bug-fixing, fuzzing, and incentives"
+        },
+        {
+          "lines": "L90-L99",
+          "topic": "usable security, the research-scientist hire, and UX partnership"
+        },
+        {
+          "lines": "L102-L108",
+          "topic": "automatic updates, release TPMs, and the 24-hour fix demonstrations"
+        },
+        {
+          "lines": "L111-L126",
+          "topic": "sandboxing, Site Isolation, schedule overrun, and leadership support"
+        },
+        {
+          "lines": "L129-L141",
+          "topic": "transparency, vulnerability disclosure, community engagement, and HTTPS"
+        },
+        {
+          "lines": "L144-L150",
+          "topic": "conclusion on principles, culture, speed, and defense in depth"
+        },
+        {
+          "lines": "L153-L156",
+          "topic": "single endnote on ClusterFuzz and OSS-Fuzz"
+        }
+      ],
+      "sections": [
+        {
+          "section": "Chapter heading and byline",
+          "lines": "L1-L10",
+          "coverage": "read"
+        },
+        {
+          "section": "Aside: early centralization and case-study scope",
+          "lines": "L13-L18",
+          "coverage": "read; authored"
+        },
+        {
+          "section": "Background and Team Evolution",
+          "lines": "L21-L63",
+          "coverage": "read"
+        },
+        {
+          "section": "Security Is a Team Responsibility",
+          "lines": "L66-L87",
+          "coverage": "read"
+        },
+        {
+          "section": "Help Users Safely Navigate the Web",
+          "lines": "L90-L99",
+          "coverage": "read"
+        },
+        {
+          "section": "Speed Matters",
+          "lines": "L102-L108",
+          "coverage": "read"
+        },
+        {
+          "section": "Design for Defense in Depth",
+          "lines": "L111-L126",
+          "coverage": "read"
+        },
+        {
+          "section": "Be Transparent and Engage the Community",
+          "lines": "L129-L141",
+          "coverage": "read"
+        },
+        {
+          "section": "Conclusion",
+          "lines": "L144-L150",
+          "coverage": "read"
+        },
+        {
+          "section": "Endnotes",
+          "lines": "L153-L156",
+          "coverage": "read; 1 authored entry"
+        }
+      ],
+      "notes": [
+        {
+          "kind": "source_claim",
+          "lines": "L13-L18",
+          "text": "The opening aside states that early security work at Google, including product-focused security, was entirely centralized; Chrome was one of the first products to build a security-focused organization, and the case study covers that organization's evolution, principles, and ideas for scaling security."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L24-L42",
+          "text": "In 2006 a team was formed to build an open source Windows browser in under two years that would be more secure, faster, and more stable than alternatives. The stated challenges were browser complexity comparable to an operating system, limited transferable client-side and Windows security expertise in Google's central team, and open source development and operational requirements that ruled out dependence on corporate security practices. Chrome launched in 2008."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L45-L46",
+          "text": "The team describes four stages. v0.1 had no formal security team before the 2008 launch and relied on distributed engineering expertise, central consulting, and third-party vendors; critical buffer overflows were found in the first two weeks. v1.0 added a dedicated team a year after the public beta. v2.0 began the 2010 Vulnerability Reward Program and a flood of WebKit reports that the team often fixed itself, creating a hybrid engineering team rather than isolated consultants. v3.0 published core principles in 2012 and held a 2013 mission-setting offsite."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L48-L54",
+          "text": "The 2013 offsite used Post-it notes and collective clustering to define five evergreen focus areas: security reviews, bug finding and fixing, architecture and exploit mitigation, usable security, and web platform security. Accountable leads and later managers scaled the organization, while leads were expected to share information and swarm rather than silo."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L57-L60",
+          "text": "Hiring relied on personal networks, diverse backgrounds, intern conversion, conference speakers, and cold outreach, with public Chromium material helping candidates understand the work. The team deliberately considered people with security interest but accomplishments elsewhere, including an engineer with an SRE background, and calls this diversity of experience a key success factor."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L69-L87",
+          "text": "The chapter argues that security is a team responsibility because the security team cannot own all of Chrome. All engineers, including security staff, fix bugs and write code; fuzzing infrastructure grew from one computer under a desk to serving fuzzing across Google and the world by 2019; contests, tutorials, and safe base libraries make the secure path the default. Peer bonuses and positive feedback reward visible security practice, and the authors say organizations without security as a core value need fundamental reflection."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L93-L99",
+          "text": "Usable security is presented as necessary because effective security should not depend on user expertise. In Team v3.0 the team acknowledged phishing, social engineering, and warning effectiveness as open problems, lacked human-centered expertise, and hired a research scientist despite no precedent on that job ladder, then partnered with UX and added designers and researchers. The authors observe that security experts are often blind to user challenges."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L105-L108",
+          "text": "Speed is tied to fast, automatic updates and to release TPMs who watch crash rates, prioritize fixes, roll forward incrementally, and resist unsafe speed. Pwn2Own and Pwnium were used as forcing functions to prove critical fixes could be released and deployed in under 24 hours; the team says it can, but has rarely needed to because of defense in depth."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L114-L126",
+          "text": "Defense in depth is illustrated by the 2008 multiprocess architecture with sandboxed renderers, which contained the then-dominant threat of a malicious page installing malware, and by Site Isolation from 2012 after cross-site data theft became a plausible target. Site Isolation was predicted to take a year and ran more than five times longer; the team communicated the defense-in-depth rationale and code-health benefits to leadership. The authors note it coincidentally mitigates 2018 speculative-execution vulnerabilities and that user-invisible work needs proactive leadership support."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L132-L141",
+          "text": "Transparency is described as a founding value: no silent fixes or downplayed impact, public handling process, disclosure of all fixed vulnerabilities including dependencies, and release notes listing every fixed security issue where possible. The team also publishes quarterly summaries, runs a public mailing list, encourages conference and social sharing, pays and attributes VRP rewards, sponsors conferences, and connects embedded security teams at an annual offsite; the HTTPS adoption effort in Chapter 7 is cited as ecosystem change."
+        },
+        {
+          "kind": "inference",
+          "lines": "L45-L46,L105-L126",
+          "text": "This is a self-reported practitioner case study, not an independent evaluation. The 24-hour fix claim, the fivefold schedule overrun, and the organizational history are team recollections without measurement or comparison cases, so they illustrate the team's account rather than establish causal effects."
+        }
+      ],
+      "omissions": "Other book chapters outside this batch not read; no production experiment. Within this chapter, external links, cited works, and the endnote reference were not opened. No figures or tables are present. Only extractor artifacts were excluded from interpretation (missing space after the endnote number); no authored prose was omitted. No other edition, PDF, or secondary summary was used.",
+      "representation_sha256": "89d13444917772011a9750bb8cf2e43e7bbccc080db51f4dee5c6d08f95b1f98",
+      "retrieved_lines": 156,
+      "retrieved_words": 3324,
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+          "candidate": "Adjacent to sandboxing, site isolation, and defense in depth; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/security-tests.md",
+          "candidate": "Adjacent to fuzzing, security testing, and exploit-finding programs; relation only, no verdict."
+        },
+        {
+          "path": "book/delivery/safe-rollout-and-recovery.md",
+          "candidate": "Adjacent to fast automatic updates and staged rollout; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/quality-scenarios.md",
+          "candidate": "Adjacent to usability-versus-security trade-offs as quality attributes; relation only, no verdict."
+        },
+        {
+          "path": "book/security/identity-authorization-threat-models-and-isolation.md",
+          "candidate": "Adjacent to trust boundaries and security-architecture framing; relation only, no verdict."
+        }
+      ],
+      "reader": "B20e delegated reader R194 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R195",
+      "source_id": "src.secure-reliable",
+      "source_ids": [
+        "src.secure-reliable"
+      ],
+      "url": "https://google.github.io/building-secure-and-reliable-systems/raw/ch20.html",
+      "unit": "Chapter 20, Understanding Roles and Responsibilities (one chapter of Building Secure and Reliable Systems, raw HTML)",
+      "revision": "Building Secure and Reliable Systems, raw HTML 2023, corrected extraction",
+      "status": "full-scoped-text-read",
+      "coverage": "All 516 lines and 6,087 words of the assigned local representation were read sequentially from L1 to L516. Recomputed SHA-256 over the file equals the manifest value 33770959c918623c0dee80e38130675fef72b224060bde2e24418791870b888b; the file has 516 newline-terminated lines and 6,087 whitespace-delimited words. The corrected extraction preserves 6 [ASIDE] blocks (97, 67, 116, 134, 386, and 79 prose words), 1 [NOTE] (111 prose words in two paragraphs), 0 [CODE], and 1 [ENDNOTES] block (11 authored entries, 244 prose words), each containing authored text. [ASIDE] blocks are closed by [/ASIDE]; [NOTE] and [ENDNOTES] are emitted without closing markers in this extractor convention, so the note boundary was established from the HTML data-type=note div rather than from the text marker: it ends at L389, before the post-note paragraph at L392. The 17 headings match the HTML inventory, and a normalized fingerprint check found all 119 paragraph/heading/list blocks in the text. One table is present with the caption 'Security expertise needed at key milestones in Google's history' (5 rows by 3 columns, 15 cells); all cell text is present, but row and column boundaries are flattened in the extracted text. The chapter has no figures or images. Minor extractor artifacts (missing spaces after footnote numbers, flattened table cells) were ignored; no authored text was excluded. External links, cited works, and the endnote references were not opened.",
+      "retrieval_refs": [
+        {
+          "lines": "L1-L10",
+          "topic": "chapter label, title, authors, and contributing editors"
+        },
+        {
+          "lines": "L13-L18",
+          "topic": "aside: who should work on security and the specialist question"
+        },
+        {
+          "lines": "L21-L34",
+          "topic": "two framing questions and dependence on objectives and culture"
+        },
+        {
+          "lines": "L37-L45",
+          "topic": "aside: reliability roles covered in SRE book and workbook"
+        },
+        {
+          "lines": "L48-L57",
+          "topic": "security and reliability as everyone's responsibility; isolated-team failure"
+        },
+        {
+          "lines": "L60-L68",
+          "topic": "aside: the car analogy for embedded security and reliability"
+        },
+        {
+          "lines": "L71-L112",
+          "topic": "specialist roles, lifecycle consultation, cryptography, AAA, SRE infrastructure, and training"
+        },
+        {
+          "lines": "L95-L103",
+          "topic": "aside: security and reliability risk evaluation before launch"
+        },
+        {
+          "lines": "L115-L121",
+          "topic": "hiring security expertise and the medical-specialist analogy"
+        },
+        {
+          "lines": "L122-L169",
+          "topic": "milestone table: Search, AdWords, Blogger, and Gmail expertise and challenges"
+        },
+        {
+          "lines": "L171-L183",
+          "topic": "certifications, academic programs, and first-hire sequencing"
+        },
+        {
+          "lines": "L186-L243",
+          "topic": "when to start security, trigger conditions, breach examples, cost balance, and firewall automation"
+        },
+        {
+          "lines": "L246-L291",
+          "topic": "embedded versus centralized models, CISO reporting, Google central team and champions"
+        },
+        {
+          "lines": "L294-L339",
+          "topic": "aside: Google's smart intake questionnaire"
+        },
+        {
+          "lines": "L342-L380",
+          "topic": "Blue, Red, and Purple Teams; goals, boundaries, and scope differences"
+        },
+        {
+          "lines": "L363-L371",
+          "topic": "aside: protocol when Blue Team detects Red Team"
+        },
+        {
+          "lines": "L383-L389",
+          "topic": "note: limits of Red Team testing and internal education"
+        },
+        {
+          "lines": "L392-L395",
+          "topic": "post-note Red Team lessons and risk-tolerance roadmap"
+        },
+        {
+          "lines": "L398-L474",
+          "topic": "external researchers, VRP history, setup steps, challenges, and disclosure reading"
+        },
+        {
+          "lines": "L477-L480",
+          "topic": "conclusion on people, process, and shared responsibility"
+        },
+        {
+          "lines": "L483-L516",
+          "topic": "11 endnotes on SRE chapters, laws, breach cases, Purple Teams, and disclosure"
+        }
+      ],
+      "sections": [
+        {
+          "section": "Chapter heading and byline",
+          "lines": "L1-L10",
+          "coverage": "read"
+        },
+        {
+          "section": "Aside: who should work on security",
+          "lines": "L13-L18",
+          "coverage": "read; authored"
+        },
+        {
+          "section": "Introduction: two questions and cultural dependence",
+          "lines": "L21-L34",
+          "coverage": "read"
+        },
+        {
+          "section": "Aside: On Reliability",
+          "lines": "L37-L45",
+          "coverage": "read; authored"
+        },
+        {
+          "section": "Who Is Responsible for Security and Reliability?",
+          "lines": "L48-L57",
+          "coverage": "read"
+        },
+        {
+          "section": "Aside: A System Security and Reliability Analogy",
+          "lines": "L60-L68",
+          "coverage": "read; authored"
+        },
+        {
+          "section": "The Roles of Specialists",
+          "lines": "L71-L112",
+          "coverage": "read"
+        },
+        {
+          "section": "Aside: Security and Reliability Risk Evaluation",
+          "lines": "L95-L103",
+          "coverage": "read; authored"
+        },
+        {
+          "section": "Understanding Security Expertise",
+          "lines": "L115-L121",
+          "coverage": "read"
+        },
+        {
+          "section": "Table: security expertise at key milestones",
+          "lines": "L122-L169",
+          "coverage": "read as flattened text; 15 authored cells present, row and column structure lost"
+        },
+        {
+          "section": "Certifications and Academia",
+          "lines": "L171-L183",
+          "coverage": "read"
+        },
+        {
+          "section": "Integrating Security into the Organization",
+          "lines": "L186-L243",
+          "coverage": "read"
+        },
+        {
+          "section": "Embedding Security Specialists and Security Teams",
+          "lines": "L246-L255",
+          "coverage": "read"
+        },
+        {
+          "section": "Example: Embedding Security at Google",
+          "lines": "L258-L291",
+          "coverage": "read"
+        },
+        {
+          "section": "Aside: Google's Smart System for Intake",
+          "lines": "L294-L339",
+          "coverage": "read; authored"
+        },
+        {
+          "section": "Special Teams: Blue and Red Teams",
+          "lines": "L342-L380",
+          "coverage": "read"
+        },
+        {
+          "section": "Aside: Detecting Red Teams",
+          "lines": "L363-L371",
+          "coverage": "read; authored"
+        },
+        {
+          "section": "Note: limits of Red Team testing",
+          "lines": "L383-L389",
+          "coverage": "read; authored, 2 paragraphs"
+        },
+        {
+          "section": "Red Team lessons and internal education",
+          "lines": "L392-L395",
+          "coverage": "read"
+        },
+        {
+          "section": "External Researchers",
+          "lines": "L398-L474",
+          "coverage": "read"
+        },
+        {
+          "section": "Conclusion",
+          "lines": "L477-L480",
+          "coverage": "read"
+        },
+        {
+          "section": "Endnotes",
+          "lines": "L483-L516",
+          "coverage": "read; 11 authored entries"
+        }
+      ],
+      "notes": [
+        {
+          "kind": "source_claim",
+          "lines": "L13-L34",
+          "text": "The opening aside and introduction argue against the myth that only experts should handle security: security and reliability should be integrated into the system lifecycle and are everyone's responsibility, while specialists remain necessary in some cases. The chapter asks who is responsible and how the work is integrated, and says the answer depends on organizational objectives and culture, the next chapter's topic."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L37-L45",
+          "text": "A reliability aside says reliability roles are covered elsewhere and points to Chapter 32 of the SRE book and Chapters 18-20 of the SRE workbook, explaining why most of this chapter discusses security."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L51-L68",
+          "text": "An isolated security or reliability team without a mandate is said to produce repeated failures and Sisyphean work. Responsibility is assigned to developers, SREs, security engineers, test engineers, tech leads, managers, project managers, tech writers, and executives so nonfunctional requirements are considered across the lifecycle. A car analogy says every component and every builder embeds safety and reliability, not just experts."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L74-L112",
+          "text": "Specialists complement developers by viewing a system as an attacker, mapping dependency chains, and defining metrics. Their advice is meant to be integrated through design review at project outset, ongoing audits, and independent testing. Security specialists own cryptography ('don't roll your own crypto'), AAA systems, and secure frameworks; SREs own centralized infrastructure and organization-wide automation; specialists also codify practices, policies, and training and build a knowledge brain trust."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L115-L183",
+          "text": "Hiring is compared to medicine: all security professionals share a general body of knowledge but specialize. Small organizations may need a generalist, while growth creates specialized needs; a table maps Google Search (1998), AdWords (2000), Blogger (2003), and Gmail (2004) to expertise and security challenges. Certifications show interest and learning ability but not necessarily applied aptitude, and academic programs should be weighed with practical experience and organizational need; an experienced first hire can mentor early-career staff, while a niche problem may suit a new PhD."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L186-L243",
+          "text": "Security work should start before it is forced. Triggers listed are personal or sensitive data, highly secure or custom technology, regulation or audit (Sarbanes-Oxley, PCI DSS, GDPR), contractual security or breach-notification terms, a breach (ideally before one), and a peer's breach. A payment-vendor example connects insecure integration to fines, trust loss, and rework, with endnotes citing Code Spaces and the American Medical Collection Agency. Cost must be balanced against business requirements because turning everything off would be safe but fatal to availability; distributing firewall configuration across six product teams through an automated approval system is offered as cheaper and more reliable than a central team maintaining 120 firewalls. Boards and shareholder suits, including Yahoo! in 2017, are cited as nontechnical stakeholders."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L246-L291",
+          "text": "Embedding ranges from fully embedded specialists to a fully centralized team, with Google using a hybrid. CISO reporting lines vary across CEO, CFO, CIO, COO, general counsel, VP Engineering, and CSO, and the authors say there is no universally right configuration. At Google the central security organization is a peer to product engineering led by a VP, preserving independence; failure modes are inability to raise issues, being circumvented through silent launches, and poor documentation or code access. Security champions in product teams act as gateways, central teams keep design review, policy, frameworks, and least privilege, and Android and Chrome have decentralized product security teams. The section stresses an open, approachable team and timely feedback."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L294-L339",
+          "text": "An aside describes Google's smart intake system: a dynamic questionnaire replaces a one-size-fits-most ticket form, asks context-aware questions about memory safety, templating, sensitive data, and critical systems, warns about risky choices, routes structured tickets, and lets users bypass to 'other' for time-sensitive one-offs. Security engineers review commonly bypassed sections and adjust the questionnaire. Claimed outcomes are user self-service and education, faster and better recommendations, more tickets closed per week, and higher information quality."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L342-L395",
+          "text": "Blue Teams assess and harden software and infrastructure and handle detection, containment, and recovery; Red Teams run goal-oriented offensive exercises. Red Team goals include exfiltrating customer data to a safe destination, testing whether reconnaissance is detected, and demonstrating that theoretical issues are exploitable. Buy-in from legal and executives and boundaries such as no real customer data or production disruption are recommended, with test accounts as approximations. Some Red Teams share plans with Blue Teams or use a Purple Team. A note says Red Team attacks are not a perfect test because internal engineers know the systems and exercises cannot be frequent enough for real-time or statistically significant metrics; they still find rare edge cases and can teach an adversarial mindset. The post-note paragraph says embedding system engineers in an attack team teaches them how attackers work."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L398-L474",
+          "text": "External researchers are engaged through Vulnerability Reward Programs. Google's first VRP in 2006 offered a T-shirt and a public thank-you. Before launching a VRP, organizations should cover basic finding and scanning so they do not pay outsiders for bugs their own teams could catch and to reduce duplicate reports. Suggested steps are readiness, scope, payout levels and funds, in-house versus specialist operation, an intake/triage/investigation/validation/follow-up/fix process estimated at about 40 hours per serious issue excluding fixes, a payment process that accounts for global reporters and legal and finance constraints, and launch-learn-iterate. Expected challenges are report volume, poor-quality or non-bug reports, language barriers, and unsettled disclosure norms; the chapter points to Google, Project Zero, Oulu University, and ISO material."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L477-L480",
+          "text": "The conclusion says security and reliability are created by the quality or absence of processes and practices, that people are the most important drivers, and that effective employees collaborate across roles, departments, and cultural boundaries. Because the future and adversaries are unpredictable, making everyone responsible is called the best defense."
+        },
+        {
+          "kind": "inference",
+          "lines": "L122-L169,L434",
+          "text": "The chapter is prescriptive and experience-based. The milestone table is a historical illustration rather than a tested model, and the roughly 40-hour triage estimate is stated as experience without a sample, distribution, or method."
+        }
+      ],
+      "omissions": "Other book chapters outside this batch not read; no production experiment. Within this chapter, external links, cited works, and the 11 endnote references were not opened. The one table's 15 cells were read as flattened text; its row and column structure is lost in the local representation. Only extractor artifacts were excluded from interpretation (missing spaces after footnote numbers and flattened table cells); no authored prose was omitted. No other edition, PDF, or secondary summary was used.",
+      "representation_sha256": "33770959c918623c0dee80e38130675fef72b224060bde2e24418791870b888b",
+      "retrieved_lines": 516,
+      "retrieved_words": 6087,
+      "tycho_candidates": [
+        {
+          "path": "book/security/identity-authorization-threat-models-and-isolation.md",
+          "candidate": "Adjacent to trust boundaries and specialist security-architecture responsibilities; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md",
+          "candidate": "Adjacent to threat modeling and the adversarial perspective Red Teams exercise; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/security-tests.md",
+          "candidate": "Adjacent to adversarial security testing and decision gates; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md",
+          "candidate": "Adjacent to incident exercises, roles, and recovery readiness; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+          "candidate": "Adjacent to AAA and isolation controls that specialists own; relation only, no verdict."
+        }
+      ],
+      "reader": "B20e delegated reader R195 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R196",
+      "source_id": "src.secure-reliable",
+      "source_ids": [
+        "src.secure-reliable"
+      ],
+      "url": "https://google.github.io/building-secure-and-reliable-systems/raw/ch21.html",
+      "unit": "Chapter 21, Building a Culture of Security and Reliability (one chapter of Building Secure and Reliable Systems, raw HTML)",
+      "revision": "Building Secure and Reliable Systems, raw HTML 2023, corrected extraction",
+      "status": "full-scoped-text-read",
+      "coverage": "All 464 lines and 9,862 words of the assigned local representation were read sequentially from L1 to L464. Recomputed SHA-256 over the file equals the manifest value 71c59d3eb1fad42a73c35e1b42e35ed10218d98e032bcef8937f8720f7ccaca5; the file has 464 newline-terminated lines and 9,862 whitespace-delimited words. The corrected extraction preserves 5 [ASIDE] blocks (198, 119, 127, 115, and 158 prose words), 0 [NOTE], 0 [CODE], and 1 [ENDNOTES] block (16 authored entries, 544 prose words), each containing authored text. [ASIDE] blocks are closed by [/ASIDE]; [ENDNOTES] is emitted without a closing marker in this extractor convention and is bounded by end of file. The two unusually long list lines at L261 and L364 were read in full via wrapped output. The 26 headings match the HTML inventory, and a normalized fingerprint check found all 124 paragraph/heading/list blocks in the text. Two figures are present (Figure 21-1, a security training game, and Figure 21-2, an episode of Testing on the Toilet) but only their captions and image alt text appear in the representation; the images themselves were not viewed. The chapter has no tables. Minor extractor artifacts (missing spaces after footnote numbers) were ignored; no authored text was excluded. External links, cited works, and the 16 endnote references were not opened.",
+      "retrieval_refs": [
+        {
+          "lines": "L1-L10",
+          "topic": "chapter label, title, author, and contributing editors"
+        },
+        {
+          "lines": "L13-L24",
+          "topic": "aside: employee awareness, chapter scope, and adaptation caveat"
+        },
+        {
+          "lines": "L27-L39",
+          "topic": "incident and accidental-push scenarios; blameless postmortems, error budgets, transparency"
+        },
+        {
+          "lines": "L42-L63",
+          "topic": "defining a healthy culture and security/reliability by default"
+        },
+        {
+          "lines": "L66-L96",
+          "topic": "culture of review, multi-party authorization, code and configuration review"
+        },
+        {
+          "lines": "L99-L110",
+          "topic": "aside: reducing review friction"
+        },
+        {
+          "lines": "L113-L113",
+          "topic": "reviewer context and Tricorder-style automated checks"
+        },
+        {
+          "lines": "L116-L132",
+          "topic": "culture of awareness, training, games, documentation, ToT flyers, and just-in-time notices"
+        },
+        {
+          "lines": "L134-L157",
+          "topic": "culture of yes, App Engine, and error budgets"
+        },
+        {
+          "lines": "L143-L154",
+          "topic": "aside: balancing accountability and risk taking"
+        },
+        {
+          "lines": "L160-L166",
+          "topic": "culture of inevitability and exercises"
+        },
+        {
+          "lines": "L169-L180",
+          "topic": "aside: NASA Columbia after-action report"
+        },
+        {
+          "lines": "L183-L192",
+          "topic": "culture of sustainability, workload, and burnout"
+        },
+        {
+          "lines": "L195-L206",
+          "topic": "aside: Google follow-the-sun staffing and Project Oxygen"
+        },
+        {
+          "lines": "L209-L226",
+          "topic": "temporary all-hands deviations and return to sustainability"
+        },
+        {
+          "lines": "L230-L296",
+          "topic": "changing culture through practice: incentives, fear reduction, safety nets, usability"
+        },
+        {
+          "lines": "L257-L261",
+          "topic": "canaries, dogfooding, trusted testers, opt-in, and progressive stringency"
+        },
+        {
+          "lines": "L272-L296",
+          "topic": "transparent functionality, security keys, and Upvote self-service"
+        },
+        {
+          "lines": "L299-L330",
+          "topic": "overcommunication, dashboards, empathy, job swaps, and recognition"
+        },
+        {
+          "lines": "L333-L401",
+          "topic": "convincing leadership, building a case, picking battles, and escalation"
+        },
+        {
+          "lines": "L360-L364",
+          "topic": "case-building steps from data through changing the zeitgeist"
+        },
+        {
+          "lines": "L375-L401",
+          "topic": "escalation guidelines and Google security-dispute example"
+        },
+        {
+          "lines": "L404-L413",
+          "topic": "conclusion on designing and maintaining culture"
+        },
+        {
+          "lines": "L416-L464",
+          "topic": "16 endnotes on SRE chapters, studies, NIST, Password Alert, and Production Excellence"
+        }
+      ],
+      "sections": [
+        {
+          "section": "Chapter heading and byline",
+          "lines": "L1-L10",
+          "coverage": "read"
+        },
+        {
+          "section": "Aside: employee awareness and chapter scope",
+          "lines": "L13-L24",
+          "coverage": "read; authored"
+        },
+        {
+          "section": "Introduction: two culture scenarios",
+          "lines": "L27-L39",
+          "coverage": "read"
+        },
+        {
+          "section": "Defining a Healthy Security and Reliability Culture",
+          "lines": "L42-L45",
+          "coverage": "read"
+        },
+        {
+          "section": "Culture of Security and Reliability by Default",
+          "lines": "L48-L63",
+          "coverage": "read"
+        },
+        {
+          "section": "Culture of Review",
+          "lines": "L66-L96",
+          "coverage": "read"
+        },
+        {
+          "section": "Aside: Reducing Friction",
+          "lines": "L99-L110",
+          "coverage": "read; authored"
+        },
+        {
+          "section": "Reviewer context and automated checks",
+          "lines": "L113-L113",
+          "coverage": "read"
+        },
+        {
+          "section": "Culture of Awareness",
+          "lines": "L116-L132",
+          "coverage": "read"
+        },
+        {
+          "section": "Culture of Yes",
+          "lines": "L134-L157",
+          "coverage": "read"
+        },
+        {
+          "section": "Aside: Balancing Accountability and Risk Taking",
+          "lines": "L143-L154",
+          "coverage": "read; authored"
+        },
+        {
+          "section": "Culture of Inevitably",
+          "lines": "L160-L166",
+          "coverage": "read"
+        },
+        {
+          "section": "Aside: Using Related Case Studies (NASA Columbia)",
+          "lines": "L169-L180",
+          "coverage": "read; authored"
+        },
+        {
+          "section": "Culture of Sustainability",
+          "lines": "L183-L192",
+          "coverage": "read"
+        },
+        {
+          "section": "Aside: Sustainable Reliability and Security Culture at Google",
+          "lines": "L195-L206",
+          "coverage": "read; authored"
+        },
+        {
+          "section": "Exceptional circumstances and temporary deviation",
+          "lines": "L209-L226",
+          "coverage": "read"
+        },
+        {
+          "section": "Changing Culture Through Good Practice",
+          "lines": "L230-L242",
+          "coverage": "read"
+        },
+        {
+          "section": "Align Project Goals and Participant Incentives",
+          "lines": "L245-L254",
+          "coverage": "read"
+        },
+        {
+          "section": "Reduce Fear with Risk-Reduction Mechanisms",
+          "lines": "L257-L261",
+          "coverage": "read; long list line L261 read in full"
+        },
+        {
+          "section": "Make Safety Nets the Norm",
+          "lines": "L263-L269",
+          "coverage": "read"
+        },
+        {
+          "section": "Increase Productivity and Usability",
+          "lines": "L272-L296",
+          "coverage": "read"
+        },
+        {
+          "section": "Overcommunicate and Be Transparent",
+          "lines": "L299-L303",
+          "coverage": "read"
+        },
+        {
+          "section": "Build Empathy",
+          "lines": "L305-L330",
+          "coverage": "read"
+        },
+        {
+          "section": "Convincing Leadership",
+          "lines": "L333-L339",
+          "coverage": "read"
+        },
+        {
+          "section": "Understand the Decision-Making Process",
+          "lines": "L342-L357",
+          "coverage": "read"
+        },
+        {
+          "section": "Build a Case for Change",
+          "lines": "L360-L364",
+          "coverage": "read; long list line L364 read in full"
+        },
+        {
+          "section": "Pick Your Battles",
+          "lines": "L366-L372",
+          "coverage": "read"
+        },
+        {
+          "section": "Escalations and Problem Resolution",
+          "lines": "L375-L401",
+          "coverage": "read"
+        },
+        {
+          "section": "Conclusion",
+          "lines": "L404-L413",
+          "coverage": "read"
+        },
+        {
+          "section": "Endnotes",
+          "lines": "L416-L464",
+          "coverage": "read; 16 authored entries"
+        }
+      ],
+      "notes": [
+        {
+          "kind": "source_claim",
+          "lines": "L13-L24",
+          "text": "The opening aside asks whether a new employee understands security and reliability priorities and their own role, then frames the chapter as healthy-culture patterns, practices for changing culture, and ways to influence leadership. It cautions that no two organizations are alike, that not every practice will fit, and that Google does not follow its own advice perfectly."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L27-L39",
+          "text": "Two scenarios set up the argument: a CEO-prioritized deal threatened by an attacker, where a healthy culture reports the incident despite delay, and an accidental frontend push that takes revenue offline, where a reliability culture redesigns the process. The chapter recommends blameless postmortems, error budgets instead of 100% targets, safe code pushes, and transparency rather than hiding incidents."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L48-L63",
+          "text": "Security and reliability should be secure and reliable by default rather than retrofitted, compared to buying a car and separately sourcing seat belts, windshield review, and airbag inspection. Early lifecycle choices are said to preserve sustained velocity and consistency; automation, sanitizers, vulnerability discovery, testing, frameworks, libraries, and language guidance reduce friction and memory-safety errors. The authors point to Chapters 12, 13, and 19 for Google's evolution."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L66-L113",
+          "text": "A review culture makes everyone think about approval before a change. Examples are multi-party authorization for access, peer code review, and configuration review before production. Practices should be documented, new developers and reviewers educated, and reviewers onboarded through apprenticeship; owners are responsible for standards but not exempt from review of their own changes. The Reducing Friction aside recommends lightweight paths for minor changes and good tooling, while still requiring review; reviewers need enough context and may decline or redirect, with automated checks such as Tricorder helping."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L116-L132",
+          "text": "Awareness means people know their security and reliability responsibilities and how to carry them out, with examples of account security, phishing exposure, and executive travel. Education should be lighthearted and interactive because retention varies; Google uses mandatory annual training plus role-specific programs, interactive talks on root causes, games such as the XSS game in Figure 21-1, reference documentation with clear ownership, weekly one-page 'Testing on the Toilet' flyers in restrooms (Figure 21-2), and just-in-time notifications for actions such as upgrading from an untrusted repository or uploading sensitive data."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L134-L157",
+          "text": "A culture of no avoids risk and can stagnate an organization; healthy cultures take risks deliberately and measure them. Google App Engine is the example: running third-party untrusted code looked too risky, but a layered hardened collaboration between product and security made launch possible and built trust for later security work. The Balancing Accountability aside says fear of making the wrong call makes reviewers less willing to accept risk, and layered controls such as least privilege, resiliency, and testing lift the burden of individual perfection. Error budgets give explicit room for risky changes until a limit is reached."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L160-L180",
+          "text": "No system is perfect, so teams should assume failure can happen and prepare. Preparation includes tabletops, Red Team attacks, recovery tests, and role playing; incident skills need regular use. The chapter recommends studying failures through blameless postmortems and after-action reports from other organizations and industries. A NASA aside describes the 2003 Columbia Disaster Investigation Board report, whose Chapter 7 found that NASA's organizational setup and norms impeded a safety culture, as a public example of learning from failure."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L183-L226",
+          "text": "Sustainability requires continuous resources and processes for outages, incidents, and emergencies, plus balance between reactive work and proactive investment. Teams should measure operational workload and improvement investment, consider stress, burnout, and morale, avoid heroics through repeatable processes and staff rotation, and surface concerns. Google's follow-the-sun staffing, protected improvement time, and manager training under Project Oxygen are cited. Exceptional all-hands periods should be declared temporary, run by a standby group with decision authority and exception power, have bypasses flagged and reviewed later, and end with a postmortem that examines whether reward systems caused the emergency."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L230-L296",
+          "text": "Resistance to change is often fear of friction, but the authors call the belief that security and reliability must create friction a myth. Risk-reduction tactics are canaries and staged rollouts, dogfooding, trusted testers, opting in before mandates, and progressive stringency; the staged Chrome release and internal adoption of security keys or endpoint software are examples. Safety nets such as breakglass procedures let teams bypass a stringent control sparingly and with audit. Usability work includes secure-by-construction APIs, security keys that are easier than one-time passwords and allow less frequent password changes, and the Upvote self-service portal where peers can approve software not on an allow list."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L299-L330",
+          "text": "Communication advice is to document why a change is happening, what success looks like, how it rolls back, and whom to contact; to create feedback channels; to use dashboards for multi-team changes; and to write frequent stakeholder updates for long efforts. Empathy is built through shared work, Chrome fixits, job shadowing or swapping, the SRE Security Exchange, Mission Control, and Hacker Camp, plus thank-you mechanisms such as peer bonuses, Kudos, and postcards."
+        },
+        {
+          "kind": "source_claim",
+          "lines": "L333-L401",
+          "text": "For leadership buy-in, the chapter advises identifying the actual decider, which may be an executive, a lawyer or risk officer, a tech lead, a stakeholder group, or a community, and understanding that person's pressures and priorities. A case for change should gather data, educate others (including through Red Team postmortems), align incentives, find allies, observe industry trends, and change the zeitgeist over time. Teams should pick battles and treat lost causes as preparation. Escalation guidance is to form an unbiased group, summarize options factually, align one's own leadership, and convene affected management chains with designated deciders; Google security disputes between product and reviewer are cited as a normalized escalation."
+        },
+        {
+          "kind": "inference",
+          "lines": "L137-L157,L233-L296",
+          "text": "The chapter is prescriptive and anecdotal. The claim that security and reliability improvements need not create friction is explicitly an opinion, and the Google programs and error-budget advice are not accompanied by measurements, comparison cases, or failure rates, so they document practitioner belief and experience rather than tested effectiveness."
+        }
+      ],
+      "omissions": "Other book chapters outside this batch not read; no production experiment. Within this chapter, external links, cited works, and the 16 endnote references were not opened. Figure 21-1 (XSS game) and Figure 21-2 (Testing on the Toilet) were available only as captions and alt text; the images were not viewed. Only extractor artifacts were excluded from interpretation (missing spaces after footnote numbers); no authored prose was omitted. No other edition, PDF, or secondary summary was used.",
+      "representation_sha256": "71c59d3eb1fad42a73c35e1b42e35ed10218d98e032bcef8937f8720f7ccaca5",
+      "retrieved_lines": 464,
+      "retrieved_words": 9862,
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/budget-actions.md",
+          "candidate": "Adjacent to error budgets as explicit room for risk-taking; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md",
+          "candidate": "Adjacent to blameless exercises, postmortems, and recovery readiness; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/architecture-views-and-decision-records.md",
+          "candidate": "Adjacent to documenting decisions, rationale, and reviewer context; relation only, no verdict."
+        },
+        {
+          "path": "book/delivery/safe-rollout-and-recovery.md",
+          "candidate": "Adjacent to canaries, staged rollout, and breakglass safety nets; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md",
+          "candidate": "Adjacent to building a case for change and recording decisions; relation only, no verdict."
+        }
+      ],
+      "reader": "B20e delegated reader R196 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 144,
+    "full_reads": 153,
     "blocked": 14,
     "records": [
       "R015",
@@ -17009,7 +18343,16 @@
       "R184",
       "R185",
       "R186",
-      "R187"
+      "R187",
+      "R188",
+      "R189",
+      "R190",
+      "R191",
+      "R192",
+      "R193",
+      "R194",
+      "R195",
+      "R196"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
