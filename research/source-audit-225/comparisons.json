@@ -134,6 +134,32 @@
       "severity": "none",
       "proposed_action": "No correction. The two levels (OS event loop and Reactor scheduler) should not be conflated.",
       "status": "candidate"
+    },
+    {
+      "id": "C011",
+      "book_page": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+      "book_anchor": "lines 51-60",
+      "source_id": "src.ostep",
+      "source_record": "B092",
+      "source_unit": "OSTEP chapter 42, sections 42.1-42.4",
+      "observation": "Tycho asks what is durable when a primary acknowledges. OSTEP journaling makes the same point at the file-system layer: a transaction-end commit and ordered data-before-commit are protocol conditions, not properties implied by writing a log.",
+      "support": "qualified",
+      "severity": "none",
+      "proposed_action": "No correction. Keep acknowledgment, log commit and data durability as separate claims.",
+      "status": "candidate"
+    },
+    {
+      "id": "C012",
+      "book_page": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/replication-acks.md",
+      "book_anchor": "lines 46-60",
+      "source_id": "src.ostep",
+      "source_record": "B098",
+      "source_unit": "OSTEP chapter 48, sections 48.1-48.6",
+      "observation": "Tycho distinguishes replica and acknowledgment conditions for durability and availability. OSTEP reliable messaging shows why an acknowledgment can be lost after the effect and why duplicate delivery is a separate problem; exactly-once is conditional, not automatic.",
+      "support": "qualified",
+      "severity": "none",
+      "proposed_action": "No correction. Keep acknowledgment, replication and effect identity as separate obligations.",
+      "status": "candidate"
     }
   ]
 }

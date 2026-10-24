@@ -1,7 +1,7 @@
 # Foundational book reading
 
 Issue [#225](https://github.com/rouslanbaranov/tycho/issues/225). Updated 2026-10-24.
-**SRE whole-book reading complete; OSTEP CPU, memory/VM, swapping and concurrency batches read;**
+**SRE whole-book reading complete; OSTEP main 51-chapter sequence read; security and appendices remain;**
 **wider reading and comparison in progress.** The owner prioritized foundational
 books over further technology-reference auditing. Earlier reference readings remain
 recorded; one whole book is now complete. The wider source-reading and Tycho
@@ -12,7 +12,7 @@ comparison obligations remain open.
 | Book | Actual progress | Next action |
 | --- | --- | --- |
 | Site Reliability Engineering | All 48 public book units read: 34 chapters, foreword, preface, five part introductions, six appendices and bibliography, with footnotes, tables, examples and embedded figures/formulas | Whole scoped book complete; compare exact passages with the frozen Tycho baseline and separately read linked publications; see `SRE-COMPLETION.md` |
-| Operating Systems: Three Easy Pieces | Chapters 1, 3-34 read completely (33 new units; chapter 2 earlier): CPU virtualization, scheduling, memory and paging, swapping and complete VM, and concurrency. 34 numbered units total; raster figures not visually inspected | Continue chapters 35-51 (persistence and distribution) and appendices |
+| Operating Systems: Three Easy Pieces | Chapters 1, 3-51 read completely (50 new units; chapter 2 earlier): CPU virtualization, memory, concurrency, persistence and distributed file systems. The main 51-chapter sequence is complete; security chapters 52-57 and appendices remain. Raster figures not visually inspected | Read security chapters 52-57 and appendices; keep figure and exercise limits explicit |
 | Designing Data-Intensive Applications, 2nd edition | Publisher contents and short chapter 1 preview only | Full text requires lawful access; do not count the preview as chapter reading or silently substitute the first edition |
 | Distributed Systems, 4th edition | Author's access instructions examined; no book text obtained | Personalized download requires an email and human-verification step; no request submitted |
 | Other registered books | Not started in this audit | Continue `book-queue.json`; distinguish available complete texts from commercial previews |
@@ -236,4 +236,64 @@ linked papers, code and simulator exercises were not executed.
 
 These are mechanism and policy notes, not measurements. Candidate comparisons
 for concurrency-related Tycho pages are extended in
+[comparisons.json](comparisons.json).
+
+## OSTEP continuation - persistence and distribution
+
+Seventeen records B085-B101 add chapters 35-51: 4,933 retrieved lines, 101,044
+words and 243 pages. The combined OSTEP continuation is 50 records: 17,778
+lines, 257,074 words and 651 pages. Raster figures and trace tables were not
+visually inspected; linked papers, code and exercises were not executed.
+
+- **Chapter 35:** persistence means making data survive crashes, device
+  failures and power loss; durability is a separate problem from memory
+  virtualization.
+- **Chapter 36:** devices expose status/command/data registers; polling,
+  interrupts, DMA and coalescing trade CPU cost against latency, and drivers
+  provide a device-neutral seam.
+- **Chapter 37:** disk time is seek plus rotation plus transfer; SSTF and
+  SCAN-family policies trade starvation against head movement, and only a
+  single-sector write is atomic.
+- **Chapter 38:** RAID levels 0, 1, 4 and 5 trade capacity, reliability and
+  small-write cost; consistent update requires ordering across disks.
+- **Chapter 39:** the file API distinguishes descriptors, open-file-table
+  entries, offsets and links; buffered writes, fsync, atomic rename and
+  permissions define the actual durability and visibility contract.
+- **Chapter 40:** file-system implementation connects inodes, directories,
+  free-space structures and the open/read/write path; no layout is universal.
+- **Chapter 41:** FFS uses cylinder groups, locality-aware allocation and
+  larger blocks to improve disk-aware throughput while managing internal and
+  external fragmentation.
+- **Chapter 42:** crash consistency requires protocol ordering. FSCK repairs
+  known structures but cannot detect metadata-consistent garbage; journaling
+  uses a transaction end marker, redo replay and ordered data-before-commit.
+- **Chapter 43:** LFS buffers segments, uses an inode map and checkpoint
+  region, and pays for sequential writes through cleaning and space
+  amplification.
+- **Chapter 44:** flash needs erase-before-program; an FTL adds logical-to-
+  physical mapping, garbage collection and wear leveling, with dated 2015
+  performance evidence.
+- **Chapter 45:** integrity failures include detectable errors, silent
+  corruption, misdirected writes and lost writes; checksums detect but do not
+  repair without an independent good copy, and scrubbing bounds coverage.
+- **Chapter 46:** the summary connects durability, crash consistency and
+  technology-aware file systems; flash changes mechanisms but not the value of
+  locality and recovery reasoning.
+- **Chapter 47:** distributed systems face loss, crash and corruption; the
+  book's treatment focuses on distributed file systems.
+- **Chapter 48:** reliable messaging uses acknowledgment, timeout, retry and
+  sequence numbers; RPC is the dominant abstraction, duplicates arise from lost
+  acknowledgments, and the end-to-end argument locates final verification at
+  the application.
+- **Chapter 49:** NFSv2 keeps the server stateless and retries operations; file
+  handles, client offsets, idempotent retry, close-to-open consistency and an
+  attribute cache define its visibility limits.
+- **Chapter 50:** AFS uses callbacks and FIDs; close-time consistency and
+  callback state improve scale but make server restart a cache-wide
+  invalidation event, and large-file trade-offs depend on workload.
+- **Chapter 51:** the summary treats failure, redundancy, retry and exact
+  protocol semantics as the durable distributed lessons.
+
+These are mechanism and policy notes, not measurements. Candidate comparisons
+for durability and replication pages are extended in
 [comparisons.json](comparisons.json).

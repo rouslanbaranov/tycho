@@ -2266,5 +2266,1159 @@
     "remaining": "Explicit omissions: no raster figures are present; the linked gamified deadlock exercise and the cited Outliers book were not read; the dialogue contains no exercises to execute.",
     "reader": "Delegated reading subagent; no independent review or execution.",
     "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B085",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-persistence.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-persistence.pdf",
+    "unit": "Complete chapter 35, A Dialogue on Persistence",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:29:54Z; 4 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 64 lines / 4 pages; complete dialogue text; no figures, tables or footnotes.",
+    "retrieved_lines": 64,
+    "retrieved_words": 366,
+    "representation_sha256": "64aed1a224e21de7c9b0274c3d991db9d6d16adcf175b45267257feee67e048b",
+    "pages": 4,
+    "pdf_sha256": null,
+    "sections": [
+      "Part III: Persistence",
+      "A Dialogue on Persistence"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/dialogue-persistence.md lines 1-64",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: persistence means making information survive crashes, disk failures and power outages, and it requires additional work.",
+      "Source claim: the OS manages durable storage in addition to CPU and memory; persistence is presented as the third pillar after virtualization and concurrency.",
+      "Source claim: the persistence section covers I/O devices, disks, RAID, files and directories, file-system implementation, FFS, journaling, LFS, SSDs and data integrity.",
+      "Inference: persistence is not one mechanism; it spans device reliability, layout, naming, crash consistency and verification.",
+      "Inference: durability and availability are different promises; a surviving copy does not by itself answer whether a write committed.",
+      "The dialogue contains no measurement, recovery procedure or guarantee; it is scope framing."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+        "candidate": "Does the WAL page separate logical commit, physical durability and media failure, as OSTEP separates memory persistence from device failure?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+        "candidate": "Does the recovery page distinguish crash recovery from disk failure and from replica failover?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
+        "candidate": "Does the object-lifecycle page distinguish durability, availability and retention policy?"
+      }
+    ],
+    "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is framing, not technical evidence.",
+    "reader": "Tycho agent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B086",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/file-devices.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/file-devices.pdf",
+    "unit": "Complete chapter 36, I/O Devices",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-09T21:59:35Z; 14 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 233 lines / 14 pages; sections 36.1-36.10 plus References; 6 figures (36.1-36.6), 5 CRUX boxes, 1 TIP box, inline four-step protocol pseudo-code and the Figure 36.6 xv6 IDE driver listing; no homework section; raster figures not visually inspected",
+    "retrieved_lines": 233,
+    "retrieved_words": 5222,
+    "representation_sha256": "ce62b421db6badb72dd31255bc2f7d3b83aab191cc3561121eea02bc92bb3ee3",
+    "pages": 14,
+    "pdf_sha256": null,
+    "sections": [
+      "36.1 System Architecture",
+      "36.2 A Canonical Device",
+      "36.3 The Canonical Protocol",
+      "36.4 Lowering CPU Overhead With Interrupts",
+      "36.5 More Efficient Data Movement With DMA",
+      "36.6 Methods Of Device Interaction",
+      "36.7 Fitting Into The OS: The Device Driver",
+      "36.8 Case Study: A Simple IDE Disk Driver",
+      "36.9 Historical Notes",
+      "36.10 Summary",
+      "References"
+    ],
+    "figures": [
+      "Figure 36.1: Prototypical System Architecture",
+      "Figure 36.2: Modern System Architecture",
+      "Figure 36.3: A Canonical Device",
+      "Figure 36.4: The File System Stack",
+      "Figure 36.5: The IDE Interface",
+      "Figure 36.6: The xv6 IDE Disk Driver (Simplified)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/file-devices.md lines 1-233",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: a canonical device presents status, command and data registers, and the OS drives it by polling until ready, writing data, writing a command, then polling until done.",
+      "Source claim: that protocol is programmed I/O (PIO) because the CPU moves the data; it is simple but burns CPU cycles waiting on a slow device.",
+      "Source claim: interrupts let the OS sleep the requester and run other work, with an interrupt handler completing the request and waking the process.",
+      "Source claim: interrupts are not always better; for a device that finishes before the first poll, interrupt and context-switch cost dominate, so a hybrid poll-then-interrupt approach is suggested.",
+      "Source claim: a flood of interrupts can livelock the kernel, cited from Mogul and Ramakrishnan's network work, and interrupt coalescing trades latency for lower per-interrupt overhead.",
+      "Source claim: DMA offloads bulk copying to a DMA engine that interrupts the CPU on completion, freeing the CPU during the transfer.",
+      "Source claim: device registers are reached either by privileged explicit I/O instructions (x86 in/out) or by memory-mapped loads and stores into device addresses.",
+      "Source claim: a device driver encapsulates device specifics below a generic block interface, and the chapter cites a study putting over 70% of Linux kernel code in drivers, with driver bugs a leading crash cause.",
+      "Inference: the driver layering buys device neutrality at a real cost, since a generic interface discards device-specific detail; the chapter's own example is SCSI error reporting collapsing to a generic EIO.",
+      "Inference: the xv6 queue-plus-sleep driver implies the completion path is load-bearing, because a request is only retired when the interrupt handler drains the queue and starts the next request."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-acceptance.md",
+        "candidate": "Does the acceptance section distinguish acknowledgement by a device or cache from durable completion, as this chapter distinguishes write-back reporting from the write reaching the platter?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/measurement-boundary.md",
+        "candidate": "Does the measurement boundary separate device service time from queueing delay, matching the chapter's split between I/O time and CPU overhead?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/upload-integrity.md",
+        "candidate": "For large transfers, does the page account for CPU copy or checksum cost that DMA-style offload would remove?"
+      }
+    ],
+    "remaining": "Raster figures 36.1-36.6 not visually inspected; only captured caption and diagram-label text was read. Cited papers and sources ([A+11], [MR96], [C01], [S03], [G08], [W10], [CK+08], [S08]) were not retrieved; the xv6 ide.c source was not fetched. This chapter has no homework or exercises to execute.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B087",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/file-disks.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/file-disks.pdf",
+    "unit": "Complete chapter 37, Hard Disk Drives",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:30:23Z; 16 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 402 lines / 16 pages; sections 37.1-37.6 plus References and Homework (Simulation); 8 figures (37.1-37.8), numbered equations 37.1-37.8, 3 CRUX boxes, 2 TIP boxes, 2 asides (dimensional analysis, computing the average seek), 10 unexecuted simulator exercises; raster figures not visually inspected",
+    "retrieved_lines": 402,
+    "retrieved_words": 6569,
+    "representation_sha256": "7e974e2a7c888a2286ac6719029426d8f013f898856c5fe0d225a33d3524c4a5",
+    "pages": 16,
+    "pdf_sha256": null,
+    "sections": [
+      "37.1 The Interface",
+      "37.2 Basic Geometry",
+      "37.3 A Simple Disk Drive",
+      "Single-track Latency: The Rotational Delay",
+      "Multiple Tracks: Seek Time",
+      "Some Other Details",
+      "37.4 I/O Time: Doing The Math",
+      "37.5 Disk Scheduling",
+      "SSTF: Shortest Seek Time First",
+      "Elevator (a.k.a. SCAN or C-SCAN)",
+      "SPTF: Shortest Positioning Time First",
+      "Other Scheduling Issues",
+      "37.6 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 37.1: A Disk With Just A Single Track",
+      "Figure 37.2: A Single Track Plus A Head",
+      "Figure 37.3: Three Tracks Plus A Head (Right: With Seek)",
+      "Figure 37.4: Three Tracks: Track Skew Of 2",
+      "Figure 37.5: Disk Drive Specs: SCSI Versus SATA",
+      "Figure 37.6: Disk Drive Performance: SCSI Versus SATA",
+      "Figure 37.7: SSTF: Scheduling Requests 21 And 2",
+      "Figure 37.8: SSTF: Sometimes Not Good Enough"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/file-disks.md lines 1-402",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: the interface is a flat array of 512-byte sectors numbered 0 to n-1; multi-sector operations are possible, but the only atomicity guarantee is a single 512-byte write, so a power loss can leave a torn write.",
+      "Source claim: the \"unwritten contract\" of disks (Schlosser and Ganger) is that nearby blocks and contiguous runs are faster, an assumption clients make but the interface does not promise.",
+      "Source claim: I/O time is seek plus rotational delay plus transfer, and the average rotational delay is half a rotation derived from RPM; 15,000 RPM implies 4 ms per rotation and 2 ms average delay.",
+      "Source claim: in the worked two-drive comparison, 4 KB random reads yield about 0.66 MB/s on the Cheetah and 0.31 MB/s on the Barracuda, while sequential 100 MB transfers approach 125 and 105 MB/s, a gap of roughly 200 to 300 times.",
+      "Source claim: SSTF orders by nearest track and can starve distant requests; SCAN sweeps back and forth, F-SCAN freezes the queue per sweep, C-SCAN sweeps one direction for fairness, and SPTF adds rotation but is usually implemented inside the drive.",
+      "Source claim: track skew offsets sector numbering across adjacent tracks so cross-track sequential reads avoid nearly a full rotational wait, and multi-zone drives put more sectors on outer tracks.",
+      "Source claim: drives carry an 8-16 MB cache, and write-back caching acknowledges before the data reaches the platter, which the chapter calls dangerous for ordering-sensitive file systems and defers to the journaling chapter.",
+      "Source claim: the familiar one-third average-seek figure comes from average seek distance under a uniform model, not from measured seek time.",
+      "Inference: the three-term equation is service time for one isolated request, so it is a lower bound on observed latency; queueing, request merging and OS batching sit outside it.",
+      "Inference: every policy described is greedy and only helps when the queue is deeper than one, so the chapter's practical advice reduces to batching requests and keeping sequential and random traffic apart."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/storage-workload.md",
+        "candidate": "Does the workload model separate random and sequential access costs the way this chapter's two workloads do, or does it quote one blended throughput figure?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+        "candidate": "Does the acknowledgment section state which layer acknowledged the write, matching the chapter's distinction between drive write-back reporting and the data reaching the platter?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+        "candidate": "Is cost per byte treated as a distinct axis from cost per I/O, as the chapter separates capacity drives from performance drives?"
+      }
+    ],
+    "remaining": "Raster figures 37.1-37.8 not visually inspected; only caption and diagram-label text was read. The disk.py simulator and all 10 homework exercises were not run. Cited papers and data sheets ([RW92], [ADR03], [SG04], [SCO90], [ID01], [CKR72], [S09a], [S09b]) were not retrieved.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B088",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/file-raid.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/file-raid.pdf",
+    "unit": "Complete chapter 38, Redundant Arrays of Inexpensive Disks (RAIDs)",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:30:32Z; 18 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 324 lines / 18 pages; sections 38.1-38.10 plus References and Homework (Simulation); 8 figures (38.1-38.8), equation 38.1, inline XOR bit tables, three asides/tips (transparency, RAID mapping problem, consistent update) and 8 homework questions; the only tabular material is the Figure 38.8 comparison matrix; raster figures not visually inspected",
+    "retrieved_lines": 324,
+    "retrieved_words": 8549,
+    "representation_sha256": "3a0cd6663b4856735fdf555f10b2c238504b4a37ed41db88db658064bc38d54f",
+    "pages": 18,
+    "pdf_sha256": null,
+    "sections": [
+      "38.1 Interface And RAID Internals",
+      "38.2 Fault Model",
+      "38.3 How To Evaluate A RAID",
+      "38.4 RAID Level 0: Striping",
+      "38.5 RAID Level 1: Mirroring",
+      "38.6 RAID Level 4: Saving Space With Parity",
+      "38.7 RAID Level 5: Rotating Parity",
+      "38.8 RAID Comparison: A Summary",
+      "38.9 Other Interesting RAID Issues",
+      "38.10 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 38.1: RAID-0: Simple Striping",
+      "Figure 38.2: Striping With A Bigger Chunk Size",
+      "Figure 38.3: Simple RAID-1: Mirroring",
+      "Figure 38.4: RAID-4 With Parity",
+      "Figure 38.5: Full-stripe Writes In RAID-4",
+      "Figure 38.6: Example: Writes To 4, 13, And Respective Parity Blocks",
+      "Figure 38.7: RAID-5 With Rotated Parity",
+      "Figure 38.8: RAID Capacity, Reliability, and Performance"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/file-raid.md lines 1-324",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: a RAID presents a linear array of blocks and maps each logical request to one or more physical disks, and the chapter credits transparency (it can replace a SCSI disk with no host or OS change) for much of RAID's adoption.",
+      "Source claim: designs are compared on capacity, reliability and performance under a fail-stop fault model in which a disk is either fully working or permanently lost, failure is immediately detectable, and silent corruption or latent sector errors are deferred to the data-integrity chapter.",
+      "Source claim: RAID-0 striping yields N·B capacity, no fault tolerance, N·S sequential and N·R random bandwidth; chunk size trades intra-file parallelism (small chunks) against positioning time (large chunks), and no universally best size exists.",
+      "Source claim: RAID-1 mirroring halves useful capacity, certainly tolerates one failure (up to N/2 if the right disks fail), matches single-disk read latency, and reaches only (N/2)·S sequential bandwidth because each disk serves every other block and idles over the skipped one.",
+      "Source claim: RAID-4 keeps one XOR parity block per stripe, giving (N−1)·B capacity and one-failure tolerance; full-stripe writes are efficient, but any partial write must also update parity.",
+      "Source claim: RAID-4's dedicated parity disk serializes concurrent small writes, so random write throughput is R/2 and does not improve as data disks are added; RAID-5 rotates parity and reaches N/4·R because each small write still costs four physical I/Os.",
+      "Source claim: subtractive parity computes P_new = (C_old XOR C_new) XOR P_old with two reads and two writes, whereas additive parity reads every other data block in the stripe; the chapter asks the reader to find the crossover point.",
+      "Source claim: the consistent-update problem leaves mirrored copies divergent if a crash interrupts a multi-disk write, and the general fix is a write-ahead log, usually held in battery-backed non-volatile RAM because logging every write to disk is prohibitively expensive.",
+      "Inference: the throughput matrix is an analytical upper bound, not a measurement; it assumes independent disks, no controller or interconnect ceiling, and workloads that are purely sequential or purely random, and the chapter itself notes max-of-two-seeks effects make mirrored writes slightly worse than modeled.",
+      "Inference: parity RAID does not eliminate write cost, it relocates it into per-write amplification, so choosing RAID-5 over RAID-1 is really a claim about small-write concurrency and acceptable degraded-mode behavior rather than about capacity alone."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+        "candidate": "Does the failure-domain page distinguish fail-stop whole-node loss from silent corruption and correlated multi-failure, as RAID's fault model does when it assumes detectable disk failure only?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-saturation-and-scaling-laws.md",
+        "candidate": "Does the scaling discussion identify a single shared serialized resource (the RAID-4 parity-disk analog) whose contention caps throughput even as capacity is added?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+        "candidate": "Does the backup page state explicitly that mirroring or parity is redundancy against device loss, not a backup against corruption, deletion or multiple simultaneous failures?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+        "candidate": "Does the capacity model account for usable-versus-raw loss (mirroring 50%, single parity 1/N) when costing storage, rather than pricing raw device capacity?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures 38.1-38.8 were not visually inspected; only caption and diagram-label text was read. Cited papers ([P+88], [BG88], [K86], [K88], [PB86], [SG86], [S84], [CL95], [C+04], [DAA05], [HLM94], [B+08], [BJ88]) were not retrieved. The raid.py simulator and its eight homework questions were not run.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B089",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/file-intro.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/file-intro.pdf",
+    "unit": "Complete chapter 39, Interlude: Files and Directories",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:30:48Z; 29 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 693 lines / 29 pages; sections 39.1-39.18 plus References and Homework (Code); 5 figures (39.1-39.5), inline struct and prototype listings (struct proc, struct file, ftable, struct stat, struct dirent) and command/trace transcripts, 8 asides/tips including mmap() persistent memory and TOCTTOU, 4 homework problems; raster figures not visually inspected",
+    "retrieved_lines": 693,
+    "retrieved_words": 11670,
+    "representation_sha256": "305a8b49663d26e6f9c0e3b47b20b883d424522bb851a9cdd277c7a8c91ab71f",
+    "pages": 29,
+    "pdf_sha256": null,
+    "sections": [
+      "39.1 Files And Directories",
+      "39.2 The File System Interface",
+      "39.3 Creating Files",
+      "39.4 Reading And Writing Files",
+      "39.5 Reading And Writing, But Not Sequentially",
+      "39.6 Shared File Table Entries: fork() And dup()",
+      "39.7 Writing Immediately With fsync()",
+      "39.8 Renaming Files",
+      "39.9 Getting Information About Files",
+      "39.10 Removing Files",
+      "39.11 Making Directories",
+      "39.12 Reading Directories",
+      "39.13 Deleting Directories",
+      "39.14 Hard Links",
+      "39.15 Symbolic Links",
+      "39.16 Permission Bits And Access Control Lists",
+      "39.17 Making And Mounting A File System",
+      "39.18 Summary",
+      "References",
+      "Homework (Code)"
+    ],
+    "figures": [
+      "Figure 39.1: An Example Directory Tree",
+      "Figure 39.2: Shared Parent/Child File Table Entries (fork-seek.c)",
+      "Figure 39.3: Processes Sharing An Open File Table Entry",
+      "Figure 39.4: Shared File Table Entry With dup() (dup.c)",
+      "Figure 39.5: The stat structure"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/file-intro.md lines 1-693",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: a file is a linear array of bytes with a low-level inode number, and a directory is a list of (user-readable name, low-level name) pairs that can nest into a tree rooted at /; the name's extension is convention only.",
+      "Source claim: open() with O_CREAT|O_WRONLY|O_TRUNC creates or truncates a file and returns a per-process descriptor, an opaque capability that indexes a per-process array of struct file pointers (xv6: ofile[NOFILE]).",
+      "Source claim: descriptors 0, 1 and 2 are standard input, output and error, so the first user open is normally 3; read() returns the bytes read and 0 at end of file, and each read or write implicitly advances the current offset.",
+      "Source claim: lseek() changes only an in-memory offset and performs no disk I/O, although reading at scattered offsets afterwards can cause seeks; the offset lives in the open file table entry, not in the inode.",
+      "Source claim: fork() makes parent and child share one open file table entry with an incremented reference count, so the child's lseek(10) is visible to the parent; dup() creates a second descriptor for the same entry and underlies shell redirection.",
+      "Source claim: write() is buffered and may return before data is persistent; fsync(fd) forces the file's dirty data, a newly created name also needs its containing directory fsynced, and because rename() is crash-atomic, write-temp/fsync/rename is the idiom for atomic file replacement.",
+      "Source claim: unlink() removes one name and decrements the inode link count, freeing data only at zero; hard links cannot cross partitions or target directories, whereas symbolic links are separate files holding a pathname and can dangle after the target is removed.",
+      "Source claim: permission bits encode owner/group/other read-write-execute, and on a directory the execute bit gates traversal; AFS access control lists provide per-directory, per-principal rights beyond that model.",
+      "Source claim: TOCTTOU attacks exploit the gap between a privileged check (for example lstat()) and the later use of the same path, as when a mailbox is renamed to /etc/passwd in between; O_NOFOLLOW, fewer privileged services and transactional file systems only narrow the problem.",
+      "Inference: the chapter specifies durability by API composition (fsync the file, fsync the directory, rename) but leaves the file system's internal ordering and metadata-journaling obligations to later chapters, so the guarantee is stated rather than derived here."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/publication-consistency.md",
+        "candidate": "Does publication rely on an atomic rename or commit step and state that a rename without a directory fsync may not survive a crash, matching this chapter's durability caveat?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md",
+        "candidate": "Does the threat model include check-then-use races on shared names and paths, where a privileged service validates a path and then acts on a different object?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/measurement-boundary.md",
+        "candidate": "When discussing random access, does the measurement boundary separate a logical file offset from a physical device seek, as lseek() does not itself cause I/O?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-modeling-and-transaction-isolation.md",
+        "candidate": "Does the durability discussion distinguish a committed write from a buffered write that merely returned, and name the fsync boundary explicitly?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures 39.1-39.5 were not visually inspected; only caption and label text was read. The pstack.c program from the OSTEP code repository was not fetched or run. Cited papers and sources ([BD96], [CK+08], [H+18], [K19], [K20], [K84], [L84], [MJLF84], [P+13], [P+14], [SK09], [SR05], [T+08]) were not retrieved. The four homework programs were not written or executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B090",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf",
+    "unit": "Complete chapter 40, File System Implementation",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-02-18T00:56:09Z; 18 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 336 lines / 18 pages; sections 40.1-40.8, References and Homework (Simulation); Figures 40.1-40.4 (two tables, two I/O timelines), four asides, three tips, two crux boxes, four footnotes and four homework questions; raster figures not visually inspected",
+    "retrieved_lines": 336,
+    "retrieved_words": 8292,
+    "representation_sha256": "4b9871b259bd95630282efd3a803d5d1ae3119086b9fb8cffd51bb8d7cfc6740",
+    "pages": 18,
+    "pdf_sha256": null,
+    "sections": [
+      "40.1 The Way To Think",
+      "40.2 Overall Organization",
+      "40.3 File Organization: The Inode",
+      "40.4 Directory Organization",
+      "40.5 Free Space Management",
+      "40.6 Access Paths: Reading and Writing",
+      "40.7 Caching and Buffering",
+      "40.8 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 40.1: Simplified Ext2 Inode",
+      "Figure 40.2: File System Measurement Summary",
+      "Figure 40.3: File Read Timeline (Time Increasing Downward)",
+      "Figure 40.4: File Creation Timeline (Time Increasing Downward)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/file-implementation.md lines 1-336",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: vsfs divides a 4KB-block partition into a superblock, inode bitmap, data bitmap, inode table and data region; the 64-block example yields 80 inodes and 56 data blocks, with one full block per bitmap for simplicity.",
+      "Source claim: an inode stores metadata plus 15 disk pointers; 12 direct pointers and single, double and triple indirect pointers form an imbalanced tree, with 12 direct plus one indirect covering 4144KB and a double indirect extending the file to just over 4GB.",
+      "Source claim: the measurement summary in Figure 40.2 reports a most-common file size near 2KB, an average near 200KB, most bytes in large files, roughly 100K files per file system, about 50% occupancy and directories of 20 or fewer entries.",
+      "Source claim: a directory is a file containing records of inode number, record length and name length, plus . and ..; unlink leaves reusable space marked by a reserved inode number, and XFS instead uses a B-tree for directories.",
+      "Source claim: opening /foo/bar reads the root inode (number 2), root data, the foo inode and data, then the bar inode; each read consults the inode and may write atime, close performs no disk I/O, and cost grows with path depth and directory size.",
+      "Source claim: an allocating write logically costs five I/Os (data bitmap read and write, inode read and write, data write), while the worked file creation costs ten I/Os including directory updates; bitmaps are not consulted on a pure read path.",
+      "Source claim: a fixed buffer cache of about 10% of memory gave way to a unified page cache; write buffering batches, schedules and sometimes eliminates writes, but exposes a five-to-thirty-second loss window, with fsync, direct I/O and raw disk as escape hatches.",
+      "Inference: the five-I/O count is the uncached dependency chain of an allocating write, not a fixed device cost; the caching section can collapse those I/Os, so the count should not be used as a per-write latency model.",
+      "Inference: the chapter specifies no crash-consistency protocol, so a crash between bitmap, inode and directory updates can leave leaked blocks or a directory entry without a valid inode; ordering, journaling and fsck are left to later chapters.",
+      "Inference: 'reads do not access allocation structures' means the bitmap is not a read-path validator; the read path follows inode pointers without checking allocation, so bitmap inconsistency is a repair concern rather than a read-time error."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+        "candidate": "Does the durability page separate a buffered write's completion from its stable-storage commit, and state which metadata (inode, directory entry, bitmap) must be forced before a create is acknowledged?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+        "candidate": "Does the access-path page price the multi-level lookup needed to reach a row or index entry, rather than treating selectivity as the only cost?"
+      },
+      {
+        "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+        "candidate": "Does the caching page distinguish a transparent OS page cache from an application cache with explicit freshness and invalidation duties?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+        "candidate": "Does the capacity model count metadata and write-amplification I/O, not only payload bytes, when comparing storage options?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures in the PDF were not visually inspected; linked papers (Agrawal et al., Bonwick and Moore, Brouwer, Custer, Howard et al., Poirier, Ritchie and Thompson, Silvers, Sweeney et al.) and the vsfs.py simulator were not read or executed; the four homework exercises were not run.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B091",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/file-ffs.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/file-ffs.pdf",
+    "unit": "Complete chapter 41, Locality and The Fast File System",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-16T04:13:52Z; 14 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 262 lines / 14 pages; sections 41.1-41.8, References and Homework (Simulation); Figures 41.1-41.3, Equation 41.1, one aside, one tip, one crux box, unnumbered layout diagrams and nine homework questions; raster figures not visually inspected",
+    "retrieved_lines": 262,
+    "retrieved_words": 5824,
+    "representation_sha256": "a3fa9cde324c2f599073def9159cc3de6cf86a66b1daee94f57e302ffe56e235",
+    "pages": 14,
+    "pdf_sha256": null,
+    "sections": [
+      "41.1 The Problem: Poor Performance",
+      "41.2 FFS: Disk Awareness Is The Solution",
+      "41.3 Organizing Structure: The Cylinder Group",
+      "41.4 Policies: How To Allocate Files and Directories",
+      "41.5 Measuring File Locality",
+      "41.6 The Large-File Exception",
+      "41.7 A Few Other Things About FFS",
+      "41.8 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 41.1: FFS Locality For SEER Traces",
+      "Figure 41.2: Amortization: How Big Do Chunks Have To Be?",
+      "Figure 41.3: FFS: Standard Versus Parameterized Placement"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/file-ffs.md lines 1-262",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: the old UNIX file system kept a superblock, inodes and data blocks and delivered only 2% of overall disk bandwidth in the McKusick et al. measurement, because it ignored positioning costs and fragmented free space, while 512-byte blocks worsened transfer efficiency.",
+      "Source claim: FFS introduced cylinder groups, later block groups because modern disks hide geometry, each holding a superblock copy, inode bitmap, data bitmap, inode table and data blocks so related data can be co-located and seeks shortened.",
+      "Source claim: FFS places a directory in a group with few allocated directories and many free inodes, puts a file's data in its inode's group, and puts all files of one directory in that directory's group.",
+      "Source claim: SEER traces show about 7% of opens repeat the previous file, nearly 40% are the same file or same directory, and another 25% are at tree distance two, as in proj/src/foo.c followed by proj/obj/foo.o, a pattern FFS does not capture.",
+      "Source claim: the large-file exception keeps the first 12 direct blocks with the inode and places each subsequent indirect chunk in a different group, so one large file does not fill the group and crowd out related files.",
+      "Source claim: spreading a large file hurts sequential throughput, so chunk size must amortize positioning; at 40MB/s and 10ms positioning, 409.6KB yields 50% of peak bandwidth, 3.6MB yields 90% and 39.6MB yields 99%.",
+      "Source claim: with 4KB blocks and 32-bit addresses, FFS placed every 1024 blocks (4MB) in a separate group, except the first 48KB reached by direct pointers, and the chapter argues rising transfer rates make mechanical costs relatively more expensive over time.",
+      "Source claim: FFS added 512-byte sub-blocks for small files, promoted them to a full 4KB block when the file grew, and mostly avoided the copy cost by having libc buffer writes into 4KB chunks.",
+      "Source claim: FFS staggered consecutive blocks by a parameterized skip to avoid a full rotation between sequential reads, accepting at most 50% of peak bandwidth; modern drives read a whole track into a buffer, making the trick unnecessary.",
+      "Inference: FFS placement optimizes namespace proximity rather than measured inter-open distance, so the roughly 25% distance-two share is a known locality class the policy leaves to seek time."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+        "candidate": "Does the access-path page treat physical clustering (for example BRIN correlation or sequential scan) as a measured property rather than assuming logical order implies locality?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+        "candidate": "Does the capacity model amortize positioning overhead over transfer size when comparing block sizes or storage tiers?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/benchmark-controls.md",
+        "candidate": "Does the benchmark method control for on-disk layout, cache warmth and device geometry when comparing storage throughput?"
+      },
+      {
+        "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+        "candidate": "Does the cache page separate temporal locality from namespace or spatial locality when predicting hit rates?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures in the PDF were not visually inspected; linked papers (Kuenning; McKusick et al.; Patterson) and the ffs.py simulator were not read or executed; the nine homework exercises were not run.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B092",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/file-journaling.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/file-journaling.pdf",
+    "unit": "Complete chapter 42, Crash Consistency: FSCK and Journaling",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:31:47Z; 21 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 415 lines / 21 pages; sections 42.1-42.5 plus References and Homework (Simulation); figures 42.1-42.2 are text timelines only; two asides (Forcing Writes to Disk, Optimizing Log Writes); three footnotes; no executable code, six homework questions invoking the fsck.py simulator; raster figures not visually inspected",
+    "retrieved_lines": 415,
+    "retrieved_words": 9362,
+    "representation_sha256": "739304c88703371a810d8b3f32660c99137f960bd191c46285a4565fa1e1c4c5",
+    "pages": 21,
+    "pdf_sha256": null,
+    "sections": [
+      "42.1 A Detailed Example",
+      "42.2 Solution #1: The File System Checker",
+      "42.3 Solution #2: Journaling (or Write-Ahead Logging)",
+      "42.3 Data Journaling",
+      "42.3 Recovery",
+      "42.3 Batching Log Updates",
+      "42.3 Making The Log Finite",
+      "42.3 Metadata Journaling",
+      "42.3 Tricky Case: Block Reuse",
+      "42.3 Wrapping Up Journaling: A Timeline",
+      "42.4 Solution #3: Other Approaches",
+      "42.5 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 42.1: Data Journaling Timeline (text-rendered timeline; no raster image)",
+      "Figure 42.2: Metadata Journaling Timeline (text-rendered timeline; no raster image)",
+      "Unnumbered on-disk layout diagrams for the append example, ext2/ext3 journal placement, journal contents (TxB/I[v2]/B[v2]/Db/TxE), and the circular-log superblock (text only)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/file-journaling.md lines 1-415",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: the crash-consistency problem is that any two on-disk writes can be separated by a crash, so a multi-block update may persist only partially.",
+      "Source claim: the append example enumerates six crash outcomes from three writes (inode, bitmap, data); two-write outcomes leave metadata self-consistent but the inode may point at garbage, while one-write outcomes yield inconsistency or a space leak.",
+      "Source claim: fsck runs before mount, trusts inodes over bitmaps to rebuild allocation, checks inode type, link counts, duplicate pointers, out-of-range block pointers and directory structure, and moves unreferenced inodes to lost+found.",
+      "Source claim: fsck cannot detect a metadata-consistent but semantically wrong file (inode pointing at stale data), and its whole-disk scan cost grew prohibitive with disk and RAID capacity.",
+      "Source claim: journaling writes a transaction (TxB, physical contents, TxE) to a log, commits by writing the 512-byte TxE atomically, then checkpoints; recovery replays committed transactions in order (redo logging).",
+      "Source claim: the log is treated as circular with a journal superblock tracking oldest/newest non-checkpointed transactions, and batching groups many updates into one global transaction to cut journal traffic.",
+      "Source claim: metadata (ordered) journaling omits user data from the log but must write data blocks before the commit block, since otherwise replay can leave an inode pointing at garbage; ext3 offers data, ordered and unordered modes.",
+      "Source claim: block reuse after delete can make replay overwrite live data, which ext3 addresses with revoke records that suppress replay of revoked blocks.",
+      "Source claim: alternatives are Soft Updates (careful write ordering, requiring per-structure knowledge), copy-on-write (ZFS), backpointer-based consistency, and optimistic crash consistency via generalized transaction checksums.",
+      "Inference: the chapter's guarantee is conditional on the disk honoring write ordering and atomic 512-byte writes, and it cites evidence that some drives silently ignore barriers, so the protocol's correctness rests on an assumption the file system cannot verify."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+        "candidate": "Does the WAL page state the commit-ordering rule (log before data, atomic commit record) and what recovery replays, or only that a WAL exists?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/storage-workload.md",
+        "candidate": "Does the storage page separate metadata consistency from user-data durability, as ordered journaling does, or conflate them into one 'durable' claim?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/restore-drills.md",
+        "candidate": "Is recovery cost measured (log-bounded vs whole-volume scan) rather than asserted, mirroring the fsck-versus-journaling trade-off?"
+      },
+      {
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
+        "candidate": "Does the recovery chapter acknowledge that a consistent metadata state can still expose stale or garbage payload, as the block-reuse case shows?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures not visually inspected (both timelines are text-only in this representation); cited papers and the fsck.py simulator were not retrieved or executed; the six homework questions were read but not run.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B093",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/file-lfs.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/file-lfs.pdf",
+    "unit": "Complete chapter 43, Log-structured File Systems",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:32:06Z; 16 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 422 lines / 16 pages; sections 43.1-43.13 plus References and Homework (Simulation); equations 43.1-43.6; three TIP asides (Details Matter, Use A Level Of Indirection, Turn Flaws Into Virtues); one pseudocode block for block liveness; no numbered figures, only text block-layout diagrams; eleven homework questions invoking the lfs.py simulator; raster figures not visually inspected",
+    "retrieved_lines": 422,
+    "retrieved_words": 7242,
+    "representation_sha256": "5aa7f63189c7673010180d1c3ba48e7690fc8fe7d25d1d5f5c9890c40a3b10b9",
+    "pages": 16,
+    "pdf_sha256": null,
+    "sections": [
+      "43.1 Writing To Disk Sequentially",
+      "43.2 Writing Sequentially And Effectively",
+      "43.3 How Much To Buffer?",
+      "43.4 Problem: Finding Inodes",
+      "43.5 Solution Through Indirection: The Inode Map",
+      "43.6 Completing The Solution: The Checkpoint Region",
+      "43.7 Reading A File From Disk: A Recap",
+      "43.8 What About Directories?",
+      "43.9 A New Problem: Garbage Collection",
+      "43.10 Determining Block Liveness",
+      "43.11 A Policy Question: Which Blocks To Clean, And When?",
+      "43.12 Crash Recovery And The Log",
+      "43.13 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "No numbered figures; on-disk layout diagrams are text-rendered (data block plus inode, seven-block segment for files j and k, imap piece with inode and data, checkpoint region and imap chunk, directory create sequence, live vs garbage block versions, segment summary liveness check)",
+      "Equations 43.1-43.6: write time, effective rate and buffering threshold D = F/(1-F) x Rpeak x Tposition (text only)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/file-lfs.md lines 1-422",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: LFS rests on four motivations - growing memory caches shifting traffic to writes, a widening random-versus-sequential I/O gap, FFS paying many short seeks per file creation, and RAID-4/5 small-write penalties.",
+      "Source claim: updates are buffered in an in-memory segment and written sequentially to a free location; LFS never overwrites in place, so all writes can become large sequential transfers.",
+      "Source claim: buffering size is derived from positioning time and transfer rate, with D = F/(1-F) x Rpeak x Tposition; the worked example gives about 9 MB to reach 90% of peak on a 10 ms, 100 MB/s disk.",
+      "Source claim: because inodes are scattered and move on every update, an inode map translates inode number to latest on-disk address, and pieces of the imap are written adjacent to the data and inodes they describe.",
+      "Source claim: the checkpoint region is a fixed location pointing to the latest imap pieces, updated only periodically (about every 30 seconds), which bounds the seek cost of finding the map.",
+      "Source claim: the imap also solves the recursive update problem, since a moved inode changes only its imap entry, not the parent directory entry that stores the inode number.",
+      "Source claim: overwriting to new locations produces garbage; cleaning works segment-by-segment, reading M segments and compacting live blocks into N new segments (N < M), and liveness is decided via a segment summary block holding inode number and offset plus a check of the inode pointer.",
+      "Source claim: the original policy cleans cold segments sooner and hot segments later, waiting for hot blocks to die; later adaptive work improved on this heuristic.",
+      "Source claim: crash recovery uses two checkpoint regions written alternately with timestamped header and final block, and roll forward replays segments after the last consistent CR.",
+      "Inference: LFS trades a write-path cost (cleaning, roughly a garbage-collection tax on free space) for sequential write efficiency, so its viability depends on cleaner efficiency keeping segment utilization high enough; the chapter states the trade-off but gives no utilization bound or cleaning-cost model."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+        "candidate": "Does the storage-model page treat append-only/copy-on-write layout as a workload-fit decision with a space-amplification cost, rather than a strictly superior design?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/storage-workload.md",
+        "candidate": "Does the workload page distinguish sequential-write efficiency from random-write efficiency with a concrete positioning-cost argument, as the buffering formula does?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+        "candidate": "Is there an analogue of the checkpoint-region-plus-roll-forward recovery boundary - a stated last-consistent-point and a bounded loss window?"
+      },
+      {
+        "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+        "candidate": "Does the index lifecycle material account for obsolete-version reclamation (garbage collection) and its cost, not only for building new structures?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures not visually inspected (the chapter's diagrams are text-only here); cited papers, the lfs.py simulator and the README were not retrieved or executed; the eleven homework questions were read but not run.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B094",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/file-ssd.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/file-ssd.pdf",
+    "unit": "Complete chapter 44, Flash-based SSDs",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:32:28Z; 24 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 461 lines / 24 pages; sections 44.1-44.12, References, Homework (Simulation); figures 44.1-44.4 (two diagrams, two performance tables), worked state-transition and mapping diagrams, five tips/asides, no code listings, simulation homework; raster figures not visually inspected",
+    "retrieved_lines": 461,
+    "retrieved_words": 10488,
+    "representation_sha256": "4691460807b5e259f17e3c929c62b03113459ae58b98649cc999875e0b30fb41",
+    "pages": 24,
+    "pdf_sha256": null,
+    "sections": [
+      "44.1 Storing a Single Bit",
+      "44.2 From Bits to Groups/Planes",
+      "44.3 Basic Flash Operations",
+      "44.4 Flash Performance And Reliability",
+      "44.5 From Raw Flash to Flash-Based SSDs",
+      "44.6 FTL Organization: A Bad Approach",
+      "44.7 A Log-Structured FTL",
+      "44.8 Garbage Collection",
+      "44.9 Mapping Table Size",
+      "44.10 Wear Leveling",
+      "44.11 SSD Performance And Cost",
+      "44.12 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 44.1: A Simple Flash Chip: Pages Within Blocks (text-rendered diagram)",
+      "Figure 44.2: Raw Flash Performance Characteristics (table)",
+      "Figure 44.3: A Flash-based SSD: Logical Diagram (text-rendered diagram)",
+      "Figure 44.4: SSDs And Hard Drives: Performance Comparison (table)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/file-ssd.md lines 1-461",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: erase is block-granular and resets bits to 1; program is page-granular, can only flip 1s to 0s, and is invalid on an already-programmed page, so overwriting a page requires erasing its block (44.1-44.3).",
+      "Source claim: a direct-mapped FTL maps logical page N to physical page N; each overwrite copies the surviving pages of the block, erases it, and reprograms it, producing write amplification and workload-dependent wear (44.6).",
+      "Source claim: the log-structured FTL appends each update, updates an in-memory logical-to-physical map, and persists enough per-page metadata or checkpoint state to reconstruct the map after power loss (44.7).",
+      "Source claim: cleaning selects a block, copies its live pages to the log, then erases it; all-dead blocks are cheapest to reclaim, while overprovisioning creates free space that can defer cleaning and absorb bursts (44.8).",
+      "Source claim: a page-mapped table needs about 1 GB for a 1-TB device at 4 bytes per 4-KB page; block mapping cuts table size but turns sub-block writes into copy-and-merge work (44.9).",
+      "Source claim: hybrid FTLs keep page-mapped log blocks and block-mapped data blocks; switch merge is cheapest, partial merge copies sibling pages, and full merge gathers pages from several blocks (44.9).",
+      "Source claim: wear leveling must relocate long-lived data because blocks containing only read-only data otherwise avoid the erase/program cycles that age the rest of the device (44.10).",
+      "Source claim: the chapter's 2015 sample puts SSD cost near $0.60/GB versus $0.05/GB for a hard drive, while measured random I/O strongly favors SSD and sequential gaps are smaller (44.11).",
+      "Inference: the chapter supports tiering by access pattern and cost, not a blanket replacement claim; its dated prices and device models are evidence of mechanism, not a current procurement input.",
+      "Inference: observed SSD latency and lifetime are policy outcomes of FTL cleaning, mapping and wear leveling interacting with workload, so an IOPS-only requirement omits the variables that determine sustained behavior."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/storage-workload.md",
+        "candidate": "Add an SSD-specific workload note: random writes are serialized through a log and can trigger background cleaning, so sustained write latency and endurance depend on overprovisioning and write pressure, not only peak IOPS."
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+        "candidate": "Compare SSD and HDD tiers on random versus sequential throughput, write amplification, endurance and cost per usable capacity; do not reduce the choice to one latency benchmark."
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md",
+        "candidate": "Model storage cost with overprovisioning and cleaning headroom, and re-price dated dollars-per-gigabyte figures instead of reusing the chapter's 2015 sample."
+      }
+    ],
+    "remaining": "Explicit omissions: raster contents of all figures and diagrams were not visually inspected (captions and text tables were read); cited papers were not retrieved; ssd.py, its README and all simulation exercises were not executed; no independent measurements.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B095",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/file-integrity.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/file-integrity.pdf",
+    "unit": "Complete chapter 45, Data Integrity and Protection",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:32:47Z; 14 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 288 lines / 14 pages; sections 45.1-45.9, References, Homework (Simulation), Homework (Code); Figure 45.1, four layout diagrams (baseline, per-sector checksums, grouped checksums, physical IDs), XOR worked example, one tip, no code listings; raster figures not visually inspected",
+    "retrieved_lines": 288,
+    "retrieved_words": 5728,
+    "representation_sha256": "5e0a44426d19c944088b6c581d414da53535d910b1ecd59faf7a747e915377c3",
+    "pages": 14,
+    "pdf_sha256": null,
+    "sections": [
+      "45.1 Disk Failure Modes",
+      "45.2 Handling Latent Sector Errors",
+      "45.3 Detecting Corruption: The Checksum",
+      "45.4 Using Checksums",
+      "45.5 A New Problem: Misdirected Writes",
+      "45.6 One Last Problem: Lost Writes",
+      "45.7 Scrubbing",
+      "45.8 Overheads Of Checksumming",
+      "45.9 Summary",
+      "References",
+      "Homework (Simulation)",
+      "Homework (Code)"
+    ],
+    "figures": [
+      "Figure 45.1: Frequency Of LSEs And Block Corruption (table)",
+      "Unnumbered layout diagrams: baseline blocks, one checksum per sector, a grouped checksum sector, and checksum plus physical ID across two disks (text only)",
+      "Unnumbered XOR worked example over a 16-byte block (text only)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/file-integrity.md lines 1-288",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: the fail-stop model is incomplete; a disk can return an error for one block (LSE) or plausible but wrong data (silent corruption), so whole-disk health is not a data-integrity guarantee (45.1).",
+      "Source claim: a three-year study of roughly 1.5 million drives reported at least one LSE on 9.40% of cheap and 1.40% of costly drives, and corruption on 0.50% and 0.05%; these are fleet observations, not per-read probabilities (45.1).",
+      "Source claim: LSEs are detectable, so mirroring or parity can reconstruct the block; during RAID-4/5 rebuild, a second LSE can defeat reconstruction, motivating dual-parity schemes such as RAID-DP (45.2).",
+      "Source claim: a checksum stores a small digest with data; equality makes corruption unlikely but not impossible, and a mismatch identifies corruption without supplying a good copy (45.3-45.4).",
+      "Source claim: XOR checksums miss paired bit flips in the same position; additive checksums are weak under byte shifts; Fletcher detects all single- and double-bit errors and many bursts; CRC uses a polynomial remainder; collisions remain possible for every scheme (45.3).",
+      "Source claim: checksum placement changes I/O cost: an 8-byte checksum fits a 520-byte sector with one write, whereas grouping checksums in 512-byte sectors can require a read-modify-write of the checksum sector (45.3).",
+      "Source claim: adding disk and block identifiers detects misdirected writes because the stored location metadata will not match the read location; it does not detect a lost write, whose old contents and old metadata still agree (45.5-45.6).",
+      "Source claim: lost writes need read-after-write verification or a checksum held at a different level, such as ZFS's inode or indirect-block checksum; losing both data and metadata updates can still evade detection (45.6).",
+      "Source claim: scrubbing periodically reads all blocks to validate checksums; an 8-byte checksum per 4-KB block is about 0.19% capacity overhead, while CPU, extra I/O and scrub scheduling are the time costs (45.7-45.8).",
+      "Inference: checksum algorithm, placement, coverage and recovery source are independent choices; a strong checksum over the wrong scope can still miss a lost or misdirected update, and detection without redundancy only converts silent corruption into an error."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/upload-integrity.md",
+        "candidate": "Require an explicit byte-integrity contract for uploads: checksum algorithm, scope, trusted expected value and verification point; a stored checksum cannot repair corruption without an independent good copy."
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/restore-drills.md",
+        "candidate": "Add a data-verification step to restore drills: read back restored data, compare checksums and test detection of silent corruption, not only row counts or command success."
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-integrity.md",
+        "candidate": "Distinguish integrity evidence from retention and access control: checksums can detect alteration but do not prove authorship or authority, and a valid stored checksum may accompany stale or lost data."
+      }
+    ],
+    "remaining": "Explicit omissions: raster contents of Figure 45.1 and the checksum-layout diagrams were not visually inspected (captions and text layouts were read); cited papers were not retrieved; checksum.py and both homework sets, including the C programs, were not executed or compiled; no independent fault-injection test.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B096",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/file-dialogue.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/file-dialogue.pdf",
+    "unit": "Complete chapter 46, Summary Dialogue on Persistence",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:33:16Z; 2 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 55 lines / 2 pages; complete dialogue text; no figures or tables.",
+    "retrieved_lines": 55,
+    "retrieved_words": 509,
+    "representation_sha256": "fc3c3f121da7ec300b06a6f185e2c4eb0f897e197318197559ccfa4b4f7a9871",
+    "pages": 2,
+    "pdf_sha256": null,
+    "sections": [
+      "Summary Dialogue on Persistence"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/file-dialogue.md lines 1-55",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: managing persistent data is harder than managing memory because a crash destroys memory but storage must survive.",
+      "Source claim: updating persistent storage requires thinking about crash recovery, which was not central to memory virtualization.",
+      "Source claim: the section covered disk scheduling, RAID, checksums, FFS, LFS and technology-aware file systems.",
+      "Source claim: flash does not make the ideas obsolete; flash translation layers use log structuring internally, and locality remains relevant.",
+      "Inference: durability, crash consistency and availability are distinct promises that require separate evidence.",
+      "Inference: the dialogue names topics but provides no recovery procedure, measurement or guarantee."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+        "candidate": "Does the WAL page connect crash recovery to a concrete write-order and flush contract, not just a durable label?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+        "candidate": "Does the recovery page separate crash consistency, media failure and replica failover?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
+        "candidate": "Does the object-lifecycle page separate durability, availability and retention?"
+      }
+    ],
+    "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is a synthesis, not technical evidence.",
+    "reader": "Tycho agent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B097",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-distribution.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-distribution.pdf",
+    "unit": "Complete chapter 47, A Dialogue on Distribution",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:33:35Z; 2 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 53 lines / 2 pages; complete dialogue text; no figures or tables.",
+    "retrieved_lines": 53,
+    "retrieved_words": 390,
+    "representation_sha256": "9b5d76ded583e907f449c0241c60a63e1998122e002edb443bbc28103f5affff",
+    "pages": 2,
+    "pdf_sha256": null,
+    "sections": [
+      "A Dialogue on Distribution"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/dialogue-distribution.md lines 1-53",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: distributed systems are hard because messages are lost, machines fail and disks can corrupt data.",
+      "Source claim: practical systems hide some failures through replication, retry, detection and recovery.",
+      "Source claim: the book focuses on distributed file systems rather than a full distributed-systems treatment.",
+      "Inference: redundancy can improve availability without proving that a particular write committed.",
+      "Inference: retries improve delivery chances but create duplicate-effect and ordering questions.",
+      "The dialogue contains no measurement, protocol specification or guarantee."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+        "candidate": "Does the page separate failure detection, replication and consensus rather than treating redundancy as a single property?"
+      },
+      {
+        "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/replication-acks.md",
+        "candidate": "Does the acknowledgment page distinguish broker acknowledgment from durable commit under failure?"
+      },
+      {
+        "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causality-ordering-and-consensus.md",
+        "candidate": "Does the protocol page make retries, duplicate delivery and partial failure explicit?"
+      }
+    ],
+    "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is framing or synthesis, not technical evidence.",
+    "reader": "Tycho agent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B098",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/dist-intro.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/dist-intro.pdf",
+    "unit": "Complete chapter 48, Distributed Systems",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:33:55Z; 17 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 253 lines / 17 pages; sections 48.1 Communication Basics, 48.2 Unreliable Communication Layers, 48.3 Reliable Communication Layers, 48.4 Communication Abstractions, 48.5 Remote Procedure Call (RPC) with Stub Generator, Run-Time Library, Other Issues, 48.6 Summary, References, Homework (Code); figures 48.1-48.2 code listings and 48.3-48.5 message-sequence diagrams reproduced as text/code; two TIP asides and the End-to-End Argument aside; one footnote; homework questions read but not executed; raster figure renderings not visually inspected",
+    "retrieved_lines": 253,
+    "retrieved_words": 6723,
+    "representation_sha256": "43f1bf9480bdb8be06b9ad77fcd05b147b59e571a5e666df8a338e363223fe03",
+    "pages": 17,
+    "pdf_sha256": null,
+    "sections": [
+      "48.1 Communication Basics",
+      "48.2 Unreliable Communication Layers",
+      "48.3 Reliable Communication Layers",
+      "48.4 Communication Abstractions",
+      "48.5 Remote Procedure Call (RPC)",
+      "Stub Generator",
+      "Run-Time Library",
+      "Other Issues",
+      "48.6 Summary",
+      "References",
+      "Homework (Code)"
+    ],
+    "figures": [
+      "Figure 48.1: Example UDP Code (client.c, server.c)",
+      "Figure 48.2: A Simple UDP Library (udp.c)",
+      "Figure 48.3: Message Plus Acknowledgment",
+      "Figure 48.4: Message Plus Acknowledgment: Dropped Request",
+      "Figure 48.5: Message Plus Acknowledgment: Dropped Reply"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/dist-intro.md lines 1-253",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: the chapter makes failure, not performance, the defining problem of distributed systems, then reframes it as an opportunity because a collection of regularly failing machines can present a service that rarely fails. Inference: this is an availability argument about aggregation, not a correctness guarantee, and it leaves correlated failure domains unaddressed.",
+      "Source claim: packet loss is treated as unavoidable even if every link and host works, because router and endpoint buffers are finite and overflow forces drops. Inference: loss and overload are the same phenomenon observed at different scales, which is why the chapter's timeout advice later turns into a load argument.",
+      "Source claim: UDP is presented as a deliberately unreliable datagram layer whose checksum guards against corruption but not loss, with the end-to-end argument used to justify leaving reliability to applications. Inference: a checksum is a corruption detector, not an integrity proof, and the text gives no residual error rate.",
+      "Source claim: reliable messaging is assembled from acknowledgments plus timeout/retry, and duplicates appear when the acknowledgment rather than the request is lost. Inference: the same event produces different sender and receiver histories, which is the ambiguity that later shows up as retry-induced duplicate effects.",
+      "Source claim: a per-sender sequence counter compared against a single expected value suppresses duplicates with bounded memory, unlike remembering every message ID. Inference: the scheme silently assumes one outstanding message per sender in order; pipelining or reordering would need a window or a larger counter space, which the chapter does not develop.",
+      "Source claim: RPC aims to make remote execution look like a local call, with a stub generator automating marshaling and a run-time library handling naming, transport, fragmentation, and long-running calls. Inference: the 'looks local' promise is exactly where latency, partial failure, and serialization semantics leak into the programming model.",
+      "Source claim: reliable transport such as TCP adds two extra acknowledgment messages per request/response, so many RPC packages run over UDP and reimplement reliability, yielding exactly-once only without failure and at-most-once when failure occurs. Inference: duplicate suppression therefore becomes a server-side obligation, and 'exactly once' is scoped far more narrowly than the phrase suggests.",
+      "Source claim: the timeout value trades wasted retransmission and CPU against slow loss detection, and exponential back-off from the Aloha/Ethernet lineage avoids retry storms when loss signals server overload. Inference: a fixed timeout encodes an assumption about the latency distribution, so adaptive timeouts act as overload control as much as performance tuning.",
+      "Source claim: DSM failed in practice because a failed machine makes parts of the shared address space disappear, breaking pointer-based structures, while remote page faults make access cost unpredictable. Inference: the chapter uses this as a caution about extending local-memory abstractions across a failure boundary, not as a proof that no shared-memory design can work.",
+      "Source claim: the end-to-end argument holds that only the application can verify end-to-end reliability, since bytes can be corrupted in sender memory or on receiver disk after a reliable transfer, yet lower-layer machinery may still be justified for performance. Inference: this is a principle about where final verification must live, not a blanket prohibition on retries at more than one layer."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+        "candidate": "Sequence-counter duplicate suppression as a bounded-memory alternative to tracking all request IDs; use it to contrast message-level dedup with effect-level idempotency under lost acknowledgments."
+      },
+      {
+        "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+        "candidate": "Timeout selection and exponential back-off as coupled latency and overload policies; the chapter's warning that loss can indicate server overload maps directly onto deadline and retry-budget guidance."
+      },
+      {
+        "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+        "candidate": "Stub generation, marshaling, pointer/complex-argument handling, and endianness normalization as contract-versioning concerns that predate modern IDL and schema discussion."
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-latency-fanout-and-deadline-budgets.md",
+        "candidate": "Long-running RPC handling via explicit acknowledgment plus periodic status polling; useful as a precedent for progress signals distinct from completion, relevant to deadline budgets."
+      }
+    ],
+    "remaining": "Explicit omissions: raster figure renderings (Figures 48.1-48.5 were read only as reproduced text and code, never as images); the linked references [A70], [BN84], [LH89], [MK09], [SK09], [SRC84], [VJ88] were not retrieved or read; the UDP library, rpcgen, gRPC, and Thrift were not built or exercised; none of the seven homework coding questions were executed; no independent review was performed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B099",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/dist-nfs.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/dist-nfs.pdf",
+    "unit": "Complete chapter 49, Sun's Network File System (NFS)",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-09T22:00:03Z; 18 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 352 lines / 18 pages; sections 49.1-49.12 plus References and Homework (Measurement); figures 49.1-49.7 (client/server layout, NFS protocol example table, client/server call trace, three loss cases, cache-consistency diagram) and code samples (open/read/close; three overlapping writes); asides on why servers crash, idempotency, Voltaire's law, VFS/vnodes, key NFS terms; raster figures not visually inspected",
+    "retrieved_lines": 352,
+    "retrieved_words": 7727,
+    "representation_sha256": "7e7d5852b777a8a03df3f125072cddacc17d675de190274d8b9f6dd12b207dad",
+    "pages": 18,
+    "pdf_sha256": null,
+    "sections": [
+      "49.1 A Basic Distributed File System",
+      "49.2 On To NFS",
+      "49.3 Focus: Simple And Fast Server Crash Recovery",
+      "49.4 Key To Fast Crash Recovery: Statelessness",
+      "49.5 The NFSv2 Protocol",
+      "49.6 From Protocol To Distributed File System",
+      "49.7 Handling Server Failure With Idempotent Operations",
+      "49.8 Improving Performance: Client-side Caching",
+      "49.9 The Cache Consistency Problem",
+      "49.10 Assessing NFS Cache Consistency",
+      "49.11 Implications On Server-Side Write Buffering",
+      "49.12 Summary",
+      "References",
+      "Homework (Measurement)"
+    ],
+    "figures": [
+      "Figure 49.1: A Generic Client/Server System",
+      "Figure 49.2: Distributed File System Architecture",
+      "Figure 49.3: Client Code: Reading From A File",
+      "Figure 49.4: The NFS Protocol: Examples (procedure table)",
+      "Figure 49.5: Reading A File: Client-side And File Server Actions",
+      "Figure 49.6: The Three Types Of Loss",
+      "Figure 49.7: The Cache Consistency Problem"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/dist-nfs.md lines 1-352",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: NFSv2's stated design goal is simple and fast server crash recovery, because a single server outage stalls every client; statelessness is the chosen means.",
+      "Source claim: a file handle combines volume identifier, inode number and generation number; the generation counter prevents a stale handle from reaching a newly allocated inode.",
+      "Source claim: statelessness moves open-file state to the client (descriptor-to-handle mapping, current offset), so READ and WRITE carry an explicit offset and the server holds nothing across calls.",
+      "Source claim: clients treat lost request, server crash and lost reply identically, retrying after a timeout; this works because LOOKUP, READ and offset-bearing WRITE are idempotent.",
+      "Source claim: MKDIR is not idempotent; a retry after a lost reply can report failure for an operation that actually succeeded, which the chapter accepts as Voltaire's law rather than fixing.",
+      "Source claim: client caching and write buffering create two distinct problems, update visibility and stale caches, addressed by flush-on-close (close-to-open) semantics and by GETATTR validation backed by a short-lived attribute cache.",
+      "Source claim: attribute caching cuts the GETATTR flood but makes observable freshness depend on a timeout, so implementation detail rather than protocol defines user-visible semantics.",
+      "Source claim: a server may not acknowledge WRITE before the data is stable, or a crash between two acknowledged writes leaves a file mixing old and new blocks while the client believes all writes succeeded.",
+      "Source claim: fast stable writes are the motivation for battery-backed write caches and write-optimized file-system designs; the VFS/vnode layer let multiple file systems coexist.",
+      "Inference: statelessness buys recovery simplicity by paying per-request metadata and repeated attribute traffic; the attribute-cache timeout is an explicit freshness-versus-load trade.",
+      "Inference: 'idempotent' here is a property of request content, not of the operation name; WRITE is safe to replay only because offset, count and data travel in every message."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+        "candidate": "Does the page distinguish a replay-safe request (full offset and payload carried) from an operation whose name merely sounds repeatable, as NFS does for WRITE versus MKDIR?"
+      },
+      {
+        "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
+        "candidate": "Does duplicate suppression have an authority separate from operation semantics, or is idempotency assumed to cover retries after ambiguous acknowledgements?"
+      },
+      {
+        "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
+        "candidate": "Is the freshness check and its timeout window stated as a visibility bound, matching NFS's GETATTR validation plus attribute-cache expiry?"
+      },
+      {
+        "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/multiwriter-conflicts.md",
+        "candidate": "Does the page separate close-to-open visibility from strong consistency, and name what a reader can observe between flushes?"
+      }
+    ],
+    "remaining": "Raster figures in Figures 49.1-49.7 were not visually inspected; text-only representations were read. Linked papers (Sandberg, Callaghan, Hitz et al., Kleiman, Pawlowski et al., RFC 1094) were not read. Homework trace exercises were not downloaded or executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B100",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/dist-afs.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/dist-afs.pdf",
+    "unit": "Complete chapter 50, The Andrew File System (AFS)",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:34:32Z; 14 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 244 lines / 14 pages; sections 50.1-50.9 plus References and Homework (Simulation); figures 50.1-50.4 (AFSv1 protocol table, client/server read sequence, cache-consistency timeline, AFS-vs-NFS workload comparison); 3 asides/tips; 6 homework simulator questions not executed; no code listings; raster figures not visually inspected",
+    "retrieved_lines": 244,
+    "retrieved_words": 6108,
+    "representation_sha256": "75bdcda9efebb6acc36772490e68f68aa83b10476b5b1c21e3355e03878f86db",
+    "pages": 14,
+    "pdf_sha256": null,
+    "sections": [
+      "50.1 AFS Version 1",
+      "50.2 Problems with Version 1",
+      "50.3 Improving the Protocol",
+      "50.4 AFS Version 2",
+      "50.5 Cache Consistency",
+      "50.6 Crash Recovery",
+      "50.7 Scale And Performance Of AFSv2",
+      "50.8 AFS: Other Improvements",
+      "50.9 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 50.1: AFSv1 Protocol Highlights (message table: TestAuth, GetFileStat, Fetch, Store, SetFileStat, ListDir)",
+      "Figure 50.2: Reading A File: Client-side And File Server Actions (step sequence: Fetch per path component, callbacks, local open/read/close, flush on change)",
+      "Figure 50.3: Cache Consistency Timeline (timeline table over P1/P2 on Client 1, P3 on Client 2 and the server; partially garbled in the text representation)",
+      "Figure 50.4: Comparison: AFS vs. NFS (11 workloads with time expressions and AFS/NFS ratio)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/dist-afs.md lines 1-244",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: AFSv1 cached whole files on client local disk, fetched on open and flushed on close, but still sent a TestAuth message per access to validate the cached copy, and a server could serve only about 20 clients.",
+      "Source claim: the redesign was driven by two measured bottlenecks, server CPU spent on full pathname traversal during Fetch/Store and excessive TestAuth traffic; load imbalance and one server process per client were fixed separately by volumes and by threads.",
+      "Source claim: AFSv2 replaced validation polling with server-issued callbacks and whole pathnames with FIDs (volume identifier, file identifier, uniquifier), so the client walks one path component at a time and caches each result.",
+      "Source claim: between machines, AFS makes the update visible and invalidates cached copies at the same moment, namely on close(); processes on the same machine see each other's writes immediately, matching UNIX semantics.",
+      "Source claim: simultaneous cross-machine writers resolve as last writer wins, effectively last closer wins, leaving a file produced entirely by one client, unlike NFS block flushing that can leave a mixed and possibly invalid artifact.",
+      "Source claim: callbacks are held in server memory, so after a server reboot each client must treat its cache as suspect and revalidate with TestAuth; the chapter contrasts this with NFS, where clients hardly noticed a server crash.",
+      "Source claim: the analytic comparison in Figure 50.4 gives AFS a Lnet/Ldisk advantage on large-file sequential re-read, a 2x penalty on large-file overwrite and on single-block access within large files, and rough parity on first reads and sequential writes.",
+      "Source claim: the chapter attributes AFS's decline to NFS becoming an open standard and notes that NFSv4 adopted server state such as an open protocol message, converging toward the AFS model.",
+      "Inference: the 20-to-50 clients-per-server figure is a historical measurement of one implementation on its hardware, not a property of callback protocols in general, and should be cited as an illustrative data point rather than a benchmark.",
+      "Inference: callbacks trade forward validation traffic for server-held per-client state plus reverse reachability to clients, so the crash-recovery section describes the ongoing price of that trade rather than a rare edge case."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+        "candidate": "Does the refresh page separate push invalidation (callback) from TTL or lease polling, and state what happens to a client's freshness assumption when the invalidator is unreachable or restarts having lost its invalidation state?"
+      },
+      {
+        "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-authority.md",
+        "candidate": "Does the authority page make the granularity of the cached unit explicit, since whole-object versus block granularity determines both read amplification on partial access and whether concurrent writers can produce a torn mixed artifact?"
+      },
+      {
+        "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/multiwriter-conflicts.md",
+        "candidate": "Does the multiwriter page distinguish whole-object replacement under last-writer-wins from per-block interleaving that can leave a mixed artifact no single writer ever produced?"
+      },
+      {
+        "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md",
+        "candidate": "Does the session-consistency page separate same-client read-your-writes from cross-client visibility at close or commit time, rather than asserting a single freshness level for all readers?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures were not visually inspected; figures 50.1-50.4 were read only as extracted text and the Figure 50.3 timeline table is partly garbled in the representation; the linked papers (H+88, S+85, B+91, H+11, R+00, V99) and the afs.py simulator with its README were not retrieved or read; the six homework questions were not executed; no measurement was reproduced.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B101",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/dist-dialogue.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/dist-dialogue.pdf",
+    "unit": "Complete chapter 51, Summary Dialogue on Distribution",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:34:51Z; 2 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 76 lines / 2 pages; complete dialogue text; no figures or tables.",
+    "retrieved_lines": 76,
+    "retrieved_words": 275,
+    "representation_sha256": "d2fdf32041bb4cd9186d8179af2757607636b047f3e5a45824378c1b6921011b",
+    "pages": 2,
+    "pdf_sha256": null,
+    "sections": [
+      "Summary Dialogue on Distribution"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/dist-dialogue.md lines 1-76",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: everything can fail in a distributed system; replication can hide some failures but not all consequences.",
+      "Source claim: retries are a basic and useful technique, and protocols define the exact exchanged bits.",
+      "Source claim: protocol choices affect failure response and scalability, not only happy-path behavior.",
+      "Inference: a retry is not a commit and a replica is not automatically authoritative.",
+      "Inference: exact protocol semantics matter more than the presence of a redundancy label.",
+      "The dialogue is a synthesis, not a protocol specification or measurement."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+        "candidate": "Does the page separate failure detection, replication and consensus rather than treating redundancy as a single property?"
+      },
+      {
+        "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/replication-acks.md",
+        "candidate": "Does the acknowledgment page distinguish broker acknowledgment from durable commit under failure?"
+      },
+      {
+        "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causality-ordering-and-consensus.md",
+        "candidate": "Does the protocol page make retries, duplicate delivery and partial failure explicit?"
+      }
+    ],
+    "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is framing or synthesis, not technical evidence.",
+    "reader": "Tycho agent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
   }
 ]
