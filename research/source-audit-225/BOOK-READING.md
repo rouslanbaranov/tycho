@@ -1,7 +1,7 @@
 # Foundational book reading
 
 Issue [#225](https://github.com/rouslanbaranov/tycho/issues/225). Updated 2026-10-24.
-**SRE whole-book reading complete; OSTEP CPU and scheduling batch read;**
+**SRE whole-book reading complete; OSTEP CPU and memory/VM batches read;**
 **wider reading and comparison in progress.** The owner prioritized foundational
 books over further technology-reference auditing. Earlier reference readings remain
 recorded; one whole book is now complete. The wider source-reading and Tycho
@@ -12,7 +12,7 @@ comparison obligations remain open.
 | Book | Actual progress | Next action |
 | --- | --- | --- |
 | Site Reliability Engineering | All 48 public book units read: 34 chapters, foreword, preface, five part introductions, six appendices and bibliography, with footnotes, tables, examples and embedded figures/formulas | Whole scoped book complete; compare exact passages with the frozen Tycho baseline and separately read linked publications; see `SRE-COMPLETION.md` |
-| Operating Systems: Three Easy Pieces | Chapters 1, 3 and 4-11 read completely (10 new units; chapter 2 earlier): CPU virtualization, process API, limited direct execution and scheduling. 11 numbered units total; raster figures not visually inspected | Continue chapter 12 and the memory/VM chapters; then concurrency and persistence |
+| Operating Systems: Three Easy Pieces | Chapters 1, 3-20 read completely (19 new units; chapter 2 earlier): CPU virtualization, process API, limited direct execution, scheduling, address spaces, memory API, translation, segmentation, free-space management and paging. 20 numbered units total; raster figures not visually inspected | Continue chapters 21-24 (swapping and complete VM), then concurrency and persistence |
 | Designing Data-Intensive Applications, 2nd edition | Publisher contents and short chapter 1 preview only | Full text requires lawful access; do not count the preview as chapter reading or silently substitute the first edition |
 | Distributed Systems, 4th edition | Author's access instructions examined; no book text obtained | Personalized download requires an email and human-verification step; no request submitted |
 | Other registered books | Not started in this audit | Continue `book-queue.json`; distinguish available complete texts from commercial previews |
@@ -125,3 +125,44 @@ contents still says 1.10; the record keeps the chapter's printed version.
 The batch advances reading, not source-to-book completeness. Candidate
 comparisons are recorded in [comparisons.json](comparisons.json); they are
 questions, not defects or proposed book edits.
+
+## OSTEP continuation - memory and paging
+
+Nine records B062-B070 add chapters 12-20 to the CPU batch: 2,620 retrieved
+lines, 43,227 words and 114 pages. The combined OSTEP continuation is now 19
+records (5,182 lines, 83,042 words, 218 pages). Raster figures were not
+visually inspected; linked papers, code and simulator exercises were not
+executed.
+
+- **Chapter 12:** every user-program address is virtual; the OS and hardware
+  translate it to physical memory, providing ease of use, isolation and
+  protection. The chapter defers base/bounds, TLBs and multi-level tables.
+- **Chapter 13:** multiprogramming and time sharing make several address
+  spaces resident; an address space holds code, stack and heap, and the goals
+  are transparency, efficiency and protection rather than a portable layout.
+- **Chapter 14:** the memory API exposes allocation and free with explicit
+  ownership and lifetime; uninitialized reads, dangling references, double
+  frees and leaks are different failures, and process exit is not a sanitizer.
+- **Chapter 15:** base-and-bounds translates by addition plus a bounds check;
+  protection comes from privileged registers and a fault path. Equal fixed
+  slots create internal fragmentation and cap flexibility.
+- **Chapter 16:** segmentation generalizes to per-segment base/size pairs with
+  growth and protection bits; variable-size segments create external
+  fragmentation, and compaction only trades fragmentation against copying.
+- **Chapter 17:** variable-size free-space management needs size headers,
+  splitting and coalescing. Best/worst/first/next fit and segregated or buddy
+  lists trade search cost against leftover waste; no policy is universally
+  best because request streams are workload-dependent.
+- **Chapter 18:** paging removes external fragmentation by construction, but a
+  linear page table is large and each reference pays an extra memory access;
+  the valid bit makes sparse address spaces affordable.
+- **Chapter 19:** the TLB caches translations; hit rate depends on spatial and
+  temporal locality, hardware- and software-managed designs differ, and ASIDs
+  or flush policy affect context-switch behavior. LRU can be pessimal for a
+  cyclic working set.
+- **Chapter 20:** bigger pages, segmentation hybrids and multi-level tables
+  reduce table size or TLB pressure but add internal fragmentation, complexity
+  or address-space-shape dependence; no single structure dominates.
+
+These are mechanism and policy notes, not measurements. Candidate comparisons
+for memory-related Tycho pages are added to [comparisons.json](comparisons.json).

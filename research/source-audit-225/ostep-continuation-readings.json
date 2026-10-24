@@ -645,5 +645,626 @@
     "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is framing, not technical evidence.",
     "reader": "Tycho agent; no independent review or execution.",
     "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B062",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-intro.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/vm-intro.pdf",
+    "unit": "Complete chapter 13, The Abstraction: Address Spaces",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:23:01Z; 9 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 205 lines / 9 pages; sections 13.1-13.5, References, Homework (Code); figures 13.1-13.3 as captions and extracted labels; code va.c; Crux, Isolation and Every Address You See Is Virtual asides; footnotes; raster figures not visually inspected",
+    "retrieved_lines": 205,
+    "retrieved_words": 3599,
+    "representation_sha256": "a432c8ea31ee14af3eda67a3998e850b72d8bbefbc602df30aa457fb21d1d758",
+    "pages": 9,
+    "pdf_sha256": null,
+    "sections": [
+      "13.1 Early Systems",
+      "13.2 Multiprogramming and Time Sharing",
+      "13.3 The Address Space",
+      "13.4 Goals",
+      "13.5 Summary",
+      "References",
+      "Homework (Code)"
+    ],
+    "figures": [
+      "Figure 13.1: Operating Systems: The Early Days (text labels only)",
+      "Figure 13.2: Three Processes: Sharing Memory (text labels only)",
+      "Figure 13.3: An Example Address Space (text labels only)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/vm-intro.md lines 1-205",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: early systems exposed little memory abstraction; the OS sat at low physical memory and one running program occupied the remainder (13.1).",
+      "Source claim: multiprogramming switched among ready processes to raise CPU utilization, while time sharing added interactive concurrent use and made protection important (13.2).",
+      "Source claim: saving and restoring an entire memory image on every switch is too slow; leaving processes resident and partitioning physical memory makes sharing practical (13.2).",
+      "Inference: once several processes remain resident, address translation becomes a protection mechanism, not merely a convenience for locating data.",
+      "Source claim: the chapter's address space contains code, stack and heap; code is static, while the heap and stack grow in opposite directions by convention (13.3).",
+      "Inference: the simple opposed-growth layout is a teaching model; the chapter itself notes that multiple threads complicate any clean division of the space.",
+      "Source claim: the stated VM goals are transparency, time-and-space efficiency, and protection that yields isolation among processes and from the OS (13.4).",
+      "Source claim: a user program sees only virtual addresses; the va.c example prints code, heap and stack addresses said to be translated by OS and hardware (Aside).",
+      "Inference: example addresses from one 64-bit machine illustrate the abstraction but are not a portable layout guarantee."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+        "candidate": "Keep virtual address-space size, reserved memory, process RSS and live managed data as separate diagnostic quantities; a large virtual range does not establish physical occupancy."
+      },
+      {
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/compute-models.md",
+        "candidate": "Describe process or VM isolation as an enforceable protection boundary with explicit trust and failure assumptions, not as a property implied by a deployment label."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+        "candidate": "Does the diagnostic page separate virtual address-space size, resident set and live managed heap when explaining memory pressure?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures not visually inspected; referenced papers and external code not retrieved; homework exercises not executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B063",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-api.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/vm-api.pdf",
+    "unit": "Complete chapter 14, Interlude: Memory API",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-09T22:00:54Z; 12 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 257 lines / 12 pages; sections 14.1-14.7, unnumbered Summary, References, Homework (Code); no numbered figures; API and code snippets in 14.1-14.6; Crux, tip boxes, aside and footnotes; homework 9 questions; raster figures not visually inspected",
+    "retrieved_lines": 257,
+    "retrieved_words": 4196,
+    "representation_sha256": "98047ec9945d27e6b53e962385510a0126f05c25c3bf1205607865a10cdebfb1",
+    "pages": 12,
+    "pdf_sha256": null,
+    "sections": [
+      "14.1 Types of Memory",
+      "14.2 The malloc() Call",
+      "14.3 The free() Call",
+      "14.4 Common Errors",
+      "Summary (unnumbered)",
+      "14.5 Underlying OS Support",
+      "14.6 Other Calls",
+      "14.7 Summary",
+      "References",
+      "Homework (Code)"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/vm-api.md lines 1-257",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: stack memory is allocated and released implicitly by the compiler, while heap memory is allocated and freed explicitly by the programmer (14.1).",
+      "Source claim: malloc takes a byte count, returns NULL on failure, and its declared return type is void; the chapter says a cast reassures readers but is not required for correctness (14.2).",
+      "Source claim: sizeof is a compile-time operator and its result changes according to static type: an array name can yield the array size, while a pointer yields only the pointer size (14.2).",
+      "Inference: passing a heap pointer to sizeof therefore cannot recover the size of the allocation; the allocator must retain extent metadata and the caller must retain the original pointer.",
+      "Source claim: free accepts only a pointer previously returned by malloc, so the allocation size is not supplied and must be tracked by the allocator library (14.3).",
+      "Source claim: the enumerated errors are an unallocated destination, an undersized buffer, an uninitialized read, a leak, a dangling pointer, a double free and an invalid free (14.4).",
+      "Inference: compiling or running successfully is weak evidence because allocator slack or a harmless overwrite can hide an out-of-bounds write until layout or workload changes.",
+      "Source claim: the OS reclaims all process pages at exit, so short-lived leaks are bounded, whereas long-running services and the kernel can accumulate leaked memory (Aside, 14.4).",
+      "Source claim: malloc and free are library calls built over OS facilities such as brk, sbrk and anonymous mmap; calloc zeroes memory and realloc copies to a larger region (14.5-14.6)."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+        "candidate": "Classify application memory failures by ownership and lifetime, and keep allocator metadata errors distinct from OS page reclamation; process exit does not validate a leak-free implementation."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/diagnostic-experiments.md",
+        "candidate": "Add explicit negative controls for uninitialized reads, dangling references, invalid frees and leaks so a clean run cannot be mistaken for memory-safety evidence."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+        "candidate": "Does the diagnostic page distinguish allocator lifetime errors, GC-managed retention and OS paging when explaining memory pressure?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures (none present) not visually inspected; linked papers and tools not retrieved; homework exercises and code examples not executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B064",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-mechanism.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/vm-mechanism.pdf",
+    "unit": "Complete chapter 15, Mechanism: Address Translation",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:23:39Z; 15 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 298 lines / 15 pages; sections 15.1-15.6, references, homework; figures 15.1-15.6, four asides, x86 assembly and translation pseudocode, footnotes; raster figures not visually inspected",
+    "retrieved_lines": 298,
+    "retrieved_words": 5586,
+    "representation_sha256": "80e0cd0edbcaaf3e1491b5d3e84a19955d819b3c7ca32d6e00894566ddbfca82",
+    "pages": 15,
+    "pdf_sha256": null,
+    "sections": [
+      "15.1 Assumptions",
+      "15.2 An Example",
+      "15.3 Dynamic (Hardware-based) Relocation",
+      "15.4 Hardware Support: A Summary",
+      "15.5 Operating System Issues",
+      "15.6 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 15.1: A Process And Its Address Space",
+      "Figure 15.2: Physical Memory with a Single Relocated Process",
+      "Figure 15.3: Dynamic Relocation: Hardware Requirements",
+      "Figure 15.4: Dynamic Relocation: Operating System Responsibilities",
+      "Figure 15.5: Limited Direct Execution (Dynamic Relocation) @ Boot",
+      "Figure 15.6: Limited Direct Execution (Dynamic Relocation) @ Runtime"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/vm-mechanism.md lines 1-298",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: base-and-bounds translates by adding base to the virtual address, with bounds holding the address-space size and checked before the add; the chapter notes the end-address convention is logically equivalent (15.3).",
+      "Source claim: the mechanism relies on privileged per-CPU base/bounds registers, so the OS reloads them on context switch and can move a stopped process by copying it and updating the saved base (15.5).",
+      "Source claim: the chapter's assumptions are contiguous placement, address space smaller than physical memory, and equal-size address spaces; it states these are relaxed in later chapters (15.1).",
+      "Source claim: the unused gap between stack and heap is still allocated, which the chapter calls internal fragmentation and uses to motivate segmentation (15.6).",
+      "Inference: translation is stateless per access, so protection comes from privileged register updates and the fault path rather than from the arithmetic alone.",
+      "Source claim: static relocation by a loader rewrites addresses before execution, provides no protection, and makes later relocation difficult (aside in 15.3).",
+      "Inference: the per-reference cost is one add plus one compare; the price is that flexibility is capped at one fixed-size physical slot per process.",
+      "Source claim: an out-of-bounds or negative address raises an exception, and the OS normally terminates the offending process (15.3, 15.5).",
+      "Source claim: the homework uses relocation.py with seeds, bounds and address-space sizes; the exercises were not executed in this audit."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+        "candidate": "Does the page separate virtual address-space accounting from resident physical memory when diagnosing heap growth or exhaustion?"
+      },
+      {
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md",
+        "candidate": "Does the page distinguish transparent relocation from an actual isolation guarantee when a workload is moved?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/safe-agent-access-and-knowledge-isolation.md",
+        "candidate": "Does the page treat isolation as enforced by a privileged boundary and fault path, not by naming or convention?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+        "candidate": "Does the capacity model count reserved-but-unused space as a real cost rather than only consumed bytes?"
+      },
+      {
+        "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/isolation-axes.md",
+        "candidate": "Does the isolation discussion separate memory-address boundaries from authorization boundaries?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures not visually inspected; linked papers and code not retrieved; the relocation.py exercises were not executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B065",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-segmentation.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/vm-segmentation.pdf",
+    "unit": "Complete chapter 16, Segmentation",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-09T21:45:21Z; 12 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 304 lines / 12 pages; sections 16.1-16.7, references, homework; figures 16.1-16.6, two asides, translation pseudocode and bit-layout text, footnotes; raster figures not visually inspected",
+    "retrieved_lines": 304,
+    "retrieved_words": 4748,
+    "representation_sha256": "e9f14582aa37307e83be3a81d533c5b9d0dbc4c0beddb0211a09c8ffe07f1a66",
+    "pages": 12,
+    "pdf_sha256": null,
+    "sections": [
+      "16.1 Segmentation: Generalized Base/Bounds",
+      "16.2 Which Segment Are We Referring To?",
+      "16.3 What About The Stack?",
+      "16.4 Support for Sharing",
+      "16.5 Fine-grained vs. Coarse-grained Segmentation",
+      "16.6 OS Support",
+      "16.7 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 16.1: An Address Space (Again)",
+      "Figure 16.2: Placing Segments In Physical Memory",
+      "Figure 16.3: Segment Register Values",
+      "Figure 16.4: Segment Registers (With Negative-Growth Support)",
+      "Figure 16.5: Segment Register Values (with Protection)",
+      "Figure 16.6: Non-compacted and Compacted Memory"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/vm-segmentation.md lines 1-304",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: segmentation keeps a base/bounds pair per logical segment, so only used portions occupy physical memory and large sparse address spaces become affordable (16.1).",
+      "Source claim: the explicit approach selects a segment from the top address bits; with two bits one encoding is unused and each segment is capped by the bits allocated (16.2).",
+      "Source claim: backward-growing stacks need a direction bit, with the offset reduced by the maximum segment size and bounds checked on its absolute value (16.3).",
+      "Source claim: per-segment read/write/execute protection bits allow read-only code to be shared across address spaces while preserving per-process isolation (16.4).",
+      "Source claim: variable-sized segments produce external fragmentation, and compaction is expensive and can obstruct later segment growth (16.6).",
+      "Inference: the tip that no one allocation algorithm is best implies fragmentation is structural to variable-size allocation, not a tuning gap.",
+      "Source claim: fine-grained segmentation uses in-memory segment tables and many small segments, as in Multics and the Burroughs B5000 (16.5).",
+      "Inference: the design still ties a logical extent to contiguous physical residency, so a large sparsely-used heap inside one segment must remain fully resident (16.7).",
+      "Source claim: heap growth may go through a system call such as sbrk, and the OS may refuse it for lack of memory or policy (16.6).",
+      "Source claim: the homework uses segmentation.py with seeds, bounds and address spaces; the exercises were not executed in this audit."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+        "candidate": "Does the page distinguish fragmentation from a leak or from ordinary heap growth in its diagnostic guidance?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+        "candidate": "Does capacity planning account for fragmentation of a variable-sized resource pool rather than assuming uniform slots?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+        "candidate": "Does the resharding page separate fragmentation of contiguous extents from key-distribution skew?"
+      },
+      {
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md",
+        "candidate": "Does placement reasoning assume equal-size units, and what fails when units differ in size and can grow?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/safe-agent-access-and-knowledge-isolation.md",
+        "candidate": "Are shared read-only artifacts treated as safe only when immutability is enforced, not merely assumed?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures not visually inspected; linked papers and code not retrieved; the segmentation.py exercises were not executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B066",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-freespace.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/vm-freespace.pdf",
+    "unit": "Complete chapter 17, Free-Space Management",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:24:19Z; 18 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 411 lines / 18 pages; sections 17.1-17.5, References, Homework; figures 17.1-17.8; code listings (header_t, free() pointer arithmetic, node_t, mmap heap initialization); CRUX box; one aside (Great Engineers Are Really Great); 7 homework questions; raster figures not visually inspected",
+    "retrieved_lines": 411,
+    "retrieved_words": 6073,
+    "representation_sha256": "68db3a30de76f1d10d6717d0e2690be32a1300c2fea43459a90615c6c473bb4e",
+    "pages": 18,
+    "pdf_sha256": null,
+    "sections": [
+      "17.1 Assumptions",
+      "17.2 Low-level Mechanisms (Splitting and Coalescing; Tracking The Size Of Allocated Regions; Embedding A Free List; Growing The Heap)",
+      "17.3 Basic Strategies (Best Fit; Worst Fit; First Fit; Next Fit; Examples)",
+      "17.4 Other Approaches (Segregated Lists; Buddy Allocation; Other Ideas)",
+      "17.5 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 17.1: An Allocated Region Plus Header",
+      "Figure 17.2: Specific Contents Of The Header",
+      "Figure 17.3: A Heap With One Free Chunk",
+      "Figure 17.4: A Heap: After One Allocation",
+      "Figure 17.5: Free Space With Three Chunks Allocated",
+      "Figure 17.6: Free Space With Two Chunks Allocated",
+      "Figure 17.7: A Non-Coalesced Free List",
+      "Figure 17.8: Example Buddy-managed Heap"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/vm-freespace.md lines 1-411",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: the chapter frames free-space management as easy for fixed-size units and hard for variable-sized units, where external fragmentation can make a request fail even though total free space is sufficient.",
+      "Source claim: because free(void *ptr) carries no size, allocators prepend a header holding the region size and a magic number and recover it by pointer arithmetic, in effect (header_t *)ptr - 1.",
+      "Source claim: a request for N bytes is satisfied by searching for N plus the header size, so the chunk consumed always exceeds the bytes the caller can use.",
+      "Source claim: splitting and coalescing are the two core mechanisms; the worked example shows that without coalescing a fully free heap can still refuse a large request (Figures 17.6 and 17.7).",
+      "Source claim: best fit and worst fit both require a full traversal of the free list; first fit avoids the traversal but pollutes the head of the list, while next fit moves the search cursor to spread splintering.",
+      "Source claim: the chapter deliberately declines to name a best strategy, arguing the request stream is programmer-determined and therefore any policy can be pessimal on some input.",
+      "Source claim: segregated lists dedicate caches to popular object sizes, and the slab allocator additionally keeps freed objects pre-initialized to avoid repeated construction cost.",
+      "Source claim: binary buddy allocation splits power-of-two blocks and coalesces recursively, bounding coalescing work at the cost of rounding every request up to a power of two.",
+      "Inference: header-embedded metadata makes corruption a safety property rather than a mere bug, since a wrong size field desynchronizes the free list; the magic-number assert detects this but cannot repair it.",
+      "Representation note: the figures survive only as text fragments (address, length and pointer labels), so the diagrams were read as captions and numeric labels, not as images."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-modes.md",
+        "candidate": "Fixed-size pools are the paging case, not the malloc case: document which pool guarantees are structural (no external fragmentation) and which still depend on size-class choices."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+        "candidate": "Heap growth is ambiguous between leak and fragmentation; a diagnostic page should state that RSS cannot separate the two without allocation-level evidence."
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/scaling-models.md",
+        "candidate": "Allocator scaling is a contention story: segregated per-thread arenas trade fragmentation for reduced lock contention, a pattern that recurs in pool and shard design."
+      },
+      {
+        "path": "book/volumes/v01-requirements-and-architecture/c06-capacity-operational-constraints-and-total-cost/operating-capacity.md",
+        "candidate": "Capacity headroom must cover fragmentation, not just peak demand; a free-space total is not evidence that a single contiguous request can be served."
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures 17.1-17.8 not visually inspected (captions and text fragments only); cited works ([W+95], [B94], [K65], [B+00], [E06], [S15]) not retrieved; malloc.py and its README not retrieved or executed; seven homework questions not executed; no allocator measurements taken.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B067",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-paging.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/vm-paging.pdf",
+    "unit": "Complete chapter 18, Paging: Introduction",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-10T21:13:07Z; 15 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 358 lines / 15 pages; sections 18.1-18.6, References, Homework; figures 18.1-18.7; code and pseudo-code listings (movl examples, address-translation pseudo-code, C array loop, x86 assembly); CRUX box; two asides (The Page Table; Why No Valid Bit?); 5 homework questions; raster figures not visually inspected",
+    "retrieved_lines": 358,
+    "retrieved_words": 5194,
+    "representation_sha256": "95af0eeefa1c7b43b30fa462556ec76e93028047543376219a916645665434f9",
+    "pages": 15,
+    "pdf_sha256": null,
+    "sections": [
+      "18.1 A Simple Example And Overview",
+      "18.2 Where Are Page Tables Stored?",
+      "18.3 What's Actually In The Page Table?",
+      "18.4 Paging: Also Too Slow",
+      "18.5 A Memory Trace",
+      "18.6 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 18.1: A Simple 64-byte Address Space",
+      "Figure 18.2: A 64-Byte Address Space In A 128-Byte Physical Memory",
+      "Figure 18.3: The Address Translation Process",
+      "Figure 18.4: Example: Page Table in Kernel Physical Memory",
+      "Figure 18.5: An x86 Page Table Entry (PTE)",
+      "Figure 18.6: Accessing Memory With Paging",
+      "Figure 18.7: A Virtual (And Physical) Memory Trace"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/vm-paging.md lines 1-358",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: paging divides the address space into fixed-size pages and physical memory into equally sized frames, so it removes external fragmentation by construction rather than by policy.",
+      "Source claim: a virtual address splits into VPN and offset; translation replaces only the VPN with the PFN, and the offset passes through unchanged because it names a byte within the page.",
+      "Source claim: a 32-bit address space with 4KB pages yields a 20-bit VPN, roughly one million translations, about 4MB of page table per process and 400MB across 100 processes at 4 bytes per entry.",
+      "Source claim: because page tables are too large to hold on chip, they live in memory and a page-table base register identifies the table of the running process.",
+      "Source claim: the valid bit is what makes a sparse address space affordable, since unused regions need no physical frame and an access to them traps instead.",
+      "Source claim: each memory reference pays an extra reference to fetch the PTE, which the chapter says will likely slow a process by a factor of two or more.",
+      "Source claim: x86 folds validity into the single present bit, so P=0 covers both swapped-out-but-valid and invalid, forcing the OS to disambiguate using structures the hardware does not provide.",
+      "Source claim: in the traced loop the accounting is four instruction fetches, one array update and five page-table accesses per iteration, ten memory accesses total.",
+      "Inference: the chapter's two named defects, table size and translation cost, are exactly what multi-level tables and the TLB address later, so this chapter alone justifies no paging design decision.",
+      "Representation note: Figures 18.1-18.7 are address ladders and trace plots that survive as label fragments and axis values only, so no visual layout is asserted."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/compute-models.md",
+        "candidate": "A VM's configured memory is a virtual-size figure, not a resident one; compute-model comparisons should state which of the two a sizing claim uses."
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+        "candidate": "Address translation is a per-access latency tax that application profilers usually cannot see; a diagnostic page should not attribute all memory stall time to the GC or the heap."
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/measurement-boundary.md",
+        "candidate": "Page-table memory sits below the application measurement boundary; capacity models built only from heap or container metrics will undercount real footprint."
+      },
+      {
+        "path": "book/volumes/v01-requirements-and-architecture/c06-capacity-operational-constraints-and-total-cost/operating-capacity.md",
+        "candidate": "Sparse address spaces mean reserved capacity and touched capacity diverge; headroom planning should distinguish committed virtual size from backed physical pages."
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures 18.1-18.7 not visually inspected (captions, axis labels and trace fragments only); cited works ([KE+62], [L78], [I09]) not retrieved, including the Intel software developer manuals; paging-linear-translate.py and its README not retrieved or executed; five homework questions not executed; no translation benchmarks taken.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B068",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf",
+    "unit": "Complete chapter 19, Paging: Faster Translations (TLBs)",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:24:50Z; 16 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 341 lines / 16 pages; sections 19.1-19.8, References, Homework (Measurement); Figures 19.1-19.5, code listings, and four asides (caching, RISC vs CISC, TLB valid bit, Culler's Law); raster figures not visually inspected",
+    "retrieved_lines": 341,
+    "retrieved_words": 7105,
+    "representation_sha256": "2c67e4e6b49709e440668b60f9061c9cf119150858a0b5e94e712a8f492f4fc0",
+    "pages": 16,
+    "pdf_sha256": null,
+    "sections": [
+      "19 Paging: Faster Translations (TLBs)",
+      "19.1 TLB Basic Algorithm",
+      "19.2 Example: Accessing An Array",
+      "19.3 Who Handles The TLB Miss?",
+      "19.4 TLB Contents: What's In There?",
+      "19.5 TLB Issue: Context Switches",
+      "19.6 Issue: Replacement Policy",
+      "19.7 A Real TLB Entry",
+      "19.8 Summary",
+      "References",
+      "Homework (Measurement)"
+    ],
+    "figures": [
+      "Figure 19.1: TLB Control Flow Algorithm",
+      "Figure 19.2: Example: An Array In A Tiny Address Space",
+      "Figure 19.3: TLB Control Flow Algorithm (OS Handled)",
+      "Figure 19.4: A MIPS TLB Entry",
+      "Figure 19.5: Discovering TLB Sizes and Miss Costs"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/vm-tlbs.md lines 1-341",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: the TLB is a hardware cache of virtual-to-physical translations inside the MMU; a hit avoids the page-table memory reference, which the chapter says is what makes paging practical.",
+      "Source claim: a TLB miss costs an extra memory reference (more with multi-level tables), so hit rate depends on spatial and temporal locality, which are program properties rather than laws.",
+      "Source claim: the ten-integer array walk on 16-byte pages produces miss, hit, hit, miss, hit, hit, hit, miss, hit, hit (70% hits), i.e. one miss per page touched; larger pages would reduce misses further.",
+      "Source claim: hardware-managed TLBs (x86, CR3) walk a fixed page-table format, while software-managed TLBs (MIPS, SPARC v9) trap; the trap must resume the faulting instruction and avoid recursive misses via wired or unmapped handler entries.",
+      "Source claim: TLB valid bits mean entry occupancy, not page allocation; flushing sets them to zero, while ASIDs (8-bit versus 32-bit PIDs) let entries survive a context switch.",
+      "Source claim: LRU replacement is pessimal for a cyclic working set of n+1 pages with n TLB entries, whereas random eviction degrades more gracefully.",
+      "Source claim: the MIPS R4000 entry has a 19-bit user VPN, 24-bit PFN (64GB), global bit, 8-bit ASID, dirty/valid bits, page mask and wired entries; TLBP, TLBR, TLBWI and TLBWR must be privileged.",
+      "Source claim: TLB coverage, the set of pages reachable through the TLB, is the practical limit; once a working set exceeds it, misses dominate and large pages are the usual mitigation (for example in database systems).",
+      "Inference: the homework's timing steps (about 5 ns, 20 ns, 70 ns) illustrate a measurement method, not any current machine's benchmark.",
+      "Inference: TLB behavior is a hidden nonlinearity in end-to-end latency, so context pinning, warm-up and anti-dead-code-elimination controls are validity requirements for such measurements."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+        "candidate": "Does the page separate address-translation/TLB overhead from heap and GC footprint when diagnosing memory-related latency?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/benchmark-controls.md",
+        "candidate": "Do benchmark controls cover execution-context pinning, warm-up and dead-code elimination, as the TLB measurement homework requires?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/scaling-models.md",
+        "candidate": "Does any scaling model treat cache or TLB coverage as a step nonlinearity rather than a smooth cost?"
+      },
+      {
+        "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+        "candidate": "Is cache coverage (entries times unit size) distinguished from total capacity, and is LRU's cyclic-access pathology acknowledged?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/measurement-boundary.md",
+        "candidate": "Does the measurement boundary state whether translation and page-fault costs are inside the timed region?"
+      }
+    ],
+    "remaining": "Raster figures (19.2 layout, 19.4 MIPS entry, 19.5 measurement graph) not visually inspected; linked papers, architecture manuals and homework code not read or executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B069",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-smalltables.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/vm-smalltables.pdf",
+    "unit": "Complete chapter 20, Paging: Smaller Tables",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:25:01Z; 15 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 385 lines / 15 pages; sections 20.1-20.6, References, Homework (Simulation); Figures 20.1-20.6, code listings and bit diagrams, and four asides (multiple page sizes, hybrids, time-space trade-offs, complexity); raster figures not visually inspected",
+    "retrieved_lines": 385,
+    "retrieved_words": 6140,
+    "representation_sha256": "ad6ac9c5198292f535e0f4074f0470de9b826852a87d4a6ea665ea8edc5d0a25",
+    "pages": 15,
+    "pdf_sha256": null,
+    "sections": [
+      "20 Paging: Smaller Tables",
+      "20.1 Simple Solution: Bigger Pages",
+      "20.2 Hybrid Approach: Paging and Segments",
+      "20.3 Multi-level Page Tables (A Detailed Multi-Level Example; More Than Two Levels; The Translation Process: Remember the TLB)",
+      "20.4 Inverted Page Tables",
+      "20.5 Swapping the Page Tables to Disk",
+      "20.6 Summary",
+      "References",
+      "Homework (Simulation)"
+    ],
+    "figures": [
+      "Figure 20.1: A 16KB Address Space With 1KB Pages",
+      "Figure 20.2: A Page Table For 16KB Address Space",
+      "Figure 20.3: Linear (Left) And Multi-Level (Right) Page Tables",
+      "Figure 20.4: A 16KB Address Space With 64-byte Pages",
+      "Figure 20.5: A Page Directory, And Pieces Of Page Table",
+      "Figure 20.6: Multi-level Page Table Control Flow"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/vm-smalltables.md lines 1-385",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: a 32-bit address space with 4KB pages and 4-byte PTEs needs about one million entries, a 4MB linear table per process, and there is one table per process.",
+      "Source claim: moving to 16KB pages cuts the table to 1MB, exactly tracking the page-size factor, but internal fragmentation is the cost; most systems keep 4KB or 8KB pages.",
+      "Source claim: multiple page sizes exist mainly to relieve TLB pressure rather than to shrink tables, and they make the virtual memory manager notably more complex [N+02].",
+      "Source claim: the paging/segmentation hybrid keeps base/bounds per segment, where base points at that segment's page table and bounds gives its valid-page count, so unallocated regions consume no table space.",
+      "Source claim: the hybrid still depends on the address-space usage pattern (a large sparse heap still wastes space) and reintroduces external fragmentation because tables are arbitrary multiples of PTEs.",
+      "Source claim: a multi-level table allocates a page-table page only if at least one PTE in it is valid; the PDE valid bit summarizes that condition and unallocated pages free frames.",
+      "Source claim: the price is one extra memory load per level on a TLB miss (two loads for two levels) plus hardware or OS complexity, while TLB hits are unchanged.",
+      "Source claim: levels are chosen so each fragment fits a page; 512-byte pages and 4-byte PTEs give 128 entries (7 index bits) per level, and leftover directory bits force another level.",
+      "Source claim: inverted tables hold one entry per physical frame keyed by process and virtual page, need search or hashing, and scale with memory rather than address space; page tables are just data structures.",
+      "Inference: the chapter's guidance is conditional, favoring small structures in memory-constrained systems and larger, faster ones when memory is plentiful, so no universal table design follows."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-cost-model.md",
+        "candidate": "Does the capacity model include per-process metadata that scales with address space or key range rather than live data?"
+      },
+      {
+        "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
+        "candidate": "Is a sparse index's space overhead quantified, and is a multi-level directory considered when keys are sparse?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+        "candidate": "Are page-table-like structures accounted for separately from application heap when attributing memory?"
+      },
+      {
+        "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+        "candidate": "When recommending smaller metadata, is the added lookup level and its miss-path cost made explicit?"
+      },
+      {
+        "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/scaling-models.md",
+        "candidate": "Do scaling models include memory-pressure effects such as paging out metadata under load?"
+      }
+    ],
+    "remaining": "Raster figures (20.1-20.5 address-space and table diagrams) not visually inspected; linked papers, the paging simulator and homework questions not read or executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B070",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-vm.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-vm.pdf",
+    "unit": "Complete chapter 12, A Dialogue on Memory Virtualization",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:22:41Z; 2 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 61 lines / 2 pages; complete dialogue text and footnotes; no figures or tables.",
+    "retrieved_lines": 61,
+    "retrieved_words": 586,
+    "representation_sha256": "8bda3d62cfa0164aeabba48fb097476709143d23fabe910e141fda3ce425bb59",
+    "pages": 2,
+    "pdf_sha256": null,
+    "sections": [
+      "A Dialogue on Memory Virtualization"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/dialogue-vm.md lines 1-61",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: CPU virtualization alone is incomplete; memory virtualization adds a hardware/OS translation layer.",
+      "Source claim: every address generated by a user program is virtual; the OS and hardware translate it to a physical address.",
+      "Source claim: the OS provides each process an illusion of a large, private, contiguous address space, primarily for ease of use.",
+      "Source claim: isolation and protection prevent one process from reading or overwriting another process memory.",
+      "Source claim: the chapter sequence starts with base/bounds and adds segmentation, TLBs and multi-level page tables.",
+      "Inference: virtual-address isolation is not a heap-sizing or GC contract; it says nothing about object liveness or latency.",
+      "Inference: a JVM heap limit and a process address space are different boundaries and should not be used interchangeably.",
+      "The dialogue contains no measurement, implementation or capacity guarantee."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+        "candidate": "Does the memory page distinguish OS virtual-address isolation from JVM heap sizing and garbage-collected occupancy?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+        "candidate": "Do the diagnostics separate process address-space growth from live-heap and GC occupancy?"
+      },
+      {
+        "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md",
+        "candidate": "Does the thread page avoid conflating a process address space with per-thread stack allocation?"
+      }
+    ],
+    "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is framing, not technical evidence.",
+    "reader": "Tycho agent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
   }
 ]

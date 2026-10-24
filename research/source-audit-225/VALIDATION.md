@@ -56,3 +56,26 @@ Limitations: raster figures were not visually inspected; linked papers, code,
 simulator exercises and homework were not read or executed; chapter 9's PDF
 footer prints version 1.20 while the site table of contents still says 1.10;
 this checkpoint does not claim independent review or whole-book completion.
+
+## OSTEP memory and paging continuation - 2026-10-24
+
+Nine records B062-B070 add chapters 12-20: 2,620 retrieved lines, 43,227 words
+and 114 pages. The combined OSTEP continuation is 19 records, 5,182 lines,
+83,042 words and 218 pages. Chapter 12 is the two-page dialogue; chapters 13-20
+cover address spaces, the memory API, translation, segmentation, free-space
+management, paging, TLBs and smaller tables.
+
+- All nine records parse, have unique IDs B062-B070 and the same 22-field
+  shape; each matches the local line count, word count and SHA-256.
+- All candidate paths exist in the frozen baseline; `comparisons.json` now has
+  seven candidate comparisons, still questions rather than findings.
+- The read-only census passed again; 681 baseline files, 247 sources and 406
+  canonical documents remain represented.
+- `check_boundary.py` and `git diff --check` passed. The current-main V11 line
+  checker passes against this tree but does not validate research Markdown.
+- No book, source register, canonical metadata, index, edition or historical
+  report changed. Only the research directory is in the delta.
+
+Limitations: raster figures were not visually inspected; linked papers, code
+and exercises were not read or executed; the chapter 9 version discrepancy
+remains; no independent review or whole-book completion is claimed.

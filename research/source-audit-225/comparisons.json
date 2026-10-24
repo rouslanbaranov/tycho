@@ -56,6 +56,45 @@
       "severity": "none",
       "proposed_action": "No correction. Optional citation if a primary-source example is useful.",
       "status": "candidate"
+    },
+    {
+      "id": "C005",
+      "book_page": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+      "book_anchor": "lines 49-53",
+      "source_id": "src.ostep",
+      "source_record": "B062",
+      "source_unit": "OSTEP chapter 13, sections 13.3-13.4",
+      "observation": "The memory page separates managed heap, native memory, stacks, mappings and RSS. OSTEP address space is a virtual layout, not a resident-set measurement; the two can be compared only with an explicit translation and residency boundary.",
+      "support": "qualified",
+      "severity": "none",
+      "proposed_action": "No correction. Keep virtual size, reserved memory, RSS and live heap distinct when citing OS memory vocabulary.",
+      "status": "candidate"
+    },
+    {
+      "id": "C006",
+      "book_page": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+      "book_anchor": "lines 71-82",
+      "source_id": "src.ostep",
+      "source_record": "B063",
+      "source_unit": "OSTEP chapter 14, sections 14.1-14.5",
+      "observation": "The diagnostic page keeps GC pauses, RSS growth, native buffers and connection waits separate. OSTEP memory API focuses on allocation ownership, lifetime and invalid frees; those are different failure classes from managed retention and paging.",
+      "support": "qualified",
+      "severity": "none",
+      "proposed_action": "No correction. The page already avoids treating heap occupancy as a diagnosis.",
+      "status": "candidate"
+    },
+    {
+      "id": "C007",
+      "book_page": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/compute-models.md",
+      "book_anchor": "lines 61-64",
+      "source_id": "src.ostep",
+      "source_record": "B062",
+      "source_unit": "OSTEP chapter 13, section 13.4",
+      "observation": "Tycho describes a VM as a guest-OS/hypervisor isolation boundary. OSTEP process address-space protection is a narrower mechanism inside one OS; the two isolation claims should not be treated as interchangeable.",
+      "support": "qualified",
+      "severity": "none",
+      "proposed_action": "No correction. Name the boundary (process, guest OS or host) whenever isolation is claimed.",
+      "status": "candidate"
     }
   ]
 }
