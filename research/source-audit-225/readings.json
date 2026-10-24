@@ -22805,12 +22805,794 @@
           "text": "Much of the time spent in developing a search application will be spent on tuning the retrieval eﬀectiveness of the ranking algorithm. Doing this without some concept of the underlying retrieval model can be very unrewarding. The re- trieval models described in this chapter (namely BM25, query likelihood, rele- vance models, inference network, and Ranking SVM) provide the best possible blueprints for a successful ranking algorithm. For these models, good parame- ter values and weights are already known from extensive published experiments. These values can be used as a starting point for the process of determining whether"
         }
       ]
+    },
+    {
+      "id": "R225",
+      "source_id": "src.sicar",
+      "source_ids": [
+        "src.sicar"
+      ],
+      "url": "https://ciir.cs.umass.edu/downloads/SEIRiP.pdf",
+      "unit": "Chapter 8, 'Evaluating Search Engines', pp. 297-338 of Search Engines: Information Retrieval in Practice (free PDF, 2015 update)",
+      "revision": "Search Engines: Information Retrieval in Practice, free PDF, 2015 update",
+      "status": "full-scoped-text-read",
+      "coverage": "Chapter 8 complete (PDF pp. 297-338): sections 8.1-8.7 including 8.4.1-8.4.4 and 8.6.1-8.6.3, Tables 8.1-8.6, figures 8.1-8.9, References and Further Reading, and Exercises 8.1-8.10. All 1,735 splitlines and 15,546 words read sequentially; running heads, page numbers, form-feed page breaks and layout whitespace were excluded from analysis but remain in the mechanical whole-file counts. Figure raster content is absent from the text extraction (see representation_gap).",
+      "retrieval_refs": [
+        "https://ciir.cs.umass.edu/downloads/SEIRiP.pdf"
+      ],
+      "omissions": "Other book chapters outside this batch not read; no reproduction or experiment",
+      "representation_sha256": "e5ede017dd147438f0e4386321847506f96fa16cfd0e2a9d8887241ba88f661a",
+      "retrieved_lines": 1735,
+      "retrieved_words": 15546,
+      "sections": [
+        {
+          "id": "Chapter 8",
+          "heading": "Chapter opening (title and epigraph)",
+          "pages": "297",
+          "lines": "1-8"
+        },
+        {
+          "id": "8.1",
+          "heading": "Why Evaluate?",
+          "pages": "297-299",
+          "lines": "9-95"
+        },
+        {
+          "id": "8.2",
+          "heading": "The Evaluation Corpus",
+          "pages": "299-304",
+          "lines": "96-335"
+        },
+        {
+          "id": "8.3",
+          "heading": "Logging",
+          "pages": "305-307",
+          "lines": "336-449"
+        },
+        {
+          "id": "8.4",
+          "heading": "Effectiveness Metrics",
+          "pages": "308",
+          "lines": "450-451"
+        },
+        {
+          "id": "8.4.1",
+          "heading": "Recall and Precision",
+          "pages": "308-313",
+          "lines": "452-665"
+        },
+        {
+          "id": "8.4.2",
+          "heading": "Averaging and Interpolation",
+          "pages": "313-318",
+          "lines": "666-899"
+        },
+        {
+          "id": "8.4.3",
+          "heading": "Focusing on the Top Documents",
+          "pages": "318-321",
+          "lines": "900-1011"
+        },
+        {
+          "id": "8.4.4",
+          "heading": "Using Preferences",
+          "pages": "321-322",
+          "lines": "1012-1067"
+        },
+        {
+          "id": "8.5",
+          "heading": "Efficiency Metrics",
+          "pages": "322-324",
+          "lines": "1068-1166"
+        },
+        {
+          "id": "8.6-8.6.1",
+          "heading": "Training, Testing, and Statistics; Significance Tests",
+          "pages": "325-330",
+          "lines": "1167-1383"
+        },
+        {
+          "id": "8.6.2",
+          "heading": "Setting Parameter Values",
+          "pages": "330-332",
+          "lines": "1384-1453"
+        },
+        {
+          "id": "8.6.3",
+          "heading": "Online Testing",
+          "pages": "332-333",
+          "lines": "1454-1509"
+        },
+        {
+          "id": "8.7",
+          "heading": "The Bottom Line",
+          "pages": "333-335",
+          "lines": "1510-1591"
+        },
+        {
+          "id": "References",
+          "heading": "References and Further Reading",
+          "pages": "335-337",
+          "lines": "1592-1656"
+        },
+        {
+          "id": "Exercises",
+          "heading": "Exercises 8.1-8.10",
+          "pages": "337-338",
+          "lines": "1657-1693"
+        }
+      ],
+      "notes": [
+        "Claim (8.1): effectiveness measures how well a ranking matches relevance judgments, efficiency measures time and space, and cost is the third constraint; the authors state that no reliable technique that significantly improves effectiveness is currently excluded for efficiency reasons, and distinguish parameter optimization from search-engine optimization (9-93). Inference: the chapter treats controlled batch experiments as the primary evidence standard and leaves holistic interactive evaluation aside.",
+        "Claim (8.2): Cranfield-style test collections fix documents, queries and judgments. Table 8.1 gives CACM 3,204 documents/2.2 MB/64 words, AP 242,918/0.7 GB/474 and GOV2 25,205,179/426 GB/1,073; Table 8.2 gives 64, 100 and 150 queries with 16, 220 and 180 relevant documents per query (96-198).",
+        "Claim (8.2): pooling merges the top k = 50-200 results per system and can treat unpooled relevant documents as non-relevant, which the chapter says would penalize a new algorithm; TREC studies are said to show judgments complete enough for comparisons. The query-count analysis says 25 queries give a wrong conclusion about a 0.05 MAP difference in about 13% of comparisons, 50 queries below 4%, and a 10% relative MAP difference suffices with a significance test (245-305).",
+        "Claim (8.3): logs record a user or session identifier, the exact query, ranked URLs with click flags and timestamps; dwell time and exit action are among the best implicit predictors. Clicks are biased toward high ranks and popular pages, so Skip Above and Skip Next converts clicks into preferences, and the click deviation CD(d,p)=O(d,p)-E(p) filters unusually frequent clicks (338-440).",
+        "Claim (8.4.1): recall is |A intersect B|/|A| and precision is |A intersect B|/|B|; fallout covers false positives but is vanishingly small on skewed collections, so precision is preferred as user-facing. F is the harmonic mean and F-beta reweights recall against precision. Average precision for the worked rankings is 0.78 versus 0.52 (452-664).",
+        "Claim (8.4.2): MAP averages per-query average precision (worked 0.62 and 0.44 for two queries, MAP 0.53); interpolation P(R)=max{P':R'>=R} produces a step function, and Table 8.4 averages precision at the 11 standard recall levels. Macro-averaging versus micro-averaging is explained in a footnote (666-843).",
+        "Claim (8.4.3): for top-heavy tasks the chapter presents precision at p (usually 10 or 20), MRR (worked reciprocal ranks 0.5 and 0.2, MRR 0.35) and DCG/NDCG with a log2 discount (worked DCG 6.89 at rank 5 and 9.61 at rank 10; NDCG values up to 0.88). It states there is no theoretical justification for this discount and gives an alternative exponential-gain definition used by some companies (900-1010).",
+        "Claim (8.4.4): Kendall tau = (P-Q)/(P+Q) compares full preference rankings (worked 0.33 when 10 of 15 preferences agree), but the authors say no studies are available showing tau is useful for comparing systems. BPREF balances R relevant documents against the first R non-relevant ones, ranges 0-1, and is reported as robust and similar to MAP for system comparisons (1012-1066).",
+        "Claim (8.5): efficiency metrics include elapsed and CPU indexing time, query throughput, latency, indexing temporary space and index size (Table 8.5). Throughput and latency trade off, latency is often reported as a percentile bound, and operations under about 150 ms are described as perceived instantaneous (1068-1165).",
+        "Claim (8.6.1): significance testing uses a null hypothesis, one-tailed tests, Type I/II errors and power. On the artificial 10-query data in Table 8.6 the paired t-test gives a mean difference of 21.4, standard deviation 29.1, t=2.33 and p=0.02; Wilcoxon gives w=35 and p about 0.025; the sign test finds 7 of 10 and p=0.17, so it cannot reject. A 5% average-precision difference (10% conservative) is cited as the old noticeable-difference threshold (1167-1382).",
+        "Claim (8.6.2-8.6.3): parameters must be tuned on training data and compared once on test data, with cross-validation as the fallback; testing on training data is the 'cardinal sin' and brute-force parameter sweeps are exhaustive but expensive. Online testing uses live traffic, often 1-5%, and provides cheap but noisy click data while risking the user experience (1384-1507).",
+        "Claim (8.7): no single effectiveness measure is correct; the recommended bundle is MAP, average NDCG, a recall-precision graph and precision at 10, always against a baseline, with the t-test and a per-query improvement distribution (Fig. 8.9); Galago provides the measures. Inference: the evidence base is TREC-centric, and interactive evaluation is only pointed to via Belkin (2008) (1510-1654)."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-judgments.md",
+          "candidate": "Closest existing treatment of judgments and metrics; chapter 8 supplies pooling caveats, MAP/NDCG definitions and query-count error rates. No edit in this batch."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "candidate": "Evaluation-lifecycle landing page; chapter 8 adds significance tests and the train/test separation. No edit in this batch."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-evaluation.md",
+          "candidate": "Candidate for top-heavy metrics (P@10, NDCG) and baseline discipline in hybrid comparisons. No edit in this batch."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Links effectiveness/efficiency trade-offs and parameter tuning to lexical deployment. No edit in this batch."
+        },
+        {
+          "path": "book/search/README.md",
+          "candidate": "Routes evaluation questions to the retrieval-evaluation pages. No edit in this batch."
+        }
+      ],
+      "reader": {
+        "label": "delegated-reader/deepseek-flash/DSH-subagent",
+        "role": "extraction only; not independent review, human review or source-completeness evidence",
+        "parent_agent_id": "session-339f3170-2943-4eff-877d-b6b465e229ef",
+        "read_at": "2026-10-24",
+        "policy": "/tmp/delegated-reader-policy.md"
+      },
+      "verification": {
+        "sha256_recomputed": "e5ede017dd147438f0e4386321847506f96fa16cfd0e2a9d8887241ba88f661a",
+        "sha256_matches_manifest": true,
+        "lines_manifest": 1735,
+        "lines_python_splitlines": 1735,
+        "physical_newlines": 1693,
+        "newline_delimited_lines": 1694,
+        "formfeed_page_breaks": 42,
+        "words_whitespace_split": 15546,
+        "words_match_manifest": true,
+        "pages": "297-338 (42 pages)",
+        "line_count_note": "The manifest's 1,735 equals Python splitlines(), which counts the 42 form-feed page separators as line boundaries; the file has 1,693 newline characters and no trailing newline. No text is missing; running heads and page numbers occur on every page and were excluded from analysis only."
+      },
+      "passages": [
+        {
+          "lines": "52-57",
+          "text": "fast is of no use unless it produces good results. So is there a trade-oﬀ between eﬃciency and eﬀectiveness? Some search en- gine designers discuss having “knobs,” or parameters, on their system that can be turned to favor either high-quality results or improved eﬃciency. The current sit- uation, however, is that there is no reliable technique that significantly improves eﬀectiveness that cannot be incorporated into a search engine due to eﬃciency"
+        },
+        {
+          "lines": "286-294",
+          "text": "specific. For example, in the case of the high-recall TREC task, a number of diﬀerent news and government collections were used for evaluation. • The queries that are used for the test collection should also be representative of the queries submitted by users of the target application. These may be acquired either from a query log from a similar application or by asking potential users for examples of queries. Although it may be possible to gather tens of thou- sands of queries in some applications, the need for relevance judgments is a major constraint. The number of queries must be suﬃcient to establish that a new technique makes a significant diﬀerence. An analysis of TREC experi-"
+        },
+        {
+          "lines": "613-623",
+          "text": "If there are a large number of relevant documents for a query, or if the relevant documents are widely distributed in the ranking, a list of recall-precision values for every rank position will be long and unwieldy. Instead, a number of techniques have been developed to summarize the eﬀectiveness of a ranking. The first of these is simply to calculate recall-precision values at a small number of predefined rank positions. In fact, to compare two or more rankings for a given query, only the 312    8 Evaluating Search Engines"
+        },
+        {
+          "lines": "1036-1038",
+          "text": "8.4.4 Using Preferences In section 8.3, we discussed how user preferences can be inferred from query logs."
+        },
+        {
+          "lines": "1513-1517",
+          "text": "f (λx1 + (1 − λ)x2 ) ≤ λf (x1 ) + (1 − λ)f (x2 ) 8.7 The Bottom Line     333"
+        }
+      ]
+    },
+    {
+      "id": "R226",
+      "source_id": "src.sicar",
+      "source_ids": [
+        "src.sicar"
+      ],
+      "url": "https://ciir.cs.umass.edu/downloads/SEIRiP.pdf",
+      "unit": "Chapter 9, 'Classification and Clustering', pp. 339-395 (p. 396 blank in the PDF) of Search Engines: Information Retrieval in Practice (free PDF, 2015 update)",
+      "revision": "Search Engines: Information Retrieval in Practice, free PDF, 2015 update",
+      "status": "full-scoped-text-read",
+      "coverage": "Chapter 9 complete (PDF pp. 339-395; p. 396 is blank): sections 9.1-9.2 including 9.1.1-9.1.5 and 9.2.1-9.2.5, Figures 9.1-9.18, Tables 9.1, Algorithms 1-2, References and Further Reading, and Exercises 9.1-9.13. All 2,422 splitlines and 20,354 words read sequentially; running heads, page numbers, form-feed page breaks and layout whitespace were excluded from analysis but remain in the mechanical whole-file counts. Figure raster content is absent from the text extraction (see representation_gap).",
+      "retrieval_refs": [
+        "https://ciir.cs.umass.edu/downloads/SEIRiP.pdf"
+      ],
+      "omissions": "Other book chapters outside this batch not read; no reproduction or experiment",
+      "representation_sha256": "c9af08ab2d797297c977571aa7efd1ecaa56a995a52e01189d5f484c3af5f44c",
+      "retrieved_lines": 2422,
+      "retrieved_words": 20354,
+      "sections": [
+        {
+          "id": "Chapter 9",
+          "heading": "Chapter opening (title, epigraph, introduction)",
+          "pages": "339-340",
+          "lines": "1-67"
+        },
+        {
+          "id": "9.1",
+          "heading": "Classification and Categorization",
+          "pages": "340-342",
+          "lines": "68-138"
+        },
+        {
+          "id": "9.1.1",
+          "heading": "Naive Bayes",
+          "pages": "342-351",
+          "lines": "139-517"
+        },
+        {
+          "id": "9.1.2",
+          "heading": "Support Vector Machines",
+          "pages": "351-359",
+          "lines": "518-848"
+        },
+        {
+          "id": "9.1.3",
+          "heading": "Evaluation",
+          "pages": "359",
+          "lines": "849-865"
+        },
+        {
+          "id": "9.1.4",
+          "heading": "Classifier and Feature Selection",
+          "pages": "359-364",
+          "lines": "866-1053"
+        },
+        {
+          "id": "9.1.5",
+          "heading": "Spam, Sentiment, and Online Advertising",
+          "pages": "364-373",
+          "lines": "1054-1446"
+        },
+        {
+          "id": "9.2",
+          "heading": "Clustering",
+          "pages": "373-375",
+          "lines": "1447-1501"
+        },
+        {
+          "id": "9.2.1",
+          "heading": "Hierarchical and K-Means Clustering",
+          "pages": "375-384",
+          "lines": "1502-1906"
+        },
+        {
+          "id": "9.2.2",
+          "heading": "K Nearest Neighbor Clustering",
+          "pages": "384-386",
+          "lines": "1907-1978"
+        },
+        {
+          "id": "9.2.3",
+          "heading": "Evaluation",
+          "pages": "386-387",
+          "lines": "1979-2027"
+        },
+        {
+          "id": "9.2.4",
+          "heading": "How to Choose K",
+          "pages": "387-389",
+          "lines": "2028-2100"
+        },
+        {
+          "id": "9.2.5",
+          "heading": "Clustering and Search",
+          "pages": "389-392",
+          "lines": "2101-2263"
+        },
+        {
+          "id": "References",
+          "heading": "References and Further Reading",
+          "pages": "392-393",
+          "lines": "2264-2299"
+        },
+        {
+          "id": "Exercises",
+          "heading": "Exercises 9.1-9.13",
+          "pages": "393-395",
+          "lines": "2300-2364"
+        }
+      ],
+      "notes": [
+        "Claim (intro): classification is supervised labeling and clustering is unsupervised grouping; the chapter positions both as machine-learning tasks that are heavily used in search engines and explicitly limits itself to an overview rather than theory (8-65).",
+        "Claim (9.1): ontology choice (binary, multivalued or hierarchical) must fit the task and the available labels; collapsing rare labels into a coarser class can improve generalization. A human-classification analogy leads to feature extraction, a weighted evidence score H(food)=sum w_i f_i, and a threshold decision rule (68-137).",
+        "Claim (9.1.1): Naive Bayes applies Bayes' rule with class priors P(c)=Nc/N and a conditional-independence factorization P(d|c)=product P(wi|c); the multiple-Bernoulli and multinomial event spaces are contrasted with worked spam tables and estimates such as P(the|spam)=4/20 and P(dinner|not spam)=1/15 (139-453).",
+        "Claim (9.1.1): maximum likelihood gives zero probabilities for unseen term-class pairs, so the chapter presents Bayesian smoothing (df+alpha)/(N+alpha+beta), add-one, and a Dirichlet-style estimate with mu; it states the multinomial model consistently outperforms multiple-Bernoulli and that training reduces to term statistics that usually fit in memory (352-516).",
+        "Claim (9.1.2): SVMs find the maximum-margin separating hyperplane; with w.x-=-1 and w.x+=1 the margin is 2/||w||, leading to minimizing 0.5||w||^2 subject to per-class constraints. Non-separable data adds hinge loss and slack variables with penalty C (standard C=1), solved by quadratic programming (518-721).",
+        "Claim (9.1.2): the kernel trick computes dot products in an implicit higher-dimensional space; the worked mapping Phi(x)=[x1^2, sqrt(2)x1x2, x2^2] gives Phi(w).Phi(x)=(w.x)^2, and Table 9.1 lists linear, polynomial and Gaussian (RBF, infinite-dimensional) kernels. Multi-class classification uses one-versus-all or one-versus-one, with no stated preference between them (723-847).",
+        "Claim (9.1.3-9.1.4): classification reuses accuracy, precision, recall, F and ROC from Chapter 8, but micro-averaging is widely used in classification where retrieval rarely uses it. Generative models (Naive Bayes) can win with few examples, discriminative models (SVMs) often win as data grows, and non-parametric nearest-neighbor can fit nonlinear boundaries but has high variance on small samples. Information gain IG(w)=H(C)-H(C|w) selects features; the worked IG(cheap)=0.2749 and IG(dinner)=0.3612 make 'dinner' the best predictor and 'the' useless (849-1050).",
+        "Claim (9.1.5): spam is defined subjectively and split into link spam (blog links, exchanges, farms) and term spam (repetition, dumping, phrase stitching, weaving); SpamAssassin combines a Bayes score with blacklists and date checks. Ntoulas et al. report above 90% accuracy from content features such as compressibility and n-gram likelihood (1054-1245).",
+        "Claim (9.1.5): sentiment pipelines need opinion detection, information extraction and polarity classification; Pang et al. report an SVM on unigrams above 80% versus about 60% for a human word-list baseline, and multiple-Bernoulli beat multinomial there. For ads, Broder et al. classify into a manually built hierarchy of over 6,000 nodes using tf.idf cosine and score semantic distance by least-common-ancestor depth (1265-1444).",
+        "Claim (9.2-9.2.1): clustering is ill-defined and usually polythetic; a similarity S converts to distance 1-S. Hierarchical clustering is divisive or agglomerative; Algorithm 1 merges the cheapest pair until K clusters, with single, complete, average, average-group and Ward cost functions. The chapter reports average-link generally best in IR experiments, O(N^2) cost, and that no single algorithm is best (1447-1813).",
+        "Claim (9.2.1-9.2.2): K-means keeps K fixed and minimizes sum dist(Xi,Ck), typically squared Euclidean (cosine in spherical K-means); it is heuristic, initialization- and order-dependent, but O(KN). K-nearest-neighbor clustering creates one overlapping cluster per instance, is O(N^2), and is used for language-model smoothing, score smoothing and pseudo-relevance feedback (1817-1977).",
+        "Claim (9.2.3-9.2.5): cluster evaluation uses ClusterPrecision = sum |MaxClass(Ci)|/N when labels exist, otherwise an objective function, which the authors call circular; choosing K has no formula, and Parzen windows replace K with a window size. The cluster hypothesis ('closely associated documents tend to be relevant to the same requests') is tested by similarity distributions and local precision, with Fig. 9.18 showing poor separation but high local precision on trec12. Cluster-based retrieval gives small, variable gains; cluster smoothing gives 'significant and consistent' gains, yet cost has kept both out of operational ranking, with query-specific clustering as the recent exception (1979-2261)."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/exact-ann.md",
+          "candidate": "Nearest-neighbor baseline parallels K-nearest-neighbor clustering; candidate for separating clustering, classification and ANN retrieval. No edit in this batch."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-hnsw-faiss-pgvector.md",
+          "candidate": "Distance and complexity discussion can host the O(N^2) versus O(KN) clustering cost contrast. No edit in this batch."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-judgments.md",
+          "candidate": "Precision/recall, micro- versus macro-averaging and ClusterPrecision connect to existing metric definitions. No edit in this batch."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c06-search-and-question-routes-for-architecture-agents/intent-reading.md",
+          "candidate": "Closest existing classification treatment (intent classification); candidate for supervised-label and sparsity caveats. No edit in this batch."
+        },
+        {
+          "path": "book/search/README.md",
+          "candidate": "Routes classification and clustering background questions. No edit in this batch."
+        }
+      ],
+      "reader": {
+        "label": "delegated-reader/deepseek-flash/DSH-subagent",
+        "role": "extraction only; not independent review, human review or source-completeness evidence",
+        "parent_agent_id": "session-339f3170-2943-4eff-877d-b6b465e229ef",
+        "read_at": "2026-10-24",
+        "policy": "/tmp/delegated-reader-policy.md"
+      },
+      "verification": {
+        "sha256_recomputed": "c9af08ab2d797297c977571aa7efd1ecaa56a995a52e01189d5f484c3af5f44c",
+        "sha256_matches_manifest": true,
+        "lines_manifest": 2422,
+        "lines_python_splitlines": 2422,
+        "physical_newlines": 2364,
+        "newline_delimited_lines": 2365,
+        "formfeed_page_breaks": 58,
+        "words_whitespace_split": 20354,
+        "words_match_manifest": true,
+        "pages": "339-395 content; 396 blank (57 content pages + 1 blank)",
+        "line_count_note": "The manifest's 2,422 equals Python splitlines(), which counts the 58 form-feed page separators as line boundaries; the file has 2,364 newline characters and no trailing newline. Two trailing form feeds follow the last exercise and the PDF page after printed p. 395 is blank, so no text is missing; running heads and page numbers were excluded from analysis only."
+      },
+      "passages": [
+        {
+          "lines": "43-46",
+          "text": "items. Both classification and clustering have been studied for many years by infor- mation retrieval researchers, with the aim of improving the eﬀectiveness, or in some cases the eﬃciency, of search applications. From another perspective, these"
+        },
+        {
+          "lines": "352-364",
+          "text": "P (dinner|spam) = 0, P (dinner|not spam) = 17 , and so on. Using the multiple-Bernoulli model, the document likelihood, P (d|c), can be written as: ∏ P (d|c) =       P (w|c)δ(w,d) (1 − P (w|c))1−δ(w,d) w∈V where δ(w, D) is 1 if and only if term w occurs in document d. In practice, it is not possible to use the maximum likelihood estimate because of the zero probability problem. In order to illustrate the zero probability problem, let us return to the spam classification example from Figure 9.1. Suppose that we receive a spam email that happens to contain the term “dinner”. No matter what other terms the email does or does not contain, the probability P (d|c) will always"
+        },
+        {
+          "lines": "592-596",
+          "text": "common case where the data points are not linearly separable. 9.1 Classification and Categorization    353"
+        },
+        {
+          "lines": "2115-2121",
+          "text": "B       B C C Fig. 9.17. Example of overlapping clustering using Parzen windows. The clusters for the"
+        },
+        {
+          "lines": "2252-2256",
+          "text": "retrieval, ranks clusters instead of individual documents in response to a query. If there were K clusters C1 . . . CK , for example, we could rank clusters using the query likelihood retrieval model. This means that we rank clusters by P (Q|Cj ), where Q is the query, and:"
+        }
+      ]
+    },
+    {
+      "id": "R227",
+      "source_id": "src.sicar",
+      "source_ids": [
+        "src.sicar"
+      ],
+      "url": "https://ciir.cs.umass.edu/downloads/SEIRiP.pdf",
+      "unit": "Chapter 10, 'Social Search', pp. 397-450 of Search Engines: Information Retrieval in Practice (free PDF, 2015 update)",
+      "revision": "Search Engines: Information Retrieval in Practice, free PDF, 2015 update",
+      "status": "full-scoped-text-read",
+      "coverage": "Chapter 10 complete: PDF pp. 397-450, sections 10.1-10.5 (including 10.2.1-10.2.3, 10.3.1-10.3.4 and 10.5.1-10.5.2), subheads 'Profiles', 'Static filtering models', 'Adaptive filtering models', 'Fast filtering with millions of profiles', 'Evaluation', 'Rating with user clusters' and 'Rating with nearest neighbors', Tables 10.1-10.4, figure captions 10.1-10.12, Algorithm 3 (HITS), References and Further Reading, and Exercises 10.1-10.14; 2,282 splitlines and 20,427 words. All body prose read sequentially; running heads, page numbers, form-feed page breaks and layout whitespace excluded from analysis. Figure raster/diagram content is absent from the text extraction (see representation_gap).",
+      "retrieval_refs": [
+        "https://ciir.cs.umass.edu/downloads/SEIRiP.pdf"
+      ],
+      "omissions": "Other book chapters outside this batch not read; no reproduction or experiment",
+      "representation_path": "/tmp/B20g/raw/se-ch10.txt",
+      "representation_gap": "Figures 10.1-10.12 are images. Only detached labels survive: 10.3 leaves a grid of hub/authority pairs and iterations whose node associations are lost; 10.5 leaves only the two panel titles; 10.8 and 10.9 leave rating digits and cluster letters A-D; 10.10 leaves the engine and result-list labels; 10.11 leaves only '(a)', '(b)', '(c)' so the central-hub, pure-P2P and superpeer topologies are entirely absent; 10.12 leaves only H and N1-N3; 10.4 leaves node numbers 1-7. Table 10.1 survives as text but keeps its odd indentation, and Table 10.4's contingency cells are readable though column alignment is fragile. Equations are layout-degraded: HITS summations are displaced onto separate lines (603-608), the normalization step in Algorithm 3 prints as 'AZi (p) A' and 'HZiH (p)' (592-596), the MMR maxima and the correlation radical/denominator are split across lines (362-364, 1592-1596), and fractions collapse, e.g. precision/recall at 1447-1452 renders 'T PT+F P P' and the worked rating example at 1671 renders '1 · 10 5'. Superscripts/subscripts are flattened, ligatures (ff, fi, fl) and the 'eﬀ' artifact appear throughout, and footnotes are interleaved at page breaks. Running heads ('398 10 Social Search' etc.) and page numbers occur on every page and were excluded from reading and from the reported word count.",
+      "representation_sha256": "71f809deeaae5f5fc78558b3cc8daffda8659ef78663fad99bb7007bf0fb203b",
+      "retrieved_lines": 2282,
+      "retrieved_words": 20427,
+      "sections": [
+        {
+          "id": "10",
+          "heading": "Chapter opening (title and epigraph)",
+          "pages": "397",
+          "lines": "1-8"
+        },
+        {
+          "id": "10.1",
+          "heading": "What Is Social Search?",
+          "pages": "397-400",
+          "lines": "9-122"
+        },
+        {
+          "id": "10.2",
+          "heading": "User Tags and Manual Indexing",
+          "pages": "400-402",
+          "lines": "123-212"
+        },
+        {
+          "id": "10.2.1",
+          "heading": "Searching Tags",
+          "pages": "402-404",
+          "lines": "213-305"
+        },
+        {
+          "id": "10.2.2",
+          "heading": "Inferring Missing Tags",
+          "pages": "404-406",
+          "lines": "306-377"
+        },
+        {
+          "id": "10.2.3",
+          "heading": "Browsing and Tag Clouds",
+          "pages": "406-408",
+          "lines": "378-453"
+        },
+        {
+          "id": "10.3",
+          "heading": "Searching with Communities (section opening)",
+          "pages": "408",
+          "lines": "454-455"
+        },
+        {
+          "id": "10.3.1",
+          "heading": "What Is a Community?",
+          "pages": "408-409",
+          "lines": "456-501"
+        },
+        {
+          "id": "10.3.2",
+          "heading": "Finding Communities",
+          "pages": "409-415",
+          "lines": "502-760"
+        },
+        {
+          "id": "10.3.3",
+          "heading": "Community-Based Question Answering",
+          "pages": "415-419",
+          "lines": "761-962"
+        },
+        {
+          "id": "10.3.4",
+          "heading": "Collaborative Searching",
+          "pages": "420-422",
+          "lines": "963-1067"
+        },
+        {
+          "id": "10.4",
+          "heading": "Filtering and Recommending (section opening)",
+          "pages": "423",
+          "lines": "1068-1069"
+        },
+        {
+          "id": "10.4.1",
+          "heading": "Document Filtering",
+          "pages": "423-432",
+          "lines": "1070-1471"
+        },
+        {
+          "id": "10.4.2",
+          "heading": "Collaborative Filtering",
+          "pages": "432-438",
+          "lines": "1472-1753"
+        },
+        {
+          "id": "10.5",
+          "heading": "Peer-to-Peer and Metasearch (section opening)",
+          "pages": "438",
+          "lines": "1754-1755"
+        },
+        {
+          "id": "10.5.1",
+          "heading": "Distributed Search",
+          "pages": "438-442",
+          "lines": "1756-1932"
+        },
+        {
+          "id": "10.5.2",
+          "heading": "P2P Networks",
+          "pages": "442-446",
+          "lines": "1933-2076"
+        },
+        {
+          "id": "References",
+          "heading": "References and Further Reading",
+          "pages": "446-448",
+          "lines": "2077-2175"
+        },
+        {
+          "id": "Exercises",
+          "heading": "Exercises 10.1-10.14",
+          "pages": "448-450",
+          "lines": "2176-2228"
+        }
+      ],
+      "notes": [
+        "Claim (10.1): social search is defined very broadly as search within an environment where a community of users actively participates — defining profiles and interests, interacting with other users, and modifying representations of the objects searched — in contrast to standard models that treat every user the same and restrict interaction to query formulation (9-48); the chapter scopes five topics — user tags, communities, filtering and recommender systems, P2P search and metasearch — and explicitly defers personalization to section 6.2.5, because it supplies query context rather than a social setting (9-120).",
+        "Claim (10.2): social tagging is manual indexing by end users with little quality control and no fixed vocabulary, so tag sets form folksonomies described as dynamic, community-influenced ontologies; this differs from expert card catalogs built from a controlled vocabulary, and the chapter reports evaluations in which automatic indexing is at least as effective and manual plus automatic is most effective (123-208).",
+        "Claim (10.2.1): tags are sparse representations of complex items, so conjunctive queries favour precision and disjunctive queries recall; vocabulary mismatch is reduced by pseudo-relevance-feedback-style enrichment of tags or queries from web search snippets (Figure 10.1), and tags are additionally noisy and often missing (213-304).",
+        "Claim (10.2.2): missing tags can be inferred by tf.idf term selection, by one binary classifier per tag trained on existing tag/item pairs (an SVM over page text, anchor text and link features), or by Maximal Marginal Relevance, which trades relevance against redundancy through lambda (306-376).",
+        "Claim (10.2.3): tag-chain browsing is focused but offers no global view, so popular tags and tag clouds (weighted lists whose display size tracks popularity or importance) are used to start exploration (378-451).",
+        "Claim (10.3.2): community finding operates on directed or undirected graphs with two criteria — member similarity and denser interaction inside than outside — and the chapter presents HITS (iterative authority/hub scores with normalization, Algorithm 3, Figures 10.3-10.4) and clustering over node vectors; it states that community-finding effectiveness cannot be compared cleanly because community membership is ill-defined (502-759).",
+        "Claim (10.3.3): community-based question answering is preferred for needs no single page satisfies, and archived questions are better match targets than archived answers; vocabulary mismatch is addressed with intralanguage translation models — Berger and Lafferty's translated query likelihood and Xue et al.'s interpolation with beta and Dirichlet smoothing — with translation probabilities estimated from question/answer pairs treated as a parallel corpus and truncated to the top few translations per term for cost (761-961).",
+        "Claim (10.3.4): collaborative search splits into co-located (CoSearch: driver, observers, shared page queue and query queue) and remote (SearchTogether: persistent sessions, shared and refinable query logs, ratings, comments, recommendations), and the chapter notes that very few commercial systems exist (963-1064).",
+        "Claim (10.4.1): filtering fixes a long-term profile while documents stream in, so it is a push application and a supervised task with very little training data; static models reuse retrieval models plus a score threshold (a language-model profile ranked by negative KL divergence is given in full), adaptive models update profiles through Rocchio, relevance models or online learning, millions of profiles are matched by indexing profiles and treating each incoming document as a query, and evaluation uses set-based measures from a contingency table including U = alpha*TP + beta*TN + delta*FP + gamma*FN (1068-1470).",
+        "Claim (10.4.2): collaborative filtering exploits relationships between profiles, associates one profile per user, predicts ratings rather than binary retrieval decisions and revisits all previously unjudged items; the chapter gives user clustering with correlation similarity, average and expected-rating prediction, nearest-neighbour prediction with user-mean offsets (more robust and empirically stronger than clustering), and evaluation by absolute error and mean squared error rather than strict accuracy (1472-1752).",
+        "Claim (10.5): distributed search requires resource representation, resource selection and result merging; nodes are described by a unigram language model (or by query-based sampling when they expose only a search API), ranked by query likelihood, and merged by local scores when models and statistics agree, otherwise by normalized scores or CombMNZ; reported TREC evidence is that selecting 5-10 of 200 collections matched centralized search while selecting 1% of 2,500 P2P nodes cost 25% average precision at rank 10, and four-engine metasearch gained 5-20% MAP over the best single engine; the P2P architectures are central hub, pure flooding with a hop horizon, and hierarchical superpeers, plus DHT/Chord exact-match routing in O(log N) hops (1754-2074).",
+        "Inference (not a source claim): the chapter's own framing makes its filtering and recommender material the closest analogue to operational profile stores and recommendation surfaces, while its distributed-search material is the closest analogue to result merging across heterogeneous backends; the text supplies no architecture, latency, failure or cost evidence for either, because Figure 10.11's topologies and all quantitative settings are extracted only as captions and label fragments."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Tag- and field-based representations reusing the lexical model; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/fusion-signals.md",
+          "candidate": "Result merging and score combination across engines (normalization, CombMNZ); no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-judgments.md",
+          "candidate": "Judgment sets and macroaveraging behind the filtering contingency-table metrics; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/graph-data-models-and-traversal.md",
+          "candidate": "Graph models and link-analysis iteration (HITS, node vectors) used for community finding; no edit under #225."
+        },
+        {
+          "path": "book/cases/meta-tao-social-graph-serving.md",
+          "candidate": "Serving a social graph with strict latency budgets, an operational counterpart to the chapter's implicit communities; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "candidate": "Profile and recommendation caches whose invalidation mirrors adaptive profile updates; no edit under #225."
+        }
+      ],
+      "verification": {
+        "sha256_recomputed": "71f809deeaae5f5fc78558b3cc8daffda8659ef78663fad99bb7007bf0fb203b",
+        "sha256_matches_manifest": true,
+        "manifest_lines": 2282,
+        "lines_by_splitlines": 2282,
+        "newline_count": 2228,
+        "form_feed_page_breaks": 54,
+        "manifest_words": 20427,
+        "words_non_space": 20427,
+        "words_wc": 20427,
+        "bytes": 136667,
+        "line_count_note": "Manifest lines equal Python str.splitlines() over the raw file, which counts the 54 form-feed page breaks as line boundaries (2,228 newline characters + 54 form feeds = 2,282). wc -l counts only the 2,228 newline characters, so a raw wc -l comparison reports 54 fewer lines than the manifest; the byte hash is identical.",
+        "checked_at": "2026-10-24"
+      },
+      "passages": [
+        {
+          "section": "10.2.1",
+          "lines": "225-226",
+          "quote": "or videos. These textual representations of non-textual items can be very useful for searching. We can apply many of the retrieval strategies described in Chap-"
+        },
+        {
+          "section": "10.4.1",
+          "lines": "1424-1427",
+          "quote": "Both static and adaptive filtering, therefore, can be considered special cases of many of the retrieval models and techniques described in Chapters 6, 7, and 9. Table 10.3 summarizes the various filtering models, including how profiles are represented and updated. In practice, the vector space model and language mod-"
+        },
+        {
+          "section": "10.4.2",
+          "lines": "1489-1491",
+          "quote": "432 10 Social Search"
+        },
+        {
+          "section": "10.5.1",
+          "lines": "1919-1922",
+          "quote": "Rd′ = (Rd − Rmin )/(Rmax − Rmin ) It is also possible to learn a score-normalizing function by comparing scores from a sample document collection to the local scores (Si & Callan, 2003)."
+        }
+      ],
+      "reader": {
+        "label": "delegated-reader/deepseek-flash/DSH-subagent",
+        "role": "extraction only; not independent review, human review or source-completeness evidence",
+        "parent_agent_id": "session-339f3170-2943-4eff-877d-b6b465e229ef",
+        "read_at": "2026-10-24",
+        "policy": "/tmp/delegated-reader-policy.md"
+      }
+    },
+    {
+      "id": "R228",
+      "source_id": "src.sicar",
+      "source_ids": [
+        "src.sicar"
+      ],
+      "url": "https://ciir.cs.umass.edu/downloads/SEIRiP.pdf",
+      "unit": "Chapter 11, 'Beyond Bag of Words', pp. 451-485 of Search Engines: Information Retrieval in Practice (free PDF, 2015 update)",
+      "revision": "Search Engines: Information Retrieval in Practice, free PDF, 2015 update",
+      "status": "full-scoped-text-read",
+      "coverage": "Chapter 11 complete: PDF pp. 451-485, sections 11.1-11.7 (including 11.4.1-11.4.2), Tables 11.1-11.2, figure captions 11.1-11.12, the three Galago query listings (independence, sequential and full dependence), References and Further Reading, and Exercises 11.1-11.13; 1,376 splitlines and 12,187 words. All body prose read sequentially; running heads, page numbers, form-feed page breaks and layout whitespace excluded from analysis. Figure raster/diagram content is absent from the text extraction (see representation_gap).",
+      "retrieval_refs": [
+        "https://ciir.cs.umass.edu/downloads/SEIRiP.pdf"
+      ],
+      "omissions": "Other book chapters outside this batch not read; no reproduction or experiment",
+      "representation_path": "/tmp/B20g/raw/se-ch11.txt",
+      "representation_gap": "Figures 11.1-11.12 are images. Only detached labels survive: 11.1 leaves D, q1, q2, q3 four times but no edges, so the independence/sequential/full/general panels are indistinguishable; 11.2 leaves the two D nodes and the query words plus two question marks; 11.3 turns capability markers into '!' bullets; 11.5 leaves the QA pipeline labels scattered across lines; 11.8 leaves only the caption (the two images and their hue histograms are absent); 11.9 leaves only the caption (the car/train/trademark examples are absent); 11.10 leaves only the caption; 11.11 keeps the five annotation word lists but not the images; 11.12 leaves only the caption. Figure 11.6's two 'Original' panels are blank while their OCR outputs survive as noisy text, and Figure 11.7's transcript and recognizer output survive as text. Equations are layout-degraded: the scoring sum in 11.2 is displaced above its body (70-72), the parameter hat and arg max split across lines (97-98), the entity-ranking summation and the P(q|e,d) normalizer Z are split (574-576, 595-603), and the Gaussian kernel prints flattened as 'exp −||q − e||2 /2σ 2' (617). The Galago #weight listings lose closing parentheses at 232-236 and 268-275, so operator nesting must be reconstructed from the surrounding prose. Table 11.2's two-column alignment is fragile where question text wraps. Ligatures (ff, fi, fl) and other typographic artifacts are present, and footnotes are interleaved at page breaks. Running heads ('452 11 Beyond Bag of Words' etc.) and page numbers occur on every page and were excluded from reading and from the reported word count.",
+      "representation_sha256": "1b5917f581144e1082968425d33436a1861d6d1d53332719c381d0fe8651d881",
+      "retrieved_lines": 1376,
+      "retrieved_words": 12187,
+      "sections": [
+        {
+          "id": "11",
+          "heading": "Chapter opening (title and epigraph)",
+          "pages": "451",
+          "lines": "1-8"
+        },
+        {
+          "id": "11.1",
+          "heading": "Overview",
+          "pages": "451-452",
+          "lines": "9-60"
+        },
+        {
+          "id": "11.2",
+          "heading": "Feature-Based Retrieval Models",
+          "pages": "452-454",
+          "lines": "61-132"
+        },
+        {
+          "id": "11.3",
+          "heading": "Term Dependence Models",
+          "pages": "454-459",
+          "lines": "133-341"
+        },
+        {
+          "id": "11.4",
+          "heading": "Structure Revisited",
+          "pages": "459-461",
+          "lines": "342-437"
+        },
+        {
+          "id": "11.4.1",
+          "heading": "XML Retrieval",
+          "pages": "461-464",
+          "lines": "438-522"
+        },
+        {
+          "id": "11.4.2",
+          "heading": "Entity Search",
+          "pages": "464-466",
+          "lines": "523-625"
+        },
+        {
+          "id": "11.5",
+          "heading": "Longer Questions, Better Answers",
+          "pages": "466-470",
+          "lines": "626-796"
+        },
+        {
+          "id": "11.6",
+          "heading": "Words, Pictures, and Music",
+          "pages": "470-479",
+          "lines": "797-1109"
+        },
+        {
+          "id": "11.7",
+          "heading": "One Search Fits All?",
+          "pages": "479-481",
+          "lines": "1110-1196"
+        },
+        {
+          "id": "References",
+          "heading": "References and Further Reading",
+          "pages": "481-483",
+          "lines": "1197-1272"
+        },
+        {
+          "id": "Exercises",
+          "heading": "Exercises 11.1-11.13",
+          "pages": "483-485",
+          "lines": "1273-1340"
+        }
+      ],
+      "notes": [
+        "Claim (11.1): bag of words denotes a document as an unordered collection of words with no syntactic or statistical relations; query likelihood, BM25 and the vector space model all rest on it, and although linguistically poor it has been hard to beat — even phrase and proximity features took years to yield consistent gains (9-34); the chapter then selects four representation aspects to examine — term dependencies, document structure, query structure for question answering and non-text features — before speculating about the future of search (9-59).",
+        "Claim (11.2): linear feature-based models restrict the scoring function to S_Lambda(D;Q) = sum_j lambda_j * f_j(D,Q) + Z, learn Lambda by maximizing an evaluation metric over training data, use brute-force search for few features and the Ranking SVM otherwise, and are preferred because features are easy to add and optimization is efficient; the standard topical feature set is term occurrence, term frequency, idf, document length and proximity (61-131).",
+        "Claim (11.3): the Markov Random Field model is an undirected graphical model with a document node connected to every query term node; four dependency assumptions are distinguished (full independence, sequential, full, general), potential functions over cliques may compute exact-phrase or window counts, and the text reports that sequential dependence is the best practical choice because attempts to learn dependencies have come up short (133-222).",
+        "Claim (11.3): Galago expresses the model directly — #combine for independence, and #weight(0.8 #combine(terms) 0.1 #combine(#od:1 adjacent pairs) 0.1 #combine(#uw:8 adjacent pairs)) for sequential dependence, with the full-dependence variant adding #od:1 triples, #uw:8 non-adjacent pairs and #uw:12 triples; the 0.8/0.1/0.1 weights are described as empirically derived and show individual terms dominate (223-283).",
+        "Claim (11.3): latent concept expansion extends pseudo-relevance feedback inside the MRF by modelling dependencies among expansion words, so multiword concepts can be proposed instead of single words; Table 11.1 lists the top one- and two-word concepts for 'hubble telescope achievements' on TREC ROBUST (284-341).",
+        "Claim (11.4): compared with a relational database the search engine offers no schema, no attribute data types and no joins; documents are contexts defined by tag pairs and stored with primary-key access only, while the database contributes persistence, reliability, scalability and a simple API, with BigTable cited as a precedent for dropping schema and joins (342-436).",
+        "Claim (11.4.1): XML retrieval is evaluated through INEX content-and-structure queries written in NEXI, whose paths and path filters combine element structure with textual predicates; the chapter reports that people rarely use structural cues, often use them incorrectly, and that there is essentially no evidence structure in user queries improves effectiveness, so INEX moved toward content-only queries and automatic element ranking (438-519).",
+        "Claim (11.4.2): entity search ranks entities rather than documents by building pseudo-documents from words near each mention, then estimating P(e,q) = sum_d P(e,q|d)P(d) decomposed as P(q|e,d)P(e|d); independence between words and entities loses effectiveness, so co-occurrence proximity with a Gaussian kernel is used, and accurate named-entity recognition was found not to matter much for expert search (523-624).",
+        "Claim (11.5): question answering pipelines combine question analysis/classification into about 31 answer-type categories, passage retrieval and answer selection; useful features include expected entity type, question words, answer patterns and thesaurus relations, and the text states that benefits for non-factoid questions have yet to be shown in retrieval experiments (626-795).",
+        "Claim (11.6): OCR and speech recognition inject character-level and OOV errors but TREC-style evaluations show little effectiveness loss because collections are redundant, except for short documents and high error rates; image retrieval uses quantized colour histograms, texture and shape plus key frames for video and relevance-model annotation over image terms, and music retrieval uses spectral-peak signatures and query-by-humming with adapted n-gram and language models (797-1108).",
+        "Claim (11.7): the closing argument predicts continued proliferation of specialized search services alongside convergence on probabilistic and linear feature-based models, closer coupling of implementation choice to efficiency and adaptability, and future interfaces that model users, tasks and dialog far more explicitly than current engines do (1110-1196).",
+        "Inference (not a source claim): the chapter's strongest operational content is the feature-weight and operator-nesting structure of the Galago listings, whereas its evidence for structure, entity, question and multimedia retrieval is narrative and citation-based; the extracted text preserves no measurements from Figures 11.8-11.12, so image and music claims cannot be checked against the figures themselves."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Feature vectors, term weights and proximity as inputs to a linear ranking function; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md",
+          "candidate": "Combining heterogeneous ranking signals, the architecture analogue of weighted feature models; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-architecture.md",
+          "candidate": "Non-text and embedding representations that extend beyond lexical features; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
+          "candidate": "Structured, semi-structured and specialized stores contrasted with schema-less search indexes; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "candidate": "Evaluation of ranking changes and index lifecycle when features and extractors evolve; no edit under #225."
+        },
+        {
+          "path": "book/cases/discord-search-index-cells.md",
+          "candidate": "Operational search index partitioning where richer representations and features affect cost; no edit under #225."
+        }
+      ],
+      "verification": {
+        "sha256_recomputed": "1b5917f581144e1082968425d33436a1861d6d1d53332719c381d0fe8651d881",
+        "sha256_matches_manifest": true,
+        "manifest_lines": 1376,
+        "lines_by_splitlines": 1376,
+        "newline_count": 1340,
+        "form_feed_page_breaks": 36,
+        "manifest_words": 12187,
+        "words_non_space": 12187,
+        "words_wc": 12187,
+        "bytes": 81501,
+        "line_count_note": "Manifest lines equal Python str.splitlines() over the raw file, which counts the 36 form-feed page breaks as line boundaries (1,340 newline characters + 36 form feeds = 1,376). wc -l counts only the 1,340 newline characters, so a raw wc -l comparison reports 36 fewer lines than the manifest; the byte hash is identical.",
+        "checked_at": "2026-10-24"
+      },
+      "passages": [
+        {
+          "section": "11.1",
+          "lines": "11-14",
+          "quote": "The term “bag of words” is used to refer to a simple representation of text that is used in retrieval and classification models. In this representation, a document is considered to be an unordered collection of words with no relationships, either syntactic or statistical, between them.1 Many of the retrieval models discussed in"
+        },
+        {
+          "section": "11.3",
+          "lines": "205-209",
+          "quote": "tion. Here it is assumed that adjacent terms are dependent on each other, but not on terms that are farther away. This type of assumption is similar to a bigram lan- guage model. Another possible assumption is that all terms are somehow depen- dent on all other terms. This is known as the full dependence assumption. The final"
+        },
+        {
+          "section": "11.4.1",
+          "lines": "502-504",
+          "quote": "- find articles published before 2000 (fm is the front matter of the article) that contain sections discussing the topic “search engines”."
+        },
+        {
+          "section": "11.6",
+          "lines": "1099-1102",
+          "quote": "A number of approaches have been developed for deriving index terms for searching from these basic representations. In the case of audio, one of the most successful has been the use of “signatures” created by hashing to represent the mu-"
+        }
+      ],
+      "reader": {
+        "label": "delegated-reader/deepseek-flash/DSH-subagent",
+        "role": "extraction only; not independent review, human review or source-completeness evidence",
+        "parent_agent_id": "session-339f3170-2943-4eff-877d-b6b465e229ef",
+        "read_at": "2026-10-24",
+        "policy": "/tmp/delegated-reader-policy.md"
+      }
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 191,
+    "full_reads": 195,
     "blocked": 14,
     "records": [
       "R015",
@@ -23022,7 +23804,11 @@
       "R221",
       "R222",
       "R223",
-      "R224"
+      "R224",
+      "R225",
+      "R226",
+      "R227",
+      "R228"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
