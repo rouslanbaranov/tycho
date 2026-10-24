@@ -6,7 +6,7 @@
 ## Canonical count correction
 
 The register contains 247 sources. Readings and reconciliations cover 134
-register sources; 111 remain. The earlier 127 count was stale: it did not
+register sources; 110 remain. The earlier 127 count was stale: it did not
 include the completed OSTEP whole-book reconciliation and mixed unregistered
 OpenTelemetry child-page IDs into the record count.
 
