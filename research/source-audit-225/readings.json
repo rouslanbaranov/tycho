@@ -33404,8 +33404,8 @@
       "url": "https://www.mongodb.com/docs/manual/data-modeling/",
       "unit": "Registered page: MongoDB - Data Modeling landing page (landing page only; linked detail pages are unread and outside this unit)",
       "revision": "official documentation, page captured 2026-10-24",
-      "status": "partial-scoped-text-read",
-      "coverage": "All 344 local lines (2,022 words) read sequentially. The landing page's own substantive content is lines 58-129 (about 723 words): introduction and flexible-model principle, 'Use Cases', 'Get Started', 'Details' with three subsections (flexible data model, document relationships, relational-versus-document schema design), and 'Learn More'. The remaining roughly 1,300 words are site chrome and duplicated navigation: two full mega-menus (lines 8-34), breadcrumb and docs-menu repeats (lines 36-56), 'Copy page' (line 60), previous/next pager and skill-badge promotion (lines 127-135), two copies of the 'On this page' table of contents (lines 141-159), the docs sidebar repeated twice (lines 161-291), language selector and legal/footer links (lines 293-344). Linked detail pages are part of the documented source area but were not read.",
+      "status": "full-scoped-text-read",
+      "coverage": "Data-modeling landing plus the six linked detail pages, read as R321-R326.",
       "retrieval_refs": [
         "local: /tmp/B21b/raw/mongo-modeling.md lines 58-129 (content), lines 1-57 and 130-344 (chrome, excluded)",
         "url: https://www.mongodb.com/docs/manual/data-modeling/",
@@ -33482,7 +33482,8 @@
           "candidate": "Existing page on relationship modelling and traversal; candidate contrast for one-to-many and many-to-many relationships. Relation only; no edit under #225."
         }
       ],
-      "reader": "Delegated reader (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef), research-only, records written under /tmp/B21b/records/"
+      "reader": "Delegated reader (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef), research-only, records written under /tmp/B21b/records/",
+      "representation_gap": null
     },
     {
       "id": "R304",
@@ -35025,12 +35026,614 @@
         }
       ],
       "reader": "delegated-reader R320 (DeepSeek Harness subagent deepseek-flash, read-only; extraction only, not independent review, human review or CI)"
+    },
+    {
+      "id": "R321",
+      "source_ids": [
+        "src.mongodb"
+      ],
+      "url": "https://www.mongodb.com/docs/manual/data-modeling/best-practices/",
+      "unit": "MongoDB Database Manual 9.0 page 'Best Practices for Data Modeling in MongoDB' (single page; not the whole manual), captured to /tmp/B21h/raw/best-practices.md",
+      "revision": "MongoDB Database Manual 9.0, native Markdown captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page only, not the whole MongoDB manual: local capture raw/best-practices.md is 214 lines / 2248 words / SHA-256 af66945dbce99ddb8d279df927898c52da06369998aca1ff8f28eb2191f163ed, read sequentially and completely. Body L3-L214 (2240 words) is covered in full: 7 H2 sections, 6 H3 subsections, two tables and two JavaScript code blocks. L1 is the publisher's 'complete MongoDB documentation index' banner (8 words), excluded as chrome from content analysis but retained in the representation and therefore in the counts and hash. No navigation, footer, cookie or consent chrome appears in this native Markdown capture. Linked detail pages are outside this unit and were not read.",
+      "retrieval_refs": [
+        "/tmp/B21h/manifest.json#R321 (lines 214, words 2248, sha256 af66945dbce99ddb8d279df927898c52da06369998aca1ff8f28eb2191f163ed)",
+        "/tmp/B21h/raw/best-practices.md L3-L214 body (2240 words), read in full",
+        "/tmp/B21h/raw/best-practices.md L1 llms.txt index banner (8 words, chrome)",
+        "https://www.mongodb.com/docs/manual/data-modeling/best-practices/ (declared page URL in manifest)"
+      ],
+      "omissions": "Other MongoDB manual pages outside this batch not read; no experiment. The linked embedding, referencing, enforce-consistency, transactions, TTL, schema-validation and indexing pages were not fetched, and no deployment, index build or benchmark was observed.",
+      "representation_gap": "No gap in the captured page itself: all 13 headings and the body text L3-L214 are present and read. Scope gap: detailed mechanics for embedding versus referencing, consistency enforcement, transactions, TTL and indexing live on separate linked manual pages that are outside this unit and were not read, so nothing from those pages is attributed here.",
+      "representation_sha256": "af66945dbce99ddb8d279df927898c52da06369998aca1ff8f28eb2191f163ed",
+      "retrieved_lines": 214,
+      "retrieved_words": 2248,
+      "sections": [
+        {
+          "heading": "Best Practices for Data Modeling in MongoDB (intro)",
+          "lines": "L3-L5",
+          "summary": "Frames the page as guidance for balancing performance and adaptability while ensuring consistency and integrity, and links to schema planning and design-pattern pages."
+        },
+        {
+          "heading": "Plan Your Schema Early and Iterate",
+          "lines": "L7-L11",
+          "summary": "Plan early to avoid growth problems; the flexible schema supports iteration, but large production schemas remain difficult to modify."
+        },
+        {
+          "heading": "Modify Your Data Model",
+          "lines": "L13-L29",
+          "summary": "Learning-platform example: lessons start embedded; when videos, quizzes, assignments and links arrive, split them into a `lessons` collection linked by reference IDs."
+        },
+        {
+          "heading": "Link Related Data",
+          "lines": "L31-L61",
+          "summary": "Embed or reference; a scenario table maps embedding to has-a, co-read, co-updated and co-archived data and referencing to high cardinality, duplication cost, size/bandwidth pressure, unbounded arrays, different write times and parent-independent children."
+        },
+        {
+          "heading": "Duplicate Data",
+          "lines": "L63-L84",
+          "summary": "Duplication trades cheaper reads (no joins) for update logic; classifies duplicates as immutable, temporal, staleness-sensitive and staleness-tolerant."
+        },
+        {
+          "heading": "Enforce Data Consistency",
+          "lines": "L86-L98",
+          "summary": "Consistency options are embedding related data, transactions and Atlas Database Triggers, with a pointer to the data-consistency page for tradeoffs."
+        },
+        {
+          "heading": "Enforce Schema with Validation Rules",
+          "lines": "L100-L116",
+          "summary": "Validation suits established applications with a defined structure; rules need not cover every field; examples cover an events date type, a store card-type set and a students positive GPA."
+        },
+        {
+          "heading": "Index Commonly Queried Fields",
+          "lines": "L118-L142",
+          "summary": "Index frequently queried, filtered, sorted or joined fields; claimed benefits include faster reads and sorting plus `$lookup`/`$group` optimization; costs include at least 8 kB per index, write overhead, disk and memory."
+        },
+        {
+          "heading": "Additional Considerations",
+          "lines": "L144-L146",
+          "summary": "Introduces atomicity, lifecycle, hardware and small-document considerations alongside read and write operations."
+        },
+        {
+          "heading": "Atomicity",
+          "lines": "L148-L164",
+          "summary": "Writes are atomic per document; embedded data gets atomic multi-subdocument updates, references need separate operations, and multi-document transactions exist but cost more than single-document writes."
+        },
+        {
+          "heading": "Data Lifecycle Management",
+          "lines": "L166-L172",
+          "summary": "TTL collections expire documents after a period (30-minute login-session example); capped collections provide FIFO insertion-order management."
+        },
+        {
+          "heading": "Hardware Constraints",
+          "lines": "L174-L176",
+          "summary": "Design for available RAM and keep the working set small by returning only relevant fields."
+        },
+        {
+          "heading": "Small Documents",
+          "lines": "L178-L210",
+          "summary": "Per-document overhead matters for tiny documents; suggests explicit `_id`, shorter field names (9 bytes saved in the example) and embedding, while noting field-name shortening does not shrink indexes."
+        },
+        {
+          "heading": "Learn More",
+          "lines": "L212-L214",
+          "summary": "Points to a MongoDB University data-modeling course."
+        }
+      ],
+      "excluded_chrome": [
+        "L1: llms.txt documentation-index banner (8 words)",
+        "No site navigation, footer, cookie/consent, language or breadcrumb chrome is present in the native Markdown capture."
+      ],
+      "notes": [
+        "Source claim: plan the schema early; the flexible model supports iteration, but modifying large production schemas is still difficult, so a simple schema may precede optimization (L7-L11).",
+        "Source claim: in the learning-platform example, lessons begin embedded as sub-documents and later move to a separate `lessons` collection linked by reference IDs when formats such as videos, quizzes and assignments multiply (L13-L29).",
+        "Source claim: the linking table (L43-L55) favors embedding for has-a/contains, co-read, co-updated and co-archived data, and referencing for high child cardinality, costly duplication, size/bandwidth pressure, unbounded array growth, different write times and children that can exist without a parent.",
+        "Source claim: duplicating data removes joins and can speed reads, but frequent updates to duplicated data create heavy workloads; duplicates are classified as immutable, temporal, staleness-sensitive or staleness-tolerant (L63-L80).",
+        "Source claim: consistency across duplicates can be enforced by embedding, transactions or Atlas Database Triggers (L90-L96), and schema validation is most useful for an established application and need not cover every field (L100-L106).",
+        "Source claim: index fields used for frequent query, filter, sort or join operations; benefits claimed are faster results, efficient sorting, `$lookup`/`$group` optimization and lower CPU/I/O, at a cost of at least 8 kB per index plus write, disk and memory overhead (L118-L140).",
+        "Source claim: a write is atomic only at single-document level, so embedded documents can update related sub-documents atomically while references require separate operations; multi-document transactions are supported but 'in most cases' incur greater performance cost and are not a replacement for schema design (L148-L164).",
+        "Source claim: TTL collections delete expired documents automatically (30-minute session example) and capped collections manage documents FIFO by insertion order (L166-L172).",
+        "Source claim: for small documents the page suggests an explicit `_id` instead of the automatic 12-byte ObjectId, shorter field names and embedding; shortening `last_name` to `lname` and `best_score` to `score` is said to save 9 bytes per document (L178-L206).",
+        "Inference: the page is qualitative vendor guidance. Its only numeric figures are the 8 kB minimum index size and the 9-byte field-name example; it gives no array-size, document-size, collection-count or staleness bounds, so no threshold can be attributed to it.",
+        "Inference: the page is a hub that states principles and defers mechanics to linked pages; 'greater performance cost' for distributed transactions (L162) is unmeasured and must not be read as a benchmark."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader R321 (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef, deepseek-flash), research-only; wrote only /tmp/B21h/records/; extraction, not independent review, human review or CI"
+    },
+    {
+      "id": "R322",
+      "source_ids": [
+        "src.mongodb"
+      ],
+      "url": "https://www.mongodb.com/docs/manual/data-modeling/design-antipatterns/",
+      "unit": "MongoDB Database Manual 9.0 page 'Schema Design Anti-Patterns' (single landing page; not the whole manual), captured to /tmp/B21h/raw/design-antipatterns.md",
+      "revision": "MongoDB Database Manual 9.0, native Markdown captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page only, not the whole MongoDB manual: local capture raw/design-antipatterns.md is 53 lines / 446 words / SHA-256 893d682c94324c8798e51fd99d7073821f1149ac863988ffe41a5549b8595bf6, read sequentially and completely. Body L3-L53 (438 words) is covered in full: introduction, a 5-row anti-pattern table, Details, a 5-step Atlas Performance Advisor walkthrough and Learn More. L1 is the publisher's 'complete MongoDB documentation index' banner (8 words), excluded as chrome from content analysis but retained in the representation and therefore in the counts and hash. No navigation, footer, cookie or consent chrome appears in this native Markdown capture. The linked anti-pattern detail pages are outside this unit and were not read.",
+      "retrieval_refs": [
+        "/tmp/B21h/manifest.json#R322 (lines 53, words 446, sha256 893d682c94324c8798e51fd99d7073821f1149ac863988ffe41a5549b8595bf6)",
+        "/tmp/B21h/raw/design-antipatterns.md L3-L53 body (438 words), read in full",
+        "/tmp/B21h/raw/design-antipatterns.md L1 llms.txt index banner (8 words, chrome)",
+        "https://www.mongodb.com/docs/manual/data-modeling/design-antipatterns/ (declared page URL in manifest)"
+      ],
+      "omissions": "Other MongoDB manual pages outside this batch not read; no experiment. The five linked anti-pattern detail pages, the Atlas Performance Advisor documentation and the Compass Performance Insights page were not fetched, and no Atlas cluster, advisor output or benchmark was inspected.",
+      "representation_gap": "No gap in the captured page itself: all sections L3-L53 are present and read. Scope gap: the page is an index to five anti-pattern detail pages (unbounded arrays, collection count, unnecessary indexes, bloated documents, `$lookup` volume); those pages' thresholds, examples and remediation mechanics are absent from this representation, so only the one-sentence definitions in the table can be attributed to this source. The Atlas walkthrough is captured as UI steps only; no screenshots, scoring rules or limits are present.",
+      "representation_sha256": "893d682c94324c8798e51fd99d7073821f1149ac863988ffe41a5549b8595bf6",
+      "retrieved_lines": 53,
+      "retrieved_words": 446,
+      "sections": [
+        {
+          "heading": "Schema Design Anti-Patterns (intro)",
+          "lines": "L3-L5",
+          "summary": "Defines anti-patterns as inefficient schema structures that add complexity and cause performance problems, and says recognizing them improves performance."
+        },
+        {
+          "heading": "Get Started",
+          "lines": "L7-L17",
+          "summary": "A 5-row table names each anti-pattern, links its detail page and gives a one-sentence definition: unbounded arrays, too many collections, unnecessary indexes, bloated documents and too many `$lookup` operations."
+        },
+        {
+          "heading": "Details",
+          "lines": "L19-L21",
+          "summary": "Says Atlas Performance Advisor (M10 clusters or higher) and Compass Performance Insights identify anti-patterns, and that understanding the warnings is necessary to correct them."
+        },
+        {
+          "heading": "View Schema Suggestions in Performance Advisor",
+          "lines": "L23-L49",
+          "summary": "Five-step Atlas navigation: Clusters page, select organization/project, open Clusters, choose the replica set or shard, open Performance Advisor, then Explore Recommendations on the Improve Schema card; optionally change the host."
+        },
+        {
+          "heading": "Learn More",
+          "lines": "L51-L53",
+          "summary": "Links to the Schema Design Patterns page and the Apply Design Patterns page."
+        }
+      ],
+      "excluded_chrome": [
+        "L1: llms.txt documentation-index banner (8 words)",
+        "No site navigation, footer, cookie/consent, language or breadcrumb chrome is present in the native Markdown capture."
+      ],
+      "notes": [
+        "Source claim: schema design anti-patterns are inefficient structures that create unnecessary complexity and performance issues, and recognizing them helps produce better-performing applications (L5).",
+        "Source claim: the five named anti-patterns are unbounded arrays (can exceed the document size limit and reduce index performance), too many collections (can reduce storage engine performance), unnecessary indexes (consume disk and degrade writes), bloated documents (degrade common queries) and too many `$lookup` operations (increase query complexity and reduce performance) (L13-L17).",
+        "Source claim: Atlas Performance Advisor, available for M10 clusters or higher, and Compass Performance Insights identify anti-patterns in a database (L21).",
+        "Source claim: recommendations are reached through Clusters, a selected replica set or shard, Performance Advisor, and Explore Recommendations on the Improve Schema card (L25-L45).",
+        "Source claim: results default to a primary host, and another host can be selected from a drop-down (L47-L49).",
+        "Source claim: the page carries a warning that Atlas navigation is being improved and points to preview documentation if the steps do not match the UI (L27).",
+        "Inference: every anti-pattern definition is a single sentence with no threshold (array length, collection count, document size, index count or lookup count), so no boundary between acceptable and anti-pattern can be attributed to this page.",
+        "Inference: the page is a landing index plus an Atlas UI recipe; it gives no remediation mechanics or worked examples, which live on the five linked pages that were not read.",
+        "Inference: 'performance' claims here are unquantified vendor statements; no measurement, workload, data size or server version is cited, and the Atlas path is product-specific and access-dependent."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/query-counterexamples.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader R322 (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef, deepseek-flash), research-only; wrote only /tmp/B21h/records/; extraction, not independent review, human review or CI"
+    },
+    {
+      "id": "R323",
+      "source_ids": [
+        "src.mongodb"
+      ],
+      "url": "https://www.mongodb.com/docs/manual/data-modeling/design-patterns/",
+      "unit": "MongoDB Database Manual 9.0 page 'Schema Design Patterns' (single landing page; not the whole manual), captured to /tmp/B21h/raw/design-patterns.md",
+      "revision": "MongoDB Database Manual 9.0, native Markdown captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page only, not the whole MongoDB manual: local capture raw/design-patterns.md is 29 lines / 125 words / SHA-256 dc69c662ed0dd5b4d56f127b090a11dc3b47f2dc2b59d08e3113486ed4c2e5a3, read sequentially and completely. Body L3-L29 (117 words) is covered in full: one sentence of purpose plus six linked pattern entries, each a title, URL and one-sentence description. L1 is the publisher's 'complete MongoDB documentation index' banner (8 words), excluded as chrome from content analysis but retained in the representation and therefore in the counts and hash. No navigation, footer, cookie or consent chrome appears in this native Markdown capture. The six linked pattern pages are outside this unit and were not read.",
+      "retrieval_refs": [
+        "/tmp/B21h/manifest.json#R323 (lines 29, words 125, sha256 dc69c662ed0dd5b4d56f127b090a11dc3b47f2dc2b59d08e3113486ed4c2e5a3)",
+        "/tmp/B21h/raw/design-patterns.md L3-L29 body (117 words), read in full",
+        "/tmp/B21h/raw/design-patterns.md L1 llms.txt index banner (8 words, chrome)",
+        "https://www.mongodb.com/docs/manual/data-modeling/design-patterns/ (declared page URL in manifest)"
+      ],
+      "omissions": "Other MongoDB manual pages outside this batch not read; no experiment. The six linked pattern pages (computed values, group data, polymorphic data, data versioning, archive, single collection), the Apply Design Patterns page and the anti-patterns page were not fetched, and no schema or workload was inspected.",
+      "representation_gap": "No gap in the captured page itself: all L3-L29 content is present and read. Scope gap: the page is a directory of six pattern pages, and each pattern is represented only by its name and one sentence; examples, trade-offs, thresholds and implementation mechanics are absent, so pattern semantics beyond those sentences cannot be attributed to this source.",
+      "representation_sha256": "dc69c662ed0dd5b4d56f127b090a11dc3b47f2dc2b59d08e3113486ed4c2e5a3",
+      "retrieved_lines": 29,
+      "retrieved_words": 125,
+      "sections": [
+        {
+          "heading": "Schema Design Patterns (intro)",
+          "lines": "L3-L5",
+          "summary": "States that schema design patterns optimize the data model for how an application queries and uses data."
+        },
+        {
+          "heading": "Handle Computed Values",
+          "lines": "L7-L9",
+          "summary": "Link plus one sentence: perform calculations in the database so results are ready when the client requests data."
+        },
+        {
+          "heading": "Group Data",
+          "lines": "L11-L13",
+          "summary": "Link plus one sentence: group data into series to improve performance and account for outliers."
+        },
+        {
+          "heading": "Polymorphic Data",
+          "lines": "L15-L17",
+          "summary": "Link plus one sentence: handle variable document fields and data types in a single collection."
+        },
+        {
+          "heading": "Document and Schema Versioning",
+          "lines": "L19-L21",
+          "summary": "Link plus one sentence: prepare for schema changes to account for changing technical requirements."
+        },
+        {
+          "heading": "Archive Pattern",
+          "lines": "L23-L25",
+          "summary": "Link plus one sentence: move old data to a separate location to increase storage and improve performance where data is accessed most frequently."
+        },
+        {
+          "heading": "Single Collection Pattern",
+          "lines": "L27-L29",
+          "summary": "Link plus one sentence: use references to group related documents of different types into a single collection."
+        }
+      ],
+      "excluded_chrome": [
+        "L1: llms.txt documentation-index banner (8 words)",
+        "No site navigation, footer, cookie/consent, language or breadcrumb chrome is present in the native Markdown capture."
+      ],
+      "notes": [
+        "Source claim: schema design patterns optimize the data model based on how the application queries and uses data (L5).",
+        "Source claim: six patterns are listed, each with a title, a link and one sentence: computed values, group data, polymorphic data, document and schema versioning, archive and single collection (L7-L29).",
+        "Source claim: the computed-values pattern is described as performing calculations in the database so results are ready when the client requests data (L9).",
+        "Source claim: group data is described as grouping data into series to improve performance and account for outliers; the page does not define the series key or the outlier handling (L13).",
+        "Source claim: polymorphic data is described as handling variable document fields and data types in a single collection (L17).",
+        "Source claim: document and schema versioning is described as preparing for schema changes driven by changing technical requirements (L21), and the archive pattern as moving old data to a separate location to improve storage and hot-data performance (L25).",
+        "Source claim: the single-collection pattern uses references to group related documents of different types in one collection (L29).",
+        "Inference: the page is a pure directory. It contains no examples, trade-offs, thresholds or mechanics, so no pattern can be described beyond its one-sentence definition from this source.",
+        "Inference: no selection criteria or ordering rationale is given; the list is not presented as a decision procedure, and its 'improve performance' claims are unquantified with no version, workload or measurement cited."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/semantic-compatibility.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader R323 (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef, deepseek-flash), research-only; wrote only /tmp/B21h/records/; extraction, not independent review, human review or CI"
+    },
+    {
+      "id": "R324",
+      "source_ids": [
+        "src.mongodb"
+      ],
+      "url": "https://www.mongodb.com/docs/manual/data-modeling/embedding/",
+      "unit": "MongoDB Database Manual 9.0 page 'Embedded Data in Your MongoDB Schema' at https://www.mongodb.com/docs/manual/data-modeling/embedding/, native Markdown at /tmp/B21h/raw/embedding.md; 51 lines, 472 words, SHA-256 cbd409b87ed7cecbbaaeb93fa9592b66c8231f3addcda64ce48cd7b8e0983bb2",
+      "revision": "MongoDB Database Manual 9.0, native Markdown captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 51 lines / 472 words of the local representation were read sequentially. L1 (9 words) is the publisher cross-reference to the MongoDB documentation index and is excluded from the substantive body; L3-L51 (463 words) contain the page body and were read in full. The body covers the H1 and the embedded/denormalized definition (L3-L11), the example image (alt text and SVG URL only, L9), the three stated benefits (L15-L19), the 16-mebibyte document limit and GridFS pointer (L23-L27), Use Cases (L29-L35), Collections with a Large Number of Small Documents (L37-L43), and Query Embedded Data (L45-L51). No heading, prose paragraph, callout, code block, table or list item is missing from the body. The native-Markdown URL was re-fetched on 2026-10-24 (HTTP 200); it returned 4,011 bytes whose SHA-256 equals the local file hash exactly. Site navigation, breadcrumb, footer, rating and 'copy page' chrome are not present in the native Markdown and are treated as excluded chrome rather than content. Linked MongoDB tutorial pages are outside this unit.",
+      "retrieval_refs": [
+        {
+          "kind": "manifest",
+          "ref": "/tmp/B21h/manifest.json#R324",
+          "note": "declares 51 lines, 472 words, SHA-256 cbd409b87ed7cecbbaaeb93fa9592b66c8231f3addcda64ce48cd7b8e0983bb2"
+        },
+        {
+          "kind": "local",
+          "ref": "/tmp/B21h/raw/embedding.md L1-L51",
+          "note": "read sequentially in full; L1 publisher pointer, L3-L51 body (463 words)"
+        },
+        {
+          "kind": "live",
+          "ref": "https://www.mongodb.com/docs/manual/data-modeling/embedding.md",
+          "note": "re-fetched 2026-10-24; HTTP 200; 4,011 bytes; same SHA-256 as the local file"
+        }
+      ],
+      "omissions": "Other MongoDB manual pages outside this batch not read, including the linked one-to-one and one-to-many tutorials, the array/nested-document query tutorials and GridFS; no experiment",
+      "representation_gap": null,
+      "representation_sha256": "cbd409b87ed7cecbbaaeb93fa9592b66c8231f3addcda64ce48cd7b8e0983bb2",
+      "retrieved_lines": 51,
+      "retrieved_words": 472,
+      "sections": [
+        {
+          "heading": "Publisher pointer (excluded)",
+          "lines": "L1",
+          "summary": "Nine-word cross-reference to the MongoDB documentation index (llms.txt); publisher navigation, not page prose."
+        },
+        {
+          "heading": "Embedded Data in Your MongoDB Schema (introduction)",
+          "lines": "L3-L27",
+          "summary": "H1 L3; embedded documents and denormalized definition L5; example image L9 (alt text and SVG URL only); duplication note L11; read, single-operation and single-atomic-write benefits L15-L19; L21 repeats L5 verbatim; 16-mebibyte document limit L25; GridFS pointer L27."
+        },
+        {
+          "heading": "Use Cases",
+          "lines": "L29-L35",
+          "summary": "Embedding for 'contains'/one-to-one relationships (contact with address) and for one-to-many relationships where child documents are read in the parent context; each case links to a tutorial."
+        },
+        {
+          "heading": "Collections with a Large Number of Small Documents",
+          "lines": "L37-L43",
+          "summary": "Roll small documents into larger grouped documents when the grouping is logical and frequently queried; claims sequential reads, fewer random disk accesses and fewer index key entries; caveat when only a subset is retrieved or the separate model is natural."
+        },
+        {
+          "heading": "Query Embedded Data",
+          "lines": "L45-L51",
+          "summary": "Dot notation for fields inside embedded documents and arrays; links to Query an Array and Query on Embedded/Nested Documents."
+        }
+      ],
+      "notes": [
+        "Source claim: embedded documents keep related data in one document structure, may contain arrays and sub-documents, and are called denormalized because frequently accessed data is duplicated across collections (L5, L11).",
+        "Source claim: embedding is credited with better read performance, retrieval of related data in a single database operation, and update of related data in a single atomic write operation (L15-L19).",
+        "Source claim: documents must be smaller than 16 mebibytes, and GridFS is suggested for large binary data (L25-L27).",
+        "Source claim: embedding fits 'contains'/one-to-one and one-to-many relationships where the many side is viewed in the context of the one side (L31-L35).",
+        "Source claim: rolling up many small documents can produce sequential reads, fewer random disk accesses and fewer index key entries, but may not help when only a subset of a group is retrieved (L39-L43).",
+        "Source claim: embedded data is queried with dot notation, with separate tutorials for arrays and nested documents (L47-L51).",
+        "Inference: the read-performance and atomicity benefits are stated qualitatively; the page gives no dataset, latency, throughput or write-conflict measurement, so no magnitude can be attributed to this source.",
+        "Inference: 'single atomic write operation' is scoped to one document write; the page does not discuss multi-document transactions, update anomalies, or how duplicated fields are kept consistent across collections.",
+        "Inference: L5 and L21 are identical paragraphs. A same-day re-fetch of the native-Markdown endpoint returns the same bytes, so the repetition is in the publisher's Markdown rather than a local extraction artifact; it adds and removes no section.",
+        "Inference: the page carries no MongoDB release number; '9.0' is the manifest revision label, not a claim printed on the page."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/transactional-models.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader R324 (DeepSeek Harness subagent deepseek-flash, read-only; extraction only, not independent review, human review or CI)"
+    },
+    {
+      "id": "R325",
+      "source_ids": [
+        "src.mongodb"
+      ],
+      "url": "https://www.mongodb.com/docs/manual/data-modeling/referencing/",
+      "unit": "MongoDB Database Manual 9.0 page 'Reference Data in Your MongoDB Schema' at https://www.mongodb.com/docs/manual/data-modeling/referencing/, native Markdown at /tmp/B21h/raw/referencing.md; 54 lines, 401 words, SHA-256 afe8b697058eabfeaa6c2b8db148c4464ea9508a246ef94a303651f570ce96a5",
+      "revision": "MongoDB Database Manual 9.0, native Markdown captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 54 lines / 401 words of the local representation were read sequentially. L1 (9 words) is the publisher cross-reference to the MongoDB documentation index and is excluded from the substantive body; L3-L54 (392 words) contain the page body and were read in full. The body covers the H1 and the reference/normalized definition (L3-L9), the example image (alt text only, L7), Use Cases (L11-L19), Large Number of Collections (L21-L42) including the logs example, per-type collections, metadata overhead and namespace-file behaviour, and Query Normalized Data Models (L44-L54) with the $lookup and $graphLookup stages and links to tree and one-to-many reference tutorials. No heading, prose paragraph, code block, table or list item is missing from the body. The native-Markdown URL was re-fetched on 2026-10-24 (HTTP 200); it returned 3,485 bytes whose SHA-256 equals the local file hash exactly. Site navigation, breadcrumb, footer, rating and 'copy page' chrome are not present in the native Markdown and are treated as excluded chrome rather than content. Linked MongoDB tutorial and operator pages are outside this unit.",
+      "retrieval_refs": [
+        {
+          "kind": "manifest",
+          "ref": "/tmp/B21h/manifest.json#R325",
+          "note": "declares 54 lines, 401 words, SHA-256 afe8b697058eabfeaa6c2b8db148c4464ea9508a246ef94a303651f570ce96a5"
+        },
+        {
+          "kind": "local",
+          "ref": "/tmp/B21h/raw/referencing.md L1-L54",
+          "note": "read sequentially in full; L1 publisher pointer, L3-L54 body (392 words)"
+        },
+        {
+          "kind": "live",
+          "ref": "https://www.mongodb.com/docs/manual/data-modeling/referencing.md",
+          "note": "re-fetched 2026-10-24; HTTP 200; 3,485 bytes; same SHA-256 as the local file"
+        }
+      ],
+      "omissions": "Other MongoDB manual pages outside this batch not read, including the linked one-to-many reference tutorial, Model Tree Structures and the $lookup/$graphLookup operator pages; no experiment",
+      "representation_gap": null,
+      "representation_sha256": "afe8b697058eabfeaa6c2b8db148c4464ea9508a246ef94a303651f570ce96a5",
+      "retrieved_lines": 54,
+      "retrieved_words": 401,
+      "sections": [
+        {
+          "heading": "Publisher pointer (excluded)",
+          "lines": "L1",
+          "summary": "Nine-word cross-reference to the MongoDB documentation index (llms.txt); publisher navigation, not page prose."
+        },
+        {
+          "heading": "Reference Data in Your MongoDB Schema (introduction)",
+          "lines": "L3-L9",
+          "summary": "H1 L3; references are links from one document to another that applications resolve L5; example image L7 (alt text only); normalized models divide data across collections without duplication L9."
+        },
+        {
+          "heading": "Use Cases",
+          "lines": "L11-L19",
+          "summary": "Prefer references when embedding duplicates frequently changing data without enough read benefit, when representing complex many-to-many or large hierarchical data, or when the related entity is frequently queried on its own."
+        },
+        {
+          "heading": "Large Number of Collections",
+          "lines": "L21-L42",
+          "summary": "Logs sample and document shape L25-L30; grouping into logs_dev and logs_debug by type L32; claim that many collections generally carry no significant performance penalty and that distinct collections matter for high-throughput batch processing L34; per-collection kilobyte overhead, memory cost of unindexed reads and the database namespace file with its limits link L38-L42."
+        },
+        {
+          "heading": "Query Normalized Data Models",
+          "lines": "L44-L54",
+          "summary": "Aggregation stages $lookup L48 and $graphLookup L50 for querying across collections; links to a one-to-many document-reference tutorial L52 and Model Tree Structures L54."
+        }
+      ],
+      "notes": [
+        "Source claim: references store relationships by including links from one document to another, and applications resolve those references to access the related data (L5).",
+        "Source claim: references produce normalized models because data is divided into multiple collections and is not duplicated (L9).",
+        "Source claim: references are preferred when embedding would duplicate frequently changing data without sufficient read benefit, for complex many-to-many or large hierarchical data, and when the related entity is frequently queried on its own (L15-L19).",
+        "Source claim: having a large number of collections is said to have no significant performance penalty generally, and distinct collections are called very important for high-throughput batch processing (L34).",
+        "Source claim: each collection has a minimum overhead of a few kilobytes, unindexed reads may consume large memory, and a single namespace file per database stores metadata with one entry per index and collection (L38-L42).",
+        "Source claim: normalized models are queried with the $lookup and $graphLookup aggregation stages, with tree structures covered by a separate manual page (L46-L54).",
+        "Inference: the page describes resolution by applications and never mentions database-enforced referential integrity, cascading updates or dangling-reference cleanup, so those guarantees cannot be attributed to this source.",
+        "Inference: 'no significant performance penalty' and 'very important' are unquantified; the page supplies no collection count, metadata size, query mix or benchmark against which the claim could be tested.",
+        "Inference: the namespace-file sentence uses a `<database>.ns` example and gives no storage-engine or version qualifier, so its currency against current MongoDB metadata handling cannot be established from this unit.",
+        "Inference: the normalized-model tradeoff is argued in one direction only; the page gives no procedure for measuring duplication cost, read amplification or the write cost of resolving references."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/graph-data-models-and-traversal.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader R325 (DeepSeek Harness subagent deepseek-flash, read-only; extraction only, not independent review, human review or CI)"
+    },
+    {
+      "id": "R326",
+      "source_ids": [
+        "src.mongodb"
+      ],
+      "url": "https://www.mongodb.com/docs/manual/data-modeling/schema-design-process/",
+      "unit": "MongoDB Database Manual 9.0 page 'Designing Your Schema' at https://www.mongodb.com/docs/manual/data-modeling/schema-design-process/, native Markdown at /tmp/B21h/raw/schema-design-process.md; 31 lines, 181 words, SHA-256 abb52835bd2eabc084bb3f9e2ef45512b6eeced35bc0113fc84f23e1b124d251",
+      "revision": "MongoDB Database Manual 9.0, native Markdown captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 31 lines / 181 words of the local representation were read sequentially. L1 (9 words) is the publisher cross-reference to the MongoDB documentation index and is excluded from the substantive body; L3-L31 (172 words) contain the page body and were read in full. The body covers the H1 and purpose (L3-L5), Use Cases (L7-L11) with early planning, flexible-schema iteration and the difficulty of changing large production schemas, and Tasks (L13-L31), the ordered four-step process: identify workload, map relationships, apply design patterns and create indexes, each with a link to its subpage. No heading, prose paragraph, table, code block or list item is missing from the body. The native-Markdown URL was re-fetched on 2026-10-24 (HTTP 200); it returned 1,797 bytes whose SHA-256 equals the local file hash exactly. Site navigation, breadcrumb, footer, rating and 'copy page' chrome are not present in the native Markdown and are treated as excluded chrome rather than content. Linked subpages and all other MongoDB manual pages are outside this unit.",
+      "retrieval_refs": [
+        {
+          "kind": "manifest",
+          "ref": "/tmp/B21h/manifest.json#R326",
+          "note": "declares 31 lines, 181 words, SHA-256 abb52835bd2eabc084bb3f9e2ef45512b6eeced35bc0113fc84f23e1b124d251"
+        },
+        {
+          "kind": "local",
+          "ref": "/tmp/B21h/raw/schema-design-process.md L1-L31",
+          "note": "read sequentially in full; L1 publisher pointer, L3-L31 body (172 words)"
+        },
+        {
+          "kind": "live",
+          "ref": "https://www.mongodb.com/docs/manual/data-modeling/schema-design-process.md",
+          "note": "re-fetched 2026-10-24; HTTP 200; 1,797 bytes; same SHA-256 as the local file"
+        }
+      ],
+      "omissions": "Other MongoDB manual pages outside this batch not read, including the four linked task subpages (identify-workload, map-relationships, apply-patterns, create-indexes); no experiment",
+      "representation_gap": null,
+      "representation_sha256": "abb52835bd2eabc084bb3f9e2ef45512b6eeced35bc0113fc84f23e1b124d251",
+      "retrieved_lines": 31,
+      "retrieved_words": 181,
+      "sections": [
+        {
+          "heading": "Publisher pointer (excluded)",
+          "lines": "L1",
+          "summary": "Nine-word cross-reference to the MongoDB documentation index (llms.txt); publisher navigation, not page prose."
+        },
+        {
+          "heading": "Designing Your Schema (introduction)",
+          "lines": "L3-L5",
+          "summary": "H1 L3; the schema design process identifies the data an application needs and organizes it to optimize performance L5."
+        },
+        {
+          "heading": "Use Cases",
+          "lines": "L7-L11",
+          "summary": "Plan and design early to avoid performance issues as the application grows; the flexible schema supports iterative design, but large in-production schemas remain difficult to modify, so a simple schema may precede optimization."
+        },
+        {
+          "heading": "Tasks",
+          "lines": "L13-L31",
+          "summary": "Four ordered steps, each linked to a subpage: identify the workload and its most frequent operations L17-L19; map relationships and decide whether to link or embed L21-L23; apply design patterns to optimize reads and writes L25-L27; create indexes for common query patterns L29-L31."
+        }
+      ],
+      "notes": [
+        "Source claim: the schema design process helps identify needed data and organize it to optimize performance (L5).",
+        "Source claim: planning and designing the schema early helps prevent performance issues as an application grows (L9).",
+        "Source claim: MongoDB's flexible schema allows iterative design, but large-scale schemas used in production can still be difficult to modify, so a simple schema may be established before optimization (L11).",
+        "Source claim: the first task is to identify the operations the application runs most frequently (L17-L19).",
+        "Source claim: the second task is to map data relationships and decide whether to link or embed related data (L21-L23).",
+        "Source claim: the third task is to apply schema design patterns that optimize reads and writes (L25-L27).",
+        "Source claim: the fourth task is to create indexes that support common query patterns (L29-L31).",
+        "Inference: the four tasks are presented as an order but the page states no iteration loop, exit criteria, owners, artifacts or success measures; 'iteratively' at L11 describes schema flexibility, not a documented process loop.",
+        "Inference: design patterns and indexes are named only; this page supplies no pattern catalogue, selectivity rule or workload-quantification method, so those mechanisms must come from the linked subpages, which are outside this unit.",
+        "Inference: the page carries no MongoDB release number; '9.0' is the manifest revision label, not a claim printed on the page."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/workload-contract.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/workload-demand-and-arrival-models.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-cards.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader R326 (DeepSeek Harness subagent deepseek-flash, read-only; extraction only, not independent review, human review or CI)"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 284,
+    "full_reads": 291,
     "blocked": 14,
     "records": [
       "R015",
@@ -35338,11 +35941,17 @@
       "R317",
       "R318",
       "R319",
-      "R320"
+      "R320",
+      "R321",
+      "R322",
+      "R323",
+      "R324",
+      "R325",
+      "R326"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
-    "partial_reads": 12
+    "partial_reads": 11
   }
 }
