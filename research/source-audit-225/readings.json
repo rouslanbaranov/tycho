@@ -31423,12 +31423,211 @@
         }
       ],
       "reader": "delegated-reader/B20h/deepseek-harness (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - no book findings, support classification, severity or verdict."
+    },
+    {
+      "id": "R280",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/zeromq.html",
+      "unit": "AOSA Volume II, Chapter 24 \"ZeroMQ\" (public HTML chapter), local representation /tmp/B20h/raw/zeromq.txt lines 1-375",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text present in the local representation, lines 1-375 (375/375 lines, 6206/6206 words): 12 level-2 sections (24.1-24.12), no subsections, 9 referenced figures whose images are absent, 2 code blocks (lines 311-331 and 340-347) and no tables, read sequentially. Lines 1-9 (volume masthead, chapter title, byline, promotional line) are chrome, excluded from the substantive summary but retained in the hash, line and word totals. Live HTML fetched 2026-10-24 (HTTP 200) has the same 12 headings, 2 pre blocks, 9 figure elements and no tables; an automated containment check found all 124 live paragraph, list-item, heading and caption blocks represented in the local text.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest10.json#R280",
+        "/tmp/B20h/raw/zeromq.txt lines 1-375; sha256=dbdde0ab0a248767b0a39830bf830a365ab63208b43474317beca7bdcb4faba9; words=6206",
+        "https://aosabook.org/en/v2/zeromq.html (HTTP 200, fetched 2026-10-24; used only to confirm 12 headings, 2 code blocks, 9 figures and no tables)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment. No ØMQ build, benchmark, source-code inspection or release check was performed; the throughput, batching, memory-allocation and shutdown-bug figures are author-reported and were not reproduced.",
+      "representation_gap": "Figures 24.1-24.9 are caption-only at lines 63, 87, 144, 156, 159, 189, 225, 249 and 261; the nine diagram images and any alt text are absent, so library/context, message-copying, batching, architecture, threading and lock-free-queue structures cannot be inspected. Code indentation is collapsed inside the extractor's [CODE]/[/CODE] markers (the AMQP example's four-space continuations appear as one space), and 224 separator lines carry spaces only. No table. No prose section is missing relative to the live headings.",
+      "representation_sha256": "dbdde0ab0a248767b0a39830bf830a365ab63208b43474317beca7bdcb4faba9",
+      "retrieved_lines": 375,
+      "retrieved_words": 6206,
+      "sections": [
+        {
+          "title": "24.1. Application vs. Library",
+          "level": 2,
+          "start_line": 35,
+          "end_line": 58
+        },
+        {
+          "title": "24.2. Global State",
+          "level": 2,
+          "start_line": 59,
+          "end_line": 73
+        },
+        {
+          "title": "24.3. Performance",
+          "level": 2,
+          "start_line": 74,
+          "end_line": 106
+        },
+        {
+          "title": "24.4. Critical Path",
+          "level": 2,
+          "start_line": 107,
+          "end_line": 133
+        },
+        {
+          "title": "24.5. Allocating Memory",
+          "level": 2,
+          "start_line": 134,
+          "end_line": 148
+        },
+        {
+          "title": "24.6. Batching",
+          "level": 2,
+          "start_line": 149,
+          "end_line": 184
+        },
+        {
+          "title": "24.7. Architecture Overview",
+          "level": 2,
+          "start_line": 185,
+          "end_line": 211
+        },
+        {
+          "title": "24.8. Concurrency Model",
+          "level": 2,
+          "start_line": 212,
+          "end_line": 238
+        },
+        {
+          "title": "24.9. Lock-Free Algorithms",
+          "level": 2,
+          "start_line": 239,
+          "end_line": 265
+        },
+        {
+          "title": "24.10. API",
+          "level": 2,
+          "start_line": 266,
+          "end_line": 295
+        },
+        {
+          "title": "24.11. Messaging Patterns",
+          "level": 2,
+          "start_line": 296,
+          "end_line": 371
+        },
+        {
+          "title": "24.12. Conclusion",
+          "level": 2,
+          "start_line": 372,
+          "end_line": 375
+        }
+      ],
+      "notes": [
+        "Source claim: ØMQ is a messaging system or message-oriented middleware used in financial services, game development, embedded systems, academic research and aerospace; it began as ultra-fast messaging for stock trading, spent its first year on benchmarking methodology, its second on generic distributed applications and its third on usability and the BSD Sockets API, while standardisation and an experimental in-kernel implementation are explicitly out of scope (lines 11-32).",
+        "Source claim: a broker puts every message through the network twice and eventually becomes the bottleneck, while organisational boundaries make one central messaging server untenable; ØMQ therefore chose a 'smart endpoint, dumb network' library based on the end-to-end principle, which the author reports as both faster and more flexible, with the operational benefit that no messaging server has to be installed or administered (lines 38-56).",
+        "Source claim: global variables in a library break when it is instantiated twice in one process, so ØMQ has none; the user creates an explicit context object to hold global state, which from the user's side behaves like a pool of worker threads, and each library instance can have its own context (lines 62-71; Figure 24.1 is caption-only).",
+        "Source claim: latency and throughput are not inverses; the worked example sends five messages over six seconds, giving a naive 1.2 s 'latency' although individual message latencies are 2-4 s, and throughput differs at sender (2.5 msgs/s) and receiver (1.25 msgs/s); latency exists only between two points per message, throughput only at one point over a set of messages, and their relation belongs to queueing theory (lines 77-101).",
+        "Source claim: optimisation should target the critical path, and for ØMQ the critical factors are memory allocations, system calls and the concurrency model; connection setup and error handling are rare and therefore negligible, and small messages cost one allocation per 256 messages, dropping to zero under a steady stream because chunks are reused (lines 110-131).",
+        "Source claim: small messages are encoded directly in an opaque handle so copying the handle copies the data, while large messages live in a separate reference-counted buffer reached by a pointer so copying the handle does not copy the payload; the author presents this as zero-copy for large messages and a deliberate split between allocation and copy cost (lines 137-146).",
+        "Source claim: batching avoids repeated traversal of the whole network stack and can improve throughput by up to two orders of magnitude, but adds latency, as Nagle's algorithm and NIC interrupt coalescing show; ØMQ disables lower-layer batching when traffic is sparse, batches aggressively at the topmost layer only once queues build, and turns batching off again when the queue empties (lines 152-182).",
+        "Source claim: a socket lives in the user's thread while worker threads own asynchronous objects in a tree with one owner per object; listeners and connectors create session/engine pairs, the single session type talks to the socket while per-protocol engines (TCP, IPC, PGM) talk to the network, two pipe objects per session carry messages in each direction as lock-free queues, and a context holds global state (lines 191-209).",
+        "Source claim: ØMQ adopted the actor model to scale across cores: one worker thread per core, each object bound to one thread with no migration, no mutexes or semaphores, and fully asynchronous event-driven state machines under a cooperative scheduler; clean shutdown of these state machines is the hardest subsystem, with the author reporting that roughly 30-50% of bug-tracker issues relate to shutdown (lines 215-236).",
+        "Source claim: pipe queues have exactly one writer and one reader, so 1-to-N communication uses multiple queues and no writer/writer or reader/reader synchronisation is needed; atomics are still expensive, so writers accumulate messages in a pre-write area and flush with one atomic pointer change, and readers shift the queue into a pre-read area with another single atomic operation (lines 242-261).",
+        "Source claim: the API moved from AMQP's exchange/queue model to the BSD Sockets API at the end of 2009, after which adoption reportedly rose tenfold and some 20 language bindings appeared; the author argues that reusing a decades-old, widely known API flattens the learning curve and lets ØMQ share event loops and conceptual infrastructure (lines 269-290).",
+        "Source claim: ØMQ rejects a generic routing system such as AMQP in favour of small orthogonal messaging patterns (publish/subscribe, request/reply, pipeline), implemented as a scalability layer over transports analogous to TCP/UDP/SCTP/DCCP; the AMQP RPC client takes 13 lines against four for a ØMQ REQ socket, and the conclusion frames distributed computing as an everyday problem whose solutions remain mostly domain-specific hacks (lines 299-375). Inference (reader): the performance, adoption and bug-share numbers are author-reported, not measured or independently verified here."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+          "candidate": "Candidate context for broker-based versus brokerless messaging and for choosing among messaging families; the smart-endpoint library model, REQ pattern and orthogonal pattern layer are the concrete case, while the page addresses RabbitMQ, Pulsar, NATS and durable workflows."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/measurement-boundary.md",
+          "candidate": "Candidate context for where latency and throughput are measured; the five-message example and the rule that latency is between two points while throughput is at one point are the concrete case."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/benchmark-controls.md",
+          "candidate": "Candidate context for benchmark design and confounders; the first year spent on benchmarking methodology and the critique of dividing total time by message count are the concrete case."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+          "candidate": "Candidate context for actor-style coordination and thread affinity; one worker thread per core, non-migrating objects, cooperative scheduling and the shutdown-bug share are the concrete case, though the page addresses cancellation and resource ownership."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+          "candidate": "Candidate context for API surface as a product boundary; replacing the AMQP exchange/queue API with BSD sockets and the resulting adoption change are the concrete case, though the page addresses HTTP/RPC contracts."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Candidate context for orthogonal layer implementations and stable boundaries; the scalability layer with non-intersecting messaging patterns over pluggable transport engines is the concrete case."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - no book findings, support classification, severity or verdict."
+    },
+    {
+      "id": "R281",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/bib2.html",
+      "unit": "AOSA Volume II, Bibliography (apparatus, not a chapter), local representation /tmp/B20h/raw/bib2.txt lines 1-74",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full bibliography apparatus, lines 1-74: one 'Bibliography' heading and 23 alphabetically ordered entries ([aut12] at line 8 through [SPS+00] at line 74); no prose sections, figures, code, tables or footnotes. Lines 1-6 are the site header, title and promotional line, counted in the hash, line and word totals but excluded from substantive coverage. The live HTML fetched 2026-10-24 shows the same heading and the same 23 labelled entries; no section is missing.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest10.json#R281",
+        "/tmp/B20h/raw/bib2.txt lines 1-74; sha256=ac323609814ebd01f2d5cdc203e6c9974d12b5afa247ab96e8d7dd3b1d59723d; words=541",
+        "https://aosabook.org/en/v2/bib2.html (HTTP 200, fetched 2026-10-24; live HTML has one Bibliography heading, 23 bibitem entries, no figures, code or tables)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment. No cited work was retrieved, no bibliographic detail was checked against a catalogue, and no citation-to-chapter mapping was attempted.",
+      "representation_gap": "No text gap relative to the live page. Markup is flattened: <cite> italics disappear and the two citation URLs remain as plain text; the page supplies no DOI, ISBN or citation-to-chapter map. Header/promotional chrome is retained in lines 1-6. The final entry is [SPS+00] and no later-alphabet entry appears; the live page ends at the same entry, so this is not an extraction truncation, but whether Volume II cites any work outside this list cannot be established from the apparatus.",
+      "representation_sha256": "ac323609814ebd01f2d5cdc203e6c9974d12b5afa247ab96e8d7dd3b1d59723d",
+      "retrieved_lines": 74,
+      "retrieved_words": 541,
+      "sections": [
+        {
+          "title": "Bibliography",
+          "level": 1,
+          "start_line": 2,
+          "end_line": 74
+        }
+      ],
+      "notes": [
+        "Source claim: this page is apparatus, not a chapter - a single 'Bibliography' heading followed by 23 alphabetically ordered reference entries from [aut12] to [SPS+00] (lines 2-74), with no prose, argument, figures, code or tables.",
+        "Source claim: each entry gives a bracketed citation label, author(s) or issuing body, title, venue or publisher, and year; some add page ranges, volume/issue, an edition, or a URL, which is a conventional academic-style reference list (lines 8-74).",
+        "Source claim: the entries cluster around Haskell and GHC (type synonyms, deforestation, history, the 2010 report, parallel GC, FFI concurrency, inlining, rewrite rules, GADTs, type coercions), MPI (the 1993 and 2009 standards, Open MPI, MPI-2), graphics and documents (Kiva, PDF reference, Anti-Grain Geometry, TeX), build and parsing tools (Autoconf, Eclipse, Pyparsing) and GDB, with one GPS essay (lines 8-74).",
+        "Source claim: only two citation entries carry an explicit URL - [Mar10] points to the Haskell 2010 report page and [Ray] to a GPS essay - while the live HTML's four anchors are those two plus the two promotional links; no DOI or ISBN appears anywhere (lines 41, 65).",
+        "Source claim: ordering is alphabetical by citation label rather than by author or topic, and the list stops at [SPS+00]; the live page ends at the same entry (line 74).",
+        "Source claim: entry shapes vary - [aut12] and [ecl12] are bare project-plus-year entries, [Ent11a] is source code, [Ray] has no year or venue, and [HHPW07] uses the unusual page range 12-1-12-55 - all retained as rendered (lines 8, 14, 17, 35, 65).",
+        "Inference (reader): titles align with topics that appear as Volume II chapter subjects (MPI, GHC/Haskell, GDB, GPS, graphics and build tools), suggesting a volume-wide aggregate list, but the page carries no per-chapter citation map, so which chapter cites which entry cannot be established from this unit.",
+        "Inference (reader): the bibliography can locate candidate sources but cannot establish that a chapter actually cites a work, nor verify bibliographic accuracy, authority or currency; the dates range from 1986 to 2012.",
+        "Representation note: lines 1-6 are site header, title and promotional chrome; the remaining lines contain 23 entries separated by blank lines, and the 541-word total includes that chrome and the separators."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/evidence-hypotheses.md",
+          "candidate": "Candidate context for what a cited source can and cannot prove and for separating evidence classes; a bibliography entry that locates a work without showing its use is the concrete case."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/architecture-views-and-decision-records.md",
+          "candidate": "Candidate context for source-linked evidence in architecture records and ADRs; a bare reference list with no claim-level mapping is the concrete case."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md",
+          "candidate": "Candidate context for attributing baseline claims to inspectable sources; bibliography labels and URLs are the concrete case, while the page addresses legacy baseline evidence."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md",
+          "candidate": "Candidate context for recording evidence plans, rejected alternatives and revision triggers with references; apparatus-only citation rows are the concrete case."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/architecture-evidence-hypotheses-and-experiments.md",
+          "candidate": "Candidate context for integrating citation evidence into hypothesis testing; the aggregate list's lack of chapter-level linkage is the concrete case."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - no book findings, support classification, severity or verdict."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 246,
+    "full_reads": 248,
     "blocked": 14,
     "records": [
       "R015",
@@ -31695,7 +31894,9 @@
       "R276",
       "R277",
       "R278",
-      "R279"
+      "R279",
+      "R280",
+      "R281"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
