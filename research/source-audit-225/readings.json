@@ -5633,12 +5633,147 @@
         }
       ],
       "reader": "Delegated reader batch 10; parent validation pending."
+    },
+    {
+      "id": "R114",
+      "source_ids": [
+        "src.soa-model"
+      ],
+      "url": "https://docs.oasis-open.org/soa-rm/v1.0/soa-rm.html",
+      "unit": "Complete standard: Reference Model for Service Oriented Architecture v1.0",
+      "revision": "OASIS SOA-RM v1.0; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 655 lines / 10451 words; §1-5 (1.1-1.6, 2.1-2.3, 3.1-3.3 incl. 3.2.1-3.2.3 and 3.3.1-3.3.3), glossary entries and committee list; Jina header and empty-anchor chrome excluded",
+      "retrieval_refs": [
+        "/tmp/batch11/raw/src.soa-model.md lines 1-655",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked references (RFC 2119, W3C WSA) not read; no execution; figure images not inspected.",
+      "representation_gap": "Front matter absent (abstract, status, table of contents, copyright/date line); §2 heading absent, text resumes at 2.1; Glossary heading absent, entries begin unheaded at line 483; Figures 1-11 are image links with captions only, no alt text.",
+      "representation_sha256": "69a28ce6d4337c11c4ecebd45219adefa1fd9915d07c476b2662440a7cbd2924",
+      "retrieved_lines": 655,
+      "retrieved_words": 10451,
+      "sections": [
+        "1 Introduction",
+        "1.1 What is a reference model",
+        "1.2 A Reference Model for Service Oriented Architectures",
+        "1.3 Audience",
+        "1.4 Guide to using the reference model",
+        "1.5 Notational Conventions",
+        "1.5.1 How to interpret concept maps",
+        "1.6 Relationships to Other Standards",
+        "2.1 What is Service Oriented Architecture? (§2 heading absent)",
+        "2.1.1 A worked Service Oriented Architecture example",
+        "2.2 How is Service Oriented Architecture different?",
+        "2.3 The Benefits of Service Oriented Architecture",
+        "3 The Reference Model",
+        "3.1 Service",
+        "3.2 Dynamics of Services",
+        "3.2.1 Visibility",
+        "3.2.1.1 Awareness",
+        "3.2.1.2 Willingness",
+        "3.2.1.3 Reachability",
+        "3.2.2 Interacting with services",
+        "3.2.2.1 Information model",
+        "3.2.2.1.1 Structure",
+        "3.2.2.1.2 Semantics",
+        "3.2.2.2 Behavior model",
+        "3.2.2.2.1 Action model",
+        "3.2.2.2.2 Process Model",
+        "3.2.3 Real World Effect",
+        "3.3 About services",
+        "3.3.1 Service description",
+        "3.3.1.1 Service Reachability",
+        "3.3.1.2 Service Functionality",
+        "3.3.1.3 Policies Related to a Service",
+        "3.3.1.4 Service Interface",
+        "3.3.1.5 The Limits of Description",
+        "3.3.2 Policies and Contracts",
+        "3.3.2.1 Service Policy",
+        "3.3.2.2 Service Contract",
+        "3.3.3 Execution context",
+        "4 Conformance Guidelines",
+        "5 References",
+        "5.1 Normative",
+        "5.2 Non-Normative",
+        "Glossary (heading absent; entries at lines 483-595)",
+        "Committee participants and acknowledgements (lines 597-655)"
+      ],
+      "notes": [
+        "Source claim: SOA is 'a paradigm for organizing and utilizing distributed capabilities that may be under the control of different ownership domains' (line 93; glossary line 575). Inference: ownership boundaries, not transport or granularity, are the model's organizing axis; that is compatible with Tycho's boundary decisions but is an application, not a statement of the source.",
+        "Source claim: a reference model is independent of specific standards, technologies, implementations and concrete details (line 12), and Web services are 'too solution specific to be part of a general reference model' (line 129). Inference: citing this source cannot support claims about SOAP/REST, message buses or deployment shape.",
+        "Source claim: reference model, reference architecture and concrete architecture are separated by abstraction level, illustrated through housing (lines 12-22). Inference: the glossary entry for reference architecture (line 541) is narrower than the housing illustration; the text does not fully reconcile the two, so neither should be quoted as a settled taxonomy.",
+        "Source claim: visibility is satisfied when participants can interact; awareness, willingness and reachability are preconditions stated with MUST in places (lines 217-243). Inference: these are necessary conditions for interaction, not guarantees or measurable criteria; a book test must operationalize them independently.",
+        "Source claim: 'loose coupling' and 'coarse-grained' are intentionally not used because they are subjective trade-offs without useful metrics (line 127). Inference: the source rejects those labels as design criteria; Tycho's measured-boundary framing is a different basis and should not be presented as the source's method.",
+        "Source claim: a service is opaque, exposing only interface information and suitability information (line 189); descriptions SHOULD use a standard referenceable format (line 351) and required detail may be included by reference (line 361). Inference: description is broader than an interface schema, but the model specifies no description language or registry protocol.",
+        "Source claim: real-world effect is a change to shared state; private actions are unknowable and parties SHOULD NOT have explicit knowledge of them; shared state need not be recorded, though audit becomes harder (lines 315-327). Inference: auditability is flagged as a consequence, not required, so Tycho audit obligations need separate support.",
+        "Source claim: a policy is one participant's constraint; a contract is an agreement of two or more parties; an unenforceable constraint 'is not a policy' but 'a wish' (lines 401-427). Inference: policy enforcement and contract dispute resolution have different authorities, so a policy engine alone does not establish contract compliance.",
+        "Source claim: execution context is the set of infrastructure, process entities, policy assertions and agreements forming the path for one instantiated interaction (line 439), evolves during the interaction (line 453) and distinguishes service instances (line 449). Inference: this is interaction-scoped agreement state, not request-tracing context or a tenancy boundary; the collision is a terminology risk for the book.",
+        "Source claim: conformance to the model is 'not generally an easily automatable task' and the document declines to identify best practices (lines 457, 469); orchestration and choreography are outside scope (lines 305-307). Inference: no certification, test suite or multi-service workflow guidance can be derived from this document."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-contracts.md",
+          "candidate": "In 'Service descriptions are more than interface schemas', add that the model permits required detail by reference (line 361) and explicitly rejects 'loose coupling'/'coarse-grained' as metric-free labels (line 127), so those words should not serve as acceptance criteria."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md",
+          "candidate": "The 'Visibility and policy' table row can distinguish policy (one participant's assertion) from contract (two-party agreement) and record that willingness to interact is not willingness to perform an action (lines 401-427, 237)."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/README.md",
+          "candidate": "Ledger row cites only §3.2; extend 'Not verified' with §4's statement that conformance is not generally automatable and §3.2.2.2.2's exclusion of orchestration/choreography, so no conformance or workflow claim is inferred."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "candidate": "Use the shared-state definition of real-world effect (lines 315-327) to bound what a successful call commits; note that the glossary's idempotency definition (line 509) is service-level and supplies no HTTP retry semantics beyond the RFC 9110 text already cited."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/semantic-translation.md",
+          "candidate": "Cite §3.2.2.1.2 that consistent interpretation is stronger than type consistency and domain semantics are out of scope (lines 277-285) as the conceptual basis for an adapter's semantic contract, without implying an ontology format."
+        }
+      ],
+      "reader": "Delegated reader batch 11; parent validation pending."
+    },
+    {
+      "id": "R115",
+      "source_ids": [
+        "src.jepsen-session-models"
+      ],
+      "url": "https://jepsen.io/consistency/models",
+      "unit": "Complete Jepsen consistency-models index page",
+      "revision": "Live page; retrieved 2026-10-24; no immutable revision exposed",
+      "status": "blocked-full-text",
+      "coverage": "Only 8 lines / 21 words were retrieved: a title pointing at map.svg and the sentence \"the picture consists of a diagram\". No prose model definitions.",
+      "retrieval_refs": [
+        "/tmp/batch8/raw/src.jepsen-session-models.md lines 1-8",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "The page is a diagram-only index. The diagram is not machine-readable and individual model pages were not read; this is not a full text read.",
+      "representation_sha256": "9bc9cccb2fa360d222483989acea6e4f14d924aaee03c32719e797bc26ea7c67",
+      "retrieved_lines": 8,
+      "retrieved_words": 21,
+      "sections": [
+        "Consistency models diagram index"
+      ],
+      "notes": [
+        "The retrieved representation contains only a diagram pointer, not the model definitions.",
+        "Individual consistency-model pages are separate sources and were not substituted.",
+        "This source is blocked for full-text purposes; it is not counted as read."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md",
+          "candidate": "Use individual model pages, not the diagram index, for definitions."
+        }
+      ],
+      "reader": "Parent-created blocked record; no independent review."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 82,
+    "full_reads": 83,
     "blocked": 14,
     "records": [
       "R015",
@@ -5739,7 +5874,9 @@
       "R110",
       "R111",
       "R112",
-      "R113"
+      "R113",
+      "R114",
+      "R115"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",

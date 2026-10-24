@@ -207,7 +207,7 @@ No independent review or source-to-book completeness is claimed.
 ## Comparison assessment - 2026-10-24
 
 Sixteen candidate comparisons from the OSTEP reading were assessed against the
-frozen Tycho baseline. Result: fifty-six assessed comparisons: thirty-one supported,
+frozen Tycho baseline. Result: fifty-seven assessed comparisons: thirty-two supported,
 twenty-three qualified, two not-addressed and zero contradicted. Two JEP-to-book
 comparisons were added after the reference batch: JEP 491 provenance and JEP 444
 socket interruption. Each assessment records the exact book
@@ -228,7 +228,7 @@ action. No book page was edited.
 
 ## Reference-source batch - 2026-10-24
 
-Ninety-nine records R015-R113 extend the reference ledger. Eighty-two are
+101 records R015-R115 extend the reference ledger. Eighty-three are
 full-scoped reads: JEP 444, JEP 491, thirty public engineering articles
 and seventeen documentation/paper units in the src.m9-* series, plus ten delegated records. Fourteen publisher pages returned no readable
 article body and are recorded as blocked-full-text, not inferred. Two internal
@@ -269,14 +269,14 @@ a96c6b7 are outside that attempted review's stated HEAD.
 ## Page matrix and interim synthesis - 2026-10-24
 
 - The 406-page census records a review status for every canonical page:
-  40 are comparison-assessed and 366 carry an explicit evidence gap. The
+  41 are comparison-assessed and 365 carry an explicit evidence gap. The
   per-page list is in page-review-summary.json; a gap is not a pass.
-- The reference ledger has 113 records: 93 full reads, 1 partial, 17 blocked and 2
+- The reference ledger has 115 records: 94 full reads, 1 partial, 18 blocked and 2
   excluded internal team sites. All 45 baseline fetch-incomplete sources are
   accounted for: 29 full, 14 blocked, 2 excluded, 0 unaccounted.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
   two candidate page actions, the zero-contradiction result, the 202
-  landing-only sources, the 366 unassessed pages and the missing independent
+  landing-only sources, the 365 unassessed pages and the missing independent
   review. It does not claim #225 completion.
 - Boundary, whitespace, JSON, candidate-path and anchor checks passed. No book,
   source register, index or edition file changed.
@@ -284,9 +284,9 @@ a96c6b7 are outside that attempted review's stated HEAD.
 ## Final synthesis and acceptance review - 2026-10-24
 
 - FINAL-SYNTHESIS.md records the current evidence base and the unmet criteria.
-- ACCEPTANCE.md records verdict **not accepted**: 180 landing-only sources,
-  383 page gaps, 14 blocked pages, 2 excluded sources and no independent review.
-- The six SRE chapter source records are reconciled to existing SRE reading IDs
-  in source-coverage-reconciliation.json; they are not new reads.
+- ACCEPTANCE.md records verdict **not accepted**: 135 landing-only sources,
+  365 page gaps, 18 blocked records and 2 excluded sources, and no independent review.
+- The five source records are reconciled to existing reading IDs
+  in source-coverage-reconciliation.json; three SRE chapters and two PostgreSQL units, and they are not new reads.
 - No book, source-register, index or edition file changed. The issue remains
   open; this is not a completion claim.

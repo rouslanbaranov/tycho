@@ -46,11 +46,11 @@ are not met. The unresolved items are stated with exact counts below.
 
 ## 3. What is not complete
 
-- **139 registered sources remain landing-or-abstract only.** They are not full
+- **135 registered sources remain landing-or-abstract only.** They are not full
   reads, even where the title and URL are registered. This includes many official docs; RFC 9110 HTTP Semantics is now read with labelled supplements.
-- **366 of 406 canonical pages have no page-level comparison.** Their matrix
+- **365 of 406 canonical pages have no page-level comparison.** Their matrix
   status is an explicit gap, not an inferred pass.
-- **14 pages remain blocked** and 2 sources are excluded; no summary is inferred
+- **18 blocked records remain (14 baseline pages)** and 2 sources are excluded; no summary is inferred
   from a challenge page.
 - **No independent review.** The Reviewer-preset child returned no report
   before the bounded stop; `human_review` is not-performed and `sufficient` is 0.
@@ -63,7 +63,7 @@ The #225 acceptance criteria require every accessible scoped source to be read
 completely, all 406 pages to have an applicability/review status beyond an
 explicit gap, material explanations to have source comparisons, and the research
 artifacts to be independently reviewed. The audit currently has 180 unread
-landing sources, 366 unassessed pages and no independent review. Reading a book
+landing sources, 365 unassessed pages and no independent review. Reading a book
 and accounting for the 45 baseline fetch-incomplete sources does not satisfy
 those criteria.
 
@@ -72,10 +72,10 @@ overstate coverage. The branch remains a research checkpoint.
 
 ## 5. What would change the verdict
 
-1. Reconcile the 139 landing-only sources into finite units; for each, read the
+1. Reconcile the 135 landing-only sources into finite units; for each, read the
    complete unit or record a lawful access limitation.
 2. Extend page-level comparisons to the pages with material claims; the current
-   ratio is 40 assessed to 366 gaps.
+   ratio is 41 assessed to 365 gaps.
 3. Complete the external-link inventory and map every citation to a source ID or
    an explicit unresolved gap.
 4. Run an independent Reviewer batch on a bounded delta and verify its report.
@@ -85,5 +85,5 @@ overstate coverage. The branch remains a research checkpoint.
 
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, claim that a first-party
-article is a benchmark, or claim that Tycho is correct. The 180 landing-only
-sources and 366 unassessed pages are the dominant remaining uncertainty.
+article is a benchmark, or claim that Tycho is correct. The 135 landing-only
+sources and 365 unassessed pages are the dominant remaining uncertainty.
