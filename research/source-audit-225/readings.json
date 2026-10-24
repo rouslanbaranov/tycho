@@ -23587,12 +23587,471 @@
         "read_at": "2026-10-24",
         "policy": "/tmp/delegated-reader-policy.md"
       }
+    },
+    {
+      "id": "R229",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/intro1.html",
+      "unit": "R229 / Introduction to Volume I (editorial front matter)",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full: 100% of assigned file (178/178 lines, 3249/3249 words); unnumbered introduction essay, all contributor biographies, acknowledgments and dedication.",
+      "retrieval_refs": [
+        "https://aosabook.org/en/v1/intro1.html",
+        "local:/tmp/B20h/raw/intro1.txt#L1-L178",
+        "manifest:/tmp/B20h/manifest.json#R229"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment. Contributor contact URLs were not followed; live-site navigation/footer and cover imagery were not treated as chapter content.",
+      "representation_gap": "None identified: heading comparison with the live page found the same four headings (Introduction, Contributors, Acknowledgments, Dedication) and zero images. Local text retains the volume header, byline and a site promo line; live navigation/footer chrome is not represented.",
+      "representation_sha256": "e9492ff2e30ad1e4177bdfe891197dcf35008a15e56fa50a932f5b7c70d20a9a",
+      "retrieved_lines": 178,
+      "retrieved_words": 3249,
+      "sections": [
+        "Introduction (unnumbered essay)",
+        "Contributors",
+        "Acknowledgments",
+        "Dedication"
+      ],
+      "notes": [
+        "Source states the volume's aim: each chapter explains an open-source application's structure, how its parts interact, why it is built that way, and lessons transferable to other design problems.",
+        "Source distinguishes software architecture from programming craft by analogy with building architecture, arguing that most developers know few large programs well and therefore repeat mistakes.",
+        "Source says chapters are written by practitioners with years or decades of experience and span simple drawing programs and web spreadsheets through compiler toolkits and multi-million-line visualization packages, aged from a few years to nearly thirty.",
+        "Source lists contributor biographies, including Russell Bryant (Asterisk) and James Crook (Audacity) - the authors of the other two units in this batch.",
+        "Source acknowledges named reviewers and editors, credits a CC BY-NC-SA 2.0 cover photograph, and closes with a dedication.",
+        "No architectural mechanism, source code, figure, metric or experiment appears in this unit; it is editorial front matter.",
+        "Inference (reader): this unit can support framing claims about what architecture descriptions cover, but it supplies no technical evidence for any specific Tycho page.",
+        "Extractor artifacts: volume title, byline and site promo line precede the essay; no navigation or footer is present in the local text. The live page has identical headings and no images.",
+        "Most of the line and word count is contributor biography, acknowledgments and credits rather than sustained argument.",
+        "No production experiment was performed; this record is extraction only."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/README.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/architecture-views-and-decision-records.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - not independent review, human review, CI or whole-book coverage"
+    },
+    {
+      "id": "R230",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/asterisk.html",
+      "unit": "R230 / Asterisk chapter",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full: 100% of assigned file (376/376 lines, 5128/5128 words); introduction, Sections 1.1-1.5, code examples and footnotes.",
+      "retrieval_refs": [
+        "https://aosabook.org/en/v1/asterisk.html",
+        "local:/tmp/B20h/raw/asterisk.txt#L1-L376",
+        "manifest:/tmp/B20h/manifest.json#R230"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment. Figure images not transcribed; no Asterisk source tree or external documentation inspected; live-site navigation/footer excluded.",
+      "representation_gap": "Live page contains 8 figures (PNG); the local representation retains their captions but not image content, so diagram-only information is unavailable. All 16 numbered section headings plus Footnotes match the live page. Superscript footnote markers are flattened into adjacent words (e.g. 'Asterisk1', 'DTMF key2'); code blocks are delimited by extractor tags [CODE]/[/CODE].",
+      "representation_sha256": "19312c94cdbaef22191545b453cd50217354c23cfe9d5e4cb035c2130b9bd5e1",
+      "retrieved_lines": 376,
+      "retrieved_words": 5128,
+      "sections": [
+        "Introduction (unnumbered)",
+        "1.1. Critical Architectural Concepts",
+        "1.1.1. Channels",
+        "1.1.2. Channel Bridging",
+        "1.1.3. Frames",
+        "1.2. Asterisk Component Abstractions",
+        "1.2.1. Channel Drivers",
+        "1.2.2. Dialplan Applications",
+        "1.2.3. Dialplan Functions",
+        "1.2.4. Codec Translators",
+        "1.3. Threads",
+        "1.3.1. Network Monitor Threads",
+        "1.3.2. Channel Threads",
+        "1.4. Call Scenarios",
+        "1.4.1. Checking Voicemail",
+        "1.4.2. Bridged Call",
+        "1.5. Final Comments",
+        "Footnotes"
+      ],
+      "notes": [
+        "Source: Asterisk is a GPLv2 open-source telephony platform for making, receiving and custom-processing calls; Mark Spencer started it in 1999 at Linux Support Services, later Digium.",
+        "Source: a channel represents one connection between Asterisk and an endpoint and is an ast_channel; a bridge passes media between channels, with all media negotiated through Asterisk.",
+        "Source: bridging is either generic (technology-agnostic, flexible, least efficient due to abstraction) or native (technology-specific, selected by comparing C function pointers when both channels support the same method).",
+        "Source: communication inside a call uses ast_frame media or signalling frames; frame types are statically defined (VOICE, VIDEO, MODEM, CONTROL, DTMF_BEGIN, DTMF_END), and MODEM data must remain undisturbed whereas audio may be transcoded.",
+        "Source: the core in main/ acts mainly as a module registry; loadable modules register implementations of component abstractions at runtime, and configuration can restrict and order module loading for memory and security benefits.",
+        "Source: the channel driver interface ast_channel_tech defines requester, call, answer, hangup, indicate, send_digit_begin/end, read, write and bridge; technology-specific operations are deferred to the driver.",
+        "Source: the dialplan in extensions.conf is a set of extensions selecting applications from a runtime-populated registry (~200 applications); dialplan functions mostly set or retrieve channel metadata and do not signal or process media; codec translators implement ast_translator with source and destination formats.",
+        "Source: Asterisk is heavily multithreaded over POSIX threads; network monitor threads handle connection setup per channel driver, then one channel thread per inbound channel executes the dialplan and owns ast_channel lifetime.",
+        "Source: voicemail and bridged-call walkthroughs show component interaction; Dial allocates an outbound channel, the inbound call is not answered until the outbound is answered, and both channels receive technology-specific hangup handling.",
+        "Source limitation claims: cross-server scaling is not well addressed, with Asterisk SCF named as a companion project; complex audio and video codec negotiation is described as weak and a top development priority.",
+        "Extractor artifacts: figures 1.1-1.8 are captions only locally; footnote markers are flattened; code examples are preserved but wrapped in [CODE] tags.",
+        "Inference (reader): the chapter reports design rationale and practitioner experience, not benchmarks or measured efficiency results; no performance experiment is present."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/adapter-scenarios.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/module-enforcement.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - not independent review, human review, CI or whole-book coverage"
+    },
+    {
+      "id": "R231",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/audacity.html",
+      "unit": "R231 / Audacity chapter",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full: 100% of assigned file (286/286 lines, 6303/6303 words); introduction, Sections 2.1-2.9 and footnote.",
+      "retrieval_refs": [
+        "https://aosabook.org/en/v1/audacity.html",
+        "local:/tmp/B20h/raw/audacity.txt#L1-L286",
+        "manifest:/tmp/B20h/manifest.json#R231"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment. Figure images and screenshots not inspected; no Audacity source tree, build, or external documentation inspected; live-site navigation/footer excluded.",
+      "representation_gap": "Live page contains 6 figures (PNG); the local representation retains their captions but not image content, so diagram and screenshot information is unavailable. All 9 numbered section headings plus Footnotes match the live page. The single footnote superscript is flattened into adjacent text ('could want.1'); the code sample is wrapped in extractor tags [CODE]/[/CODE].",
+      "representation_sha256": "9fedd4a2f0317c3e7c90a7207954d9e20b3b839ca66ebbde7345d66be3820756",
+      "retrieved_lines": 286,
+      "retrieved_words": 6303,
+      "sections": [
+        "Introduction (unnumbered)",
+        "2.1. Structure in Audacity",
+        "2.2. wxWidgets GUI Library",
+        "2.3. ShuttleGui Layer",
+        "2.4. The TrackPanel",
+        "2.5. PortAudio Library: Recording and Playback",
+        "2.6. BlockFiles",
+        "2.7. Scripting",
+        "2.8. Real-Time Effects",
+        "2.9. Summary",
+        "Footnotes"
+      ],
+      "notes": [
+        "Source: Audacity is a popular sound recorder and audio editor; Dominic Mazzoni wrote the original in 1999 as a Carnegie Mellon research student, and the same source compiles for Windows, Linux and Mac.",
+        "Source: user-interface discoverability is an explicit goal, but there is no overall architecture; the author uses a 'small city' analogy with impressive buildings and run-down neighborhoods.",
+        "Source: Audacity layers on PortAudio and wxWidgets, with optional LADSPA, VAMP, libFLAC, libogg and libvorbis; MP3 support dynamically loads LAME or FFmpeg and VST is excluded because of licensing.",
+        "Source: FFTW is offered only in self-compiled builds because the authors argue its license conflicts with Audacity's plugin support; the chapter presents this as a trade-off, not a legal ruling.",
+        "Source: a rule against any TCP/IP connection to or from Audacity reduces security exposure, reflecting the small team's limited resources.",
+        "Source: ShuttleGui is a facade between wxWidgets and Audacity that shortens dialog code and shuttles data both ways between GUI and preferences; dialogs are compiled into code, and the custom toolbar predates wxWidgets' toolbar.",
+        "Source: TrackPanel is a custom-drawn control mixing GUI and application code; a flyweight/sizer redesign was attempted but blocked by flicker risk, wxWidgets slowdown with many widgets, and disagreement about the target design.",
+        "Source: BlockFiles are roughly 1 MB chunks coordinated by an XML .aup master file, reference-counted to support undo until save, never internally sparse, and accompanied by summary BlockFiles for zoomed-out drawing; imported .wav spans are no longer the default because users lost originals, and Windows performance led to subdirectories of at most 100 files.",
+        "Source: three thread roles handle audio - a PortAudio pthread callback filling five-second buffers, an AudioIO thread moving data to tracks/disk through FillBuffers, and the wxWidgets GUI thread updating on a 20 Hz timer; shared variables replace mutexes by design.",
+        "Source: scripting is an experimental optional DLL exposing textual commands over a named pipe, with a security warning; the CleanSpeech fork-avoidance work produced batch chains and preceded scripting.",
+        "Source: Audacity has no real-time effects; on-demand loading (background summary generation, out-of-order block processing) is described as an evolutionary step, with block overlap and varying parameters still needed for real-time effects.",
+        "Extractor artifacts: figures 2.1-2.6 are captions only locally; the footnote marker is flattened; no section is missing. No benchmarks or production experiment appear in the chapter."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/demand-blocking.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - not independent review, human review, CI or whole-book coverage"
+    },
+    {
+      "id": "R232",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/bash.html",
+      "unit": "R232 / The Bourne-Again Shell (AOSA Volume I, chapter 3)",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter read end-to-end: 452/452 lines and 7,489/7,489 whitespace-delimited words, SHA-256 matched to manifest R232. All numbered sections 3.1-3.8, their subsections and both footnotes accounted for. Analysis excluded the L8 site banner and 292 whitespace-only spacer lines; the reported counts cover the whole local file including chrome and [CODE] markers.",
+      "retrieval_refs": [
+        "https://aosabook.org/en/v1/bash.html",
+        "local:/tmp/B20h/raw/bash.txt#L1-L452",
+        "local:/tmp/B20h/raw/bash.html",
+        "manifest:/tmp/B20h/manifest.json#R232"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_sha256": "81ae951fa29d4ff538b8eafb23cdabf30b886bae11bb3c487d624861cc8279c1",
+      "retrieved_lines": 452,
+      "retrieved_words": 7489,
+      "sections": [
+        "3.1. Introduction (L11)",
+        "3.1.1. Bash (L29)",
+        "3.2. Syntactic Units and Primitives (L41)",
+        "3.2.1. Primitives (L44)",
+        "3.2.2. Variables and Parameters (L50)",
+        "3.2.3. The Shell Programming Language (L71)",
+        "3.2.4. A Further Note (L89)",
+        "3.3. Input Processing (L124)",
+        "3.3.1. Readline and Command Line Editing (L130)",
+        "Readline Structure (L142)",
+        "Applications Extending Readline (L163)",
+        "3.3.2. Non-interactive Input Processing (L172)",
+        "3.3.3. Multibyte Characters (L181)",
+        "3.4. Parsing (L187)",
+        "3.5. Word Expansions (L236)",
+        "3.5.1. Parameter and Variable Expansions (L242)",
+        "3.5.2. And Many More (L254)",
+        "3.5.3. Word Splitting (L292)",
+        "3.5.4. Globbing (L298)",
+        "3.5.5. Implementation (L304)",
+        "3.6. Command Execution (L316)",
+        "3.6.1. Redirection (L328)",
+        "3.6.2. Builtin Commands (L346)",
+        "3.6.3. Simple Command Execution (L358)",
+        "3.6.4. Job Control (L376)",
+        "3.6.5. Compound Commands (L388)",
+        "3.7. Lessons Learned (L397)",
+        "3.7.1. What I Have Found Is Important (L400)",
+        "3.7.2. What I Would Have Done Differently (L424)",
+        "3.8. Conclusions (L436)",
+        "Footnotes (L448)"
+      ],
+      "notes": [
+        "Source claim: the chapter organizes bash as a staged pipeline — terminal/file input, readline or buffered input, lexical analysis and yacc/bison parsing, word expansion, then command execution — and uses that pipeline as its architectural lens (L20-L23, L316-L319).",
+        "Source claim: the implementation rests on a small set of structures (arrays, trees, singly and doubly linked lists, hash tables); WORD_DESC and WORD_LIST carry words between stages, with flags carrying stage state such as assignment markers or a quoted null string (L92-L121, L310).",
+        "Source claim: interactive editing is delegated to readline, a read/dispatch/execute/redisplay loop whose keymaps are dispatch tables; applications extend it through bindable functions and hook-function pointers, and bash adds more than thirty bindable commands (L136-L169).",
+        "Source claim: non-interactive input must respect POSIX consumption rules — buffer only when the file offset can be rolled back to the parser's stopping point, and read character by character from non-seekable input (L175-L178).",
+        "Source claim: the parser is context-dependent, saves and restores parser state around recursive command-substitution and completion parsing, and rewinds read-ahead input; the author calls it the only Bourne-style shell parser built with Yacc or Bison (L193-L227).",
+        "Source claim: word expansion is itself a pipeline (brace, tilde, parameter, command and process substitution, arithmetic, IFS splitting, globbing); quote style determines which expansions apply (L245-L307).",
+        "Source claim: redirection needs an undo list with distinct lifetimes for shell functions, the '.' builtin and 'exec'; allowing descriptors above 9 forces bookkeeping of internal descriptors and close-on-exec heuristics (L331-L343).",
+        "Source claim: job control represents a job as a process list plus state and process-group ID; the terminal's foreground process group decides which job may read, and synchronizing child creation with process-group assignment is the hard part (L379-L385).",
+        "Source claim: the author's lessons are detailed change logs, regression tests, standards participation, internal standards, authoritative documentation, reuse and community engagement; he would add formal compatibility levels, more frequent releases using a public repository and a hand-written recursive-descent parser (L403-L433).",
+        "Inference: the pipeline description is a conceptual decomposition, not a strictly one-way runtime sequence — command substitution, programmable completion and prompt expansion re-enter the parser during later stages (L221-L227).",
+        "Inference: scale statements such as 'millions of users' and the Yacc/Bison uniqueness claim are author assertions; this read found no measurement or independent corroboration in the chapter."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/architecture-views-and-decision-records.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/decision-discriminators.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "representation_gap": "Figure 3.1 ('Bash Component Architecture') exists in the HTML as an image, but the text representation keeps only its caption; no section text is missing. The five code blocks survive as [CODE]/[/CODE] wrappers, an extractor artifact rather than source syntax.",
+      "reader": "delegated-reader/deepseek-flash (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - not independent review, human review, CI or whole-book coverage"
+    },
+    {
+      "id": "R233",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/bdb.html",
+      "unit": "R233 / Berkeley DB (AOSA Volume I, chapter 4)",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter read end-to-end: 441/441 lines and 9,571/9,571 whitespace-delimited words, SHA-256 matched to manifest R233. All numbered sections 4.1-4.10, their subsections, fourteen inline 'Design Lesson' passages, Tables 4.1-4.2 and the footnote accounted for. Analysis excluded the L8 site banner and 284 whitespace-only spacer lines; counts cover the whole local file including chrome and flattening artifacts.",
+      "retrieval_refs": [
+        "https://aosabook.org/en/v1/bdb.html",
+        "local:/tmp/B20h/raw/bdb.txt#L1-L441",
+        "local:/tmp/B20h/raw/bdb.html",
+        "manifest:/tmp/B20h/manifest.json#R233"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_sha256": "f41dbdaf273ebefd2028962c10c5a5b3c7b1bfaa8ab947372968320e06129bd8",
+      "retrieved_lines": 441,
+      "retrieved_words": 9571,
+      "sections": [
+        "Untitled introduction (L11)",
+        "4.1. In the Beginning (L20)",
+        "4.2. Architectural Overview (L53)",
+        "4.3. The Access Methods: Btree, Hash, Recno, Queue (L104)",
+        "4.4. The Library Interface Layer (L128)",
+        "4.5. The Underlying Components (L170)",
+        "4.6. The Buffer Manager: Mpool (L197)",
+        "4.6.1. The Mpool File Abstraction (L209)",
+        "4.6.2. Write-ahead Logging (L215)",
+        "4.7. The Lock Manager: Lock (L230)",
+        "4.7.1. Lock Objects (L245)",
+        "4.7.2. The Conflict Matrix (L263)",
+        "4.7.3. Supporting Hierarchical Locking (L275)",
+        "4.8. The Log Manager: Log (L296)",
+        "4.8.1. Log Record Formatting (L314)",
+        "4.8.2. Breaking the Abstraction (L335)",
+        "4.9. The Transaction Manager: Txn (L362)",
+        "4.9.1. Checkpoint Processing (L374)",
+        "4.9.2. Recovery (L383)",
+        "4.10. Wrapping Up (L433)",
+        "Footnotes (L439)"
+      ],
+      "notes": [
+        "Source claim: Berkeley DB began as a freely redistributable replacement for in-memory hsearch and on-disk dbm/ndbm; Seltzer's hash used Litwin extensible linear hashing, Olson added a Btree, and the two were unified behind access-method-agnostic database handles before the LIBTP paper and the 4BSD 1.85 release (L23-L35).",
+        "Source claim: the timeline is 1996 Netscape contract, 2.0 in 1997 adding transactions, 3.0 in 1999 adding abstraction, 4.0 in 2001 adding replication and Oracle 5.0 in 2010 adding SQL; the authors present this as incremental adaptation of a modular design (L38-L44).",
+        "Source claim: the architecture is a cooperating set of modules — access methods, interface layer, Mpool, lock, log/dbreg and transaction — now sharing a DB_ENV handle; components remain independently usable and all functions return error codes up the call stack (L98-L188).",
+        "Source claim: four snapshots trace evolution — LIBTP without a process manager, the intended 2.0 design, actual 2.0.6 adding general recovery, and 5.0.21 adding replication, splitting log/dbreg, a cursor-based log API and a fileop module (L59-L83).",
+        "Source claim: public calls pass through _pp interface wrappers, _arg checks and a worker; the interface layer tracks threads inside the library, generates implicit transactions and performs generic plus per-call validation (L140-L167).",
+        "Source claim: Mpool caches file pages and represents inter-page pointers as page numbers because the on-disk format is also the in-memory format; every access pins a page, and distinguishing read from write pins enabled multi-version concurrency control (L200-L212).",
+        "Source claim: write-ahead logging is enforced by an LSN stored on each page; set_lsn_offset and set_clearlen let Mpool enforce WAL without requiring every Mpool client to adopt Berkeley DB's page format (L218-L227).",
+        "Source claim: the lock manager uses 32-bit locker IDs split between transactions and non-transactions, opaque lock objects, a square conflict matrix, intention locks, atomic multi-lock lock_vec and lock coupling; page-level locking was chosen for recovery stability over concurrency (L236-L293).",
+        "Source claim: the log is a set of sequentially numbered append-only files; LSNs are file-number/offset pairs, headers carry length, previous-record offset and checksum, log_flush supports WAL, and checkpoint records are a deliberate abstraction violation cached for performance (L308-L347).",
+        "Source claim: dbreg was pulled out of the log subsystem after repeated bug fixes, and the authors say the filename-to-log-file-id mapping should logically have lived with the environment (L350-L353).",
+        "Source claim: recovery is a five-step scheme — find the checkpoint before the checkpoint LSN, read forward to rebuild dbreg mappings and the committed list, read backward undoing uncommitted transactions, read forward redoing committed ones, then checkpoint (L392-L424).",
+        "Inference: the fourteen 'Design Lesson' passages are experience-based generalizations, not controlled findings; the chapter reports no benchmark, incident count or comparative experiment, and 'most widely used database toolkit' with hundreds of millions of deployments (L44) is an author claim not verified here."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/recovery-objects.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "representation_gap": "Figures 4.1-4.4 exist in the HTML as images but only their captions survive in text. Figure 4.4's API table is flattened into one run-on line (L93), and Table 4.2's conflict matrix is flattened into a checkmark row (L270), so row/column semantics are partly lost. No section text is missing; the one code block is preserved.",
+      "reader": "delegated-reader/deepseek-flash (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - not independent review, human review, CI or whole-book coverage"
+    },
+    {
+      "id": "R234",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/cmake.html",
+      "unit": "R234 / CMake (AOSA Volume I, chapter 5)",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter read end-to-end: 269/269 lines and 4,045/4,045 whitespace-delimited words, SHA-256 matched to manifest R234. All numbered sections 5.1-5.3, their subsections and the footnote accounted for. Analysis excluded the L8 site banner and 159 whitespace-only spacer lines; counts cover the whole local file, including four C-preprocessor lines mis-rendered as Markdown H1 headings.",
+      "retrieval_refs": [
+        "https://aosabook.org/en/v1/cmake.html",
+        "local:/tmp/B20h/raw/cmake.txt#L1-L269",
+        "local:/tmp/B20h/raw/cmake.html",
+        "manifest:/tmp/B20h/manifest.json#R234"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_sha256": "7877720cfc9589a0815b932b89d6eb43a89b5f61813d34e3d08bd51dcae18eba",
+      "retrieved_lines": 269,
+      "retrieved_words": 4045,
+      "sections": [
+        "Untitled introduction (L11)",
+        "5.1. CMake History and Requirements (L17)",
+        "5.2. How CMake Is Implemented (L96)",
+        "5.2.1. The CMake Process (L102)",
+        "Environment Variables (or Not) (L108)",
+        "The Configure Step (L114)",
+        "The Generate Step (L126)",
+        "5.2.2. CMake: The Code (L138)",
+        "CMake Objects (L141)",
+        "Dependency Analysis (L183)",
+        "CTest and CPack (L195)",
+        "5.2.3. Graphical Interfaces (L207)",
+        "5.2.4. Testing CMake (L225)",
+        "5.3. Lessons Learned (L237)",
+        "5.3.1. Backwards Compatibility (L243)",
+        "5.3.2. Language, Language, Language (L249)",
+        "5.3.3. Plugins Did Not Work (L255)",
+        "5.3.4. Reduce Exposed APIs (L261)",
+        "Footnotes (L267)"
+      ],
+      "notes": [
+        "Source claim: in 1999 the National Library of Medicine engaged Kitware to improve configuration, build and deployment for ITK; CMake emerged as a replacement for the autoconf/libtool approach and grew into CMake, CTest, CPack and CDash (L11-L14).",
+        "Source claim: the stated constraints were a C++ compiler as the only dependency, Visual Studio project generation, easy static/shared/executable/plugin targets, build-time code generators, out-of-source builds, system introspection, automatic C/C++ header dependency scanning and consistent behavior on every supported platform (L32-L48).",
+        "Source claim: avoiding extra dependencies forced CMake to define its own simple language; the authors acknowledge this limits features to what IDEs support and remains an adoption objection, while arguing Tcl would have been harder to build and less popular (L51-L57).",
+        "Source claim: operation has two phases — configure parses CMakeCache.txt and CMakeLists.txt, executes each command through a C++ command object, and builds an in-memory tree of cmMakefile objects holding cmTarget objects; generate translates that representation into IDE files or Makefiles (L105-L135).",
+        "Source claim: the implementation is object-oriented C++ with inheritance and design patterns; a lex/yacc parser handles the language, and generated parser files are checked into the Source directory because lex/yacc may be unavailable; cmCommand subclasses carry both implementation and documentation (L144-L180).",
+        "Source claim: IDE builds delegate file-level dependency tracking to the IDE, while Makefile builds rely on generated depend.make, flags.make, build.make and DependInfo.cmake files, recomputed when a header change may add a dependency (L186-L192).",
+        "Source claim: CTest and CPack share CMake's code base but are separate tools; CTest runs add_test tests and can send results to CDash for distributed testing, while CPack builds an install tree and hands it to NSIS, RPM, Debian, tar or self-extracting packagers (L198-L204).",
+        "Source claim: the Qt and curses GUIs are editors of CMakeCache.txt with configure and generate buttons; new cache variables appear in red, and generate stays disabled until a configure pass creates no new variables (L210-L222).",
+        "Source claim: CMake development uses continuous integration with CTest and CDash, notifying developers of build errors, warnings and test failures; adding a platform is expected to come with a nightly dashboard client (L228-L234).",
+        "Source claim: lessons are a 2.6 policy system that warns but preserves old behavior, regret over the home-grown language with Lua named as the best alternative, plugin compatibility failures across 32/64-bit APIs, and a decision to reduce exposed APIs rather than become an embeddable library (L240-L264).",
+        "Inference: this is a participant history, and claims such as 'successfully building ITK from day one' (L240) and statements about developer preferences are not independently verified; the chapter reports no build-time, defect or adoption measurements."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/build-identity.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/cases/airbnb-jvm-monorepo-bazel.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/cases/decisions/build-delivery-migration.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/views-tradeoffs.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/modernization-options.md",
+          "candidate": "Relate the chapter to this page; no edit under #225."
+        }
+      ],
+      "representation_gap": "Figures 5.1-5.4 exist in the HTML as images but only captions survive in the text. Four C-preprocessor lines at column 1 (#ifdef linux L68, #endif L70, #ifdef HAS_FEATURE L80, #endif L82) are mis-rendered as Markdown H1 headings; the code text itself is present. No section text is missing.",
+      "reader": "delegated-reader/deepseek-flash (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - not independent review, human review, CI or whole-book coverage"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 195,
+    "full_reads": 201,
     "blocked": 14,
     "records": [
       "R015",
@@ -23808,7 +24267,13 @@
       "R225",
       "R226",
       "R227",
-      "R228"
+      "R228",
+      "R229",
+      "R230",
+      "R231",
+      "R232",
+      "R233",
+      "R234"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
