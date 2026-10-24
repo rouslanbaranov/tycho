@@ -21,10 +21,10 @@ claim that the entire documentation site was read.
   read 4/4; complete-scoped. R102, R106, R125, R126 accepted.
 - **src.kafka** - Consumer config, design, producer config; read 3/3;
   complete-scoped. R094, R123, R124 accepted.
-- **src.lucene** - Overview, indexing, search; read 0/3; planned.
-  Next: resolve indexing/search URLs.
-- **src.nats** - JetStream concepts, streams, consumers; read 0/3; planned.
-  Next: resolve stream/consumer URLs.
+- **src.lucene** - Documentation overview, demo API, core API and
+  queryparser API; read 4/4; complete-scoped. R127 accepted.
+- **src.nats** - JetStream concepts including Streams and Consumers;
+  read 1/1; complete-scoped. R128 accepted.
 - **src.owasp-asvs** - not bounded; scope decision required.
 - **src.continuous-delivery-book** - not bounded; scope decision required.
 
@@ -38,8 +38,8 @@ OpenTelemetry page.
 
 ## Counts are not moved by partial units
 
-Current canonical ledger: 126 records (103 full, 3 partial, 18 blocked, 2
-excluded); 131 landing-only sources. R116/R117 are partial and do not reduce
+Current canonical ledger: 128 records (105 full, 3 partial, 18 blocked, 2
+excluded); 129 landing-only sources. R116/R117 are partial and do not reduce
 that count. Only a completed scope does.
 
 ## Scope decisions needed

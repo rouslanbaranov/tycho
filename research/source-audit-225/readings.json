@@ -6504,12 +6504,139 @@
         }
       ],
       "reader": "Delegated reader batch 15; parent validation pending."
+    },
+    {
+      "id": "R127",
+      "source_ids": [
+        "src.lucene"
+      ],
+      "url": "https://lucene.apache.org/core/9_12_0/index.html",
+      "unit": "Bounded four-page Lucene 9.12.0 documentation set in one local capture: 9.12.0 documentation overview (core/9_12_0/index.html), demo API overview (core/9_12_0/demo/index.html), core API overview (core/9_12_0/core/index.html) and queryparser API overview (core/9_12_0/queryparser/index.html).",
+      "revision": "Apache Lucene 9.12.0 documentation; page 1 metadata gives Published Time 2024-09-28 19:47:22 GMT, the other three pages carry no timestamp; all URLs pinned to the /core/9_12_0/ release path; retrieved 2026-10-24. No per-page revision identifier beyond the release version.",
+      "status": "full-scoped-text-read",
+      "coverage": "All 289 lines / 3,277 words read sequentially. The four page bodies hold 3,221 substantive words (9-69: 534; 75-168: 1,267; 174-255: 1,094; 261-289: 326). Excluded as chrome: 51 words of reader/extraction metadata (Title, URL Source, Published Time and Markdown Content blocks at 1-5, 7, 70-74, 169-173, 256-260) plus the 5-word logo image reference at line 8, 56 chrome words in total. No site navigation, sidebar, breadcrumb or footer exists in this capture. The demo page's in-page anchor table of contents (79-87) was retained in the count but is navigational and carries no substantive claim. No section is missing; the only capture artifact is a mid-word line break at 117-118. Three of the four pages are module API overviews (package indexes and one-line summaries), not narrative guides; only the demo page contains a getting-started walk-through.",
+      "retrieval_refs": [
+        "/tmp/batch16/raw/src.lucene-docs.md lines 1-289",
+        "Four concatenated pages in one local capture; page boundaries at lines 70, 169 and 256; accessed 2026-10-24"
+      ],
+      "omissions": "other documentation outside the declared scope not read",
+      "representation_sha256": "1cf863a3ba8b1814525fb4a59e9dd3b89673dd9b6dc633d3f80abc5c71e9c801",
+      "retrieved_lines": 289,
+      "retrieved_words": 3277,
+      "sections": [
+        "Page 1, 9.12.0 documentation overview (1-69): Getting Started 14-20; Reference Documents 22-31; API Javadocs 33-65; Tools 67-69",
+        "Page 2, demo API overview and getting-started guide (70-168): in-page anchor TOC 79-87; About this Document 89-91; About the Demo 93-95; Setting your CLASSPATH 97-103; Indexing Files 105-119; About the code 121-123; Location of the source 125-130; IndexFiles 132-150; Searching Files 152-156; Working with vector embeddings 158-160; Working with facets 162-168",
+        "Page 3, core API overview (169-255): usage example 174-176; package summaries 177-185; four-step usage sequence 187-192; demo examples and CLI transcript 194-217; package table 219-255",
+        "Page 4, queryparser API overview (256-289): package table only 261-289"
+      ],
+      "notes": [
+        "Provenance and shape: one capture concatenating four 9.12.0 pages - overview (1-69), demo (70-168), core (169-255), queryparser (256-289). The representation is converted index content: no Javadoc class pages, guides, release notes or file-format specifications are included, so every statement here is index-level.",
+        "API-overview caveat: the demo, core and queryparser items are module overview pages built around package tables (219-255, 261-289) and a single usage example (174-176). Only the demo page carries a narrative walk-through (89-156); do not read this unit as implementation or configuration detail.",
+        "Source claim (10): Lucene is a Java full-text search engine and explicitly 'not a complete application, but rather a code library and API' that applications embed. Additional Wiki documentation is named but outside this unit. Inference: clustering, sharding, replication and index lifecycle are outside this source and absent from it.",
+        "Source claim (16): the Getting Started section serves first-time users, application developers and contributors, and deliberately 'does not go into great depth on some of the conceptual or inner details'. This is the page's own depth limit and useful when scoping how far a citation may reach.",
+        "Source claim (24-31): Changes, System Requirements, Migration Guide, JRE Version Migration, File Formats, Search and Scoring, Classic Scoring Formula and Classic QueryParser Syntax are linked only. None of their content is evidence in this record, including any migration or format detail.",
+        "Source claim (35-69): a 31-entry module Javadoc index with one-line descriptions (core, analysis-* modules, backward-codecs, benchmark, classification, codecs, demo, expressions, facet, grouping, highlighter, join, memory, misc, monitor, queries, queryparser, replicator, sandbox, spatial-extras, spatial3d, suggest, test-framework) and Luke, a Swing GUI for browsing documents, indexed terms and posting lists and for searching. The entries assert no API behavior.",
+        "Source claim (89-119, demo): the demo is example code; four JARs (core, queryparser, analysis-common, demo) must be on the CLASSPATH; 'IndexFiles -docs <path>' builds an index and SearchFiles prompts for a query and pages every tenth hit. The capture splits 'superca' / 'lifragilisticexpialidocious' at 117-118 - a conversion artifact, not lost text.",
+        "Source claim (132-150, demo): IndexFiles parses -index, -docs and -update, opens a Directory and instantiates StandardAnalyzer and IndexWriterConfig; without -update it wipes the index first, and with -update it sets OpenMode.CREATE_OR_APPEND and replaces documents by identifier (the file path). Inference: update is delete-then-add of whole documents, not field-level patching.",
+        "Source claim (154-156, demo): SearchFiles uses QueryParser over the same analyzer so query text is interpreted like document text, IndexSearcher.search(query, n) returns TopDocs sorted by score, and Query objects can also be built programmatically without the parser. The paragraph is one physical line of 2,185 characters (line 154) and was read in full.",
+        "Source claim (160-168, demo): the vector demo indexes and searches pre-computed GloVe embeddings using a toy dictionary and is 'definitely not ready for production use'; a larger corpus raises an exception. The facets section is only a three-row package table (demo, demo.facet, demo.knn). Inference: the demo shows kNN wiring, not ANN quality or recall.",
+        "Source claim (174-192, core): the canonical flow is Document/Field creation, IndexWriter.addDocument, QueryParser.parse for a string query, and IndexSearcher.search; package summaries cover analysis, codecs, document, index, search, store and util. The codecs bullet names an encoding/decoding abstraction but states no file-format detail.",
+        "Source claim (219-255, core) and (261-289, queryparser): the core package table lists lucene912 (9.12 file format) beside lucene90/94/95/99, HNSW, quantization, perfield postings and internal vectorization; the queryparser page is only a 27-row package table (classic, complexPhrase, ext, flexible.* framework, simple, surround, xml) with no grammar or syntax. Inference: several on-disk formats ship in one release, but this page states no compatibility or reindex rule."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
+          "candidate": "Section 3 (48-50) already states that Lucene is a library and that clusters add storage topology outside it; source lines 10 and 16 support that directly, including the page's own admission of limited depth. Use as a citation for library-versus-product only, not for refresh, shard or recovery behavior."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "The analyzer-to-terms-to-postings description (64) matches the source's TokenStream/TokenFilter pipeline and query-term handling (179, 183) at API-index level. The source gives no ranking mathematics, so it cannot support the page's BM25 claims (70) and should not be cited for them."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/README.md",
+          "candidate": "Evidence rows E02 and E03 (97-98) cite the Lucene 10.3.0 API and overview, while this record covers 9.12.0. Add a 9.12.0 row for the overview claim or record the version delta, so the ledger does not imply one edition supports both."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-hnsw-faiss-pgvector.md",
+          "candidate": "The source lists HNSW codec/util packages (226, 252), a kNN demo (168) and vector quantization helpers (255), but states no algorithm, distance, recall or filtering behavior. Use it only to establish that Lucene 9.12.0 ships HNSW/kNN components, not to support ANN trade-off claims."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "The page's comparison table (71) treats Lucene analyzers and term ranking as tunable per field; the source supports only the existence of analyzers and a codec abstraction (179-180). It does not support tuning outcomes or benchmark claims, so cite it narrowly."
+        }
+      ],
+      "reader": "Delegated reader batch 16; parent validation pending."
+    },
+    {
+      "id": "R128",
+      "source_ids": [
+        "src.nats"
+      ],
+      "url": "https://docs.nats.io/concepts/jetstream",
+      "unit": "One concepts page: JetStream at docs.nats.io/concepts/jetstream, complete capture from '# JetStream' (line 1) through 'Next steps' (line 590). Streams (21-23) and Consumers (25-33) are the declared sections of interest; the whole page was read.",
+      "revision": "Rolling NATS documentation page; the representation exposes no version, publication date or commit identifier, and the text names no server release; retrieved 2026-10-24.",
+      "status": "full-scoped-text-read",
+      "coverage": "All 590 lines / 1,543 words read sequentially. 634 words are prose (headings, paragraphs, two figure captions, link lists) and 983 words sit inside 496 fenced code lines across CLI, JavaScript/TypeScript, Go, Python, Java, Rust, C#/.NET and C. Excluded as chrome: nothing - the capture contains no reader header, site navigation, sidebar, breadcrumb, edit link or footer. 'Related Concepts' (580-584) and 'Next steps' (586-590) were retained as page navigation but carry no substantive claim. No section is missing. The two animated figures (9, 29) survive only as caption text plus the stray label 'Publisher → NATS' at line 11; no frames were available.",
+      "retrieval_refs": [
+        "/tmp/batch16/raw/src.nats-jetstream.md lines 1-590",
+        "Rolling docs page captured 2026-10-24; no revision identifier in the representation"
+      ],
+      "omissions": "other documentation outside the declared scope not read",
+      "representation_sha256": "44fca6fb81850d4f1850e5f46d904158ead85e953aeb69141689441c3c9a9343",
+      "retrieved_lines": 590,
+      "retrieved_words": 1543,
+      "sections": [
+        "Introduction and message-flow caption (1-11): Core NATS at-most-once versus JetStream persistence and replay",
+        "How It Works (13-19): stream, consumer and client roles",
+        "Streams (21-23): subject binding, server-assigned sequence, storage/retention/replication configuration",
+        "Consumers (25-33): server-side cursors, independent consumers, acknowledgement, redelivery and start positions",
+        "Putting It Together (35-571): CLI 37-65; JavaScript/TypeScript 67-123; Go 125-193; Python 195-241; Java 243-305; Rust 307-381; C#/.NET 383-437; C 439-571",
+        "Beyond Streams and Consumers (573-578): Key Value Store and Object Store",
+        "Related Concepts (580-584): publish-subscribe, subjects, queue groups",
+        "Next steps (586-590): JetStream, Key-Value and Object Store deep dives"
+      ],
+      "notes": [
+        "Provenance and shape: a single rolling page with no title/URL metadata block, no site navigation and no footer; content runs from '# JetStream' to the final deep-dive link. 496 of 590 lines are fenced code, so the substantive conceptual text is about 634 words, against a 983-word, eight-language demonstration of the same sequence.",
+        "Source claim (3-5): Core NATS delivers only to subscribers connected at publication time, is at-most-once and never replayed; JetStream adds a persistence layer giving at-least-once delivery, survival across restarts and replay, and extends decoupling from identity to time.",
+        "Source claim (9) and figure status: the Core-versus-JetStream comparison is an animated figure. Only the caption is in the representation - it describes an offline subscriber whose pending count climbs and drains on reconnect. Inference: the animation itself is not evidence beyond that caption.",
+        "Source claim (17-19): three pieces - a stream is a server-side store bound to one or more subjects; a consumer is a server-side stateful view of a stream tracking client progress; a client receives and acknowledges messages, and a consumer may be shared, with each acknowledgement advancing its position.",
+        "Source claim (23, Streams): a stream binds to one or more subject patterns; a published message matching a pattern is appended and assigned a sequence number; streams are configurable for storage (memory or disk), retention (limits or consumer acks), replication 'and more'. No defaults, replica factors, retention limits or deduplication windows are stated.",
+        "Source claim (27): a consumer is a server-side, stateful view that tracks client progress; multiple consumers read the same stream independently, each with its own position, and the server maintains that position so applications need not coordinate it.",
+        "Source claim (29): a second animated figure describes three consumers with independent cursors over an 8-message stream, starting at different points and never moving each other's position, served from one shared copy. Caption only; no numbers beyond the caption are given.",
+        "Source claim (31-33): an acknowledgement advances the consumer cursor; a message not acknowledged in time is redelivered, 'which is what gives you at-least-once delivery'; a consumer can start at the beginning, at the latest message, at a sequence number or at a time. No acknowledgement-wait default, maximum-deliveries or dead-letter policy appears.",
+        "Source claim (37-65 and the seven other client sections): the CLI and client samples perform one scenario - add stream ORDERS (file storage, limits retention), publish three orders, add a durable pull consumer with explicit ack and deliver-all, fetch three and acknowledge. The samples are illustrative API shapes; the page never says they were executed, and their configuration details are not independent evidence.",
+        "Source claim (573-578): Key Value Store and Object Store are higher-level abstractions built on streams and consumers; the object store chunks objects larger than one message and carries per-object metadata. Both are described in one sentence each and are outside the declared Streams/Consumers scope.",
+        "Source claim (580-590): Related Concepts links publish-subscribe, subjects and queue groups; Next steps links three deep dives. These are navigation only. Inference: the page is conceptual and versionless, so it cannot support claims about a specific server's defaults, disk-failure durability, replica behaviour or acknowledgement timing; the linked deep dives were not read."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+          "candidate": "The NATS Core and JetStream subsection (89-95) already summarises this page as Core at-most-once versus JetStream persistent streams with server-side cursors and at-least-once redelivery. The source adds the start-position set (33) and the shared-consumer, independent-cursor wording (19, 27-29); the page's line 95 caveat about ack timeouts, replicas and dedup windows is not answered here and should stay."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/README.md",
+          "candidate": "Evidence row E03 (102) scopes the citation to 'How It Works, Streams, Consumers' and calls the site rolling. This capture also contains 'Putting It Together' and 'Beyond Streams and Consumers'; either widen the row or state explicitly that the code samples were read but not used as evidence."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+          "candidate": "The integrated claim (75) that 'NATS' without saying Core or JetStream obscures durability is supported directly by lines 3-5 and 17-19. Cite those lines rather than the concepts page generically, and keep the page's statement that no broker was installed."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/offsets-effects.md",
+          "candidate": "The Kafka consumer-position reasoning (60-69) has a JetStream analogue at line 31: an ack advances the consumer cursor and an unacknowledged message is redelivered. JetStream cursors are per consumer rather than a Kafka group offset, so the comparison must not import group semantics."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
+          "candidate": "Section 5 (67-71) argues that redelivery requires a durable deduplication authority; source line 31 supplies the messaging-side premise that at-least-once delivery arises from acknowledgement failure and redelivery. The source says nothing about dedup keys, idempotency windows or consumer identity."
+        }
+      ],
+      "reader": "Delegated reader batch 16; parent validation pending."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 92,
+    "full_reads": 94,
     "blocked": 14,
     "records": [
       "R015",
@@ -6623,7 +6750,9 @@
       "R123",
       "R124",
       "R125",
-      "R126"
+      "R126",
+      "R127",
+      "R128"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
