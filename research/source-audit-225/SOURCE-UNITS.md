@@ -25,8 +25,10 @@ claim that the entire documentation site was read.
   queryparser API; read 4/4; complete-scoped. R127 accepted.
 - **src.nats** - JetStream concepts including Streams and Consumers;
   read 1/1; complete-scoped. R128 accepted.
-- **src.owasp-asvs** - not bounded; scope decision required.
-- **src.continuous-delivery-book** - not bounded; scope decision required.
+- **src.owasp-asvs** - ASVS 5.0 chapters V1-V5; read 5/5;
+  complete-scoped. R129 accepted; V6-V17 outside scope.
+- **src.continuous-delivery-book** - blocked-full-text; no lawful
+  full text; landing/preview is not evidence.
 
 ## Batch 13
 
@@ -38,13 +40,12 @@ OpenTelemetry page.
 
 ## Counts are not moved by partial units
 
-Current canonical ledger: 128 records (105 full, 3 partial, 18 blocked, 2
-excluded); 129 landing-only sources. R116/R117 are partial and do not reduce
+Current canonical ledger: 130 records (106 full, 3 partial, 19 blocked, 2
+excluded); 127 landing-only sources. R116/R117 are partial and do not reduce
 that count. Only a completed scope does.
 
-## Scope decisions needed
+## Scope decisions
 
-- **OWASP ASVS:** chapters V1-V14 are too large to claim from the project page.
-  Choose a bounded chapter set or leave the source landing-only.
-- **Continuous Delivery:** the online book needs an explicit chapter list; the
-  landing page is not evidence.
+No open scope decisions remain for the eight planned sources. ASVS is bounded
+to V1-V5; Continuous Delivery is blocked because no lawful full text was
+available. Further sources outside this plan still require their own units.

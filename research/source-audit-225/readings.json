@@ -6631,12 +6631,308 @@
         }
       ],
       "reader": "Delegated reader batch 16; parent validation pending."
+    },
+    {
+      "id": "R129",
+      "source_ids": [
+        "src.owasp-asvs"
+      ],
+      "url": "https://raw.githubusercontent.com/OWASP/ASVS/v5.0.0/5.0/OWASP_Application_Security_Verification_Standard_5.0.0_en.pdf",
+      "unit": "OWASP ASVS 5.0 chapters V1-V5",
+      "revision": "ASVS 5.0.0, May 2025; PDF v5.0.0",
+      "status": "full-scoped-text-read",
+      "coverage": "PDF pages 23-43: chapter V1 Encoding and Sanitization, V2 Validation and Business Logic, V3 Web Frontend Security, V4 API and Web Service, V5 File Handling. All 5 control objectives, all 24 sections, all 103 numbered requirements with their Level labels, and each chapter's References list were read. Local extract lines 1-1019, continuous from the V1 heading through the V5 reference list; no section of the declared unit is missing.",
+      "retrieval_refs": [
+        {
+          "path": "/tmp/batch17/raw/asvs-v1-v5.txt",
+          "lines": "1-1019",
+          "sha256": "c3d351a42b5eb8ebc60d7ab39e8ce235083aeeb76bb46518d27c9e06d7ecdbac"
+        },
+        {
+          "path": "/tmp/batch17/manifest.json",
+          "lines": "1-12",
+          "note": "Declares 1040 lines, 6372 words, same SHA-256. Word count and hash match exactly; line count differs by counting method (see verification)."
+        }
+      ],
+      "omissions": "ASVS chapters V6-V17 outside the declared scope not read",
+      "representation_gap": "21 U+000C form-feed characters, one per PDF page transition: Python splitlines() gives 1040 lines, wc -l gives 1019. The SHA-256 is identical, so no text is missing or substituted; this is a counting convention, not a content gap.",
+      "representation_sha256": "c3d351a42b5eb8ebc60d7ab39e8ce235083aeeb76bb46518d27c9e06d7ecdbac",
+      "retrieved_lines": 1040,
+      "retrieved_words": 6372,
+      "verification": {
+        "manifest_lines": 1040,
+        "measured_newline_lines": 1019,
+        "manifest_words": 6372,
+        "measured_words": 6372,
+        "sha256_match": true,
+        "line_count_explanation": "The file contains 21 U+000C form-feed page-break characters, each on its own line. Python str.splitlines() counts each as an additional boundary (1040), while wc -l counts 1019 newline-terminated lines. Byte size 54996, SHA-256 identical to the manifest: no text is missing and no different edition was substituted.",
+        "section_and_requirement_check": "24 section headings and 103 requirement rows counted mechanically; consistent with the V1-V5 sequence."
+      },
+      "chrome_excluded": [
+        "Running header 'Application Security Verification Standard ... May 2025' on every page",
+        "Right-margin page numbers 23-43",
+        "Standalone form-feed page-break lines and blank padding lines",
+        "Repeated table header rows '# | Description | Level'",
+        "Hyphenation artifacts at line ends (e.g. 'auto- / escaping') were rejoined when reading; no wording changed"
+      ],
+      "sections": [
+        {
+          "id": "V1.1",
+          "title": "Encoding and Sanitization Architecture",
+          "chapter": "V1",
+          "requirements": 2
+        },
+        {
+          "id": "V1.2",
+          "title": "Injection Prevention",
+          "chapter": "V1",
+          "requirements": 10
+        },
+        {
+          "id": "V1.3",
+          "title": "Sanitization",
+          "chapter": "V1",
+          "requirements": 12
+        },
+        {
+          "id": "V1.4",
+          "title": "Memory, String, and Unmanaged Code",
+          "chapter": "V1",
+          "requirements": 3
+        },
+        {
+          "id": "V1.5",
+          "title": "Safe Deserialization",
+          "chapter": "V1",
+          "requirements": 3
+        },
+        {
+          "id": "V2.1",
+          "title": "Validation and Business Logic Documentation",
+          "chapter": "V2",
+          "requirements": 3
+        },
+        {
+          "id": "V2.2",
+          "title": "Input Validation",
+          "chapter": "V2",
+          "requirements": 3
+        },
+        {
+          "id": "V2.3",
+          "title": "Business Logic Security",
+          "chapter": "V2",
+          "requirements": 5
+        },
+        {
+          "id": "V2.4",
+          "title": "Anti-automation",
+          "chapter": "V2",
+          "requirements": 2
+        },
+        {
+          "id": "V3.1",
+          "title": "Web Frontend Security Documentation",
+          "chapter": "V3",
+          "requirements": 1
+        },
+        {
+          "id": "V3.2",
+          "title": "Unintended Content Interpretation",
+          "chapter": "V3",
+          "requirements": 3
+        },
+        {
+          "id": "V3.3",
+          "title": "Cookie Setup",
+          "chapter": "V3",
+          "requirements": 5
+        },
+        {
+          "id": "V3.4",
+          "title": "Browser Security Mechanism Headers",
+          "chapter": "V3",
+          "requirements": 8
+        },
+        {
+          "id": "V3.5",
+          "title": "Browser Origin Separation",
+          "chapter": "V3",
+          "requirements": 8
+        },
+        {
+          "id": "V3.6",
+          "title": "External Resource Integrity",
+          "chapter": "V3",
+          "requirements": 1
+        },
+        {
+          "id": "V3.7",
+          "title": "Other Browser Security Considerations",
+          "chapter": "V3",
+          "requirements": 5
+        },
+        {
+          "id": "V4.1",
+          "title": "Generic Web Service Security",
+          "chapter": "V4",
+          "requirements": 5
+        },
+        {
+          "id": "V4.2",
+          "title": "HTTP Message Structure Validation",
+          "chapter": "V4",
+          "requirements": 5
+        },
+        {
+          "id": "V4.3",
+          "title": "GraphQL",
+          "chapter": "V4",
+          "requirements": 2
+        },
+        {
+          "id": "V4.4",
+          "title": "WebSocket",
+          "chapter": "V4",
+          "requirements": 4
+        },
+        {
+          "id": "V5.1",
+          "title": "File Handling Documentation",
+          "chapter": "V5",
+          "requirements": 1
+        },
+        {
+          "id": "V5.2",
+          "title": "File Upload and Content",
+          "chapter": "V5",
+          "requirements": 6
+        },
+        {
+          "id": "V5.3",
+          "title": "File Storage",
+          "chapter": "V5",
+          "requirements": 3
+        },
+        {
+          "id": "V5.4",
+          "title": "File Download",
+          "chapter": "V5",
+          "requirements": 3
+        }
+      ],
+      "level_distribution": {
+        "1": 26,
+        "2": 50,
+        "3": 27,
+        "total": 103
+      },
+      "notes": [
+        "[source] The unit is 5 chapters, 24 sections and 103 numbered requirements; each requirement row carries a Level label (1, 2 or 3). Mechanical count: 26 Level 1, 50 Level 2, 27 Level 3.",
+        "[source] V1.1.1 requires untrusted input to be decoded or unescaped into canonical form exactly once, only when encoded data in that form is expected, and before further processing; V1.1.2 requires output encoding/escaping as a final step before the interpreter, or by the interpreter itself.",
+        "[source] V1.2.10 addresses CSV and formula injection: RFC 4180 sections 2.6-2.7 escaping for CSV, and a leading single quote for '=', '+', '-', '@', tab and null when exporting to CSV or spreadsheet formats.",
+        "[source] The V1.2 note states that parameterized queries or SQL escaping are not always sufficient because identifiers such as table, column and ORDER BY names cannot be escaped.",
+        "[source] V1.5.3 requires different parsers for the same data type (JSON, XML, URL) to parse consistently and use the same character encoding, citing JSON interoperability, RFI and SSRF as consequences of divergent parsing.",
+        "[source] V2.2.2 requires input validation to be enforced at a trusted service layer and states that client-side validation must not be relied on as a security control; schema validation is described as effective but not mandated.",
+        "[source] V2.3 covers step order, documented business limits, business-level transactions/rollback, locking against double-booking, and multi-user approval for high-value flows; V2.4 covers anti-automation and realistic human timing.",
+        "[source] V3 requires cookie prefixes and attributes, HSTS with at least one year and preload, CSP with object-src/base-uri 'none' and either an allowlist or nonces/hashes (per-response nonces or hashes at L3), nosniff, referrer policy, frame-ancestors, COOP, SRI for external assets, restricted redirects, and rejection of untrusted postMessage origins.",
+        "[source] V4 requires content-type/charset correctness, non-overridable intermediary headers, HTTP method allowlists, request-smuggling-resistant framing (Content-Length vs Transfer-Encoding and HTTP/2-3 DATA frames), CR/LF rejection, GraphQL cost/introspection controls, and WSS plus Origin checks and HTTPS-derived session tokens for WebSocket.",
+        "[source] V5 requires documented file types/sizes, size and magic-byte/content checks, archive expansion limits, per-user quotas, rejection of symlinks and pixel floods, non-executable public storage, trusted path construction, zip-slip protection, safe download filenames (RFC 6266) and antivirus scanning.",
+        "[inference] The chapters state verification requirements and control objectives, not architecture mechanisms or evidence that any system satisfies them; mapping to Tycho pages is a parent task, and no support, severity or acceptance judgment is offered here.",
+        "[inference] PDF chrome (running header, page numbers, form feeds, repeated table headers) was excluded from technical claims; page numbers were used only as location references."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/security/identity-authorization-threat-models-and-isolation.md",
+          "candidate": "Relate the ASVS chapter to this page control objective; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md",
+          "candidate": "Relate the ASVS chapter to this page control objective; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+          "candidate": "Relate the ASVS chapter to this page control objective; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/upload-integrity.md",
+          "candidate": "Relate the ASVS chapter to this page control objective; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
+          "candidate": "Relate the ASVS chapter to this page control objective; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/evidence-hypotheses.md",
+          "candidate": "Relate the ASVS chapter to this page control objective; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader / DeepSeek Harness subagent (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only under /tmp/delegated-reader-policy.md, no findings or verdicts",
+      "chapters": [
+        {
+          "id": "V1",
+          "title": "Encoding and Sanitization",
+          "pages": "23-28",
+          "requirements": 30
+        },
+        {
+          "id": "V2",
+          "title": "Validation and Business Logic",
+          "pages": "28-31",
+          "requirements": 13
+        },
+        {
+          "id": "V3",
+          "title": "Web Frontend Security",
+          "pages": "32-37",
+          "requirements": 31
+        },
+        {
+          "id": "V4",
+          "title": "API and Web Service",
+          "pages": "38-40",
+          "requirements": 16
+        },
+        {
+          "id": "V5",
+          "title": "File Handling",
+          "pages": "41-43",
+          "requirements": 13
+        }
+      ]
+    },
+    {
+      "id": "R130",
+      "source_ids": [
+        "src.continuous-delivery-book"
+      ],
+      "url": "https://continuousdelivery.com/",
+      "unit": "Complete book: Continuous Delivery",
+      "revision": "Published book; no lawful full-text edition retrieved",
+      "status": "blocked-full-text",
+      "coverage": "Landing page and public descriptions only; no complete book text.",
+      "retrieval_refs": [
+        "https://continuousdelivery.com/ landing page, accessed 2026-10-24"
+      ],
+      "omissions": "The book is commercially published. A preview or search snippet is not a substitute for the full text; chapters 1-3 were not read.",
+      "notes": [
+        "No lawful full-text copy was available in this environment.",
+        "The landing page is not evidence for chapter-level claims.",
+        "This source is blocked rather than counted as read."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
+          "candidate": "Use only if the owner supplies a lawful chapter text; otherwise leave blocked."
+        }
+      ],
+      "reader": "Parent-created blocked record; no independent review."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 94,
+    "full_reads": 95,
     "blocked": 14,
     "records": [
       "R015",
@@ -6752,7 +7048,9 @@
       "R125",
       "R126",
       "R127",
-      "R128"
+      "R128",
+      "R129",
+      "R130"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
