@@ -14,9 +14,8 @@ are not met. The unresolved items are stated with exact counts below.
   chapter 2 record). OSTEP raster figures were not visually inspected.
 - **All 45 baseline fetch-incomplete sources accounted for.** 29 full reads,
   14 blocked pages, 2 excluded internal team sites; 0 unaccounted.
-- **73 reference records:** 54 full, 17 blocked, 2 excluded.
-- **30 assessed comparisons across 23 canonical pages:** 14 supported, 14
-  qualified, 2 not-addressed, 0 contradicted.
+- **367 reference records:** 334 full, 12 partial, 19 blocked, 2 excluded.
+- **82 assessed comparisons across 58 canonical pages:** 47 supported, 32 qualified, 3 not-addressed, 0 contradicted.
 - **Baseline integrity:** 681 tracked files match the frozen baseline; 247
   registered sources and 406 canonical documents remain represented. No book,
   source-register, index or edition file changed.
@@ -41,14 +40,14 @@ are not met. The unresolved items are stated with exact counts below.
   out.
 - RFC 9700 supports separating token validity from audience, sender constraint
   and revocation; the object-credentials page does so correctly.
-- No comparison is contradicted. This is not proof of correctness: only 23 pages
+- No comparison is contradicted. This is not proof of correctness: only 58 pages
   have a bounded comparison.
 
 ## 3. What is not complete
 
 - **86 registered sources remain landing-or-abstract only.** They are not full
   reads, even where the title and URL are registered. This includes many official docs; RFC 9110 HTTP Semantics is now read with labelled supplements.
-- **351 of 406 canonical pages have no page-level comparison.** Their matrix
+- **348 of 406 canonical pages have no page-level comparison.** Their matrix
   status is an explicit gap, not an inferred pass.
 - **19 blocked records remain (14 baseline pages)** and 2 sources are excluded; no summary is inferred
   from a challenge page.
@@ -63,7 +62,7 @@ The #225 acceptance criteria require every accessible scoped source to be read
 completely, all 406 pages to have an applicability/review status beyond an
 explicit gap, material explanations to have source comparisons, and the research
 artifacts to be independently reviewed. The audit currently has 180 unread
-landing sources, 351 unassessed pages and no independent review. Reading a book
+landing sources, 348 unassessed pages and no independent review. Reading a book
 and accounting for the 45 baseline fetch-incomplete sources does not satisfy
 those criteria.
 
@@ -75,7 +74,7 @@ overstate coverage. The branch remains a research checkpoint.
 1. Reconcile the 86 landing-only sources into finite units; for each, read the
    complete unit or record a lawful access limitation.
 2. Extend page-level comparisons to the pages with material claims; the current
-   ratio is 55 assessed to 351 gaps.
+   ratio is 58 assessed to 348 gaps.
 3. Complete the external-link inventory and map every citation to a source ID or
    an explicit unresolved gap.
 4. Run an independent Reviewer batch on a bounded delta and verify its report.
@@ -86,4 +85,4 @@ overstate coverage. The branch remains a research checkpoint.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, claim that a first-party
 article is a benchmark, or claim that Tycho is correct. The 135 landing-only
-sources and 351 unassessed pages are the dominant remaining uncertainty.
+sources and 348 unassessed pages are the dominant remaining uncertainty.
