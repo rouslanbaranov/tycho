@@ -17,10 +17,10 @@ index or edition file was changed.
 - **59 reference records** in `readings.json`: 40 full reads, 17 blocked-full-text
   and 2 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
-- **18 assessed comparisons** in `comparisons.json` against 14 canonical pages:
+- **20 assessed comparisons** in `comparisons.json` against 16 canonical pages:
   6 supported, 10 qualified, 2 not-addressed, 0 contradicted.
-- **Page matrix:** all 406 pages have a recorded review status; 14 are
-  comparison-assessed and 392 carry an explicit evidence gap
+- **Page matrix:** all 406 pages have a recorded review status; 16 are
+  comparison-assessed and 390 carry an explicit evidence gap
   (`page-review-summary.json`). A recorded gap is not a pass.
 
 ## 2. What the evidence supports
@@ -69,8 +69,9 @@ index or edition file was changed.
 - The strongest transferable claims are qualitative: a local quota cannot see
   remote overload; static timeouts can cause retry storms; concurrency is a
   better signal only when it maps to the constrained resource; and fairness
-  needs a separate per-tenant mechanism. Tycho's queueing and contention pages
-  do not yet carry a page-level comparison for this source.
+  needs a separate per-tenant mechanism. C019 finds the queueing page compatible
+  with the concurrency signal, but the page correctly does not treat it as
+  universal; the source names low-QPS large-write and hot-key exceptions.
 
 ### Migration, cutover and architecture evolution
 
@@ -79,8 +80,10 @@ index or edition file was changed.
   shape: small reversible steps, shadow or dual operation, explicit equality
   checks, a rollback path and retirement of the old path only after evidence.
 - These are first-party narratives. They support the general pattern but do not
-  establish that any specific Tycho cutover gate is sufficient. No page-level
-  comparison has been recorded for these sources yet.
+  establish that any specific Tycho cutover gate is sufficient. C020 compares
+  the cutover-gate table with the CDC migration and finds it compatible, while
+  noting that reverse shadowing and checksum gates are not yet named in the
+  table; this is a candidate enrichment, not a defect.
 - Domain-oriented services (R024), modular-monolith evolution (R025, R031) and
   generated dependency enforcement show that boundaries are maintained by
   contracts, dependency analysis and ownership, not by directory layout or a
@@ -127,7 +130,7 @@ C008) are optional additions, not defects.
 
 - **202 registered sources** are still at landing-or-abstract inspection. They
   are not full reads, even where their titles and URLs are registered.
-- **392 of 406 canonical pages** have no page-level comparison. Their matrix
+- **390 of 406 canonical pages** have no page-level comparison. Their matrix
   status is an explicit gap, not an inferred pass.
 - Linked publications, xv6 source, simulator code and exercises were not read or
   executed. Embedded raster figures were not visually inspected.
@@ -146,11 +149,11 @@ C008) are optional additions, not defects.
 - [ ] Every accessible scoped source read completely: 202 landing-only sources
   remain, and 14 pages are blocked.
 - [ ] All 406 pages have an applicability/review status beyond an explicit gap:
-  14 assessed, 392 gaps.
+  16 assessed, 390 gaps.
 - [ ] Material explanations have source comparisons across every technical page:
-  18 comparisons exist; the applied case layer and most pages are unassessed.
+  20 comparisons exist; the applied case layer and most pages are unassessed.
 - [ ] Complete external-link inventory and finite units for every citation.
-- [x] Findings carry exact book anchors and source records for the 18 assessed
+- [x] Findings carry exact book anchors and source records for the 20 assessed
   comparisons; confidence and no-edit actions are recorded.
 - [ ] Deep synthesis final: this is an interim synthesis.
 - [x] Research artifacts reviewed for lexical boundary and whitespace; no
@@ -175,5 +178,5 @@ C008) are optional additions, not defects.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, does not claim that a
 first-party article is a benchmark, and does not claim that Tycho is complete or
-correct. The 202 landing-only sources and 392 unassessed pages are the dominant
+correct. The 202 landing-only sources and 390 unassessed pages are the dominant
 remaining uncertainty.
