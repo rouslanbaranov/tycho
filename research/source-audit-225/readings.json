@@ -32032,15 +32032,15 @@
       "title": "Chapter 29. Logical Replication",
       "unit": "PostgreSQL 18 documentation, Chapter 29 'Logical Replication' landing page, local markdown representation /tmp/B21/raw/postgres-logical.md, 30 lines / 369 words, sha256 b51e795edab90a2cb78c50e69f10763fd1978807522d9c7bc6f82a93000c3044; landing page only, not the chapter subpages",
       "revision": "official documentation, page captured 2026-10-24",
-      "status": "partial-scoped-text-read",
-      "coverage": "All 30 local lines read sequentially. Substantive prose L8-30 (356 words) is complete: definition and contrast with physical replication, publish/subscribe model, initial snapshot and change stream, use cases, and subscriber/conflict behavior. L1-7 are extractor metadata and the 'Markdown Content:' label; no site navigation, footer or cookie chrome is present. A live spot-check on 2026-10-24 confirms the same prose and identifies the edition as PostgreSQL 18 (current). The live page's Table of Contents lists sections 29.1-29.14, which the capture omits. Chapter scope remains one landing page of fifteen top-level units (landing plus fourteen sections); subpages were not read.",
+      "status": "full-scoped-text-read",
+      "coverage": "Chapter 29 landing prose plus all fourteen section pages, read as R287-R300.",
       "retrieval_refs": [
         "/tmp/B21/manifest.json#R286 (lines 30, words 369, sha256 b51e795edab90a2cb78c50e69f10763fd1978807522d9c7bc6f82a93000c3044)",
         "/tmp/B21/raw/postgres-logical.md (read in full, L1-30)",
         "https://www.postgresql.org/docs/current/logical-replication.html (HTTP 200, 2026-10-24; PostgreSQL 18 current; body prose and TOC spot-checked)"
       ],
       "omissions": "Chapter subpages not read: 29.1 Publication (incl. 29.1.1 Replica Identity), 29.2 Subscription (29.2.1-29.2.3), 29.3 Logical Replication Failover, 29.4 Row Filters (29.4.1-29.4.7), 29.5 Column Lists (29.5.1), 29.6 Generated Column Replication, 29.7 Conflicts, 29.8 Restrictions, 29.9 Architecture (29.9.1 Initial Snapshot), 29.10 Monitoring, 29.11 Security, 29.12 Configuration Settings (29.12.1-29.12.2), 29.13 Upgrade (29.13.1-29.13.3), 29.14 Quick Setup. Other PostgreSQL documentation outside Chapter 29 not read; no experiment.",
-      "representation_gap": "The local capture omits the landing page's Table of Contents (29.1-29.14 and their subsections), which is present on the live page. No chapter subpage is included, so the registered chapter unit is represented by its overview only. The captured landing prose matches the live page; no prose block was found missing. A chapter-level completeness claim is therefore not supported.",
+      "representation_gap": null,
       "representation_sha256": "b51e795edab90a2cb78c50e69f10763fd1978807522d9c7bc6f82a93000c3044",
       "retrieved_lines": 30,
       "retrieved_words": 369,
@@ -32093,12 +32093,1060 @@
         }
       ],
       "reader": "delegated reader R286 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R287",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "url": "https://www.postgresql.org/docs/current/logical-replication-architecture.html",
+      "unit": "PostgreSQL 18 documentation, Section 29.9 'Architecture' including 29.9.1 'Initial Snapshot' (single subpage of Chapter 29 'Logical Replication'; not the chapter or the manual), local markdown representation /tmp/B21/raw/pglog-architecture.md, 24 lines / 449 words, sha256 92084f9499f1bb51d82b9c46fc76742be5c02207f921cf93cebde63d41037daa",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered section only, not Chapter 29 and not the PostgreSQL manual: all 24 local lines read sequentially and completely. In-scope body L8-24 (438 words): architecture overview, apply-process behavior, trigger scope, 29.9.1 Initial Snapshot and two Notes. Excluded: L1-7 (11 words) extractor metadata (Title, URL Source, Published Time, 'Markdown Content:'). No site navigation, footer or cookie chrome is present in this capture. Live spot-check on 2026-10-24 returned HTTP 200 for the same URL, identified the page as PostgreSQL 18.6, and matched the captured prose through the final sentence; the live table of contents lists only 29.9 and 29.9.1.",
+      "retrieval_refs": [
+        "/tmp/B21/manifest2.json#R287 (lines 24, words 449, sha256 92084f9499f1bb51d82b9c46fc76742be5c02207f921cf93cebde63d41037daa)",
+        "/tmp/B21/raw/pglog-architecture.md (read in full, L1-24)",
+        "https://www.postgresql.org/docs/current/logical-replication-architecture.html (HTTP 200, 2026-10-24; PostgreSQL 18.6; body and TOC spot-checked)"
+      ],
+      "omissions": "Other Chapter 29 sections (29.1-29.8, 29.10-29.14) not read in this record. Other PostgreSQL manual chapters not read; no experiment.",
+      "representation_gap": null,
+      "representation_sha256": "92084f9499f1bb51d82b9c46fc76742be5c02207f921cf93cebde63d41037daa",
+      "retrieved_lines": 24,
+      "retrieved_words": 449,
+      "in_scope_words": 438,
+      "sections": [
+        "Extractor metadata: Title, URL Source, Published Time, 'Markdown Content:', excluded (L1-7)",
+        "29.9 Architecture: walsender logical decoding, pgoutput plugin, conversion to the logical replication protocol, publication filtering, transfer to the apply worker (L8)",
+        "Apply-process role: session_replication_role=replica, triggers and rules disabled by default, per-table ENABLE TRIGGER / ENABLE RULE (L10)",
+        "Trigger scope: apply fires row triggers only, not statement triggers; initial synchronization acts like COPY and fires row and statement triggers for INSERT (L12)",
+        "29.9.1 Initial Snapshot: parallel per-table synchronization workers, one replication slot each, copy visibility, catch-up streaming in publisher order, handback to the main apply process (L16)",
+        "Note: the publish parameter affects DML replication only and does not filter the initial data copy (L18-20)",
+        "Note: a failed table synchronization worker is detected and respawned; wal_retrieve_retry_interval is cited (L22-24)"
+      ],
+      "notes": [
+        "Source claim (L8): logical replication has an architecture similar to physical streaming replication and is implemented by walsender and apply processes; walsender starts logical decoding of the WAL and loads the pgoutput plugin, which converts WAL changes to the logical replication protocol and filters data by the publication specification; data is streamed to the apply worker, which maps it to local tables and applies changes in correct transactional order.",
+        "Source claim (L10): the subscriber apply process always runs with session_replication_role set to replica, so triggers and rules do not fire by default; users may enable them per table with ALTER TABLE and the ENABLE TRIGGER and ENABLE RULE clauses.",
+        "Source claim (L12): the apply process currently fires row triggers only, not statement triggers; initial table synchronization is implemented like COPY and therefore fires both row and statement triggers for INSERT.",
+        "Source claim (L16): initial data is snapshotted and copied by parallel instances of a special apply process, dedicated table synchronization workers spawned per table; each creates its own replication slot, copied contents become visible to other backends when the copy finishes, the worker then streams changes that occurred during the copy, applies and commits them in publisher order, and returns control to the main apply process.",
+        "Source claim (L20): the publication publish parameter affects only which DML operations are replicated; initial data synchronization does not take it into account when copying existing table data.",
+        "Source claim (L24): if a table synchronization worker fails during copy, the apply worker detects the failure and respawns it so transient errors do not permanently disrupt the setup; the text points to wal_retrieve_retry_interval.",
+        "Inference: one replication slot and one synchronization worker per table mean capacity demand tracks the number of tables being synchronized, not only the number of subscriptions; this is consistent with the reserve for table synchronization described in Section 29.12.",
+        "Inference: trigger behavior differs by phase. Initial COPY fires row and statement INSERT triggers, while streaming apply fires row triggers only; the page does not state whether triggers enabled on the subscriber fire during the catch-up streaming phase.",
+        "Inference: 'correct transactional order' describes apply order of streamed changes; the page makes no claim of global ordering across subscriptions or of DDL replication.",
+        "Representation note: the local capture contains no navigation or footer, and the live PostgreSQL 18.6 page matches this body through the final paragraph; no live TOC entry beyond 29.9 and 29.9.1 is missing locally.",
+        "No measurements, benchmarks, failure experiments or operational procedures are reported on this page; the respawn behavior is documented, not tested here."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Existing page covers PostgreSQL WAL plus physical and logical replication with recovery evidence; adjacent mechanism family; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "candidate": "Existing page contrasts physical streaming replication with logical publication/subscription and restore boundaries; adjacent conceptual boundary."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+          "candidate": "Existing page covers WAL ordering and acknowledgment boundaries; adjacent to logical decoding reading WAL, but does not describe the apply pipeline."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
+          "candidate": "Existing page covers change data capture and changelog replay; logical decoding is a database-side change-capture mechanism."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "candidate": "Existing page covers replication safety and progress under failures; adjacent to synchronization-worker failure and respawn, through a different mechanism."
+        }
+      ],
+      "reader": "delegated reader R287 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R288",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "url": "https://www.postgresql.org/docs/current/logical-replication-col-lists.html",
+      "unit": "PostgreSQL 18 documentation, Section 29.5 'Column Lists' including 29.5.1 'Examples' (single subpage of Chapter 29 'Logical Replication'; not the chapter or the manual), local markdown representation /tmp/B21/raw/pglog-col-lists.md, 101 lines / 969 words, sha256 0b4041855fde3f81e002e2fd3e86a76b2cee04655b8bd581e186fe9bc0d6b7f4",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered section only, not Chapter 29 and not the PostgreSQL manual: all 101 local lines read sequentially and completely. In-scope body L8-101 (957 words): column-list rules, a multi-publication warning, and the full 29.5.1 worked example with psql output. Excluded: L1-7 (12 words) extractor metadata (Title, URL Source, Published Time, 'Markdown Content:'). No site navigation, footer or cookie chrome is present in this capture. Live spot-check on 2026-10-24 returned HTTP 200 for the same URL, identified the page as PostgreSQL 18.6, and matched the captured text through the final '(3 rows)' output; the live table of contents lists only 29.5 and 29.5.1.",
+      "retrieval_refs": [
+        "/tmp/B21/manifest2.json#R288 (lines 101, words 969, sha256 0b4041855fde3f81e002e2fd3e86a76b2cee04655b8bd581e186fe9bc0d6b7f4)",
+        "/tmp/B21/raw/pglog-col-lists.md (read in full, L1-101)",
+        "https://www.postgresql.org/docs/current/logical-replication-col-lists.html (HTTP 200, 2026-10-24; PostgreSQL 18.6; body and TOC spot-checked)"
+      ],
+      "omissions": "Other Chapter 29 sections (29.1-29.4, 29.6-29.14) not read in this record. Other PostgreSQL manual chapters not read; no experiment.",
+      "representation_gap": null,
+      "representation_sha256": "0b4041855fde3f81e002e2fd3e86a76b2cee04655b8bd581e186fe9bc0d6b7f4",
+      "retrieved_lines": 101,
+      "retrieved_words": 969,
+      "in_scope_words": 957,
+      "sections": [
+        "Extractor metadata: Title, URL Source, Published Time, 'Markdown Content:', excluded (L1-7)",
+        "Column-list definition, subscriber superset requirement and default of all columns (L8)",
+        "Motivation and security caveat: behavioral or performance choice, not a security boundary; malicious subscriber can obtain unpublished columns; publisher-side protections (L10)",
+        "Default behavior under schema change: later columns auto-replicated; a list naming all current columns differs from no list (L12)",
+        "Syntax limits: only simple column references; order is not preserved (L14)",
+        "Generated columns may be listed regardless of publish_generated_columns; cross-reference to 29.6 (L16)",
+        "Column list with FOR TABLES IN SCHEMA is not supported (L18)",
+        "Partitioned tables: publish_via_partition_root selects the root or per-partition column list (L20)",
+        "Replica identity columns required for UPDATE/DELETE publications; may be omitted for INSERT-only (L22)",
+        "No effect on TRUNCATE (L24)",
+        "Initial synchronization copies published columns only, with pre-15 and pre-18 subscriber exceptions (L26)",
+        "Warning: no support for different column lists for the same table across several publications; creation is blocked but later publication changes can break apply, with matching-and-recreate remedies (L28-34)",
+        "29.5.1 Examples: table and publication DDL, \\dRp+ and \\d inspection, subscriber-side subset table, inserts and observed replicated rows (L36-101)"
+      ],
+      "notes": [
+        "Source claim (L8): each publication can optionally specify which columns of each table are replicated; the subscriber table must have at least all published columns; with no column list all publisher columns are replicated; CREATE PUBLICATION documents the syntax.",
+        "Source claim (L10): column choice may be based on behavioral or performance reasons, but must not be relied on for security because a malicious subscriber is able to obtain data from columns that are not specifically published; protections can be applied at the publisher side.",
+        "Source claim (L12): with no column list, columns added to the table later are automatically replicated, so a column list naming all columns is not the same as having no column list.",
+        "Source claim (L14): a column list can contain only simple column references and the order of columns is not preserved; the example publishes (id, b, a, d) and subsequently displays (id, a, b, d).",
+        "Source claim (L16): generated columns can be specified in a column list, allowing them to be published regardless of the publish_generated_columns publication parameter; Section 29.6 covers the details.",
+        "Source claim (L18): specifying a column list when the publication also publishes FOR TABLES IN SCHEMA is not supported.",
+        "Source claim (L20): for partitioned tables, publish_via_partition_root determines the list; true uses the root partitioned table's list, false (the default) uses each partition's list.",
+        "Source claim (L22): if a publication publishes UPDATE or DELETE, any column list must include the table's replica identity columns; an INSERT-only publication may omit them.",
+        "Source claim (L24): column lists have no effect for the TRUNCATE command.",
+        "Source claim (L26): initial synchronization copies only published columns, but subscribers before release 15 copy all columns ignoring lists, and subscribers before release 18 do not copy generated columns even when they are defined on the publisher.",
+        "Source claim (L28-34): subscriptions combining several publications where the same table has different column lists are unsupported; CREATE SUBSCRIPTION disallows creating them, but publication-side additions or alterations after subscription creation can produce the situation and cause subscriber errors; the stated remedy is to make the lists match and then recreate the subscription or use ALTER SUBSCRIPTION ... DROP PUBLICATION and re-add.",
+        "Inference: the feature is a name-based projection, not a security control and not a stable schema contract; without a list, later column additions are silently included, while an explicit list must be maintained as the table evolves. No measurements or experiments are reported on this page."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/ddl-events.md",
+          "candidate": "Existing page covers DDL resource budgets and event compatibility; column addition under a publication is an adjacent schema-change axis."
+        },
+        {
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "candidate": "Existing page covers expand-migrate-contract and mixed-version compatibility; adjacent to maintaining a published column set across versions."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Existing page covers logical publication/subscription semantics within PostgreSQL replication evidence; adjacent mechanism family."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
+          "candidate": "Existing page covers change data capture and replayable change state; column selection shapes the captured change payload."
+        },
+        {
+          "path": "book/security/identity-authorization-threat-models-and-isolation.md",
+          "candidate": "Existing page covers trust boundaries and isolation; the source explicitly warns that column lists are not a security boundary."
+        }
+      ],
+      "reader": "delegated reader R288 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R289",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "url": "https://www.postgresql.org/docs/current/logical-replication-config.html",
+      "unit": "PostgreSQL 18 documentation, Section 29.12 'Configuration Settings' including 29.12.1 'Publishers' and 29.12.2 'Subscribers' (single subpage of Chapter 29 'Logical Replication'; not the chapter or the manual), local markdown representation /tmp/B21/raw/pglog-config.md, 79 lines / 489 words, sha256 c6f8f7f46495f36a7f33f70bf6f861e7d704276cbe8a910d886c050ca4cadbc5",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered section only, not Chapter 29 and not the PostgreSQL manual: all 79 local lines read sequentially. Substantive content is L36-66 (227 words). Excluded chrome: extractor metadata L1-7 (12 words); site chrome L8-34 (180 words) containing the logo, ten-item navigation, PostgreSQL 19 RC 1 news banner, documentation breadcrumb, supported/development/unsupported version lists and a prev/up/next table; footer chrome L68-79 (70 words) containing repeated prev/up/next links, the submit-correction block, policies and copyright. No body prose was omitted. Live spot-check on 2026-10-24 returned HTTP 200 for the same URL, identified the page as PostgreSQL 18.6, and matched the captured body through the final wal_retrieve_retry_interval sentence; the live TOC lists 29.12.1 and 29.12.2.",
+      "retrieval_refs": [
+        "/tmp/B21/manifest2.json#R289 (lines 79, words 489, sha256 c6f8f7f46495f36a7f33f70bf6f861e7d704276cbe8a910d886c050ca4cadbc5)",
+        "/tmp/B21/raw/pglog-config.md (read in full, L1-79; body L36-66)",
+        "https://www.postgresql.org/docs/current/logical-replication-config.html (HTTP 200, 2026-10-24; PostgreSQL 18.6; body and TOC spot-checked)"
+      ],
+      "omissions": "Other Chapter 29 sections (29.1-29.11, 29.13-29.14) not read in this record. Other PostgreSQL manual chapters not read; no experiment.",
+      "representation_gap": null,
+      "representation_sha256": "c6f8f7f46495f36a7f33f70bf6f861e7d704276cbe8a910d886c050ca4cadbc5",
+      "retrieved_lines": 79,
+      "retrieved_words": 489,
+      "in_scope_words": 227,
+      "sections": [
+        "Extractor metadata: Title, URL Source, Published Time, 'Markdown Content:', excluded (L1-7)",
+        "Site chrome: logo, navigation, release banner, breadcrumb, version lists and prev/up/next table, excluded (L8-34)",
+        "29.12 Configuration Settings introduction: options are relevant to only one side of replication (L36-40)",
+        "29.12.1 Publishers: wal_level=logical; max_replication_slots sizing with table-synchronization reserve; idle_replication_slot_timeout; max_wal_senders sizing with concurrent physical replicas; wal_sender_timeout (L42-52)",
+        "29.12.2 Subscribers: max_active_replication_origins; max_logical_replication_workers; max_worker_processes and competition from extensions and parallel queries; max_sync_workers_per_subscription; max_parallel_apply_workers_per_subscription; receiver timeouts and retry interval (L54-66)",
+        "Footer chrome: repeated prev/up/next, submit-correction block, policies and copyright, excluded (L68-79)"
+      ],
+      "notes": [
+        "Source claim (L40): logical replication requires several configuration options, and these options are relevant only on one side of the replication.",
+        "Source claim (L44): on the publisher, wal_level must be set to logical.",
+        "Source claim (L46-48): max_replication_slots must be at least the number of subscriptions expected to connect plus some reserve for table synchronization; logical replication slots are also affected by idle_replication_slot_timeout.",
+        "Source claim (L50-52): max_wal_senders should be at least the same as max_replication_slots plus the number of physical replicas connected at the same time; the logical replication walsender is also affected by wal_sender_timeout.",
+        "Source claim (L56): on the subscriber, max_active_replication_origins must be at least the number of subscriptions that will be added plus some reserve for table synchronization.",
+        "Source claim (L58): max_logical_replication_workers must be at least the number of subscriptions for leader apply workers, plus some reserve for table synchronization workers and parallel apply workers.",
+        "Source claim (L60): max_worker_processes may need to be adjusted to at least max_logical_replication_workers + 1, and extensions and parallel queries also take worker slots from it.",
+        "Source claim (L62): max_sync_workers_per_subscription controls the parallelism of the initial data copy at subscription initialization or when new tables are added.",
+        "Source claim (L64): max_parallel_apply_workers_per_subscription controls parallelism for streaming in-progress transactions when the subscription parameter streaming = parallel.",
+        "Source claim (L66): logical replication workers are also affected by wal_receiver_timeout, wal_receiver_status_interval and wal_retrieve_retry_interval.",
+        "Inference: every sizing statement is a floor ('must', 'should', 'may need') with an unspecified 'some reserve'; the page gives no numeric defaults, upper bounds or measured cost, and does not specify how the reserve scales with table count or parallel apply workers.",
+        "Representation note: chrome accounts for 250 of the 489 captured words (180 site, 70 footer) plus 12 metadata words; the substantive 227-word body matches the live PostgreSQL 18.6 page, and no content section is missing from the capture."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Existing page covers PostgreSQL WAL and physical/logical replication evidence; adjacent to wal_level, slot and walsender settings."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "candidate": "Existing page covers replication and restore boundaries; adjacent to the publisher/subscriber split of settings."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+          "candidate": "Existing page covers WAL durability and acknowledgment boundaries; adjacent to wal_level and walsender timeout settings."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md",
+          "candidate": "Existing page covers capacity planning under uncertainty; adjacent to worker, slot and subscription sizing floors."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/README.md",
+          "candidate": "Existing chapter landing covers replication operations and restore drills; adjacent to subscription capacity and worker budgets."
+        }
+      ],
+      "reader": "delegated reader R289 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R290",
+      "source_id": "src.postgres-logical",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "chapter": "postgres-logical",
+      "title": "29.7. Conflicts",
+      "url": "https://www.postgresql.org/docs/current/logical-replication-conflicts.html",
+      "unit": "PostgreSQL 18 documentation, Chapter 29 'Logical Replication', Section 29.7 'Conflicts', local markdown representation /tmp/B21/raw/pglog-conflicts.md, 87 lines / 1323 words, sha256 3a6aeba718747641cef2a2ed889403b09a1e02675346f5a937b834bd53def44b; single section page only (landing page and sibling sections excluded)",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 87 local lines read sequentially. The substantive body L8-87 (1312 words) is complete: conflict definition, seven logged conflict cases, log format, LOG/DETAIL field semantics, privilege and row-level-security conflicts, manual resolution, a worked ERROR example, transaction skipping, and the parallel-streaming caveat. L1-7 are extractor metadata ('Title', 'URL Source', 'Published Time', 'Markdown Content:') and are excluded. Heading permalink anchors '[#](...)' and markdown link targets are capture artifacts, excluded from analysis. No site navigation, footer or cookie chrome is present; the page has no subsections (conflict types are a description list).",
+      "retrieval_refs": [
+        "/tmp/B21/manifest2.json#R290 (87 lines, 1323 words, sha256 3a6aeba718747641cef2a2ed889403b09a1e02675346f5a937b834bd53def44b)",
+        "/tmp/B21/raw/pglog-conflicts.md (read in full, L1-87; body L8-87 = 1312 words)",
+        "https://www.postgresql.org/docs/current/logical-replication-conflicts.html (manifest URL; local capture used, not re-fetched)"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment. Within Chapter 29, only this section page was read; the landing page and the other thirteen section pages were not read.",
+      "representation_gap": "None observed in the section body: every content line of the captured page is present and no prose block, table row or code block appears missing. The capture omits site navigation, sidebar, footer and cookie chrome and adds an extractor header and heading permalink anchors; those are treated as non-content and excluded rather than counted as a representation gap. The local capture was not independently re-fetched.",
+      "representation_sha256": "3a6aeba718747641cef2a2ed889403b09a1e02675346f5a937b834bd53def44b",
+      "retrieved_lines": 87,
+      "retrieved_words": 1323,
+      "in_scope_words": 1312,
+      "sections": [
+        "Extractor metadata: title, URL, published time and 'Markdown Content:' label (L1-7; excluded)",
+        "Conflict definition: data is updated even if changed locally; an incoming constraint violation stops replication; missing rows for UPDATE/DELETE are conflicts that are skipped without error (L8)",
+        "Logged conflict cases and statistics: insert_exists, update_origin_differs, update_exists, update_missing, delete_origin_differs, delete_missing, multiple_unique_conflicts (L10-31)",
+        "Other conflict scenarios such as exclusion-constraint violations without additional log detail (L33)",
+        "Log format: LOG line with relation and conflict type; DETAIL explanation and detail_values grammar (L35-46)",
+        "LOG and DETAIL semantics: relation and conflict type; origin, transaction ID and commit timestamp; Key, existing local row, remote row and replica identity; column-name visibility and 64-byte value truncation (L48-72)",
+        "Privileges and row-level security as conflict sources (L74)",
+        "Error conflicts stop replication and require manual resolution (L76-78)",
+        "Worked ERROR log example with unique key, local/remote rows, origin name and finish LSN (L80-83)",
+        "Skip procedure: ALTER SUBSCRIPTION ... SKIP or pg_replication_origin_advance(), with the inconsistency risk of skipping a whole transaction (L85)",
+        "Parallel streaming caveat: finish LSN may be unlogged; switch streaming mode to reproduce the conflict (L87)"
+      ],
+      "notes": [
+        "Source claim (L8): logical replication behaves like normal DML in that data is updated even if it was changed locally; if incoming data violates constraints, replication stops and this is called a conflict; for UPDATE or DELETE, missing data is also a conflict but is not an error and the operation is skipped.",
+        "Source claim (L10-31): seven conflict cases are logged and counted in pg_stat_subscription_stats: insert_exists, update_origin_differs, update_exists, update_missing, delete_origin_differs, delete_missing and multiple_unique_conflicts.",
+        "Source claim (L12-31): insert_exists, update_exists and multiple_unique_conflicts violate NOT DEFERRABLE unique constraints and raise errors until resolved manually; their origin and commit-timestamp details require track_commit_timestamp on the subscriber; update_origin_differs and delete_origin_differs can only be detected with that setting, and the update or delete is always applied regardless of the local row's origin; update_missing and delete_missing are skipped.",
+        "Source claim (L19): updating a partitioned table can move a row into another partition, where a NOT DEFERRABLE unique constraint may then produce an insert_exists conflict.",
+        "Source claim (L33): exclusion-constraint violations and other scenarios exist but currently receive no additional detail in the log.",
+        "Source claim (L35-46): the log format is 'LOG: conflict detected on relation \"schemaname.tablename\": conflict=conflict_type' plus 'DETAIL: detailed_explanation. {detail_values}', where detail values are Key, existing local row, remote row, or replica identity (including full).",
+        "Source claim (L48-72): DETAIL includes origin, transaction ID and commit timestamp when available; Key values are given for unique-constraint conflicts; existing local and remote rows are included per conflict type; remote unchanged toasted values appear as null; replica identity shows the lookup key; column names appear only when the user lacks access to all columns; large values are truncated to 64 bytes; multiple_unique_conflicts emits one explanation per constraint.",
+        "Source claim (L74): logical replication runs with the subscription owner's privileges; permission failures on target tables cause conflicts, as does enabled row-level security the owner is subject to, regardless of whether a policy would reject the operation; the RLS restriction may be lifted in a future version.",
+        "Source claim (L76-85): an error-producing conflict stops replication and must be resolved manually; resolution is by changing subscriber data or permissions, or by skipping the transaction with ALTER SUBSCRIPTION ... SKIP using the finish LSN, or by calling pg_replication_origin_advance() with the next LSN after disabling the subscription or using disable_on_error; skipping the whole transaction can omit non-conflicting changes and make the subscriber inconsistent.",
+        "Source claim (L87): with streaming mode 'parallel', the finish LSN of failed transactions may not be logged; changing streaming to 'on' or 'off' and reproducing the conflicts may be needed to obtain it.",
+        "Inference: the page separates fatal conflicts (replication stops, manual action) from conflicts that are still applied or silently skipped, so pg_stat_subscription_stats counts are not equivalent to replication-stopping events.",
+        "Representation note: the extractor 'Published Time' field reads 2026-08-13 while the record revision uses the delegated 2026-10-24 capture date; no live re-fetch, measurement or failure experiment was performed."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/multiwriter-conflicts.md",
+          "candidate": "Adjacent to concurrent-writer conflict classification and resolution; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
+          "candidate": "Adjacent to change-stream replay and recoverable processor state; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "candidate": "Adjacent to replication and consistent-recovery boundaries; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "candidate": "Adjacent to safety and progress of replication under failures; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/restore-drills.md",
+          "candidate": "Adjacent to recovering consistency after skipped or divergent changes; relation only, no verdict."
+        }
+      ],
+      "reader": "delegated reader R290 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R291",
+      "source_id": "src.postgres-logical",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "chapter": "postgres-logical",
+      "title": "29.3. Logical Replication Failover",
+      "url": "https://www.postgresql.org/docs/current/logical-replication-failover.html",
+      "unit": "PostgreSQL 18 documentation, Chapter 29 'Logical Replication', Section 29.3 'Logical Replication Failover', local markdown representation /tmp/B21/raw/pglog-failover.md, 65 lines / 663 words, sha256 46e7d8d21b4adc0d6a3fced676254dac312e1a175510faded290419adcf0c9bb; single section page only (landing page and sibling sections excluded)",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 65 local lines read sequentially. The substantive body L8-65 (650 words) is complete: physical-standby prerequisite, failover slot synchronization, asynchronous-copy caveat, the three-step subscriber/standby verification procedure with SQL and sample output, PostgreSQL versus non-PostgreSQL subscribers, and the primary-side query for planned failover. L1-7 are extractor metadata ('Title', 'URL Source', 'Published Time', 'Markdown Content:') and are excluded. Code-block prompts ('/* sub # */', '/* standby # */', '/* primary # */') and sample result sets are treated as page content and retained. No site navigation, footer or cookie chrome is present.",
+      "retrieval_refs": [
+        "/tmp/B21/manifest2.json#R291 (65 lines, 663 words, sha256 46e7d8d21b4adc0d6a3fced676254dac312e1a175510faded290419adcf0c9bb)",
+        "/tmp/B21/raw/pglog-failover.md (read in full, L1-65; body L8-65 = 650 words)",
+        "https://www.postgresql.org/docs/current/logical-replication-failover.html (manifest URL; local capture used, not re-fetched)"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment. Within Chapter 29, only this section page was read; the landing page and the other thirteen section pages were not read.",
+      "representation_gap": "None observed in the section body: every content line of the captured page is present and no prose block, table row or code block appears missing. The capture omits site navigation, sidebar, footer and cookie chrome and adds an extractor header and heading permalink anchors; those are treated as non-content and excluded rather than counted as a representation gap. The local capture was not independently re-fetched.",
+      "representation_sha256": "46e7d8d21b4adc0d6a3fced676254dac312e1a175510faded290419adcf0c9bb",
+      "retrieved_lines": 65,
+      "retrieved_words": 663,
+      "in_scope_words": 650,
+      "sections": [
+        "Extractor metadata: title, URL, published time and 'Markdown Content:' label (L1-7; excluded)",
+        "Physical-standby prerequisite, failover=true slot synchronization, and seamless subscription continuation after promotion (L8)",
+        "Asynchronous slot copying, the need to confirm synchronization before failover, and synchronized_standby_slots (L10)",
+        "Purpose of the three-step readiness verification (L12)",
+        "Step 1: subscriber query listing replication slots of failover-enabled subscriptions from pg_subscription (L14-24)",
+        "Step 2: per-database query for table synchronization slots whose copy finished, using pg_subscription_rel and pg_control_system (L25-38)",
+        "Step 3: standby check that slots exist and are failover-ready via synced, NOT temporary and invalidation_reason IS NULL (L39-51)",
+        "Interpretation: subscriptions may continue on the new primary when every slot is present and failover_ready is true (L53)",
+        "PostgreSQL versus non-PostgreSQL subscribers; run steps on each subscriber node served by the designated standby (L55)",
+        "Planned failover: primary-side query for all failover-enabled, non-temporary slots instead of steps 1-2 (L57-65)"
+      ],
+      "notes": [
+        "Source claim (L8): for subscribers to continue replicating after the publisher goes down, a physical standby corresponding to the publisher is required; logical slots for the subscriptions can be synchronized to the standby by specifying failover = true when creating subscriptions, referencing Section 47.2.3.",
+        "Source claim (L8): the failover parameter is said to ensure a seamless transition of those subscriptions after the standby is promoted, and they can continue subscribing to publications on the new primary.",
+        "Source claim (L10): slot synchronization copies asynchronously, so replication slots must be confirmed synced to the standby before failover; the standby must be ahead of the subscriber, which synchronized_standby_slots can achieve.",
+        "Source claim (L14-24): on the subscriber, pg_subscription rows with subfailover true and a non-null subslotname identify the replication slots that should be synced to the standby planned for promotion.",
+        "Source claim (L25-38): a second subscriber-side query, run on each database with failover-enabled subscriptions, derives table synchronization slot names from pg_subscription_rel rows with srsubstate = 'f' joined with pg_subscription and pg_control_system; such slots need syncing only when the table copy is finished, since otherwise they are dropped or recreated on the new primary.",
+        "Source claim (L39-51): on the standby, pg_replication_slots is queried for each slot name, and failover_ready is defined as synced AND NOT temporary AND invalidation_reason IS NULL.",
+        "Source claim (L53): if all slots are present on the standby and failover_ready is true, existing subscriptions can continue subscribing to publications on the new primary.",
+        "Source claim (L55): the first two steps are meant for a PostgreSQL subscriber and are recommended on each subscriber node that the designated standby will serve, so the complete slot list can be verified in step 3; non-PostgreSQL subscribers may use their own methods to identify their slots.",
+        "Source claim (L57-65): for planned failover, to confirm that all subscribers can continue after failover, a primary-side query over pg_replication_slots with failover true and NOT temporary returns the slots that need syncing, replacing steps 1-2.",
+        "Inference: the procedure verifies slot presence and synchronization state, not data freshness by itself; the 'standby ahead of subscriber' condition is delegated to synchronized_standby_slots rather than checked by the shown queries.",
+        "Inference: table synchronization slots are relevant only while a table copy is in progress; the page's state filter srsubstate = 'f' encodes that transient role.",
+        "Representation note: the extractor 'Published Time' field reads 2026-08-13 while the record revision uses the delegated 2026-10-24 capture date; no live re-fetch, failover experiment or measurement was performed."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "candidate": "Adjacent to replication safety and progress across leader change; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "candidate": "Adjacent to leader changes, reconfiguration and restoration; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "candidate": "Adjacent to replication versus consistent recovery boundaries; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/restore-drills.md",
+          "candidate": "Adjacent to demonstrated recovery rather than assumed failover; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/README.md",
+          "candidate": "Adjacent to replication, lag and restore evidence; relation only, no verdict."
+        }
+      ],
+      "reader": "delegated reader R291 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R292",
+      "source_id": "src.postgres-logical",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "chapter": "postgres-logical",
+      "title": "29.6. Generated Column Replication",
+      "url": "https://www.postgresql.org/docs/current/logical-replication-gencols.html",
+      "unit": "PostgreSQL 18 documentation, Chapter 29 'Logical Replication', Section 29.6 'Generated Column Replication', local markdown representation /tmp/B21/raw/pglog-gencols.md, 76 lines / 593 words, sha256 b619bad34e62e09c7f66b3034714c43862fb59703349f57685daf143cba17213; single section page only (landing page and sibling sections excluded)",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 76 local lines read sequentially. The substantive body L8-76 (580 words) is complete: default generated-column behavior, a worked publisher/subscriber example, pre-18.0 history, the generated-to-regular use case and tip, the two opt-in mechanisms, column-list precedence, Table 29.2 with all six publisher/subscriber combinations, the multiple-publication warning, and the pre-18 subscriber note. L1-7 are extractor metadata ('Title', 'URL Source', 'Published Time', 'Markdown Content:') and are excluded. Tip/Note/Warning headings, SQL blocks, result sets and the markdown table are retained; table separator rows are formatting, not content. No site navigation, footer or cookie chrome is present.",
+      "retrieval_refs": [
+        "/tmp/B21/manifest2.json#R292 (76 lines, 593 words, sha256 b619bad34e62e09c7f66b3034714c43862fb59703349f57685daf143cba17213)",
+        "/tmp/B21/raw/pglog-gencols.md (read in full, L1-76; body L8-76 = 580 words)",
+        "https://www.postgresql.org/docs/current/logical-replication-gencols.html (manifest URL; local capture used, not re-fetched)"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment. Within Chapter 29, only this section page was read; the landing page and the other thirteen section pages were not read.",
+      "representation_gap": "None observed in the section body: every content line of the captured page is present and no prose block, table row or code block appears missing. The capture omits site navigation, sidebar, footer and cookie chrome and adds an extractor header and heading permalink anchors; those are treated as non-content and excluded rather than counted as a representation gap. The local capture was not independently re-fetched.",
+      "representation_sha256": "b619bad34e62e09c7f66b3034714c43862fb59703349f57685daf143cba17213",
+      "retrieved_lines": 76,
+      "retrieved_words": 593,
+      "in_scope_words": 580,
+      "sections": [
+        "Extractor metadata: title, URL, published time and 'Markdown Content:' label (L1-7; excluded)",
+        "Default case: subscriber table mirrors the publisher and the subscriber's generated-column value is used (L8)",
+        "Worked example: publisher GENERATED ALWAYS AS (a + 1) STORED versus subscriber GENERATED ALWAYS AS (a * 100) STORED (L10-31)",
+        "Pre-18.0 behavior and the generated-column-to-regular-column use case (L33-35)",
+        "Tip: usefulness for non-PostgreSQL targets via output plugin (L37-39)",
+        "Opt-in mechanisms: publish_generated_columns = 'stored' or an explicit table column list (L41-47)",
+        "Note: a column list overrides publish_generated_columns (L49-51)",
+        "Table 29.2: replication results for six publish/generated/subscriber-column combinations (L53-64)",
+        "Warning: no support for multiple publications with different column lists for the same table (L68-72)",
+        "Note: a pre-18 subscriber's initial table synchronization will not copy generated columns (L74-76)"
+      ],
+      "notes": [
+        "Source claim (L8): typically the subscriber table is defined the same as the publisher, so a publisher GENERATED column has a matching subscriber generated column; in that case the subscriber table's generated-column value is always the one used.",
+        "Source claim (L10-31): the example publishes a table with b GENERATED ALWAYS AS (a + 1) STORED and inserts 1, 2, 3, producing b = 2, 3, 4 on the publisher; the subscriber defines b GENERATED ALWAYS AS (a * 100) STORED and shows b = 100, 200, 300, demonstrating that the subscriber recomputes locally.",
+        "Source claim (L33): prior to version 18.0, logical replication did not publish GENERATED columns at all.",
+        "Source claim (L35-39): replicating a generated column to a regular column can be desirable, and the Tip says this may be useful when replicating to a non-PostgreSQL database through an output plugin, especially if the target does not support generated columns.",
+        "Source claim (L41-47): generated columns are not published by default; users can opt in by setting the publication parameter publish_generated_columns to 'stored' (current and future stored generated columns) or by specifying a table column list that nominates stored generated columns.",
+        "Source claim (L49-51): when determining which columns are published, a column list takes precedence and overrides the publish_generated_columns parameter.",
+        "Source claim (L53-64): Table 29.2 gives six outcomes: unpublished GENERATED to GENERATED uses the subscriber's generated value; to regular uses the subscriber column default; to a missing column does nothing; published GENERATED to GENERATED is an unsupported ERROR; to regular replicates the publisher value; to a missing column is an ERROR reporting the column missing.",
+        "Source claim (L68-72): there is currently no support for subscriptions comprising several publications where the same table is published with different column lists; the same situation arises when one publication publishes generated columns and another in the same subscription does not.",
+        "Source claim (L74-76): if the subscriber is from a release prior to 18, initial table synchronization will not copy generated columns even when they are defined on the publisher.",
+        "Inference: enabling publication of generated columns is aimed at regular target columns; the generated-to-generated combination is explicitly unsupported rather than silently recomputed from replicated input.",
+        "Inference: because a column list overrides publish_generated_columns, mixing publications with and without that setting for one table can change the effective column set, which the warning treats as unsupported.",
+        "Representation note: the extractor 'Published Time' field reads 2026-08-13 while the record revision uses the delegated 2026-10-24 capture date; no live re-fetch, measurement or replication experiment was performed."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Adjacent to schema lifecycle and semantic migration across differing definitions; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/semantic-compatibility.md",
+          "candidate": "Adjacent to preserving meaning when old and new representations differ; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
+          "candidate": "Adjacent to change-data capture and derivation state; relation only, no verdict."
+        },
+        {
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "candidate": "Adjacent to progressive schema change and compatibility windows; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/README.md",
+          "candidate": "Adjacent to schema evolution, migration and retention scope; relation only, no verdict."
+        }
+      ],
+      "reader": "delegated reader R292 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R293",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "url": "https://www.postgresql.org/docs/current/logical-replication-monitoring.html",
+      "unit": "Registered page: PostgreSQL 18 documentation - 29.10 Monitoring (single documentation page within Chapter 29 Logical Replication; not the PostgreSQL manual)",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page only, not the whole PostgreSQL manual and not the whole of Chapter 29: local capture of '29.10. Monitoring', lines 1-12 (144 words), read sequentially and completely - three body paragraphs on lines 8, 10 and 12. Extractor preamble (Title, URL Source, Published Time, 'Markdown Content:') on lines 1-7 is retained; navigation and footer chrome visible on the live page are absent from the capture and excluded. The body was cross-checked against the live page on 2026-10-24 and no section is missing.",
+      "retrieval_refs": [
+        "local: /tmp/B21/raw/pglog-monitoring.md lines 1-12",
+        "url: https://www.postgresql.org/docs/current/logical-replication-monitoring.html",
+        "passages: line 8 (publisher-side monitoring analogy), line 10 (pg_stat_subscription rows), line 12 (worker states and parallel apply)",
+        "live cross-check: same URL fetched 2026-10-24, body paragraphs match the capture; only navheader/navfooter chrome differs"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read, including Section 26.2.5.2 (monitoring of physical streaming replication) and the pg_stat_subscription reference page linked on line 10; no experiment, no cluster observation and no query execution.",
+      "representation_gap": null,
+      "representation_sha256": "f0f16d7812b0b9a742e6b066059aabe1ff405cb8abd38a5a03a188ecd688dfc5",
+      "retrieved_lines": 12,
+      "retrieved_words": 144,
+      "sections": [
+        {
+          "heading": "Publication-node monitoring by analogy to physical streaming replication",
+          "lines": "8"
+        },
+        {
+          "heading": "Subscription monitoring through pg_stat_subscription",
+          "lines": "10"
+        },
+        {
+          "heading": "Subscription worker population and states",
+          "lines": "12"
+        }
+      ],
+      "notes": [
+        "Source claim (line 8): logical replication is based on a similar architecture to physical streaming replication, so monitoring on a publication node is similar to monitoring a physical replication primary; detail is deferred to Section 26.2.5.2.",
+        "Source claim (line 10): subscription monitoring information is visible in pg_stat_subscription, which contains one row for every subscription worker; a subscription can have zero or more active workers depending on its state.",
+        "Source claim (line 12): normally one apply process runs for an enabled subscription; a disabled or crashed subscription has zero rows; in-progress initial synchronization adds workers for the tables being synchronized; parallel apply of a streaming transaction can add parallel apply workers.",
+        "Inference (reader): the page defines worker presence as the observable and names no lag, byte, transaction, error or retention metric, so it cannot support claims about replication delay or retained WAL.",
+        "Inference (reader): zero rows conflates disabled and crashed subscriptions on this page, so worker count alone cannot separate intentional disablement from failure without state read elsewhere.",
+        "Representation note: the capture's 12 lines and 144 words include the seven-line extractor preamble; the page body is three paragraphs and carries no subsection headings.",
+        "Scope note: Section 26.2.5.2 and the pg_stat_subscription reference page were not read; no cluster was observed and no monitoring query was run.",
+        "Inference (reader): 'similar to' is an analogy, not an identity; the page does not say publisher-side logical monitoring uses pg_stat_replication or the same columns, so equating the views would over-read it."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Existing page on PostgreSQL WAL and physical/logical replication evidence; relevant to where subscription-worker monitoring belongs; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "candidate": "Existing page contrasts physical streaming and logical replication; the monitoring analogy bears on that boundary; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-semantics.md",
+          "candidate": "Existing page owns metric semantics; pg_stat_subscription row presence is a concrete state-derived telemetry example; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
+          "candidate": "Existing page owns CDC task state and replay; subscription-worker states are a database-side analogue; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
+          "candidate": "Existing page owns SLI and alert design; this page supplies no lag signal, so any alert mapping must be argued there; no edit under #225."
+        }
+      ],
+      "reader": "Delegated reader (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef), research-only, records written under /tmp/B21/records/"
+    },
+    {
+      "id": "R294",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "url": "https://www.postgresql.org/docs/current/logical-replication-publication.html",
+      "unit": "Registered page: PostgreSQL 18 documentation - 29.1 Publication, including 29.1.1 Replica Identity (single documentation page within Chapter 29 Logical Replication; not the PostgreSQL manual)",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page only, not the whole PostgreSQL manual and not the whole of Chapter 29: local capture of '29.1. Publication' and subsection '29.1.1 Replica Identity', lines 1-32 (536 words), read sequentially and completely. Body text runs lines 8-32 with the subsection heading on line 20. Extractor preamble (Title, URL Source, Published Time, 'Markdown Content:') on lines 1-7 is retained; navigation and footer chrome visible on the live page are absent from the capture and excluded. The body was cross-checked against the live page on 2026-10-24 and no section is missing.",
+      "retrieval_refs": [
+        "local: /tmp/B21/raw/pglog-publication.md lines 1-32",
+        "url: https://www.postgresql.org/docs/current/logical-replication-publication.html",
+        "passages: lines 8-10 (definition and scope), line 12 (operation-type filtering), lines 14-18 (subscribers and lifecycle), lines 20-32 (Replica Identity)",
+        "live cross-check: same URL fetched 2026-10-24, body paragraphs and 29.1.1 heading match the capture; only navheader/navfooter chrome differs"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read, including the linked Section 29.4 on row filters and the CREATE PUBLICATION, ALTER PUBLICATION and ALTER TABLE...REPLICA IDENTITY reference pages; no experiment.",
+      "representation_gap": null,
+      "representation_sha256": "3d57680e4814aa4c98bafde162e12c6415e1c36b2fb1a56eeafb3c970c7b5e13",
+      "retrieved_lines": 32,
+      "retrieved_words": 536,
+      "sections": [
+        {
+          "heading": "Publication definition, scope and publisher",
+          "lines": "8-10"
+        },
+        {
+          "heading": "Change-type filtering and DML-only scope",
+          "lines": "12"
+        },
+        {
+          "heading": "Subscribers and publication lifecycle",
+          "lines": "14-18"
+        },
+        {
+          "heading": "29.1.1 Replica Identity",
+          "lines": "20-32"
+        }
+      ],
+      "notes": [
+        "Source claim (lines 8-10): a publication is defined on a physical replication primary (the publisher) and is a set of changes generated from a table or group of tables, also called a change set or replication set; each publication exists in only one database. Publications differ from schemas, do not affect table access, may currently contain only tables and all tables in a schema, and require explicit membership except for ALL TABLES.",
+        "Source claim (line 12): a publication may limit changes to any combination of INSERT, UPDATE, DELETE and TRUNCATE; by default all operation types are replicated; these specifications apply only to DML and not to the initial data synchronization copy; row filters have no effect on TRUNCATE.",
+        "Source claim (lines 14-18): every publication can have multiple subscribers; CREATE PUBLICATION creates it and ALTER/DROP modify it; ADD TABLE and DROP TABLE are transactional, so the table starts or stops replicating at the correct snapshot once the transaction commits.",
+        "Source claim (lines 22-24): UPDATE and DELETE replication requires a replica identity on the published table so subscriber-side rows can be identified; the default is the primary key if one exists; another unique index with certain additional requirements may be used; FULL makes the entire row the key and permits subscriber-side indexes that are btree or hash, non-partial, with a plain column referencing the published table column as the leftmost field; without suitable indexes FULL search can be very inefficient, so FULL is a fallback.",
+        "Source claim (lines 26-30): a non-FULL publisher replica identity requires a subscriber identity comprising the same or fewer columns; a table with NOTHING, DEFAULT without a primary key, or USING INDEX with a dropped index cannot support replicated UPDATE or DELETE and attempts error on the publisher; INSERT proceeds regardless of replica identity.",
+        "Inference (reader): replica identity on this page is row-matching metadata for UPDATE/DELETE, not authentication or general record identity; the term's scope should not be widened beyond that role.",
+        "Inference (reader): operation-type filtering and the initial-copy exemption are separate scopes; the page does not say whether filtered operations are absent from the initial copy, so equivalence between the two cannot be inferred.",
+        "Inference (reader): the page defines membership and row matching but says nothing about ordering, exactly-once delivery, conflict handling or DDL propagation, so those cannot be claimed from it.",
+        "Representation note: the capture's 32 lines and 536 words include the seven-line extractor preamble; the body contains one subsection heading (line 20) and no navigation or footer chrome.",
+        "Scope note: Section 29.4 (row filters) and the CREATE PUBLICATION, ALTER PUBLICATION and ALTER TABLE...REPLICA IDENTITY pages were not read; no experiment was run."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Existing page introduces publication/subscription for logical change propagation; this page supplies the publication-side definitions; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "candidate": "Existing page contrasts physical and logical replication boundaries; publication scope belongs to that comparison; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
+          "candidate": "Existing page owns CDC state and replay; a publication change set is an upstream selection boundary; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "candidate": "Existing page owns outbox publication and ordering; it uses a different sense of 'publication' that should not be conflated; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/multiwriter-conflicts.md",
+          "candidate": "Existing page uses 'replica identity' for operation identity; the PostgreSQL term means row matching, a terminology collision to disambiguate; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/publication-consistency.md",
+          "candidate": "Existing page owns object publication consistency; another distinct use of 'publication' for the same word; no edit under #225."
+        }
+      ],
+      "reader": "Delegated reader (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef), research-only, records written under /tmp/B21/records/"
+    },
+    {
+      "id": "R295",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "url": "https://www.postgresql.org/docs/current/logical-replication-quick-setup.html",
+      "unit": "Registered page: PostgreSQL 18 documentation - 29.14 Quick Setup (single documentation page within Chapter 29 Logical Replication; not the PostgreSQL manual)",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page only, not the whole PostgreSQL manual and not the whole of Chapter 29: local capture of '29.14. Quick Setup', lines 1-26 (120 words), read sequentially and completely - prose on lines 8, 12, 14, 18, 22 and 26, with configuration and SQL examples on lines 10, 16, 20 and 24. Extractor preamble (Title, URL Source, Published Time, 'Markdown Content:') on lines 1-7 is retained; navigation and footer chrome visible on the live page are absent from the capture and excluded. The body was cross-checked against the live page on 2026-10-24 and no section is missing.",
+      "retrieval_refs": [
+        "local: /tmp/B21/raw/pglog-quick-setup.md lines 1-26",
+        "url: https://www.postgresql.org/docs/current/logical-replication-quick-setup.html",
+        "passages: lines 8-12 (wal_level configuration), lines 14-16 (pg_hba.conf), lines 18-24 (CREATE PUBLICATION and CREATE SUBSCRIPTION), line 26 (initial synchronization then incremental changes)",
+        "live cross-check: same URL fetched 2026-10-24, body prose and code blocks match the capture; only navheader/navfooter chrome differs"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read, including the linked CREATE PUBLICATION, CREATE SUBSCRIPTION, logical replication configuration and pg_hba.conf documentation; no experiment, no database was configured and no command was executed.",
+      "representation_gap": null,
+      "representation_sha256": "2cf19694fd540be6cf2fbb25b17e8b62e020439f8b5770a4ca95deb36d440d55",
+      "retrieved_lines": 26,
+      "retrieved_words": 120,
+      "sections": [
+        {
+          "heading": "Publisher configuration: wal_level",
+          "lines": "8-12"
+        },
+        {
+          "heading": "Client authentication in pg_hba.conf",
+          "lines": "14-16"
+        },
+        {
+          "heading": "Creating the publication and subscription",
+          "lines": "18-24"
+        },
+        {
+          "heading": "Initial synchronization and incremental changes",
+          "lines": "26"
+        }
+      ],
+      "notes": [
+        "Source claim (lines 8-12): set wal_level = logical in postgresql.conf; the other required settings have default values sufficient for a basic setup.",
+        "Source claim (lines 14-16): pg_hba.conf must be adjusted to allow replication, with values depending on the actual network configuration and the connecting user; the shown example is 'host all repuser 0.0.0.0/0 scram-sha-256'.",
+        "Source claim (lines 18-24): on the publisher database run CREATE PUBLICATION mypub FOR TABLE users, departments; on the subscriber database run CREATE SUBSCRIPTION mysub CONNECTION 'dbname=foo host=bar user=repuser' PUBLICATION mypub.",
+        "Source claim (line 26): the commands start the replication process, which synchronizes the initial table contents of users and departments and then replicates incremental changes to those tables.",
+        "Inference (reader): this is a minimal happy path; the page does not state whether changing wal_level requires a restart and does not mention replication slots, WAL senders or slot cleanup.",
+        "Inference (reader): the pg_hba example is broad (0.0.0.0/0) and uses scram-sha-256; the page explicitly makes the values environment-dependent, so the line is illustrative rather than a recommended exposure.",
+        "Inference (reader): the page shows no verification step - no query, log check or pg_stat_subscription inspection - so success is asserted by the procedure, not demonstrated.",
+        "Representation note: the capture's 26 lines and 120 words include the seven-line extractor preamble; the body has four code lines (10, 16, 20, 24) and no subsection headings, and no navigation or footer chrome.",
+        "Scope note: the linked CREATE PUBLICATION, CREATE SUBSCRIPTION, configuration and pg_hba.conf documentation was not read; no database was configured and no command was run."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+          "candidate": "Existing page owns WAL ordering and acknowledgment; wal_level = logical is a WAL-content decision adjacent to it; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Existing page covers PostgreSQL logical replication evidence; this page is the minimal setup procedure; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+          "candidate": "Existing page owns identity, authorization and trust boundaries; pg_hba.conf is a host-based authentication boundary; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
+          "candidate": "Existing page owns CDC state and replay; the initial-copy-then-incremental sequence is the same problem boundary; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
+          "candidate": "Existing page owns configuration rollout while processes observe different versions; postgresql.conf and pg_hba.conf changes are a database instance of it; no edit under #225."
+        }
+      ],
+      "reader": "Delegated reader (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef), research-only, records written under /tmp/B21/records/"
+    },
+    {
+      "id": "R296",
+      "source_id": "src.postgres-logical",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "url": "https://www.postgresql.org/docs/current/logical-replication-restrictions.html",
+      "unit": "PostgreSQL 18 documentation, Section 29.8 'Restrictions' (logical replication), local markdown representation /tmp/B21/raw/pglog-restrictions.md, 22 lines / 574 words, sha256 f0488e17a3e4167a8c3576a6dd5b210a75176bda3b64b57499ddb9b01699bd1d; one section page only, not the chapter",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 22 local lines were read sequentially. L8-22 are the complete section body (15 lines, 563 words by wc): one introductory sentence and seven restriction bullets. L1-7 are extractor metadata (Title, URL Source, Published Time, Markdown Content) and are excluded. No navigation, footer, cookie banner, table of contents or related-links chrome is present in the capture. A live fetch on 2026-10-24 returned HTTP 200 with page title 'Documentation: 18: 29.8. Restrictions'; its docContent has the same introductory paragraph and seven list items, and the local closing sentence appears verbatim. Scope is this one section page; the Chapter 29 landing page and the other thirteen section pages are separate units and are not represented here.",
+      "retrieval_refs": [
+        "/tmp/B21/manifest2.json#R296 (lines 22, words 574, sha256 f0488e17a3e4167a8c3576a6dd5b210a75176bda3b64b57499ddb9b01699bd1d)",
+        "/tmp/B21/raw/pglog-restrictions.md (read in full, L1-22; body L8-22 = 15 lines / 563 words by wc)",
+        "https://www.postgresql.org/docs/current/logical-replication-restrictions.html (HTTP 200, 2026-10-24; title 'Documentation: 18: 29.8. Restrictions'; intro and seven bullets matched)"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment.",
+      "representation_gap": null,
+      "representation_sha256": "f0488e17a3e4167a8c3576a6dd5b210a75176bda3b64b57499ddb9b01699bd1d",
+      "retrieved_lines": 22,
+      "retrieved_words": 574,
+      "sections": [
+        "Extractor metadata, excluded (L1-7)",
+        "Intro: current restrictions or missing functionality (L8)",
+        "Schema and DDL not replicated; pg_dump --schema-only, manual sync, additive subscriber-first changes (L10)",
+        "Sequences not replicated; switchover/failover needs sequence advance (L12)",
+        "TRUNCATE replication and foreign-key groups (L14)",
+        "Large objects not replicated; workaround stores data in normal tables (L16)",
+        "Only tables, including partitioned, supported; views/materialized views/foreign tables error (L18)",
+        "Partitioned tables: leaf partitions are the default origin; publish_via_partition_root alternative (L20)",
+        "REPLICA IDENTITY FULL with types lacking a default B-tree/Hash operator class (L22)"
+      ],
+      "notes": [
+        "Source claim (L8): the seven items are current restrictions or missing functionality, and the page says these might be addressed in future releases.",
+        "Source claim (L10): schema and DDL are not replicated; the initial schema can be copied with pg_dump --schema-only, later schema changes must be kept in sync manually, and schemas need not be identical. Replication errors while arriving data does not fit the subscriber schema; applying additive changes to the subscriber first often avoids intermittent errors.",
+        "Source claim (L12): sequence data is not replicated. Serial or identity column values replicate as table data, but the sequence on the subscriber still shows its start value. Read-only subscribers are usually unaffected; a switchover or failover requires updating sequences to the latest values by copying current data or choosing a sufficiently high value from the tables.",
+        "Source claim (L14): TRUNCATE is replicated, and the subscriber truncates the same explicitly specified or CASCADE-collected group minus tables outside the subscription. This works when all affected tables share one subscription, but fails when a table to be truncated has foreign-key links to tables outside the same or any subscription.",
+        "Source claim (L16, L18): large objects are not replicated and the only workaround is storing data in normal tables. Only tables, including partitioned tables, are supported; replicating views, materialized views or foreign tables results in an error.",
+        "Source claim (L20): partitioned replication originates by default from the publisher's leaf partitions, so those partitions must exist on the subscriber as valid target tables (leaf, further subpartitioned, or independent). publish_via_partition_root can instead replicate using the identity and schema of the partitioned root table.",
+        "Source claim (L22): with REPLICA IDENTITY FULL, UPDATE and DELETE cannot be applied on subscribers when tables include attributes whose types (such as point or box) lack a default operator class for B-tree or Hash; defining a primary key or replica identity overcomes this limitation.",
+        "Inference: the restrictions are stated as product behavior, not measured failure rates; the page reports no experiments, no version matrix beyond the current documentation, and no workaround beyond those named.",
+        "Inference: these constraints mark where table-row replication stops and where DDL, sequence state, large objects and non-table relations remain external operational responsibilities.",
+        "Representation note: the only excluded local lines are L1-7 extractor metadata; no site chrome is present. The 2026-10-24 live spot-check found the same intro and all seven bullets, so no section-level representation gap was detected."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Adjacent to schema/DDL change management and subscriber-side schema evolution; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
+          "candidate": "Adjacent to expand/migrate/contract ordering and manual schema synchronization; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+          "candidate": "Adjacent to switchover/failover preparation and sequence or large-object gaps in restore evidence; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Adjacent to partitioned-table topology and partition-level target tables; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "candidate": "Adjacent to physical versus logical replication boundaries and replica identity; relation only, no verdict."
+        }
+      ],
+      "reader": "delegated reader R296 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R297",
+      "source_id": "src.postgres-logical",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "url": "https://www.postgresql.org/docs/current/logical-replication-row-filter.html",
+      "unit": "PostgreSQL 18 documentation, Section 29.4 'Row Filters' (logical replication), local markdown representation /tmp/B21/raw/pglog-row-filter.md, 328 lines / 2413 words, sha256 62989b6d6fd9f3cb39451b5cc84637c73ebe22d56ae29e7a163e9f31dcc7de95; one section page only, not the chapter",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 328 local lines were read sequentially. L8-328 are the complete section body (321 lines, 2401 words by wc): the 29.4 introduction, subsections 29.4.1-29.4.7, Table 29.1, and SQL examples through the final '(3 rows)' output. L1-7 are extractor metadata and are excluded. No site navigation, footer, cookie banner or related-links chrome is present in the capture. A live fetch on 2026-10-24 returned HTTP 200 with page title 'Documentation: 18: 29.4. Row Filters'; it carries the same subsection headings and ends with the same example output. The live page's small in-page contents list duplicates those headings as navigation and is the only live element absent locally; it is chrome, not a content section. Scope is this one section page; sibling Chapter 29 sections are separate units.",
+      "retrieval_refs": [
+        "/tmp/B21/manifest2.json#R297 (lines 328, words 2413, sha256 62989b6d6fd9f3cb39451b5cc84637c73ebe22d56ae29e7a163e9f31dcc7de95)",
+        "/tmp/B21/raw/pglog-row-filter.md (read in full, L1-328; body L8-328 = 321 lines / 2401 words by wc)",
+        "https://www.postgresql.org/docs/current/logical-replication-row-filter.html (HTTP 200, 2026-10-24; title 'Documentation: 18: 29.4. Row Filters'; headings 29.4.1-29.4.7 and final example matched)"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment.",
+      "representation_gap": null,
+      "representation_sha256": "62989b6d6fd9f3cb39451b5cc84637c73ebe22d56ae29e7a163e9f31dcc7de95",
+      "retrieved_lines": 328,
+      "retrieved_words": 2413,
+      "sections": [
+        "Extractor metadata, excluded (L1-7)",
+        "29.4 intro: default full replication, row filter purpose, per-table WHERE clause in parentheses (L8)",
+        "29.4.1 Row Filter Rules: applied before publishing; false or NULL dropped; connection role; no effect on TRUNCATE (L10-12)",
+        "29.4.2 Expression Restrictions: simple expressions only; replica identity columns for UPDATE/DELETE; INSERT-only exception (L14-18)",
+        "29.4.3 UPDATE Transformations: old/new evaluation and INSERT/DELETE transformation; Table 29.1 (L20-39)",
+        "29.4.4 Partitioned Tables: publish_via_partition_root chooses root or partition filter (L41-43)",
+        "29.4.5 Initial Data Synchronization: filtered copy, any-of semantics, Warning and pre-15 Note (L45-57)",
+        "29.4.6 Combining Multiple Row Filters: ORed expressions and redundancy cases (L59-67)",
+        "29.4.7 Examples: p1-p3 setup and psql output, insert filtering, UPDATE transformations, p4 partition-root true/false (L69-328)"
+      ],
+      "notes": [
+        "Source claim (L8): all published data is replicated by default; a row filter reduces it, is chosen for behavioral, security or performance reasons, is defined per table with a parenthesized WHERE clause after the table name, and is configured through CREATE PUBLICATION.",
+        "Source claim (L12): row filters are applied before publishing; a row is not replicated when the expression evaluates to false or NULL. The expression is evaluated with the role used for the replication connection (the CONNECTION role of CREATE SUBSCRIPTION), and filters have no effect on TRUNCATE.",
+        "Source claim (L16): the WHERE clause allows only simple expressions; user-defined functions, operators, types and collations, system column references, and non-immutable built-in functions are not allowed.",
+        "Source claim (L18): when a publication publishes UPDATE or DELETE, filter columns must be covered by the replica identity; an INSERT-only publication may filter on any column.",
+        "Source claim (L22-26): an UPDATE is evaluated for both the old and new row. Both true replicates the UPDATE; both false replicates nothing; exactly one true transforms the change to INSERT (new row only) or DELETE (old row only) so the subscriber reflects the filter. Table 29.1 summarizes the four combinations.",
+        "Source claim (L43): with publish_via_partition_root true the root partitioned table's row filter is used; with false (the default) each partition's row filter is used.",
+        "Source claim (L47-49): during initial data synchronization only rows satisfying the filters are copied, and when several publications apply to one table, rows satisfying any expression are copied.",
+        "Source claim (L53, L57): initial synchronization ignores the publish parameter, so it may copy rows that DML would not replicate; a subscriber older than release 15 ignores row filters and copies whole tables.",
+        "Source claim (L61-67): filters for the same table and the same publish operation are ORed, so any matching expression replicates. A publication with no filter, one created with FOR ALL TABLES, or one created with FOR TABLES IN SCHEMA covering the table makes the other filters redundant, because those clauses do not allow row filters.",
+        "Source claim (L79-328): the examples create p1 (t1 filter a > 5 AND c = 'NSW'), p2 (t1 unfiltered, t2 e = 99), p3 (t2 d = 10, t3 g = 10), show filters through psql \\dRp+ and \\d, then demonstrate insert filtering, UPDATE-to-INSERT (a 2 to 555) and UPDATE-to-DELETE (c NSW to VIC). The p4 examples show publish_via_partition_root true keeping 2,3,4 under the parent filter a < 5, and false keeping 5,6,7 under the child filter a >= 5.",
+        "Inference: the page presents filters as publisher-side row selection with behavioral, security and performance motivations, not as an access-control boundary; the warning shows initial-copy results may legitimately differ from streamed DML results.",
+        "Representation note: local L1-7 are extractor metadata only, with no site chrome; the 2026-10-24 live spot-check found the same subsection structure and final example, so no section-level representation gap was detected."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
+          "candidate": "Adjacent to change-data-capture streams and selective replay; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "candidate": "Adjacent to data subsetting and partition-key selection; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Adjacent to partition topology and partition-level routing; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/semantic-compatibility.md",
+          "candidate": "Adjacent to preserving meaning when copied data differs from streamed changes; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/isolation-axes.md",
+          "candidate": "Adjacent to row-level selection versus tenant isolation boundaries; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+          "candidate": "Adjacent to row security and authorization boundaries; relation only, no verdict."
+        }
+      ],
+      "reader": "delegated reader R297 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R298",
+      "source_id": "src.postgres-logical",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "url": "https://www.postgresql.org/docs/current/logical-replication-security.html",
+      "unit": "PostgreSQL 18 documentation, Section 29.11 'Security' (logical replication), local markdown representation /tmp/B21/raw/pglog-security.md, 28 lines / 611 words, sha256 f9ed69c1fb6154bd0283e2dfbbe5005980eb798130cb84f82c492be6941cecbf; one section page only, not the chapter",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 28 local lines were read sequentially. L8-28 are the complete section body (21 lines, 600 words by wc): eleven paragraphs covering replication-role requirements, output plugins, publication and subscription privileges, apply-process role switching, run_as_owner, and publisher/subscriber privilege-check timing. L1-7 are extractor metadata (Title, URL Source, Published Time, Markdown Content) and are excluded. No navigation, footer, cookie banner, table of contents or related-links chrome is present in the capture. A live fetch on 2026-10-24 returned HTTP 200 with page title 'Documentation: 18: 29.11. Security'; its docContent contains the same eleven paragraphs, with the last local sentence appearing verbatim. Scope is this one section page; the Chapter 29 landing page and the other thirteen section pages are separate units and are not represented here.",
+      "retrieval_refs": [
+        "/tmp/B21/manifest2.json#R298 (lines 28, words 611, sha256 f9ed69c1fb6154bd0283e2dfbbe5005980eb798130cb84f82c492be6941cecbf)",
+        "/tmp/B21/raw/pglog-security.md (read in full, L1-28; body L8-28 = 21 lines / 600 words by wc)",
+        "https://www.postgresql.org/docs/current/logical-replication-security.html (HTTP 200, 2026-10-24; title 'Documentation: 18: 29.11. Security'; eleven body paragraphs matched)"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment.",
+      "representation_gap": null,
+      "representation_sha256": "f9ed69c1fb6154bd0283e2dfbbe5005980eb798130cb84f82c492be6941cecbf",
+      "retrieved_lines": 28,
+      "retrieved_words": 611,
+      "sections": [
+        "Extractor metadata, excluded (L1-7)",
+        "Replication role: REPLICATION attribute or superuser; RLS exposure; -crow_security=off; pg_hba.conf and LOGIN (L8)",
+        "Output plugin allow-list output_plugin_libraries and per-connection superuser override (L10)",
+        "SELECT privilege on published tables for initial copy (L12)",
+        "CREATE privilege in the database to create a publication (L14)",
+        "Table ownership to add tables; superuser for schema-wide or automatic all-tables publications (L16)",
+        "No privileges on publications; cross-publication exposure of filtered or partial data (L18)",
+        "pg_create_subscription plus CREATE privilege to create a subscription (L20)",
+        "Apply process session privileges; per-table SET ROLE to the table owner (L22)",
+        "run_as_owner = true: no user switching and its privilege-escalation risk (L24)",
+        "Publisher checks privileges once at connection start, not per change record (L26)",
+        "Subscriber re-checks per transaction; concurrent ownership change keeps old owner for the in-flight transaction (L28)"
+      ],
+      "notes": [
+        "Source claim (L8): the replication connection role must have the REPLICATION attribute or be a superuser. If the role lacks SUPERUSER and BYPASSRLS, publisher row security policies can execute; a role that does not trust all table owners can pass options=-crow_security=off, after which an owner-added row security policy makes replication halt rather than execute the policy. Access must be allowed in pg_hba.conf and the role needs LOGIN.",
+        "Source claim (L10): the output plugin used by the replication connection must be included in output_plugin_libraries; subscriptions use pgoutput. Superusers may modify the trusted list per connection with options=-coutput_plugin_libraries=...",
+        "Source claim (L12, L14): copying initial table data requires SELECT on a published table (or superuser), and creating a publication requires CREATE privilege in the database.",
+        "Source claim (L16): adding tables to a publication requires ownership of those tables; adding all tables in a schema, or creating a publication that automatically publishes all tables or all tables in a schema, requires superuser.",
+        "Source claim (L18): there are currently no privileges on publications; any subscription able to connect can access any publication. Hiding information with row filters, column lists or partial table inclusion can be defeated by other publications in the same database exposing the same information; publication privileges might be added in the future.",
+        "Source claim (L20): creating a subscription requires the privileges of the pg_create_subscription role and CREATE privilege on the database.",
+        "Source claim (L22): the apply process runs at session level with the subscription owner's privileges, but switches to the table owner for insert, update, delete or truncate on each table; the subscription owner therefore needs SET ROLE to every role that owns a replicated table.",
+        "Source claim (L24): with run_as_owner = true there is no user switching; all operations use the subscription owner's permissions, which then only needs SELECT, INSERT, UPDATE and DELETE on the target table. However, any owner of a table receiving replication can execute arbitrary code with the subscription owner's privileges, for example by attaching a trigger, so the page says to avoid this setting unless user security within the database is unimportant.",
+        "Source claim (L26, L28): publisher privileges are checked once at the start of a replication connection and not re-checked per change record; subscriber-side subscription owner privileges are re-checked for each transaction. If ownership changes concurrently while a transaction is being applied, the current transaction continues under the old owner's privileges.",
+        "Inference: the asymmetric check timing means publisher-side grants revoked mid-stream are not re-evaluated per record, while subscriber-side ownership changes can affect later transactions but not an in-flight one.",
+        "Inference: run_as_owner shifts the trust boundary toward table owners, and the page frames that shift as a reason to avoid the setting rather than as an isolation model.",
+        "Representation note: local L1-7 are extractor metadata only and no site chrome is present; the 2026-10-24 live spot-check found the same eleven paragraphs, so no section-level representation gap was detected."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+          "candidate": "Adjacent to threat boundaries, authorization and service isolation; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+          "candidate": "Adjacent to object-level permission and credential boundaries; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md",
+          "candidate": "Adjacent to threat models and the distinction between authentication and authorization; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/isolation-axes.md",
+          "candidate": "Adjacent to isolation dimensions and placement; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md",
+          "candidate": "Adjacent to domain ownership and multi-tenant authorization boundaries; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Adjacent to PostgreSQL replication roles and recovery evidence; relation only, no verdict."
+        }
+      ],
+      "reader": "delegated reader R298 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R299",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "url": "https://www.postgresql.org/docs/current/logical-replication-subscription.html",
+      "unit": "PostgreSQL 18 documentation, Chapter 29 'Logical Replication', Section 29.2 'Subscription' - single documentation page (local capture /tmp/B21/raw/pglog-subscription.md, 257 lines / 2,048 words, sha256 1a19e3d6f28ec98b2cceb9aa293f943e183e0682a303c2f7793bc0f55a0615e6); not the whole PostgreSQL manual",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page only, not the whole PostgreSQL manual: the complete local capture of '29.2. Subscription', lines 1-257 (2,048 words), read sequentially and completely, including the untitled introduction (L8-28) and subsections 29.2.1-29.2.3 (L30-257). Extractor preamble (Title, URL Source, Published Time, 'Markdown Content:', L1-7) is retained in the representation but excluded from claims. No site navigation, footer, cookie banner or feedback chrome is present in the capture; heading anchor links of the form '[#](...)' and cross-reference link titles remain extractor markup and were not read as content.",
+      "retrieval_refs": [
+        "local: /tmp/B21/raw/pglog-subscription.md lines 1-257 (all lines read sequentially)",
+        "manifest: /tmp/B21/manifest2.json#R299 (lines 257, words 2048, sha256 1a19e3d6f28ec98b2cceb9aa293f943e183e0682a303c2f7793bc0f55a0615e6)",
+        "url: https://www.postgresql.org/docs/current/logical-replication-subscription.html",
+        "passages: L8-28 (definition, topology, table matching), L30-44 (29.2.1 slot management), L46-182 (29.2.2 setup example), L184-257 (29.2.3 deferred slot creation, examples 1-3)"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment. Sections 29.1 and 29.3-29.13 of the same chapter were not read, and linked pages were not followed: CREATE/ALTER/DROP SUBSCRIPTION SQL references, Section 26.2.6 (replication slots), Section 26.2.8 (synchronous replication), Section 29.4 (row filters) and the glossary. No subscription was created, no replication was run, and no cluster was observed; no benchmark or production evidence.",
+      "representation_sha256": "1a19e3d6f28ec98b2cceb9aa293f943e183e0682a303c2f7793bc0f55a0615e6",
+      "retrieved_lines": 257,
+      "retrieved_words": 2048,
+      "sections": [
+        {
+          "heading": "29.2 Subscription: definition, topology and table matching (untitled introduction)",
+          "lines": "8-28"
+        },
+        {
+          "heading": "29.2.1 Replication Slot Management",
+          "lines": "30-44"
+        },
+        {
+          "heading": "29.2.2 Examples: Set Up Logical Replication",
+          "lines": "46-182"
+        },
+        {
+          "heading": "29.2.3 Examples: Deferred Replication Slot Creation",
+          "lines": "184-257"
+        },
+        {
+          "heading": "Example 1: connect = false, slot created manually",
+          "lines": "192-212"
+        },
+        {
+          "heading": "Example 2: connect = false with slot_name specified",
+          "lines": "214-234"
+        },
+        {
+          "heading": "Example 3: slot_name = NONE",
+          "lines": "236-257"
+        }
+      ],
+      "notes": [
+        "Source claim (L8-12): a subscription is the downstream side of logical replication; the node where it is defined is the subscriber; it defines a connection to another database plus one or more publications. The subscriber behaves like any PostgreSQL instance and can publish for others; a node may hold multiple subscriptions and a publisher-subscriber pair may have several, but care is required so subscribed publication objects do not overlap.",
+        "Source claim (L14-16): each subscription receives changes through one replication slot, with additional slots possibly needed for initial synchronization of pre-existing table data and dropped when synchronization ends. A subscription can act as a synchronous-replication standby; the standby name defaults to the subscription name and can be overridden by application_name in the connection string.",
+        "Source claim (L18-22): pg_dump dumps subscriptions only for a superuser, otherwise warns and skips them because non-superusers cannot read all subscription information from pg_subscription. CREATE SUBSCRIPTION adds a subscription, ALTER SUBSCRIPTION stops/resumes it, DROP SUBSCRIPTION removes it; dropping and recreating loses synchronization information, so data must be resynchronized.",
+        "Source claim (L24-28): schema definitions are not replicated and published tables must already exist on the subscriber; only regular tables can be replication targets, not views. Tables are matched by fully qualified name and columns by name (order may differ); types may differ if the text representation converts, e.g. integer to bigint; extra subscriber columns receive their declared defaults; binary-format replication is more restrictive.",
+        "Source claim (L32-36): each active subscription receives changes from a remote slot; table synchronization slots are normally transient, created internally for initial synchronization and dropped automatically, with generated names 'pg_%u_sync_%u_%llu' (subscription oid, table relid, system identifier). Normally the remote slot is created with CREATE SUBSCRIPTION and dropped with DROP SUBSCRIPTION.",
+        "Source claim (L38-44): slot management can be separated from subscription lifecycle. Use create_slot = false when the remote slot already exists; connect = false when the remote host is unreachable or unclear (pg_dump does this), requiring a manually created slot before activation; disassociate the slot with ALTER SUBSCRIPTION when moving the subscriber or when the remote is unreachable at drop time. An unreachable remote's slot (and leftover table sync slots) must be dropped manually, because it would keep reserving WAL and could fill the disk.",
+        "Source claim (L48-83): the setup example creates three tables with primary keys, publications pub1 (t1), pub2 (t2, publish = 'truncate'), pub3a (t3, publish = 'truncate') and pub3b (t3, row filter e > 5); subscription sub3 subscribes to both pub3a and pub3b, and all subscriptions copy initial data by default.",
+        "Source claim (L85-111, L154-182): initial table copying ignores the publication's publish operations and row filters - t2 is copied despite its truncate-only publication, and t3 receives all three initial rows despite pub3b's filter. During subsequent replication the publish operations and filter apply: the later inserts leave t2 at three rows and deliver only e = 6 to t3, giving t3 rows 1, 2, 3 and 6.",
+        "Source claim (L186-257): deferred slot creation requires creating the slot on the publisher with pg_create_logical_replication_slot(<slot_name>, 'pgoutput'), then ALTER SUBSCRIPTION ... ENABLE and REFRESH PUBLICATION on the subscriber. With connect = false the slot name defaults to the subscription name unless slot_name is given; with slot_name = NONE the subscription also needs enabled = false and create_slot = false, and is later bound with ALTER SUBSCRIPTION ... SET (slot_name = 'myslot').",
+        "Inference (reader): the page documents an explicit asymmetry between the initial copy (not governed by publish or row filters) and streaming changes (governed by both), but does not explain how the copy is coordinated with the slot's consistent point or how concurrent writes during the copy are handled; this page alone cannot support a snapshot-consistency claim.",
+        "Inference (reader): the overlap caution at L12 is stated for multiple subscriptions between one publisher-subscriber pair, while the example's single subscription sub3 covers the same table t3 through two publications (L71, L81-83). The page does not say whether the caution extends to multiple publications on one subscription, so the example should not be generalized into permission for overlapping publications.",
+        "Scope and representation note: conflict handling, security, monitoring, row-filter syntax and slot monitoring are covered by other chapter sections and were not read here. The example prompts '/* pub # */' and '/* sub # */' plus the query-result tables are source content, while the preamble, heading anchor links and link titles are extractor markup; no site navigation or footer appears in the capture."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Adjacent on WAL retention and replication topology; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
+          "candidate": "Adjacent on replication and restore boundaries; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
+          "candidate": "Adjacent on change-data-capture consumption; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Adjacent on schema not travelling with replicated data; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+          "candidate": "Adjacent on dump, copy and backup semantics; relation only, no verdict."
+        }
+      ],
+      "reader": "Delegated reader R299 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R300",
+      "source_ids": [
+        "src.postgres-logical"
+      ],
+      "url": "https://www.postgresql.org/docs/current/logical-replication-upgrade.html",
+      "unit": "PostgreSQL 18 documentation, Chapter 29 'Logical Replication', Section 29.13 'Upgrade' - single documentation page (local capture /tmp/B21/raw/pglog-upgrade.md, 248 lines / 1,859 words, sha256 e85aa2ac202d815325de45cb4058128793e6a906f1d7f63d3117d43c236abc92); not the whole PostgreSQL manual",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page only, not the whole PostgreSQL manual: the complete local capture of '29.13. Upgrade', lines 1-248 (1,859 words), read sequentially and completely, including the one-paragraph scope statement (L8), 29.13.1 publisher preparation (L10-28), 29.13.2 subscriber preparation (L30-40), 29.13.3 cluster upgrade overview with Note and Warning (L42-64), and the three step-by-step procedures 29.13.3.1-29.13.3.3 (L66-248). Extractor preamble (Title, URL Source, Published Time, 'Markdown Content:', L1-7) is retained in the representation but excluded from claims. No site navigation, footer, cookie banner or feedback chrome is present; heading anchor links and an empty link artifact at L8 remain extractor markup.",
+      "retrieval_refs": [
+        "local: /tmp/B21/raw/pglog-upgrade.md lines 1-248 (all lines read sequentially)",
+        "manifest: /tmp/B21/manifest2.json#R300 (lines 248, words 1859, sha256 e85aa2ac202d815325de45cb4058128793e6a906f1d7f63d3117d43c236abc92)",
+        "url: https://www.postgresql.org/docs/current/logical-replication-upgrade.html",
+        "passages: L8-12 (scope and slot migration), L14-28 (publisher prerequisites), L32-40 (subscriber prerequisites), L44-56 (continuity, restrictions, warning), L66-115 (two-node), L117-189 (cascaded), L191-248 (circular)"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment. Sections 29.1-29.12 of the same chapter were not read, nor Section 29.8 (linked restrictions) or Section 25.3.2 (linked base-backup procedure). No pg_upgrade run, no logical replication cluster, no timing measurement and no rollback test was performed.",
+      "representation_sha256": "e85aa2ac202d815325de45cb4058128793e6a906f1d7f63d3117d43c236abc92",
+      "retrieved_lines": 248,
+      "retrieved_words": 1859,
+      "sections": [
+        {
+          "heading": "29.13 Upgrade: minimum version and scope",
+          "lines": "8"
+        },
+        {
+          "heading": "29.13.1 Prepare for Publisher Upgrades (slot migration and prerequisites)",
+          "lines": "10-28"
+        },
+        {
+          "heading": "29.13.2 Prepare for Subscriber Upgrades (dependency migration and prerequisites)",
+          "lines": "30-40"
+        },
+        {
+          "heading": "29.13.3 Upgrading Logical Replication Clusters: continuity, Note and Warning",
+          "lines": "42-64"
+        },
+        {
+          "heading": "29.13.3.1 Steps to Upgrade a Two-node Logical Replication Cluster",
+          "lines": "66-115"
+        },
+        {
+          "heading": "29.13.3.2 Steps to Upgrade a Cascaded Logical Replication Cluster",
+          "lines": "117-189"
+        },
+        {
+          "heading": "29.13.3.3 Steps to Upgrade a Two-node Circular Logical Replication Cluster",
+          "lines": "191-248"
+        }
+      ],
+      "notes": [
+        "Source claim (L8): migration of logical replication clusters is possible only when all members of the old logical replication clusters are version 17.0 or later.",
+        "Source claim (L12): pg_upgrade attempts to migrate logical slots, avoiding manual redefinition on the new publisher, but slot migration is supported only from 17.0 or later; logical slots on older clusters are silently ignored.",
+        "Source claim (L14): before upgrading a publisher cluster the subscription must be temporarily disabled with ALTER SUBSCRIPTION ... DISABLE and re-enabled after the upgrade.",
+        "Source claim (L18-28): pg_upgrade requires the new cluster to have wal_level = logical; max_replication_slots at least the number of old slots; the old slots' output plugins installed in the new executable directory and listed in output_plugin_libraries; the old cluster to have replicated all transactions and logical decoding messages to subscribers; all old slots usable, worded as 'there are no slots whose pg_replication_slots.conflicting is not true' (L26); and no permanent logical slots in the new cluster, i.e. no slot with temporary = false. Reader gloss: the L26 wording reads inverted relative to 'must be usable'; the operative condition is presumably conflicting = false.",
+        "Source claim (L32): for subscribers, pg_upgrade attempts to migrate subscription dependencies, including table information in pg_subscription_rel and the subscription's replication origin, so logical replication can continue from where the old subscriber stopped; this is supported only from 17.0 or later, and dependencies on older clusters are silently ignored.",
+        "Source claim (L36-40): subscriber upgrade prerequisites are that every subscription table in the old subscriber is in state 'i' (initialize) or 'r' (ready), verifiable via pg_subscription_rel.srsubstate; that the replication origin entry for each subscription exists (pg_subscription and pg_replication_origin); and that max_active_replication_origins is at least the number of subscriptions in the old cluster.",
+        "Source claim (L44-56): while a subscriber is upgraded, writes can continue on the publisher and will be replicated once the subscriber upgrade completes; the chapter's restrictions (Section 29.8) and both publisher and subscriber prerequisites also apply. A Warning states that upgrading requires multiple steps on various nodes, that not all operations are transactional, and that base backups should be taken as described in Section 25.3.2.",
+        "Source claim (L66-115): two-node procedure - disable node2's subscription, stop node1, initialize the new instance, run pg_upgrade, start node1, stop node2, initialize, upgrade and start node2, create on node2 any tables created on node1 since step 1, enable the subscription, then REFRESH PUBLICATION. A Note says publisher-first is not mandatory and the same steps can be applied subscriber-first.",
+        "Source claim (L117-189): cascaded procedure - disable node2's subscription from node1, upgrade node1, disable node3's subscription from node2, upgrade node2, create missing tables and enable/refresh node2's subscription, then upgrade node3, create missing tables, enable and refresh node3's subscription.",
+        "Source claim (L191-248): circular two-node procedure - disable node2's subscription from node1, upgrade node1, enable that subscription, create on node1 the tables created on node2 since step 1, REFRESH node1's subscription to copy initial data from node2, disable node1's subscription from node2, upgrade node2, enable the node1 subscription, create missing tables on node2, and REFRESH node2's subscription to copy initial data from node1.",
+        "Inference (reader): the page describes an ordered, stateful migration that depends on pg_upgrade preserving slot and origin state; it gives no timing, lag, downtime or capacity figures, no procedure for an interrupted upgrade or a partial migration, and no downgrade or rollback path. The Warning implies recovery relies on the advised base backup, not on reversing the upgrade.",
+        "Representation note: the procedures render as numbered steps with shell command blocks and '/* nodeN # */' prompts, which are source content; the preamble, heading anchors and the empty link '[](...)' at L8 are extractor markup, and no navigation or footer is present in the capture."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md",
+          "candidate": "Adjacent on mixed-version coexistence during a database upgrade; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/no-return-recovery.md",
+          "candidate": "Adjacent on non-transactional change and irreversible points; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
+          "candidate": "Adjacent on staged migration and retirement gates; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "candidate": "Adjacent on WAL, slots and replication state; relation only, no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+          "candidate": "Adjacent on the base backup advised before a multi-step upgrade; relation only, no verdict."
+        }
+      ],
+      "reader": "Delegated reader R300 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 251,
+    "full_reads": 266,
     "blocked": 14,
     "records": [
       "R015",
@@ -32372,11 +33420,25 @@
       "R283",
       "R284",
       "R285",
-      "R286"
+      "R286",
+      "R287",
+      "R288",
+      "R289",
+      "R290",
+      "R291",
+      "R292",
+      "R293",
+      "R294",
+      "R295",
+      "R296",
+      "R297",
+      "R298",
+      "R299",
+      "R300"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
-    "partial_reads": 11
+    "partial_reads": 10
   }
 }
