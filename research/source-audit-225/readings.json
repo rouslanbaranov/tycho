@@ -33618,12 +33618,220 @@
         }
       ],
       "reader": "delegated reader (DeepSeek Harness subagent session), one bounded unit, extraction only; not independent review, human review, CI or source-completeness evidence"
+    },
+    {
+      "id": "R305",
+      "source_ids": [
+        "src.pulsar"
+      ],
+      "url": "https://pulsar.apache.org/docs/next/concepts-architecture-overview/",
+      "unit": "Apache Pulsar documentation, 'next' edition: single Concepts > Architecture Overview page",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All page text L6-L164 read: instance/cluster inventory, brokers, clusters, metadata-store backends and configuration, configuration store, persistent storage (BookKeeper, ledgers, managed ledgers), journal storage, proxy, service discovery. Extractor metadata L1-L5 excluded from content. Three figures (L16, L99, L156) exist only as blob: image references with alt text.",
+      "retrieval_refs": [
+        "raw/pulsar.md L1-L5 (extractor header: Title, URL Source, Markdown Content)",
+        "raw/pulsar.md L6-L18 (instance, cluster components, configuration store pointer)",
+        "raw/pulsar.md L20-L31 (Brokers)",
+        "raw/pulsar.md L33-L66 (Clusters; supported metadata-store backends; configuration; deployment considerations)",
+        "raw/pulsar.md L68-L70 (Configuration store)",
+        "raw/pulsar.md L72-L120 (Persistent storage; Apache BookKeeper; Ledgers; ledger read consistency; managed ledgers)",
+        "raw/pulsar.md L122-L124 (Journal storage)",
+        "raw/pulsar.md L126-L146 (Pulsar proxy)",
+        "raw/pulsar.md L148-L164 (Service discovery; closing note on single-broker topic ownership)"
+      ],
+      "omissions": "Related documentation pages outside the registered page not read (replication, clients, load balancing, binary protocol, admin guides, multi-tenancy, schema, non-persistent topics, TLS/mTLS security, configuration reference); no experiment, benchmark or deployment was performed; figure interiors unavailable (blob: images, alt text only); site navigation, sidebar, footer and cookie chrome absent from the representation.",
+      "representation_gap": "The three architecture diagrams (L16 'Pulsar architecture diagram', L99 'Brokers and bookies in a Pulsar cluster', L156 'Service discovery in Pulsar') are blob: URLs in the local capture; only alt text survives, so visual topology details (box labels, arrows) are not represented. Diagram content is not inferred.",
+      "representation_sha256": "f1e59a6f654743a80c2b92fd9f27f0d4fc60194783e229e8a8fe0af8aa803e94",
+      "retrieved_lines": 164,
+      "retrieved_words": 1968,
+      "sections": [
+        {
+          "heading": "Architecture overview (intro)",
+          "lines": "L6-L18"
+        },
+        {
+          "heading": "Brokers",
+          "lines": "L20-L31"
+        },
+        {
+          "heading": "Clusters",
+          "lines": "L33-L66"
+        },
+        {
+          "heading": "Clusters > Supported Metadata Store Backends",
+          "lines": "L47-L51"
+        },
+        {
+          "heading": "Clusters > Configuration",
+          "lines": "L53-L57"
+        },
+        {
+          "heading": "Clusters > Deployment Considerations",
+          "lines": "L59-L66"
+        },
+        {
+          "heading": "Configuration store",
+          "lines": "L68-L70"
+        },
+        {
+          "heading": "Persistent storage",
+          "lines": "L72-L76"
+        },
+        {
+          "heading": "Persistent storage > Apache BookKeeper",
+          "lines": "L78-L99"
+        },
+        {
+          "heading": "Persistent storage > Ledgers",
+          "lines": "L101-L107"
+        },
+        {
+          "heading": "Persistent storage > Ledgers > Ledger read consistency",
+          "lines": "L109-L111"
+        },
+        {
+          "heading": "Persistent storage > Ledgers > Managed ledgers",
+          "lines": "L113-L120"
+        },
+        {
+          "heading": "Persistent storage > Journal storage",
+          "lines": "L122-L124"
+        },
+        {
+          "heading": "Pulsar proxy",
+          "lines": "L126-L146"
+        },
+        {
+          "heading": "Service discovery",
+          "lines": "L148-L164"
+        }
+      ],
+      "notes": [
+        "Source claim (L6-L18): a Pulsar instance contains one or more clusters that can replicate among themselves; a cluster comprises brokers, a BookKeeper cluster of bookies, and a metadata-store cluster (Oxia, ZooKeeper or another supported backend); an instance-wide configuration store coordinates cross-cluster work such as geo-replication.",
+        "Source claim (L22-L27): the broker is described as stateless and primarily runs an HTTP server exposing REST administration plus topic lookup, and an asynchronous TCP dispatcher over a custom binary protocol; messages are normally served from a managed-ledger cache unless the backlog exceeds cache size, at which point the broker reads entries from BookKeeper.",
+        "Source claim (L45-L57): the metadata store holds topic metadata, schemas, broker load data and more; backends are Oxia (recommended for new clusters), Apache ZooKeeper (production-ready, ships with the binary) and RocksDB (embedded, standalone deployments); selection is via the metadataStoreUrl parameter.",
+        "Source claim (L61-L66): one metadata-store cluster may serve both Pulsar and BookKeeper metadata, but brokers attaching to an existing BookKeeper cluster require separate metadata-store clusters for Pulsar and BookKeeper; the configuration store quorum holds tenant/namespace configuration while each cluster's local ensemble holds ownership, load reports and ledger metadata.",
+        "Source claim (L80-L120): persistence is Apache BookKeeper, a distributed write-ahead-log system; ledgers are append-only with a single writer replicated across bookies, readable only after close, deletable once unneeded; after failure a recovery process fixes the last committed entry so all readers see identical content; a managed ledger is the per-topic storage abstraction layered over multiple BookKeeper ledgers.",
+        "Source claim (L122-L124): journal files hold BookKeeper transaction logs written before ledger updates; a new journal file starts on bookie start or when journalMaxSizeMB is reached.",
+        "Source claim (L126-L146): the optional Pulsar proxy is a single gateway for all brokers in a cluster, derives its information from the metadata store via cluster-specific and instance-wide connection strings, requires no client-side reconfiguration beyond the service URL, and supports TLS encryption and mTLS authentication.",
+        "Source claim (L148-L164): service discovery lets clients use one URL for an entire instance, provided requests are redirected to an active broker in the desired cluster via DNS, HTTP or IP redirect; the closing note states each topic is handled by exactly one broker and non-owning brokers redirect requests to the owner.",
+        "Inference, not source claim: the single-writer ledger plus single-owner topic model pushes coordination into the metadata store, which explains why the page treats metadata-store choice and quorum placement as an architectural decision rather than an operational detail; the page supplies no replication-factor defaults, capacity or latency figures.",
+        "Extractor artifacts excluded from substance: lines 1, 3 and 5 are title/URL/'Markdown Content:' headers; headings carry zero-width-space anchors and 'Direct link to ...' labels; code samples at L57, L136 and L160 are collapsed onto single lines (newlines lost), though their content is present; 'note' at L162 is a callout label for L164.",
+        "Coverage limit: the page is a conceptual overview only; failure behavior under broker/bookie loss, upgrade compatibility, multi-tenancy enforcement and non-persistent delivery are referenced to unread sibling pages, so no completeness claim extends beyond this page."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/partitions-producers.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/scaling-models.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated reader B21d/R305 (DeepSeek Harness subagent of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, not independent review, human review or CI"
+    },
+    {
+      "id": "R306",
+      "source_ids": [
+        "src.arc42"
+      ],
+      "url": "https://docs.arc42.org/home/",
+      "unit": "arc42 documentation home/index page (landing for the twelve template-section pages)",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "Landing page text L8-L49 read completely: purpose statement, the twelve-section index with per-section tip counts, the three highlighted keywords, and the 'More from arc42' links. The twelve linked section pages, the 60-keyword index, the examples site, the FAQ and the contact page are declared by this index but were not part of the registered page and are unread.",
+      "retrieval_refs": [
+        "raw/arc42.md L1-L7 (extractor header: Title, URL Source, Published Time, Markdown Content)",
+        "raw/arc42.md L8-L10 (purpose statement: organized by the twelve template sections)",
+        "raw/arc42.md L12-L25 (the twelve template sections with tip counts)",
+        "raw/arc42.md L27-L37 (keyword navigation; lean, thorough, essential)",
+        "raw/arc42.md L39-L49 (examples, FAQ, contact, open-source repository links)"
+      ],
+      "omissions": "Related documentation pages outside the registered page not read (all twelve section pages, keywords index, examples.arc42.org, faq.arc42.org, contact, GitHub site repository); no template guidance is quoted because the page only indexes it; no experiment; site navigation, footer and cookie chrome absent from the representation.",
+      "representation_gap": "The registered page is an index; the substantive arc42 guidance lives on the twelve linked section pages, which the manifest does not enumerate, so template-level content cannot be represented from this capture.",
+      "representation_sha256": "fc3629de695df7fc71c9b6a98ab9078a1640f12c8ddfc1e0018f742617625a0f",
+      "retrieved_lines": 49,
+      "retrieved_words": 416,
+      "sections": [
+        {
+          "heading": "Home (intro: practical tips and examples, organized by twelve sections)",
+          "lines": "L8-L10"
+        },
+        {
+          "heading": "The template sections",
+          "lines": "L12-L25"
+        },
+        {
+          "heading": "Navigate by keyword",
+          "lines": "L27-L37"
+        },
+        {
+          "heading": "More from arc42",
+          "lines": "L39-L49"
+        }
+      ],
+      "notes": [
+        "Source claim (L8-L10): the site presents practical tips and examples for the arc42 template and is organized by the twelve template sections; each section page is said to state what belongs in it, how much detail it deserves, and how other teams wrote it.",
+        "Source claim (L14-L25): the index enumerates sections 01-12 with short scopes and tip counts: 01 Introduction and Goals (25), 02 Constraints (5), 03 Context and Scope (19), 04 Solution Strategy (6), 05 Building Block View (28), 06 Runtime View (11), 07 Deployment View (10), 08 Crosscutting Concepts (11), 09 Architecture Decisions (10), 10 Quality Requirements (8), 11 Risks and Technical Debt (6), 12 Glossary (6).",
+        "Source claim (L29-L37): tips are tagged with 60 keywords; three highlighted stances are 'lean' (streamline documentation, agile, travel light), 'thorough' (formal, large or critical systems, auditability) and 'essential' (some information such as quality goals should always be documented).",
+        "Source claim (L41-L49): complete example architecture documentation exists at examples.arc42.org, an FAQ answers more than 120 questions, a contact page exists, and the site is open source on a public GitHub repository.",
+        "Inference, not source claim: this page carries no template structure text, only an index; the tip counts indicate relative guidance volume per section but say nothing about quality or applicability, and must not be read as evidence about arc42's normative content.",
+        "Extractor artifacts excluded from substance: L1, L3, L5 and L7 are title/URL/'Published Time'/'Markdown Content:' headers; numbering and bold labels are flattened with the section text inside one anchor per list item; two brand icons (L43, L46) are image links with empty alt text; trailing '›' remains in one link label (L37).",
+        "Capture metadata: the extractor records Published Time 'Tue, 20 Oct 2026 20:12:42 GMT' (L5), while the manifest fixes the capture date as 2026-10-24; both are recorded, and the publication timestamp is not treated as the page revision.",
+        "Gap: no section page content is available, so claims about arc42's twelve-part structure stop at the section titles and one-line scopes shown in the index; section-level tips remain unread.",
+        "Status rationale: partial-scoped-text-read rather than full-scoped-text-read because the declared source is the documentation home whose linked sections carry the guidance; the index itself was read completely."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/architecture-views-and-decision-records.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/concerns-views.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/adr-sensitivity.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/problem-framing-and-system-boundaries.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/identity-adrs.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated reader B21d/R306 (DeepSeek Harness subagent of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, not independent review, human review or CI"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 267,
+    "full_reads": 268,
     "blocked": 14,
     "records": [
       "R015",
@@ -33915,11 +34123,12 @@
       "R301",
       "R302",
       "R303",
-      "R304"
+      "R304",
+      "R305"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
-    "partial_reads": 13
+    "partial_reads": 14
   }
 }
