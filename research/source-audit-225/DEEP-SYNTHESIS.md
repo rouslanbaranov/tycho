@@ -18,7 +18,7 @@ index or edition file was changed.
   and 2 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
 - **79 assessed comparisons** in `comparisons.json` against 43 canonical pages:
-  48 supported, 65 qualified, 8 not-addressed, 0 contradicted.
+  48 supported, 66 qualified, 8 not-addressed, 0 contradicted.
 - **Page matrix:** all 406 pages have a recorded review status; 55 are
   comparison-assessed and 351 carry an explicit evidence gap
   (`page-review-summary.json`). A recorded gap is not a pass.
