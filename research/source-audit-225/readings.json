@@ -1726,13 +1726,467 @@
       ],
       "tycho_candidates": [],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R045",
+      "source_ids": [
+        "src.m9-n02"
+      ],
+      "url": "https://www.infoq.com/presentations/netflix-java/",
+      "unit": "Complete article: How Netflix Really Uses Java",
+      "revision": "QCon presentation transcript published 2024-02-26; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 162 lines / 8186 words; sections Background, Evolving Architecture, The Groovy Era, Limitations, GraphQL Federation, The Java 17 Upgrade, Java 21+, Virtual Threads, Spring Boot Netflix, Why Spring Boot?, The Road to Spring Boot 3, Questions and Answers; transcript/page chrome identified and not treated as technical evidence; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n02.md lines 1-162",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, slides, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "2d2ffa4601d87d2315ba30a5fac4deb6ba1e9dd1bdded5eb115bd871fa7fb422",
+      "retrieved_lines": 162,
+      "retrieved_words": 8186,
+      "sections": [
+        "Background",
+        "Evolving Architecture",
+        "The Groovy Era",
+        "Limitations",
+        "GraphQL Federation",
+        "The Java 17 Upgrade",
+        "Java 21+",
+        "Virtual Threads",
+        "Spring Boot Netflix",
+        "Why Spring Boot?",
+        "The Road to Spring Boot 3",
+        "Questions and Answers"
+      ],
+      "notes": [
+        "Source claim: the Java Platform team supports about 2,800 Java applications and 1,500 internal libraries, mostly on Java 17 and testing Java 21 on an OpenJDK build.",
+        "Source claim: moving from Java 8 to 17 produced about 20% better CPU usage without code changes, attributed mainly to G1 improvements; this was used to justify the upgrade.",
+        "Source claim: virtual threads are not a free lunch: frameworks and some application code must opt in, and replacing a CPU-intensive gRPC client worker pool with virtual threads reduced performance by a few percent.",
+        "Source claim: G1 is the default collector; Shenandoah is used for the proxy, and generational ZGC was expected to broaden the low-pause fit but had not been tested enough.",
+        "Source claim: the company standardized on Spring Boot and later integrated DGS with Spring GraphQL to avoid forcing users to choose between frameworks.",
+        "Source claim: the reactive-to-simple transition is motivated by reactive code being hard to read and debug, with structured concurrency expected to replace some fan-out code.",
+        "Inference: the 20% CPU figure is a first-party observation without a stated workload or controlled baseline.",
+        "Inference: a framework-level virtual-thread switch is not a universal capacity gain; CPU-bound pools can regress, as the gRPC example shows."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/virtual-threads.md",
+          "candidate": "Does the virtual-thread page keep framework adoption, pinning and CPU-bound pools as separate constraints?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/scheduler-context.md",
+          "candidate": "Does the scheduler page allow a virtual-thread switch to regress CPU-bound work?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/benchmark-controls.md",
+          "candidate": "Does the benchmark page require a workload and baseline before a 20% CPU claim is generalized?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R046",
+      "source_ids": [
+        "src.m9-n07"
+      ],
+      "url": "https://netflixtechblog.com/zuul-2-the-netflix-journey-to-asynchronous-non-blocking-systems-45947377fb5c",
+      "unit": "Complete article: Zuul 2: The Netflix Journey to Asynchronous, Non-Blocking Systems",
+      "revision": "Published 2016-09-21; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 70 lines / 1975 words; sections Differences Between Blocking vs. Non-Blocking Systems, Building Non-Blocking Zuul, Results of Zuul 2 in Production; transcript/page chrome identified and not treated as technical evidence; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n07.md lines 1-70",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, slides, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "89ffcb4e936fdcc970ddfad28802bb0692ab31a153c3b89dd5851209c714a350",
+      "retrieved_lines": 70,
+      "retrieved_words": 1975,
+      "sections": [
+        "Differences Between Blocking vs. Non-Blocking Systems",
+        "Building Non-Blocking Zuul",
+        "Results of Zuul 2 in Production"
+      ],
+      "notes": [
+        "Source claim: Zuul 1 used one thread per connection; backend latency or retry storms increased threads and could drive a death spiral, mitigated by throttling and Hystrix.",
+        "Source claim: Zuul 2 moved to Netty event loops and cheap connections, but callback debugging, thread-local assumptions, blocking libraries and ByteBuf/fd leaks made it harder to operate.",
+        "Source claim: the team built async filters that could run in both blocking and non-blocking systems, giving an apples-to-apples production comparison.",
+        "Source claim: for the CPU-heavy API cluster, async Zuul showed no efficiency gain and roughly equal throughput per node; the logging cluster gained about 25% throughput with 25% less CPU.",
+        "Source claim: the primary benefit was connection scaling for persistent device connections, not a general efficiency win; resiliency improved but required tuning.",
+        "Inference: the result contradicts a blanket \"async is faster\" claim; the benefit depends on how CPU-bound the work is.",
+        "Inference: event-loop systems shift complexity from threads to callback lifecycle and leak diagnosis, which is an operational cost."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/scheduler-context.md",
+          "candidate": "Does the scheduler page treat async as a context and cost change, not an automatic throughput gain?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/context-cancellation.md",
+          "candidate": "Does the cancellation page cover callback cleanup and leaked resources in an event loop?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-response.md",
+          "candidate": "Does the contention page distinguish thread-per-connection exhaustion from CPU saturation?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R047",
+      "source_ids": [
+        "src.m9-n09"
+      ],
+      "url": "https://netflixtechblog.com/a-tale-of-two-frameworks-the-domain-graph-service-framework-meets-spring-graphql-f8237f09c389",
+      "unit": "Complete article: A Tale of Two Frameworks: The Domain Graph Service Framework Meets Spring GraphQL",
+      "revision": "Published 2024-04-08; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 107 lines / 1349 words; sections Why not retire?, Framework Architecture, Performance, What does this mean?, Going Forward; transcript/page chrome identified and not treated as technical evidence; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n09.md lines 1-107",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, slides, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "680d4b8d2c8eb2cfb367614a5105257a5b5121914f427ad0056811d44d8fc73d",
+      "retrieved_lines": 107,
+      "retrieved_words": 1349,
+      "sections": [
+        "Why not retire?",
+        "Framework Architecture",
+        "Performance",
+        "What does this mean?",
+        "Going Forward"
+      ],
+      "notes": [
+        "Source claim: DGS and Spring GraphQL both sit on graphql-java; the integration lets one application mix both programming models while preserving DGS tests and schema wiring.",
+        "Source claim: the integration is opt-in through a new starter, with a plan to become the default in Q3 2024 and remove legacy modules before the end of 2024.",
+        "Source claim: canary comparison on large services initially showed over 50% CPU degradation and 20% latency degradation; after fixes, 10-20% CPU degradation remained.",
+        "Source claim: the remaining regression came from implicitly enabling asynchronous request processing; disabling async dispatch restored parity for existing services.",
+        "Source claim: the framework is a drop-in replacement for most users, but performance parity depended on a configuration change and canary measurement.",
+        "Inference: \"drop-in\" refers to the programming model, not automatically to runtime behavior; the async regression is a concrete counterexample.",
+        "Inference: canary analysis comparing CPU, memory and latency is the evidence; the article does not claim a universal performance improvement."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
+          "candidate": "Does the compatibility page distinguish source compatibility from a runtime behavior change?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/coexistence-retirement.md",
+          "candidate": "Does the coexistence page plan legacy removal only after canary evidence?"
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md",
+          "candidate": "Does the decision page treat framework integration as an experiment with measured rollback criteria?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R048",
+      "source_ids": [
+        "src.m9-n03"
+      ],
+      "url": "https://dev.java/community/javaone-2026/sessions/lrn1058/",
+      "unit": "Complete article: JavaOne 2026 Session",
+      "revision": "Live publisher page; access attempted 2026-10-24; no article body obtained",
+      "status": "blocked-full-text",
+      "coverage": "No article text retrieved.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n03.md",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Session page returned only a metadata shell; no article or transcript body. No full text, figures, linked articles or code were read; no execution or verification.",
+      "blocked_reason": "Session page returned only a metadata shell; no article or transcript body.",
+      "notes": [
+        "Access attempt on 2026-10-24 returned no readable article body.",
+        "No source claim was read.",
+        "No coverage or comparison is claimed.",
+        "A lawful alternative copy or publisher access is required."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R049",
+      "source_ids": [
+        "src.m9-n11"
+      ],
+      "url": "https://netflixtechblog.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1",
+      "unit": "Complete article: Evolution of Cassandra Data Movement (2026)",
+      "revision": "Live publisher page; access attempted 2026-10-24; no article body obtained",
+      "status": "blocked-full-text",
+      "coverage": "No article text retrieved.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n11.md",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Cloudflare challenge; no article body returned. No full text, figures, linked articles or code were read; no execution or verification.",
+      "blocked_reason": "Cloudflare challenge; no article body returned.",
+      "notes": [
+        "Access attempt on 2026-10-24 returned no readable article body.",
+        "No source claim was read.",
+        "No coverage or comparison is claimed.",
+        "A lawful alternative copy or publisher access is required."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R050",
+      "source_ids": [
+        "src.m9-n12"
+      ],
+      "url": "https://medium.com/netflix-techblog/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456",
+      "unit": "Complete article: Dynamic Repartitioning for Time Series Workloads (2026)",
+      "revision": "Live publisher page; access attempted 2026-10-24; no article body obtained",
+      "status": "blocked-full-text",
+      "coverage": "No article text retrieved.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n12.md",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Empty body; no article text returned. No full text, figures, linked articles or code were read; no execution or verification.",
+      "blocked_reason": "Empty body; no article text returned.",
+      "notes": [
+        "Access attempt on 2026-10-24 returned no readable article body.",
+        "No source claim was read.",
+        "No coverage or comparison is claimed.",
+        "A lawful alternative copy or publisher access is required."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R051",
+      "source_ids": [
+        "src.m9-n13"
+      ],
+      "url": "https://medium.com/netflix-techblog/scaling-time-series-data-storage-part-i-ec2b6d44ba39",
+      "unit": "Complete article: Scaling Time Series Data Storage - Part I",
+      "revision": "Live publisher page; access attempted 2026-10-24; no article body obtained",
+      "status": "blocked-full-text",
+      "coverage": "No article text retrieved.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n13.md",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Empty body; no article text returned. No full text, figures, linked articles or code were read; no execution or verification.",
+      "blocked_reason": "Empty body; no article text returned.",
+      "notes": [
+        "Access attempt on 2026-10-24 returned no readable article body.",
+        "No source claim was read.",
+        "No coverage or comparison is claimed.",
+        "A lawful alternative copy or publisher access is required."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R052",
+      "source_ids": [
+        "src.m9-n14"
+      ],
+      "url": "https://netflixtechblog.com/netflix-conductor-the-next-chapter-41ad21067649",
+      "unit": "Complete article: Netflix Conductor: The Next Chapter (Oct 2026)",
+      "revision": "Live publisher page; access attempted 2026-10-24; no article body obtained",
+      "status": "blocked-full-text",
+      "coverage": "No article text retrieved.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n14.md",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Cloudflare challenge; no article body returned. No full text, figures, linked articles or code were read; no execution or verification.",
+      "blocked_reason": "Cloudflare challenge; no article body returned.",
+      "notes": [
+        "Access attempt on 2026-10-24 returned no readable article body.",
+        "No source claim was read.",
+        "No coverage or comparison is claimed.",
+        "A lawful alternative copy or publisher access is required."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R053",
+      "source_ids": [
+        "src.m9-n15"
+      ],
+      "url": "https://medium.com/netflix-techblog/chaos-engineering-upgraded-878d341f15fa",
+      "unit": "Complete article: Chaos Engineering Upgraded (2015)",
+      "revision": "Live publisher page; access attempted 2026-10-24; no article body obtained",
+      "status": "blocked-full-text",
+      "coverage": "No article text retrieved.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n15.md",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Empty body; no article text returned. No full text, figures, linked articles or code were read; no execution or verification.",
+      "blocked_reason": "Empty body; no article text returned.",
+      "notes": [
+        "Access attempt on 2026-10-24 returned no readable article body.",
+        "No source claim was read.",
+        "No coverage or comparison is claimed.",
+        "A lawful alternative copy or publisher access is required."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R054",
+      "source_ids": [
+        "src.m9-n16"
+      ],
+      "url": "https://medium.com/netflix-techblog/evolution-of-the-netflix-data-pipeline-da246ca36905",
+      "unit": "Complete article: Evolution of the Netflix Data Pipeline (2016)",
+      "revision": "Live publisher page; access attempted 2026-10-24; no article body obtained",
+      "status": "blocked-full-text",
+      "coverage": "No article text retrieved.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n16.md",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Empty body; no article text returned. No full text, figures, linked articles or code were read; no execution or verification.",
+      "blocked_reason": "Empty body; no article text returned.",
+      "notes": [
+        "Access attempt on 2026-10-24 returned no readable article body.",
+        "No source claim was read.",
+        "No coverage or comparison is claimed.",
+        "A lawful alternative copy or publisher access is required."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R055",
+      "source_ids": [
+        "src.m9-n17"
+      ],
+      "url": "https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e",
+      "unit": "Complete article: Data Projects: Managing Data Assets (2026)",
+      "revision": "Live publisher page; access attempted 2026-10-24; no article body obtained",
+      "status": "blocked-full-text",
+      "coverage": "No article text retrieved.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n17.md",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Cloudflare challenge; no article body returned. No full text, figures, linked articles or code were read; no execution or verification.",
+      "blocked_reason": "Cloudflare challenge; no article body returned.",
+      "notes": [
+        "Access attempt on 2026-10-24 returned no readable article body.",
+        "No source claim was read.",
+        "No coverage or comparison is claimed.",
+        "A lawful alternative copy or publisher access is required."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R056",
+      "source_ids": [
+        "src.m9-n18"
+      ],
+      "url": "https://netflixtechblog.com/seeing-through-hardware-counters-a-journey-to-threefold-performance-increase-2721924a2822",
+      "unit": "Complete article: Seeing through hardware counters (2022)",
+      "revision": "Live publisher page; access attempted 2026-10-24; no article body obtained",
+      "status": "blocked-full-text",
+      "coverage": "No article text retrieved.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n18.md",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Cloudflare challenge; no article body returned. No full text, figures, linked articles or code were read; no execution or verification.",
+      "blocked_reason": "Cloudflare challenge; no article body returned.",
+      "notes": [
+        "Access attempt on 2026-10-24 returned no readable article body.",
+        "No source claim was read.",
+        "No coverage or comparison is claimed.",
+        "A lawful alternative copy or publisher access is required."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R057",
+      "source_ids": [
+        "src.m9-n19"
+      ],
+      "url": "https://medium.com/netflix-techblog/how-we-build-code-at-netflix-c5d9bd727f15",
+      "unit": "Complete article: How We Build Code at Netflix (2016)",
+      "revision": "Live publisher page; access attempted 2026-10-24; no article body obtained",
+      "status": "blocked-full-text",
+      "coverage": "No article text retrieved.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-n19.md",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Empty body; no article text returned. No full text, figures, linked articles or code were read; no execution or verification.",
+      "blocked_reason": "Empty body; no article text returned.",
+      "notes": [
+        "Access attempt on 2026-10-24 returned no readable article body.",
+        "No source claim was read.",
+        "No coverage or comparison is claimed.",
+        "A lawful alternative copy or publisher access is required."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R058",
+      "source_ids": [
+        "src.m9-n04"
+      ],
+      "url": "https://sites.google.com/netflix.com/javaplatformnetflix/jif",
+      "unit": "Complete page: Java Integration Framework team",
+      "revision": "Internal team site; not retrieved",
+      "status": "excluded-from-scope",
+      "coverage": "No public technical text retrieved; the URL is an internal team site, not a published article.",
+      "retrieval_refs": [
+        "No retrieval attempted; excluded as an internal, non-publication team site."
+      ],
+      "omissions": "Excluded from public-source reading. Internal team sites are not public technical publications and were not accessed.",
+      "blocked_reason": "Internal team site; not a public technical publication",
+      "notes": [
+        "The baseline register lists this as a team site, not a public article.",
+        "No retrieval was attempted.",
+        "No source claim was read.",
+        "The source remains unresolved for public-source completeness."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R059",
+      "source_ids": [
+        "src.m9-n20"
+      ],
+      "url": "https://sites.google.com/netflix.com/javaplatformnetflix/jvm",
+      "unit": "Complete page: Java Platform JVM Ecosystem team",
+      "revision": "Internal team site; not retrieved",
+      "status": "excluded-from-scope",
+      "coverage": "No public technical text retrieved; the URL is an internal team site, not a published article.",
+      "retrieval_refs": [
+        "No retrieval attempted; excluded as an internal, non-publication team site."
+      ],
+      "omissions": "Excluded from public-source reading. Internal team sites are not public technical publications and were not accessed.",
+      "blocked_reason": "Internal team site; not a public technical publication",
+      "notes": [
+        "The baseline register lists this as a team site, not a public article.",
+        "No retrieval was attempted.",
+        "No source claim was read.",
+        "The source remains unresolved for public-source completeness."
+      ],
+      "tycho_candidates": [],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 26,
-    "blocked": 2,
+    "full_reads": 29,
+    "blocked": 14,
     "records": [
       "R015",
       "R016",
@@ -1763,9 +2217,25 @@
       "R041",
       "R042",
       "R043",
-      "R044"
+      "R044",
+      "R045",
+      "R046",
+      "R047",
+      "R048",
+      "R049",
+      "R050",
+      "R051",
+      "R052",
+      "R053",
+      "R054",
+      "R055",
+      "R056",
+      "R057",
+      "R058",
+      "R059"
     ],
-    "scope": "JEP 444, JEP 491, twenty-four public engineering articles and four blocked publisher pages",
-    "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit."
+    "scope": "JEP 444, JEP 491, twenty-seven public engineering articles, fourteen blocked pages and two excluded internal team sites",
+    "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
+    "excluded": 2
   }
 }
