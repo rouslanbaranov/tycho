@@ -56,3 +56,26 @@ An unlisted change, or a further change to an already revised payload, still fai
 The original manifests remain byte-identical, so their historical protection is not
 rewritten. The routing index and edition inventory are regenerated after the
 authorized change.
+
+### Pre-flight for a bounded change
+
+`python3 scripts/book_change.py --plan` is a read-only pre-flight for a page
+edit. It reports changed book pages, missing revision entries, stale derived
+artifacts and the ordered rebuild/review steps; `--strict` exits non-zero while
+anything blocking remains. It never writes, never authorizes a revision and
+does not replace `premerge_check.py`, claim review or independent review.
+
+Ownership stays with the existing contracts: identity and metadata in
+[METADATA-IDENTITY-CONTRACT](METADATA-IDENTITY-CONTRACT.md), heading and
+citation behavior in [SECTION-FTS-INDEX](SECTION-FTS-INDEX.md), page structure
+and splitting in [EDITORIAL-CONTRACT](EDITORIAL-CONTRACT.md), atlas and edition
+mechanics in [PATTERN-ATLAS-CONTRACT](PATTERN-ATLAS-CONTRACT.md), and branch/PR
+discipline in [AGENTS.md](../AGENTS.md). If this section and an owning contract
+disagree, the contract wins.
+
+For a text-only correction, keep `id`, `canonical_path`, `parent_id`,
+`source_ids` and level-2 headings stable; changing any of them, adding or
+removing pages, or changing evidence is a structural or evidence revision and
+needs its own review. Record the authorized before/after hashes as described
+above, then rebuild in the order the plan prints. A revision belongs to one
+issue; do not mix unrelated pages in one change.
