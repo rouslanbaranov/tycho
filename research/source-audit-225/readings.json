@@ -39545,12 +39545,150 @@
         "read_at": "2026-10-24",
         "note": "Extraction only; research-only; no book findings, support classification or verdicts. Delegated reading is not independent review."
       }
+    },
+    {
+      "id": "R369",
+      "source_ids": [
+        "src.keda"
+      ],
+      "url": "https://keda.sh/docs/latest/concepts/",
+      "unit": "KEDA Concepts",
+      "revision": "KEDA documentation 2.x, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete scoped page text: /tmp/B24b/raw/keda.md lines 1-92 (92 lines, 1172 words) read sequentially from start to end. Excluded chrome: lines 1-5 are the markdown-extraction preamble (Title, URL Source, 'Markdown Content:') and lines 6-8 are the docs page header (breadcrumb 'KEDA Concepts Latest' with version label and the one-line tagline); together 20 words. Page body = 1152 words covering 5 H2 sections and 6 nested H3 sections. The capture contains no site navigation, sidebar, breadcrumb trail, footer, cookie or edit-this-page links. Two identical architecture-diagram image references (lines 28 and 30) are retained only as alt text; diagram labels are not text in this representation.",
+      "retrieval_refs": [
+        "/tmp/B24b/manifest.json:3-10 (id, source id, file, url, lines, words, sha256)",
+        "/tmp/B24b/raw/keda.md:1-92 (full capture, read in order)",
+        "/tmp/B24b/raw/keda.md:12-22 (What is KEDA; How KEDA works, including batch/Job path)",
+        "/tmp/B24b/raw/keda.md:32-43 (three components and the two scaling tracks)",
+        "/tmp/B24b/raw/keda.md:49-51 (ScaledObject, ScaledJob, TriggerAuthentication)",
+        "/tmp/B24b/raw/keda.md:65 (CPU/Memory trigger note: metrics-server path, no scale-to-zero)",
+        "/tmp/B24b/raw/keda.md:85-92 (raw metrics gRPC protocol and RAW_METRICS_MODE values)",
+        "https://keda.sh/docs/latest/concepts/ (heading cross-check on 2026-10-24: same 5 H2 and 6 H3 headings; body diffed only at heading level)"
+      ],
+      "omissions": "Other KEDA documentation pages outside the concepts page not read; no experiment",
+      "representation_sha256": "b1ac954f57975c8f9ffa7aa81b23001d0d6394b3e2fd3929ec448b0b8f378110",
+      "retrieved_lines": 92,
+      "retrieved_words": 1172,
+      "sections": [
+        {
+          "heading": "extraction preamble (Title, URL Source, Markdown Content)",
+          "level": "chrome",
+          "lines": "1-5",
+          "words": 10,
+          "excluded": true
+        },
+        {
+          "heading": "docs page header: 'KEDA Concepts Latest' + tagline",
+          "level": "chrome",
+          "lines": "6-8",
+          "words": 10,
+          "excluded": true
+        },
+        {
+          "heading": "What is KEDA?",
+          "level": "h2",
+          "lines": "10-14",
+          "words": 97
+        },
+        {
+          "heading": "How KEDA works",
+          "level": "h2",
+          "lines": "16-22",
+          "words": 141
+        },
+        {
+          "heading": "KEDA Architecture",
+          "level": "h2",
+          "lines": "24-43",
+          "words": 276
+        },
+        {
+          "heading": "KEDA Custom Resources (CRDs)",
+          "level": "h2",
+          "lines": "45-53",
+          "words": 81
+        },
+        {
+          "heading": "Scaling Deployments, StatefulSets, and Custom Resources",
+          "level": "h2",
+          "lines": "55-57",
+          "words": 39
+        },
+        {
+          "heading": "Scaling Deployments and StatefulSets",
+          "level": "h3",
+          "lines": "59-65",
+          "words": 145
+        },
+        {
+          "heading": "Scaling Custom Resources",
+          "level": "h3",
+          "lines": "67-69",
+          "words": 48
+        },
+        {
+          "heading": "Scaling Jobs",
+          "level": "h3",
+          "lines": "71-73",
+          "words": 49
+        },
+        {
+          "heading": "Authentication",
+          "level": "h3",
+          "lines": "75-77",
+          "words": 40
+        },
+        {
+          "heading": "External Scalers",
+          "level": "h3",
+          "lines": "79-81",
+          "words": 52
+        },
+        {
+          "heading": "Consuming Raw Scaler Metrics Externally",
+          "level": "h3",
+          "lines": "83-92",
+          "words": 184
+        }
+      ],
+      "notes": [
+        "Source claim: KEDA is presented as a Kubernetes tool that scales applications on real-world events (queues, requests), created by Microsoft and Red Hat, and positioned as an addition to the Horizontal Pod Autoscaler rather than a replacement (lines 12-14).",
+        "Source claim: three in-cluster components with distinct duties - keda-operator watches KEDA resources, manages the HPA lifecycle and owns 0-to-1 / 1-to-0 scaling; keda-metrics-apiserver serves external metrics to the HPA through the Kubernetes API Server; keda-admission-webhooks validates KEDA resources at apply time (e.g. two ScaledObjects targeting one deployment) (lines 34-36).",
+        "Source claim: scaling is split into two tracks - operator handles zero-to-one and one-to-zero, the HPA handles one-to-N and N-to-one using metrics reached through the API Server; the Deployment's ReplicaSet turns the desired count into running pods (lines 38-43).",
+        "Source claim: three CRDs are named - ScaledObject (links a Deployment or StatefulSet to an event source), ScaledJob (batch Jobs on external metrics), TriggerAuthentication (secure event-source access via environment variables or cloud credentials) (lines 49-51, 77).",
+        "Source claim: for CPU or Memory triggers the HPA reads metrics-server directly instead of keda-metrics-apiserver, and scale-to-zero is unsupported because with no pods there are no metrics to observe (line 65).",
+        "Source claim: batch workloads take a different route - new Jobs per event rather than resizing a running deployment (e.g. one job per queue message), with completed jobs cleaned up automatically (lines 22, 73).",
+        "Source claim: internal scaler metrics can be streamed to third parties over a gRPC server stream when RAW_METRICS_GRPC_PROTOCOL is set to 'enabled'; subscriptions are keyed by ScaledObject/ScaledJob name, namespace and trigger name; RAW_METRICS_MODE accepts all/empty (default), hpa, pollinginterval, and unknown values fall back to all (lines 85-92).",
+        "Inference: the page is conceptual only - it gives no polling intervals, cooldown or stabilization windows, HPA tolerance values, replica-count formulas or failure-recovery behavior; those numbers would have to come from other KEDA or Kubernetes pages, which this unit does not cover.",
+        "Inference: the text asserts an extension beyond CPU/memory but does not specify the metrics-adapter contract, metric staleness handling or what happens when keda-metrics-apiserver is unavailable, so availability claims about the external-metrics path cannot be grounded in this unit.",
+        "Observation: cross-checking the live URL on 2026-10-24 returned the identical 11 headings (5 H2, 6 H3), so no section is missing from the capture; beyond headings the live body was not diffed word by word, and the capture's 2 image references vs 5 live <img> tags are consistent with chrome images (logo/icons) not being extracted.",
+        "Inference: the Microsoft/Red Hat attribution is a provenance statement, not evidence about project governance, support commitments or release cadence."
+      ],
+      "tycho_candidates": [
+        "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+        "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/scaling-delay.md",
+        "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/controller-stability.md",
+        "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/README.md",
+        "book/performance/workload-profiles-and-capacity-experiments.md",
+        "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/runtime-placement-and-control-plane.md"
+      ],
+      "reader": {
+        "label": "delegated-reader",
+        "harness": "DeepSeek Harness",
+        "model": "deepseek-flash",
+        "parent_agent_id": "session-339f3170-2943-4eff-877d-b6b465e229ef",
+        "policy_ref": "/tmp/delegated-reader-policy.md",
+        "retrieved_at": "2026-10-24T20:51:29Z",
+        "writes": "only /tmp/B24b/records/",
+        "scope_note": "extraction only; no findings, support classification or severity assigned"
+      }
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 332,
+    "full_reads": 333,
     "blocked": 14,
     "records": [
       "R015",
@@ -39906,7 +40044,8 @@
       "R365",
       "R366",
       "R367",
-      "R368"
+      "R368",
+      "R369"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
