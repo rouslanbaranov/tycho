@@ -681,12 +681,234 @@
       ],
       "tycho_candidates": [],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R024",
+      "source_ids": [
+        "src.m9-u01"
+      ],
+      "url": "https://www.uber.com/us/en/blog/microservice-architecture/",
+      "unit": "Complete article: Introducing Domain-Oriented Microservice Architecture",
+      "revision": "Article dated 2020-07-23; live page retrieved 2026-10-24; representation repeats the article body twice",
+      "status": "full-scoped-text-read",
+      "coverage": "All 698 lines; the representation contains the article body twice. Unique text (lines 1-294) was read completely; the second copy was verified by matching headings and block content. Images not visually inspected.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-u01.md lines 1-698",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "d51b170563bbaddb5c3592475bb06123cce1fc5751020b133fc4d75355019a4e",
+      "retrieved_lines": 698,
+      "retrieved_words": 8189,
+      "sections": [
+        "Introduction",
+        "What is a microservice?",
+        "Motivations",
+        "Domain-Oriented Microservice Architecture",
+        "Implementation: Domains, Layer Design, Gateways, Extensions",
+        "Benefits",
+        "Practical Advice: Startups, Midsize, Large",
+        "Final Thoughts"
+      ],
+      "notes": [
+        "Source claim: the organization reached about 2,200 critical microservices and found that one investigation could span roughly 50 services across 12 teams.",
+        "Source claim: DOMA groups related microservices into domains, arranges domains into layers with allowed dependency direction, exposes each domain through a gateway and provides logic/data extension points.",
+        "Source claim: layer design is a blast-radius heuristic: lower layers have more dependents and a larger outage impact; higher layers are more product-specific.",
+        "Source claim: gateways reduce upstream touchpoints and let underlying services change without forcing every consumer to migrate; two large platform rewrites happened behind gateways.",
+        "Source claim: the reported early benefits include a feature-integration time reduction from three days to three hours, 25-50% faster onboarding, and 2,200 services classified into 70 domains.",
+        "Source claim: the author recommends delaying microservices for small organizations and treating architecture evolution as incremental hedge-trimming, not a top-down rewrite.",
+        "Inference: the 1.5-year microservice half-life and the benefit figures are first-party observations, not a controlled study or a general law.",
+        "Inference: a gateway is an interface and dependency boundary, not a guarantee of availability, authorization or data consistency.",
+        "Inference: extension points reduce coupling but add an execution contract and observability surface that the article does not quantify."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md",
+          "candidate": "Does the domain-boundary page distinguish a logical domain from an organizational team and name the allowed dependency direction?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/module-enforcement.md",
+          "candidate": "Does the enforcement page treat a gateway/interface as a dependency boundary rather than proof of runtime isolation?"
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md",
+          "candidate": "Does the transition page support incremental architecture evolution without claiming a one-time rewrite?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R025",
+      "source_ids": [
+        "src.m9-sh02"
+      ],
+      "url": "https://shopify.engineering/shopify-monolith",
+      "unit": "Complete article: Under Deconstruction: The State of Shopify's Monolith",
+      "revision": "Live publisher page; publication date not exposed in the representation; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 273 lines / 4867 words; sections Create the Right Conditions, Build Holistic Architecture, Balance Encapsulation With a Simple Dependency Graph, Balance Loose Coupling With High Cohesion, Create a SOLID Foundation, Apply Tooling Deliberately, Decide to Prioritize Ownership or Boundaries, What We Are Building Right Now; images not visually inspected",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-sh02.md lines 1-273",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "671554fb43b96add5737c0dd1d073864d87845416275201fa7c0f93e4fe63bd0",
+      "retrieved_lines": 273,
+      "retrieved_words": 4867,
+      "sections": [
+        "Create the Right Conditions",
+        "Build Holistic Architecture",
+        "Balance Encapsulation With a Simple Dependency Graph",
+        "Balance Loose Coupling With High Cohesion",
+        "Create a SOLID Foundation",
+        "Apply Tooling Deliberately",
+        "Decide to Prioritize Ownership or Boundaries",
+        "What We Are Building Right Now"
+      ],
+      "notes": [
+        "Source claim: the componentization effort created an Architecture Guild and used a developer handbook and internal talks to spread design knowledge.",
+        "Source claim: a dense dependency graph with many cycles made components impossible to reason about or evolve separately; public interfaces alone became indirection when the graph stayed cyclic.",
+        "Source claim: the team pairs encapsulation with dependency-graph cleanup and loose coupling with high cohesion, using change locality as the practical measure.",
+        "Source claim: Rails Engines, Sorbet contracts and the Packwerk static-reference analyzer replaced an earlier call-graph tool that was noisy and slow.",
+        "Source claim: there are 37 components in the main monolith; Packwerk covers about a third, with total acyclicity as a long-term goal.",
+        "Source claim: the team chooses between a future-boundary partition and a spin-off partition depending on which incomplete intermediate state is more useful; service extraction is reserved for clear cases.",
+        "Inference: the article is a first-party evolution report, not a controlled comparison of monolith, modular monolith and microservices.",
+        "Inference: static analysis can reject new dependency edges but cannot prove semantic bounded-context correctness or data ownership.",
+        "Inference: incomplete boundaries are treated as a durable state to manage, not a temporary failure to hide."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/module-enforcement.md",
+          "candidate": "Does the enforcement page require dependency-graph and static-reference checks rather than trusting directory structure?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md",
+          "candidate": "Does the domain-authority page separate code ownership from data authority and runtime enforcement?"
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md",
+          "candidate": "Does the transition page allow an incomplete modular state to persist while the target evolves?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R026",
+      "source_ids": [
+        "src.m9-st02"
+      ],
+      "url": "https://stripe.com/blog/migrating-to-typescript",
+      "unit": "Complete article: Migrating millions of lines of code to TypeScript",
+      "revision": "Published 2022-05-20; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 108 lines / 2215 words; sections A brief history of JavaScript type checking, Choosing the right migration strategy, Planning, preparation, and iteration, Going live, TypeScript... two months later; images/code listed but not visually inspected or executed",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-st02.md lines 1-108",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "3f35211a2e9a320d0fad9b23c1b1d86d73f7c31c42b54244fca488bb6e8f5e20",
+      "retrieved_lines": 108,
+      "retrieved_words": 2215,
+      "sections": [
+        "A brief history of JavaScript type checking",
+        "Choosing the right migration strategy",
+        "Planning, preparation, and iteration",
+        "Going live",
+        "TypeScript... two months later"
+      ],
+      "notes": [
+        "Source claim: more than 3.7 million lines of Flow-annotated JavaScript were converted to TypeScript in one pull request on 2022-03-06.",
+        "Source claim: a single codemod pass avoided a long dual-language migration and the need to keep two type systems consistent across the whole codebase.",
+        "Source claim: the codemod required months of fixes and tests; an initial dashboard pass produced over 97,000 error suppressions, reduced to about 37,000 before merge.",
+        "Source claim: TypeScript project references gave the compiler enough memory headroom without restructuring the dashboard into distinct modules.",
+        "Source claim: ESLint, Jest, Webpack and Metro all needed updates; Jest snapshots were rewritten to .tsx and custom lint rules were temporarily disabled.",
+        "Source claim: manual testing by product teams caught a non-English translation regression that automated tests missed.",
+        "Source claim: the migration was not perfect; CI/local type mismatches appeared when third-party type definitions changed, and more granular project references remained future work.",
+        "Inference: the article is a first-party change narrative, not a controlled productivity study; the \"single biggest productivity boost\" quote is anecdotal.",
+        "Inference: a codemod plus suppressions trades a clean end state for deferred correctness work; the suppression budget is a debt metric, not proof of type safety."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md",
+          "candidate": "Does the transition page distinguish a mechanical codemod from the semantic verification that must follow it?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/module-enforcement.md",
+          "candidate": "Does the enforcement page treat compiler/project boundaries as tooling evidence rather than proof of runtime isolation?"
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/coexistence-retirement.md",
+          "candidate": "Does the coexistence page plan retirement of the old type system and its suppressions, not just the old syntax?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R027",
+      "source_ids": [
+        "src.m9-di02"
+      ],
+      "url": "https://discord.com/blog/how-discord-indexes-trillions-of-messages",
+      "unit": "Complete article: How Discord Indexes Trillions of Messages",
+      "revision": "Published 2025-05-02; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 187 lines / 2783 words; sections Our Redis message indexing queue would drop messages, Our bulk indexing was fault-intolerant, Large Elasticsearch clusters had large overhead, No good path to software upgrades, Indices with large guilds grew too large, The Solutions, Deploy Elasticsearch on Kubernetes, Multi-cluster cell architecture, PubSub message queue, Batch messages by cluster and index, Supporting new search use cases, Big Freaking Guilds, So... how are things going?; images/code listed but not visually inspected or executed",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-di02.md lines 1-187",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party claims not independently verified; no benchmark.",
+      "representation_sha256": "8d49cbdbf7b9b1e758ea76c8e53c615a787c1a2703302fa0e060704d13330587",
+      "retrieved_lines": 187,
+      "retrieved_words": 2783,
+      "sections": [
+        "Our Redis message indexing queue would drop messages",
+        "Our bulk indexing was fault-intolerant",
+        "Large Elasticsearch clusters had large overhead",
+        "No good path to software upgrades",
+        "Indices with large guilds grew too large",
+        "The Solutions",
+        "Deploy Elasticsearch on Kubernetes",
+        "Multi-cluster cell architecture",
+        "PubSub message queue",
+        "Batch messages by cluster and index",
+        "Supporting new search use cases",
+        "Big Freaking Guilds",
+        "So... how are things going?"
+      ],
+      "notes": [
+        "Source claim: the legacy Redis-backed indexing queue dropped messages under backlog, and one failed node in a 100-node cluster could fail about 40% of 50-message bulk batches because each batch fanned out across nodes.",
+        "Source claim: clusters grew beyond 200 nodes, master-node state overhead caused OOM and query timeouts, and Lucene's roughly 2 billion documents per index became a hard limit for large guilds.",
+        "Source claim: moving to Kubernetes with the Elasticsearch operator enabled rolling restarts and OS upgrades that were previously impossible without downtime.",
+        "Source claim: the cell architecture uses many smaller clusters with dedicated ingest, master-eligible and data nodes, zonal spread and shard-allocation awareness.",
+        "Source claim: PubSub replaced Redis for guaranteed delivery, and a router batches messages by destination cluster/index so a failed node affects only its own batch.",
+        "Source claim: DM search required re-sharding by user, accepting duplicate storage; large guilds get dedicated indices with multiple primary shards and a dual-index reindex flow.",
+        "Source claim: the reported results are double the indexing throughput, median query latency from 500 ms to under 100 ms, p99 from 1 s to under 500 ms, and 40 clusters.",
+        "Inference: these are first-party operational figures without a controlled baseline or independent verification.",
+        "Inference: cells and destination batching reduce blast radius and coordination cost but do not remove the 2-billion-document limit; dedicated multi-shard indices are an explicit exception."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "candidate": "Does the index-lifecycle page treat reindexing, dual indexing and old-index retirement as separate states?"
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "candidate": "Does the hot-key page include fanout and per-node failure amplification, not only cache misses?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/kafka-partitions-replication-and-contracts.md",
+          "candidate": "Does the partition page distinguish key-based colocation from a cell-level blast-radius boundary?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 7,
+    "full_reads": 11,
     "blocked": 2,
     "records": [
       "R015",
@@ -697,9 +919,13 @@
       "R020",
       "R021",
       "R022",
-      "R023"
+      "R023",
+      "R024",
+      "R025",
+      "R026",
+      "R027"
     ],
-    "scope": "JEP 444 and JEP 491, five public engineering articles, two blocked Netflix pages",
+    "scope": "JEP 444, JEP 491, nine public engineering articles and two blocked publisher pages",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit."
   }
 }
