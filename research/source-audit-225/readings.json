@@ -3003,12 +3003,71 @@
         }
       ],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R078",
+      "source_ids": [
+        "src.pgbouncer"
+      ],
+      "url": "https://www.pgbouncer.org/config.html",
+      "unit": "Complete document: PgBouncer Configuration",
+      "revision": "Official configuration page published/modified 2026-10-14; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1271 lines / 9376 words; generic settings, authentication, dangerous timeouts, network, databases, users, peers, file formats and examples",
+      "retrieval_refs": [
+        "/tmp/refs/src.pgbouncer.md lines 1-1271",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked PostgreSQL/PgBouncer guides and code not read; no deployment or benchmark.",
+      "representation_sha256": "ea75cdda2541173873db79f332de3e5eeab936eb31885dd07853bd4b448a40de",
+      "retrieved_lines": 1271,
+      "retrieved_words": 9376,
+      "sections": [
+        "Generic settings",
+        "Authentication settings",
+        "Dangerous timeouts",
+        "Low-level network settings",
+        "Section [databases]",
+        "Section [users]",
+        "Section [peers]",
+        "Include directive",
+        "Authentication file format",
+        "HBA file format",
+        "Ident map file format",
+        "Examples"
+      ],
+      "notes": [
+        "Source claim: PgBouncer maps many client connections to a smaller pool of server connections; pool_mode session, transaction or statement determines when a server connection is released.",
+        "Source claim: default_pool_size is per user/database pair, max_client_conn is separate, and file-descriptor limits can exceed max_client_conn by the number of server pools.",
+        "Source claim: transaction pooling is incompatible with session state (prepared statements, advisory locks, LISTEN, session GUCs) unless PgBouncer tracks or resets it.",
+        "Source claim: query_wait_timeout bounds queueing for a server; query_timeout cancels long queries; server_lifetime, server_idle_timeout and server_login_retry control connection reuse.",
+        "Source claim: prepared-statement tracking has memory and CPU cost, and a plan change can produce cached-plan errors that require RECONNECT.",
+        "Source claim: multiple PgBouncer processes can use SO_REUSEPORT with peering so cancellation requests reach the process that owns the query.",
+        "Source claim: TLS modes and auth types are configuration choices, not guarantees that the backend or client uses them.",
+        "Inference: the configuration page defines mechanism and defaults, not a fleet capacity model or a safe pool size for a workload.",
+        "Inference: a pool limit is a per-process/DB/user bound; the fleet ceiling and database heavy-write limit still need measurement."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md",
+          "candidate": "Does the pool page distinguish per-process pool size from the fleet and database capacity limits?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/fleet-budgets.md",
+          "candidate": "Does the fleet budget page account for file descriptors, server pools and transaction pooling state?"
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/pool-modes.md",
+          "candidate": "Does the pool-modes page list the session-state features transaction pooling breaks?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 44,
+    "full_reads": 45,
     "blocked": 14,
     "records": [
       "R015",
@@ -3073,9 +3132,10 @@
       "R074",
       "R075",
       "R076",
-      "R077"
+      "R077",
+      "R078"
     ],
-    "scope": "JEP 444, JEP 491, thirty public engineering articles, twelve documentation/paper units, fourteen blocked pages and two excluded internal team sites",
+    "scope": "JEP 444, JEP 491, thirty public engineering articles, thirteen documentation/paper units, fourteen blocked pages and two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2
   }
