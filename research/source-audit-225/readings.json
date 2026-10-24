@@ -2841,12 +2841,120 @@
         }
       ],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R072",
+      "source_ids": [
+        "src.oauth-security"
+      ],
+      "url": "https://www.rfc-editor.org/rfc/rfc9700.html",
+      "unit": "Complete document: RFC 9700, Best Current Practice for OAuth 2.0 Security",
+      "revision": "RFC 9700, January 2025; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1091 lines / 16221 words; Abstract through Security Considerations, References and Acknowledgements; sections 1-7; diagrams/code examples read as text",
+      "retrieval_refs": [
+        "/tmp/refs/src.oauth-security.md lines 1-1091",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Normative references and linked specifications not read in full; no implementation or test execution.",
+      "representation_sha256": "6973341ee3741f03dc005ff46d8d6aea5575dbd9edd9b3f13463456b54c99492",
+      "retrieved_lines": 1091,
+      "retrieved_words": 16221,
+      "sections": [
+        "1. Introduction",
+        "2. Best Practices",
+        "3. Updated Attacker Model",
+        "4. Attacks and Mitigations",
+        "5. IANA Considerations",
+        "6. Security Considerations",
+        "7. References"
+      ],
+      "notes": [
+        "Source claim: the BCP updates OAuth 2.0 security guidance for redirect-based flows, token replay, privilege restriction, client authentication and the resource-owner password grant.",
+        "Source claim: authorization servers should use exact redirect URI matching; wildcard/pattern matching and open redirectors enable code and token leakage.",
+        "Source claim: public clients must use PKCE; PKCE also protects against authorization code injection, and a server must reject a code_verifier when no code_challenge was sent.",
+        "Source claim: mix-up attacks require a client that interacts with multiple authorization servers to bind the issuer to the user-agent session and verify the issuer or use distinct redirect URIs.",
+        "Source claim: access tokens should be sender-constrained and audience-restricted; refresh tokens for public clients need rotation or sender constraint, with revocation on replay.",
+        "Source claim: the HTTP 307 redirect can expose credentials in a POST body; authorization servers must not use 307 for requests carrying credentials and should prefer 303.",
+        "Source claim: reverse proxies must sanitize security-relevant headers, and in-browser postMessage flows require exact origin matching and no wildcard receiver.",
+        "Inference: the BCP is normative guidance, not a claim that any deployment implements every recommendation.",
+        "Inference: several mitigations are conditional on client type, deployment model and protocol version; a checklist without those conditions is insufficient."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+          "candidate": "Does the credential page separate token validity, audience, sender constraint and revocation?"
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/security-tests.md",
+          "candidate": "Does the security-test page include cross-resource token reuse and PKCE downgrade tests?"
+        },
+        {
+          "path": "book/security/identity-authorization-threat-models-and-isolation.md",
+          "candidate": "Does the identity page distinguish authentication, authorization and token replay?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R073",
+      "source_ids": [
+        "src.little-law"
+      ],
+      "url": "https://www.columbia.edu/~ww2040/LL_OR.pdf",
+      "unit": "Complete paper: Statistical Analysis with Little's Law",
+      "revision": "Operations Research 61(4), 2013, pp. 1030-1045; DOI 10.1287/opre.2013.1193; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1235 lines / 15334 words; sections 1-7, theorems, tables and references; formulas read as text",
+      "retrieval_refs": [
+        "/tmp/refs/src.little-law.md lines 1-1235",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Supplemental e-companion, referenced papers and data archive not read; no reanalysis or simulation executed.",
+      "representation_sha256": "56fc799d5e9a6a7f1630e80a83c637e336300a4bdb4437f8e20d16a03af3e6ba",
+      "retrieved_lines": 1235,
+      "retrieved_words": 15334,
+      "sections": [
+        "1. Introduction",
+        "2. Measurement Over a Finite Time Interval",
+        "3. A Call Center Example",
+        "4. Confidence Intervals",
+        "5. Estimating and Reducing the Bias",
+        "6. Confidence Intervals for the Refined Estimator",
+        "7. Conclusions"
+      ],
+      "notes": [
+        "Source claim: L = lambda W is well founded for long-run averages and stationary expected values, but measurements over a finite interval are neither; the equality holds only when the system starts and ends empty.",
+        "Source claim: the extended finite-time law expresses the bias as edge-effect areas from customers present before time 0 and after time t; the exact relation is not a simple equality.",
+        "Source claim: altering definitions to an inside view forces equality but censors waiting time and makes batch-means confidence intervals problematic.",
+        "Source claim: the paper advocates a statistical approach, using batch means for a single stationary segment and independent replications across days for nonstationary service systems.",
+        "Source claim: the estimator L/lambda is biased when waiting times are not observed; the bias depends on the model and can be reduced with a refined estimator using initial and terminal counts.",
+        "Source claim: a call-center example shows confidence intervals, stationarity checks and bias reduction change the interpretation of finite measurements.",
+        "Source claim: infinite-server and single-server models have different bias behavior; a refinement that works for many-server systems can fail for a single-server queue.",
+        "Inference: the paper is about estimation from finite data, not a claim that Little's Law predicts tail latency or chooses capacity.",
+        "Inference: a page that treats L = lambda W as a direct equality on any observed interval would overstate the theorem."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+          "candidate": "Does the page keep the finite-interval edge effects and the mean-only scope of Little's Law explicit?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/measurement-boundary.md",
+          "candidate": "Does the measurement page avoid treating an observed interval average as an unbiased estimate of W?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-experiments.md",
+          "candidate": "Does the tail page avoid using Little's Law to predict a percentile?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 41,
+    "full_reads": 43,
     "blocked": 14,
     "records": [
       "R015",
@@ -2905,9 +3013,11 @@
       "R068",
       "R069",
       "R070",
-      "R071"
+      "R071",
+      "R072",
+      "R073"
     ],
-    "scope": "JEP 444, JEP 491, twenty-nine public engineering articles, ten documentation/paper units, fourteen blocked pages and two excluded internal team sites",
+    "scope": "JEP 444, JEP 491, twenty-nine public engineering articles, twelve documentation/paper units, fourteen blocked pages and two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2
   }
