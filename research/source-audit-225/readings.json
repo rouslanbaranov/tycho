@@ -27236,12 +27236,313 @@
         }
       ],
       "reader": "delegated-reader/B20h/deepseek-harness"
+    },
+    {
+      "id": "R253",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/wesnoth.html",
+      "unit": "AOSA Volume I, Chapter 25 \"The Battle for Wesnoth\" (public HTML chapter), local representation /tmp/B20h/raw/wesnoth.txt lines 1-279",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-279: 5 numbered sections (25.1-25.5), 5 code blocks, 1 figure caption, no tables or footnotes. Lines 1-9 are the site header, chapter title, author list and a promotional line; they are counted in the hash, line and word totals but excluded from the substantive section description. No prose section present in the live HTML is missing.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest5.json#R253",
+        "/tmp/B20h/raw/wesnoth.txt lines 1-279; sha256=f67c8264a5520f886a9daa20fa228b3409f14efc83d5bd4e48803615e22951c2; words=4053",
+        "https://aosabook.org/en/v1/wesnoth.html (HTTP 200, fetched 2026-10-24; live HTML has the same 5 numbered sections, 5 code blocks and Figure 25.1 caption, so no section is missing)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_gap": "Figure 25.1 is caption-only (line 35); the diagram image and any alt text are absent from the text representation. Code blocks survive as literal text between [CODE] and [/CODE] markers, including WML preprocessor directives. Header/promotional chrome is retained in lines 1-9, and blank separator lines carry single trailing spaces from extraction; no prose is missing.",
+      "representation_sha256": "f67c8264a5520f886a9daa20fa228b3409f14efc83d5bd4e48803615e22951c2",
+      "retrieved_lines": 279,
+      "retrieved_words": 4053,
+      "sections": [
+        {
+          "title": "25.1. Project Overview",
+          "level": 2,
+          "start_line": 29,
+          "end_line": 96
+        },
+        {
+          "title": "25.2. Wesnoth Markup Language",
+          "level": 2,
+          "start_line": 97,
+          "end_line": 205
+        },
+        {
+          "title": "25.3. Units in Wesnoth",
+          "level": 2,
+          "start_line": 206,
+          "end_line": 235
+        },
+        {
+          "title": "25.4. Wesnoth's Multiplayer Implementation",
+          "level": 2,
+          "start_line": 236,
+          "end_line": 266
+        },
+        {
+          "title": "25.5. Conclusion",
+          "level": 2,
+          "start_line": 267,
+          "end_line": 279
+        }
+      ],
+      "notes": [
+        "Source claim: the Battle for Wesnoth is a turn-based fantasy strategy game released under a GPL2 license, with more than four million downloads at the time of writing; the chapter's stated aim is to show how its development model let volunteers of widely different skill levels contribute (lines 17-24).",
+        "Source claim: the engine is about 200,000 lines of C++ and ships with roughly 250,000 lines of WML content; functionality once hard-coded in C++ has increasingly moved into WML (line 32).",
+        "Source claim: the project minimises dependencies for portability but relies on SDL for video, I/O and event handling, plus SDL_Mixer, SDL_Image and SDL_Net, and on Boost, Pango/Cairo, zlib, Python/Lua and GNU gettext (lines 38-58).",
+        "Source claim: subsystems are deliberately segmented - WML parser/preprocessor, I/O, GUI, display, AI, hexagonal pathfinding, map generation and game-flow modules - so a contributor can change one area without damaging the rest; display and 'play game' are the largest and have risked the Blob anti-pattern (lines 63-91).",
+        "Source claim: XML was considered but rejected for WML because a more relaxed, non-technical syntax was wanted; WML has elements and string-to-string attributes but no text nodes, and all game data is presented to the engine as one conceptual document (lines 100-141).",
+        "Source claim: a preprocessor supplies file/directory includes, macros and conditional symbols used for difficulty; changing a preprocessor symbol forces the entire WML document to be reloaded and reprocessed (lines 144-197).",
+        "Source claim: the single multi-megabyte WML document can take up to a minute to load and consumes substantial memory; mitigations are campaign-specific #ifdef content and a cache of the fully preprocessed document keyed by the active symbol set and invalidated by file timestamps (lines 200-203).",
+        "Source claim: Wesnoth deliberately avoids unit inheritance; a unit instance refers to an immutable unit_type, abilities are flags interpreted by engine code (for example pathfinding checks 'skirmisher'), and attacks are attack_type lists (lines 212-224).",
+        "Source claim: traits and equipment are WML-defined modifications to unit statistics, including selected attack types; fully WML-defined abilities were rejected because WML would become a programming language and because the C++ AI would still need to understand each ability (lines 227-233).",
+        "Source claim: multiplayer actions are serialised as WML nodes, and a complete replay is the initial state plus the command log; a thin wesnothd relay distributes commands over TCP, observers receive initial state plus history, and server version segmentation makes divergent rules visible; the project consciously does not attempt strong cheat prevention (lines 239-264).",
+        "Source claim: the authors present accessibility as a series of compromises that look inelegant in code - WML's inefficient syntax is criticised internally - but credit it with hundreds of user-made campaigns and with drawing people into programming; they caution that Wesnoth's open-source and GPL setting limits how far the lessons generalise (lines 270-279).",
+        "Representation note: Figure 25.1 is caption-only, the five code blocks are preserved, lines 1-9 are site/chapter header and promotional chrome, and the live HTML checked on 2026-10-24 contains no numbered section absent from this representation."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Candidate context for segmented engine subsystems and SDL-backed platform adapters; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "candidate": "Candidate context for a preprocessed-document cache keyed by active symbols and invalidated by timestamps; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-cards.md",
+          "candidate": "Candidate context for choosing data-driven composition over inheritance and for the Blob anti-pattern caveat; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md",
+          "candidate": "Candidate context for accessibility, portability, load-time and memory trade-offs; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+          "candidate": "Candidate context for command-log replay, observer catch-up and relay delivery semantics; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+          "candidate": "Candidate context for the stated trust boundary and client-version segmentation; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness"
+    },
+    {
+      "id": "R254",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/integration.html",
+      "unit": "AOSA Volume I, Chapter 9 \"Continuous Integration\" (public HTML chapter), local representation /tmp/B20h/raw/integration.txt lines 1-286",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-286: 14 numbered sections (9.1-9.1.2, 9.2-9.2.7, 9.3-9.3.2), 1 code block, 4 figure captions, no tables or footnotes. Lines 1-9 are the site header, chapter title, author list and a promotional line; they are counted in the hash, line and word totals but excluded from the substantive section description. No prose section present in the live HTML is missing.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest5.json#R254",
+        "/tmp/B20h/raw/integration.txt lines 1-286; sha256=ba08f86fe27bddd4048af85f491311caadfbfd9f52ab8929fd5eec759c5dbafe; words=5436",
+        "https://aosabook.org/en/v1/integration.html (HTTP 200, fetched 2026-10-24; live HTML has the same 14 numbered sections, 1 code block and Figures 9.1-9.4 captions, so no section is missing)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_gap": "Figures 9.1-9.4 are caption-only (lines 63, 111, 138, 177); diagram images and alt text are absent. The single shell-script code block survives as literal text (lines 47-57). Header/promotional chrome is retained in lines 1-9, and separator lines carry extraction whitespace; no prose is missing.",
+      "representation_sha256": "ba08f86fe27bddd4048af85f491311caadfbfd9f52ab8929fd5eec759c5dbafe",
+      "retrieved_lines": 286,
+      "retrieved_words": 5436,
+      "sections": [
+        {
+          "title": "9.1. The Landscape",
+          "level": 2,
+          "start_line": 20,
+          "end_line": 40
+        },
+        {
+          "title": "9.1.1. What Does Continuous Integration Software Do?",
+          "level": 3,
+          "start_line": 41,
+          "end_line": 87
+        },
+        {
+          "title": "9.1.2. External Interactions",
+          "level": 3,
+          "start_line": 88,
+          "end_line": 101
+        },
+        {
+          "title": "9.2. Architectures",
+          "level": 2,
+          "start_line": 102,
+          "end_line": 107
+        },
+        {
+          "title": "9.2.1. Implementation Model: Buildbot",
+          "level": 3,
+          "start_line": 108,
+          "end_line": 134
+        },
+        {
+          "title": "9.2.2. Implementation Model: CDash",
+          "level": 3,
+          "start_line": 135,
+          "end_line": 155
+        },
+        {
+          "title": "9.2.3. Implementation Model: Jenkins",
+          "level": 3,
+          "start_line": 156,
+          "end_line": 173
+        },
+        {
+          "title": "9.2.4. Implementation Model: Pony-Build",
+          "level": 3,
+          "start_line": 174,
+          "end_line": 216
+        },
+        {
+          "title": "9.2.5. Build Recipes",
+          "level": 3,
+          "start_line": 217,
+          "end_line": 228
+        },
+        {
+          "title": "9.2.6. Trust",
+          "level": 3,
+          "start_line": 229,
+          "end_line": 237
+        },
+        {
+          "title": "9.2.7. Choosing a Model",
+          "level": 3,
+          "start_line": 238,
+          "end_line": 252
+        },
+        {
+          "title": "9.3. The Future",
+          "level": 2,
+          "start_line": 253,
+          "end_line": 264
+        },
+        {
+          "title": "9.3.1. Concluding Thoughts",
+          "level": 3,
+          "start_line": 265,
+          "end_line": 282
+        },
+        {
+          "title": "9.3.2. Acknowledgments",
+          "level": 3,
+          "start_line": 283,
+          "end_line": 286
+        }
+      ],
+      "notes": [
+        "Source claim: CI systems build and test software automatically and regularly; benefits include cross-platform testing, slow or data-intensive tests, legacy-platform checks, detection of infrequently failing tests and release production, and CI is often a step toward continuous deployment (line 11).",
+        "Source claim: the chapter contrasts four systems - Buildbot (master/slave), CDash (reporting server), Jenkins (hybrid) and Pony-Build (decentralised Python reporting server) - as extremes and a foil (lines 17-35).",
+        "Source claim: CI architectures are dominated by two extremes, central master/slave control and client-contributed reporting; known systems combine features from both (line 23).",
+        "Source claim: Buildbot's buildmaster schedules builds and buildslaves execute them over persistent connections; locks make system-integration coordination easy, but new slaves cannot attach dynamically, clients are fully controlled by the master, build products cannot easily be returned, and slave load is not reported (lines 26, 114-132).",
+        "Source claim: CDash is a reporting server for CMake/CTest clients; clients decide when to build and upload XML reports, which permits volunteer and cloud builds but gives up central scheduling, progress reports and a guaranteed response to a check-in (lines 29, 141-150).",
+        "Source claim: CDash added an '@Home' mode in which clients poll for build requests and return results; at the time of writing (October 2010) requests were manual and clients had to be connected (line 153).",
+        "Source claim: Jenkins (Hudson until early 2011) is a Java hybrid that can build locally, coordinate remote builds over master-initiated SSH or client-initiated JNLP, and passively receive results; its plugin architecture supports third-party result and binary return, while its locks plugin was immature in January 2011 (lines 159-171).",
+        "Source claim: Pony-Build separates a results server, independent clients holding build configuration, and an optional reporting server, linked by webhooks, XML-RPC and PubSubHubbub; this buys language independence, testability, easy modification and low server load, but makes build requests, distributed locking and real-time monitoring hard (lines 180-211).",
+        "Source claim: the feature inventory includes checkout/update, abstract recipes, stored checkout/build/test status, release packages, multi-architecture builds, resource management, external-resource coordination and progress reports; external interactions cover notification, build information, build requests and remote control (lines 66-99).",
+        "Source claim: recipes are hard because they must be platform-independent yet customisable, and trust is a second problem because recipes execute arbitrary code; the authors suggest community-standard recipes or digitally signed recipes (lines 220-235).",
+        "Source claim: the authors judge a loosely coupled RPC/webhook model easy and flexible except for build coordination, so model choice should follow project needs; they call 'architecture dictates function' nonsense and argue architecture canalises development while contributor self-selection reinforces the fit (lines 241-250, 268-280).",
+        "Source claim: future wishes are a language-agnostic recipe DSL, common build/test reporting formats such as TAP or JUnit XML, and richer platform introspection hooks (lines 258-262). Representation note: Figures 9.1-9.4 are caption-only, the shell-script code block is preserved, lines 1-9 are chrome, and the live HTML checked on 2026-10-24 contains no numbered section absent from this representation."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md",
+          "candidate": "Candidate context for separating build, test, publication and deployment boundaries; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/build-identity.md",
+          "candidate": "Candidate context for source, runner and artifact evidence in a CI run; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/sbom-attestation-and-release-verification.md",
+          "candidate": "Candidate context for trusting build recipes and returned artifacts; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/decision-discriminators.md",
+          "candidate": "Candidate context for choosing a centralised or reporting model from coordination needs; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md",
+          "candidate": "Candidate context for the coordination costs that decide whether a remote boundary is justified; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness"
+    },
+    {
+      "id": "R255",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v1/bib1.html",
+      "unit": "AOSA Volume I, Bibliography (apparatus, not a chapter), local representation /tmp/B20h/raw/bib1.txt lines 1-119",
+      "revision": "The Architecture of Open Source Applications, Volume I, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full bibliography apparatus, lines 1-119: one 'Bibliography' heading and 38 alphabetically ordered entries ([AF94] at line 8 through [Top00] at line 119); no prose sections, figures, code, tables or footnotes. Lines 1-6 are the site header, title and a promotional line, counted in the hash, line and word totals but excluded from substantive coverage. The live HTML shows the same single heading and 38 entries; no section is missing.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest5.json#R255",
+        "/tmp/B20h/raw/bib1.txt lines 1-119; sha256=566b36f12a5106ad23cf5a1e45f8d8978fb10227ff7b967c885a9e01c0becaf3; words=876",
+        "https://aosabook.org/en/v1/bib1.html (HTTP 200, fetched 2026-10-24; live HTML has one Bibliography heading and the same 38 labelled entries, no figures or code)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_gap": "External link targets beyond the printed [Tan06] URL are flattened, and no DOI, ISBN or citation-to-chapter map is present in either representation. The anomalies '[GL02] ... page 2002' and '[LCWB+11] ... 19(1), 2011' appear in the live HTML as well as the local text, so they are not extraction artifacts. Header/promotional chrome is retained in lines 1-6.",
+      "representation_sha256": "566b36f12a5106ad23cf5a1e45f8d8978fb10227ff7b967c885a9e01c0becaf3",
+      "retrieved_lines": 119,
+      "retrieved_words": 876,
+      "sections": [
+        {
+          "title": "Bibliography",
+          "level": 1,
+          "start_line": 2,
+          "end_line": 119
+        }
+      ],
+      "notes": [
+        "Source claim: this page is apparatus, not a chapter - a single 'Bibliography' heading followed by 38 alphabetically ordered reference entries from [AF94] to [Top00] (lines 2-119), with no prose, argument, figures, code or tables.",
+        "Source claim: each entry gives a label, author(s), title, venue or publisher, and year, often with volume, issue and page range; books add edition and publisher, which is a conventional academic-style reference list (lines 8-119).",
+        "Source claim: the entries cluster around distributed data and storage (BigTable, PNUTS, Dynamo, GFS, HDFS, PVFS, MapReduce, SnowFlock), visualization and provenance (VTK, VisTrails, provenance surveys), testing, SCM, naming, transactions and UI toolkits (lines 8-119).",
+        "Inference: titles such as Beautiful Testing, LLVM, Mercurial, Plan 9, VTK, HDFS and GFS align with Volume I chapter subjects, suggesting a volume-wide aggregate list; no per-chapter citation map is present, so this cannot be confirmed from the apparatus alone.",
+        "Source claim: [GL02] is printed as 'ACM SIGACT News, page 2002, 2002', an anomalous page field retained as rendered; [LCWB+11] gives ACM Transactions on Computer Systems 19(1), 2011; [Tan06] is the only entry with an explicit URL (lines 47, 74, 116).",
+        "Source claim: accented author names and en dashes in page ranges survive extraction, and the representation preserves only the printed [Tan06] URL, so no other link targets are recoverable (lines 14-116).",
+        "Inference: the bibliography can locate candidate sources but cannot establish that a chapter actually cites a given work, nor verify bibliographic accuracy; no DOI or ISBN is supplied.",
+        "Inference: dates run from 1974 to 2011, consistent with a 2011 Volume I compilation, and the A-Z run ends at [Top00], so the list appears complete as rendered (line 119).",
+        "Representation note: lines 1-6 are site header, title and promotional chrome; the remaining 113 lines contain the 38 entries separated by blank lines, and the live HTML checked on 2026-10-24 contains no section absent from this representation."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/architecture-evidence-hypotheses-and-experiments.md",
+          "candidate": "Candidate context for what a cited source can and cannot prove; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c06-search-and-question-routes-for-architecture-agents/evidence-safety.md",
+          "candidate": "Candidate context for attributable synthesis, version conflict and safe refusal; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/authority-dependencies.md",
+          "candidate": "Candidate context for the authority and provenance of external sources; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/evidence-screening.md",
+          "candidate": "Candidate context for screening missing evidence before reuse; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/architecture-views-and-decision-records.md",
+          "candidate": "Candidate context for source-linked evidence in architecture records; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 219,
+    "full_reads": 222,
     "blocked": 14,
     "records": [
       "R015",
@@ -27481,7 +27782,10 @@
       "R249",
       "R250",
       "R251",
-      "R252"
+      "R252",
+      "R253",
+      "R254",
+      "R255"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
