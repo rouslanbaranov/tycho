@@ -33141,12 +33141,272 @@
         }
       ],
       "reader": "Delegated reader R300 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R301",
+      "source_ids": [
+        "src.vitess"
+      ],
+      "url": "https://vitess.io/docs/concepts/shard/",
+      "unit": "Registered page: Vitess - Shard concept page (single page; not the Vitess documentation site)",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Registered page only, not the whole documentation site: local capture of the Vitess 'Shard' concept page, lines 1-45 (443 words), read sequentially and completely. Substantive content is lines 6-39 (424 words): the shard definition, replica roles, unsharded versus sharded keyspaces, the shard-name grammar with worked range examples, hash- and vindex-derived keyspace IDs, and resharding. The extractor preamble (Title, URL Source, 'Markdown Content:', lines 1-5) is retained but carries no claims; the closing 'Related Vitess Documentation' link block (lines 41-43) and the trailing horizontal rule (line 45) are page footer chrome and excluded. No site navigation, cookie, consent or language chrome is present in this capture.",
+      "retrieval_refs": [
+        "local: /tmp/B21b/raw/vitess-shard.md lines 1-45",
+        "url: https://vitess.io/docs/concepts/shard/",
+        "passages: lines 6-8 (definition, replicas), 10 (unsharded/sharded), 12-19 (name grammar), 21-27 (worked examples), 29-35 (vindex and keyspace IDs), 37-39 (resharding)"
+      ],
+      "omissions": "Related documentation pages outside the registered page not read; no experiment. The linked Resharding User Guide, keyspace and vindex concept pages, and any topology or resharding workflow documentation were not read, and no cluster, keyspace metadata or benchmark was inspected.",
+      "representation_sha256": "3111093f86b4ceafe4a0927e550999976ec2e31a6f58d1dc6558baf7d6ad3087",
+      "retrieved_lines": 45,
+      "retrieved_words": 443,
+      "sections": [
+        {
+          "heading": "Shard definition and replica roles (untitled)",
+          "lines": "6-8"
+        },
+        {
+          "heading": "Unsharded versus sharded keyspace",
+          "lines": "10"
+        },
+        {
+          "heading": "Shard name characteristics",
+          "lines": "12-19"
+        },
+        {
+          "heading": "Range notation: worked examples and edge cases",
+          "lines": "21-27"
+        },
+        {
+          "heading": "Hash-derived keyspace IDs and vindexes",
+          "lines": "29-35"
+        },
+        {
+          "heading": "Resharding",
+          "lines": "37-39"
+        }
+      ],
+      "notes": [
+        "Source claim (lines 6-8): a shard is a subset of a keyspace; a keyspace always contains one or more shards; a shard typically contains one MySQL primary and potentially many MySQL replicas, which hold identical data apart from replication lag and can serve read-only traffic with eventual consistency, long-running analysis, and administrative tasks such as backup, restore and diff.",
+        "Source claim (line 10): an unsharded keyspace has exactly one shard, named '0' (sometimes '-') by convention; a sharded keyspace has N shards holding non-overlapping data, the shard count varies with use case and load, and some Vitess users run hundreds of shards in a keyspace.",
+        "Source claim (lines 12-19): shard names represent a range in unsigned integer space (left bound included, right bound excluded), are written in hexadecimal, are left-justified and right-padded with zeros; a '-' prefix means anything less than the right value, a '-' postfix means anything greater than or equal to the left value, and a plain '-' denotes the full keyrange.",
+        "Source claim (lines 21-27): '-80', '00-80', '0000-8000' and the sixteen-hex-digit form denote the same range; '80-FF' equals '8000-FF00', so 'FFFF' falls outside '80-FF'; consequently '80-' is not the same as '80-FF', and '80-' means anything greater than or equal to 0x80.",
+        "Source claim (line 29): an xxhash-type vindex produces an unsigned 64-bit integer, so every value below 0x8000000000000000 falls in shard '-80' and every value with the highest bit set belongs to shard '80-'.",
+        "Source claim (lines 31-35): the left-justified encoding permits keyspace IDs of arbitrary length with the most significant bits on the left; an md5 hash (16 bytes) can serve as a keyspace ID, and an arbitrary-length varbinary can be mapped as-is by the 'binary' vindex.",
+        "Source claim (lines 37-39): resharding changes the shard count on a live cluster by splitting shards into smaller pieces or merging neighbouring shards; source data is copied to destination shards, allowed to catch up on replication, compared against the original for integrity, live serving is shifted, and the source shards are deleted.",
+        "Inference (reader, not stated on the page): the page defines a shard simultaneously as a keyrange and as a MySQL replication group, but says nothing about where topology and routing metadata live, how the cutover in resharding is coordinated, or what read consistency holds across shards, so mechanism-level claims about those need other sources.",
+        "Scope and artifacts: no section headings exist on the page, so sections above are reader-supplied labels; the footer link block and the trailing '* * *' separator (lines 41-45) were excluded; the doubled hyphen in '80-FF' and the quote characters are preserved as captured."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "candidate": "Existing page on partition ownership and shard strategy; candidate receiving page for keyrange-versus-replication-group vocabulary. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "candidate": "Existing page on shard keys and hotspots; candidate context for hash-derived keyspace IDs and skewed ranges. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
+          "candidate": "Existing page on resharding transition; candidate context for the copy, catch-up, compare and cut-over sequence described on this page. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+          "candidate": "Existing page on backup and restore drills; candidate context for replicas used for backup, restore and diff. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
+          "candidate": "Existing page on shuffle sharding; candidate contrast with fixed keyrange shards. Relation only; no edit under #225."
+        }
+      ],
+      "reader": "Delegated reader (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef), research-only, records written under /tmp/B21b/records/"
+    },
+    {
+      "id": "R302",
+      "source_ids": [
+        "src.cockroachdb"
+      ],
+      "url": "https://www.cockroachlabs.com/docs/stable/architecture/overview",
+      "unit": "Registered page: CockroachDB - Architecture Overview (architecture guide overview page; the layer pages it links are outside this unit)",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "All 346 local lines (4,429 words) read sequentially. Substantive region is lines 169-324 (about 1,805 words): 'Using this guide', 'Goals of CockroachDB', the overview narrative of startup, SQL-to-KV path and ranges, the five-layer table, 'Database terms' (consistency, isolation, consensus, replication, transaction, transaction contention, multi-active availability, user), 'CockroachDB architecture terms' (cluster, node, range, replica, leaseholder, Raft protocol, Raft leader, Raft log) and 'What's next?'. Excluded as chrome: docs navigation sidebar (lines 39-136), the 'On this page' table of contents (lines 138-165), breadcrumb (line 167), duplicated 'Copy page' widgets (lines 171-173), footer blocks (lines 326-344) and an embedded Mintlify docsConfig JSON blob (line 346). The capture is mixed: many inline link texts are missing inside the substantive region, so several component, command and SQL-clause names are not present.",
+      "retrieval_refs": [
+        "local: /tmp/B21b/raw/cockroach.md lines 169-324 (content), lines 1-166 and 325-346 (chrome, excluded)",
+        "url: https://www.cockroachlabs.com/docs/stable/architecture/overview",
+        "passages: lines 175-185 (guide scope and reading order), 191-198 (goals), 203-224 (startup, SQL-to-KV, layer table), 234-273 (database terms), 282-317 (architecture terms), 318-322 (what's next)"
+      ],
+      "omissions": "Related documentation pages outside the registered page not read; no experiment. The linked architecture layer pages (SQL, transaction, distribution, replication, storage, backup architecture), the glossary, cluster settings, and application-development documentation were not read. Inline link text dropped by the extractor could not be recovered from this representation, so some named components and the SQL historical-read clause remain unidentified.",
+      "representation_gap": "The capture of the registered page is incomplete at the token level: inline link text is absent in the substantive region (for example lines 175, 183, 185, 192, 196, 198, 204-207, 209, 220-224, 239, 259-263, 292, 297, 302, 307, 312, 322). Layer names in the layer table (lines 220-224), the two startup command names (lines 204-205), the storage engine and SQL clause names (line 211), and several defined terms (lines 259-263) are therefore missing. Empty anchor artifacts remain where link text was dropped. No section of the page is missing as a whole, but exact wording of the affected sentences cannot be certified from this file.",
+      "retrieved_lines": 346,
+      "retrieved_words": 4429,
+      "sections": [
+        {
+          "heading": "Using this guide",
+          "lines": "179-185"
+        },
+        {
+          "heading": "Goals of CockroachDB",
+          "lines": "187-198"
+        },
+        {
+          "heading": "Overview: startup, SQL to KV, ranges, consensus",
+          "lines": "201-211"
+        },
+        {
+          "heading": "Layers",
+          "lines": "212-224"
+        },
+        {
+          "heading": "Database terms: consistency, isolation, consensus, replication, transaction",
+          "lines": "226-254"
+        },
+        {
+          "heading": "Database terms: transaction contention, multi-active availability, user",
+          "lines": "255-273"
+        },
+        {
+          "heading": "CockroachDB architecture terms: cluster, node, range, replica, leaseholder, Raft",
+          "lines": "274-317"
+        },
+        {
+          "heading": "What's next?",
+          "lines": "318-322"
+        }
+      ],
+      "notes": [
+        "Source claim (lines 175-177): CockroachDB is presented as a source-available database built to be both scalable and consistent; the guide explains inner workings but the page states that understanding the architecture is not required to use the product, and it points to a free introductory course.",
+        "Source claim (lines 183-185): the guide is split into pages per layer and is meant to be read sequentially from this overview; readers wanting a high-level view can read only each layer's Overview section, while contributors should also read the Components sections; the guide does not explain how to build applications.",
+        "Source claim (lines 191-198): stated goals are low-touch automation for operators and simplicity for developers; consistency at scale through distributed transactions rather than eventual consistency or stale reads; an always-on database accepting reads and writes on all nodes without conflicts; deployment without platform or vendor lock-in; and support for familiar relational tooling.",
+        "Source claim (lines 203-205): nodes are started with a command carrying a --join flag naming the initial nodes, followed by a one-time cluster initialization command; the capture drops both command names, so they are described here structurally rather than quoted.",
+        "Source claim (lines 207-211): clients reach the cluster through a SQL API, any node accepts requests because nodes behave symmetrically, SQL RPCs are converted into key-value operations, data is broken into ranges, and each range is replicated to at least three nodes; replicas serve reads and writes and receive replicated changes; a node that cannot serve a request locates a node that can.",
+        "Source claim (line 211): range changes rely on consensus so that a majority of replicas agree before commit, which the page ties to its isolation guarantees; data is written and read through a storage engine that tracks timestamps, which the page says enables a SQL-standard clause for querying historical data (the clause name is missing from the capture).",
+        "Source claim (lines 216-224): the architecture is described as layers that interact as relatively opaque services, listed as a five-row table whose purposes are SQL-to-KV translation, atomic changes to multiple KV entries, presenting replicated ranges as one entity, consistent synchronous replication with consensus reads, and on-disk KV storage; the layer names themselves are missing.",
+        "Source claim (lines 234-249): consistency is used in both ACID and CAP senses but less formally than either; isolation is the degree a transaction is affected by concurrent transactions, with SERIALIZABLE and READ COMMITTED offered; consensus means agreeing whether a transaction commits, using Raft, with a quorum of replica-holding nodes acknowledging a write and forward progress halting when consensus fails.",
+        "Source claim (lines 259-263): contention is described as lock contention (a transaction blocked by a concurrent or recent write to the same data) and serialization conflict (a transaction that cannot be ordered among currently executing transactions); automatic retry is described, a client-visible error is emitted when retry fails under SERIALIZABLE, and the page advises taking steps to avoid contention.",
+        "Source claim (lines 268-273 and 282-317): multi-active availability is a per-range consensus-based model contrasted with active-passive and active-active replication; a cluster is a set of nodes acting as one server with its own authorization hierarchy; a range is a contiguous chunk of the sorted KV keyspace, initially one per table plus secondary indexes, split once a size threshold is reached; replicas default to three; the leaseholder coordinates reads and writes and, for most tables, alone serves consistent reads; the Raft leader orders writes and the Raft log is the on-disk source of truth.",
+        "Inference (reader, not stated on the page): this is a vocabulary and layering overview rather than a mechanism reference; it gives no split threshold value, lease duration, replication-factor rationale or contention metric, and the dropped link text means the page cannot be quoted for layer names or the historical-read clause without another capture.",
+        "Scope and artifacts: the printed page version marker 'v26.3' appears in the sidebar (line 20) and the capture header records 'Published Time: Sat, 24 Oct 2026 18:36:47 GMT' (line 5); empty '[](...)' anchors precede several definitions (lines 244, 259, 292, 297, 302, 307, 312)."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "candidate": "Existing page on replication, consensus and leader change; candidate context for Raft leader and quorum claims. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "candidate": "Existing page on replica protection and quorum; candidate context for quorum-before-commit wording. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "candidate": "Existing page on key ranges and resharding; candidate context for ranges, splits and leaseholders. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/transaction-isolation-and-sagas.md",
+          "candidate": "Existing page on isolation and transactions; candidate context for SERIALIZABLE, contention and retry. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/serializable-retry.md",
+          "candidate": "Existing page on serializable retry; candidate context for client-visible retry errors. Relation only; no edit under #225."
+        }
+      ],
+      "reader": "Delegated reader (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef), research-only, records written under /tmp/B21b/records/",
+      "representation_sha256": "4c3871edd3f5a20607e485b60a9f5854616692dfff749ec881fe1f51f37b5818"
+    },
+    {
+      "id": "R303",
+      "source_ids": [
+        "src.mongodb"
+      ],
+      "url": "https://www.mongodb.com/docs/manual/data-modeling/",
+      "unit": "Registered page: MongoDB - Data Modeling landing page (landing page only; linked detail pages are unread and outside this unit)",
+      "revision": "official documentation, page captured 2026-10-24",
+      "status": "partial-scoped-text-read",
+      "coverage": "All 344 local lines (2,022 words) read sequentially. The landing page's own substantive content is lines 58-129 (about 723 words): introduction and flexible-model principle, 'Use Cases', 'Get Started', 'Details' with three subsections (flexible data model, document relationships, relational-versus-document schema design), and 'Learn More'. The remaining roughly 1,300 words are site chrome and duplicated navigation: two full mega-menus (lines 8-34), breadcrumb and docs-menu repeats (lines 36-56), 'Copy page' (line 60), previous/next pager and skill-badge promotion (lines 127-135), two copies of the 'On this page' table of contents (lines 141-159), the docs sidebar repeated twice (lines 161-291), language selector and legal/footer links (lines 293-344). Linked detail pages are part of the documented source area but were not read.",
+      "retrieval_refs": [
+        "local: /tmp/B21b/raw/mongo-modeling.md lines 58-129 (content), lines 1-57 and 130-344 (chrome, excluded)",
+        "url: https://www.mongodb.com/docs/manual/data-modeling/",
+        "passages: lines 62-71 (definition, flexible model, access principle), 75-79 (use cases), 81-83 (schema planning), 87-111 (flexible model, relationships), 115-120 (relational comparison), 122-125 (learn more)"
+      ],
+      "omissions": "Related documentation pages outside the registered page not read; no experiment. In particular the linked Best Practices for Data Modeling, schema design process, Schema Design Patterns, Schema Design Anti-Patterns, Embedding, Referencing, Model Relationships, Model Tree Structures, Example Application Models and Compass data-modeling pages were not read, and no database, Compass session or benchmark was used.",
+      "representation_sha256": "0814b8571fc5faf5c85e77c314a5fc1942357795654fc7516636a0432e4f7953",
+      "retrieved_lines": 344,
+      "retrieved_words": 2022,
+      "sections": [
+        {
+          "heading": "Data Modeling in MongoDB: definition, flexible model, access principle (untitled)",
+          "lines": "58-71"
+        },
+        {
+          "heading": "Use Cases",
+          "lines": "73-79"
+        },
+        {
+          "heading": "Get Started",
+          "lines": "81-83"
+        },
+        {
+          "heading": "Details: Developing with a Flexible Data Model",
+          "lines": "85-96"
+        },
+        {
+          "heading": "Details: Document Relationships",
+          "lines": "98-111"
+        },
+        {
+          "heading": "Details: Schema Design - Differences Between Relational and Document Databases",
+          "lines": "113-120"
+        },
+        {
+          "heading": "Learn More",
+          "lines": "122-125"
+        }
+      ],
+      "notes": [
+        "Source claim (lines 62-69): data modeling is the organization of data within a database and the links between related entities; the document model is flexible enough to store polymorphic data, meaning documents in one collection need not share a field set and a field's type may differ between documents; the stated core principle is that data accessed together should be stored together, with structure driven by application access patterns.",
+        "Source claim (lines 75-79): the three use cases given are embedding department information in an employee collection to answer in one query, keeping older product reviews in a separate collection because they are read less often, and storing heterogeneous catalog products in one collection despite differing fields and field types.",
+        "Source claim (lines 81-83): the page advises planning the schema before production scale and following the linked schema design process to obtain a logical structure and optimal performance.",
+        "Source claim (lines 87-96): a flexible schema allows iterative improvement during development, direct mapping of the data model to objects in code, and schema validation applied only to the sections and aspects that need stricter control; a linked best-practices section is cited for an iterative-modification example.",
+        "Source claim (lines 100-106): a field value may be any BSON data type, including other documents, arrays and arrays of documents; those structures represent one-to-one (a patient and a medical record), one-to-many (a user and their posts or comments) and many-to-many (students and courses) relationships; relationships are modelled by embedding or referencing, and the choice is framed as optimizing for access patterns.",
+        "Source claim (lines 115-120): the comparison table contrasts a fixed relational schema requiring upfront planning and analysis of dependent references with a document model that changes over time; it contrasts joining several tables with storing data by access pattern, where embedding avoids cross-collection joins and is said to improve performance and reduce deployment workload.",
+        "Source claim (lines 122-125): 'Learn More' links to Best Practices for Data Modeling and to Data Modeling in MongoDB Compass; the page's next-section pager also targets Best Practices.",
+        "Inference (reader, not stated on the page): the landing page supplies principles and vocabulary only; it gives no size thresholds, no embed-versus-reference decision rules, no validation syntax and no anti-pattern catalog, all of which sit in the unread linked pages, so claims needing those specifics are unsupported by this capture alone.",
+        "Scope and artifacts: headings carry empty-text permalink anchors (for example line 58 and line 73); line 6 is a site-level instruction to AI agents about markdown mirrors, not page content; the 'On this page' list is duplicated verbatim (lines 141-159); no published date appears in the capture, while the sidebar names 'Database Manual 9.0 (Current)' (line 173) and the footer states '© 2026 MongoDB, Inc.' (lines 304, 344)."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "candidate": "Existing page on storage models and workload fit; candidate context for the document model and access-pattern-driven structure. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
+          "candidate": "Existing page on document and wide-column models; candidate context for polymorphic documents and embedding. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Existing page on schema lifecycle; candidate context for iterative schema change and selective validation. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+          "candidate": "Existing page on access paths; candidate context for deriving structure from access patterns. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
+          "candidate": "Existing page on cross-model store selection; candidate context for relational-versus-document comparison. Relation only; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/graph-data-models-and-traversal.md",
+          "candidate": "Existing page on relationship modelling and traversal; candidate contrast for one-to-many and many-to-many relationships. Relation only; no edit under #225."
+        }
+      ],
+      "reader": "Delegated reader (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef), research-only, records written under /tmp/B21b/records/"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 266,
+    "full_reads": 267,
     "blocked": 14,
     "records": [
       "R015",
@@ -33434,11 +33694,14 @@
       "R297",
       "R298",
       "R299",
-      "R300"
+      "R300",
+      "R301",
+      "R302",
+      "R303"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
-    "partial_reads": 10
+    "partial_reads": 12
   }
 }
