@@ -18,8 +18,8 @@ Comparison checkpoint: eighteen candidate comparisons are assessed in
 source mechanisms not addressed and zero contradicted. These are bounded
 comparisons, not independent review, book findings or permission to edit.
 
-Reference batch 2026-10-24: fifteen full reads and two blocked pages. The full
-reads are JEP 444, JEP 491 and thirteen public engineering articles in the
+Reference batch 2026-10-24: sixteen full reads and two blocked pages. The full
+reads are JEP 444, JEP 491 and fourteen public engineering articles in the
 src.m9-* series. Two publisher pages (src.m9-n05 and src.m9-n06) returned a
 Cloudflare challenge and are recorded as blocked, not read. JEP 491 is now read
 in full: its record supplies the canonical body that earlier book pages flagged

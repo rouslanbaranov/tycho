@@ -1113,12 +1113,68 @@
         }
       ],
       "reader": "Tycho agent; no independent review or execution."
+    },
+    {
+      "id": "R032",
+      "source_ids": [
+        "src.m9-u06"
+      ],
+      "url": "https://www.uber.com/us/en/blog/from-static-rate-limiting-to-intelligent-load-management/",
+      "unit": "Complete article: How Uber Conquered Database Overload: The Journey from Static Rate-Limiting to Intelligent Load Management",
+      "revision": "Article dated 2026-04-20; live page published 2026-10-23; representation repeats the article body twice; retrieved 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 904 lines; the representation contains the article body twice. Unique text and metadata (lines 1-370) were read completely; the second copy was verified by matching headings. Images not visually inspected.",
+      "retrieval_refs": [
+        "/tmp/refs/src.m9-u06.md lines 1-904",
+        "Jina reader, accessed 2026-10-24"
+      ],
+      "omissions": "Linked articles, images, code and internal systems not read or executed; first-party metrics not independently verified; no benchmark.",
+      "representation_sha256": "a805173f7e80d3a6883b22f775f221083c11fe5479602434b4c8cd46fcadd72d",
+      "retrieved_lines": 904,
+      "retrieved_words": 6746,
+      "sections": [
+        "Introduction",
+        "Docstore and Schemaless",
+        "Challenges",
+        "Building the Foundation of a Unified Load Manager",
+        "Evolving the Architecture",
+        "The Unified Load Shedding Engine",
+        "Lessons Learned",
+        "Conclusion"
+      ],
+      "notes": [
+        "Source claim: quota-based rate limiting in the stateless query layer failed because it added a Redis hop, required global partition-health tracking, mispriced full scans and needed constant static-quota changes.",
+        "Source claim: the team moved overload control into the stateful storage layer and chose in-flight concurrency, tied to Little's Law, as a better signal than coarse QPS.",
+        "Source claim: CoDel queues separated reads, writes and slow operations; under pressure they switched from FIFO to adaptive LIFO so stale requests fail fast instead of wasting work.",
+        "Source claim: the Scorecard engine enforced per-tenant concurrency limits for fairness, while plug-in regulators covered write bytes, hot partition keys, memory and goroutine count.",
+        "Source claim: CoDel's fixed timeouts and static inflight limits caused manual tuning, indiscriminate shedding of user-facing traffic and retry-driven thundering herds.",
+        "Source claim: Cinnamon added request priority tiers and a PID controller that adapts queue timeouts and inflight limits from latency and error signals.",
+        "Source claim: the unified engine accepts external signals such as follower commit lag, so a healthy leader can shed when replication is behind; the reported gains are 80% throughput, ~70% lower p99, ~93% fewer goroutines and ~60% lower heap during overload.",
+        "Inference: the reported before/after figures are first-party operational results, not a controlled benchmark; concurrent changes and workload differences are not isolated.",
+        "Inference: concurrency is a better overload signal only when the measured in-flight work maps to the constrained resource; a low-QPS large-write or hot-key workload still needs a separate regulator.",
+        "Inference: priority-aware shedding changes the fairness question from total throughput to which work survives; the article does not give a formal starvation bound."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+          "candidate": "Does the queueing page treat concurrency as the control signal and state the boundary where Little's Law applies?"
+        },
+        {
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-response.md",
+          "candidate": "Does the contention page separate global overload shedding from per-tenant fairness limits?"
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md",
+          "candidate": "Does the retry page cover the thundering-herd feedback loop created by fixed rejection timeouts?"
+        }
+      ],
+      "reader": "Tycho agent; no independent review or execution."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 15,
+    "full_reads": 16,
     "blocked": 2,
     "records": [
       "R015",
@@ -1137,9 +1193,10 @@
       "R028",
       "R029",
       "R030",
-      "R031"
+      "R031",
+      "R032"
     ],
-    "scope": "JEP 444, JEP 491, thirteen public engineering articles and two blocked publisher pages",
+    "scope": "JEP 444, JEP 491, fourteen public engineering articles and two blocked publisher pages",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit."
   }
 }
