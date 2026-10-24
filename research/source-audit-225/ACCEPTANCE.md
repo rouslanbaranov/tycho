@@ -5,7 +5,7 @@
 | Criterion | Status | Evidence |
 |---|---|---|
 | Complete source inventory reconciles register and external links | Partial | 247 sources and 406 documents represented; external-link inventory beyond the register is incomplete. |
-| Every source has a finite unit and honest full/partial/blocked status | Partial | 196 reference records plus 6 source reconciliations; 111 sources remain landing-only. |
+| Every source has a finite unit and honest full/partial/blocked status | Partial | 202 reference records plus 6 source reconciliations; 111 sources remain landing-only. |
 | Every accessible scoped source read completely | Not met | 111 landing-only sources remain; RFC 9110 is now read with labelled supplements; 19 blocked records (14 baseline pages) and 2 sources excluded. |
 | All 406 canonical documents have a review status | Partial | All 406 have a status; 55 are comparison-assessed and 351 are explicit gaps. |
 | Findings include exact source locations, anchors and confidence | Partial | 30 comparisons carry anchors and source records; most pages have no comparison. |
