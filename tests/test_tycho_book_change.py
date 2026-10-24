@@ -2,6 +2,7 @@
 import hashlib
 import io
 import json
+import sqlite3
 from contextlib import redirect_stdout
 from pathlib import Path
 import tempfile
@@ -136,6 +137,69 @@ class BookChangePlanTests(unittest.TestCase):
         with mock.patch.object(book_change.validate_delivery_evidence, "validate",
                                side_effect=ValueError("delivery-owner-acceptance-claim")):
             item = delivery_state(ROOT, route)
+        self.assertEqual(item["state"], "stale")
+        self.assertTrue(item["blocking"])
+
+    def test_git_prerequisite_is_unavailable(self):
+        route = book_change.canonical_scan(ROOT)
+        with mock.patch.object(book_change.validate_pattern_semantic_audit, "validate",
+                               side_effect=ValueError("fatal: not a git repository")):
+            item = semantic_audit_state(ROOT, route)
+        self.assertEqual(item["state"], "unavailable")
+        self.assertTrue(item["blocking"])
+
+    def test_non_strict_error_exits_nonzero(self):
+        with mock.patch.object(book_change, "canonical_scan",
+                               side_effect=ValueError("bad metadata")):
+            with redirect_stdout(io.StringIO()) as out:
+                code = book_change.main(["--root", "/tmp", "--json"])
+        self.assertEqual(code, 1)
+        self.assertIn("bad metadata", json.loads(out.getvalue())["error"])
+
+    def test_route_state_missing_is_blocking(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            item = book_change.route_state(Path(tmp),
+                                           {"documents": [], "snapshot_sha256": "x"})
+        self.assertEqual(item["state"], "missing")
+        self.assertTrue(item["blocking"])
+
+    def test_inventory_state_stale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for folder in ("book", "sources", "schemas", "edition", "generated"):
+                (root / folder).mkdir()
+            (root / "book/a.md").write_text("x", encoding="utf-8")
+            (root / "sources/register.json").write_text("{}", encoding="utf-8")
+            (root / "schemas/x.json").write_text("{}", encoding="utf-8")
+            (root / "generated/route-index.v1.json").write_text("{}", encoding="utf-8")
+            (root / "edition/outline.json").write_text("{}", encoding="utf-8")
+            (root / "edition/migration.json").write_text("{}", encoding="utf-8")
+            (root / "edition/inventory.json").write_text(
+                json.dumps({"files": {"book/a.md": "wrong"}}), encoding="utf-8")
+            item = book_change.inventory_state(root)
+        self.assertEqual(item["state"], "stale")
+        self.assertTrue(item["blocking"])
+
+    def test_fts_fresh_stale_absent(self):
+        route = {"snapshot_sha256": "abc"}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "generated").mkdir()
+            self.assertEqual(fts_state(root, route)["state"], "not-built")
+            path = root / "generated" / section_fts_index.INDEX_NAME
+            con = sqlite3.connect(path)
+            con.execute("create table meta (key text primary key, value text)")
+            con.execute("insert into meta values ('manifest', ?)",
+                        (json.dumps({"route_snapshot_sha256": "abc"}),))
+            con.commit()
+            con.close()
+            self.assertEqual(fts_state(root, route)["state"], "fresh")
+            con = sqlite3.connect(path)
+            con.execute("update meta set value = ? where key = 'manifest'",
+                        (json.dumps({"route_snapshot_sha256": "def"}),))
+            con.commit()
+            con.close()
+            item = fts_state(root, route)
         self.assertEqual(item["state"], "stale")
         self.assertTrue(item["blocking"])
 
