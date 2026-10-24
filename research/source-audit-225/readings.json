@@ -36622,12 +36622,932 @@
         }
       ],
       "reader": "delegated-reader R337 (DeepSeek Harness subagent session-339f3170-2943-4eff-877d-b6b465e229ef, deepseek-flash), research-only; wrote only /tmp/B21i/records/; extraction, not independent review, human review or CI"
+    },
+    {
+      "id": "R338",
+      "source_ids": [
+        "src.postgres-fts"
+      ],
+      "url": "https://www.postgresql.org/docs/current/textsearch.html",
+      "unit": "PostgreSQL 18 documentation, Chapter 12 'Full Text Search' landing page (textsearch.html)",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Whole capture 55 lines / 477 words. Body lines 36-40: chapter heading and 33-entry table of contents (12.1-12.11 plus subsections); the page contains no section prose. Site navigation, version selector, breadcrumbs, Prev/Up/Next, correction form and footer (376 of 477 words) excluded; retained body is 101 words including extractor metadata. No representation gap.",
+      "retrieval_refs": [
+        "raw/textsearch.md:36-40"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment",
+      "representation_sha256": "35d793046d107e591e84368dbe5eeb0acd400ef6e11880ca74fcbeefab25c9f3",
+      "retrieved_lines": 55,
+      "retrieved_words": 477,
+      "sections": [
+        "12. Full Text Search (landing page and table of contents)"
+      ],
+      "notes": [
+        "[source] this is the Chapter 12 landing page; its body is only the chapter heading and a 33-entry table of contents for 12.1-12.11 and their subsections. It contains no section prose.",
+        "[source] the table of contents lists 11 top-level sections and 22 subsections: 12.1 (3), 12.2 (2), 12.3 (4), 12.4 (4), 12.5, 12.6 (6), 12.7, 12.8 (3), 12.9, 12.10 and 12.11.",
+        "[source] breadcrumbs place the chapter in Part II 'The SQL Language'; the previous page is 11.12 'Examining Index Usage' and the next page is 12.1 'Introduction'.",
+        "[observation] 376 of 477 words are site chrome (nav, version selector, breadcrumbs, Prev/Up/Next, correction form, policies/copyright) and were excluded; the retained body is 101 words including extractor metadata lines.",
+        "[observation] extractor artifact - the 33 TOC links are concatenated onto one 3,699-character line without separators; the read tool truncates long lines at 2,000 characters, so the section list was verified directly from the raw line.",
+        "[observation] the extractor header records 'Published Time: 2026-08-13T12:52:54.741344' and page chrome identifies PostgreSQL 18.6; the delegation revision date is 2026-10-24.",
+        "[inference] this page can support claims about chapter scope, section ordering and titles only; it provides no evidence about full-text-search behavior.",
+        "[source] footer copyright is 1996-2026 The PostgreSQL Global Development Group; the page states no separate chapter revision history."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/README.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/README.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash; read 2026-10-24; parent session-339f3170-2943-4eff-877d-b6b465e229ef; policy /tmp/delegated-reader-policy.md"
+    },
+    {
+      "id": "R339",
+      "source_ids": [
+        "src.postgres-fts"
+      ],
+      "url": "https://www.postgresql.org/docs/current/textsearch-intro.html",
+      "unit": "PostgreSQL 18 documentation, Chapter 12, Section 12.1 'Introduction' including 12.1.1-12.1.3 (textsearch-intro.html)",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Whole capture 151 lines / 2,174 words. Body lines 8-151 read completely: 12.1 Introduction (rationale, preprocessing pipeline, tsvector/tsquery), 12.1.1 What Is a Document?, 12.1.2 Basic Text Matching (examples, operators, precedence, FOLLOWED BY semantics), 12.1.3 Configurations. Lines 1-7 are an 11-word extractor header (excluded); 2,163 body words; no site navigation or footer. No representation gap.",
+      "retrieval_refs": [
+        "raw/fts-intro.md:8-38",
+        "raw/fts-intro.md:40-60",
+        "raw/fts-intro.md:62-131",
+        "raw/fts-intro.md:133-151"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment",
+      "representation_sha256": "e5c3b2b6487fa925f629036c31765311155ecceff90bc37aa042e8fbad0c4a20",
+      "retrieved_lines": 151,
+      "retrieved_words": 2174,
+      "sections": [
+        "12.1. Introduction",
+        "12.1.1. What Is a Document?",
+        "12.1.2. Basic Text Matching",
+        "12.1.3. Configurations"
+      ],
+      "notes": [
+        "[source] full text search identifies natural-language documents that satisfy a query and optionally sorts them by relevance; query and similarity are application-dependent, with the simplest case being a word set and query-word frequency.",
+        "[source] `~`, `~*`, `LIKE` and `ILIKE` are criticized for lacking linguistic support (derived forms such as satisfies/satisfy), result ranking, and index support, which makes them slow on large collections.",
+        "[source] indexing preprocesses documents in three stages: parsing into classified tokens, converting tokens into normalized lexemes (case folding, suffix removal, stop-word elimination) via dictionaries, and storing a search-optimized representation with optional positions for proximity ranking.",
+        "[source] `tsvector` stores preprocessed documents and `tsquery` processed queries; `@@` returns true on a match regardless of operand order, and the `text @@ tsquery` / `text @@ text` variants avoid explicit casts.",
+        "[source] tsquery supports `&`, `|`, `!`, `<->` (FOLLOWED BY) and `<N>` distance forms; `<0>` requires the same word, precedence is `|`, then `&`, then `<->`, then `!` from loosest to tightest, and parentheses override it.",
+        "[source] `'fat cats ate fat rats'::tsvector` does not normalize, so it fails `to_tsquery('fat & rat')`, whereas `to_tsvector(...)` succeeds; tsvector elements are assumed already-normalized lexemes.",
+        "[source] `phraseto_tsquery('the cats ate the rats')` renders as `'cat' <-> 'ate' <2> 'rat'`, encoding the stop-word gap as a position distance.",
+        "[source] NOT and AND/OR change meaning inside FOLLOWED BY: `!x <-> y` matches y when it is not immediately preceded by x, and `(x & y) <-> z` requires x and y at the same position before z, unlike `x <-> z & y <-> z`.",
+        "[source] configurations control stop words, synonyms and parsing; `default_text_search_config` can be set per cluster, database or session, and each configuration-dependent function accepts an optional `regconfig` argument; parsers, dictionaries, templates and configurations are the four object types, with parsers/templates requiring C and superuser privileges to install.",
+        "[observation] 151 lines / 2,174 words; lines 1-7 are an 11-word extractor header, leaving 2,163 body words, and this capture has no site nav or footer.",
+        "[observation] extractor escaping artifacts such as `\\_tokens\\__` and `\\_lexemes\\__`, and doubled backticks around `@@`, appear in the Markdown; they were read as emphasis/code formatting, not content.",
+        "[inference] the page is conceptual and example-driven; it reports no measurements, version-specific benchmarks or operational limits."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/README.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/data/postgresql-mvcc-indexes-and-query-plans.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash; read 2026-10-24; parent session-339f3170-2943-4eff-877d-b6b465e229ef; policy /tmp/delegated-reader-policy.md"
+    },
+    {
+      "id": "R340",
+      "source_ids": [
+        "src.postgres-fts"
+      ],
+      "url": "https://www.postgresql.org/docs/current/textsearch-tables.html",
+      "unit": "PostgreSQL 18 documentation, Chapter 12, Section 12.2 'Tables and Indexes' including 12.2.1-12.2.2 (textsearch-tables.html)",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Whole capture 78 lines / 789 words. Body lines 8-78 read completely: 12.2 Tables and Indexes, 12.2.1 Searching a Table (unindexed queries, default configuration, NULL/coalesce caveat), 12.2.2 Creating Indexes (GIN expression indexes, configuration-name consistency, per-row configuration, column concatenation, stored generated tsvector column). Lines 1-7 are a 13-word extractor header (excluded); 776 body words; no site navigation or footer. No representation gap.",
+      "retrieval_refs": [
+        "raw/fts-tables.md:8",
+        "raw/fts-tables.md:10-38",
+        "raw/fts-tables.md:40-78"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment",
+      "representation_sha256": "52d495a751a816687e44f364e63544fa633e8c66ed39b70b1b58b2dfeea3dfb3",
+      "retrieved_lines": 78,
+      "retrieved_words": 789,
+      "sections": [
+        "12.2. Tables and Indexes",
+        "12.2.1. Searching a Table",
+        "12.2.2. Creating Indexes"
+      ],
+      "notes": [
+        "[source] full text search can run without an index; `to_tsvector('english', body) @@ to_tsquery('english', 'friend')` also finds friends and friendly because they normalize to the same lexeme.",
+        "[source] omitting configuration arguments makes the functions use `default_text_search_config`.",
+        "[source] a multi-column query uses `to_tsvector(title || ' ' || body) @@ to_tsquery('create & table')` with `ORDER BY last_mod_date DESC LIMIT 10`; the text notes that `coalesce` was omitted and is needed for rows with NULL fields.",
+        "[source] unindexed scans are characterized as too slow for most applications except occasional ad-hoc searches; practical use usually requires an index.",
+        "[source] a GIN expression index is built on `to_tsvector('english', body)`; expression indexes must use the two-argument form because index contents must not depend on `default_text_search_config`, otherwise entries could mix configurations and dump/restore could not reconstruct them.",
+        "[source] a query uses the expression index only if it repeats the same two-argument expression and configuration name.",
+        "[source] an expression index can take the configuration from another column (`to_tsvector(config_name, body)`), supporting mixed-language collections when queries match, and can concatenate columns.",
+        "[source] alternatively, a stored generated `tsvector` column built with `coalesce` can be GIN-indexed; queries then need not name the configuration and avoid re-running `to_tsvector`, which the text says is faster (more important for GiST than GIN); the expression index is simpler and uses less disk because the tsvector is not stored.",
+        "[observation] 78 lines / 789 words; lines 1-7 are a 13-word extractor header, leaving 776 body words, and this capture has no site nav or footer.",
+        "[observation] the page uses a `pgweb` example table with `title`, `body`, `last_mod_date` and `config_name` columns; no sample output or timings are given.",
+        "[inference] performance statements ('too slow', 'faster') are qualitative and unmeasured on this page, so they should not be cited as benchmark evidence."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/README.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/data/postgresql-mvcc-indexes-and-query-plans.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash; read 2026-10-24; parent session-339f3170-2943-4eff-877d-b6b465e229ef; policy /tmp/delegated-reader-policy.md"
+    },
+    {
+      "id": "R341",
+      "source_id": "src.postgres-fts",
+      "source_ids": [
+        "src.postgres-fts"
+      ],
+      "url": "https://www.postgresql.org/docs/current/textsearch-controls.html",
+      "unit": "PostgreSQL 18 documentation, Section 12.3 'Controlling Text Search' (four subsections), local markdown representation /tmp/B21j/raw/fts-controls.md, 302 lines / 2,905 words, sha256 02b14c383e92abd3519d4c0712e4da8894ec0c35449248f9e00c0e86086c46bd; one section page only, not the chapter",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 302 local lines (2,905 words) were read sequentially. L8-302 are the complete section body (295 lines, 2,892 words by wc): 12.3.1 Parsing Documents (L10-37), 12.3.2 Parsing Queries (L39-158), 12.3.3 Ranking Search Results (L160-244) and 12.3.4 Highlighting Results (L246-302), ending with the ts_headline cost sentence. L1-7 are extractor metadata (Title, URL Source, Published Time, Markdown Content) and are excluded. No site navigation, footer, cookie banner or related-links chrome is present in the capture. Extractor artifacts noted: heading anchor links '[#](...)', two empty '[](...)' anchors before the ts_rank signatures (L166, L169), and flattened code blocks (no fenced blocks; SQL statements and result tables appear as plain lines). A live fetch on 2026-10-24 returned HTTP 200 with document title 'PostgreSQL: Documentation: 18: 12.3. Controlling Text Search'; markers 12.3.1, 12.3.3 and ts_headline were present. Scope is this one section page; Sections 8.11.2, 12.4.1, 12.6 and 12.7, and the other Chapter 12 pages, are separate units and are not represented here.",
+      "retrieval_refs": [
+        "/tmp/B21j/manifest.json#R341 (lines 302, words 2905, sha256 02b14c383e92abd3519d4c0712e4da8894ec0c35449248f9e00c0e86086c46bd)",
+        "/tmp/B21j/raw/fts-controls.md (read in full, L1-302; body L8-302 = 295 lines / 2,892 words by wc)",
+        "https://www.postgresql.org/docs/current/textsearch-controls.html (HTTP 200, 2026-10-24; title 'Documentation: 18: 12.3. Controlling Text Search')",
+        "passages: L10-37 parsing documents; L39-158 parsing queries; L160-244 ranking; L246-302 highlighting"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment.",
+      "representation_gap": null,
+      "representation_sha256": "02b14c383e92abd3519d4c0712e4da8894ec0c35449248f9e00c0e86086c46bd",
+      "retrieved_lines": 302,
+      "retrieved_words": 2905,
+      "sections": [
+        {
+          "heading": "12.3.1 Parsing Documents",
+          "lines": "10-37"
+        },
+        {
+          "heading": "12.3.2 Parsing Queries",
+          "lines": "39-158"
+        },
+        {
+          "heading": "12.3.3 Ranking Search Results",
+          "lines": "160-244"
+        },
+        {
+          "heading": "12.3.4 Highlighting Results",
+          "lines": "246-302"
+        }
+      ],
+      "notes": [
+        "Source claim (L12-25): to_tsvector accepts an optional configuration and a document, parses the text into tokens, reduces them to lexemes and returns lexemes with positions. The page example turns 'a fat cat sat on a mat - it ate a fat rats' into 'ate':9 'cat':3 'fat':2,11 'mat':7 'rat':12 'sat':4: a/on/it are dropped as stop words, rats becomes rat, and '-' is ignored.",
+        "Source claim (L25): the parser assigns each token a type; for each token, the dictionary list selected for that type is consulted and the first dictionary that recognizes the token emits normalized lexemes. Stop words and unrecognized tokens are ignored. Parser, dictionaries and indexed token types are determined by the text search configuration; many configurations can coexist and predefined language configurations exist, with english used in the example.",
+        "Source claim (L27-37): setweight labels a tsvector's entries with weight A, B, C or D, typically to mark document parts such as title versus body for later ranking. Because to_tsvector(NULL) returns NULL, coalesce is recommended; the page's structured-document pattern labels title A, keyword B, abstract C and body D, then merges the vectors with the || operator.",
+        "Source claim (L41-75): four query constructors are provided: to_tsquery (more features, less forgiving), plainto_tsquery, phraseto_tsquery and websearch_to_tsquery (a simplified, web-search-like syntax). to_tsquery requires single tokens separated by & (AND), | (OR), ! (NOT) or <-> (FOLLOWED BY), possibly parenthesized; it normalizes tokens to lexemes and discards stop words, accepts weight labels such as :AB and prefix '*', and accepts single-quoted phrases for thesaurus rules. Tokens not separated by an operator raise a syntax error.",
+        "Source claim (L77-95): plainto_tsquery parses and normalizes text much as to_tsvector does, then inserts & between surviving words. It does not recognize tsquery operators, weight labels or prefix-match labels: 'The Fat & Rats:C' becomes 'fat' & 'rat' & 'c', and all input punctuation is discarded.",
+        "Source claim (L97-113): phraseto_tsquery behaves like plainto_tsquery but inserts <-> between surviving words, and accounts for stop words with <N> operators rather than discarding them; it therefore checks lexeme order, not just presence. Like plainto_tsquery, it does not recognize tsquery operators, weight labels or prefix labels.",
+        "Source claim (L114-158): websearch_to_tsquery accepts simple unformatted text, recognizes some operators and never raises syntax errors, so raw user input can be used. Unquoted text becomes &-separated terms, quoted text becomes <->-separated terms, the word 'or' becomes |, a dash becomes ! and other punctuation is ignored. Examples include '\"supernovae stars\" -crab' -> 'supernova' <-> 'star' & !'crab' and a malformed string reduced to 'dummi' & 'queri'.",
+        "Source claim (L162-202): ts_rank ranks by frequency of matching lexemes; ts_rank_cd computes cover density as described by Clarke, Cormack and Tudhope (Information Processing and Management, 1999), taking proximity into account. ts_rank_cd needs positional information, ignores stripped lexemes and returns zero when no unstripped lexemes remain. The optional weight array is ordered {D-weight, C-weight, B-weight, A-weight} and defaults to {0.1, 0.2, 0.4, 1.0}.",
+        "Source claim (L184-244): both ranking functions accept an integer normalization bit mask: 0 ignores length, 1 divides by 1+log(length), 2 by length, 4 by mean harmonic distance between extents (ts_rank_cd only), 8 by unique-word count, 16 by 1+log(unique-word count) and 32 by rank+1; multiple bits apply in the listed order. The functions use no global information, so no fair 1%/100% normalization is possible; option 32 maps ranks into 0..1 cosmetically without changing order. Ranking can be expensive because it consults each matching document's tsvector and may be I/O bound.",
+        "Source claim (L250-274): ts_headline accepts a document, query and optional comma-separated options, returns an excerpt, selects fragments using the query, and highlights all query words even where positional restrictions do not match. Options are MaxWords/MinWords (defaults 35/15), ShortWord (3), HighlightAll (false), MaxFragments (0 selects single-excerpt mode), StartSel/StopSel (<b>/</b>) and FragmentDelimiter (' ... '); option names are case-insensitive and string values with spaces or commas must be double-quoted.",
+        "Source claim (L268-270, L274, L302): ts_headline output is not guaranteed safe for direct inclusion in web pages. With HighlightAll false some simple XML tags are removed, but not all HTML markup, so this is not an effective XSS defense; input markup should be removed or output sanitized. Non-fragment mode chooses one best match; fragment mode splits matches into at most MaxWords words, prefers more query words and stretches around them; with no match the first MinWords words are shown. ts_headline reads the original document rather than a tsvector summary, so it can be slow.",
+        "Inference (reader, not stated on the page): the page defines mechanisms and tunable options but reports no latency, index-size or relevance-quality measurements; its performance statements are qualitative ('can be slow', 'can be expensive'), so it supports no benchmark claim."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Existing page on inverted indexes, BM25 and PostgreSQL FTS scoring; adjacent to ts_rank/ts_rank_cd and tsquery semantics. Relation only; no verdict."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Existing integrated lexical-retrieval walkthrough; adjacent to analyzer compatibility and SQL FTS. Relation only; no verdict."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-judgments.md",
+          "candidate": "Existing page on judgments, metrics and matched retrieval baselines; adjacent to relevance-ranking evaluation. Relation only; no verdict."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/fusion-signals.md",
+          "candidate": "Existing page on multiple retrieval signals and rank fusion; adjacent to combining lexical scores with other signals. Relation only; no verdict."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/README.md",
+          "candidate": "Chapter landing and source ledger for lexical FTS; adjacent scope and evidence routing. Relation only; no verdict."
+        }
+      ],
+      "reader": "delegated reader R341 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R342",
+      "source_id": "src.postgres-fts",
+      "source_ids": [
+        "src.postgres-fts"
+      ],
+      "url": "https://www.postgresql.org/docs/current/textsearch-indexes.html",
+      "unit": "PostgreSQL 18 documentation, Section 12.9 'Preferred Index Types for Text Search' (single page, no subsections), local markdown representation /tmp/B21j/raw/fts-indexes.md, 28 lines / 575 words, sha256 a8b797cb11dacc6700d3adf2518aff1e23c9ad69e478cb1fcec56afa12dbccd8; one section page only, not the chapter",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 28 local lines (575 words) were read sequentially. L8-28 are the complete section body (21 lines, 559 words by wc), a single continuous section with no subsections: the two index types and their CREATE INDEX forms (L8-16), GIN behavior and weight-recheck limitation (L18), GiST signatures and lossiness (L20), covering GiST indexes (L22), the cost of lossiness (L24), build-time memory sensitivity (L26) and partitioning/distribution (L28). L1-7 are extractor metadata (Title, URL Source, Published Time, Markdown Content) and are excluded. No site navigation, footer, cookie banner, table of contents or related-links chrome is present in the capture. Extractor artifacts noted: two empty '[](...)' anchors before the GIN and GiST command signatures (L12, L15) and flattened code blocks (no fenced blocks; the two CREATE INDEX forms appear as plain lines). A live fetch on 2026-10-24 returned HTTP 200 with document title 'PostgreSQL: Documentation: 18: 12.9. Preferred Index Types for Text Search'; GIN was present. Scope is this one section page; the linked GIN (Chapter 65.4), GiST (65.2) and Foreign Data pages, and the other Chapter 12 pages, are separate units and are not represented here.",
+      "retrieval_refs": [
+        "/tmp/B21j/manifest.json#R342 (lines 28, words 575, sha256 a8b797cb11dacc6700d3adf2518aff1e23c9ad69e478cb1fcec56afa12dbccd8)",
+        "/tmp/B21j/raw/fts-indexes.md (read in full, L1-28; body L8-28 = 21 lines / 559 words by wc)",
+        "https://www.postgresql.org/docs/current/textsearch-indexes.html (HTTP 200, 2026-10-24; title 'Documentation: 18: 12.9. Preferred Index Types for Text Search')",
+        "passages: L8-16 index types and DDL; L18 GIN; L20 GiST signatures; L22 covering GiST; L24 lossiness; L26 build memory; L28 partitioning and distribution"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment.",
+      "representation_gap": null,
+      "representation_sha256": "a8b797cb11dacc6700d3adf2518aff1e23c9ad69e478cb1fcec56afa12dbccd8",
+      "retrieved_lines": 28,
+      "retrieved_words": 575,
+      "sections": [
+        {
+          "heading": "12.9 Preferred Index Types for Text Search (whole page, no subsections)",
+          "lines": "8-28"
+        }
+      ],
+      "notes": [
+        "Source claim (L8): two index kinds can speed up full text searches, GIN and GiST. Indexes are not mandatory for full text searching, but an index is usually desirable when a column is searched regularly.",
+        "Source claim (L10-16): CREATE INDEX ... USING GIN (column) creates a GIN-based index and the column must be of tsvector type. CREATE INDEX ... USING GIST (column [ { DEFAULT | tsvector_ops } (siglen = number) ]) creates a GiST-based index; the column may be tsvector or tsquery, and the optional integer siglen sets signature length in bytes.",
+        "Source claim (L18): GIN indexes are the preferred text search index type. As inverted indexes they hold an entry per lexeme with a compressed list of matching locations; a multi-word search can find the first match and then use the index to remove rows lacking additional words. GIN stores only tsvector lexemes, not weight labels, so a query involving weights requires a table row recheck.",
+        "Source claim (L20): a GiST index is lossy and can produce false matches, requiring a check of the actual table row, which PostgreSQL performs automatically when needed. Each document is represented by a fixed-length signature; siglen controls its length, the default is 124 bytes and the maximum is 2024 bytes. Each word is hashed to one bit in an n-bit string and the bits are OR-ed into a document signature; two words hashing to the same bit produce a false match. If all query words have matches (real or false), the row is retrieved. Longer signatures make searches more precise (smaller index fraction, fewer heap pages) at the cost of a larger index.",
+        "Source claim (L22): a GiST index can be covering by using the INCLUDE clause; included columns may have data types without any GiST operator class, and included attributes are stored uncompressed.",
+        "Source claim (L24): lossiness degrades performance through unnecessary table-row fetches that turn out to be false matches. Because random access to table records is slow, this limits GiST's usefulness; false-match likelihood depends on factors including the number of unique words, so dictionaries that reduce that number are recommended.",
+        "Source claim (L26): GIN index build time can often be improved by increasing maintenance_work_mem, while GiST index build time is not sensitive to that parameter.",
+        "Source claim (L28): partitioning large collections and using GIN and GiST indexes properly allows very fast searches with online update. Partitioning can be done at database level with table inheritance, or by distributing documents over servers and collecting external search results, for example through Foreign Data access; the latter is possible because ranking functions use only local information.",
+        "Inference (reader, not stated on the page): the page gives no latency or index-size measurements and no workload-specific rule for choosing GiST over GIN beyond calling GIN preferred; its quantitative details are the signature limits (124 default, 2024 maximum) and the qualitative build-time sensitivity to maintenance_work_mem.",
+        "Representation note: L1-7 are the extractor header and no site chrome is present. The capture flattens the two CREATE INDEX forms into plain lines, leaves heading text without a '[#]' anchor, and leaves two empty link anchors (L12, L15). The 2026-10-24 live fetch returned HTTP 200 and the same document version/title, so no section-level representation gap was detected."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+          "candidate": "Existing page on access methods, selectivity and index-family limits, including GIN and GiST rows; adjacent to index-type selection. Relation only; no verdict."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md",
+          "candidate": "Existing page on PostgreSQL indexes, statistics and query plans; adjacent to index design and planner use. Relation only; no verdict."
+        },
+        {
+          "path": "book/data/postgresql-mvcc-indexes-and-query-plans.md",
+          "candidate": "Existing cross-volume page on PostgreSQL index families and read/write/storage tradeoffs; adjacent to GIN/GiST costs. Relation only; no verdict."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Existing page on inverted indexes and PostgreSQL FTS; adjacent to GIN as a lexical index. Relation only; no verdict."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
+          "candidate": "Existing page on index generations, updates and rebuilds; adjacent to build-time and maintenance considerations. Relation only; no verdict."
+        }
+      ],
+      "reader": "delegated reader R342 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R343",
+      "source_id": "src.postgres-fts",
+      "source_ids": [
+        "src.postgres-fts"
+      ],
+      "url": "https://www.postgresql.org/docs/current/textsearch-features.html",
+      "unit": "PostgreSQL 18 documentation, Section 12.4 'Additional Features' (four subsections, including 12.4.2.1 Query Rewriting), local markdown representation /tmp/B21j/raw/fts-features.md, 221 lines / 1,847 words, sha256 2ed1d442ff560eafec67931edd419335c1482263d047cd187ef225e3156401be; one section page only, not the chapter",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 221 local lines (1,847 words) were read sequentially. L8-221 are the complete section body (214 lines, 1,835 words by wc): 12.4.1 Manipulating Documents (L10-30), 12.4.2 Manipulating Queries (L32-83) with 12.4.2.1 Query Rewriting (L85-136), 12.4.3 Triggers for Automatic Updates (L138-191) and 12.4.4 Gathering Document Statistics (L193-221). L1-7 are extractor metadata (Title, URL Source, Published Time, Markdown Content) and are excluded. No site navigation, footer, cookie banner, table of contents or related-links chrome is present in the capture. Extractor artifacts noted: heading anchor links '[#](...)', seven empty '[](...)' anchors before function signatures and operators, one literal '<N>' token that is source notation, and flattened code blocks (no fenced blocks; SQL, PL/pgSQL and result tables appear as plain lines). A live fetch on 2026-10-24 returned HTTP 200 with document title 'PostgreSQL: Documentation: 18: 12.4. Additional Features'; tsvector_update_trigger and ts_stat were present. Scope is this one section page; Sections 12.2.2, 12.6.4, 9.43 and the other Chapter 12 pages, and the GIN/GiST chapters, are separate units and are not represented here.",
+      "retrieval_refs": [
+        "/tmp/B21j/manifest.json#R343 (lines 221, words 1847, sha256 2ed1d442ff560eafec67931edd419335c1482263d047cd187ef225e3156401be)",
+        "/tmp/B21j/raw/fts-features.md (read in full, L1-221; body L8-221 = 214 lines / 1,835 words by wc)",
+        "https://www.postgresql.org/docs/current/textsearch-features.html (HTTP 200, 2026-10-24; title 'Documentation: 18: 12.4. Additional Features')",
+        "passages: L10-30 tsvector manipulation; L32-83 tsquery manipulation; L85-136 query rewriting; L138-191 update triggers; L193-221 document statistics"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment.",
+      "representation_gap": null,
+      "representation_sha256": "2ed1d442ff560eafec67931edd419335c1482263d047cd187ef225e3156401be",
+      "retrieved_lines": 221,
+      "retrieved_words": 1847,
+      "sections": [
+        {
+          "heading": "12.4.1 Manipulating Documents",
+          "lines": "10-30"
+        },
+        {
+          "heading": "12.4.2 Manipulating Queries",
+          "lines": "32-83"
+        },
+        {
+          "heading": "12.4.2.1 Query Rewriting",
+          "lines": "85-136"
+        },
+        {
+          "heading": "12.4.3 Triggers for Automatic Updates",
+          "lines": "138-191"
+        },
+        {
+          "heading": "12.4.4 Gathering Document Statistics",
+          "lines": "193-221"
+        }
+      ],
+      "notes": [
+        "Source claim (L14-17): tsvector || tsvector concatenates two vectors, retaining lexemes, positions and weight labels; positions in the right-hand vector are offset by the largest position in the left-hand vector. The result is nearly equivalent to running to_tsvector on the concatenated text, but not exactly, because stop words removed from the end of the left argument would have shifted right-hand positions under textual concatenation. Vector concatenation allows different configurations for different document sections, and setweight must be applied before concatenation to give sections different weights.",
+        "Source claim (L19-22): setweight(vector, weight) returns a copy in which every position is labeled A, B, C or D; D is the default for new vectors and is not shown on output. Labels are retained when vectors are concatenated, so ranking can weight document parts differently. Weight labels apply to positions, not lexemes; setweight does nothing to a vector stripped of positions.",
+        "Source claim (L24-30): length(vector) returns the number of lexemes stored in the vector. strip(vector) returns the same lexemes without position or weight information; the result is usually much smaller but less useful, relevance ranking works less well, and the <-> (FOLLOWED BY) tsquery operator never matches stripped input because distance between lexeme occurrences cannot be determined. A full function list is in Table 9.43.",
+        "Source claim (L36-58): tsquery && tsquery returns the AND combination, || the OR combination, !! the negation, and tsquery <-> tsquery a FOLLOWED BY match (example: 'fat' <-> ('cat' | 'rat')). tsquery_phrase(query1, query2 [, distance]) searches for the second query exactly distance lexemes after the first using the <N> operator (example: 'fat' <10> 'cat').",
+        "Source claim (L59-83): numnode(query) returns the number of nodes (lexemes plus operators), useful to tell whether a query is meaningful (>0) or contains only stop words (0); examples return 0 with a NOTICE for 'the any' and 3 for 'foo & bar'. querytree(query) returns the portion usable for an index search, useful for detecting unindexable queries such as stop-word-only or fully negated ones; 'defined' yields 'defin' and '!defined' yields T.",
+        "Source claim (L87-107): the ts_rewrite family finds occurrences of a target subquery in a tsquery and replaces each with a substitute subquery, a tsquery-specific substring replacement. A collection of target/substitute rules can expand synonyms (new york, big apple, nyc, gotham) or narrow a topic. This overlaps thesaurus dictionaries (Section 12.6.4), but rewrite rules can be changed on the fly without reindexing whereas updating a thesaurus requires reindexing. The three-argument form applies one rule ('a & b', target 'a', substitute 'c' -> 'b' & 'c'); the select form requires two tsquery columns and applies each row's target/substitute, with application order mattering, so ORDER BY an ordering key is advised.",
+        "Source claim (L109-136): a table-driven example expands supernovae to supernovae|sn, producing 'crab' & ('supernova' | 'sn'); updating the aliases table changes the rules without reindexing. Rewriting can be slow with many rules because every rule is checked for a match; the containment operators can filter obvious non-candidates, e.g. WHERE ''a & b''::tsquery @> t.",
+        "Source claim (L140-175): a note states that the trigger method in this section has been obsoleted by stored generated columns (Section 12.2.2). For a separate tsvector column, a trigger is needed to update it when content columns change; two built-in trigger functions exist: tsvector_update_trigger(tsvector_column_name, config_name, text_column_name [, ...]) and tsvector_update_trigger_column(tsvector_column_name, config_column_name, text_column_name [, ...]). The first argument is the tsvector column, the second is a schema-qualified configuration name (so search_path changes do not alter behavior) or a regconfig column for per-row configuration, and remaining arguments are text/varchar/char columns included in the given order; NULL values are skipped while other columns are still indexed.",
+        "Source claim (L177-191): the built-in triggers treat all input columns alike; weighting title differently from body requires a custom trigger, illustrated with a PL/pgSQL function applying setweight A to title and D to body. The page stresses specifying the configuration name explicitly inside triggers so column contents are unaffected by changes to default_text_search_config, which could otherwise change search results after a dump and restore.",
+        "Source claim (L195-221): ts_stat(sqlquery text, [weights text,] OUT word text, OUT ndoc integer, OUT nentry integer) returns setof record. sqlquery must return a single tsvector column; ts_stat executes it and returns one row per distinct lexeme with word, ndoc (number of documents/tsvectors containing it) and nentry (total occurrences). Supplying weights counts only occurrences with those weights; examples select the ten most frequent words overall and with weights 'ab'.",
+        "Inference (reader, not stated on the page): the page is a function-and-operator reference with no measurements; the only lifecycle signal is the note that triggers are obsolete in favor of stored generated columns, and the page does not show the generated-column DDL itself.",
+        "Representation note: L1-7 are the extractor header and no site chrome is present. The capture flattens code blocks, leaves heading and empty link anchors, and the literal '<N>' at L53 is source notation rather than HTML. The 2026-10-24 live fetch returned HTTP 200 and the same document version/title, so no section-level representation gap was detected."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Existing page on inverted indexes and PostgreSQL FTS, including tsvector/tsquery and ranking; adjacent to document and query manipulation. Relation only; no verdict."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Existing integrated lexical-retrieval walkthrough; adjacent to indexing and query semantics. Relation only; no verdict."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
+          "candidate": "Existing page on index generations, incremental updates and rebuilds; adjacent to automatic tsvector maintenance and triggers. Relation only; no verdict."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/snapshot-access.md",
+          "candidate": "Existing page on index identity, access and provenance; adjacent to keeping derived search state consistent with source revisions. Relation only; no verdict."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/README.md",
+          "candidate": "Chapter landing and source ledger for lexical FTS; adjacent scope and evidence routing. Relation only; no verdict."
+        }
+      ],
+      "reader": "delegated reader R343 (child of session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only, no book findings, support classifications, severity or acceptance verdicts"
+    },
+    {
+      "id": "R344",
+      "source_ids": [
+        "src.postgres-fts"
+      ],
+      "url": "https://www.postgresql.org/docs/current/textsearch-dictionaries.html",
+      "unit": "PostgreSQL 18 documentation page 12.6 'Dictionaries' at https://www.postgresql.org/docs/current/textsearch-dictionaries.html, native Markdown at /tmp/B21j/raw/fts-dictionaries.md; 401 lines, 3240 words, SHA-256 3d6366f8b3f020f79d1c6ab6011a7ba7579f609caa7ce6542de64c6fcd86657e",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 401 lines / 3240 words of the local native-Markdown capture were read sequentially. L1-L7 (11 words) are the extractor header (Title, URL Source, Published Time 2026-08-13T12:52:54.741344, 'Markdown Content:') and are excluded from the substantive body, leaving L8-L401 at 3229 words. All subsections 12.6.1-12.6.6 and both sub-subsections 12.6.4.1 and 12.6.4.2 are present and end in complete sentences; the '...' at L197 belongs to the published thesaurus file-format illustration, not a truncation. The capture contains no site navigation, breadcrumb, footer, prev/up/next links or cookie text. Extractor artifacts retained in the counts: heading permalink anchors such as '[#]' and pipe-table formatting.",
+      "retrieval_refs": [
+        {
+          "kind": "manifest",
+          "ref": "/tmp/B21j/manifest.json#R344",
+          "note": "declares 401 lines, 3240 words, SHA-256 3d6366f8b3f020f79d1c6ab6011a7ba7579f609caa7ce6542de64c6fcd86657e"
+        },
+        {
+          "kind": "local",
+          "ref": "/tmp/B21j/raw/fts-dictionaries.md L1-L401",
+          "note": "read sequentially in full; L1-L7 extractor header (11 words), L8-L401 body (3229 words)"
+        },
+        {
+          "kind": "live-manifest-url",
+          "ref": "https://www.postgresql.org/docs/current/textsearch-dictionaries.html",
+          "note": "re-fetched 2026-10-24; HTTP 200; the served page title is 'PostgreSQL: Documentation: 18: ...', so /current/ still serves the same major edition as the capture; a site news banner mentions PostgreSQL 19 RC 1, which is not the document version"
+        },
+        {
+          "kind": "live-pinned-edition",
+          "ref": "https://www.postgresql.org/docs/18/textsearch-dictionaries.html",
+          "note": "re-fetched 2026-10-24; HTTP 200; title and character count identical to the /current/ fetch (48,283), consistent with the same edition, but this is not a byte-level comparison and the record's scope stays the local snapshot"
+        }
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment. Outside this unit: chapter 12 sections 12.1-12.4 and 12.8-12.11, the runtime-configuration entry for default_text_search_config, the CREATE/ALTER TEXT SEARCH DICTIONARY and CONFIGURATION reference pages, the contrib unaccent page, the Ispell/MySpell/Hunspell and Snowball sites, and the dictionary data files under $SHAREDIR/tsearch_data were not read.",
+      "representation_gap": null,
+      "representation_sha256": "3d6366f8b3f020f79d1c6ab6011a7ba7579f609caa7ce6542de64c6fcd86657e",
+      "retrieved_lines": 401,
+      "retrieved_words": 3240,
+      "sections": [
+        {
+          "heading": "Capture header (excluded)",
+          "lines": "L1-L7",
+          "summary": "Title 12.6, URL Source, Published Time and 'Markdown Content:' marker; 11 words of extractor metadata, not page prose."
+        },
+        {
+          "heading": "12.6 Dictionaries - role, contract and ordering",
+          "lines": "L8-L45",
+          "summary": "Dictionaries remove stop words and normalize tokens into lexemes, which also shrinks the tsvector and is claimed to improve performance (L8); four normalization examples including URL canonicalization and decimal truncation (L10-L24); return contract - lexeme array, TSL_FILTER single lexeme, empty array for a stop word, NULL for an unknown token (L26-L34); predefined dictionaries and templates, and a configuration binding a parser to per-token-type dictionary lists where the first non-NULL result wins (L36-L38); narrow-to-general ordering rule with the astro_en example (L40-L43); a filtering dictionary may sit anywhere except last, e.g. unaccent (L45)."
+        },
+        {
+          "heading": "12.6.1 Stop Words",
+          "lines": "L47-L68",
+          "summary": "Stop words have no discrimination value but keep their positions in the tsvector: 'in the list of stop words' yields 'list':3 'stop':5 'word':6, and ts_rank_cd reads 0.05 versus 0.1 without them (L49-L66); ispell normalizes before the stop-word check while Snowball checks stop words first (L68)."
+        },
+        {
+          "heading": "12.6.2 Simple Dictionary",
+          "lines": "L70-L108",
+          "summary": "Lowercases the token and checks a stop-word file; ts_lexize returns {yes} for 'YeS' and {} for 'The'; Accept=false returns NULL for non-stop words so a later dictionary can decide, and then a following dictionary is required (L72-L108)."
+        },
+        {
+          "heading": "12.6.2 Cautions - file encoding and reload",
+          "lines": "L110-L116",
+          "summary": "Configuration files must be stored in UTF-8 and are translated to the database encoding when read (L112); a session reads a file once, so changed contents need ALTER TEXT SEARCH DICTIONARY, possibly a dummy update (L116)."
+        },
+        {
+          "heading": "12.6.3 Synonym Dictionary",
+          "lines": "L118-L186",
+          "summary": "Replaces a word with a synonym and does not support phrases; the Paris/paris entry stops english_stem reducing Paris to pari (L120-L139); SYNONYMS names a .syn file under $SHAREDIR/tsearch_data and CaseSensitive defaults to false (L141-L143); a trailing asterisk marks a prefix, ignored by to_tsvector but emitted as ':*' by to_tsquery (L145-L174), shown with a psql transcript (L176-L186)."
+        },
+        {
+          "heading": "12.6.4 Thesaurus Dictionary",
+          "lines": "L188-L215",
+          "summary": "Extends the synonym dictionary with phrase support; the file maps 'sample word(s) : indexed word(s)' with colon as delimiter (L192-L199); exactly one subdictionary normalizes input and a leading asterisk skips it for an indexed word (L201); the longest match wins and ties use the last definition (L203); '?' stands for any subdictionary stop word (L205-L209); phrase handling needs parser interaction and correct token-type assignment (L211); parameter changes require reindexing (L215)."
+        },
+        {
+          "heading": "12.6.4.1 Thesaurus Configuration",
+          "lines": "L217-L239",
+          "summary": "CREATE TEXT SEARCH DICTIONARY with TEMPLATE=thesaurus, DictFile=mythesaurus and Dictionary=pg_catalog.english_stem, the .ths file under $SHAREDIR/tsearch_data, then ALTER MAPPING FOR asciiword, asciihword, hword_asciipart (L221-L239)."
+        },
+        {
+          "heading": "12.6.4.2 Thesaurus Example",
+          "lines": "L241-L288",
+          "summary": "thesaurus_astro maps 'supernovae stars' to sn; plainto_tsquery('supernova star') returns 'sn' after the stemmer removes the e and s, and repeating the phrase on the right-hand side yields 'sn' & 'supernova' & 'star' (L245-L288)."
+        },
+        {
+          "heading": "12.6.5 Ispell Dictionary",
+          "lines": "L290-L387",
+          "summary": "Morphological normalization of bank, banking, banked, banks and possessive forms; the distribution ships no dictionary files, and Ispell, MySpell and Hunspell formats are accepted (L292-L294); preparation converts .aff/.dic to .affix/.dict, optional iconv to UTF-8, copy to $SHAREDIR/tsearch_data, then CREATE TEXT SEARCH DICTIONARY with DictFile/AffFile/Stopwords (L296-L312); .affix flag and .dict 'basic_form/affix_class_name' formats (L316-L343); compound splitting via 'compoundwords controlled' with Norwegian ts_lexize output (L345-L354); Hunspell PFX/SFX layout and field list (L356-L383); MySpell has no compounds and PostgreSQL implements only basic Hunspell compound operations (L385-L387)."
+        },
+        {
+          "heading": "12.6.6 Snowball Dictionary",
+          "lines": "L389-L401",
+          "summary": "Porter-derived stemmers per language; Language is required and StopWords optional; the built-in english_stem definition is shown; because it recognizes everything it must be placed last (L391-L401)."
+        }
+      ],
+      "notes": [
+        "Source claim: a dictionary returns an array of lexemes for a known token, a single lexeme with TSL_FILTER to replace the token for later dictionaries, an empty array for a stop word, or NULL when it does not recognize the token (L26-L34).",
+        "Source claim: normally the first dictionary returning non-NULL determines the result and later dictionaries are not consulted, while a filtering dictionary's replacement is passed onward; hence the narrow-to-general ordering rule (L38-L45).",
+        "Source claim: stop words keep their positions in the tsvector, so ranking changes; the page shows 'list':3 'stop':5 'word':6 and ts_rank_cd 0.05 against 0.1 for the same words without stop words (L49-L66).",
+        "Source claim: ispell dictionaries normalize before checking the stop-word list while Snowball stemmers check the stop-word list first (L68).",
+        "Source claim: dictionary configuration files must be UTF-8 and are read once per session; reloading requires ALTER TEXT SEARCH DICTIONARY, which may be a dummy update (L112-L116).",
+        "Source claim: a thesaurus uses exactly one subdictionary, takes the longest phrase match, breaks ties with the last definition, and needs reindexing after parameter changes, unlike small stop-word edits for most other dictionary types (L201-L215).",
+        "Source claim: MySpell does not support compound words, Hunspell does, and PostgreSQL implements only the basic Hunspell compound operations (L385-L387).",
+        "Observation: L310 writes the parameter as 'Stopwords' while the sibling 12.7 capture writes 'StopWords' (L35 of that page); unquoted SQL identifiers fold to lower case, so this is typographic, not a behavioural difference.",
+        "Inference: the claim that normalization and stop-word removal improve performance is unquantified; the page gives no index-size, latency or throughput measurement, and no procedure or cost for the required reindexing.",
+        "Inference: the page does not discuss dictionary versioning, how a mixed-version dictionary set affects an existing index, or how to stage a reindex for a large table.",
+        "Observation: sample dictionaries, synonym files, affix files and psql outputs are publisher illustrations; none was created or executed during this read."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Analyzer and normalization semantics behind lexical matching, including stemming risks for identifiers."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Integrated walkthrough whose failure case is analyzer compatibility and a stale index generation."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
+          "candidate": "Index generation change and stale citations, the consequence of the thesaurus reindex requirement."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/snapshot-access.md",
+          "candidate": "Index identity and provenance, applicable to recording which dictionary set produced an index."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md",
+          "candidate": "Treats an index as a data-lifecycle change, matching the reindex-after-parameter-change warning."
+        }
+      ],
+      "reader": "delegated-reader R344 (DeepSeek Harness subagent deepseek-flash, parent session-339f3170-2943-4eff-877d-b6b465e229ef; read-only extraction, not independent review, human review or CI)"
+    },
+    {
+      "id": "R345",
+      "source_ids": [
+        "src.postgres-fts"
+      ],
+      "url": "https://www.postgresql.org/docs/current/textsearch-parsers.html",
+      "unit": "PostgreSQL 18 documentation page 12.5 'Parsers' at https://www.postgresql.org/docs/current/textsearch-parsers.html, native Markdown at /tmp/B21j/raw/fts-parsers.md; 70 lines, 677 words, SHA-256 9b0561a425a1f315d79e900682957330addeca94a961d4643c055788ed853fc7",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 70 lines / 677 words of the local native-Markdown capture were read sequentially. L1-L7 (11 words) are the extractor header (Title, URL Source, Published Time 2026-08-13T12:52:54.741344, 'Markdown Content:') and are excluded from the substantive body, leaving L8-L70 at 666 words. The single section 12.5 is complete: role statement, built-in parser, Table 12.1 with 23 token-type rows (L16-L38, count matches the stated 23), a Note block on locale, email and tag limits, and two ts_debug examples. L40 is a whitespace-only extractor artifact between the table and the Note; heading permalink anchors and table pipes are retained in the counts. No site navigation, breadcrumb, footer, prev/up/next links or cookie text is present.",
+      "retrieval_refs": [
+        {
+          "kind": "manifest",
+          "ref": "/tmp/B21j/manifest.json#R345",
+          "note": "declares 70 lines, 677 words, SHA-256 9b0561a425a1f315d79e900682957330addeca94a961d4643c055788ed853fc7"
+        },
+        {
+          "kind": "local",
+          "ref": "/tmp/B21j/raw/fts-parsers.md L1-L70",
+          "note": "read sequentially in full; L1-L7 extractor header (11 words), L8-L70 body (666 words)"
+        },
+        {
+          "kind": "live-manifest-url",
+          "ref": "https://www.postgresql.org/docs/current/textsearch-parsers.html",
+          "note": "re-fetched 2026-10-24; HTTP 200; the served page title is 'PostgreSQL: Documentation: 18: ...', so /current/ still serves the same major edition as the capture; a site news banner mentions PostgreSQL 19 RC 1, which is not the document version"
+        },
+        {
+          "kind": "live-pinned-edition",
+          "ref": "https://www.postgresql.org/docs/18/textsearch-parsers.html",
+          "note": "re-fetched 2026-10-24; HTTP 200; title and character count identical to the /current/ fetch (22,045) and still states 23 token types, consistent with the same edition, but this is not a byte-level comparison and the record's scope stays the local snapshot"
+        }
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment. Outside this unit: RFC 5322, the W3C XML Recommendation, the remaining chapter 12 sections, and the ts_debug and ts_lexize reference pages were not read.",
+      "representation_gap": null,
+      "representation_sha256": "9b0561a425a1f315d79e900682957330addeca94a961d4643c055788ed853fc7",
+      "retrieved_lines": 70,
+      "retrieved_words": 677,
+      "sections": [
+        {
+          "heading": "Capture header (excluded)",
+          "lines": "L1-L7",
+          "summary": "Title 12.5, URL Source, Published Time and 'Markdown Content:' marker; 11 words of extractor metadata, not page prose."
+        },
+        {
+          "heading": "12.5 Parsers - role",
+          "lines": "L8",
+          "summary": "Parsers split raw document text into tokens and identify each token's parser-defined type; a parser does not modify text, it only identifies plausible word boundaries; because of that limited scope custom parsers are needed less often than custom dictionaries, and one built-in parser covers a wide range."
+        },
+        {
+          "heading": "Built-in parser and token-type count",
+          "lines": "L10",
+          "summary": "The built-in parser is pg_catalog.default and recognizes 23 token types, tabulated in Table 12.1."
+        },
+        {
+          "heading": "Table 12.1 Default Parser's Token Types",
+          "lines": "L12-L38",
+          "summary": "23 rows, each with description and example: asciiword, word, numword, asciihword, hword, numhword, hword_asciipart, hword_part, hword_numpart, email, protocol, url, host, url_path, file, sfloat, float, int, uint, version, tag, entity, blank (L16-L38)."
+        },
+        {
+          "heading": "Note - locale, email and tag limits",
+          "lines": "L42-L48",
+          "summary": "A letter is defined by the database locale, specifically lc_ctype, and ASCII-only words are a separate token type that in most European languages can be treated like word (L44); email allows only period, dash and underscore beyond alphanumerics in user names, not all RFC 5322 characters (L46); tag accepts only names starting with an ASCII letter, underscore or colon and containing letters, digits, hyphens, underscores, periods and colons, and also covers XML comments and declarations, including anything starting with <?x and ending with > (L48)."
+        },
+        {
+          "heading": "Overlapping tokens example",
+          "lines": "L50-L62",
+          "summary": "foo-bar-beta1 is reported as numhword plus hword_asciipart foo and bar and hword_numpart beta1, with '-' as blank; the overlap is stated to be desirable so both the compound and its components can match (L50-L62)."
+        },
+        {
+          "heading": "URL token example",
+          "lines": "L64-L70",
+          "summary": "http://example.com/stuff/index.html is reported as protocol, url, host and url_path tokens, with the url_path shown in the context of a URL (L64-L70)."
+        }
+      ],
+      "notes": [
+        "Source claim: parsers only break text into tokens and label token types; they do not modify the text, and the type set is defined by the parser itself (L8).",
+        "Source claim: PostgreSQL provides just one built-in parser, pg_catalog.default, and the page argues custom parsers are less necessary than custom dictionaries (L8-L10).",
+        "Source claim: the default parser recognizes 23 token types; Table 12.1 lists 23 rows, so the stated count and the table agree (L10-L38).",
+        "Source claim: token-type recognition of letters depends on lc_ctype, and asciiword versus word separation exists because distinguishing basic ASCII words is sometimes useful (L44).",
+        "Source claim: the email token type supports only period, dash and underscore as non-alphanumerics in user names, so not all RFC 5322 addresses are parsed as email (L46).",
+        "Source claim: the tag token type covers a restricted name grammar plus XML comments and XML declarations, which also captures anything starting with <?x and ending with > (L48).",
+        "Source claim: one text span can yield overlapping tokens; the hyphenated example emits the whole word and each component, which is presented as desirable for matching compounds and parts (L50-L62).",
+        "Observation: the page names token types but never shows how they map to dictionaries; that binding is performed in configurations and is outside this unit.",
+        "Inference: no parsing cost, token-count or latency figures appear, and the two examples are the only behavioural evidence; the claim that one parser fits a wide range of applications is not qualified by corpus type.",
+        "Observation: both result tables are publisher ts_debug output, not executed during this read; neither ends with a psql row-count line, and the URL table stops at url_path."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Tokenization boundaries for code identifiers, dotted names and hyphenated fields, the practical reading of parser token types."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Analyzer-compatibility walkthrough where differing tokenization between index and query changes results."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+          "candidate": "GIN access over composite values such as lexemes, the index side of parser output."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-judgments.md",
+          "candidate": "Matched lexical comparisons, where token-type choices determine what counts as a match."
+        }
+      ],
+      "reader": "delegated-reader R345 (DeepSeek Harness subagent deepseek-flash, parent session-339f3170-2943-4eff-877d-b6b465e229ef; read-only extraction, not independent review, human review or CI)"
+    },
+    {
+      "id": "R346",
+      "source_ids": [
+        "src.postgres-fts"
+      ],
+      "url": "https://www.postgresql.org/docs/current/textsearch-configuration.html",
+      "unit": "PostgreSQL 18 documentation page 12.7 'Configuration Example' at https://www.postgresql.org/docs/current/textsearch-configuration.html, native Markdown at /tmp/B21j/raw/fts-configuration.md; 72 lines, 395 words, SHA-256 e276d8a9d44e8baadc1c8baf53a368bcbd2c1801fc74240a50aba1bfd24fcd53",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "All 72 lines / 395 words of the local native-Markdown capture were read sequentially. L1-L7 (12 words) are the extractor header (Title, URL Source, Published Time 2026-08-13T12:52:54.741344, 'Markdown Content:') and are excluded from the substantive body, leaving L8-L72 at 383 words. Section 12.7 is complete: framing, synonym file and dictionary creation, ispell registration, mapping and unmapping, a ts_debug test call and the activation transcript ending at L72 with 'public.pg'. No site navigation, breadcrumb, footer, prev/up/next links or cookie text is present; heading anchors and psql transcript formatting are retained in the counts.",
+      "retrieval_refs": [
+        {
+          "kind": "manifest",
+          "ref": "/tmp/B21j/manifest.json#R346",
+          "note": "declares 72 lines, 395 words, SHA-256 e276d8a9d44e8baadc1c8baf53a368bcbd2c1801fc74240a50aba1bfd24fcd53"
+        },
+        {
+          "kind": "local",
+          "ref": "/tmp/B21j/raw/fts-configuration.md L1-L72",
+          "note": "read sequentially in full; L1-L7 extractor header (12 words), L8-L72 body (383 words)"
+        },
+        {
+          "kind": "live-manifest-url",
+          "ref": "https://www.postgresql.org/docs/current/textsearch-configuration.html",
+          "note": "re-fetched 2026-10-24; HTTP 200; the served page title is 'PostgreSQL: Documentation: 18: ...', so /current/ still serves the same major edition as the capture; a site news banner mentions PostgreSQL 19 RC 1, which is not the document version"
+        },
+        {
+          "kind": "live-pinned-edition",
+          "ref": "https://www.postgresql.org/docs/18/textsearch-configuration.html",
+          "note": "re-fetched 2026-10-24; HTTP 200; title and character count identical to the /current/ fetch (17,116) and still headed 'Configuration Example', consistent with the same edition, but this is not a byte-level comparison and the record's scope stays the local snapshot"
+        }
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment. Outside this unit: section 12.10 psql support, the CREATE TEXT SEARCH CONFIGURATION and DICTIONARY reference pages, the default_text_search_config runtime-configuration entry, and the referenced $SHAREDIR files (pg_dict.syn, english.affix/.dict/.stop) were not read.",
+      "representation_gap": null,
+      "representation_sha256": "e276d8a9d44e8baadc1c8baf53a368bcbd2c1801fc74240a50aba1bfd24fcd53",
+      "retrieved_lines": 72,
+      "retrieved_words": 395,
+      "sections": [
+        {
+          "heading": "Capture header (excluded)",
+          "lines": "L1-L7",
+          "summary": "Title 12.7, URL Source, Published Time and 'Markdown Content:' marker; 12 words of extractor metadata, not page prose."
+        },
+        {
+          "heading": "12.7 Configuration Example - framing",
+          "lines": "L8-L10",
+          "summary": "A configuration specifies everything needed to turn a document into a tsvector, namely the parser and the dictionaries that map tokens to lexemes; every to_tsvector or to_tsquery call needs one, and default_text_search_config supplies the default, set in postgresql.conf or per session with SET (L8); several predefined configurations exist, custom ones are easy, and SQL plus psql commands (Section 12.10) manage and display them (L10)."
+        },
+        {
+          "heading": "Duplicate english and add a synonym list",
+          "lines": "L12-L27",
+          "summary": "CREATE TEXT SEARCH CONFIGURATION public.pg (COPY = pg_catalog.english); the $SHAREDIR/tsearch_data/pg_dict.syn file maps postgres, pgsql and postgresql to pg; CREATE TEXT SEARCH DICTIONARY pg_dict (TEMPLATE = synonym, SYNONYMS = pg_dict)."
+        },
+        {
+          "heading": "Register the Ispell dictionary",
+          "lines": "L29-L36",
+          "summary": "CREATE TEXT SEARCH DICTIONARY english_ispell (TEMPLATE = ispell, DictFile = english, AffFile = english, StopWords = english), with the note that it has its own configuration files."
+        },
+        {
+          "heading": "Map token types to the dictionary chain",
+          "lines": "L38-L43",
+          "summary": "ALTER TEXT SEARCH CONFIGURATION pg ALTER MAPPING FOR asciiword, asciihword, hword_asciipart, word, hword, hword_part WITH pg_dict, english_ispell, english_stem."
+        },
+        {
+          "heading": "Drop unneeded token types",
+          "lines": "L45-L48",
+          "summary": "ALTER MAPPING ... DROP MAPPING FOR email, url, url_path, sfloat, float, described as choosing not to index or search token types the built-in configuration handles."
+        },
+        {
+          "heading": "Test with ts_debug",
+          "lines": "L50-L56",
+          "summary": "SELECT * FROM ts_debug('public.pg', ...) over a sample sentence; the call is shown without its result set."
+        },
+        {
+          "heading": "Activate and verify",
+          "lines": "L58-L72",
+          "summary": "\\dF lists public.pg in schema public; SET default_text_search_config = 'public.pg' followed by SHOW confirming public.pg."
+        }
+      ],
+      "notes": [
+        "Source claim: a text search configuration specifies the parser used to break text into tokens and the dictionaries used to turn tokens into lexemes, and every to_tsvector or to_tsquery call needs one (L8).",
+        "Source claim: default_text_search_config names the configuration used when no explicit one is passed and can be set in postgresql.conf or per session with SET (L8).",
+        "Source claim: the example duplicates the built-in english configuration into public.pg and relies on a synonym file mapping postgres, pgsql and postgresql to pg (L12-L27).",
+        "Source claim: the dictionary chain is pg_dict then english_ispell then english_stem, i.e. narrow to general, which mirrors the ordering rule stated on the preceding Dictionaries page (L40-L43).",
+        "Source claim: DROP MAPPING FOR email, url, url_path, sfloat and float deliberately stops indexing and searching token types the built-in configuration handles (L45-L48).",
+        "Source claim: \\dF lists the configuration, and SET plus SHOW default_text_search_config confirm that the new configuration is active (L60-L72).",
+        "Observation: the ts_debug call at L52-L56 is shown without output, so this page demonstrates the command but not the resulting token/dictionary/lexeme rows.",
+        "Observation: the example assumes the ability to write pg_dict.syn into $SHAREDIR/tsearch_data; no permission, packaging or deployment step is described for that file.",
+        "Inference: the page is descriptive, not normative - it gives no criterion for copying an existing configuration versus composing one, and no measurement of the effect of adding synonyms, ispell or dropped token types.",
+        "Observation: L35 spells the parameter 'StopWords', while the Dictionaries page capture spells it 'Stopwords' at its L310; unquoted identifiers are case-insensitive, so the difference is typographic.",
+        "Inference: because the configuration is the object that binds parser and dictionaries, a configuration change is the natural boundary for index regeneration, but this page does not say so."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "End-to-end lexical walkthrough where analyzer/configuration choice and index generation interact."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Section on PostgreSQL SQL full-text search as a candidate store, currently referencing chapter 12 configuration and ranking."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/snapshot-access.md",
+          "candidate": "Provenance of the configuration and dictionary set that produced an index."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md",
+          "candidate": "Index lifecycle change, relevant when a configuration change forces a rebuild."
+        }
+      ],
+      "reader": "delegated-reader R346 (DeepSeek Harness subagent deepseek-flash, parent session-339f3170-2943-4eff-877d-b6b465e229ef; read-only extraction, not independent review, human review or CI)"
+    },
+    {
+      "id": "R347",
+      "source_ids": [
+        "src.postgres-fts"
+      ],
+      "url": "https://www.postgresql.org/docs/current/textsearch-psql.html",
+      "unit": "PostgreSQL 18 documentation — Chapter 12. Full Text Search, section 12.10. psql Support (single page)",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Whole capture (lines 1-156; 156 lines, 796 words), including extractor header. Page body lines 8-156 read completely: one section, no subsections. Site navigation/footer chrome is absent; Markdown link/anchor and emphasis markup not treated as prose. No representation gap.",
+      "retrieval_refs": [
+        "raw/fts-psql.md:1-156",
+        "https://www.postgresql.org/docs/current/textsearch-psql.html"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment",
+      "representation_sha256": "a588d0e7fc99792781a310f8abcc615adcf5f11440c40bd8dc1272592504691e",
+      "retrieved_lines": 156,
+      "retrieved_words": 796,
+      "sections": [
+        "12.10. psql Support"
+      ],
+      "notes": [
+        "[source] The page introduces psql's text-search inspection commands as `\\dF{d,p,t}[+] [PATTERN]`, then enumerates `\\dF`, `\\dFd`, `\\dFp` and `\\dFt`; `+` adds detail and `PATTERN` may be schema-qualified, a regular expression, or split into separate schema/object patterns.",
+        "[source] `\\dF` lists configurations; the `\\dF+ russian` example adds parser `pg_catalog.default` and a token-type-to-dictionary table (e.g. `word` to `russian_stem`, `email` to `simple`).",
+        "[source] `\\dFd` lists dictionaries; its sample output names Snowball stemmers for many languages plus a `simple` dictionary that lower-cases and checks stop words.",
+        "[source] `\\dFp+` lists parser support functions (`prsd_start`, `prsd_nexttoken`, `prsd_end`, `prsd_headline`, `prsd_lextype`) and the 23 token types of the default parser, ending with '(23 rows)'.",
+        "[source] `\\dFt` lists the five templates: `ispell`, `simple`, `snowball`, `synonym`, `thesaurus`.",
+        "[inference] These commands expose installed catalog objects; the displayed rows describe one server's configuration rather than a fixed, version-independent catalog.",
+        "[inference] The page is discovery-only: it contains no DDL, privilege guidance, performance advice, or explanation of how the objects affect matching.",
+        "[artifact] The capture adds Title/URL/Published Time/Markdown Content header lines and Markdown emphasis/backtick markup; psql table whitespace is preserved. No site navigation or footer is present.",
+        "[artifact] The header's Published Time (2026-08-13T12:52:54) is capture metadata, not an edition date; the parent-supplied revision date is used instead."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash; read 2026-10-24; parent session-339f3170-2943-4eff-877d-b6b465e229ef"
+    },
+    {
+      "id": "R348",
+      "source_ids": [
+        "src.postgres-fts"
+      ],
+      "url": "https://www.postgresql.org/docs/current/textsearch-debugging.html",
+      "unit": "PostgreSQL 18 documentation — Chapter 12. Full Text Search, section 12.8. Testing and Debugging Text Search (single page, 3 subsections)",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Whole capture (lines 1-197; 197 lines, 1,347 words), including extractor header. Page body lines 8-197 read completely: 12.8 plus subsections 12.8.1-12.8.3. Site navigation/footer chrome absent; anchor-link markup, escaped underscores and heading markers excluded as extractor artifacts. No representation gap.",
+      "retrieval_refs": [
+        "raw/fts-debugging.md:1-197",
+        "https://www.postgresql.org/docs/current/textsearch-debugging.html"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment",
+      "representation_sha256": "d191f7152b397dda62d59b082fcedc7a081b3161e6c02a60f124307039eb6063",
+      "retrieved_lines": 197,
+      "retrieved_words": 1347,
+      "sections": [
+        "12.8. Testing and Debugging Text Search",
+        "12.8.1 Configuration Testing",
+        "12.8.2 Parser Testing",
+        "12.8.3 Dictionary Testing"
+      ],
+      "notes": [
+        "[source] 12.8 introduces `ts_debug` for testing a whole configuration, with optional `config regconfig` defaulting to `default_text_search_config`; it returns one row per parser token with alias, description, token, candidate dictionaries, recognizing dictionary and lexemes.",
+        "[source] Output semantics: a `NULL` dictionary means no dictionary recognized the token; `{}` lexemes means a stop word; `NULL` lexemes means no recognition.",
+        "[source] The first example shows `a` and `on` as stop words (`{}`) and the hyphen as a `blank` token with no dictionaries.",
+        "[source] The extended example creates `public.english` from `pg_catalog.english`, adds `english_ispell`, and maps `asciiword`; `Brightest` becomes `{bright}` via ispell while `supernovaes` falls through to `english_stem` and becomes `{supernova}`.",
+        "[source] `The` is recognized by `english_ispell` as a stop word and not indexed; spaces are discarded because the configuration provides no dictionaries for them.",
+        "[source] `ts_parse` returns `tokid` and token text; the example `123 - a number` yields tokid 22 for `123`, 12 for blanks/hyphen, and 1 for `a`/`number`.",
+        "[source] `ts_token_type` returns the integer `tokid`, alias and description for each of the 23 default token types.",
+        "[source] `ts_lexize` returns lexemes for known tokens, `{}` for stop words, `NULL` for unknown tokens; it treats input as one token, so the thesaurus phrase `supernovae stars` returns NULL and `plainto_tsquery`/`to_tsvector` are recommended for phrase tests (the example `plainto_tsquery` result is `'sn'`).",
+        "[inference] The three subsections form a layered diagnostic path: configuration mapping, parser segmentation, then dictionary normalization.",
+        "[artifact] Capture artifacts include `[#]` anchor links, escaped underscores such as `parser\\_name`, and `###` heading markup; the 'Note' appears as a bold block, not a numbered section. No nav/footer chrome is present."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/README.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-judgments.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash; read 2026-10-24; parent session-339f3170-2943-4eff-877d-b6b465e229ef"
+    },
+    {
+      "id": "R349",
+      "source_ids": [
+        "src.postgres-fts"
+      ],
+      "url": "https://www.postgresql.org/docs/current/textsearch-limitations.html",
+      "unit": "PostgreSQL 18 documentation — Chapter 12. Full Text Search, section 12.11. Limitations (single page)",
+      "revision": "PostgreSQL 18 documentation, page captured 2026-10-24",
+      "status": "full-scoped-text-read",
+      "coverage": "Whole capture (lines 1-26; 26 lines, 159 words), including extractor header. Page body lines 8-26 read completely: 12.11, no subsections. Nav/footer chrome absent; superscript flattening noted. No representation gap.",
+      "retrieval_refs": [
+        "raw/fts-limitations.md:1-26",
+        "https://www.postgresql.org/docs/current/textsearch-limitations.html"
+      ],
+      "omissions": "Other PostgreSQL manual chapters not read; no experiment",
+      "representation_sha256": "a0a47e9f3cee71d2232a3abd310239d04cf6f94529fb4320880b6c50cf5c01e4",
+      "retrieved_lines": 26,
+      "retrieved_words": 159,
+      "sections": [
+        "12.11. Limitations"
+      ],
+      "notes": [
+        "[source] Lexeme length must be less than 2 kilobytes; a `tsvector` (lexemes + positions) must be less than 1 megabyte.",
+        "[source] The number of lexemes must be less than 2^64 (the capture renders it as '2 64', losing the superscript).",
+        "[source] `tsvector` positions must be greater than 0 and no more than 16,383; the `<N>` (FOLLOWED BY) distance in `tsquery` cannot exceed 16,384; no more than 256 positions per lexeme.",
+        "[source] A `tsquery` may contain fewer than 32,768 nodes (lexemes + operators).",
+        "[source] For scale comparison the page cites PostgreSQL 8.1 documentation: 10,441 unique words, 335,420 total words, and 'postgresql' mentioned 6,127 times in 655 documents.",
+        "[source] A mailing-list example reports 910,989 unique words, 57,491,343 lexemes across 461,020 messages.",
+        "[inference] These are structural/value-size limits; the page states no latency, index-size, throughput or degradation behavior at the boundaries.",
+        "[inference] The two corpus figures are illustrative historical counts without a stated measurement method; they are not current benchmarks.",
+        "[artifact] Formatting artifacts: the superscript in '2^64' and typographic quotes are flattened in the Markdown capture; the page has no subsections and no navigation/footer chrome."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md",
+          "candidate": "Relate the page to this chapter; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/deepseek-flash; read 2026-10-24; parent session-339f3170-2943-4eff-877d-b6b465e229ef"
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 302,
+    "full_reads": 314,
     "blocked": 14,
     "records": [
       "R015",
@@ -36952,7 +37872,19 @@
       "R334",
       "R335",
       "R336",
-      "R337"
+      "R337",
+      "R338",
+      "R339",
+      "R340",
+      "R341",
+      "R342",
+      "R343",
+      "R344",
+      "R345",
+      "R346",
+      "R347",
+      "R348",
+      "R349"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
