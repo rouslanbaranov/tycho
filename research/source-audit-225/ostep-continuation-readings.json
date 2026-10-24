@@ -3420,5 +3420,374 @@
     "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is framing or synthesis, not technical evidence.",
     "reader": "Tycho agent; no independent review or execution.",
     "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B102",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-security.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/dialogue-security.pdf",
+    "unit": "Complete chapter 52, A Dialogue on Security",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2024-08-21T22:41:24Z; 2 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 67 lines / 2 pages; complete dialogue text; no figures or tables.",
+    "retrieved_lines": 67,
+    "retrieved_words": 620,
+    "representation_sha256": "0bada2b9d8571cfacd0c312af8acadcce5169a989af441cf72d41581c7ed6b8a",
+    "pages": 2,
+    "pdf_sha256": null,
+    "sections": [
+      "A Dialogue on Security"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/dialogue-security.md lines 1-67",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: operating-system security is about confidentiality, integrity and availability of resources.",
+      "Source claim: security differs from reliability because an adversary intentionally tries to cause failures, not merely accidents or poor planning.",
+      "Source claim: adversaries are assumed to be clever, persistent, flexible and sneaky; protection must hold despite their attempts.",
+      "Inference: a security claim needs an explicit asset, adversary capability and boundary; a generic control list is insufficient.",
+      "Inference: availability is part of security, not only a performance or reliability objective.",
+      "The dialogue contains no mechanism, measurement or threat-model specification."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md",
+        "candidate": "Does the threat page start from assets, adversaries and capabilities rather than a generic security checklist?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+        "candidate": "Does the page keep confidentiality, integrity and availability as separate goals with different failure evidence?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/safe-agent-access-and-knowledge-isolation.md",
+        "candidate": "Does the isolation page state the adversary model and what the boundary does not protect?"
+      }
+    ],
+    "remaining": "No raster figures. Linked papers, code and exercises were not read or executed. Dialogue is framing, not technical evidence.",
+    "reader": "Tycho agent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B103",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/security-intro.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/security-intro.pdf",
+    "unit": "Complete chapter 53, Introduction to Operating System Security",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:35:30Z; 12 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 144 lines / 12 pages; sections 53.1-53.6 plus References; figures: none; code: none; asides: Security Enclaves and Security vs. Fault Tolerance plus one Weakest Link tip; footnotes 1-3; homework: none; no raster figures present or visually inspected",
+    "retrieved_lines": 144,
+    "retrieved_words": 5320,
+    "representation_sha256": "58d3efba0f8b62107ebc75d68b19f687dbf90e316b20548814e00723d65ec034",
+    "pages": 12,
+    "pdf_sha256": null,
+    "sections": [
+      "53.1 Introduction",
+      "53.2 What Are We Protecting?",
+      "53.3 Security Goals and Policies",
+      "53.4 Designing Secure Systems",
+      "53.5 The Basics of OS Security",
+      "53.6 Summary",
+      "References"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/security-intro.md lines 1-144",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: the chapter grounds OS security in the OS's control of processor, memory, persistent storage and devices, so a compromised OS can read or alter any process's memory, files, scheduling and messages.",
+      "Source claim: the stated goals are confidentiality, integrity (including authenticity), availability, controlled sharing and non-repudiation; examples show these must be narrowed to specific principals, objects and actions.",
+      "Source claim: the OS provides general enforcement mechanisms while deployers choose the policy; the file example permits users A and B to write file X and denies everyone else.",
+      "Source claim: the eight Saltzer-Schroeder principles include complete mediation and least common mechanism, and the chapter notes that complete mediation is often traded away for overhead or usability.",
+      "Source claim: virtualization is not sufficient for security because isolation mechanisms can be subverted, some sharing is intentional, and the OS does not always control all hardware.",
+      "Source claim: a system call is the OS's policy checkpoint; the mode switch lets the OS resolve the calling process from its PCB, and the OS can reject the request with an error if it is unauthorized.",
+      "Source claim: attackers target the weakest link, often a human user, so least privilege limits what a fooled user can authorize.",
+      "Inference: 'protect everything' works as a scope warning but not as an operating policy; the chapter's own file example implies that each policy must name principal, object, action and permitted or denied outcome.",
+      "Inference: complete mediation is a coverage property, not a single check; a mechanism that is bypassable through another path does not satisfy it even when the primary path is checked.",
+      "Inference: the chapter's trust assumption is asymmetric, since it treats a non-malicious but flawed OS as the normal case and a malicious OS as outside the defended threat model."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md",
+        "candidate": "Does the threat worksheet turn 'protect everything' into explicit principal, object, action and permitted/denied outcomes that can be tested?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/security-tests.md",
+        "candidate": "Do the negative tests exercise complete mediation at every entry path, including paths that bypass the primary API, rather than only the documented workflow?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+        "candidate": "Does the page keep policy authority distinct from enforcement mechanism, so swapping the mechanism cannot silently change who is allowed to act?"
+      }
+    ],
+    "remaining": "Explicit omissions: no raster figures are present; the linked references [D+07], [SC00], [SE13] and [SS75] were not retrieved; no code or exercises were executed; historical examples and source claims were not independently verified.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B104",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/security-authentication.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/security-authentication.pdf",
+    "unit": "Complete chapter 54, Authentication",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2026-01-09T21:46:56Z; 19 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 240 lines / 19 pages; sections 54.1-54.8 plus References; figure 54.1 (Crossover Error Rate); code: one inline sudo command, no listing; asides: Password Vaults, Linux Login Procedures, Other Authentication Possibilities; footnotes 1-6; homework: none; raster figure not visually inspected",
+    "retrieved_lines": 240,
+    "retrieved_words": 9874,
+    "representation_sha256": "a9aa59a28615d6e86f03efabd16634c071a617dc23680f39525031955180b545",
+    "pages": 19,
+    "pdf_sha256": null,
+    "sections": [
+      "54.1 Introduction",
+      "54.2 Attaching Identities To Processes",
+      "54.3 How To Authenticate Users?",
+      "54.4 Authentication By What You Know",
+      "54.5 Authentication by What You Have",
+      "54.6 Authentication by What You Are",
+      "54.7 Authenticating Non-Humans",
+      "54.8 Summary",
+      "References"
+    ],
+    "figures": [
+      "Figure 54.1: Crossover Error Rate (false-positive and false-negative sensitivity curves; axes and caption only in the text representation)"
+    ],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/security-authentication.md lines 1-240",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: a principal is a security-meaningful entity such as a user, group or program; an agent is the process acting for it, and an object is the resource being requested.",
+      "Source claim: new processes normally inherit their parent's identity; a privileged login process sets the first user process's identity after authentication, and later children copy it.",
+      "Source claim: password verification needs only a stored cryptographic hash; a stolen hash should not reveal the password, and a salt prevents one precomputed dictionary from covering every entry.",
+      "Source claim: password guessing depends on length and alphabet, but dictionary attacks exploit predictable choices; rate limiting or slowing checks protects an online login, while a stolen hash file enables offline guessing.",
+      "Source claim: possession factors must produce changing evidence; otherwise a copied static code becomes a password, and loss or theft both blocks the legitimate user and may enable an impostor.",
+      "Source claim: biometric matching is similarity-based, so sensitivity trades false positives against false negatives; crossover error rate summarizes one operating point, but the preferred point depends on which error is costlier.",
+      "Source claim: a remote biometric reading is only a bit pattern; without a trusted local sensor, an attacker who knows the expected pattern can replay or synthesize it.",
+      "Source claim: non-human principals are accounts with no interactive login; sudo -u lets an authenticated administrator start a process under another identity, and that command does not require credentials for the target account.",
+      "Source claim: Linux reports the same login failure for an unknown user name and a wrong password to avoid disclosing valid account names; user names are echoed while passwords are not.",
+      "Inference: identity inheritance makes the initial login decision durable across the process tree, so compromise of a long-lived shell or service effectively extends the authenticated identity to every descendant until a privileged identity change occurs."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md",
+        "candidate": "Does the page state exactly what authentication establishes, for which principal type (human, group or service), and how that identity is bound to a process and inherited by its children?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+        "candidate": "Does the credential contract cover non-human principals and privileged identity changes, including who is authenticated and which child process inherits the changed identity?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/security-tests.md",
+        "candidate": "Do negative tests cover a compromised long-lived parent process, a stolen possession factor and indistinguishable login failures for unknown versus valid principals?"
+      }
+    ],
+    "remaining": "Explicit omissions: Figure 54.1 was read only as extracted axis and caption text and was not visually inspected; the linked references and external URLs were not retrieved; the sudo example was not executed; no homework or exercises were executed.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B105",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/security-access.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/security-access.pdf",
+    "unit": "Complete chapter 55, Access Control",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:36:15Z; 18 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 238 lines / 18 pages; sections 55.1-55.7 plus References; 2 asides (Namespaces; The Android Access Control Model), 1 tip (Privilege Escalation Considered Dangerous), 1 crux box; inline open() and sudo examples; no numbered figures, tables, code listings or homework; raster figures not visually inspected",
+    "retrieved_lines": 238,
+    "retrieved_words": 9704,
+    "representation_sha256": "1d19220f7c9bae104c91246440f6963b0c65695004378ec97bfbe2567302561b",
+    "pages": 18,
+    "pdf_sha256": null,
+    "sections": [
+      "55.1 Introduction",
+      "55.2 Important Aspects Of The Access Control Problem",
+      "55.3 Using ACLs For Access Control",
+      "55.4 Using Capabilities For Access Control",
+      "55.5 Mandatory And Discretionary Access Control",
+      "55.6 Practicalities Of Access Control Mechanisms",
+      "55.7 Summary",
+      "References"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/security-access.md lines 1-238",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: access control is the decision procedure that maps a subject, an object and a requested access mode to allow or deny, and authorization is that decision executed by a reference monitor on a trapped request.",
+      "Source claim: complete mediation and reference-monitor cost pull against each other; virtualization (virtual memory, assigned devices) removes per-access checks only by making protection of the virtualization mechanism itself the new boundary.",
+      "Source claim: the Unix nine-bit owner/group/other ACL is a compact ACL encoded in the inode, chosen to fit scarce metadata space, and it cannot express arbitrary sharing relationships.",
+      "Source claim: ACLs make 'who may access this object' and revocation cheap, but enumerating a principal's accessible objects requires scanning every object's ACL, and cross-domain ACLs need a common identity namespace.",
+      "Source claim: in a pure capability system the kernel holds unforgeable tokens for the process; because user-space bit patterns can be copied and forged, transfer must be mediated, and revocation becomes difficult once copies exist.",
+      "Source claim: capabilities make 'what may this principal access' and least-privilege delegation cheap, but finding every principal who can reach one object requires scanning all capability lists.",
+      "Source claim: Linux combines the models, consulting the inode ACL at open() and then attaching a capability-like structure to the process's PCB for later reads and writes until close.",
+      "Source claim: discretionary access control leaves policy to the owner, mandatory access control lets an authority override owners, and the choice is orthogonal to ACL versus capability.",
+      "Source claim: RBAC adds roles, role switching that relinquishes the prior role's rights, and type enforcement finer than read/write; setuid and sudo provide bounded escalation whose danger is an attacker's route to superuser.",
+      "Inference: the chapter's central architectural point is that mechanism defects are rare compared with policy defects, so defaults, role definitions and revocation paths deserve more review than the choice of ACL or capability data structure."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+        "candidate": "Does the page compare ACL-style object policy with capability-style possession, including which query direction each makes cheap and where revocation lives?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md",
+        "candidate": "Does the threat page name the reference monitor, its mediation boundary and the latency budget for checking every request, rather than assuming a central decision point is free?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+        "candidate": "Does the credentials page distinguish owner-discretionary policy from authority-imposed policy, and state which one its rotation and revocation rules assume?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/safe-agent-access-and-knowledge-isolation.md",
+        "candidate": "Does the agent isolation page grant a delegated process a strict subset of its parent's rights, and say what happens to a copied grant after revocation?"
+      }
+    ],
+    "remaining": "Explicit omissions: no raster figures exist in this chapter and none were visually inspected; the ten cited works (C+63, DV64, E+09, FK92, L84, L01, S74, T84, W20, W+74) were not retrieved; no code or exercise was executed, and the chapter has no homework section.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B106",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/security-crypto.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/security-crypto.pdf",
+    "unit": "Complete chapter 56, Protecting Information With Cryptography",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:37:19Z; 20 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 263 lines / 20 pages; sections 56.1-56.9 plus References; 2 tips (Developing Your Own Ciphers: Don't Do It; Selecting Keys), 1 crux box, 5 numbered equations (56.1-56.5); no numbered figures, tables, code listings or homework; raster figures not visually inspected",
+    "retrieved_lines": 263,
+    "retrieved_words": 10263,
+    "representation_sha256": "5ef1ff0cf9fc3a38aa39b3f236a134126fea84a23ada7f429262fa3258ffd5ba",
+    "pages": 20,
+    "pdf_sha256": null,
+    "sections": [
+      "56.1 Introduction",
+      "56.2 Cryptography",
+      "56.3 Public Key Cryptography",
+      "56.4 Cryptographic Hashes",
+      "56.5 Cracking Cryptography",
+      "56.6 Cryptography And Operating Systems",
+      "56.7 At-Rest Data Encryption",
+      "56.8 Cryptographic Capabilities",
+      "56.9 Summary",
+      "References"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/security-crypto.md lines 1-263",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: cryptography is needed because data can leave the operating system's control domain, so protection must assume loss of custody rather than rely on access checks.",
+      "Source claim: a cipher's benefit rests entirely on key secrecy; standard ciphers such as AES are public and studied, and the chapter advises against designing a new cipher.",
+      "Source claim: altered ciphertext should decrypt to unpredictable output, and encrypting a cryptographic hash of the plaintext gives a stronger tamper check than relying on decryption garbage alone.",
+      "Source claim: cryptographic hashes must be collision-resistant and unpredictable; SHA-1 was broken in 2017, and hash choice needs current guidance, with uses in password storage, file-integrity checking and proof of work.",
+      "Source claim: symmetric cryptography shares one secret key, while public-key cryptography uses a pair so private-key encryption authenticates and public-key encryption protects secrecy; PK is hundreds of times slower and needs two pairs for both properties.",
+      "Source claim: public-key cryptography replaces secret-key distribution with public-key distribution, but that foundation fails if an attacker can convince a peer that the attacker's key belongs to someone else.",
+      "Source claim: practical breaks are usually key guessing, key exposure, or key-management flaws (WEP, Netscape seeds, shared embedded-device private keys, Heartbleed), not cipher breaks; random generation and adequate length are the defenses.",
+      "Source claim: when plaintext and key are both on a machine, a compromised OS can read or copy them; cryptography helps only outside that trust boundary, for one-way password hashes, in transit, or at rest with the key absent.",
+      "Source claim: full-disk encryption protects against physical removal or theft, not against OS flaws, administrators, application bugs or access-control bypass while the key is resident; software overhead is typically a few percent on disk-heavy work.",
+      "Inference: the at-rest threat model is narrow and explicit - confidentiality against offline access - so treating disk encryption as authorization, integrity or protection from a live compromised kernel overreads the chapter."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+        "candidate": "Does the credential page separate data-encryption keys, token-signing keys and transport certificates, and require distinct rotation, revocation and recovery paths for each?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-integrity.md",
+        "candidate": "Does the record-integrity page avoid equating encryption or a bare hash with tamper evidence, and require an authenticated construction plus independent capture?"
+      },
+      {
+        "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
+        "candidate": "Does the access-lifecycle page treat encryption as a confidentiality control for offline or removed media, and state the key-custody assumption that makes it real?"
+      },
+      {
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",
+        "candidate": "Does the TLS page separate channel encryption from end-to-end authentication and identify every hop where plaintext or keys exist?"
+      }
+    ],
+    "remaining": "Explicit omissions: no raster figures exist in this chapter and none were visually inspected; the eight cited works (D88, D+14, G02, G17, GW96, K96, S96, V16) were not retrieved; no code, cipher, or exercise was executed, and the chapter has no homework section.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
+  },
+  {
+    "id": "B107",
+    "source_id": "src.ostep",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/security-distributed.pdf",
+    "representation_url": "https://r.jina.ai/http://pages.cs.wisc.edu/~remzi/OSTEP/security-distributed.pdf",
+    "unit": "Complete chapter 57, Distributed System Security",
+    "edition": "Operating Systems: Three Easy Pieces, version 1.10; PDF Published Time 2023-11-14T15:37:38Z; 18 pages",
+    "status": "full-scoped-text-read",
+    "coverage": "All 216 lines / 18 pages; sections 57.1–57.8 and References; running headers/footers; one boxed Diffie-Hellman aside; no figure captions, tables, code listings, or homework in the representation; raster figures not visually inspected",
+    "retrieved_lines": 216,
+    "retrieved_words": 9035,
+    "representation_sha256": "370b07dc337acc5b627743b55ca999f403a29315ede926444ccd2711e07de081",
+    "pages": 18,
+    "pdf_sha256": null,
+    "sections": [
+      "57.1 Introduction",
+      "57.2 The Role of Authentication",
+      "57.3 Public Key Authentication For Distributed Systems",
+      "57.4 Password Authentication For Distributed Systems",
+      "57.5 SSL/TLS",
+      "Aside: Diffie-Hellman Key Exchange",
+      "57.6 Other Authentication Approaches",
+      "57.7 Some Higher Level Tools",
+      "HTTPS",
+      "SSH",
+      "57.8 Summary",
+      "References"
+    ],
+    "figures": [],
+    "technical_images_inspected": 0,
+    "retrieval_refs": [
+      "/tmp/ostep/security-distributed.md lines 1-216",
+      "Jina reader, accessed 2026-10-24"
+    ],
+    "notes": [
+      "Source claim: because an OS controls only its own machine, it cannot generally verify a remote partner's disk encryption, key wiping, or access controls; distributed security must rely on bounded trust, authentication, and compensating action.",
+      "Source claim: a certificate binds an identity and public key under a CA signature, and verification requires a pre-trusted CA key; browsers and installed software are the usual bootstrap point.",
+      "Inference: the certificate walkthrough uses a simplified RSA sign/verify model ('decrypt the signature with the public key'); it is an explanatory sketch, not a complete modern signature or PKI specification.",
+      "Source claim: copying a valid signed or encrypted message permits replay, so protocols need unique per-message information; home-grown cryptography is discouraged in favor of standard protocols.",
+      "Source claim: passwords fit many users authenticating to one site, while public keys fit one site authenticating to many users; password transit must be encrypted, and initial authentication does not by itself authenticate later messages.",
+      "Source claim: TLS negotiates algorithms, normally authenticates the server with a certificate, uses Diffie-Hellman to establish a fresh symmetric key, and optionally authenticates the client; bulk data uses symmetric encryption.",
+      "Source claim: TLS is a protocol with multiple implementations, so a flaw may be implementation-specific (Heartbleed in OpenSSL) or affect every compliant implementation; the chapter treats TLS 1.3 as current circa 2020.",
+      "Source claim: cookies act as server-issued cryptographic capabilities after login, while challenge/response and online authentication servers (for example Kerberos) offer alternatives with different setup and revocation properties.",
+      "Source claim: HTTPS is HTTP over TLS and HSTS removes plaintext fallback, but a valid certificate only records that a CA vouched for key ownership at some time; it does not prove the site is benevolent, the private key remains secret, or the CA is uncompromised.",
+      "Inference: authentication establishes identity or possession at a point under a named trust root; authorization, endpoint safety, key revocation, and binding of later sessions remain separate obligations."
+    ],
+    "tycho_candidates": [
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/threat-identity.md",
+        "candidate": "Does the page separate endpoint authentication from authenticated principal and authorization, and name the trust root (CA, pre-shared key, or platform identity) explicitly?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+        "candidate": "Does the credential contract cover certificate and trust-root lifetime, revocation, key compromise, and replay/session binding, not only token claims?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+        "candidate": "Does the page treat transport encryption as channel confidentiality and integrity rather than evidence that the remote host enforces policy or is benevolent?"
+      },
+      {
+        "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/safe-agent-access-and-knowledge-isolation.md",
+        "candidate": "For remote or agent-accessible services, does the design state that authenticated remote effects remain untrusted and need separate authorization and containment?"
+      }
+    ],
+    "remaining": "Explicit omissions: raster figures were not visually inspected (none are captioned in the representation); linked references [H14], [I12], [NT94], and [P16] were not retrieved; no code listings or exercises were present or executed; no independent implementation testing.",
+    "reader": "Delegated reading subagent; no independent review or execution.",
+    "authority": "Official publisher PDF representation; notes are original."
   }
 ]

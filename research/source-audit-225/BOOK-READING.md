@@ -1,7 +1,7 @@
 # Foundational book reading
 
 Issue [#225](https://github.com/rouslanbaranov/tycho/issues/225). Updated 2026-10-24.
-**SRE whole-book reading complete; OSTEP main 51-chapter sequence read; security and appendices remain;**
+**SRE whole-book reading complete; OSTEP chapters 1-57 read; appendices remain;**
 **wider reading and comparison in progress.** The owner prioritized foundational
 books over further technology-reference auditing. Earlier reference readings remain
 recorded; one whole book is now complete. The wider source-reading and Tycho
@@ -12,7 +12,7 @@ comparison obligations remain open.
 | Book | Actual progress | Next action |
 | --- | --- | --- |
 | Site Reliability Engineering | All 48 public book units read: 34 chapters, foreword, preface, five part introductions, six appendices and bibliography, with footnotes, tables, examples and embedded figures/formulas | Whole scoped book complete; compare exact passages with the frozen Tycho baseline and separately read linked publications; see `SRE-COMPLETION.md` |
-| Operating Systems: Three Easy Pieces | Chapters 1, 3-51 read completely (50 new units; chapter 2 earlier): CPU virtualization, memory, concurrency, persistence and distributed file systems. The main 51-chapter sequence is complete; security chapters 52-57 and appendices remain. Raster figures not visually inspected | Read security chapters 52-57 and appendices; keep figure and exercise limits explicit |
+| Operating Systems: Three Easy Pieces | Chapters 1, 3-57 read completely (56 new units; chapter 2 earlier): CPU virtualization, memory, concurrency, persistence, distributed systems and security. Appendices A-H remain. Raster figures not visually inspected | Read appendices A-H; keep figure and exercise limits explicit |
 | Designing Data-Intensive Applications, 2nd edition | Publisher contents and short chapter 1 preview only | Full text requires lawful access; do not count the preview as chapter reading or silently substitute the first edition |
 | Distributed Systems, 4th edition | Author's access instructions examined; no book text obtained | Personalized download requires an email and human-verification step; no request submitted |
 | Other registered books | Not started in this audit | Continue `book-queue.json`; distinguish available complete texts from commercial previews |
@@ -297,3 +297,34 @@ visually inspected; linked papers, code and exercises were not executed.
 These are mechanism and policy notes, not measurements. Candidate comparisons
 for durability and replication pages are extended in
 [comparisons.json](comparisons.json).
+
+## OSTEP continuation - security
+
+Six records B102-B107 add chapters 52-57: 1,168 retrieved lines, 44,816 words
+and 89 pages. The combined OSTEP continuation is 56 records: 18,946 lines,
+301,890 words and 740 pages. Raster figures were not visually inspected;
+linked papers, code and exercises were not executed.
+
+- **Chapter 52:** security adds intentional adversaries to reliability; the
+  goals are confidentiality, integrity and availability, not accident tolerance.
+- **Chapter 53:** the OS controls the processor, memory, storage and devices, so
+  a compromised OS can read or alter any process. Mechanisms are general while
+  deployers choose policy; complete mediation and least common mechanism carry
+  explicit costs.
+- **Chapter 54:** authentication binds a principal to an agent. Password hashes
+  and salts, rate limiting, possession factors and biometric error trade-offs
+  are distinct controls; authentication is not authorization.
+- **Chapter 55:** access control maps subject, object and mode to a decision
+  through a reference monitor. ACLs make object-side inquiry and revocation
+  cheap but principal-side enumeration expensive; capabilities reverse the
+  trade-off and complicate revocation.
+- **Chapter 56:** cryptography protects data outside OS custody. Cipher and key
+  secrecy, integrity checks, hash collision resistance, symmetric versus
+  public-key cost and certificate trust are separate obligations.
+- **Chapter 57:** remote hosts cannot be audited locally. PKI bootstraps trust
+  through preinstalled authorities; TLS and SSH protect channels but do not
+  make authentication authorization or establish endpoint safety. Replay,
+  key compromise and plaintext fallback remain independent failures.
+
+These are mechanism and policy notes, not measurements. Security comparisons
+are added to [comparisons.json](comparisons.json).

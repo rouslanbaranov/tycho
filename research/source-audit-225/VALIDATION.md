@@ -154,3 +154,26 @@ Limitations: raster figures and trace tables were not visually inspected;
 linked papers, code and exercises were not read or executed; chapter 9 and
 chapter 32 print version 1.20 while the site table of contents says 1.10; no
 independent review or whole-book completion is claimed.
+
+## OSTEP security continuation - 2026-10-24
+
+Six records B102-B107 add chapters 52-57: 1,168 retrieved lines, 44,816 words
+and 89 pages. The combined OSTEP continuation is 56 records: 18,946 lines,
+301,890 words and 740 pages. All numbered chapters 1-57 are now represented
+(chapter 2 was read earlier); appendices A-H remain.
+
+- All six records parse, have unique IDs B102-B107 and the same 22-field
+  shape; each matches the local line count, word count and SHA-256.
+- All candidate paths exist in the frozen baseline; `comparisons.json` now has
+  fourteen candidate comparisons, still questions rather than findings.
+- The read-only census passed again; 681 baseline files, 247 sources and 406
+  canonical documents remain represented.
+- `check_boundary.py` and `git diff --check` passed. The current-main V11 line
+  checker passes against this tree but does not validate research Markdown.
+- No book, source register, canonical metadata, index, edition or historical
+  report changed. Only the research directory is in the delta.
+
+Limitations: raster figures were not visually inspected; linked papers, code
+and exercises were not read or executed; chapter 9 and chapter 32 print version
+1.20 while the site table of contents says 1.10; no independent review or
+whole-book completion is claimed until the appendices are read.
