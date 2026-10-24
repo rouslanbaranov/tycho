@@ -14,7 +14,7 @@ are not met. The unresolved items are stated with exact counts below.
   chapter 2 record). OSTEP raster figures were not visually inspected.
 - **All 45 baseline fetch-incomplete sources accounted for.** 29 full reads,
   14 blocked pages, 2 excluded internal team sites; 0 unaccounted.
-- **367 reference records:** 334 full, 12 partial, 19 blocked, 2 excluded.
+- **371 reference records:** 338 full, 12 partial, 19 blocked, 2 excluded.
 - **105 assessed comparisons across 77 canonical pages:** 47 supported, 50 qualified, 8 not-addressed, 0 contradicted.
 - **Baseline integrity:** 681 tracked files match the frozen baseline; 247
   registered sources and 406 canonical documents remain represented. No book,
