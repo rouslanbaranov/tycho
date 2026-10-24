@@ -26,6 +26,10 @@ from validate_edition import inventory_members
 import pattern_census
 import pattern_coverage
 import phase4_audit
+import section_fts_index
+import validate_delivery_evidence
+import validate_pattern_owner_units
+import validate_pattern_semantic_audit
 
 
 def load(path, default=None):
@@ -183,6 +187,37 @@ def state(artifact, value, reason, action=None, blocking=False, mode="auto"):
             "action": action, "mode": mode, "blocking": blocking}
 
 
+def semantic_audit_state(root, route):
+    artifact = "edition/patterns/semantic-audit.v1.json"
+    if load(root / artifact) is None:
+        return state(artifact, "missing", "semantic audit is absent",
+                     "restore or re-review the semantic audit", True, "manual")
+    try:
+        validate_pattern_semantic_audit.validate(root)
+    except Exception as exc:  # noqa: BLE001 - validators fail with readable codes
+        return state(artifact, "stale", str(exc),
+                     "re-review changed pages and update sha/review", True, "manual")
+    changes = semantic_changes(root, route)
+    if changes:
+        return state(artifact, "stale",
+                     str(len(changes)) + " page hashes or memberships differ",
+                     "re-review changed pages and update sha/review", True, "manual")
+    return state(artifact, "fresh", "validator and page hashes match")
+
+
+def owner_units_state(root):
+    artifact = "edition/patterns/owner-units.v1.json"
+    if load(root / artifact) is None:
+        return state(artifact, "missing", "owner units are absent",
+                     "restore or re-audit the owner units", True, "manual")
+    try:
+        validate_pattern_owner_units.validate(root)
+    except Exception as exc:  # noqa: BLE001 - validators fail with readable codes
+        return state(artifact, "stale", str(exc),
+                     "re-audit the owner units and rebind evidence", True, "manual")
+    return state(artifact, "fresh", "validator matches the current pages")
+
+
 def route_state(root, route):
     artifact = "generated/route-index.v1.json"
     recorded = load(root / artifact)
@@ -196,7 +231,7 @@ def route_state(root, route):
 
 
 def fts_state(root, route):
-    artifact = "generated/sections-fts-v3.sqlite"
+    artifact = "generated/" + section_fts_index.INDEX_NAME
     path = root / artifact
     if not path.is_file():
         return state(artifact, "not-built", "the local section index is absent",
@@ -308,7 +343,12 @@ def delivery_state(root, route):
     if reasons:
         return state(artifact, "stale", "; ".join(reasons),
                      "manual rebind after counts stabilize", True, "manual")
-    return state(artifact, "fresh", "summary counts match the current tree")
+    try:
+        validate_delivery_evidence.validate(root)
+    except Exception as exc:  # noqa: BLE001 - validators fail with readable codes
+        return state(artifact, "stale", str(exc),
+                     "manual rebind after the cited artifact is repaired", True, "manual")
+    return state(artifact, "fresh", "summary and validator match the current tree")
 
 
 def inventory_state(root):
@@ -324,26 +364,102 @@ def inventory_state(root):
     return state(artifact, "fresh", "file hashes match the current tree")
 
 
+def error_plan(root, message):
+    return {
+        "clean": False,
+        "blocking": True,
+        "error": message,
+        "root": str(root),
+        "changed_pages": [],
+        "missing_revisions": [],
+        "atlas_changes": [],
+        "semantic_changes": [],
+        "artifacts": [],
+        "steps": [
+            {"kind": "review", "description": "Fix the reported error and rerun the plan",
+             "command": None},
+            {"kind": "check", "description": "Run the local premerge gate",
+             "command": "python3 scripts/premerge_check.py --branch <branch> "
+                        "--issue-title '<issue title>'"},
+        ],
+        "limits": [
+            "Read-only plan; it does not validate claims, authorize revisions or replace premerge.",
+            "The plan stopped before computing artifact states; no clean verdict is implied.",
+        ],
+    }
+
+
 def build_plan(root, branch=None, issue_title=None):
     root = Path(root).resolve()
-    route = canonical_scan(root)
-    changed = changed_book_pages(root)
-    revisions = directory_revision_gaps(root) + enrichment_revision_gaps(root)
-    atlas = atlas_changes(root)
-    semantic = semantic_changes(root, route)
+    try:
+        route = canonical_scan(root)
+    except Exception as exc:  # noqa: BLE001 - fail closed with a readable plan
+        return error_plan(root, str(exc))
 
-    route_item = route_state(root, route)
-    fts_item = fts_state(root, route)
-    census_item = census_state(root, route_item["state"])
-    coverage_item = coverage_state(root, route_item["state"])
-    phase4_item = phase4_state(root, route_item["state"], coverage_item["state"])
-    plan_item = source_plan_state(root, route)
-    delivery_item = delivery_state(root, route)
-    inventory_item = inventory_state(root)
+    artifacts = []
 
-    artifacts = [route_item, fts_item, census_item, coverage_item, phase4_item,
-                 plan_item, delivery_item, inventory_item]
-    blocking = any(item["blocking"] for item in artifacts)
+    def item(label, action, fn):
+        try:
+            return fn()
+        except Exception as exc:  # noqa: BLE001 - validators/builders fail with codes
+            return state(label, "unavailable", str(exc), action, True, "manual")
+
+    def rows(label, action, fn):
+        try:
+            return fn()
+        except Exception as exc:  # noqa: BLE001 - fail closed and keep the plan
+            artifacts.append(state(label, "unavailable", str(exc), action, True, "manual"))
+            return []
+
+    changed = rows("book inventory", "inspect the error and refresh the inventory",
+                   lambda: changed_book_pages(root))
+    revisions = rows("content revisions", "inspect the error and record authorized revisions",
+                     lambda: directory_revision_gaps(root) + enrichment_revision_gaps(root))
+    atlas = rows("atlas manifest", "inspect the error and update the atlas manifest",
+                 lambda: atlas_changes(root))
+    semantic = rows("semantic audit", "inspect the error and re-review changed pages",
+                    lambda: semantic_changes(root, route))
+    if load(root / "edition/atlas-manifest.json") is None:
+        artifacts.append(state("edition/atlas-manifest.json", "missing",
+                               "atlas manifest is absent",
+                               "restore or rebuild the atlas manifest", True, "manual"))
+
+    route_item = item("generated/route-index.v1.json",
+                      "python3 scripts/route_index.py build",
+                      lambda: route_state(root, route))
+    fts_item = item("generated/" + section_fts_index.INDEX_NAME,
+                    "python3 scripts/section_fts_index.py build",
+                    lambda: fts_state(root, route))
+    census_item = item("edition/patterns/page-census.v1.json",
+                       "python3 scripts/pattern_census.py --write",
+                       lambda: census_state(root, route_item["state"]))
+    coverage_item = item("edition/patterns/coverage-map.v1.json",
+                         "python3 scripts/pattern_coverage.py --write",
+                         lambda: coverage_state(root, route_item["state"]))
+    phase4_item = item("edition/patterns/phase4.v1.json",
+                       "python3 scripts/phase4_audit.py",
+                       lambda: phase4_state(root, route_item["state"],
+                                            coverage_item["state"]))
+    plan_item = item("edition/patterns/source-plan.v1.json",
+                     "manual rebind of snapshot, registry hash and ledger count",
+                     lambda: source_plan_state(root, route))
+    delivery_item = item("edition/patterns/delivery-evidence.v1.json",
+                         "manual rebind after counts stabilize",
+                         lambda: delivery_state(root, route))
+    owner_item = item("edition/patterns/owner-units.v1.json",
+                      "re-audit the owner units and rebind evidence",
+                      lambda: owner_units_state(root))
+    semantic_item = item("edition/patterns/semantic-audit.v1.json",
+                         "restore or re-review the semantic audit",
+                         lambda: semantic_audit_state(root, route))
+    inventory_item = item("edition/inventory.json",
+                          "python3 scripts/validate_edition.py --write-inventory",
+                          lambda: inventory_state(root))
+
+    artifacts.extend([route_item, fts_item, census_item, coverage_item, phase4_item,
+                      plan_item, delivery_item, owner_item, semantic_item,
+                      inventory_item])
+    blocking = any(row["blocking"] for row in artifacts)
     blocking = blocking or bool(revisions) or bool(atlas) or bool(semantic)
 
     steps = []
@@ -354,7 +470,10 @@ def build_plan(root, branch=None, issue_title=None):
         add("review", "Record authorized revision(s) in edition/content-revisions.json")
     if atlas:
         add("review", "Update edition/atlas-manifest.json and re-review V11 pages")
-    if route_item["state"] in ("stale", "missing"):
+    if any(row["artifact"] == "edition/atlas-manifest.json" and row["state"] == "missing"
+           for row in artifacts):
+        add("review", "Restore the atlas manifest and re-review V11 pages")
+    if route_item["state"] in ("stale", "missing", "unavailable"):
         add("rebuild", "Rebuild the route index", "python3 scripts/route_index.py build")
     if fts_item["state"] == "stale":
         add("rebuild", "Rebuild the section FTS index",
@@ -362,23 +481,27 @@ def build_plan(root, branch=None, issue_title=None):
     if fts_item["state"] == "not-built":
         add("optional", "Build the local section index if section search is used",
             "python3 scripts/section_fts_index.py build")
-    if census_item["state"] in ("stale", "missing", "deferred"):
+    if census_item["state"] in ("stale", "missing", "deferred", "unavailable"):
         add("rebuild", "Rebuild the page census",
             "python3 scripts/pattern_census.py --write")
-    if coverage_item["state"] in ("stale", "missing", "deferred"):
+    if coverage_item["state"] in ("stale", "missing", "deferred", "unavailable"):
         add("rebuild", "Rebuild coverage and reverse maps",
             "python3 scripts/pattern_coverage.py --write")
-    if phase4_item["state"] in ("stale", "missing", "deferred"):
+    if phase4_item["state"] in ("stale", "missing", "deferred", "unavailable"):
         add("rebuild", "Rebuild the phase 4 artifact", "python3 scripts/phase4_audit.py")
-    if semantic:
-        add("review", "Re-review changed pages and update semantic-audit sha/review")
-    if plan_item["state"] in ("stale", "missing"):
+    if semantic or semantic_item["state"] != "fresh":
+        add("review", "Restore or re-review the semantic audit and update sha/review")
+    if plan_item["state"] in ("stale", "missing", "unavailable"):
         add("review", "Rebind the source plan snapshot, registry hash and ledger count")
-    if delivery_item["state"] in ("stale", "missing"):
+    if delivery_item["state"] in ("stale", "missing", "unavailable"):
         add("review", "Rebind delivery-evidence counts and source commit")
-    if inventory_item["state"] in ("stale", "missing"):
+    if owner_item["state"] in ("stale", "missing", "unavailable"):
+        add("review", "Re-audit owner units and rebind delivery evidence")
+    if inventory_item["state"] in ("stale", "missing", "unavailable"):
         add("rebuild", "Refresh the edition inventory after review",
             "python3 scripts/validate_edition.py --write-inventory")
+    if any(row["state"] == "unavailable" for row in artifacts):
+        add("review", "Inspect the reported unavailable artifact before rebuilding")
     add("check", "Run lexical boundary and line-length checks",
         "python3 scripts/check_boundary.py && python3 scripts/check_markdown_line_length.py")
     branch_arg = branch or "<branch>"
@@ -411,6 +534,9 @@ def build_plan(root, branch=None, issue_title=None):
 
 def render_text(plan):
     lines = ["Book change plan (read-only)", "Repository: " + plan["root"], ""]
+    if plan.get("error"):
+        lines.append("Plan failed: " + plan["error"])
+        lines.append("")
     if plan["clean"]:
         lines.append("Clean: no changed pages, missing revisions or stale artifacts detected.")
     else:
@@ -487,8 +613,7 @@ def main(argv=None):
     try:
         plan = build_plan(args.root, args.branch, args.issue_title)
     except Exception as exc:  # noqa: BLE001 - a plan must fail closed with a readable error
-        print("FAIL:", exc, file=sys.stderr)
-        return 1
+        plan = error_plan(Path(args.root).resolve(), str(exc))
     if args.json:
         print(json.dumps(plan, indent=2, ensure_ascii=False))
     else:

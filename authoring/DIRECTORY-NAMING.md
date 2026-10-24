@@ -60,18 +60,22 @@ authorized change.
 ### Pre-flight for a bounded change
 
 `python3 scripts/book_change.py --plan` is a read-only pre-flight for a page
-edit. It reports changed book pages, missing revision entries, stale derived
-artifacts and the ordered rebuild/review steps; `--strict` exits non-zero while
-anything blocking remains. It never writes, never authorizes a revision and
-does not replace `premerge_check.py`, claim review or independent review.
+edit. It reports changed book pages, missing directory or enrichment revision
+entries, stale derived artifacts and the ordered rebuild/review steps;
+`--strict` exits non-zero while anything blocking remains. It never writes,
+never authorizes a revision and does not replace `premerge_check.py`, claim
+review or independent review. The plan reports remaining work relative to the
+recorded edition inventory; a change whose derived artifacts were already
+refreshed may show no changed pages.
 
 Ownership stays with the existing contracts: identity and metadata in
-[METADATA-IDENTITY-CONTRACT](METADATA-IDENTITY-CONTRACT.md), heading and
-citation behavior in [SECTION-FTS-INDEX](SECTION-FTS-INDEX.md), page structure
-and splitting in [EDITORIAL-CONTRACT](EDITORIAL-CONTRACT.md), atlas and edition
-mechanics in [PATTERN-ATLAS-CONTRACT](PATTERN-ATLAS-CONTRACT.md), and branch/PR
-discipline in [AGENTS.md](../AGENTS.md). If this section and an owning contract
-disagree, the contract wins.
+[METADATA-IDENTITY-CONTRACT](METADATA-IDENTITY-CONTRACT.md), heading, section
+and passage indexing in [SECTION-FTS-INDEX](SECTION-FTS-INDEX.md), page
+structure, splitting and citation discipline in
+[EDITORIAL-CONTRACT](EDITORIAL-CONTRACT.md), atlas and edition mechanics in
+[PATTERN-ATLAS-CONTRACT](PATTERN-ATLAS-CONTRACT.md), and branch/PR discipline
+in [AGENTS.md](../AGENTS.md). If this section and an owning contract disagree,
+the contract wins.
 
 For a text-only correction, keep `id`, `canonical_path`, `parent_id`,
 `source_ids` and level-2 headings stable; changing any of them, adding or
