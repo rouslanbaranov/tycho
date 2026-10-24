@@ -160,7 +160,7 @@ C008) are optional additions, not defects.
 
 ## 5. Coverage gaps
 
-- **188 registered sources** are still at landing-or-abstract inspection. They
+- **180 registered sources** are still at landing-or-abstract inspection. They
   are not full reads, even where their titles and URLs are registered.
 - **383 of 406 canonical pages** have no page-level comparison. Their matrix
   status is an explicit gap, not an inferred pass.
@@ -178,7 +178,7 @@ C008) are optional additions, not defects.
   sources have an honest disposition.
 - [x] Every full reference record has a finite unit, exact revision, access date,
   sections and omissions; blocked/excluded records do not claim content.
-- [ ] Every accessible scoped source read completely: 188 landing-only sources
+- [ ] Every accessible scoped source read completely: 180 landing-only sources
   remain, and 14 pages are blocked.
 - [ ] All 406 pages have an applicability/review status beyond an explicit gap:
   19 assessed, 387 gaps.
@@ -193,7 +193,7 @@ C008) are optional additions, not defects.
 
 ## 7. Priorities for the next batch
 
-1. Reconcile the 188 landing-or-abstract sources into finite units and read the
+1. Reconcile the 180 landing-or-abstract sources into finite units and read the
    highest-priority official documentation that Tycho cites repeatedly.
 2. Extend page-level comparisons from 14 to the pages with the strongest
    material claims: crash consistency, replication, overload, migration gates,
@@ -210,5 +210,5 @@ C008) are optional additions, not defects.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, does not claim that a
 first-party article is a benchmark, and does not claim that Tycho is complete or
-correct. The 188 landing-only sources and 383 unassessed pages are the dominant
+correct. The 180 landing-only sources and 383 unassessed pages are the dominant
 remaining uncertainty.

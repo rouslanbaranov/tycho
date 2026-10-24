@@ -29,7 +29,8 @@ flagged as not retrievable. This is reading evidence, not a book edit or an
 independent review.
 
 [Interim synthesis](DEEP-SYNTHESIS.md) records what the evidence supports and
-what remains open. All 406 canonical pages have a review status in
+what remains open. [Final synthesis](FINAL-SYNTHESIS.md) and the [acceptance
+review](ACCEPTANCE.md) record why #225 is not accepted yet. All 406 canonical pages have a review status in
 [the page census](page-census.json): 23 are comparison-assessed and 383 carry an
 explicit evidence gap, summarized in [the page review summary]
 (page-review-summary.json). A recorded gap is not a pass.
