@@ -14,13 +14,13 @@ index or edition file was changed.
   images. OSTEP: chapters 1-57, appendices A-H and the preface, in 65
   continuation records (20,189 lines, 323,810 words, 803 pages plus the earlier
   chapter 2 record). OSTEP raster figures were not visually inspected.
-- **115 reference records** in `readings.json`: 94 full reads, 1 partial, 18 blocked-full-text
+- **117 reference records** in `readings.json`: 94 full reads, 3 partial, 18 blocked-full-text
   and 2 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
-- **57 assessed comparisons** in `comparisons.json` against 41 canonical pages:
-  32 supported, 23 qualified, 2 not-addressed, 0 contradicted.
-- **Page matrix:** all 406 pages have a recorded review status; 41 are
-  comparison-assessed and 365 carry an explicit evidence gap
+- **59 assessed comparisons** in `comparisons.json` against 42 canonical pages:
+  32 supported, 25 qualified, 2 not-addressed, 0 contradicted.
+- **Page matrix:** all 406 pages have a recorded review status; 42 are
+  comparison-assessed and 364 carry an explicit evidence gap
   (`page-review-summary.json`). A recorded gap is not a pass.
 
 ## 2. What the evidence supports
@@ -179,7 +179,7 @@ C008) are optional additions, not defects.
 
 - **135 registered sources** are still at landing-or-abstract inspection. They
   are not full reads, even where their titles and URLs are registered.
-- **365 of 406 canonical pages** have no page-level comparison. Their matrix
+- **364 of 406 canonical pages** have no page-level comparison. Their matrix
   status is an explicit gap, not an inferred pass.
 - Linked publications, xv6 source, simulator code and exercises were not read or
   executed. Embedded raster figures were not visually inspected.

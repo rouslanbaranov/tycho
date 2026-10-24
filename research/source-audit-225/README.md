@@ -13,12 +13,12 @@ appendices A-H and the preface; sixty-five new records are in [the OSTEP
 continuation ledger](ostep-continuation-readings.json). Embedded raster figures
 were not visually inspected, and linked publications remain separate.
 
-Comparison checkpoint: fifty-seven candidate comparisons are assessed in
-[comparisons.json](comparisons.json): thirty-two supported, twenty-three qualified, two
+Comparison checkpoint: fifty-nine candidate comparisons are assessed in
+[comparisons.json](comparisons.json): thirty-two supported, twenty-five qualified, two
 source mechanisms not addressed and zero contradicted. These are bounded
 comparisons, not independent review, book findings or permission to edit.
 
-Reference batch 2026-10-24: eighty-three full reads, one partial, eighteen blocked records and two
+Reference batch 2026-10-24: eighty-three full reads, three partial, eighteen blocked records and two
 excluded internal team sites. The full reads are JEP 444, JEP 491 and
 thirty public engineering articles and seventeen documentation/paper units in the
 src.m9-* series. Fourteen
@@ -31,7 +31,7 @@ independent review.
 [Interim synthesis](DEEP-SYNTHESIS.md) records what the evidence supports and
 what remains open. [Final synthesis](FINAL-SYNTHESIS.md) and the [acceptance
 review](ACCEPTANCE.md) record why #225 is not accepted yet. All 406 canonical pages have a review status in
-[the page census](page-census.json): 41 are comparison-assessed and 365 carry an
+[the page census](page-census.json): 42 are comparison-assessed and 364 carry an
 explicit evidence gap, summarized in [the page review summary]
 (page-review-summary.json). A recorded gap is not a pass.
 
