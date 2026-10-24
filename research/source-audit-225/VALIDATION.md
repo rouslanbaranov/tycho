@@ -228,7 +228,7 @@ action. No book page was edited.
 
 ## Reference-source batch - 2026-10-24
 
-173 records R015-R187 extend the reference ledger. Two hundred twenty-eight are
+173 records R015-R187 extend the reference ledger. Two hundred thirty-four are
 full-scoped reads: JEP 444, JEP 491, thirty public engineering articles
 and seventeen documentation/paper units in the src.m9-* series, plus ten delegated records. Fourteen publisher pages returned no readable
 article body and are recorded as blocked-full-text, not inferred. Two internal
@@ -271,7 +271,7 @@ a96c6b7 are outside that attempted review's stated HEAD.
 - The 406-page census records a review status for every canonical page:
   55 are comparison-assessed and 351 carry an explicit evidence gap. The
   per-page list is in page-review-summary.json; a gap is not a pass.
-- The reference ledger has 261 records: 231 full reads, 9 partial, 19 blocked and 2
+- The reference ledger has 267 records: 237 full reads, 9 partial, 19 blocked and 2
   excluded internal team sites. All 45 baseline fetch-incomplete sources are
   accounted for: 29 full, 14 blocked, 2 excluded, 0 unaccounted.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the

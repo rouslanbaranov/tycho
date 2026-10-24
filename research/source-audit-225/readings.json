@@ -28624,12 +28624,826 @@
         }
       ],
       "reader": "delegated-reader/B20h/deepseek-harness (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - no book findings, support classification, severity or verdict."
+    },
+    {
+      "id": "R262",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/git.html",
+      "unit": "AOSA Volume II, Chapter 6 \"Git\" by Susan Potter (public HTML chapter), local representation /tmp/B20h/raw/git.txt lines 1-407",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-407: 10 numbered sections (6.1-6.10) with three unnumbered level-3 subsections nested inside 6.3 (Content Storage, Commit and Merge Histories, Distribution), 4 code blocks and 4 figure captions; no tables or footnotes. Lines 1-9 are the volume header, chapter title, author line and a promotional line; they are counted in the hash, line and word totals but excluded from the substantive section description. No prose section present in the live HTML is missing.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest7.json#R262",
+        "/tmp/B20h/raw/git.txt lines 1-407; sha256=14da526311428fa8b05cf0e350bda713211a1c3b0ede49ad07823b605a1bdea6; words=4444",
+        "https://aosabook.org/en/v2/git.html (HTTP 200, fetched 2026-10-24; live HTML has the same 10 numbered sections and Figure 6.1-6.4 captions, so no section is missing)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_gap": "Figures 6.1-6.4 are caption-only (lines 105, 295, 327, 342); the diagrams and any alt text are absent from the text representation. Code blocks survive as literal shell transcripts between [CODE] and [/CODE] markers, with irregular indentation in the .git tree listing (lines 186-213). The level-3 heading at line 94 is followed by a paragraph that begins with a leading space at line 95, and blank separator lines carry single trailing spaces; these are extraction artifacts, not missing prose. Lines 1-9 are site/chapter chrome retained in the representation. No section present in the live HTML checked 2026-10-24 is absent.",
+      "representation_sha256": "14da526311428fa8b05cf0e350bda713211a1c3b0ede49ad07823b605a1bdea6",
+      "retrieved_lines": 407,
+      "retrieved_words": 4444,
+      "sections": [
+        {
+          "title": "6.1. Git in a Nutshell",
+          "level": 2,
+          "start_line": 11,
+          "end_line": 19
+        },
+        {
+          "title": "6.2. Git's Origin",
+          "level": 2,
+          "start_line": 20,
+          "end_line": 66
+        },
+        {
+          "title": "6.3. Version Control System Design",
+          "level": 2,
+          "start_line": 67,
+          "end_line": 143
+        },
+        {
+          "title": "6.4. The Toolkit",
+          "level": 2,
+          "start_line": 144,
+          "end_line": 161
+        },
+        {
+          "title": "6.5. The Repository, Index and Working Areas",
+          "level": 2,
+          "start_line": 162,
+          "end_line": 293
+        },
+        {
+          "title": "6.6. The Object Database",
+          "level": 2,
+          "start_line": 294,
+          "end_line": 322
+        },
+        {
+          "title": "6.7. Storage and Compression Techniques",
+          "level": 2,
+          "start_line": 323,
+          "end_line": 337
+        },
+        {
+          "title": "6.8. Merge Histories",
+          "level": 2,
+          "start_line": 338,
+          "end_line": 361
+        },
+        {
+          "title": "6.9. What's Next?",
+          "level": 2,
+          "start_line": 362,
+          "end_line": 391
+        },
+        {
+          "title": "6.10. Lessons Learned",
+          "level": 2,
+          "start_line": 392,
+          "end_line": 407
+        }
+      ],
+      "notes": [
+        "Source claim: Git began in 2005 after BitMover announced it would revoke licences for some Linux kernel developers; Torvalds' stated goal was to be the anti-CVS, with three usability goals - distributed workflows like BitKeeper, safeguards against content corruption and high performance (lines 29-44).",
+        "Source claim: a VCS has three core requirements - store content, track changes/history, distribute content and history - and the third is not universal; Git uses a DAG for both content snapshots and commit history, while delta-based changesets are the common alternative (lines 73-111).",
+        "Source claim: distribution is local-only, central-server or distributed; the Subversion-versus-Git walkthrough (Alex, a 1 MB file) contrasts a central delta commit with a local full-blob commit plus an explicit push, noting Git's extra moving parts buy workflow flexibility (lines 117-141).",
+        "Source claim: the toolkit splits into plumbing (DAG manipulation) and porcelain (user commands); because the Git binary calls die() it is not reentrant, so GUIs and long-running services must fork/exec, which motivated linkable-library work (lines 150-159).",
+        "Source claim: .git holds configuration, lifecycle hooks, the future index, the object database and refs; the index is the staging area between working directory and repository, and checkout/add/commit interactions are enumerated and demonstrated (lines 216-247, 256-288).",
+        "Source claim: Git has four primitive object types - tree, blob, commit, tag - each with type, size and content, addressed by a 40-digit SHA whose identity and corruption-detection properties carry the distributed and integrity goals (lines 297-317).",
+        "Source claim: pack files use an index of offsets; version 2 moved per-object CRC checksums into the index, lifted the 4 GB limit and appends a 20-byte SHA-1 of the ordered object IDs to detect pack corruption (lines 326-335).",
+        "Source claim: linear-history VCSs such as Subversion cannot record that changesets from another branch are now contained in trunk; Git merge commits name their parents, but determining exactly which commits each branch contains remains hard, with cherry-pick as the simple-case tool (lines 341-359).",
+        "Source claim: follow-on work includes libgit2 and JGit, plus experimental object-database backends (Cassandra, HBase, Memcached/Redis/SQLite/MySQL); the author argues 'Git' is now the repository format and protocol more than the CLI (lines 365-389).",
+        "Source claim: lessons learned are the missing linkable library hurting IDE integration, early shell-script commands hurting Windows portability, and plumbing complexity confusing new users (lines 395-404).",
+        "Inference: the chapter is a designer's tour, not a measurement study; efficiency claims such as delta storage being 'much more efficient' or DAG ancestry being efficient are qualitative, and no benchmark, timing or corpus is reported.",
+        "Representation note: 4 figures are caption-only, 4 code blocks are present as text, lines 1-9 are chrome, and the live HTML checked 2026-10-24 contains the same 10 numbered sections and 4 figures."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md",
+          "candidate": "Candidate context for content-addressed object identity and history as provenance; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causality-ordering-and-consensus.md",
+          "candidate": "Candidate context for DAG ancestry, merge parents and containment questions; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Candidate context for plumbing/porcelain layering and toolkit-versus-library boundaries; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/provenance-subjects.md",
+          "candidate": "Candidate context for digest-addressed artifact subjects and corruption detection; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-cards.md",
+          "candidate": "Candidate context for contrasting central delta storage with replicated DAG storage and their trade-offs; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness"
+    },
+    {
+      "id": "R263",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/gpsd.html",
+      "unit": "AOSA Volume II, Chapter 7 \"GPSD\" by Eric Raymond (public HTML chapter), local representation /tmp/B20h/raw/gpsd.txt lines 1-327",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-327: 10 numbered sections (7.1-7.10), 2 figure captions, no code blocks, tables or footnotes. Lines 1-9 are the volume header, chapter title, author line and a promotional line; they are counted in the hash, line and word totals but excluded from the substantive section description. The chapter is unusually dense prose (6014 words in 327 lines). No prose section present in the live HTML is missing.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest7.json#R263",
+        "/tmp/B20h/raw/gpsd.txt lines 1-327; sha256=924222a1d754deb33c917a93dbccc9cdb562e306c69088cc040c6dda8e474565; words=6014",
+        "https://aosabook.org/en/v2/gpsd.html (HTTP 200, fetched 2026-10-24; live HTML has the same 10 numbered sections and Figure 7.1-7.2 captions, so no section is missing)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_gap": "Figures 7.1 (Software layers, line 69) and 7.2 (Dataflow, line 131) are caption-only; the diagrams and any alt text are absent from the text representation. There are no code blocks in this chapter. Blank separator lines carry single trailing spaces and the promotional line at line 8 is retained site chrome; no prose is missing relative to the live HTML checked 2026-10-24.",
+      "representation_sha256": "924222a1d754deb33c917a93dbccc9cdb562e306c69088cc040c6dda8e474565",
+      "retrieved_lines": 327,
+      "retrieved_words": 6014,
+      "sections": [
+        {
+          "title": "7.1. Why GPSD Exists",
+          "level": 2,
+          "start_line": 26,
+          "end_line": 46
+        },
+        {
+          "title": "7.2. The External View",
+          "level": 2,
+          "start_line": 47,
+          "end_line": 64
+        },
+        {
+          "title": "7.3. The Software Layers",
+          "level": 2,
+          "start_line": 65,
+          "end_line": 112
+        },
+        {
+          "title": "7.4. The Dataflow View",
+          "level": 2,
+          "start_line": 113,
+          "end_line": 156
+        },
+        {
+          "title": "7.5. Defending the Architecture",
+          "level": 2,
+          "start_line": 157,
+          "end_line": 180
+        },
+        {
+          "title": "7.6. Zero Configuration, Zero Hassles",
+          "level": 2,
+          "start_line": 181,
+          "end_line": 198
+        },
+        {
+          "title": "7.7. Embedded Constraints Considered Helpful",
+          "level": 2,
+          "start_line": 199,
+          "end_line": 225
+        },
+        {
+          "title": "7.8. JSON and the Architecturenauts",
+          "level": 2,
+          "start_line": 226,
+          "end_line": 249
+        },
+        {
+          "title": "7.9. Designing for Zero Defects",
+          "level": 2,
+          "start_line": 250,
+          "end_line": 285
+        },
+        {
+          "title": "7.10. Lessons Learned",
+          "level": 2,
+          "start_line": 286,
+          "end_line": 327
+        }
+      ],
+      "notes": [
+        "Source claim: GPSD is a mid-sized suite of about 43 KLOC, mainly C and Python, with a stable core of about three developers; it supports roughly 20 sensor protocols and reports them as JSON on TCP port 2947, with shared-memory and D-Bus alternatives (lines 11-17, 35, 50).",
+        "Source claim: the stated design theme is hiding device-dependent protocol ugliness behind a simple client interface talking to a zero-configuration service; client libraries let the client API stay stable while the reporting protocol grows (lines 35, 44, 53).",
+        "Source claim: the internals divide into four layers - per-chipset drivers exposed as a C struct of data and method pointers modelled on Unix device drivers, a packet sniffer state machine, a core library managing a device session, and a multiplexer (gpsd.c) handling clients and hotplug (lines 68-98).",
+        "Source claim: the first three layers link into libgpsd and are used directly by tools such as gpsmon and gpsctl; system integrators can drop unused drivers from embedded builds, and contributed drivers show the driver API is usable outside the core team (lines 92, 101-104).",
+        "Source claim: the daemon selects over clients, sensors, a control socket and DGPS/NTRIP servers treated as sensors; a watch request opens devices, otherwise they stay closed but listed; reports leave through socket, shared-memory or D-Bus exporters (lines 116-145).",
+        "Source claim: partition discipline is enforced by rejecting patches that leak input-source details upward where avoidable; the accepted exceptions are probe strings and the -b no-baud-change option, needed because some cheap devices misbehave, while a device with invalid NMEA checksums was refused rather than weakening validation or adding a forced-type switch (lines 160-178).",
+        "Source claim: zero configuration means no dotfile, sniffed protocols, autobaud and hotplug scripts; the author argues configuration that can be edited must be edited, adding setup burden (lines 184-196).",
+        "Source claim: embedded goals produced a 69K minimum static build versus about 418K with all drivers (June 2011, 64-bit x86), CPU use near profiler noise on FPU-less ARM, and a split between a C daemon and Python test/utility code; the author states measurements should replace guesses (lines 208-223).",
+        "Source claim: the original one-letter-key request/response protocol ran out of command space and mismatched streaming sensors; JSON with a class attribute restored extensibility, at the cost of a larger parser, so GPSD wrote a static-storage subset parser in about 600 lines and kept a shared-memory path for tight deployments (lines 229-247, 292-296).",
+        "Source claim: the daemon never uses malloc/calloc, which removes leak and double-free classes and improves static analysis; the project runs splint, cppcheck and Coverity plus regression tests over more than 70 sensor logs, and the author reports an empty bug tracker and no crash bug in six years as of July 2011 (lines 265-280).",
+        "Source claim: lessons are to design for extensibility and to ship client-side libraries; the author defends scope growth by cost - a new driver is usually under 1 KLOC, Marine AIS about 3 KLOC, drivers plus sniffer and report generators about 18 KLOC of 43 KLOC, so the framework and tests dominate (lines 307-318).",
+        "Inference: the defect-rate and footprint claims are author-reported project measurements without an independent audit or a date-stamped method, and the chapter's date (mid-2011) means its 'empty tracker' and build sizes are historical snapshots. Representation note: both figures are caption-only, there are no code blocks, lines 1-9 are chrome, and the live HTML checked 2026-10-24 contains the same 10 sections and 2 figures."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md",
+          "candidate": "Candidate context for isolating applications from heterogeneous device protocols; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Candidate context for the drivers/sniffer/core/multiplexer layering and replaceable top layer; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+          "candidate": "Candidate context for metaprotocol selection, extensible report classes and versioned client libraries; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md",
+          "candidate": "Candidate context for embedded footprint, power and defect-rate quality drivers; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/evidence-hypotheses.md",
+          "candidate": "Candidate context for regression harnesses and 'demonstrate its own correctness' as evidence; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-cards.md",
+          "candidate": "Candidate context for porting the Unix device-driver pattern into user space; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness"
+    },
+    {
+      "id": "R264",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/ironlang.html",
+      "unit": "AOSA Volume II, Chapter 8 \"The Dynamic Language Runtime and the Iron Languages\" by Jeff Hardy (public HTML chapter), local representation /tmp/B20h/raw/ironlang.txt lines 1-277",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-277: 11 numbered sections (8.1-8.11), 3 figure captions and 3 code blocks; no tables or footnotes. Lines 1-9 are the volume header, chapter title, author line and a promotional line; they are counted in the hash, line and word totals but excluded from the substantive section description. No prose section present in the live HTML is missing.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest7.json#R264",
+        "/tmp/B20h/raw/ironlang.txt lines 1-277; sha256=a70cc6ee965c59ff90552b7d2b6a5cc6e1e783dc0cccec5485af8df5bb3cb2f9; words=6477",
+        "https://aosabook.org/en/v2/ironlang.html (HTTP 200, fetched 2026-10-24; live HTML has the same 11 numbered sections and Figure 8.1-8.3 captions, so no section is missing)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment",
+      "representation_gap": "Figures 8.1-8.3 are caption-only (lines 147, 150, 209); the class diagrams and flowchart, and any alt text, are absent from the text representation. Code blocks survive as literal text between [CODE] and [/CODE] markers (the C# and Python one-liners and the binder pseudo-code), with comment alignment flattened. Lines 1-9 are site/chapter chrome retained in the representation. No section present in the live HTML checked 2026-10-24 is absent.",
+      "representation_sha256": "a70cc6ee965c59ff90552b7d2b6a5cc6e1e783dc0cccec5485af8df5bb3cb2f9",
+      "retrieved_lines": 277,
+      "retrieved_words": 6477,
+      "sections": [
+        {
+          "title": "8.1. History",
+          "level": 2,
+          "start_line": 17,
+          "end_line": 35
+        },
+        {
+          "title": "8.2. Dynamic Language Runtime Principles",
+          "level": 2,
+          "start_line": 36,
+          "end_line": 53
+        },
+        {
+          "title": "8.3. Language Implementation Details",
+          "level": 2,
+          "start_line": 54,
+          "end_line": 62
+        },
+        {
+          "title": "8.4. Parsing",
+          "level": 2,
+          "start_line": 63,
+          "end_line": 83
+        },
+        {
+          "title": "8.5. Expression Trees",
+          "level": 2,
+          "start_line": 84,
+          "end_line": 98
+        },
+        {
+          "title": "8.6. Interpreting and Compilation",
+          "level": 2,
+          "start_line": 99,
+          "end_line": 119
+        },
+        {
+          "title": "8.7. Dynamic Call Sites",
+          "level": 2,
+          "start_line": 120,
+          "end_line": 180
+        },
+        {
+          "title": "8.8. Meta-Object Protocol",
+          "level": 2,
+          "start_line": 181,
+          "end_line": 231
+        },
+        {
+          "title": "8.9. Hosting",
+          "level": 2,
+          "start_line": 232,
+          "end_line": 255
+        },
+        {
+          "title": "8.10. Assembly Layout",
+          "level": 2,
+          "start_line": 256,
+          "end_line": 264
+        },
+        {
+          "title": "8.11. Lessons Learned",
+          "level": 2,
+          "start_line": 265,
+          "end_line": 277
+        }
+      ],
+      "notes": [
+        "Source claim: the Iron languages are dynamic languages targeting the CLR and built on the DLR; IronPython and IronRuby are used in dozens of projects, and the DLR ships as part of .NET Framework and Mono (line 11).",
+        "Source claim: Jim Hugunin, already author of Jython, prototyped Python on the CLR expecting to write a critique, found it about 1.7x faster than C Python on pystone, was hired by Microsoft, and the DLR was factored out of IronPython; Microsoft announced DLR/IronPython 2.0/IronRuby in April 2007 and stopped developing the Iron languages in October 2010 (lines 20-30).",
+        "Source claim: the CLR assumes types never change at runtime, so the DLR supplies a shared dynamic object model with language-specific binders, call-site caching and expression trees; it is implemented purely as libraries, needs no CLR change and runs on .NET 2.0 (lines 39-51).",
+        "Source claim: every implementation has a language-specific front end and the DLR provides a common backend from expression trees to IL, then JIT to machine code; runtime-evaluated code follows the same path at the eval call site (line 57).",
+        "Source claim: IronPython uses a hand-written tokenizer and an LL(1) recursive-descent parser; IronRuby generates a table-based LALR(1) parser with GPPG from Parser.y (540 states, over 45,000 transitions). The stated trade-off is hand-modifiable clarity versus grammar readability plus a third-party tool dependency (lines 66-75).",
+        "Source claim: DLR expression trees are low-level and language-independent, custom nodes reduce recursively to intrinsic nodes, and the immutable tree is rewritten through the Visitor-pattern ExpressionVisitor, which must rebuild parents when it changes a child (lines 87-93).",
+        "Source claim: expression trees run in a stack-based interpreter first (LightLambdaExpression), and after a default threshold of 32 executions are reduced, compiled to a DynamicMethod on a background thread and swapped into the call site; compilation or interpretation can be disabled by option (lines 102-114).",
+        "Source claim: every dynamic operation becomes a call site with a language binder; rules live in L0 (Target), L1 (10 rules) and L2 (128 rules shared on the binder), motivated by roughly 10 ns for a type check versus 80 microseconds to compile a rule, about 1 KB per variation, and profiling that showed few sites exceed 10 variations (lines 146-158).",
+        "Source claim: the meta-object protocol treats all object models as Smalltalk-style message passing over Get/Set/Delete member and index, Invoke, CreateInstance, Convert and unary/binary operations; DynamicMetaObject plus IDynamicMetaObjectProvider carry language semantics, and host binders fall back to target-language then host-language binding (lines 184-220).",
+        "Source claim: hosting exposes ScriptRuntime, per-language ScriptEngine, ScriptSource/SourceUnit and ScriptScope; engines are thread-safe when each thread has its own scope, and scopes both hold variables and isolate scripts, with LanguageContext supplying all language behaviour (lines 235-250).",
+        "Source claim: DLR parts split between the CLR (call sites, expression trees, binders, code generation, meta objects) and the IronLanguages project (hosting, interpreter), packaged as Microsoft.Scripting and Microsoft.Dynamic; lessons cite agile development with CI from day one, a 12-second DLR suite versus a 45-minute IronPython suite, and hosting APIs that never entered the .NET Framework so PowerShell 3 uses different ones (lines 259-277).",
+        "Inference: the 1.7x pystone result, nanosecond/microsecond costs and suite durations are author-reported figures from project history rather than reproducible measurements in the chapter; the claim that 'a state machine is always the right answer' (line 78) is rhetorical, not evidenced. Representation note: 3 figures are caption-only, 3 code blocks are preserved, lines 1-9 are chrome, and the live HTML checked 2026-10-24 contains the same 11 sections and 3 figures."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "candidate": "Candidate context for multi-level L0/L1/L2 call-site caches and shared binder caches; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/semantic-translation.md",
+          "candidate": "Candidate context for cross-language binding and target-versus-host semantics; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Candidate context for a shared backend with per-language front ends and hosting adapters; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md",
+          "candidate": "Candidate context for startup latency versus steady-state throughput and parser-tooling trade-offs; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-cards.md",
+          "candidate": "Candidate context for Visitor, interpreter and state-machine pattern use; no edit under #225."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+          "candidate": "Candidate context for thread-safe engines with per-thread scope isolation; no edit under #225."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness"
+    },
+    {
+      "id": "R265",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/itk.html",
+      "unit": "AOSA Volume II, Chapter 9 \"ITK\" (public HTML chapter), local representation /tmp/B20h/raw/itk.txt lines 1-602",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-602 (602/602 lines, 9176/9176 words): 22 content headings (9.1-9.3 plus subsections), 8 code blocks and 9 numbered figure captions, read sequentially. Lines 1-9 are the volume masthead, chapter title, byline and site promotional line; they are treated as chrome, excluded from the substantive description but retained in the hash, line and word totals. No prose section is missing relative to the live HTML headings.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest7.json#R265",
+        "/tmp/B20h/raw/itk.txt lines 1-602; sha256=7fa78dcdd9d33caba903ec6d68acab9c37a8d395d0e3ea71a89f142bfd588cdb; words=9176",
+        "https://aosabook.org/en/v2/itk.html (HTTP 200, fetched 2026-10-24; used only to confirm 22 headings, 9 numbered figures with 11 image files, and 8 code blocks)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment. No ITK build, filter execution, streaming run or scalability measurement was performed. Module counts, percentages, coverage and TCO figures are the authors' 2011-era claims and were not independently verified. The referenced Volume I VTK chapter and the books cited inline (Clean Code, The Art of Readable Code, Software Development Cost Estimating Handbook) were not retrieved.",
+      "representation_gap": "Non-textual gap: Figures 9.1-9.9 are caption-only; the live page embeds 11 image files for those nine numbered figures (Figure 9.2 uses three images), so the figure content is absent. All 8 code blocks are preserved between extractor-inserted [CODE]/[/CODE] markers; the chapter has no tables. No prose section is missing relative to the live HTML headings.",
+      "representation_sha256": "7fa78dcdd9d33caba903ec6d68acab9c37a8d395d0e3ea71a89f142bfd588cdb",
+      "retrieved_lines": 602,
+      "retrieved_words": 9176,
+      "sections": [
+        {
+          "title": "9.1. What Is ITK?",
+          "level": 2,
+          "start_line": 11,
+          "end_line": 16
+        },
+        {
+          "title": "9.2. Architectural Features",
+          "level": 2,
+          "start_line": 17,
+          "end_line": 401
+        },
+        {
+          "title": "The Nature of the Beast",
+          "level": 3,
+          "start_line": 23,
+          "end_line": 65
+        },
+        {
+          "title": "Modularity",
+          "level": 3,
+          "start_line": 66,
+          "end_line": 125
+        },
+        {
+          "title": "Data Pipeline",
+          "level": 3,
+          "start_line": 126,
+          "end_line": 232
+        },
+        {
+          "title": "Process and Data Objects",
+          "level": 4,
+          "start_line": 150,
+          "end_line": 188
+        },
+        {
+          "title": "The Pipeline Class Hierarchy",
+          "level": 4,
+          "start_line": 189,
+          "end_line": 200
+        },
+        {
+          "title": "The Inner Workings of the Pipeline",
+          "level": 4,
+          "start_line": 201,
+          "end_line": 232
+        },
+        {
+          "title": "Factories",
+          "level": 3,
+          "start_line": 233,
+          "end_line": 241
+        },
+        {
+          "title": "IO Factories",
+          "level": 3,
+          "start_line": 242,
+          "end_line": 345
+        },
+        {
+          "title": "Embracing Diversity with Facades",
+          "level": 4,
+          "start_line": 248,
+          "end_line": 317
+        },
+        {
+          "title": "Know Thy Pixel Type",
+          "level": 4,
+          "start_line": 318,
+          "end_line": 336
+        },
+        {
+          "title": "Together But Separate",
+          "level": 4,
+          "start_line": 337,
+          "end_line": 345
+        },
+        {
+          "title": "Streaming",
+          "level": 3,
+          "start_line": 346,
+          "end_line": 401
+        },
+        {
+          "title": "9.3. Lessons Learned",
+          "level": 2,
+          "start_line": 402,
+          "end_line": 602
+        },
+        {
+          "title": "Reusability",
+          "level": 3,
+          "start_line": 405,
+          "end_line": 467
+        },
+        {
+          "title": "Generic Programming",
+          "level": 4,
+          "start_line": 420,
+          "end_line": 458
+        },
+        {
+          "title": "Knowing When to Stop",
+          "level": 4,
+          "start_line": 459,
+          "end_line": 467
+        },
+        {
+          "title": "Maintainability",
+          "level": 3,
+          "start_line": 468,
+          "end_line": 506
+        },
+        {
+          "title": "The Invisible Hand",
+          "level": 3,
+          "start_line": 507,
+          "end_line": 535
+        },
+        {
+          "title": "Refactoring",
+          "level": 3,
+          "start_line": 536,
+          "end_line": 586
+        },
+        {
+          "title": "Reproducibility",
+          "level": 3,
+          "start_line": 587,
+          "end_line": 602
+        }
+      ],
+      "notes": [
+        "Source claim: ITK is an image-analysis library initiated and mainly funded by the US National Library of Medicine, built by a consortium of universities, companies and individual contributors; development is dated to 1999 in the introduction and to 2000 in the refactoring section, and a post-10th-anniversary refactor is described (lines 14, 539).",
+        "Source claim: the stated architectural features are modularity, data pipeline, factories, IO factories, streaming, reusability and maintainability (lines 49-64).",
+        "Source claim: modularity operates at filter, filter-family (module) and group levels; about 700 filters, about 120 modules at first mention and 124 modules in 13 groups later, with modules mapping to source directories and compiled libraries and containing filter code, build/dependency configuration and unit tests (lines 75-93).",
+        "Source claim: third-party image-format libraries (HDF5, PNG, TIFF, JPEG, OpenJPEG) account for about 56% of ITK's size and were partitioned during modularization; module size distribution was used to monitor the refactor (lines 96-99).",
+        "Source claim: the pipeline is built from DataObject (data) and ProcessObject (algorithm) abstractions; SetInput()/GetOutput() calls connect a downstream ProcessObject to the upstream DataObject, output ownership stays with the producer, inputs are const, and the pipeline is a pull pipeline (lines 153-186, 230).",
+        "Source claim: one Update() at the terminal filter triggers four passes - UpdateOutputInformation, PropagateRequestedRegion, UpdateOutputData and GenerateData - the first three upstream and the last downstream by call timing; the writer requests 500x500 and the median filter asks upstream for 502x502 because of its 3x3 neighborhood (lines 207-230).",
+        "Source claim: factories register class constructors by name at run time and loadable dynamic libraries provide a plugin mechanism; IO adds ImageIOFactory, ImageIO service classes and the ImageFileReader/ImageFileWriter facades, which hide format differences but not pixel type (lines 238-239, 254-334).",
+        "Source claim: streaming divides the image into requested regions; the median example requests 100x29 for a 100x25 output region because of a 2-pixel border, four stream divisions re-execute the filter four times, and iterative, Fourier/IIR, front-propagation and registration algorithms are named as not streamable (lines 352-399).",
+        "Source claim: reuse relies on OOP hierarchies, C++ templates and macros; Image<PixelType, Dimension> is the canonical template, concept checking produces early compile errors, and a 4.0 refactor replaced raw integer types with concept-named typedefs to support images over 4 GB (lines 408-465).",
+        "Source claim: maintainability practices include many small files, test-driven development at class level, KWStyle, Gerrit review, Git hooks that reject tabs/trailing whitespace, and CDash nightly/continuous builds reported to exercise about 84% of the code versus an estimated 50% industry average; the text estimates maintenance at 75% of TCO and 80% of developer activity (lines 473-542).",
+        "Source claim: the 2011 ARRA-funded refactor introduced modules, standardized integer types and typedefs for >4 GB images, migrated CVS to Git, added Gerrit and CDash@home, deprecated old compilers, extended DICOM/JPEG2000/BigTIFF/HDF5 IO, and added GPU, video, OpenCV and VXL support (lines 539-581).",
+        "Source claim: the Insight Journal requires code, data, parameters and tests, publishes within 24 hours and had received its 500th article; the authors argue that reproducibility and DIY practice improve software (lines 590-602). Inference (reader): the chapter is an author retrospective; its quantitative claims are not accompanied by measurement method or independent evaluation."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/module-enforcement.md",
+          "candidate": "Candidate context for module boundaries and declared dependencies; ITK's 124 modules are a source-tree and build-time analogue, not the page's event-bus argument."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/stream-contracts.md",
+          "candidate": "Candidate context for chunked and streamed processing contracts; ITK negotiates requested regions rather than the page's producer/consumer backpressure and buffer ownership."
+        },
+        {
+          "path": "book/volumes/v01-requirements-and-architecture/c06-capacity-operational-constraints-and-total-cost/lifecycle-cost.md",
+          "candidate": "Candidate context for maintenance as a lifecycle cost; the chapter's 75%/80% estimates are author claims, not measurements."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md",
+          "candidate": "Candidate context for an observed baseline before a large refactor; the 2011 modularization and >4 GB typedef work are a documented case."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Candidate context for stable facades over format-specific implementations; ITK's ImageFileReader/Writer over ImageIO classes is narrower than the page's port/adapter vocabulary."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - no book findings, support classification, severity or verdict."
+    },
+    {
+      "id": "R266",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/mailman.html",
+      "unit": "AOSA Volume II, Chapter 10 \"GNU Mailman\" (public HTML chapter), local representation /tmp/B20h/raw/mailman.txt lines 1-329",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-329 (329/329 lines, 7667/7667 words): 11 content headings (10.1-10.10 plus 'A Final Note'), 1 code block and 4 numbered figure captions, read sequentially. Lines 1-9 are the volume masthead, chapter title, byline and site promotional line; they are treated as chrome, excluded from the substantive description but retained in the hash, line and word totals. No prose section is missing relative to the live HTML headings.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest7.json#R266",
+        "/tmp/B20h/raw/mailman.txt lines 1-329; sha256=0399a22f00ca0f937e5f65a2b627cf9f4cd471eddd67ee279a0b0c40d332560b; words=7667",
+        "https://aosabook.org/en/v2/mailman.html (HTTP 200, fetched 2026-10-24; used only to confirm 11 headings, 4 figure images and 1 code block)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment. No Mailman deployment, queue-runner load test, bounce/VERP delivery test or REST call was performed. Throughput and stability statements are the author's experience, not measurements. The Mailman 2 to 3 migration procedure and the REST API specification are outside the chapter and were not retrieved.",
+      "representation_gap": "Non-textual gap: Figures 10.1-10.4 are caption-only; the live page embeds four images (mime.png, tree.png, chains.png, pipeline.png), so the MIME tree, message object tree, chain graph and handler pipeline diagrams are absent. Figure 10.3's arrow semantics are partly described in prose (lines 195-198), but the graph itself is unavailable. Hyperlink targets are stripped throughout, including the resource list at lines 313-323; the single code block (VERP address) is preserved between extractor-inserted [CODE]/[/CODE] markers. No prose section is missing relative to the live HTML headings.",
+      "representation_sha256": "0399a22f00ca0f937e5f65a2b627cf9f4cd471eddd67ee279a0b0c40d332560b",
+      "retrieved_lines": 329,
+      "retrieved_words": 7667,
+      "sections": [
+        {
+          "title": "10.1. The Anatomy of a Message",
+          "level": 2,
+          "start_line": 33,
+          "end_line": 53
+        },
+        {
+          "title": "10.2. The Mailing List",
+          "level": 2,
+          "start_line": 54,
+          "end_line": 102
+        },
+        {
+          "title": "10.3. Runners",
+          "level": 2,
+          "start_line": 103,
+          "end_line": 138
+        },
+        {
+          "title": "10.4. The Master Runner",
+          "level": 2,
+          "start_line": 139,
+          "end_line": 173
+        },
+        {
+          "title": "10.5. Rules, Links, and Chains",
+          "level": 2,
+          "start_line": 174,
+          "end_line": 218
+        },
+        {
+          "title": "10.6. Handlers and Pipelines",
+          "level": 2,
+          "start_line": 219,
+          "end_line": 230
+        },
+        {
+          "title": "10.7. VERP",
+          "level": 2,
+          "start_line": 231,
+          "end_line": 261
+        },
+        {
+          "title": "10.8. REST",
+          "level": 2,
+          "start_line": 262,
+          "end_line": 285
+        },
+        {
+          "title": "10.9. Internationalization",
+          "level": 2,
+          "start_line": 286,
+          "end_line": 297
+        },
+        {
+          "title": "10.10. Lessons Learned",
+          "level": 2,
+          "start_line": 298,
+          "end_line": 325
+        },
+        {
+          "title": "A Final Note",
+          "level": 4,
+          "start_line": 326,
+          "end_line": 329
+        }
+      ],
+      "notes": [
+        "Source claim: Mailman began in the early 1990s when John Viega wrote it for a Dave Matthews Band fan list; the Python community adopted it in the mid-1990s at CNRI to replace Majordomo, and Ken Manheimer contributed early work; Mark Sapiro maintains 2.1 and Barry Warsaw leads 3.0 (lines 14-17).",
+        "Source claim: two overriding principles drive message handling - no message lost and none delivered more than once - and the Mailman 2 redesign around them remained largely unchanged in Mailman 3 (lines 23-30).",
+        "Source claim: messages are modeled as a tree of MIME message objects parsed once from wire bytes, mutated as objects, pickled for persistence and flattened back to bytes at send time (lines 36-51).",
+        "Source claim: Mailman 2's MailList used cooperating mixin base classes and pickled __dict__ state in config.pck; this was convenient for adding features but exposed Python-only data, required exclusive NFS-safe locks for every read/write, and became slow, so Mailman 3 moved to SQL with Storm (SQLite default, PostgreSQL configurable) (lines 73-91).",
+        "Source claim: per-list config.pck silos prevented cross-list queries and made same-named lists in different virtual domains impossible; Mailman 3 uses the fully qualified posting address as the mailing-list primary key so support@example.com and support@example.org coexist (lines 94-100).",
+        "Source claim: parallelism comes from single-threaded runner processes, each owning a queue directory through a Switchboard; queue files are pickles with .pck/.bak/.tmp/.psv suffixes, and SHA1-based file names let power-of-2 runners split a queue without locking (lines 106-127).",
+        "Source claim: a timestamp prefix (<timestamp>+<sha1>.pck) restores best-effort FIFO ordering because SHA1 names destroy order and stat()/unpickling is avoided for performance; ordering across parallel runners is only approximate (lines 130-136).",
+        "Source claim: the master reads a configuration file, fork/execs runners, tracks PIDs and restart counts to stop restart cascades, and interprets SIGTERM/SIGINT (stop, no restart), SIGHUP (reopen logs) and SIGUSR1 (restart); it holds a lock refreshed daily by SIGALRM with a lifetime of about 1.5 days, and bin/mailman wraps start/stop/restart (lines 148-171).",
+        "Source claim: Mailman 2 mixed moderation and modification in one handler pipeline, making order significant; Mailman 3 separates chains/links/rules (rules decide and record metadata, actions dispatch) from handlers/pipelines (handlers modify and copy to digest, archive and outgoing queues) (lines 177-228).",
+        "Source claim: the default chain includes administrivia, max-size, truth and any links; deferred actions let Mailman report every rejection reason, 'any' sweeps prior matches, and 'truth' always matches at the last link to move accepted mail to the accept chain (lines 201-216).",
+        "Source claim: VERP encodes the recipient in the SMTP envelope sender (mylist-bounce+anne=example.com@example.org), so bounces return to the list; the cost is one copy per recipient instead of bundling, offset by per-recipient footers and mail-merge options (lines 234-259).",
+        "Source claim: Mailman 3 exposes a REST/JSON core engine so external UIs (the official web UI is a separate project) and scripts can integrate without the core being a bottleneck; the chapter also describes a language stack and layered templates for i18n, and closes with TDD, bytes/strings and i18n lessons plus a memorial note for Tokio Kikuchi (lines 265-329). Inference (reader): the two-tenet guarantee is argued from design, not demonstrated with fault-injection results."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+          "candidate": "Candidate context for no-loss/no-duplicate delivery and duplicate suppression; Mailman's guarantee rests on queue-file discipline, not the page's request-retry model."
+        },
+        {
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "candidate": "Candidate context for enqueue-then-copy fan-out to archive, digest and outgoing queues; Mailman uses files and Switchboards rather than a database outbox."
+        },
+        {
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "candidate": "Candidate context for schema-versioned persistence and a storage migration; Mailman 2 config.pck to Mailman 3 SQL is the concrete case."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/tenant-effects.md",
+          "candidate": "Candidate context for per-tenant isolation and address-keyed identity; virtual-domain list naming is the concrete case."
+        },
+        {
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/task-lifetime.md",
+          "candidate": "Candidate context for supervised long-running process lifetimes and restart policy; the master runner's PID and restart-count logic is the concrete case."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - no book findings, support classification, severity or verdict."
+    },
+    {
+      "id": "R267",
+      "source_ids": [
+        "src.aosa"
+      ],
+      "url": "https://aosabook.org/en/v2/matplotlib.html",
+      "unit": "AOSA Volume II, Chapter 11 \"matplotlib\" (public HTML chapter), local representation /tmp/B20h/raw/matplotlib.txt lines 1-340",
+      "revision": "The Architecture of Open Source Applications, Volume II, public HTML",
+      "status": "full-scoped-text-read",
+      "coverage": "Full chapter text, lines 1-340 (340/340 lines, 5567/5567 words): 11 content headings (11.1-11.8 plus the three 11.2 subsections), 7 code blocks, 9 numbered figure captions and Table 11.1, read sequentially. Lines 1-9 are the volume masthead, chapter title, byline and site promotional line; they are treated as chrome, excluded from the substantive description but retained in the hash, line and word totals. No prose section is missing relative to the live HTML headings.",
+      "retrieval_refs": [
+        "/tmp/B20h/manifest7.json#R267",
+        "/tmp/B20h/raw/matplotlib.txt lines 1-340; sha256=3f63dcb9e4117954397eaea90725ff0e76e615cba0339b871c9fcc406c9e6d35; words=5567",
+        "https://aosabook.org/en/v2/matplotlib.html (HTTP 200, fetched 2026-10-24; used only to confirm 11 headings, 9 numbered figures with 10 image files, 7 code blocks and the unnumbered matrix image)"
+      ],
+      "omissions": "Other AOSA chapters outside this batch not read; no production experiment. No matplotlib build, backend rendering, transform benchmark or regression-suite run was performed. The chapter's 2011-era testing and runtime figures were not reproduced. Citation keys [She06], [McG07], [Knu86], [Ent11a] and [Ent11b] point to a shared bibliography outside the unit and were not retrieved.",
+      "representation_gap": "Non-textual gap: Figures 11.1-11.9 are caption-only; the live page embeds ten images (Figures 11.2 and 11.3 use two files, and their captions are merged on line 87). The unnumbered 3x3 affine-matrix image after line 260 is absent, so that equation is not in the text representation. Table 11.1 is flattened into one unsegmented line at line 111, losing row and column structure. All 7 code blocks are preserved between extractor-inserted [CODE]/[/CODE] markers. No prose section is missing relative to the live HTML headings; the cited bibliography is outside the chapter unit.",
+      "representation_sha256": "3f63dcb9e4117954397eaea90725ff0e76e615cba0339b871c9fcc406c9e6d35",
+      "retrieved_lines": 340,
+      "retrieved_words": 5567,
+      "sections": [
+        {
+          "title": "11.1. The Dongle Problem",
+          "level": 2,
+          "start_line": 14,
+          "end_line": 22
+        },
+        {
+          "title": "11.2. Overview of matplotlib Architecture",
+          "level": 2,
+          "start_line": 23,
+          "end_line": 201
+        },
+        {
+          "title": "Backend Layer",
+          "level": 3,
+          "start_line": 32,
+          "end_line": 82
+        },
+        {
+          "title": "Artist Layer",
+          "level": 3,
+          "start_line": 83,
+          "end_line": 147
+        },
+        {
+          "title": "Scripting Layer (pyplot)",
+          "level": 3,
+          "start_line": 148,
+          "end_line": 201
+        },
+        {
+          "title": "11.3. Backend Refactoring",
+          "level": 2,
+          "start_line": 202,
+          "end_line": 242
+        },
+        {
+          "title": "11.4. Transforms",
+          "level": 2,
+          "start_line": 243,
+          "end_line": 271
+        },
+        {
+          "title": "11.5. The Polyline Pipeline",
+          "level": 2,
+          "start_line": 272,
+          "end_line": 287
+        },
+        {
+          "title": "11.6. Math Text",
+          "level": 2,
+          "start_line": 288,
+          "end_line": 309
+        },
+        {
+          "title": "11.7. Regression Testing",
+          "level": 2,
+          "start_line": 310,
+          "end_line": 330
+        },
+        {
+          "title": "11.8. Lessons Learned",
+          "level": 2,
+          "start_line": 331,
+          "end_line": 340
+        }
+      ],
+      "notes": [
+        "Source claim: matplotlib began when John Hunter tried to free epilepsy researchers from a single-license proprietary ECoG analysis package; early work was a GTK+ ECoG viewer, and a second goal was a MATLAB-like stateful plotting interface (lines 17-20).",
+        "Source claim: the architecture is three layers - backend, artist, scripting - where each upper layer knows the layer below but lower layers do not know upper ones (lines 26-29).",
+        "Source claim: the backend layer supplies FigureCanvas (surface), Renderer (drawing) and Event (input) implementations for GTK+, Qt, Tk, FLTK, wxWidgets and Cocoa, plus file backends; the agg C++ renderer gives pixel-identical screen and PNG output (lines 11, 35-50).",
+        "Source claim: everything visible is an Artist; the base class carries transform, visibility, clip box, label and picking, and its draw(renderer) call is the coupling point to a backend; primitive artists (Line2D, Rectangle, Circle, Text) compose into Axis, Tick, Axes and Figure (lines 86-107).",
+        "Source claim: Axes is the most important composite artist and holds most plotting methods; Table 11.1 maps Axes.imshow/hist/plot to AxesImage, Rectangle and Line2D instances stored on the Axes (lines 110-111).",
+        "Source claim: pyplot is a stateful thin wrapper that parses a config file for a default backend, tracks the current Figure/Axes, and forwards calls such as plot to Axes after gca(); @autogen_docstring copies API docstrings (lines 151-199).",
+        "Source claim: by version 0.98 the backend API had grown to many draw_* methods; the refactor reduced required methods to draw_path, draw_image, draw_text and get_text_width_height_descent, with draw_markers, draw_path_collection and draw_quad_mesh optional (lines 205-241).",
+        "Source claim: transforms map data to axes to figure to display through a directed graph of parent-dependent transform nodes; most are invertible, parent changes invalidate dependent nodes, affine 3x3 matrices are composed and frozen, non-affine functions handle log/polar/geographic projections, and blended nodes split x/y while shared nodes link axes (lines 246-269).",
+        "Source claim: polyline rendering is a discrete pipeline - transform, handle missing data via MOVETO, clip to figure bounds, snap horizontal/vertical lines to pixel centers for raster backends, and simplify collinear points (lines 275-285).",
+        "Source claim: math text can use a full TeX installation (parse DVI into drawing commands, usetex) or the internal mathtext engine, a TeX math-rendering port with a pyparsing parser that omits most third-party TeX/LaTeX libraries (lines 291-307).",
+        "Source claim: regression testing renders plots and compares them to baseline images using histogram RMS difference with a threshold, because FreeType variation prevents bit-exact comparison; PNG, PDF and SVG are tested, vector output is rasterized via Ghostscript/Inkscape first, and the suite takes about 15 minutes on a 2.33 GHz Core 2 E6550 with incomplete coverage (lines 313-328).",
+        "Source claim: lessons are 'Good architects borrow', the MATLAB-compatible scripting layer let the internal object API be refactored repeatedly without breaking most users, the GDK-derived drawing API was a costly borrowing mistake, and the PDF drawing specification would have been a better base; integration with Kiva/Enable was missed but integration has build and complexity costs (lines 334-340). Inference (reader): the chapter is a design history by two core authors, not an independent evaluation."
+      ],
+      "tycho_candidates": [
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/dependencies-ports.md",
+          "candidate": "Candidate context for downward-only layer dependencies; the backend/artist/scripting stack is the concrete case."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "candidate": "Candidate context for interchangeable adapters behind a stable core; six UI toolkits and multiple file backends are the concrete case."
+        },
+        {
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
+          "candidate": "Candidate context for keeping a scripting interface stable while internals are refactored; the MATLAB-compatible pyplot layer is the concrete case."
+        },
+        {
+          "path": "book/volumes/v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md",
+          "candidate": "Candidate context for baseline evidence and later comparison; image-baseline regression tests are the concrete case, though the page addresses modernization baselines rather than pixel diffs."
+        }
+      ],
+      "reader": "delegated-reader/B20h/deepseek-harness (parent session-339f3170-2943-4eff-877d-b6b465e229ef); extraction only - no book findings, support classification, severity or verdict."
     }
   ],
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 228,
+    "full_reads": 234,
     "blocked": 14,
     "records": [
       "R015",
@@ -28878,7 +29692,13 @@
       "R258",
       "R259",
       "R260",
-      "R261"
+      "R261",
+      "R262",
+      "R263",
+      "R264",
+      "R265",
+      "R266",
+      "R267"
     ],
     "scope": "JEP 444, JEP 491, thirty public engineering articles, documentation/paper units, RFC 9110/9111/9113, delegated reading batches and fourteen blocked pages plus two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
