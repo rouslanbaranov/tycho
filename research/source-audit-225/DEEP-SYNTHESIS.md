@@ -14,7 +14,7 @@ index or edition file was changed.
   images. OSTEP: chapters 1-57, appendices A-H and the preface, in 65
   continuation records (20,189 lines, 323,810 words, 803 pages plus the earlier
   chapter 2 record). OSTEP raster figures were not visually inspected.
-- **79 reference records** in `readings.json`: 59 full reads, 1 partial, 17 blocked-full-text
+- **79 reference records** in `readings.json`: 60 full reads, 17 blocked-full-text
   and 2 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
 - **35 assessed comparisons** in `comparisons.json` against 27 canonical pages:
@@ -174,7 +174,7 @@ C008) are optional additions, not defects.
 
 ## 5. Coverage gaps
 
-- **174 registered sources** are still at landing-or-abstract inspection. They
+- **173 registered sources** are still at landing-or-abstract inspection. They
   are not full reads, even where their titles and URLs are registered.
 - **379 of 406 canonical pages** have no page-level comparison. Their matrix
   status is an explicit gap, not an inferred pass.
@@ -192,7 +192,7 @@ C008) are optional additions, not defects.
   sources have an honest disposition.
 - [x] Every full reference record has a finite unit, exact revision, access date,
   sections and omissions; blocked/excluded records do not claim content.
-- [ ] Every accessible scoped source read completely: 174 landing-only sources
+- [ ] Every accessible scoped source read completely: 173 landing-only sources
   remain, and 14 pages are blocked.
 - [ ] All 406 pages have an applicability/review status beyond an explicit gap:
   19 assessed, 387 gaps.
@@ -207,7 +207,7 @@ C008) are optional additions, not defects.
 
 ## 7. Priorities for the next batch
 
-1. Reconcile the 174 landing-or-abstract sources into finite units and read the
+1. Reconcile the 173 landing-or-abstract sources into finite units and read the
    highest-priority official documentation that Tycho cites repeatedly.
 2. Extend page-level comparisons from 14 to the pages with the strongest
    material claims: crash consistency, replication, overload, migration gates,
@@ -224,5 +224,5 @@ C008) are optional additions, not defects.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, does not claim that a
 first-party article is a benchmark, and does not claim that Tycho is complete or
-correct. The 174 landing-only sources and 379 unassessed pages are the dominant
+correct. The 173 landing-only sources and 379 unassessed pages are the dominant
 remaining uncertainty.

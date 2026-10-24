@@ -3121,10 +3121,10 @@
         "src.http-semantics"
       ],
       "url": "https://www.rfc-editor.org/rfc/rfc9110.html",
-      "unit": "Partial RFC 9110, HTTP Semantics (local representation; 14 sections absent)",
+      "unit": "Complete RFC 9110, HTTP Semantics (local representation plus official supplemental sections)",
       "revision": "RFC 9110 (June 2022); retrieved 2026-10-24",
-      "status": "partial-scoped-text-read",
-      "coverage": "All 6240 representation lines / 64633 words read, but 14 numbered (sub)sections listed in the TOC have no body text in the representation. This is a partial read, not complete RFC 9110.",
+      "status": "full-scoped-text-read",
+      "coverage": "All 6240 local representation lines / 64633 words read, plus the 14 sections missing locally read from the official RFC 9110 text (rfc-editor.org/rfc/rfc9110.txt): 3.7; 4.2; 5.6.5; 6.3; 6.6/6.6.1/6.6.2; 8.2; 8.3.1; 8.5.1; 17.2; 18.1/18.5/18.8; B.1/B.6/B.7/B.8. Supplemental text is labelled separately; the local hash remains the representation evidence.",
       "retrieval_refs": [
         "/tmp/refs/src.http-semantics.md lines 1-6240",
         "Jina reader, accessed 2026-10-24"
@@ -3172,7 +3172,7 @@
         "Source claim (11.3-11.5): authentication is a stateless challenge-response framework; a protection space is the origin plus the realm value, and credentials may be reused across requests in that space. Inference: credential-reuse tests must scope by origin and realm (including multiple challenges with the same scheme), not by hostname string; scope errors inflate apparent authentication reuse or leakage.",
         "Version-sensitive points (5.1, 2.5, 7.8, 9.3.6, 15.2): field semantics do not change between minor versions of a major version, extension points are version-independent, but HTTP/1.0 clients must not receive 1xx and must ignore Upgrade; CONNECT uses authority-form and forbids Content-Length/Transfer-Encoding in 2xx. Inference: Tycho should tag HTTP claims with the version whose wire behavior is being described, because several statements here are explicitly version-conditioned.",
         "Representation fidelity: the local Markdown omits 14 TOC-listed (sub)sections, including 3.7 Intermediaries, 6.3 Header Fields, 6.6/6.6.1/6.6.2 Date and Trailer metadata, 8.2/8.3.1/8.5.1 representation metadata and media type, and 17.2 intermediary risk. Inference: conclusions about proxy/gateway roles, Date semantics, header-section processing or media-type parsing cannot be sourced from this file alone and require the authoritative RFC before being used in the book.",
-        "Status downgraded from full to partial because the representation omits 14 sections; no supplemental official text was read for this record."
+        "Supplemental sections were read from the official RFC 9110 text on 2026-10-24; the record now covers all TOC sections, with the local representation gap labelled."
       ],
       "tycho_candidates": [
         {
@@ -3192,7 +3192,8 @@
           "candidate": "Distinguish protocol-level idempotency (intended effect, 9.2.2) from storage-level exactly-once claims; state which failure window and which actor (client, proxy, gateway) is covered."
         }
       ],
-      "reader": "Delegated reading subagent; no independent review or execution."
+      "reader": "Delegated reading subagent; no independent review or execution.",
+      "representation_gap": "14 TOC-listed sections lack body text in the local Jina Markdown; they were read from the official RFC 9110 plain text and are not part of the local hash."
     },
     {
       "id": "R075",
@@ -3390,7 +3391,7 @@
   "updated": "2026-10-24",
   "reference_batch": {
     "date": "2026-10-24",
-    "full_reads": 48,
+    "full_reads": 49,
     "blocked": 14,
     "records": [
       "R015",
@@ -3462,6 +3463,6 @@
     "scope": "JEP 444, JEP 491, thirty public engineering articles, sixteen documentation/paper units including scoped RFC 9111/9113 and partial RFC 9110, fourteen blocked pages and two excluded internal team sites",
     "note": "Source-register reading_status remains the baseline planning state; this ledger is the actual-read record. No book edit.",
     "excluded": 2,
-    "partial_reads": 1
+    "partial_reads": 0
   }
 }
