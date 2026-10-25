@@ -136,7 +136,8 @@ the differences are small and can be expressed without a new authority.
 
 **Limits.** A BFF duplicates client-specific policy and adds a deployable; its contract and
 client matrix need an owner, and a BFF that caches or authorizes objects becomes another
-authority.
+authority. With several BFFs, each composition needs a shared domain contract and its own
+observability; otherwise the BFFs drift independently.
 
 ### API Composition
 
