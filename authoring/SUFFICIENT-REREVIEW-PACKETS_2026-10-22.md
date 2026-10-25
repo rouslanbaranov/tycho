@@ -13,10 +13,10 @@
 | Residual findings after re-review | 56 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 110 |
+| Reviewed by independent agent | 109 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 33, "report-section-missing": 2, "reviewed-by-independent-agent": 110}.
+Packet statuses: {"page-changed-since-review": 35, "report-section-missing": 1, "reviewed-by-independent-agent": 109}.
 
 ## Review procedure
 
@@ -46,7 +46,7 @@ blank verdict template in the machine-readable file.
 
 - **API Composition**
   Current: pass; re-review: pass; report: None.
-  Status: report-section-missing.
+  Status: page-changed-since-review.
 
 - **API Gateway**
   Current: pass; re-review: pass; report: pass.
@@ -66,7 +66,7 @@ blank verdict template in the machine-readable file.
 
 - **Backend for Frontend (BFF)**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Backup, PITR and Restore**
   Current: pass; re-review: pass; report: pass-with-findings.
