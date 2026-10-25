@@ -326,7 +326,7 @@
         "heading": "Clean-Onion Architecture",
         "anchor": "clean-onion-architecture",
         "level": 3,
-        "line": 169,
+        "line": 171,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Clean and onion",
@@ -2639,7 +2639,7 @@
         "heading": "Command Query Responsibility Segregation (CQRS)",
         "anchor": "command-query-responsibility-segregation-cqrs",
         "level": 3,
-        "line": 307,
+        "line": 308,
         "unit_kind": "dedicated",
         "unit_terms": [
           "CQRS begins with a",
@@ -2656,7 +2656,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "The write owner accepts command admission, invariant checks and rejection semantics.",
+          "quote": "Neither side may claim authority merely because it can read the other's tables.",
           "reason": "Bounded owner statement from the current section."
         },
         "failure_recovery": {
@@ -2666,7 +2666,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A shared schema may remain, provided table ownership and permitted writers are explicit.",
+          "quote": "Revisit the separation when command contention, projection lag or rebuild duration outweighs the read benefit, and prefer one model when that case cannot be made.",
           "reason": "Bounded owner statement from the current section."
         }
       },
@@ -2687,7 +2687,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated CQRS section; it includes the freshness subsection. Projector crash/duplicate recovery is section 4, outside this unit."
+      "notes": "Owner unit covers recorded CQRS decision, side authority, idempotent projection/cursor rebuild and reversal; no recovery text is outside the unit."
     },
     {
       "pattern_id": "tycho.pattern.event-sourcing",
@@ -4763,7 +4763,7 @@
         "heading": "CQRS Read Projections",
         "anchor": "cqrs-read-projections",
         "level": 3,
-        "line": 325,
+        "line": 326,
         "unit_kind": "dedicated",
         "unit_terms": [
           "The projection owner publishes",
@@ -4790,7 +4790,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Silent coercion of unknown fields turns a contract breach into corrupted rows.",
+          "quote": "An authority read or simpler cache may serve the journey with fewer contracts",
           "reason": "Bounded owner statement from the current section."
         }
       },

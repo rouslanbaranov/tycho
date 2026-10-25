@@ -158,7 +158,9 @@ reserve(unitId, interval, operationId), then implement it with a local transacti
 
 The domain owns the contract: a confirmed reservation has one authoritative result for the
 operation, and a uniqueness conflict becomes an explicit domain conflict. Adapter-specific errors,
-timeouts and retries stay at the edge; they do not become domain states.
+timeouts and retries stay at the edge; they do not become domain states. Mapping layers can hide
+latency and translate adapter errors inconsistently; contract tests and explicit error translation
+keep the boundary honest.
 
 Domain code must not depend on adapter or technology types; dependencies point inward. Keep the
 boundary only where substitution or testing justifies it. A distributed split is a
