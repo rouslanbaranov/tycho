@@ -288,8 +288,8 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Adapter-specific errors, timeouts and retries stay at the edge",
-          "reason": "Specifies failure translation into a domain conflict instead of blind retry."
+          "quote": "Mapping layers can hide latency and translate adapter errors inconsistently; contract tests and explicit error translation keep the boundary honest.",
+          "reason": "Names mapping-layer latency and inconsistent adapter-error translation with contract tests/error translation as recovery."
         },
         "alternative": {
           "state": "supported",
@@ -2651,7 +2651,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "CQRS begins with a recorded decision about divergent command and query needs, not with a second database.",
+          "quote": "The write owner accepts command admission, invariant checks and rejection semantics.",
           "reason": "Bounded owner statement from the current section."
         },
         "invariant": {
@@ -2687,7 +2687,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Owner unit covers recorded CQRS decision, side authority, idempotent projection/cursor rebuild and reversal; no recovery text is outside the unit."
+      "notes": "Owner unit covers recorded CQRS decision, side authority, idempotent projection/cursor rebuild and reversal; projector-crash recovery also appears in section 4 outside this bounded unit."
     },
     {
       "pattern_id": "tycho.pattern.event-sourcing",
