@@ -353,7 +353,8 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                 "citation": row["path"] + "#" + row["section_id"],
                 "match_source": source,
                 "why": (
-                    "matched in " + source + " for terms: " + ", ".join(
+                    "matched in " + source +
+                    " for terms: " + ", ".join(
                         term for term in terms if term in folded)),
                 "next_actions": [
                     {"tool": "tycho_read",

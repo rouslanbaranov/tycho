@@ -408,12 +408,12 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Translation has a maintenance cost: each mapping needs an owner and a review path.",
+          "quote": "Model behavior changes are reviewed with the domain expert before a boundary moves.",
           "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
           "state": "supported",
-          "quote": "The context map records each relationship, translation direction and mapping maintainer.",
+          "quote": "Reopen the boundary when a shared term changes meaning, a translation gains a second owner or releases become unavoidably coupled.",
           "reason": "Bounded owner statement from the current section."
         }
       },
@@ -468,7 +468,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Strong cross-service transactions remain a contraindication: an outbox or reconciliation reduces, but does not remove, that coordination cost.",
+          "quote": "Dual writes, stale replicas and cross-service queries are common; use an outbox or idempotent reconciliation for cross-service effects and verify replica freshness before joining.",
           "reason": ""
         },
         "alternative": {
@@ -3196,7 +3196,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Callers choose a value only within that published contract.",
+          "quote": "The outcome record and business effect must commit together; a later separate write leaves a window for duplicate execution.",
           "reason": "Bounded owner statement from the current section."
         },
         "failure_recovery": {
@@ -5168,7 +5168,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section covers retry safety and budgets, but never explains exponential delay growth; jitter is also absent."
+      "notes": "Owner unit defines attempt count, base, multiplier, cap, jitter and remaining deadline; no separate exponential-growth formula is stated."
     },
     {
       "pattern_id": "tycho.pattern.retry-with-jitter",
@@ -6098,7 +6098,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A resource that cannot check an epoch should not rely on this lock for exclusion; use a conditional write or single-writer route instead.",
+          "quote": "Without enforcement at the destination, the design offers a coordination signal rather than mutual exclusion.",
           "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
