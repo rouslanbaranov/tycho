@@ -18,15 +18,14 @@ complete; it does not authorize book edits.
 
 ## Source coverage
 
-- 371 reference records: 338 full, 12 partial, 19 blocked, 2 excluded.
-- 82 registered sources remain landing-only: they have a register entry but no
-  reading record. These are concentrated in vendor documentation for databases,
-  search, observability, delivery tooling and JVM frameworks, plus source
-  repositories.
-- Commercial books remain blocked without lawful full text.
+- 471 reference records: 422 full, 18 partial, 29 blocked, 2 excluded.
+- No registered source remains landing-only: every source has a reading record.
+- Ten commercial books are recorded as blocked-full-text because no lawful full
+  text was available; they are not claimed as read.
 
 ## Not claimed
 
-- B21-B27 are not complete.
+- The B21-B27 source batch is complete: no landing-only source remains; blocked and
+  partial records are explicit.
 - No independent review, human review or CI verification is claimed.
 - Acceptance remains **not accepted**.

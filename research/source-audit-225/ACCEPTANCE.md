@@ -5,10 +5,10 @@
 | Criterion | Status | Evidence |
 |---|---|---|
 | Complete source inventory reconciles register and external links | Partial | 247 sources and 406 documents represented; external-link inventory beyond the register is incomplete. |
-| Every source has a finite unit and honest full/partial/blocked status | Partial | 468 reference records plus 6 source reconciliations; 1 source remains landing-only. |
-| Every accessible scoped source read completely | Not met | 1 landing-only sources remain; RFC 9110 is now read with labelled supplements; 29 blocked records (14 baseline pages) and 2 sources excluded. |
+| Every source has a finite unit and honest full/partial/blocked status | Partial | 471 reference records plus 6 source reconciliations; no source remains landing-only. |
+| Every accessible scoped source read completely | Not met | No landing-only source remains; RFC 9110 is now read with labelled supplements; 29 blocked records (14 baseline pages) and 2 sources excluded. |
 | All 406 canonical documents have a review status | Partial | All 406 have a status; 294 are comparison-assessed and 112 are explicit gaps. |
-| Findings include exact source locations, anchors and confidence | Partial | 272 comparisons carry anchors and source records; most pages have no comparison. |
+| Findings include exact source locations, anchors and confidence | Partial | 366 comparisons carry anchors and source records; most pages have no comparison. |
 | Deep research synthesis delivered | Yes, negative | `FINAL-SYNTHESIS.md` records the evidence and the unmet criteria. |
 | No book content changed, baseline verified | Yes | 681 tracked files match; no book, register, index or edition change. |
 | Research artifacts independently reviewed | Not met | Reviewer-preset child returned no report; human review not performed. |
@@ -21,8 +21,8 @@ review acceptance. A closure would be an unsupported completion claim.
 
 ## Conditions for a future acceptance
 
-- Reconcile and read the remaining 1 landing-only sources, or record lawful
-  access limitations.
+- Resolve the 29 blocked records and 18 partial records where lawful access
+  exists, or keep the recorded access limitation.
 - Reduce the 112 page gaps through bounded comparisons.
 - Complete the external-link census.
 - Obtain and verify an independent review on a bounded delta.
