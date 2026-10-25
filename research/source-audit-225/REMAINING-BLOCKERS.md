@@ -17,9 +17,9 @@ complete; it does not authorize book edits.
 
 ## Source coverage
 
-- 471 reference records: 420 full, 20 partial, 19 blocked, 12 excluded.
+- 471 reference records: 438 full, 5 partial, 15 blocked, 13 excluded.
 - No registered source remains landing-only: every source has a reading record.
-- Ten commercial books are excluded-from-scope: unavailable and not lawfully
+- Eleven commercial books are excluded-from-scope: unavailable and not lawfully
   usable here. They are not blockers and are not claimed as read.
 
 ## Not claimed
