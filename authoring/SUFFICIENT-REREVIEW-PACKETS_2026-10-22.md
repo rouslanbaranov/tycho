@@ -9,14 +9,14 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 109 |
-| Residual findings after re-review | 36 |
+| Promoted after remediation | 110 |
+| Residual findings after re-review | 35 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 114 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 29, "report-section-missing": 2, "reviewed-by-independent-agent": 114}.
+Packet statuses: {"page-changed-since-review": 28, "report-section-missing": 3, "reviewed-by-independent-agent": 114}.
 
 ## Review procedure
 
@@ -129,8 +129,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Clean / Onion Architecture**
-  Current: pass-with-findings; re-review: pass-with-findings; report: None.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: None.
+  Status: report-section-missing.
 
 - **Client-Side Discovery**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
