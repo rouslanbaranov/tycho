@@ -24,7 +24,7 @@ The preceding chapter-19 instruction is historical and superseded. All 48 public
 - The manifest matches the publisher's complete 48-entry navigation after normalizing fragments and trailing slashes. The public contents page was also inspected directly.
 - The 29 new reading records match 29 downloaded HTML pages and 44 embedded images. All recorded asset lengths and SHA-256 values match their scratch representations; inspection-aid files are identified separately. Source bytes and images are not added to Git.
 - All relative Markdown file links in the research reports resolve locally. Exact public chapter URLs were accessed during reading; linked third-party publications and example placeholder endpoints remain outside this reading claim.
-- The lexical boundary check and whitespace check passed. Independent-origin/editorial review covered every changed report, ledger, manifest and proposed commit message: concise original notes and admissible public source metadata only; domain-neutral transfers; no private companion corpus used.
+- The lexical boundary check and whitespace check passed. The author editorial review covered every changed report, ledger, manifest and proposed commit message: concise original notes and admissible public source metadata only; domain-neutral transfers; no private companion corpus used.
 - The optional HTML helper dependency was unavailable in the first verification attempt; the navigation membership check was then implemented and passed using Python's standard HTML parser. Fragmented bibliography links were normalized before set comparison. These verification adjustments did not change reading status or source content.
 
 No technical runtime experiment, independent peer review, final claim synthesis or new full book test-suite run is asserted. No canonical Mermaid or book code changed. Main is kept at the frozen baseline; the research-only delta belongs to the existing #225 branch and draft PR #226.
@@ -232,8 +232,8 @@ The R015-R187 slice holds 173 records: 156 full-scoped reads, 14 blocked and 3
 excluded. JEP 444 and JEP 491 are read; the remainder are public engineering
 articles and documentation/paper units in the src.m9-* series. Fourteen
 publisher pages returned no readable article body and are recorded as
-blocked-full-text, not inferred. Three internal/non-public sources in this slice
-are excluded-from-scope and were not accessed.
+blocked-full-text, not inferred. Two internal/non-public team sites and one
+commercial book in this slice are excluded-from-scope and were not accessed.
 R024 and R032 each repeat the article body in the representation; their unique
 text was read and the duplicate blocks were verified by matching headings.
 R041 is a wiki page whose navigation chrome was identified and excluded from
@@ -276,7 +276,7 @@ a96c6b7 are outside that attempted review's stated HEAD.
   excluded sources (2 internal team sites, 11 unavailable commercial books). All 45 baseline fetch-incomplete sources are
   accounted for: 29 full, 14 blocked, 2 excluded, 0 unaccounted.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
-  two candidate page actions, 33 not-addressed assessments (3 high), one
+  two candidate page actions, 33 not-addressed assessments (4 high, including C412), one
   contradiction, no landing-only source, 7 unassessed pages and the missing
   independent review. It does not claim #225 completion.
 - Boundary, whitespace, JSON, candidate-path and anchor checks passed. No book,

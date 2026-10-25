@@ -15,7 +15,7 @@ are not met. The unresolved items are stated with exact counts below.
 - **All 45 baseline fetch-incomplete sources accounted for.** 29 full reads,
   14 blocked pages, 2 excluded internal team sites; 0 unaccounted.
 - **471 reference records:** 438 full, 5 partial, 15 blocked, 13 excluded.
-- **413 assessed comparisons across 300 canonical pages:** 118 supported, 261 qualified, 33 not-addressed, 1 contradicted.
+- **413 assessed comparisons across 302 canonical pages:** 118 supported, 261 qualified, 33 not-addressed, 1 contradicted.
 - **Baseline integrity:** 681 tracked files match the frozen baseline; 247
   registered sources and 406 canonical documents remain represented. No book,
   source-register, index or edition file changed.

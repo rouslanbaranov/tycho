@@ -3,7 +3,7 @@
 **Date:** 2026-10-24. **Baseline:** 6754bac6e26faa57d65a301a60be10b3da93f65b.
 **Machine-readable plan:** [source-plan-remaining.json](source-plan-remaining.json).
 
-## Canonical count correction
+## Canonical count correction (historical snapshot)
 
 The register contains 247 sources. Readings and reconciliations cover 134
 register sources; 110 remain. The earlier 127 count was stale: it did not

@@ -17,7 +17,7 @@ index or edition file was changed.
 - **471 reference records** in `readings.json`: 438 full reads, 5 partial, 15 blocked-full-text
   and 13 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
-- **413 assessed comparisons** in `comparisons.json` against 300 canonical pages:
+- **413 assessed comparisons** in `comparisons.json` against 302 canonical pages:
   118 supported, 261 qualified, 33 not-addressed, 1 contradicted.
 - **Page matrix:** all 406 pages have a recorded review status; 302 are
   comparison-assessed, 97 are landing-reviewed, and 7 carry an explicit evidence gap
@@ -202,7 +202,7 @@ verification, restatement or removal, not optional additions.
 - [ ] All 406 pages have an applicability/review status beyond an explicit gap:
   302 assessed, 7 gaps.
 - [ ] Material explanations have source comparisons across every technical page:
-  413 comparisons exist; the applied case layer and most pages are unassessed.
+  413 comparisons exist; 302 of 406 pages have comparisons; 7 blocked-source gaps remain.
 - [ ] Complete external-link inventory and finite units for every citation.
 - [x] Findings carry exact book anchors and source records for the 413 assessed
   comparisons; confidence and no-edit actions are recorded.
