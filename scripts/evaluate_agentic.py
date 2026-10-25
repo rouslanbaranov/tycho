@@ -124,8 +124,17 @@ def call_tool(process, request_id, name, arguments):
 
 def row_for(task, payload, reads, latency_ms, tool_calls):
     accepted = [entry["path"] for entry in task["accepted"]]
-    confident_results = payload.get("results") or []
-    results = confident_results or payload.get("weak_results") or []
+    if payload.get("sections") is not None:
+        results = payload.get("sections") or []
+        confident_results = [
+            item for item in results if not item.get("weak")]
+        weak_returned = sum(1 for item in results if item.get("weak"))
+        returned = len(results)
+    else:
+        confident_results = payload.get("results") or []
+        results = confident_results or payload.get("weak_results") or []
+        weak_returned = payload.get("weak_returned", 0)
+        returned = payload.get("returned")
     paths = [item.get("path") for item in results]
     rank = first_relevant_rank(paths, accepted)
     accepted_sections = {
@@ -154,8 +163,8 @@ def row_for(task, payload, reads, latency_ms, tool_calls):
         "policy_confident": assessment.get("confident"),
         "policy_state": assessment.get("state"),
         "default_would_abstain": policy_abstained,
-        "returned": payload.get("returned"),
-        "weak_returned": payload.get("weak_returned", 0),
+        "returned": returned,
+        "weak_returned": weak_returned,
         "visible_returned": len(results),
         "doc_hit": bool(rank),
         "section_hit": section_hit,
@@ -181,8 +190,9 @@ def main(argv=None):
     parser.add_argument("--dataset", type=Path, default=DATASET)
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--limit", type=int, default=10)
-    parser.add_argument("--strategy", choices=("search-once", "search-read"),
-                        default="search-once")
+    parser.add_argument(
+        "--strategy", choices=("search-once", "search-read", "context"),
+        default="search-once")
     parser.add_argument(
         "--mode", choices=("diagnostic", "strict", "exploratory"),
         default="diagnostic",
@@ -220,18 +230,29 @@ def main(argv=None):
         for task in items:
             start = time.perf_counter()
             request_id += 1
-            search_args = {"query": task["question"], "limit": args.limit}
-            if args.max_chars is not None:
-                search_args["max_chars"] = args.max_chars
-            if args.mode == "diagnostic":
-                search_args["abstain"] = False
-            elif args.mode == "strict":
-                search_args["mode"] = "strict"
-                search_args["abstain"] = True
+            if args.strategy == "context":
+                context_args = {
+                    "question": task["question"],
+                    "limit": min(args.limit, 8),
+                }
+                if args.max_chars is not None:
+                    context_args["max_chars"] = args.max_chars
+                payload = call_tool(
+                    process, request_id, "tycho_context", context_args)
             else:
-                search_args["mode"] = "exploratory"
-                search_args["abstain"] = True
-            payload = call_tool(process, request_id, "tycho_search", search_args)
+                search_args = {"query": task["question"], "limit": args.limit}
+                if args.max_chars is not None:
+                    search_args["max_chars"] = args.max_chars
+                if args.mode == "diagnostic":
+                    search_args["abstain"] = False
+                elif args.mode == "strict":
+                    search_args["mode"] = "strict"
+                    search_args["abstain"] = True
+                else:
+                    search_args["mode"] = "exploratory"
+                    search_args["abstain"] = True
+                payload = call_tool(
+                    process, request_id, "tycho_search", search_args)
             reads = []
             calls = 1
             if args.strategy == "search-read" and payload.get("results"):

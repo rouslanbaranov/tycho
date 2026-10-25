@@ -391,6 +391,22 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["content_trust"],
                          mcp_server.CONTENT_TRUST)
 
+    def test_context_bundle_is_extractive_and_bounded(self):
+        payload = self.call(self.server(), "tycho_context", {
+            "question": "retry budget",
+            "max_chars": 5000,
+        })["structuredContent"]
+        self.assertEqual(payload["tool"], "tycho_context")
+        self.assertGreater(payload["returned_sections"], 0)
+        self.assertLessEqual(payload["returned_chars"], 5000)
+        self.assertTrue(payload["sections"])
+        section = payload["sections"][0]
+        self.assertIn("citation", section)
+        self.assertIn("role", section)
+        self.assertIn("notice", payload)
+        self.assertNotIn("answer", payload)
+        self.assertNotIn("verdict", payload)
+
     def test_search_budget_returns_bounded_payload(self):
         payload = self.call(self.server(), "tycho_search", {
             "query": "zebra",
@@ -944,7 +960,7 @@ class McpServerTests(unittest.TestCase):
             listed = send({
                 "jsonrpc": "2.0", "id": 2, "method": "tools/list",
             })
-            self.assertEqual(len(listed["result"]["tools"]), 7)
+            self.assertEqual(len(listed["result"]["tools"]), 8)
             called = send({
                 "jsonrpc": "2.0", "id": 3, "method": "tools/call",
                 "params": {
