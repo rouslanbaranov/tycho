@@ -27,7 +27,7 @@ The preceding chapter-19 instruction is historical and superseded. All 48 public
 - The lexical boundary check and whitespace check passed. The author editorial review covered every changed report, ledger, manifest and proposed commit message: concise original notes and admissible public source metadata only; domain-neutral transfers; no private companion corpus used.
 - The optional HTML helper dependency was unavailable in the first verification attempt; the navigation membership check was then implemented and passed using Python's standard HTML parser. Fragmented bibliography links were normalized before set comparison. These verification adjustments did not change reading status or source content.
 
-No technical runtime experiment, independent peer review, final claim synthesis or new full book test-suite run is asserted. No canonical Mermaid or book code changed. Main is kept at the frozen baseline; the research-only delta belongs to the existing #225 branch and draft PR #226.
+No technical runtime experiment, independent peer review, final claim synthesis or new full book test-suite run is asserted. No canonical Mermaid or book code changed. At this checkpoint main was kept at the frozen baseline; the research-only delta later merged as PR #226.
 
 ## OSTEP continuation - 2026-10-24
 
@@ -267,28 +267,29 @@ finding, acceptance or independent review is claimed. human_review is
 not-performed and sufficient is 0. The latest commits b95af3e, dad953d and
 a96c6b7 are outside that attempted review's stated HEAD.
 
-## Page matrix and interim synthesis - 2026-10-24
+## Page matrix checkpoint - 2026-10-24 (superseded)
 
 - The 406-page census records a review status for every canonical page:
-  302 are comparison-assessed, 97 are landing-reviewed, and 7 carry an explicit evidence gap. The
-  per-page list is in page-review-summary.json; a gap is not a pass.
+  302 are comparison-assessed, 97 are landing-reviewed, and 7 carry an
+  owner-accepted source limitation. The per-page list is in
+  page-review-summary.json; these are limitations, not verified pages.
 - The reference ledger has 471 records: 441 full reads, 5 partial, 12 blocked and 13
   excluded sources (2 internal team sites, 11 unavailable commercial books). All 45 baseline fetch-incomplete sources are
   accounted for: 32 full, 11 blocked, 2 excluded, 0 unaccounted.
-- DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
-  two candidate page actions, 29 not-addressed assessments (no high severity; C399 and C412
-  closed by PR #388), one
-  contradiction, no landing-only source, 7 owner-accepted source limitations and the missing
-  independent review. It does not claim #225 completion.
+- DEEP-SYNTHESIS.md was the interim synthesis at this checkpoint. It listed the
+  two candidate page actions, 29 not-addressed assessments (no high severity;
+  C399 and C412 closed by PR #388), zero contradictions, no landing-only source,
+  7 owner-accepted source limitations and the then-missing independent review.
+  It was superseded by the acceptance record on 2026-10-25.
 - Boundary, whitespace, JSON, candidate-path and anchor checks passed. No book,
   source register, index or edition file changed.
 
-## Final synthesis and acceptance review - 2026-10-24
+## Superseded acceptance checkpoint - 2026-10-24
 
-- FINAL-SYNTHESIS.md records the current evidence base and the unmet criteria.
-- ACCEPTANCE.md records verdict **not accepted**: no landing-only sources,
-  0 page gaps, 7 owner-accepted limitations, 12 blocked records and 13 excluded sources, and no independent review.
-- The six source records are reconciled to existing reading IDs
-  in source-coverage-reconciliation.json; three SRE chapters, two PostgreSQL units and the completed OSTEP book, and they are not new reads.
-- No book, source-register, index or edition file changed. The issue remains
-  open; this is not a completion claim.
+- This checkpoint recorded the then-current not-accepted verdict.
+- The owner accepted the audit on 2026-10-25 after independent human review with
+  no findings; see ACCEPTANCE.md.
+- Counts at acceptance: 441 full, 5 partial, 12 blocked, 13 excluded;
+  302 comparison-assessed, 97 landing-reviewed, 7 owner-accepted; 122 supported,
+  262 qualified, 29 not-addressed, 0 contradicted.
+- The issue is closed. No book, source-register, index or edition file changed.

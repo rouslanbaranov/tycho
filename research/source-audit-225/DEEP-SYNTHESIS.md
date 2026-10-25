@@ -1,8 +1,8 @@
-# Source-to-book audit - interim synthesis
+# Source-to-book audit - supporting synthesis
 
-**Status: interim, not final.** Issue #225 remains open. This document synthesizes
-the evidence read so far and records the gaps explicitly; it does not claim
-source-to-book completeness, independent review or acceptance.
+**Status: supporting analysis; accepted 2026-10-25.** Issue #225 is closed. This
+document synthesizes the evidence and records the limits explicitly;
+FINAL-SYNTHESIS.md and ACCEPTANCE.md are the acceptance records.
 
 Baseline: main `6754bac6e26faa57d65a301a60be10b3da93f65b`; 247 registered
 sources, 406 canonical documents, 681 tracked files. No book, source-register,

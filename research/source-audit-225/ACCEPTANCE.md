@@ -1,6 +1,6 @@
 # Issue #225 acceptance review
 
-**Date:** 2026-10-25. **Status: accepted. Issue may close.**
+**Date:** 2026-10-25. **Status: accepted. Issue #225 is closed.**
 
 ## Criteria
 

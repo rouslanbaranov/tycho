@@ -1,6 +1,6 @@
 # Final synthesis and acceptance review
 
-**Date:** 2026-10-25. **Verdict: accepted. Issue #225 may close.**
+**Date:** 2026-10-25. **Verdict: accepted. Issue #225 is closed.**
 
 This is the final synthesis for the audit. The evidence base and residual limits
 are stated below; the owner accepted the result on 2026-10-25.
@@ -63,7 +63,7 @@ addressed, 0 contradicted.
 The owner confirmed an independent human review with no findings on 2026-10-25
 and accepted the audit. The earlier blockers - source access limits, page gaps,
 C373 and the external-link census - are either resolved or explicitly accepted as
-recorded limitations. #225 may close.
+recorded limitations. #225 is closed.
 
 The review report itself was not supplied; the record relies on the owner's
 explicit attestation. This is an owner acceptance, not a claim that every page is
