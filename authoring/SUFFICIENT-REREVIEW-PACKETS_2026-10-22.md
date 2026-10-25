@@ -9,14 +9,14 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 105 |
-| Residual findings after re-review | 40 |
+| Promoted after remediation | 109 |
+| Residual findings after re-review | 36 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 110 |
+| Reviewed by independent agent | 114 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 33, "report-section-missing": 2, "reviewed-by-independent-agent": 110}.
+Packet statuses: {"page-changed-since-review": 29, "report-section-missing": 2, "reviewed-by-independent-agent": 114}.
 
 ## Review procedure
 
@@ -209,8 +209,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Distributed Workflow Orchestration**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Domain Events**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -309,8 +309,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Idempotency Key**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Idempotent Receiver**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -485,8 +485,8 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Saga Orchestration**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Scatter-Gather**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -581,8 +581,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Two-Phase Commit (2PC)**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Valet Key**
   Current: pass; re-review: pass; report: pass-with-findings.
