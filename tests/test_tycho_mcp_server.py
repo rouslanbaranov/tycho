@@ -409,6 +409,21 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(
             payload["weak_results"][0]["match_source"], "route-metadata")
 
+    def test_batch_read_and_evidence_isolate_failures(self):
+        search = self.call(self.server(), "tycho_search", {
+            "query": "zebra", "abstain": False})["structuredContent"]
+        top = search["results"][0]
+        payload = self.call(self.server(), "tycho_batch", {
+            "section_keys": [top["section_key"], "missing-section"],
+            "document_ids": [top["document_id"]],
+            "max_chars": 8000,
+        })["structuredContent"]
+        self.assertEqual(payload["tool"], "tycho_batch")
+        self.assertEqual(payload["returned"], 3)
+        self.assertEqual(payload["status"], "partial")
+        self.assertGreaterEqual(payload["errors"], 1)
+        self.assertTrue(payload["notice"])
+
     def test_outline_returns_canonical_paths_without_full_text(self):
         payload = self.call(self.server(), "tycho_outline", {
             "topic": "synthetic",
@@ -1005,7 +1020,7 @@ class McpServerTests(unittest.TestCase):
             listed = send({
                 "jsonrpc": "2.0", "id": 2, "method": "tools/list",
             })
-            self.assertEqual(len(listed["result"]["tools"]), 10)
+            self.assertEqual(len(listed["result"]["tools"]), 11)
             called = send({
                 "jsonrpc": "2.0", "id": 3, "method": "tools/call",
                 "params": {
