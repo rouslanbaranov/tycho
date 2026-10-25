@@ -167,6 +167,10 @@ read record read.batch4-k8s-leases.2026-10-21: sections "Leases", "Lease objects
 election". The read record notes a 100,000-character truncation; later sections are unverified.
 The record covers leases; fencing and quorum guidance is synthetic owner evidence.
 The source is a public pattern/documentation unit, not a benchmark.
+[src.kleppmann-distributed-locking](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch4-fencing.2026-10-21: sections "Protecting a resource with a lock",
+"Making the lock safe with fencing". The article supports fencing tokens; it does not benchmark
+this design.
 
 **Decision state.** applicable-under-conditions.
 
