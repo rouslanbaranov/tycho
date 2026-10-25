@@ -37,6 +37,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.http-semantics"
+    - "src.ietf-idempotency-key"
   claim_ids: []
   status: "source-linked"
   notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
