@@ -21,7 +21,7 @@ review acceptance. A closure would be an unsupported completion claim.
 
 ## Conditions for a future acceptance
 
-- Resolve the 29 blocked records and 18 partial records where lawful access
+- Resolve the 29 blocked records and 20 partial records where lawful access
   exists, or keep the recorded access limitation.
 - Reduce the 112 page gaps through bounded comparisons.
 - Complete the external-link census.

@@ -14,7 +14,7 @@ index or edition file was changed.
   images. OSTEP: chapters 1-57, appendices A-H and the preface, in 65
   continuation records (20,189 lines, 323,810 words, 803 pages plus the earlier
   chapter 2 record). OSTEP raster figures were not visually inspected.
-- **471 reference records** in `readings.json`: 422 full reads, 18 partial, 29 blocked-full-text
+- **471 reference records** in `readings.json`: 420 full reads, 20 partial, 29 blocked-full-text
   and 2 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
 - **366 assessed comparisons** in `comparisons.json` against 294 canonical pages:
@@ -178,7 +178,7 @@ C008) are optional additions, not defects.
 ## 5. Coverage gaps
 
 - **No registered source remains at landing-only inspection.** Every source has
-  a reading record; 29 are blocked and 18 are partial.
+  a reading record; 29 are blocked and 20 are partial.
 - **112 of 406 canonical pages** have no page-level comparison. Their matrix
   status is an explicit gap, not an inferred pass.
 - Linked publications, xv6 source, simulator code and exercises were not read or

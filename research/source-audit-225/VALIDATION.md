@@ -271,7 +271,7 @@ a96c6b7 are outside that attempted review's stated HEAD.
 - The 406-page census records a review status for every canonical page:
   294 are comparison-assessed and 112 carry an explicit evidence gap. The
   per-page list is in page-review-summary.json; a gap is not a pass.
-- The reference ledger has 468 records: 422 full reads, 18 partial, 29 blocked and 2
+- The reference ledger has 471 records: 420 full reads, 20 partial, 29 blocked and 2
   excluded internal team sites. All 45 baseline fetch-incomplete sources are
   accounted for: 29 full, 14 blocked, 2 excluded, 0 unaccounted.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the

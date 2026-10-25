@@ -14,7 +14,7 @@ are not met. The unresolved items are stated with exact counts below.
   chapter 2 record). OSTEP raster figures were not visually inspected.
 - **All 45 baseline fetch-incomplete sources accounted for.** 29 full reads,
   14 blocked pages, 2 excluded internal team sites; 0 unaccounted.
-- **471 reference records:** 422 full, 18 partial, 29 blocked, 2 excluded.
+- **471 reference records:** 420 full, 20 partial, 29 blocked, 2 excluded.
 - **268 assessed comparisons across 236 canonical pages:** 101 supported, 246 qualified, 19 not-addressed, 0 contradicted.
 - **Baseline integrity:** 681 tracked files match the frozen baseline; 247
   registered sources and 406 canonical documents remain represented. No book,
@@ -46,7 +46,7 @@ are not met. The unresolved items are stated with exact counts below.
 ## 3. What is not complete
 
 - **No registered source remains landing-only.** Every source has a record; 29
-  are blocked and 18 are partial. RFC 9110 HTTP Semantics is read with labelled
+  are blocked and 20 are partial. RFC 9110 HTTP Semantics is read with labelled
   supplements.
 - **112 of 406 canonical pages have no page-level comparison.** Their matrix
   status is an explicit gap, not an inferred pass.
