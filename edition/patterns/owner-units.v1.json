@@ -1485,7 +1485,7 @@
       "decision_evidence": {
         "atlas_section": "publish-subscribe",
         "question": "Should one event reach all interested subscribers without the publisher knowing their count?",
-        "competing_alternative": "Point-to-point queue with explicit routing. Reverse the choice when every subscriber needs the same durable work, not an independent copy.",
+        "competing_alternative": "Point-to-point queue with explicit routing. Reverse the choice when one work item needs one consumer, not an independent copy per subscriber.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -1538,7 +1538,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "When one task has one natural owner, direct request/response, fan-out or a shared log may avoid brokered indirection.",
+          "quote": "When one task has one natural owner, direct request/response or a shared log may avoid brokered indirection; fan-out fits when several independent subscribers need a copy.",
           "reason": "States the mechanism, invariant, failure or alternative."
         }
       },

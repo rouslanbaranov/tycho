@@ -316,8 +316,8 @@ nonrepeatable effects need consumer-side deduplication and stable effect identit
 
 The queue contract must state its ordering scope and terminal path for poison messages. A worker
 pool needs a visible in-flight count and a redelivery limit, not only higher prefetch.
-When one task has one natural owner, direct request/response, fan-out or a shared log may avoid
-brokered indirection. A queue fits when each task needs exactly one owner and the consumer can
+When one task has one natural owner, direct request/response or a shared log may avoid
+brokered indirection; fan-out fits when several independent subscribers need a copy. A queue fits when each task needs exactly one owner and the consumer can
 absorb redelivery. The queue owner records that choice.
 
 ### Event-Driven Consumer
