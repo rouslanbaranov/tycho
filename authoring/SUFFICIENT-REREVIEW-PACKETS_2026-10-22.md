@@ -9,14 +9,14 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 93 |
-| Residual findings after re-review | 52 |
+| Promoted after remediation | 99 |
+| Residual findings after re-review | 46 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 101 |
+| Reviewed by independent agent | 107 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 43, "report-section-missing": 1, "reviewed-by-independent-agent": 101}.
+Packet statuses: {"page-changed-since-review": 37, "report-section-missing": 1, "reviewed-by-independent-agent": 107}.
 
 ## Review procedure
 
@@ -65,8 +65,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Backend for Frontend (BFF)**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Backup, PITR and Restore**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -181,8 +181,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Database per Service**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Dead Letter Channel / DLQ**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -201,8 +201,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Distributed Lock**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Distributed Tracing**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -325,8 +325,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Layered Architecture**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Leader Election**
   Current: pass-with-findings; re-review: pass-with-findings; report: None.
@@ -365,12 +365,12 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Microservices Architecture**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Modular Monolith**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Multi-Leader Replication**
   Current: pass; re-review: pass; report: pass-with-findings.
