@@ -31,7 +31,7 @@ from mcp_server import (
 ROOT = Path(__file__).resolve().parents[1]
 MAX_BODY_BYTES = 1_000_000
 SERVICE_NAME = "tycho-mcp-http"
-SERVICE_VERSION = "0.1.0"
+SERVICE_VERSION = "0.2.0"
 
 
 class HttpRequestError(Exception):

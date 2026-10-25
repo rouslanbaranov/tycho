@@ -29,7 +29,7 @@ import section_search
 
 ROOT = Path(__file__).resolve().parents[1]
 SERVER_NAME = "tycho-mcp"
-SERVER_VERSION = "0.1.0"
+SERVER_VERSION = "0.2.0"
 MODERN_VERSION = "2026-07-28"
 LEGACY_VERSION = "2025-11-25"
 SUPPORTED_VERSIONS = (MODERN_VERSION, LEGACY_VERSION)
@@ -2279,10 +2279,9 @@ class TychoMcpServer:
             "answerability": answerability({"status": "not-assessed"}),
             "not_implemented": [
                 "semantic, vector or hybrid ranking",
-                "answer generation",
-                "hosted HTTP transport, authentication or rate limiting",
+                "answer generation or verdicts",
+                "OAuth, per-client authorization or rate limiting",
                 "decision-method lookup",
-                "calibrated abstention",
             ],
             "content_trust": CONTENT_TRUST,
             "tool": "tycho_describe",

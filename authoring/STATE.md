@@ -70,8 +70,9 @@ stdio adapter is wrapped by a bearer-authenticated HTTP container with /mcp,
 live at https://tycho-theta.vercel.app; remote health, readiness, auth
 boundary, standard client and official SDK checks passed. No production
 acceptance, OAuth, per-client authorization, rate limiting, human review or CI
-is claimed. The update/versioning/snapshot contract and known limitations are
-in [the local container record](MCP-LOCAL-HTTP-CONTAINER.md).
+is claimed. The update/versioning/snapshot contract, 11-tool surface and known
+limitations are in [the local container record](MCP-LOCAL-HTTP-CONTAINER.md)
+and [the agent tool contract](MCP-AGENT-TOOL-CONTRACT.md).
 
 ## Readable directory layout — #214
 

@@ -19,6 +19,7 @@ Read [the independence policy](governance/INDEPENDENCE.md) before contributing. 
 - [Knowledge platform and MCP delivery plan](authoring/knowledge-platform-and-mcp-plan.md)
 - [Read-only MCP stdio candidate](authoring/MCP-READ-ONLY-MVP.md)
 - [Local HTTP MCP container](authoring/MCP-LOCAL-HTTP-CONTAINER.md)
+- [Agent-facing MCP tool contract](authoring/MCP-AGENT-TOOL-CONTRACT.md)
 - [Source catalogue](sources/CATALOG.md)
 - [Coverage and research questions](sources/COVERAGE.md)
 - [Implementation families](sources/IMPLEMENTATIONS.md)
