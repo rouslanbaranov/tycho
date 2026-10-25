@@ -9,14 +9,14 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 110 |
-| Residual findings after re-review | 35 |
+| Promoted after remediation | 111 |
+| Residual findings after re-review | 34 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 113 |
+| Reviewed by independent agent | 114 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 30, "report-section-missing": 2, "reviewed-by-independent-agent": 113}.
+Packet statuses: {"page-changed-since-review": 29, "report-section-missing": 2, "reviewed-by-independent-agent": 114}.
 
 ## Review procedure
 
@@ -173,8 +173,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **CQRS Read Projections**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Dark Launching / Shadow Traffic**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
