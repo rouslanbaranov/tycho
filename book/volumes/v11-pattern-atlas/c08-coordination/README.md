@@ -96,9 +96,10 @@ idempotent, and treat durability as contingent on stable storage and membership 
 **Technical owner.** [Leader elections, logs and client observations](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#4-leader-elections-logs-and-client-observations) — leader election is bounded, not a complete Raft implementation.
 
 **Sources.** [src.raft](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-raft.2026-10-21: sections "Leader Election", "Safety". The source
-is a public pattern/documentation
-unit, not a benchmark.
+read record read.batch4-raft.2026-10-21: sections "The Raft Consensus Algorithm",
+"What is Raft?". The landing page does not document term/vote/log safety or election details;
+those are synthetic owner guidance. The source is a public pattern/documentation unit, not a
+benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -128,9 +129,9 @@ in the owner section.
 **Technical owner.** [Consensus](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#consensus) — consensus is bounded to safety/progress discussion.
 
 **Sources.** [src.raft](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-raft.2026-10-21: sections "Raft Consensus Algorithm", "Safety".
-The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.batch4-raft.2026-10-21: sections "The Raft Consensus Algorithm",
+"What is Raft?". The landing page does not document safety/term details; those are synthetic
+owner guidance. The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -266,9 +267,9 @@ overlapping safeguards.
 **Technical owner.** [Quorum Coordination](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#quorum-coordination) — quorum arithmetic is bounded, not a consensus protocol.
 
 **Sources.** [src.raft](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-raft.2026-10-21: sections "Raft Consensus Algorithm", "Safety".
-The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.batch4-raft.2026-10-21: sections "The Raft Consensus Algorithm",
+"What is Raft?". The landing page does not document safety/term details; those are synthetic
+owner guidance. The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
