@@ -156,9 +156,10 @@ Only two candidate actions have direct page evidence:
    cancellation page, name the socket-close side effect and its JDK/release
    boundary. No edit under #225.
 
-All other assessments are "supported" or "qualified" with no correction. The two
-"not-addressed" entries (scheduler queue topology in C003 and TLB coverage in
-C008) are optional additions, not defects.
+Thirty-one assessments are "not-addressed", three of them high severity:
+C384, C386 and C399 attribute specifics to fetch-incomplete or unread sources.
+C373 is the single record-level contradiction. These are open items requiring
+verification, restatement or removal, not optional additions.
 
 ## 4. Contradictions and uncertainties
 
@@ -179,7 +180,7 @@ C008) are optional additions, not defects.
 ## 5. Coverage gaps
 
 - **No registered source remains at landing-only inspection.** Every source has
-  a reading record; 29 are blocked and 20 are partial.
+  a reading record; 15 are blocked and 5 are partial.
 - **9 of 406 canonical pages** have no page-level comparison. Their matrix
   status is an explicit gap, not an inferred pass.
 - Linked publications, xv6 source, simulator code and exercises were not read or

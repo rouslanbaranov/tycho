@@ -9,7 +9,7 @@ authorize edits to the book under #225.
   affected page.
 - Affected page: a top-level Netflix case-study page on Java platform convergence.
 - The page cites record **R058**, which the audit ledger records as
-  `excluded-from-scope`: a non-public internal team site that was never retrieved.
+  `excluded-from-scope`: a non-public internal team site not retrieved by this audit. The page itself asserts an earlier access date, which editorial review must resolve.
 - No text from that site was read or used in any comparison. The page is excluded from
   further comparison reading and remains `not-yet-assessed`.
 - No employer name, URL, internal terminology or source text is reproduced here.
@@ -38,7 +38,7 @@ authorize edits to the book under #225.
 
 ## Remaining page gaps
 
-Nine content pages remain `not-yet-assessed`. Each depends on a record that is
-`blocked-full-text`; six are case pages whose central source was not retrieved, and one
-cites an excluded non-public source. They are access limitations, not missing review of
-readable pages.
+Nine case pages remain `not-yet-assessed`. Seven depend only on blocked or
+non-public records and are access-limited. Two also cite fully-read records
+(R045/R020 and R046) but have no page-level comparison; they are comparison-incomplete,
+not access-limited.

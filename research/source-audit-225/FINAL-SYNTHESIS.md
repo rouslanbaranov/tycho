@@ -45,8 +45,8 @@ are not met. The unresolved items are stated with exact counts below.
 
 ## 3. What is not complete
 
-- **No registered source remains landing-only.** Every source has a record; 29
-  are blocked and 20 are partial. RFC 9110 HTTP Semantics is read with labelled
+- **No registered source remains landing-only.** Every source has a record; 15
+  are blocked and 5 are partial. RFC 9110 HTTP Semantics is read with labelled
   supplements.
 - **9 of 406 canonical pages have no page-level comparison.** Their matrix
   status is an explicit gap, not an inferred pass.

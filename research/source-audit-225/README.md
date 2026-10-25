@@ -18,15 +18,12 @@ Comparison checkpoint: four hundred three candidate comparisons are assessed in
 fifty-eight qualified, thirty-one not-addressed and one record-level contradiction. These are bounded
 comparisons, not independent review, book findings or permission to edit.
 
-Reference batch 2026-10-24: three hundred thirty-eight full reads, twelve partial, nineteen blocked records and two
-excluded internal team sites. The full reads are JEP 444, JEP 491 and
-thirty public engineering articles and seventeen documentation/paper units in the
-src.m9-* series. Fourteen
-publisher pages returned no readable article body and are recorded as blocked,
-not read; two internal team sites are excluded as non-public. JEP 491 is now
-read in full: its record supplies the canonical body that earlier book pages
-flagged as not retrievable. This is reading evidence, not a book edit or an
-independent review.
+Current ledger: four hundred thirty-eight full reads, five partial, fifteen
+blocked records and thirteen excluded sources. Eleven commercial books are
+excluded because they are unavailable and not lawfully usable here; two internal
+team sites are excluded as non-public. Blocked records are inaccessible publisher
+pages, not unread accessible text. This is reading evidence, not a book edit or
+an independent review.
 
 [Interim synthesis](DEEP-SYNTHESIS.md) records what the evidence supports and
 what remains open. [Final synthesis](FINAL-SYNTHESIS.md) and the [acceptance

@@ -228,11 +228,12 @@ action. No book page was edited.
 
 ## Reference-source batch - 2026-10-24
 
-173 records R015-R187 extend the reference ledger. Three hundred thirty-five are
-full-scoped reads: JEP 444, JEP 491, thirty public engineering articles
-and seventeen documentation/paper units in the src.m9-* series, plus ten delegated records. Fourteen publisher pages returned no readable
-article body and are recorded as blocked-full-text, not inferred. Two internal
-team sites are excluded-from-scope and were not accessed.
+The R015-R187 slice holds 173 records: 156 full-scoped reads, 14 blocked and 3
+excluded. JEP 444 and JEP 491 are read; the remainder are public engineering
+articles and documentation/paper units in the src.m9-* series. Fourteen
+publisher pages returned no readable article body and are recorded as
+blocked-full-text, not inferred. Three internal/non-public sources in this slice
+are excluded-from-scope and were not accessed.
 R024 and R032 each repeat the article body in the representation; their unique
 text was read and the duplicate blocks were verified by matching headings.
 R041 is a wiki page whose navigation chrome was identified and excluded from
@@ -271,13 +272,13 @@ a96c6b7 are outside that attempted review's stated HEAD.
 - The 406-page census records a review status for every canonical page:
   300 are comparison-assessed, 97 are landing-reviewed, and 9 carry an explicit evidence gap. The
   per-page list is in page-review-summary.json; a gap is not a pass.
-- The reference ledger has 471 records: 438 full reads, 5 partial, 15 blocked and 12
-  excluded internal team sites. All 45 baseline fetch-incomplete sources are
+- The reference ledger has 471 records: 438 full reads, 5 partial, 15 blocked and 13
+  excluded sources (2 internal team sites, 11 unavailable commercial books). All 45 baseline fetch-incomplete sources are
   accounted for: 29 full, 14 blocked, 2 excluded, 0 unaccounted.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
-  two candidate page actions, the zero-contradiction result, the 202
-  landing-only sources, the 9 unassessed pages and the missing independent
-  review. It does not claim #225 completion.
+  two candidate page actions, 31 not-addressed assessments (3 high), one
+  contradiction, no landing-only source, 9 unassessed pages and the missing
+  independent review. It does not claim #225 completion.
 - Boundary, whitespace, JSON, candidate-path and anchor checks passed. No book,
   source register, index or edition file changed.
 
