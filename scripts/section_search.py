@@ -202,12 +202,18 @@ def candidate_priority(candidate):
 
 
 def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
-           path_prefix=None, index_path=None, all_sections=False, abstain=True):
+           path_prefix=None, index_path=None, all_sections=False, abstain=True,
+           include_weak=False, detail="snippets", max_chars=None):
     terms = normalize_terms(query)
     _require(isinstance(limit, int) and 1 <= limit <= 20,
              "limit must be an integer in 1..20")
     _require(isinstance(all_sections, bool), "all_sections must be boolean")
     _require(isinstance(abstain, bool), "abstain must be boolean")
+    _require(isinstance(include_weak, bool), "include_weak must be boolean")
+    _require(detail in ("ids", "snippets"), "detail must be ids or snippets")
+    _require(max_chars is None or (
+        isinstance(max_chars, int) and not isinstance(max_chars, bool)
+        and max_chars >= 256), "max_chars must be null or an integer >= 256")
     for name, value in (("kind", kind), ("topic", topic),
                         ("evidence_status", evidence_status)):
         _require(value is None or (isinstance(value, str) and value),
@@ -346,6 +352,16 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                 "excerpt": excerpt(body, terms),
                 "citation": row["path"] + "#" + row["section_id"],
                 "match_source": source,
+                "why": (
+                    "matched in " + source +
+                    " for terms: " + ", ".join(
+                        term for term in terms if term in folded)),
+                "next_actions": [
+                    {"tool": "tycho_read",
+                     "arguments": {"section_key": row["section_key"]}},
+                    {"tool": "tycho_page",
+                     "arguments": {"path": row["path"]}},
+                ],
             }
             passage = candidate["passage"]
             if passage is not None:
