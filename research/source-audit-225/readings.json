@@ -40901,6 +40901,61 @@
         "completeness:/tmp/read11/check.py (every p/li/td/th/h1-h6 text block in the article container found in the extracted text; 0 misses)"
       ],
       "omissions": "Only the Indexing page is in scope: linked pages (filtering, hybrid queries, payload, collections, quantization, multitenancy, per-tenant scoring, the ACORN article and index-type references) were not read. Code samples, tabbed client snippets and the interactive tokenizer demo are excluded. No collection was created, no index built and no recall or latency measured. Version markers are quoted as page claims, not verified against release artifacts."
+    },
+    {
+      "id": "R415",
+      "source_ids": [
+        "src.micrometer"
+      ],
+      "url": "https://docs.micrometer.io/micrometer/reference/",
+      "unit": "Bounded four-page unit of the Micrometer 1.17.2 reference documentation: the landing index (Micrometer Documentation), Overview, Concepts/Registry and Concepts/Meters. Complete article bodies; site chrome excluded. 64 normalized lines / 888 words combined.",
+      "revision": "Micrometer 1.17.2 reference (page meta name=version content=1.17.2; latest-version=true; the 'Edit this Page' link targets the v1.17.2 tag). The four pages returned HTTP 200 on HTTPS fetches at 2026-10-25T12:15:36-37Z; a curl HEAD cross-check on 2026-10-25 returned Last-Modified Fri, 23 Oct 2026 12:14:14 GMT and Cloudflare and varnish cache headers on all four, with no ETag. No immutable commit identifier is exposed by the rendered pages.",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete article bodies of the four scoped pages: landing 11 lines/208 words, Overview 3/70, Registry 42/405, Meters 5/205. Combined representation is 64 splitlines (61 text lines plus three blank page separators)/888 words. All 11 headings, every paragraph, list item, callout note and code line in those four bodies is present; Registry contains the unit's three code blocks (SimpleMeterRegistry, CompositeMeterRegistry and global-registry examples). No images exist on these pages. Excluded as chrome and not counted: breadcrumbs, global header/nav/sidebar, version selector, search, 'Edit this Page', previous/next pager, footer, scripts and styling. Sections: Landing: Micrometer Documentation, Landing: Vendor-neutral application observability facade, Landing: Dimensional Metrics, Landing: Pre-configured Bindings, Landing: Integrated into Spring, Landing: Support for popular observability systems, Overview: Micrometer Overview, Registry: Registry, Registry: Composite Registries, Registry: Global Registry, Meters: Meters",
+      "retrieval_refs": [
+        "https://docs.micrometer.io/micrometer/reference/index.html - HTTP 200, text/html, 31,242 bytes; fetched 2026-10-25T12:15:36Z; curl HEAD cross-check: Last-Modified Fri, 23 Oct 2026 12:14:14 GMT, Cloudflare and varnish cache HIT, no ETag.",
+        "https://docs.micrometer.io/micrometer/reference/overview.html - HTTP 200, text/html, 29,389 bytes; fetched 2026-10-25T12:15:37Z; same HEAD cross-check headers.",
+        "https://docs.micrometer.io/micrometer/reference/concepts/registry.html - HTTP 200, text/html, 34,379 bytes; fetched 2026-10-25T12:15:37Z; same HEAD cross-check headers.",
+        "https://docs.micrometer.io/micrometer/reference/concepts/meters.html - HTTP 200, text/html, 30,800 bytes; fetched 2026-10-25T12:15:37Z; same HEAD cross-check headers.",
+        "Per-page normalized-text sha256: index 0b6a1f83cef34302d4b5ce9ead9243a87486a52a2ba237ef38a63105799eba7b (11 lines/208 words); overview 6467d4e91c8061216df576d791e3a237a62a78769d523bae6502277c8a405a67 (3/70); registry 09be8fa4056c59971c9fe7721bd796d5fbbe3a3417f9772242167abd9b4787da (42/405); meters badeb6df6ffa350006f9e00fbe2abc65ff54ccb8c2c4687996ae109ae2eda1ac (5/205).",
+        "Combined representation order index -> overview -> registry -> meters, two newlines between pages and one trailing newline: 64 splitlines/888 words/sha256 3c6ba7c7dc5d3b72fabedf03089bf9b6c7c99c5440ea3058167fc791b9533532.",
+        "Extraction rule: lxml 6.1.3 parse; article element with class 'doc' only; breadcrumbs, nav, header, footer, script and style removed; block-level tags terminate lines; preformatted lines retain leading whitespace and trailing (n) callout markers; admonition and callout tables flattened one cell per line; newlines inside ordinary text blocks are treated as spaces and whitespace is collapsed outside pre; empty lines dropped.",
+        "Fetches used Python urllib with a declared research user agent; curl was used only for the header cross-check. No local raw or text files were written under the read-only delegation constraint; this record is the only output."
+      ],
+      "omissions": [
+        "Not the whole Micrometer documentation. Unread pages include concepts/naming, concepts/meter-convention, concepts/meter-filters, concepts/meter-provider, concepts/implementations, the meter-type pages (counters, gauges, timers, distribution summaries, long-task timers, histograms and percentiles, rate aggregation), installing, guides, API reference and every per-backend implementation page.",
+        "The landing's supported-backend list is recorded only as a claim; no binding, registry implementation, exporter or wire format was read or exercised.",
+        "Naming and tag conventions are not covered as a mechanism; the unit establishes only that identity is name plus dimensions and that dimensions and tags are used interchangeably.",
+        "No application was instrumented, no code was compiled or run, and no registry or backend was queried; all behavior is as stated by the pages.",
+        "No images exist on the four scoped bodies; interactive tabs, scripts and styling are not represented.",
+        "Code indentation is retained in preformatted blocks, but blank lines inside code blocks are dropped and callout notes are flattened to separate lines."
+      ]
+    },
+    {
+      "id": "R416",
+      "source_ids": [
+        "src.thanos"
+      ],
+      "url": "https://thanos.io/tip/thanos/design.md/",
+      "unit": "Complete 'Design' document of the Thanos 'tip' documentation: the design.md page from its Design H1 through the closing paragraph of the Cost section. 104 normalized lines / 1,609 words.",
+      "revision": "Thanos documentation under the 'tip' docs version (meta docsearch:version content='tip'); the page links to edit main/docs/design.md. HTTPS GET returned 200 on 2026-10-25T12:15:37Z (45,177 bytes); a curl HEAD cross-check returned ETag \"467d425e07e645dc53b1aaa5eecd4da2-ssl\", no Last-Modified, and Netlify serving. No immutable commit identifier is exposed by the page.",
+      "status": "full-scoped-text-read",
+      "coverage": "Complete Design document body: 104 normalized lines/1,609 words, comprising 12 headings (H1 Design; H2 Architecture, Scaling, Cost; H3 Metric Sources, Stores, Stores & Data Sources, Query Layer, Compactor; H4 Metric Data Backup, Chunk, Chunk file), 33 paragraphs, 8 list items, 4 preformatted blocks (the block-layout directory tree and three ASCII architecture diagrams) and one details/summary 'Calculations' block. Content runs from the Design H1 to the Cost section's final cost paragraph; the trailing 'Found a typo...' feedback block, table of contents, sidebar, search, footer and scripts are excluded. Sections: Design, Architecture, Architecture > Metric Sources, Architecture > Metric Sources > Metric Data Backup, Architecture > Metric Sources > Chunk, Architecture > Metric Sources > Chunk file, Architecture > Stores, Architecture > Stores & Data Sources - It’s all the same, Architecture > Query Layer, Architecture > Compactor, Scaling, Cost, Cost > Calculations",
+      "retrieval_refs": [
+        "https://thanos.io/tip/thanos/design.md/ - HTTP 200, text/html; 45,177 bytes; fetched 2026-10-25T12:15:37Z; curl HEAD cross-check: ETag \"467d425e07e645dc53b1aaa5eecd4da2-ssl\", no Last-Modified, server Netlify.",
+        "Text boundary: from <h1 id=design> at HTML byte offset 26,031 to the <hr><p>Found a typo... feedback block at offset 40,117; header-anchor links (the trailing '#' glyph) removed before text extraction.",
+        "Normalized-text sha256 58b8d15c6e294b2767a5b50f6a3ea7ae36a143830dd5771c748c840277c3a84a; 104 splitlines/1,609 words/13,254 UTF-8 bytes.",
+        "Extraction rule: lxml 6.1.3 parse of the bounded fragment; script, style, nav, header and footer skipped; block-level tags terminate lines; preformatted lines preserve leading whitespace; newlines inside ordinary text blocks are treated as spaces and whitespace is collapsed outside pre; empty lines dropped.",
+        "Fetches used Python urllib with a declared research user agent; curl was used only for the header cross-check. No local raw or text files were written under the read-only delegation constraint; this record is the only output."
+      ],
+      "omissions": [
+        "Not the whole Thanos documentation. Unread pages include getting started, quick tutorial, changelog, governance, integrations, the component pages (sidecar, store, query, query frontend, compact, rule, receive, tools), operating and troubleshooting pages, proposals and release notes.",
+        "Linked Prometheus material is not read: the Prometheus 2.0 storage-format specification, the cited slides, the Prometheus HTTP API, remote-read and PromQL documentation. Claims about those interfaces remain the Thanos page's own.",
+        "The ASCII architecture diagrams and directory tree are retained as preformatted text but were not rendered or visually inspected; the page contains no raster images.",
+        "No deployment, benchmark, query or failure injection was performed; cost and scaling statements were not tested against a real bucket, cluster or workload.",
+        "The page's GitHub edit link and version history were not followed, so the 'tip' revision is not pinned to a commit.",
+        "Excluded chrome: table of contents, left sidebar and search, header, footer, scripts and the trailing typo-report block."
+      ]
     }
   ],
   "updated": "2026-10-25",
