@@ -40426,6 +40426,58 @@
         "The 'Charts' page is explicitly not updated for Helm 4 (L2-L3) and still describes Helm 3 behaviour; 'Using Helm' also carries Helm 3 statements (e.g. L286-L299). Both were read as published; the unit does not reconcile them with Helm 4 changes.",
         "No per-page last-modified marker is visible in the extracted text, so page revision is bounded only by the fetch timestamps, the site version label and the recorded content hashes."
       ]
+    },
+    {
+      "id": "R392",
+      "source_ids": [
+        "src.github-actions"
+      ],
+      "url": "https://docs.github.com/en/actions",
+      "unit": "GitHub Actions documentation landing plus two substantive concept pages: /en/actions (landing body), /en/actions/get-started/understand-github-actions ('Understanding GitHub Actions'), /en/actions/concepts/workflows-and-actions/workflows ('Workflows'); three pages, 184 lines / 1808 words combined.",
+      "revision": "Rolling GitHub Docs pages; the rendered landing declares <meta name=\"path-version\" content=\"free-pro-team@latest\">. No immutable document revision, commit identifier or last-updated date is exposed in the retrieved response. Retrieved 2026-10-25T12:05Z-12:06Z; the article-body endpoint returned text/markdown (HTTP 200).",
+      "status": "full-scoped-text-read",
+      "coverage": "Full text of the three scoped pages: /en/actions (h1, intro paragraph, 'Recommended' list); /en/actions/get-started/understand-github-actions (Overview; The components of GitHub Actions with Workflows, Events, Jobs, Actions, Runners; Next steps); /en/actions/concepts/workflows-and-actions/workflows (About workflows; Workflow basics; Workflow triggers; Next steps). All headings, paragraphs, bullet/numbered lists, image alt text and the note callout retained. Excluded: the landing's site-wide '## Links' navigation index (about 44 KB of link lists), site header/sidebar/footer, search UI, styling and scripts. Sections: Landing: GitHub Actions documentation, Landing: Recommended, Understanding GitHub Actions: Overview, Understanding GitHub Actions: The components of GitHub Actions, Understanding GitHub Actions: Workflows, Understanding GitHub Actions: Events, Understanding GitHub Actions: Jobs, Understanding GitHub Actions: Actions, Understanding GitHub Actions: Runners, Understanding GitHub Actions: Next steps, Workflows: About workflows, Workflows: Workflow basics, Workflows: Workflow triggers, Workflows: Next steps",
+      "retrieval_refs": [
+        "https://docs.github.com/en/actions (article body: https://docs.github.com/api/article/body?pathname=/en/actions)",
+        "https://docs.github.com/en/actions/get-started/understand-github-actions (article body: https://docs.github.com/api/article/body?pathname=/en/actions/get-started/understand-github-actions)",
+        "https://docs.github.com/en/actions/concepts/workflows-and-actions/workflows (article body: https://docs.github.com/api/article/body?pathname=/en/actions/concepts/workflows-and-actions/workflows)",
+        "GET each URL -> HTTP 200, content-type text/markdown; retrieved 2026-10-25T12:05Z-12:06Z; no authentication",
+        "raw responses: /tmp/read10/raw/gh-api-actions-landing.json (landing body before '## Links'), /tmp/read10/raw/gh-understand.json, /tmp/read10/raw/gh-workflows.json; rendered cross-check: /tmp/read10/raw/gh-understand.html",
+        "extraction rule: landing truncated before the '## Links' site-navigation block; trailing blank lines removed and each page terminated with one newline; pages concatenated in order landing -> Understanding -> Workflows with one blank line between; sha256 over that exact UTF-8 text"
+      ],
+      "omissions": [
+        "The landing's site-wide '## Links' index was excluded as navigation chrome; the 'Recommended' block was retained as page content.",
+        "Linked pages were not read, including the quickstart, workflow-syntax reference, events reference, runner how-tos, reusable-workflow pages, artifact-attestation pages and migration guides.",
+        "Images are represented only by their alt text; the diagram of event -> Job 1 -> Job 2 with its steps was not transcribed.",
+        "No workflow was executed and no runtime behavior, schedule, permissions model or artifact store was observed.",
+        "Rendered HTML styling and interactive components are not part of the representation."
+      ]
+    },
+    {
+      "id": "R393",
+      "source_ids": [
+        "src.gitlab-ci"
+      ],
+      "url": "https://docs.gitlab.com/ci/",
+      "unit": "GitLab CI/CD documentation landing plus two substantive sections: /ci/ ('Get started with GitLab CI/CD'), /ci/pipelines/pipeline_architectures/ ('Pipeline architecture'), /ci/jobs/ ('CI/CD Jobs'); three pages, 972 lines / 4882 words combined.",
+      "revision": "GitLab Docs 19.6 (rendered pages declare <meta name=\"gitlab_docs_version\" content=\"19.6\">; page source pointers name doc/ci/... on gitlab-org/gitlab master). The three markdown endpoints returned text/markdown (HTTP 200) with a shared ETag \"ac7c2ed86f66708b08acc17bd105b4a85a45dcf448e25b7fa2e1a57bd58e8570\" and Last-Modified 2026-10-25T10:08:41Z, so the ETag identifies the docs deployment rather than an individual document. Retrieved 2026-10-25T12:06Z-12:07Z.",
+      "status": "full-scoped-text-read",
+      "coverage": "Full text of the three scoped pages: /ci/ 'Get started with GitLab CI/CD' (Steps 1-4, including CI/CD variables and CI/CD expressions); /ci/pipelines/pipeline_architectures/ (Basic pipelines; Pipelines with the needs keyword; Parent-child pipelines); /ci/jobs/ 'CI/CD Jobs' (all 22 headings, Add a job through Deployment jobs). All paragraphs, lists, YAML examples, Mermaid source, history and note blocks, tier/offering metadata and image alt text retained as served in the site's markdown representation. Excluded: rendered global navigation, sidebar, breadcrumbs, page table of contents, feedback widget, version banner, edit/view-source links, styling and scripts. Sections: Get started with GitLab CI/CD, Step 1: Configure your pipeline, Step 2: Find or create runners, Step 3: Use CI/CD variables and expressions, CI/CD variables, CI/CD expressions, Step 4: Use CI/CD components, Pipeline architecture, Basic pipelines, Pipelines with the needs keyword, Parent-child pipelines, CI/CD Jobs, Add a job to a pipeline, Job names, Hide a job, Set default values for job keywords, Control the inheritance of default keywords and variables, View jobs in a pipeline, View project jobs, Available job statuses, View the source of a job, Available job sources, Group similar jobs together in pipeline views, Retry jobs, Retry a job, Retry all failed or canceled jobs in a pipeline, Cancel jobs, Cancel a job, Cancel all running jobs in a pipeline, Force cancel a job, Troubleshoot a failed job, With Root Cause Analysis, Deployment jobs",
+      "retrieval_refs": [
+        "https://docs.gitlab.com/ci/ (markdown representation: https://docs.gitlab.com/ci/index.md)",
+        "https://docs.gitlab.com/ci/pipelines/pipeline_architectures/ (markdown representation: https://docs.gitlab.com/ci/pipelines/pipeline_architectures/index.md)",
+        "https://docs.gitlab.com/ci/jobs/ (markdown representation: https://docs.gitlab.com/ci/jobs/index.md)",
+        "GET each markdown URL -> HTTP 200, content-type text/markdown; shared ETag ac7c2ed8...; Last-Modified 2026-10-25T10:08:41Z; retrieved 2026-10-25T12:06Z-12:07Z; no authentication",
+        "raw responses: /tmp/read10/raw/gl-ci-landing.md, /tmp/read10/raw/gl-pipeline-architectures.md, /tmp/read10/raw/gl-jobs.md; rendered cross-checks: /tmp/read10/raw/gl-ci-landing.html, /tmp/read10/raw/gl-pipeline-architectures.html, /tmp/read10/raw/gl-jobs.html",
+        "extraction rule: site markdown source served verbatim, trailing blank lines removed and each page terminated with one newline; pages concatenated in order landing -> Pipeline architecture -> CI/CD Jobs with one blank line between; sha256 over that exact UTF-8 text"
+      ],
+      "omissions": [
+        "Rendered chrome (global navigation, sidebar, breadcrumbs, page table of contents, feedback widget, version banner, edit/view-source links) was excluded by using the site's markdown representation.",
+        "Hugo shortcode lines such as details, history and icon remain literal in the markdown representation; their rendered badges, version-history blocks and icons were not separately transcribed.",
+        "Linked pages were not read, including the pipelines overview, runners, YAML reference, variables, components, job logs and deployment-safety pages.",
+        "Images and diagrams are represented only by alt text or Mermaid source; their rendered graphics were not inspected.",
+        "Other GitLab versions and editions were not read; no pipeline or job was executed."
+      ]
     }
   ],
   "updated": "2026-10-25",
