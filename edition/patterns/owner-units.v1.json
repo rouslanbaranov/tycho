@@ -651,7 +651,7 @@
       "decision_evidence": {
         "atlas_section": "ambassador",
         "question": "Should a local proxy mediate a client's network capabilities, rather than embedding connectivity logic in the client or centralizing it remotely?",
-        "competing_alternative": "A sidecar, service mesh or in-process client library. Reverse the choice when the proxy adds a hop without providing a needed capability.",
+        "competing_alternative": "A shared ingress gateway when the concern is ingress rather than per-client egress, or an in-process client library. Reverse the choice when the proxy adds a hop without providing a needed capability.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -1068,7 +1068,7 @@
       "decision_evidence": {
         "atlas_section": "api-composition",
         "question": "Should an in-memory composition layer assemble a response from several service owners, rather than forcing one owner to duplicate all data?",
-        "competing_alternative": "A materialized read model, CQRS projection or direct service query. Reverse the choice when composition latency and partial-failure complexity exceed the duplication alternative.",
+        "competing_alternative": "A maintained read model or a client-specific backend for frontend. Reverse the choice when composition latency and partial-failure complexity exceed the duplication alternative.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -8306,7 +8306,7 @@
       "decision_evidence": {
         "atlas_section": "structured-logging",
         "question": "Should logs be emitted as structured events with stable fields rather than free text?",
-        "competing_alternative": "Metrics/traces or minimal audit events. Reverse the choice when structured logging cost exceeds diagnostic benefit.",
+        "competing_alternative": "Unstructured text parsed at query time. Reverse the choice when structured logging cost exceeds diagnostic benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },

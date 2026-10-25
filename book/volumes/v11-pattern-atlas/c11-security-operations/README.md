@@ -347,7 +347,7 @@ owned; correlation IDs are available.
 **Hard contraindications.** Reject when logs contain unredactable sensitive data, when
 schema churn is unowned, or when volume overwhelms storage.
 
-**Competing alternative.** Metrics/traces or minimal audit events. Reverse the choice when
+**Competing alternative.** Unstructured text parsed at query time. Reverse the choice when
 structured logging cost exceeds diagnostic benefit.
 
 **Failure and recovery.** On leakage, stop emission, rotate credentials, purge/redact retained
