@@ -54,7 +54,8 @@ PATTERN_CITATION_SCHEME = "tycho.markdown-heading-anchor.v1"
 
 INSTRUCTIONS = (
     "Tycho is a snapshot-bound, read-only System Design book collection. "
-    "Use tycho_search or tycho_context to assemble cited sections, then "
+    "Use tycho_search or tycho_context to assemble cited sections, "
+    "tycho_compare for cited option matrices without a winner, then "
     "tycho_read or tycho_page for bounded reads, tycho_patterns or "
     "tycho_pattern for the draft pattern registry, and tycho_evidence to "
     "resolve registered evidence. The context bundle is extractive and does "
@@ -294,6 +295,42 @@ def search_schema():
                     "Apply the calibrated refusal policy; set false only for "
                     "diagnostics."
                 ),
+            },
+            "snapshot_id": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$",
+                "description": "Optional snapshot pin for consistency.",
+            },
+        },
+    }
+
+
+def compare_schema():
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["options"],
+        "properties": {
+            "options": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 5,
+                "items": {"type": "string", "minLength": 1, "maxLength": 300},
+                "description": "Two to five options, patterns or approaches.",
+            },
+            "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5,
+                "default": 3,
+                "description": "Maximum cited cells per option.",
+            },
+            "max_chars": {
+                "type": "integer",
+                "minimum": 2048,
+                "maximum": 12000,
+                "default": 6000,
+                "description": "Hard UTF-8 response budget.",
             },
             "snapshot_id": {
                 "type": "string",
@@ -588,6 +625,24 @@ TOOL_SPECS = {
             "openWorldHint": False,
         },
     },
+    "tycho_compare": {
+        "name": "tycho_compare",
+        "title": "Compare cited options extractively",
+        "description": (
+            "Compare two to five options with cited, extractive cells and "
+            "explicit uncertainty. It does not rank a winner or produce a "
+            "recommendation."
+        ),
+        "inputSchema": compare_schema(),
+        "handler": "_tool_compare",
+        "annotations": {
+            "title": "Compare cited options extractively",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+    },
     "tycho_context": {
         "name": "tycho_context",
         "title": "Assemble a bounded analysis context",
@@ -702,6 +757,7 @@ TOOL_SPECS = {
 TOOL_ORDER = (
     "tycho_describe",
     "tycho_search",
+    "tycho_compare",
     "tycho_context",
     "tycho_read",
     "tycho_page",
@@ -1136,6 +1192,116 @@ class TychoMcpServer:
         payload["tool"] = "tycho_search"
         self.log_query(payload, args, query, limit)
         return payload
+
+    def _tool_compare(self, args):
+        reject_unknown(args, {
+            "options", "limit", "max_chars", "snapshot_id",
+        })
+        options = args.get("options")
+        if (not isinstance(options, list) or not 2 <= len(options) <= 5):
+            raise ProtocolFailure(
+                -32602, "options must be an array of 2..5 strings")
+        if any(not isinstance(value, str) or not value.strip()
+               or len(value) > 300 for value in options):
+            raise ProtocolFailure(
+                -32602, "options must be non-empty strings <=300 characters")
+        if len(set(options)) != len(options):
+            raise ProtocolFailure(-32602, "options must be unique")
+        limit = arg_int(args, "limit", 3, 1, 5)
+        max_chars = arg_int(args, "max_chars", 6000, 2048, 12000)
+        requested = arg_snapshot(args)
+        cells = []
+        uncertainties = []
+        snapshot = None
+        for option in options:
+            try:
+                found = section_search.search(
+                    self.root,
+                    option,
+                    limit=limit,
+                    index_path=self.index_path,
+                    abstain=False,
+                    detail="snippets",
+                )
+            except section_search.SearchError as exc:
+                return self.search_error(exc, "tycho_compare")
+            except (OSError, sqlite3.Error, ValueError):
+                return self.tool_error(
+                    "not-available", "Comparison is not available",
+                    tool="tycho_compare")
+            if snapshot is None:
+                snapshot = found.get("snapshot")
+            mismatch = self.check_snapshot(requested, found.get("snapshot"))
+            if mismatch is not None:
+                mismatch["tool"] = "tycho_compare"
+                return mismatch
+            assessment = found.get("answerability") or {}
+            confident = assessment.get("confident") is True
+            results = found.get("results") or []
+            if not results:
+                uncertainties.append(
+                    "No section matched the option: " + option)
+            elif not confident:
+                uncertainties.append(
+                    "Policy not confident for option: " + option +
+                    "; cells are exploratory.")
+            for item in results:
+                text = " ".join(str(item.get(key, "")) for key in (
+                    "heading", "title", "excerpt")).casefold()
+                if any(token in text for token in (
+                        "trade-off", "tradeoff", "cost ")):
+                    dimension = "tradeoff"
+                elif any(token in text for token in (
+                        "failure", "fail", "retry", "timeout", "error")):
+                    dimension = "failure"
+                elif any(token in text for token in (
+                        "decision", "choose", "selection")):
+                    dimension = "decision"
+                elif any(token in text for token in (
+                        "example", "walkthrough", "case study")):
+                    dimension = "example"
+                elif item.get("heading_level") == 1:
+                    dimension = "overview"
+                else:
+                    dimension = "evidence"
+                cells.append({
+                    "option": option,
+                    "dimension": dimension,
+                    "citation": item.get("citation"),
+                    "section_key": item.get("section_key"),
+                    "path": item.get("path"),
+                    "heading": item.get("heading"),
+                    "excerpt": item.get("excerpt"),
+                    "evidence_status": item.get("evidence_status"),
+                    "weak": not confident,
+                })
+        response = {
+            "status": "ok" if cells else "no-results",
+            "snapshot": snapshot,
+            "options": options,
+            "dimensions": sorted({cell["dimension"] for cell in cells}),
+            "cells": cells,
+            "uncertainties": uncertainties,
+            "notice": (
+                "Extractive comparison only. No winner, recommendation or "
+                "final verdict is produced; verify every cited cell."),
+            "max_chars": max_chars,
+            "returned_chars": 0,
+            "returned_cells": len(cells),
+            "truncated": False,
+            "content_trust": CONTENT_TRUST,
+            "tool": "tycho_compare",
+        }
+        def encoded_size():
+            return len(json.dumps(
+                response, ensure_ascii=False,
+                separators=(",", ":")).encode("utf-8"))
+        while encoded_size() > max_chars and response["cells"]:
+            response["cells"].pop()
+            response["returned_cells"] = len(response["cells"])
+            response["truncated"] = True
+        response["returned_chars"] = encoded_size()
+        return response
 
     def _tool_context(self, args):
         reject_unknown(args, {
@@ -1769,6 +1935,7 @@ class TychoMcpServer:
             },
             "operations": {
                 "search": "lexical BM25 over indexed sections",
+                "compare": "extractive cited option matrix without a winner",
                 "context": "bounded extractive analysis bundle",
                 "read": "bounded codepoint range from one section",
                 "page": "bounded page body plus section map",

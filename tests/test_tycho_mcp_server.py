@@ -409,6 +409,19 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(
             payload["weak_results"][0]["match_source"], "route-metadata")
 
+    def test_compare_returns_cited_cells_without_winner(self):
+        payload = self.call(self.server(), "tycho_compare", {
+            "options": ["retry budget", "cache stampede"],
+            "max_chars": 5000,
+        })["structuredContent"]
+        self.assertEqual(payload["tool"], "tycho_compare")
+        self.assertGreater(payload["returned_cells"], 0)
+        self.assertLessEqual(payload["returned_chars"], 5000)
+        self.assertTrue(payload["cells"])
+        self.assertIn("notice", payload)
+        self.assertNotIn("winner", payload)
+        self.assertIn("citation", payload["cells"][0])
+
     def test_context_bundle_is_extractive_and_bounded(self):
         payload = self.call(self.server(), "tycho_context", {
             "question": "retry budget",
@@ -978,7 +991,7 @@ class McpServerTests(unittest.TestCase):
             listed = send({
                 "jsonrpc": "2.0", "id": 2, "method": "tools/list",
             })
-            self.assertEqual(len(listed["result"]["tools"]), 8)
+            self.assertEqual(len(listed["result"]["tools"]), 9)
             called = send({
                 "jsonrpc": "2.0", "id": 3, "method": "tools/call",
                 "params": {
