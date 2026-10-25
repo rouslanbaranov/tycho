@@ -26,16 +26,11 @@ authorize edits to the book under #225.
 ## Decision page claims inspection of blocked sources
 
 - Comparison **C373** covers a decision page that says two named sources and a third
-  source "have now been inspected at their original publishers and admitted".
-- The readings ledger records the two named sources as `blocked-full-text`: no article
-  text was retrieved and no source claim was read. Only the third source has a full
-  record.
-- This is a record-level contradiction between the page and the canonical ledger, not
-  proof about what the publishers contain and not proof that no unrecorded inspection
-  occurred.
-- No publisher page was fetched for this finding. Editorial review must verify or remove
-  the claim; the page remains comparison-assessed only for the evidence that was
-  available.
+  source were inspected and admitted for bounded first-party claims.
+- On 2026-10-25 both Spotify Engineering pages were retrieved in full. R043 and R044
+  are now full-scoped-text-read, so the page statement matches the ledger.
+- The remaining gap is metadata: the page evidence_scope.source_ids is empty and
+  source_inspection_date is null. This is classified as qualified, not contradicted.
 
 ## Owner-accepted source limitations
 

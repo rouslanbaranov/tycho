@@ -228,7 +228,7 @@ action. No book page was edited.
 
 ## Reference-source batch - 2026-10-24
 
-The R015-R187 slice holds 173 records: 156 full-scoped reads, 14 blocked and 3
+The R015-R187 slice holds 173 records: 158 full-scoped reads, 12 blocked and 3
 excluded. JEP 444 and JEP 491 are read; the remainder are public engineering
 articles and documentation/paper units in the src.m9-* series. Fourteen
 publisher pages returned no readable article body and are recorded as
@@ -272,9 +272,9 @@ a96c6b7 are outside that attempted review's stated HEAD.
 - The 406-page census records a review status for every canonical page:
   302 are comparison-assessed, 97 are landing-reviewed, and 7 carry an explicit evidence gap. The
   per-page list is in page-review-summary.json; a gap is not a pass.
-- The reference ledger has 471 records: 439 full reads, 5 partial, 14 blocked and 13
+- The reference ledger has 471 records: 441 full reads, 5 partial, 12 blocked and 13
   excluded sources (2 internal team sites, 11 unavailable commercial books). All 45 baseline fetch-incomplete sources are
-  accounted for: 30 full, 13 blocked, 2 excluded, 0 unaccounted.
+  accounted for: 32 full, 11 blocked, 2 excluded, 0 unaccounted.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
   two candidate page actions, 29 not-addressed assessments (no high severity; C399 and C412
   closed by PR #388), one
@@ -287,7 +287,7 @@ a96c6b7 are outside that attempted review's stated HEAD.
 
 - FINAL-SYNTHESIS.md records the current evidence base and the unmet criteria.
 - ACCEPTANCE.md records verdict **not accepted**: no landing-only sources,
-  7 page gaps, 14 blocked records and 13 excluded sources, and no independent review.
+  0 page gaps, 7 owner-accepted limitations, 12 blocked records and 13 excluded sources, and no independent review.
 - The six source records are reconciled to existing reading IDs
   in source-coverage-reconciliation.json; three SRE chapters, two PostgreSQL units and the completed OSTEP book, and they are not new reads.
 - No book, source-register, index or edition file changed. The issue remains

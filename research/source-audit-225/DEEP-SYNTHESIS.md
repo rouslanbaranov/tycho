@@ -14,11 +14,11 @@ index or edition file was changed.
   images. OSTEP: chapters 1-57, appendices A-H and the preface, in 65
   continuation records (20,189 lines, 323,810 words, 803 pages plus the earlier
   chapter 2 record). OSTEP raster figures were not visually inspected.
-- **471 reference records** in `readings.json`: 439 full reads, 5 partial, 14 blocked-full-text
+- **471 reference records** in `readings.json`: 441 full reads, 5 partial, 12 blocked-full-text
   and 13 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
-  disposition: 30 read, 13 blocked, 2 excluded; none unaccounted.
+  disposition: 30 read, 11 blocked, 2 excluded; none unaccounted.
 - **413 assessed comparisons** in `comparisons.json` against 302 canonical pages:
-  122 supported, 261 qualified, 29 not-addressed, 1 contradicted.
+  122 supported, 262 qualified, 29 not-addressed, 0 contradicted.
 - **Page matrix:** all 406 pages have a recorded review status; 302 are
   comparison-assessed, 97 are landing-reviewed, and 7 carry an explicit evidence gap
   (`page-review-summary.json`). A recorded gap is not a pass.
@@ -158,14 +158,15 @@ Only two candidate actions have direct page evidence:
 
 Twenty-nine assessments are "not-addressed"; none is high severity. The former
 C399 and C412 high findings were closed by the merged editorial rewrite in PR #388.
-C373 is the single record-level contradiction. These are open items requiring
-verification, restatement or removal, not optional additions.
+C373 was resolved on 2026-10-25: both Spotify Engineering pages were retrieved in
+full, so the page provenance statement now matches the ledger. The page frontmatter
+still needs its source IDs and inspection date populated.
 
 ## 4. Contradictions and uncertainties
 
-- **One contradicted comparison** is recorded (C373, a record-level provenance
-  conflict). This is not proof of correctness: only 302 pages have a bounded
-  comparison.
+- **No comparison is contradicted.** C373 is now qualified: the provenance
+  statement matches the upgraded ledger, while the page frontmatter still has an
+  empty evidence scope. Only 302 pages have a bounded comparison.
 - OSTEP version evidence is mixed: chapter 9, chapter 32 and the preface print
   version 1.20 while the site table of contents says 1.10. Records preserve the
   printed version and the discrepancy.
@@ -200,7 +201,7 @@ verification, restatement or removal, not optional additions.
 - [x] Every full reference record has a finite unit, exact revision, access date,
   sections and omissions; blocked/excluded records do not claim content.
 - [ ] Every accessible scoped source read completely: no landing-only source
-  remains, and 14 blocked records (13 baseline pages) are present.
+  remains, and 12 blocked records (11 baseline pages) are present.
 - [ ] All 406 pages have an applicability/review status beyond an explicit gap:
   302 assessed, 0 gaps.
 - [ ] Material explanations have source comparisons across every technical page:
@@ -231,5 +232,5 @@ verification, restatement or removal, not optional additions.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, does not claim that a
 first-party article is a benchmark, and does not claim that Tycho is complete or
-correct. The 14 blocked records and 7 owner-accepted source limitations are the dominant
+correct. The 12 blocked records and 7 owner-accepted source limitations are the dominant
 remaining uncertainty.
