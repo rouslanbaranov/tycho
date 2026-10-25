@@ -41681,6 +41681,41 @@
         "main content slice tpc_text.txt lines 356-416 -> /tmp/read14/tpc_overview.txt (61 lines, 8,962 bytes); raw HTML sha256 07b6e8a22b8be8bc8fa2720763a205df4dc196a92646036fb982e17d8de90f49"
       ],
       "omissions": "Excluded from the representation: navigation menus listing benchmark families and result-sort options, breadcrumb/search/login/newsletter chrome, and the footer. Not retrieved at all: per-benchmark Description pages, specification PDFs, result listings, the obsolete-benchmark pages (TPC-A, TPC-APP, TPC-B, TPC-D, TPC-R, TPC-W), and any JavaScript-rendered content."
+    },
+    {
+      "id": "R451",
+      "source_ids": [
+        "src.sre-workbook-incident-response"
+      ],
+      "url": "https://sre.google/workbook/incident-response/",
+      "unit": "Chapter 9 'Incident Response' of the SRE Workbook: complete body text of the page's main content container (div#content), treated as one bounded chapter page.",
+      "revision": "Live page served 2026-10-25 (no version string in HTML; canonical URL carries only the chapter slug). Chapter authors as printed on the page: Jennifer Mace, Jelena Oertel, Stephen Thorne and Arup Chakrabarti (PagerDuty), with Jian Ma and Jessie Yang. Raw HTML SHA-256 11894e848cfccc52f073e998815027e7ea56915ca3e16d53df20eb7d28ab7184, 90,037 bytes, HTTP 200.",
+      "status": "full-scoped-text-read",
+      "coverage": "All 221 extracted lines / 7,514 words of div#content: chapter introduction; Incident Management at Google (Incident Command System; Main Roles in Incident Response); Case Studies 1-4, each with Context / Incident / Review, including the PagerDuty case timeline and its tools subsection; Putting Best Practices into Practice (Incident Response Training; Prepare Beforehand with its four sub-tips; Drills); Conclusion; footnotes 1-2. Retrieval: curl of the public page, then block-level text extraction of the single content div. Sections: Incident Response (introduction), Incident Management at Google, Incident Command System, Main Roles in Incident Response, Case Studies, Case Study 1: Software Bug - The Lights Are On but No One's (Google) Home (Context / Incident / Review), Case Study 2: Service Fault - Cache Me If You Can (Context / Incident / Review), Case Study 3: Power Outage - Lightning Never Strikes Twice...Until It Does (Context / Incident / Review), Case Study 4: Incident Response at PagerDuty (Major incident response at PagerDuty; Tools used for incident response), Putting Best Practices into Practice, Incident Response Training, Prepare Beforehand (communication channel; keeping the audience informed; contact list; incident criteria), Drills, Conclusion, Footnotes 1-2",
+      "retrieval_refs": [
+        "GET https://sre.google/workbook/incident-response/ on 2026-10-25T13:35+01:00 (HTTP 200, 90037 bytes)",
+        "extracted text kept at /tmp/read14/chapter9.txt (sha256 18597101a50f7cce93dc34775d9c437214060dd9bbfe16288b0684fbd3fdafa4)",
+        "raw HTML kept at /tmp/read14/src.html (sha256 11894e848cfccc52f073e998815027e7ea56915ca3e16d53df20eb7d28ab7184)"
+      ],
+      "omissions": "Site chrome excluded: header menu, table-of-contents dropdown, footer, scripts, the GTM noscript iframe and images. Extraction keeps div#content block text only, preserves typographic quotes, and moves the two footnote bodies to the final two lines; intra-paragraph source line breaks are collapsed, so character offsets differ from the HTML while word and line counts refer to the extracted text. Other Workbook chapters and every page linked from this chapter are outside this unit."
+    },
+    {
+      "id": "R452",
+      "source_ids": [
+        "src.jdk-code"
+      ],
+      "url": "https://github.com/openjdk/jdk",
+      "unit": "Two files of the openjdk/jdk repository at a pinned commit: README.md (repository landing) and src/java.base/share/classes/java/lang/VirtualThread.java (the virtual-thread scheduling, mount/unmount and park mechanism). Bounded unit, not the repository.",
+      "revision": "openjdk/jdk development branch, commit e2d940b4235445f3a808a725c123a164d4253a76 (resolved from the public commits API and retrieved 2026-10-25, Europe/Zurich). Per-file SHA-256: README.md 50b0ca29cd76f14e76e6c34dca29d6ecada0df01b1cc7297cd16754058ee8a9b; VirtualThread.java 6ec3a59f66542c6fa6129bdb58715ca28f049c969ed5204acc371a78206a541d (52,736 bytes). The Java file's copyright header reads 2018, 2026.",
+      "status": "full-scoped-text-read",
+      "coverage": "All 1,457 lines / 5,535 words of the declared unit: README.md lines 1-12 (welcome plus build-documentation and community pointers only) and VirtualThread.java lines 1-1,445 - license header and imports, state constants with the documented transition table (lines 81-127), fields, constructor and scheduler inheritance, runContinuation, run/mount/unmount/yieldContinuation, afterYield and afterDone, start/park/parkNanos/parkOnCarrierThread, unpark/unblock and expiry tasks, interrupt, threadState, toString, VM transition natives, createDefaultScheduler with the three jdk.virtualThreadScheduler.* properties, DelayedTaskSchedulers, and the static unblocker thread. Sections: README.md - welcome, build-documentation pointers, community links (lines 1-12), VirtualThread.java - license header, package and imports (lines 1-57), class declaration, static scheduler/scope fields and documented state-transition table (lines 58-175), fields: park and block permits, waiting-list links, notified, timed-wait sequence number, timeout task, carrierThread (lines 176-260), defaultScheduler, continuation scope, constructor with scheduler inheritance, VThreadContinuation, runContinuation (lines 191-330), submission paths: submit, submitRunContinuation, externalSubmitRunContinuation, lazySubmitRunContinuation, submitFailed (lines 316-455), run(Runnable), mount, unmount, yieldContinuation (lines 458-557), afterYield state fan-out, timeout expiry scheduling, afterDone (lines 559-700), start(ThreadContainer), park, parkNanos, parkOnCarrierThread (lines 702-870), unpark, unblock, parkTimeoutExpired, waitTimeoutExpired (lines 871-950), tryYield, sleepNanos, interrupt, getAndClearInterrupt, threadState (lines 954-1140), toString, carrier access lock, timed-wait lock, suspend/preempt helpers, state and permit accessors, VM transition natives (lines 1141-1329), createDefaultScheduler and the jdk.virtualThreadScheduler.* properties (lines 1330-1372), DelayedTaskSchedulers, unblockVirtualThreads and the static unblocker thread (lines 1374-1445)",
+      "retrieval_refs": [
+        "GET https://api.github.com/repos/openjdk/jdk/commits/master for the commit pin (e2d940b4235445f3a808a725c123a164d4253a76)",
+        "GET https://raw.githubusercontent.com/openjdk/jdk/e2d940b4235445f3a808a725c123a164d4253a76/README.md (HTTP 200, 429 bytes)",
+        "GET https://raw.githubusercontent.com/openjdk/jdk/e2d940b4235445f3a808a725c123a164d4253a76/src/java.base/share/classes/java/lang/VirtualThread.java (HTTP 200, 52,736 bytes)",
+        "raw files kept at /tmp/read14/README.md and /tmp/read14/VirtualThread.java"
+      ],
+      "omissions": "Only two files were retrieved: the rest of the repository, the HotSpot C++ continuation implementation, the JVMTI transition natives' bodies, doc/building.md and the tests were not read, and no full-source read is claimed. Because this is a development branch, the file is not a released-JDK contract; the JEP text, release notes and JDK documentation were not consulted here. representation_sha256 is the concatenation of README.md bytes followed by VirtualThread.java bytes with no separator, reproducible as `cat README.md VirtualThread.java | shasum -a 256` against the pinned raw URLs; the two per-file hashes are in `revision` so each file can be verified separately."
     }
   ],
   "updated": "2026-10-25",
