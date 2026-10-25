@@ -137,17 +137,16 @@ source claim.
 
 ### Layered Architecture
 
-Layering groups responsibilities by abstraction and restricts source dependencies to an allowed
-direction. The inner domain must not depend on a UI, database or transport adapter.
+Layering is a dependency rule: presentation may call application, application may call domain, and
+domain calls neither. Put that rule in build checks, not only in a diagram.
 
-Dependency bypass, cyclic imports and a layer that becomes a pass-through are common; detect them in
-the build and fail the change. A layer that only forwards calls adds indirection without a policy.
-Name the allowed direction, the owner of each layer and the test that catches a violation; a diagram
-alone is not enforcement.
+The owner of each layer names its public surface and the test that catches a bypass. A layer that
+only forwards calls, a cyclic import, or shared mutable data crossing the boundary is evidence that
+the layer is not a real change boundary. Detect these in the build and fail the change.
 
-Hexagonal/clean architecture or a modular monolith may be preferable when explicit ports or module
-ownership add more value than layer count. Layering is a fit when the team needs a simple dependency
-rule and the domain can stay independent of delivery technology.
+Limits: layers are not deployment units, and a domain model already spread across layers is not
+rescued by renaming folders. Choose hexagonal ports or a clear modular monolith when explicit substitution
+or module ownership adds more value than layer count.
 
 ### Hexagonal Architecture and Ports and Adapters
 

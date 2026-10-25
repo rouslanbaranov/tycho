@@ -120,16 +120,16 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ### Modular Monolith
 
-Modules own their rules, data and contracts; internal interfaces define allowed calls and
-dependency tests enforce the boundary. The deployable is one unit even when the modules are
-separately owned.
+Modules own their rules, data and contracts. The deployable is one unit, but each module has a
+named owner, an allowed-call surface and a dependency test that fails a bypass.
 
-Internal interfaces define allowed calls and dependency tests enforce the boundary. Hidden
-cross-module database access, cyclic dependencies and event-based coupling that recreates a
-distributed monolith are common. Internal events are not automatically durable with the module's
-database commit: state whether the event is written in the same local transaction (outbox) or is
-best-effort, and who repairs a missed event. Test the dependency graph and schema ownership, not
-only the public API, and give each module a named owner.
+Hidden cross-module database access, cyclic dependencies and event coupling that recreates a
+distributed monolith are the failure modes. Internal events are not automatically durable with the
+module's database commit: state whether the event uses a local outbox or is best-effort, and who
+repairs a missed event. Test schema ownership as well as the public API.
+
+Synchronous call chains across modules and one deployment blast radius are the operational risk;
+keep a rollback path and verify event durability before treating the boundary as a contract.
 
 Microservices, hexagonal architecture or a simpler layered application may be preferable when
 module enforcement cost exceeds the coordination benefit. A modular monolith is a fit when the team

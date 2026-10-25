@@ -129,14 +129,16 @@ A bounded context has one accountable model owner and one accepted vocabulary. A
 expert co-owns that vocabulary and arbitrates disputed meanings. The model owner may reject a
 term carrying a conflicting invariant, even when another team introduced it.
 
-The context map records each relationship, translation direction and mapping maintainer. Treat
+These notes are synthetic design guidance, not measured evidence. The context map records each
+relationship, translation direction and mapping maintainer. Treat
 it as an ownership artifact that changes with the model, not a diagram produced once for review.
 
 Keep deployment choices separate from model boundaries: one deployable can host several
 contexts, and one context can span services. What matters is a single decision authority for
 each invariant.
 
-Reopen the boundary when a shared term changes meaning, a translation gains a second owner or
-releases become unavoidably coupled. Merging models is honest when the vocabularies truly
+Model behavior changes are reviewed with the domain expert before a boundary moves. Reopen the
+boundary when a shared term changes meaning, a translation gains a second owner or releases become
+unavoidably coupled. Merging models is honest when the vocabularies truly
 coincide. Record the rationale so a later team can distinguish a deliberate merger from an
 accidental one.
