@@ -293,39 +293,32 @@ deprecation window; point-to-point translation is cheaper for a few stable pairs
 
 ### Publish-Subscribe
 
-A topic fans each publication out to every current matching subscriber; ephemeral subscribers lose
-messages published while they are absent. Topic design, subscriber registration and per-subscriber
-cursors are part of the delivery contract. A crash after the effect but before acknowledgement
-causes redelivery, while acknowledging before the effect can lose work.
+Publish-subscribe is a delivery contract, not a fire-and-forget call. A publisher names a topic,
+and each current subscriber gets its own cursor; a subscriber absent during publication sees
+nothing unless the subscription is durable. Record whether it is ephemeral or durable before
+claiming a guarantee.
 
-The page describes NATS Core as at-most-once and JetStream's ordinary redelivery as at-least-once,
-under their respective configurations. A subscription name is not a durable business identity: each
-consumer still needs an effect key, a deduplication rule and an acknowledgement policy.
+A crash after the effect but before acknowledgement causes redelivery; acknowledging before the
+effect can lose work. Each consumer therefore needs an effect key, a deduplication rule and an
+acknowledgement policy. A subscription name is not a business identity.
 
-A fictional notification can use ephemeral pub/sub if losing a signal when no subscriber is
-listening is acceptable. A durable business task should not casually use Core alone if clients
-require recoverable delivery; a JetStream durable consumer or another persisted queue may better
-match that requirement. Record whether the subscription is ephemeral or durable before claiming
-a delivery guarantee.
-An unknown or unbounded subscriber count makes fan-out load and cost unownable; cap
-registration or partition the topic before treating the contract as bounded.
+Fan-out cost grows with subscriber count; an unknown or unbounded population makes load and
+retention unownable. Cap registration or partition the topic. Use ephemeral pub/sub only when
+losing a signal with no listener is acceptable; a durable business task needs a persisted
+consumer or queue.
 
 ### Point-to-Point Queue
 
-A queue dispatches each message to one eligible consumer; competing consumers share the work, and a
-consumer acknowledgement retires the message after any redelivery policy. A publisher confirmation
-is not evidence that a consumer committed its effect.
+A queue delivers each message to one eligible consumer. The acknowledgement retires it after the
+configured redelivery policy; a publisher confirmation does not prove the consumer committed its
+effect. A worker crash after the effect but before acknowledgement can cause redelivery, so
+nonrepeatable effects need consumer-side deduplication and stable effect identity.
 
-A worker that crashes after a local effect but before acknowledgement can cause redelivery, so
-nonrepeatable effects need consumer-side deduplication and a stable effect identity. If ordering or
-poison-message handling matters, state the queue's ordering scope and terminal path. A worker pool
-therefore needs a
-stable effect identity, a visible in-flight count and a redelivery limit, not only a higher
-prefetch.
-
-Direct request/response, pub/sub fan-out or a shared log may be preferable when one consumer owns
-each task or when brokered indirection adds no routing/reliability value. A queue is a fit when each
-task needs exactly one owner and the consumer can absorb redelivery.
+The queue contract must state its ordering scope and terminal path for poison messages. A worker
+pool needs a visible in-flight count and a redelivery limit, not only higher prefetch. Use direct
+request/response, fan-out or a shared log when one owner per task is enough or brokering adds no
+routing value. A queue fits when each task needs exactly one owner and the consumer can absorb
+redelivery. The queue owner records that choice.
 
 ### Event-Driven Consumer
 
@@ -365,15 +358,14 @@ subscription alone.
 
 ### Message Broker-Messaging Bridge
 
-A broker routes, stores and delivers messages between producers and consumers. A bridge forwards or
-translates between brokers/protocols, adding another hop, retention policy and failure domain. The
-bridge must preserve message identity, ordering and delivery semantics across the translation; a
-faithful broker contract on one side does not imply the same contract on the other.
+A broker moves messages between producers and consumers; a bridge translates across brokers or
+protocols and adds a hop, retention policy and failure domain. The bridge contract must preserve
+identity, ordering and delivery semantics across translation.
 
-A publisher confirmation is not a consumer commit. A bridge needs its own delivery contract,
-identity mapping and dead-letter path; crossing two brokers can duplicate or delay at either
-boundary.
+A publisher confirmation is not a consumer commit. Crossing two brokers can duplicate or delay at
+either boundary. The bridge needs its own identity mapping, dead-letter path and delivery contract;
+a faithful contract on one side does not imply the same on the other.
 
-Direct request/response, pub/sub fan-out or a shared log may be preferable when one consumer owns
-each task or when brokered indirection adds no routing/reliability value. A bridge is justified when
-protocol or organizational boundaries cannot be removed, and its extra failure domain is owned.
+Use direct request/response, fan-out or a shared log when brokering adds no routing value. A bridge
+is justified when protocol or organizational boundaries cannot be removed and its extra failure
+domain is owned. The bridge owner records the translation contract.

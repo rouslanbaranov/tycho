@@ -1454,31 +1454,31 @@
         "line": 294,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "A topic fans",
-          "at-most-once",
-          "ephemeral",
-          "acknowledgement policy"
+          "topic",
+          "cursor",
+          "subscriber count",
+          "durable"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A topic fans each publication out to every current matching subscriber; ephemeral subscribers lose messages published while they are absent.",
+          "quote": "Publish-subscribe is a delivery contract, not a fire-and-forget call.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
-          "quote": "The page describes NATS Core as at-most-once and JetStream's ordinary redelivery as at-least-once, under their respective configurations.",
+          "quote": "Record whether it is ephemeral or durable before claiming a guarantee.",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "a crash after the effect but before acknowledgement causes redelivery, while acknowledging before the effect can lose work.",
+          "quote": "A crash after the effect but before acknowledgement causes redelivery; acknowledging before the effect can lose work.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A fictional notification can use ephemeral pub/sub if losing a signal when no subscriber is listening is acceptable. A durable business task should not casually use Core alone if clients require recoverable delivery; a JetStream durable consumer or another persisted queue may better match that requirement.",
+          "quote": "Use ephemeral pub/sub only when losing a signal with no listener is acceptable; a durable business task needs a persisted consumer or queue.",
           "reason": ""
         }
       },
@@ -1511,34 +1511,34 @@
         "heading": "Point-to-Point Queue",
         "anchor": "point-to-point-queue",
         "level": 3,
-        "line": 313,
+        "line": 310,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "queue dispatches",
-          "publisher confirm",
-          "redelivery",
-          "Direct request"
+          "eligible consumer",
+          "acknowledgement",
+          "ordering scope",
+          "terminal path"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A queue dispatches each message to one eligible consumer; competing consumers share the work, and a consumer acknowledgement retires the message after any redelivery policy.",
+          "quote": "A queue delivers each message to one eligible consumer.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
-          "quote": "A publisher confirmation is not evidence that a consumer committed its effect.",
+          "quote": "The queue contract must state its ordering scope and terminal path for poison messages.",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A worker that crashes after a local effect but before acknowledgement can cause redelivery",
+          "quote": "A worker crash after the effect but before acknowledgement can cause redelivery",
           "reason": ""
         },
         "alternative": {
           "state": "supported",
-          "quote": "Direct request/response, pub/sub fan-out or a shared log may be preferable when one consumer owns each task or when brokered indirection adds no routing/reliability value.",
+          "quote": "Use direct request/response, fan-out or a shared log when one owner per task is enough or brokering adds no routing value.",
           "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
@@ -1628,7 +1628,7 @@
         "heading": "Event-Driven Consumer",
         "anchor": "event-driven-consumer",
         "level": 3,
-        "line": 330,
+        "line": 323,
         "unit_kind": "dedicated",
         "unit_terms": [
           "push subscription",
@@ -2222,7 +2222,7 @@
         "heading": "Durable Subscriber",
         "anchor": "durable-subscriber",
         "level": 3,
-        "line": 349,
+        "line": 342,
         "unit_kind": "dedicated",
         "unit_terms": [
           "server-side cursor",
@@ -2462,34 +2462,34 @@
         "heading": "Message Broker-Messaging Bridge",
         "anchor": "message-broker-messaging-bridge",
         "level": 3,
-        "line": 366,
+        "line": 359,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "routes, stores",
-          "bridge forwards",
-          "failure domain",
-          "Direct request"
+          "broker",
+          "bridge contract",
+          "identity mapping",
+          "failure domain"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A broker routes, stores and delivers messages between producers and consumers.",
+          "quote": "A broker moves messages between producers and consumers; a bridge translates across brokers or protocols",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
-          "quote": "A publisher confirmation is not a consumer commit.",
+          "quote": "The bridge contract must preserve identity, ordering and delivery semantics across translation.",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A bridge needs its own delivery contract, identity mapping and dead-letter path",
+          "quote": "A publisher confirmation is not a consumer commit.",
           "reason": ""
         },
         "alternative": {
           "state": "supported",
-          "quote": "Direct request/response, pub/sub fan-out or a shared log may be preferable when one consumer owns each task or when brokered indirection adds no routing/reliability value.",
+          "quote": "Use direct request/response, fan-out or a shared log when brokering adds no routing value.",
           "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
