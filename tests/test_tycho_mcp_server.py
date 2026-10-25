@@ -371,6 +371,36 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["answerability"]["basis"],
                          "evidence-score-threshold")
 
+    def test_exploratory_mode_returns_separate_weak_results(self):
+        payload = self.call(self.server(), "tycho_search", {
+            "query": "How do I configure a specific vendor cache policy?",
+            "mode": "exploratory",
+            "detail": "ids",
+            "limit": 2,
+            "abstain": True,
+        })["structuredContent"]
+        self.assertEqual(payload["status"], "no-confident-answer")
+        self.assertEqual(payload["returned"], 0)
+        self.assertGreater(payload["weak_returned"], 0)
+        self.assertTrue(payload["answerability"]["no_confident_answer"])
+        weak = payload["weak_results"][0]
+        self.assertIn("citation", weak)
+        self.assertIn("section_key", weak)
+        self.assertNotIn("excerpt", weak)
+        self.assertTrue(weak["next_actions"])
+        self.assertEqual(payload["content_trust"],
+                         mcp_server.CONTENT_TRUST)
+
+    def test_search_budget_returns_bounded_payload(self):
+        payload = self.call(self.server(), "tycho_search", {
+            "query": "zebra",
+            "limit": 5,
+            "max_chars": 1200,
+        })["structuredContent"]
+        self.assertLessEqual(payload["returned_chars"], 1200)
+        self.assertTrue(payload["truncated"])
+        self.assertGreaterEqual(payload["returned"], 0)
+
     def test_read_bounds_and_continuation(self):
         server = self.server()
         search = self.call(server, "tycho_search", {"query": "zebra"})

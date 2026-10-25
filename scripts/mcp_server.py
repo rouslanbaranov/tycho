@@ -248,6 +248,35 @@ def search_schema():
                 "type": "string",
                 "description": "Optional relative book path prefix.",
             },
+            "mode": {
+                "type": "string",
+                "enum": ["strict", "exploratory"],
+                "default": "strict",
+                "description": (
+                    "Strict keeps calibrated abstention. Exploratory also "
+                    "returns low-confidence weak_results when strict would "
+                    "abstain; weak results are explicitly separate."
+                ),
+            },
+            "detail": {
+                "type": "string",
+                "enum": ["ids", "snippets"],
+                "default": "snippets",
+                "description": (
+                    "ids returns citation/navigation fields only; snippets "
+                    "also returns bounded excerpts."
+                ),
+            },
+            "max_chars": {
+                "type": ["integer", "null"],
+                "minimum": 256,
+                "maximum": 50000,
+                "default": None,
+                "description": (
+                    "Optional UTF-8 response budget. Results are removed from "
+                    "the end and truncated is set when needed."
+                ),
+            },
             "all_sections": {
                 "type": "boolean",
                 "default": False,
@@ -965,6 +994,7 @@ class TychoMcpServer:
         reject_unknown(args, {
             "query", "limit", "kind", "topic", "evidence_status",
             "path_prefix", "all_sections", "abstain", "snapshot_id",
+            "mode", "detail", "max_chars",
         })
         query = arg_string(args, "query", required=True)
         limit = arg_int(args, "limit", DEFAULT_LIMIT, 1, MAX_LIMIT)
@@ -975,6 +1005,18 @@ class TychoMcpServer:
         path_prefix = arg_string(args, "path_prefix", maximum=500)
         all_sections = arg_bool(args, "all_sections", False)
         abstain = arg_bool(args, "abstain", True)
+        mode = arg_string(args, "mode", maximum=20) or "strict"
+        if mode not in ("strict", "exploratory"):
+            raise ProtocolFailure(-32602, "mode must be strict or exploratory")
+        detail = arg_string(args, "detail", maximum=20) or "snippets"
+        if detail not in ("ids", "snippets"):
+            raise ProtocolFailure(-32602, "detail must be ids or snippets")
+        max_chars = args.get("max_chars")
+        if max_chars is not None and not is_int(max_chars):
+            raise ProtocolFailure(-32602, "max_chars must be an integer")
+        if max_chars is not None and not 256 <= max_chars <= 50000:
+            raise ProtocolFailure(
+                -32602, "max_chars must be in 256..50000")
         requested = arg_snapshot(args)
         try:
             payload = section_search.search(
@@ -988,6 +1030,9 @@ class TychoMcpServer:
                 index_path=self.index_path,
                 all_sections=all_sections,
                 abstain=abstain,
+                include_weak=(mode == "exploratory"),
+                detail=detail,
+                max_chars=max_chars,
             )
         except section_search.SearchError as exc:
             return self.search_error(exc, "tycho_search")
@@ -999,9 +1044,12 @@ class TychoMcpServer:
         if mismatch is not None:
             mismatch["tool"] = "tycho_search"
             return mismatch
-        for item in payload.get("results", []):
-            item.setdefault("anchor", item.get("section_id"))
-            item.setdefault("snippet", item.get("excerpt"))
+        for key in ("results", "weak_results"):
+            for item in payload.get(key, []):
+                item.setdefault("anchor", item.get("section_id"))
+                if "excerpt" in item:
+                    item.setdefault("snippet", item.get("excerpt"))
+        payload["mode"] = mode
         payload["answerability"] = answerability(payload)
         payload["content_trust"] = CONTENT_TRUST
         payload["tool"] = "tycho_search"

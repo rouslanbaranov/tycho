@@ -207,6 +207,27 @@ class HttpMcpTests(unittest.TestCase):
         status, _ = self.request("GET", "/book/%2e%2e/schemas/x.json")
         self.assertIn(status, (400, 404))
 
+    def test_search_modes_and_budget(self):
+        status, payload = self.request(
+            "GET",
+            "/search?q=How+do+I+configure+a+specific+vendor+cache+policy"
+            "&mode=exploratory&detail=ids",
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(payload["mode"], "exploratory")
+        self.assertEqual(payload["detail"], "ids")
+        self.assertIn("weak_results", payload)
+        self.assertIn("next_actions", payload)
+        status, payload = self.request(
+            "GET",
+            "/search?q=vendor+cache+policy&mode=exploratory"
+            "&detail=ids&max_chars=1200",
+        )
+        self.assertEqual(status, 200)
+        self.assertLessEqual(payload["returned_chars"], 1200)
+        status, _ = self.request("GET", "/search?q=zebra&mode=invalid")
+        self.assertEqual(status, 400)
+
     def test_protocol_and_header_errors(self):
         status, payload = self.request("POST", "/mcp", None)
         self.assertEqual(status, 400)
