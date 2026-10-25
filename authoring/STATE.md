@@ -28,8 +28,8 @@ Owner acceptance remains open. See
 [the agent review](INDEPENDENT-AGENT-REVIEW_2026-10-21.md) and
 [the human review](HUMAN-REVIEW_2026-10-21.md).
 
-**Deep-source expansion (#228):** started 2026-10-22; all 145 entries now have all four
-evidence dimensions supported and are `partial-bounded` (0 technical partial, 0 sufficient).
+**Deep-source expansion (#228):** started 2026-10-22; 141 entries have all four evidence
+dimensions supported and 4 have partial failure/recovery evidence; all are `partial-bounded` (0 technical partial, 0 sufficient).
 The three deferred page splits were performed with stable IDs; the canonical corpus is 423
 pages. The remaining semantic gate is owner acceptance; the remaining delivery gaps are
 technical sufficiency, decision sufficiency and owner acceptance. See the

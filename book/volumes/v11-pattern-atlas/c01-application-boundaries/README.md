@@ -178,8 +178,9 @@ when distribution cost outweighs the autonomy benefit, or when boundaries cannot
 owned independently.
 
 **Failure and recovery.** Partial failure, retry amplification, latency and data
-consistency are normal; recovery requires timeouts, idempotency and observability.
-The linked owner section states the remaining limits.
+consistency are normal; recovery requires timeouts, stable effect identity and
+observability. The cited article covers failure design; retry-identity specifics are
+synthetic owner guidance. The linked owner section states the remaining limits.
 
 **Technical owner.** [Microservices Architecture](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#microservices-architecture) — The section explicitly owns SOA and microservice boundary choices.
 

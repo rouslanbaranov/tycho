@@ -244,7 +244,7 @@ small. Reverse the choice when BFF maintenance and duplication exceed the client
 benefit.
 
 **Failure and recovery.** Contract drift between the BFF and the domain API and duplicated
-logic are common. Recovery requires versioned composition and contract tests; verify the
+logic is a risk. Recovery requires versioned composition and contract tests; verify the
 API contract boundary in the owner section.
 
 **Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#backend-for-frontend-bff) — BFF tailoring has a dedicated owner section; it is bounded, not a complete API contract guide.
