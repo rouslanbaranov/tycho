@@ -361,7 +361,8 @@ subscription alone.
 
 A bridge sits between broker contracts: it translates protocols or formats and therefore adds a
 hop, a retention policy and a failure domain. The bridge contract must preserve identity, ordering
-and delivery semantics across translation.
+and delivery semantics across translation. The broker half also needs an owner for outage,
+retention and delivery observability; a bridge cannot compensate for an unavailable broker.
 
 A publisher confirmation is not a consumer commit. Crossing two brokers can duplicate or delay at
 either boundary. The bridge needs its own identity mapping, dead-letter path and delivery contract;

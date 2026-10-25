@@ -646,8 +646,9 @@ an unowned single point, or when protocol bridging hides semantic loss.
 **Competing alternative.** Direct messaging or a simpler queue. Reverse the choice when
 broker complexity and operational cost exceed decoupling benefit.
 
-**Failure and recovery.** Bridge semantic drift and duplicate or delayed crossing are common;
-verify the bridge contract, identity mapping and dead-letter path in the owner section.
+**Failure and recovery.** Broker outage, bridge semantic drift and duplicate or delayed crossing
+are common; verify broker availability, the bridge contract, identity mapping and dead-letter
+path in the owner section.
 
 **Technical owner.** [Message Broker / Messaging Bridge](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-broker-messaging-bridge) — bridge contract and failure-domain ownership is the bounded owner, not a channel page.
 
