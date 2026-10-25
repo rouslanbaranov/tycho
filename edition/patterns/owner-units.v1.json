@@ -4643,31 +4643,31 @@
         "line": 164,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "W voters",
-          "version selector",
-          "membership change",
-          "intersection"
+          "replica count",
+          "version",
+          "membership",
+          "stale response"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A write is acknowledged by W voters and a read consults R voters.",
+          "quote": "Let N be the replica count, W the acknowledgements required for a write and R the responses required for a read.",
           "reason": "Defines the mechanism."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Membership changes must preserve the intersection",
+          "quote": "During a membership change, require the old and new quorums to overlap",
           "reason": "States the invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A small R returns stale data, and an unsafe membership edit removes progress.",
-          "reason": "Names failure and recovery."
+          "quote": "Overlap is necessary but not sufficient for freshness: choose the response with the highest version and repair replicas behind it.",
+          "reason": "Names stale-read failure and version/read-repair recovery."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A leader-based protocol can simplify reads and writes but still needs a quorum for election and commit.",
+          "quote": "Use this when the chosen W/R latency fits and the membership service is trustworthy.",
           "reason": "Names the alternative and reversal."
         }
       },
@@ -6253,34 +6253,34 @@
         "heading": "Quorum Coordination",
         "anchor": "quorum-coordination",
         "level": 3,
-        "line": 179,
+        "line": 178,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "floor(N/2)+1",
-          "minority must refuse",
+          "voting threshold",
+          "current term",
           "joint or overlapping",
-          "term, vote"
+          "stable majority"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A quorum is floor(N/2)+1 only when the replica set and membership rules are correct.",
+          "quote": "Compute the voting threshold from the configured replica set",
           "reason": "Explains majority quorum arithmetic and the failure envelope for N voters."
         },
         "invariant": {
           "state": "supported",
-          "quote": "A minority must refuse conflicting authority",
+          "quote": "On a membership change, require joint or overlapping agreement",
           "reason": "States the correctness precondition for quorum arithmetic and membership changes."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A reachable voter without the current log may be unable to form a safe quorum",
-          "reason": "Shows continued progress with one unavailable voter under stated communication and log conditions."
+          "quote": "A voter that is reachable but behind the current term cannot safely complete a quorum",
+          "reason": "States a lagging voter as a safe-quorum failure case."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A leader-based protocol can simplify reads and writes but still needs a quorum for election and commit.",
+          "quote": "Choose quorum coordination when a stable majority can be maintained",
           "reason": "Names leader-based coordination as the alternative."
         }
       },

@@ -163,30 +163,29 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Quorum-Based Reads-Writes
 
-A write is acknowledged by W voters and a read consults R voters. When R + W > N, the sets
-intersect, but intersection alone does not identify the newest value: the reader must select the
-highest version and repair stale replicas. The arithmetic is a consistency rule, not a
-performance slogan.
+Let N be the replica count, W the acknowledgements required for a write and R the responses
+required for a read. The page's section 2 derives R + W > N. Overlap is necessary but not sufficient for freshness: choose the response
+with the highest version and repair replicas behind it. The arithmetic is a consistency contract;
+a latency budget does not make a stale response correct.
 
-Membership changes must preserve the intersection; a minority cannot commit authoritatively. A
-small R returns stale data, and an unsafe membership edit removes progress. Record N, R, W, the
-version selector and the membership-change procedure, and test a partition on both sides.
+During a membership change, require the old and new quorums to overlap and refuse authoritative
+commits from a minority. Keep the version selector and membership procedure in the runbook, and
+exercise both sides of a partition.
 
-A leader-based protocol can simplify reads and writes but still needs a quorum for election and
-commit. Quorum reads/writes are a fit when the operation can tolerate the chosen R/W latency and the
-membership service is trustworthy.
+Use this when the chosen W/R latency fits and the membership service is trustworthy. A leader can
+simplify ordering, but it still needs a majority for election and commit.
 
 ### Quorum Coordination
 
-A quorum is floor(N/2)+1 only when the replica set and membership rules are correct. A
-reachable voter without the current log may be unable to form a safe quorum, so track term, vote
-and log state rather than process count alone.
+Compute the voting threshold from the configured replica set, not from the number of processes
+that happen to answer; section 2 derives floor(N/2)+1. A voter that is reachable but behind the current term cannot safely complete
+a quorum; inspect term, vote and log position before counting it.
 
-A minority must refuse conflicting authority, and a membership change needs joint or overlapping
-safeguards so the old and new sets still intersect. Test asymmetric partitions and a membership
-change while the cluster is serving.
+On a membership change, require joint or overlapping agreement so old and new configurations
+intersect. A minority must reject conflicting authority rather than serving a split view. Rehearse
+an asymmetric partition and a change while work is in flight.
 
-A leader-based protocol can simplify reads and writes but still needs a quorum for election and
-commit. Quorum coordination is a fit when the cluster can keep a stable majority and the
-operator can test asymmetric partitions and membership changes. The same rule applies to every
-authoritative decision, not only to writes.
+Choose quorum coordination when a stable majority can be maintained and operators can test those
+transitions. A leader can reduce coordination chatter, but election and commit still require a
+majority. Record the threshold, the configuration revision and the last successful membership test
+in the operating procedure.
