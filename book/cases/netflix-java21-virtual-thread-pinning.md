@@ -10,17 +10,17 @@ topic_ids:
 perspectives:
   - "architecture"
   - "migration"
-summary: "General JDK 21 virtual-thread pinning risk, its scheduler consequences and the limits of JEP 444 and JEP 491. The publisher incident report is an unresolved citation, not evidence."
+summary: "General JDK 21 pinning risk; the publisher report is an unresolved citation."
 route_hints:
   questions:
-    - "When can virtual-thread pinning starve a carrier pool, and what does that imply for tracing and synchronization code?"
+    - "When can virtual-thread pinning starve a carrier pool?"
   prerequisites: []
   related_ids:
     - "tycho.page.36d83a4c7ecb4d12b60fb814d605646a"
     - "tycho.page.a486e061c9564587b1e39a4e83024fca"
     - "tycho.page.8982b044f7ee4305a2330a6ff989bb77"
   excludes:
-    - "No incident-specific count, diagnosis, reproduction or independent content acceptance is implied."
+    - "No incident count, reproduction or independent acceptance is implied."
   keywords:
     - "Java"
     - "virtual-thread"
@@ -33,8 +33,8 @@ evidence_scope:
     - "src.jep444"
     - "src.jep491"
   claim_ids: []
-  status: "bounded"
-  notes: "Claims are limited to JEP 444 and JEP 491. The publisher incident report remains blocked and is cited only as an unresolved source, not as evidence for any count or diagnostic detail."
+  status: "source-linked"
+  notes: "Claims limited to JEP 444/491; publisher report is unresolved, not evidence."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -42,13 +42,15 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-19"
 updated_at: "2026-10-25"
-source_inspection_date: "2026-10-25"
+source_inspection_date: null
 content_verified_at: null
 ---
 
 # Java 21 virtual-thread pinning at tracing and synchronization boundaries
 
-**Case ID:** `case.netflix.java21-virtual-thread-carrier-starvation` | **Status:** generalized risk note, not incident evidence
+**Case ID:** `case.netflix.java21-virtual-thread-carrier-starvation`
+
+**Status:** generalized risk note, not incident evidence
 
 **Primary sources:** JEP 444 and JEP 491. The publisher incident report
 (src.m9-n06) could not be lawfully retrieved and is an unresolved citation, not
@@ -66,7 +68,7 @@ correctness failure.
 
 JDK 21 retains monitor pinning. JEP 491 removes pinning caused by
 `synchronized` in a later release; native calls and foreign functions can still
-pin. Tracing, security, metrics and other cross-cutting libraries often contain
+pin. Tracing, security, metrics and other cross-cutting libraries may contain
 synchronized sections or native calls, so their behavior on the target JDK and
 dependency versions must be tested under load.
 
@@ -103,11 +105,11 @@ reproduction of any production trace.
 
 | Symptom | Plausible but incomplete reading | Additional check |
 |---|---|---|
-| JVM alive, endpoints stop completing | Generic upstream outage or CPU crash | Pin the JDK and dependency versions; check virtual-thread and carrier state |
-| Conventional thread dump looks idle | No work is running | Use a virtual-thread-aware dump and inspect mounted versus unmounted threads |
-| Many created but empty virtual threads | Thread leak | Compare created, started and completed tasks with socket and request lifecycle |
-| Waiters on a small carrier pool | Ordinary lock contention only | Check pinning events and carrier occupancy together with lock state |
-| Lock appears released, yet no progress | No contention exists | Inspect scheduler and wait-node state before asserting a permanent owner |
+| Live JVM, no completions | Outage or CPU crash | Check pinning and carrier state |
+| Old dump looks idle | No work running | Use a virtual-thread-aware dump |
+| Many empty virtual threads | Thread leak | Compare created, started and completed tasks |
+| Waiters on small pool | Lock contention | Check pinning and carrier occupancy |
+| Lock released, no progress | No contention | Inspect scheduler and wait-node state |
 
 These are general diagnostic prompts, not findings from a retrieved incident.
 
@@ -145,5 +147,6 @@ is "verify the complete dependency graph before enabling virtual threads", not
 
 - [JEP 444: Virtual Threads](https://openjdk.org/jeps/444)
 - [JEP 491: Synchronize Virtual Threads without Pinning](https://openjdk.org/jeps/491)
-- Publisher incident report (src.m9-n06): blocked at retrieval; retained as an
-  unresolved citation, not as evidence in this page.
+- Publisher incident report (src.m9-n06):
+  <https://netflixtechblog.com/java-21-virtual-threads-dude-wheres-my-lock-3052540e231d>
+  Not retrieved in this audit; retained as an unresolved citation, not evidence.

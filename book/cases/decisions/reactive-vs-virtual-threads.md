@@ -60,14 +60,18 @@ A legacy API gateway has 40,000 mostly idle TLS/client connections, occasional C
 
 ## Contrasting historical evidence
 
-| Actual company case | What its primary source does and does not establish |
+| Case or mechanism | What its source does and does not establish |
 |---|---|
 | [Netflix gateway](../netflix-zuul2-nonblocking-gateway.md) | src.m9-n07: Zuul2 gained connection scale; CPU gain differed by cluster |
-| [Java 21 pinning risk](../netflix-java21-virtual-thread-pinning.md) | JEP 444/491: bounded JDK 21 monitor-pinning mechanism; no incident count or diagnosis |
+| [Java 21 pinning][pin] | JEP 444/491 mechanism; no incident counts |
 | [Netflix gRPC worker pool](../netflix-grpc-cpu-workerpool-virtual-thread-regression.md) | src.m9-n02: 2023 practitioner account of a CPU-intensive outgoing gRPC worker pool that became a **few percent slower** after trying virtual threads; no exact benchmark published |
 | [Cloudflare](../cloudflare-super-slurper-queues.md) | src.m9-cf01: I/O copy fan-out via queues/workers, small-test regression |
 
-**Why the apparent conflict is useful:** Zuul2 exposes network connection scaling as a primary win even without universal CPU gains; JDK 21 monitor pinning exposes a hidden synchronization risk, while the separate CPU-intensive gRPC worker-pool experiment became slower without any carrier-pinning incident; Cloudflare's queue fan-out addresses asynchronous tasks at a different durability granularity.
+**Why the apparent conflict is useful:** Zuul2 exposes network connection scaling as a primary
+win even without universal CPU gains; JDK 21 monitor pinning exposes a hidden synchronization
+risk, while the separate CPU-intensive gRPC worker-pool experiment became slower without any
+carrier-pinning incident; Cloudflare's queue fan-out addresses asynchronous tasks at a different
+durability granularity.
 
 ## Decision tree and chosen ADR
 
@@ -94,7 +98,11 @@ flowchart TD
 
 **Use this evidence when:** a real system has the same dominant constraint, the relevant execution model/data semantics have been measured and its team can operate the new architecture.
 
-**Do not generalize when:** Do not put CPU-intensive crypto or JDBC on Netty's event loop. Netflix reported a *few-percent regression* in an outgoing CPU-intensive gRPC pool (src.m9-n02); do not treat it as a numeric benchmark or as evidence for the JDK 21 monitor-pinning risk. Do not expect Loom to accelerate CPU instructions or automatically eliminate pinning in Java21. Do not use queue fan-out for tiny synchronous requests where enqueue latency dominates.
+**Do not generalize when:** Do not put CPU-intensive crypto or JDBC on Netty's event loop.
+Netflix reported a *few-percent regression* in an outgoing CPU-intensive gRPC pool (src.m9-n02);
+do not treat it as a numeric benchmark or as evidence for the JDK 21 monitor-pinning risk. Do
+not expect Loom to accelerate CPU instructions or automatically eliminate pinning in Java21. Do
+not use queue fan-out for tiny synchronous requests where enqueue latency dominates.
 
 **Independent decision dimensions to measure:** Active connections/thread, carrier pinning/queue, event-loop stalls, canceled and retried requests, CPU per operation, p99 by class, queue age and dead-letter counts.
 
@@ -110,7 +118,7 @@ Categorize I/O waits vs CPU work *separately for outgoing gRPC worker pools, inb
 |---|---|---|---|
 | [Netflix Zuul 2, 2016](../netflix-zuul2-nonblocking-gateway.md) (src.m9-n07) | Many concurrent network connections; blocking waiting cost | Connection scale benefit; logging gateway ~25% throughput gain, API gateway no clear CPU efficiency improvement | Netty event loops increase CPU throughput for every workload |
 | [Netflix outgoing gRPC pool, QCon 2023](../netflix-grpc-cpu-workerpool-virtual-thread-regression.md) (src.m9-n02) | CPU-intensive worker execution rather than blocked network threads | Virtual-thread experiment was **a few percent slower** | An exact quantified benchmark or global prohibition of virtual threads |
-| [Java 21 monitor-pinning risk](../netflix-java21-virtual-thread-pinning.md) (JEP 444/491) | Carrier availability when a virtual thread blocks in a synchronized or native section | General starvation risk on JDK 21; monitor pinning removed by JEP 491, native pinning remains | An incident-specific count, frequency or diagnosis for any one service |
+| [Java 21 pinning][pin] | Pinning blocks carriers | General JDK 21 risk | No incident counts |
 | [Cloudflare object copying, 2025](../cloudflare-super-slurper-queues.md) (src.m9-cf01) | Long remote-object transfer waits and centralized job coordination | Large-object-count queue migration sped up; small-object proof of concept regressed | Queues and worker orchestration reduce tiny request latency or provide exactly-once delivery |
 
 The underlying categories are **network wait**, **CPU cycles**, **monitor/carrier scheduling**, and **durable asynchronous batch work**. They have different latency, scaling and rollback goals. The examples come from different organizations and years and are not one A/B experiment.
@@ -141,14 +149,16 @@ This is **Tycho's synthetic verification process**. It is not Netflix's or Cloud
 - **"Virtual threads are nonblocking."** Not in every relevant sense: synchronized monitor regions or native library behavior can pin carriers on some JDKs, and CPU-bound work still consumes CPU.
 - **"Reactive always wins CPU."** Zuul's logging cluster and API cluster had different efficiency profiles; nonblocking I/O reduces *waiting overhead*, not arbitrary computation.
 - **"Queues guarantee exactly once."** The Cloudflare case explicitly includes at-least-once delivery and requires object-level deduplication.
-- **"One architecture applies to every service."** The four case outcomes are compatible once workload type and resource pressure are separated.
+- **"One architecture applies to every service."** The four precedents are compatible once workload type and resource pressure are separated.
 
 Reject the redesign if the dominant bottleneck has not been measured, the target library stack is not verified under blocking conditions, security/tracing context cannot cross execution boundaries, or error cleanup/rollback has not been tested. Return **insufficient evidence** instead of guessing a universal scheduler ranking.
 
 ## Failure analysis and evidence provenance
 
-The company cases are not A/B comparisons of two architectures under one workload. Published outcomes describe different organizations, production periods, release versions, traffic mixes and operating constraints. This playbook compares *mechanisms and constraints*, not raw numerical results across companies.
+The cases and the JEP mechanism are not A/B comparisons under one workload. Published outcomes describe different organizations, production periods, release versions, traffic mixes and operating constraints. This playbook compares *mechanisms and constraints*, not raw numerical results across companies.
 
 Before presenting a recommendation to its user, an architecture-analysis agent should return: legacy facts, requirement/SLO evidence, selected/avoided pattern, evidence rows with company/date/source ID, alternative mechanism, caveats, a reversible transition sequence, what would falsify the choice, and whether human review is needed. Never invent what original engineering teams rejected.
 
 Sources are linked through each original case page above, ultimately referring to [the M9 public source register](../../../sources/REAL_WORLD_ARCHITECTURE_CASES.md). All analytical ADRs are original Tycho examples. **Independent review:** #121, not yet completed.
+
+[pin]: ../netflix-java21-virtual-thread-pinning.md
