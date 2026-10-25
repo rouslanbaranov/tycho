@@ -149,7 +149,8 @@ smooth bursts?
 ordering requirements are partition-scoped; duplicate effects are controlled.
 
 **Hard contraindications.** Reject when global order is mandatory, when consumers mutate
-shared state without coordination, or when one slow message blocks the queue head.
+shared state without coordination, or when a slow message has no bounded-attempt or terminal
+path.
 
 **Competing alternative.** One ordered consumer per partition, or a partitioned work
 queue. Reverse the choice when ordering dominates throughput.
