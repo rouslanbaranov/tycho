@@ -334,9 +334,10 @@ rather than serving an older snapshot.
 **Technical owner.** [Session Consistency](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md#session-consistency) — session consistency is bounded, not a complete client-session protocol.
 
 **Sources.** [src.jepsen-consistency](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-jepsen.2026-10-21: sections "Consistency Models", "Session
-guarantees". The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.batch4-jepsen.2026-10-21: section "Consistency Models". The record has no
+standalone Session guarantees section; session-specific claims rely on the page body's
+monotonic-reads/read-your-writes links, not this record. The source is a public
+pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
