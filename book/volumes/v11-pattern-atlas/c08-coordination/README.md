@@ -335,8 +335,7 @@ unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Causal Ordering; Read Replicas; Leader-Follower Replication; Session
-Token.
+**Related entries.** Causal Ordering; Read Replicas; Leader-Follower Replication.
 
 ### Distributed Workflow Orchestration
 
