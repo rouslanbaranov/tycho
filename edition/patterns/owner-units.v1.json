@@ -5137,7 +5137,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Budget retries per dependency and caller class, not as one global counter",
+          "quote": "Budget retries per dependency and caller class in addition to a service-wide cap",
           "reason": "States retry preconditions and bounded budgets that must hold."
         },
         "failure_recovery": {
@@ -5168,7 +5168,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Owner unit adds per-dependency and per-caller retry budgets, attempt/outcome labels and a healthy-window reset; the formula is stated at deadlines-retries.md:180-181."
+      "notes": "Owner unit adds per-dependency/per-caller budgets alongside a service-wide cap, attempt/outcome labels, a healthy-window reset and server-pushback stop; the formula is stated at deadlines-retries.md:180-181."
     },
     {
       "pattern_id": "tycho.pattern.retry-with-jitter",
@@ -5237,7 +5237,7 @@
         "heading": "Timeout",
         "anchor": "timeout",
         "level": 3,
-        "line": 192,
+        "line": 193,
         "unit_kind": "dedicated",
         "unit_terms": [
           "local wait bound",
@@ -5297,7 +5297,7 @@
         "heading": "Deadline Propagation",
         "anchor": "deadline-propagation",
         "level": 3,
-        "line": 206,
+        "line": 207,
         "unit_kind": "dedicated",
         "unit_terms": [
           "relative duration",
