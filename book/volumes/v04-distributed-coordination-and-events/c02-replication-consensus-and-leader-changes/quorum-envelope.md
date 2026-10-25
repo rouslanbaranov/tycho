@@ -83,9 +83,9 @@ and latency cost exceed the safety benefit.
 The [etcd v3.6 FAQ](https://etcd.io/docs/v3.6/faq/) discusses why a dangerous membership addition can remove progress when the new member cannot join. A non-voting learner can receive state before safe promotion under implementation-specific rules. Changes to membership are themselves state-machine decisions that need supported joint/overlapping quorum safeguards, not a simple count update in a config file.
 
 **Quorum mechanism.** A write is acknowledged by W voters and a read consults R voters;
-when R + W > N and membership is correctly configured, the sets intersect on the latest
-committed value. Election and log commitment also require a quorum under the protocol's
-term rules.
+when R + W > N and membership is correctly configured, the sets intersect, but the reader must
+select the highest version and repair stale replicas. Election and log commitment also require a
+quorum under the protocol's term rules.
 
 **Invariant and failure.** Quorums must intersect and every membership change must preserve
 that intersection; a minority partition cannot commit authoritatively. A read with too
@@ -163,10 +163,11 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Quorum-Based Reads-Writes
 
-Let N be the replica count, W the acknowledgements required for a write and R the responses
-required for a read. The page's section 2 derives R + W > N. Overlap is necessary but not sufficient for freshness: choose the response
-with the highest version and repair replicas behind it. The arithmetic is a consistency contract;
-a latency budget does not make a stale response correct.
+Let N be the replica count, W the acknowledgements required for a write and R the
+responses required for a read. The page's section 2 derives R + W > N. Overlap is necessary
+but not sufficient for freshness: choose the response with the highest version and repair
+replicas behind it. The arithmetic is a consistency contract; a latency budget does not make a
+stale response correct.
 
 During a membership change, require the old and new quorums to overlap and refuse authoritative
 commits from a minority. Keep the version selector and membership procedure in the runbook, and
@@ -177,9 +178,10 @@ simplify ordering, but it still needs a majority for election and commit.
 
 ### Quorum Coordination
 
-Compute the voting threshold from the configured replica set, not from the number of processes
-that happen to answer; section 2 derives floor(N/2)+1. A voter that is reachable but behind the current term cannot safely complete
-a quorum; inspect term, vote and log position before counting it.
+Compute the voting threshold from the configured replica set, not from the number of
+processes that happen to answer; section 2 derives floor(N/2)+1. A voter that is reachable but
+behind the current term cannot safely complete a quorum; inspect term, vote and log position
+before counting it.
 
 On a membership change, require joint or overlapping agreement so old and new configurations
 intersect. A minority must reject conflicting authority rather than serving a split view. Rehearse
