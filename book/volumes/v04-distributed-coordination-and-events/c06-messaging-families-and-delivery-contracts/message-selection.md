@@ -298,16 +298,17 @@ messages published while they are absent. Topic design, subscriber registration 
 cursors are part of the delivery contract. A crash after the effect but before acknowledgement
 causes redelivery, while acknowledging before the effect can lose work.
 
-The page describes Core as at-most-once and JetStream's ordinary redelivery as at-least-once, under
-their respective configurations. A subscription name is not a durable business identity: each
+The page describes NATS Core as at-most-once and JetStream's ordinary redelivery as at-least-once,
+under their respective configurations. A subscription name is not a durable business identity: each
 consumer still needs an effect key, a deduplication rule and an acknowledgement policy.
 
 A fictional notification can use ephemeral pub/sub if losing a signal when no subscriber is
 listening is acceptable. A durable business task should not casually use Core alone if clients
 require recoverable delivery; a JetStream durable consumer or another persisted queue may better
-match that requirement. Record whether the subscription is ephemeral or durable before claiming a delivery guarantee.
-An unknown or unbounded subscriber count makes fan-out load and cost unownable; cap registration
-or partition the topic before treating the contract as bounded.
+match that requirement. Record whether the subscription is ephemeral or durable before claiming
+a delivery guarantee.
+An unknown or unbounded subscriber count makes fan-out load and cost unownable; cap
+registration or partition the topic before treating the contract as bounded.
 
 ### Point-to-Point Queue
 
@@ -317,7 +318,8 @@ is not evidence that a consumer committed its effect.
 
 A worker that crashes after a local effect but before acknowledgement can cause redelivery, so
 nonrepeatable effects need consumer-side deduplication and a stable effect identity. If ordering or
-poison-message handling matters, state the queue's ordering scope and terminal path. A worker pool therefore needs a
+poison-message handling matters, state the queue's ordering scope and terminal path. A worker pool
+therefore needs a
 stable effect identity, a visible in-flight count and a redelivery limit, not only a higher
 prefetch.
 
