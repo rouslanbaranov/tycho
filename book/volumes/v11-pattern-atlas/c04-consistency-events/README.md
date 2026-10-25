@@ -85,8 +85,9 @@ can evolve independently?
 **Good-fit conditions.** Read and write workloads differ; projections can be asynchronous;
 stale reads are acceptable; duplicate/order handling is owned.
 
-**Hard contraindications.** Reject when one model meets both needs, when read-after-write
-is mandatory for every client, or when projection maintenance has no owner.
+**Hard contraindications.** Reject when one model meets both needs, when every read requires
+immediate consistency with no version-wait or authority-read path, or when projection maintenance
+has no owner.
 
 **Competing alternative.** Single model with indexes/views. Reverse the choice when
 projection lag and dual-model complexity exceed read-scale benefit.

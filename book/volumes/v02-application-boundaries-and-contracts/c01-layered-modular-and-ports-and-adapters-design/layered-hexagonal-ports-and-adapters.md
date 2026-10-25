@@ -159,7 +159,8 @@ The domain owns the contract: a confirmed reservation has one authoritative resu
 operation, and a uniqueness conflict becomes an explicit domain conflict. Adapter-specific errors,
 timeouts and retries stay at the edge; they do not become domain states.
 
-Keep the boundary only where substitution or testing justifies it. A distributed split is a
+Domain code must not depend on adapter or technology types; dependencies point inward. Keep the
+boundary only where substitution or testing justifies it. A distributed split is a
 separate decision: if the adapter calls another service, it must own remote failure, latency and
 versioned contracts, not merely rename a network call a port. A layered or modular-monolith
 structure can be simpler when one persistence choice is stable.
