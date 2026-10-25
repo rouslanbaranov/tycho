@@ -29,31 +29,31 @@
         "line": 138,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Layering groups",
-          "inner domain",
-          "Dependency bypass",
-          "Hexagonal/clean"
+          "dependency rule",
+          "public surface",
+          "change boundary",
+          "deployment units"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Layering groups responsibilities by abstraction and restricts source dependencies to an allowed direction.",
+          "quote": "Layering is a dependency rule: presentation may call application, application may call domain, and domain calls neither.",
           "reason": "Defines the mechanism."
         },
         "invariant": {
           "state": "supported",
-          "quote": "The inner domain must not depend on a UI, database or transport adapter.",
+          "quote": "The owner of each layer names its public surface and the test that catches a bypass.",
           "reason": "States the invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Dependency bypass, cyclic imports and a layer that becomes a pass-through are common; detect them in the build and fail the change.",
+          "quote": "A layer that only forwards calls, a cyclic import, or shared mutable data crossing the boundary is evidence that the layer is not a real change boundary.",
           "reason": "Names failure and recovery."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Hexagonal/clean architecture or a modular monolith may be preferable when explicit ports or module ownership add more value than layer count.",
+          "quote": "Choose hexagonal ports or a clear modular monolith when explicit substitution or module ownership adds more value than layer count.",
           "reason": "Names the alternative and reversal."
         }
       },
@@ -89,26 +89,26 @@
         "line": 121,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Modules own",
-          "internal interfaces",
-          "Hidden cross-module",
-          "Microservices"
+          "named owner",
+          "dependency test",
+          "outbox",
+          "blast radius"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Modules own their rules, data and contracts; internal interfaces define allowed calls and dependency tests enforce the boundary.",
+          "quote": "Modules own their rules, data and contracts.",
           "reason": "Defines the mechanism."
         },
         "invariant": {
           "state": "supported",
-          "quote": "internal interfaces define allowed calls and dependency tests enforce the boundary.",
+          "quote": "The deployable is one unit, but each module has a named owner, an allowed-call surface and a dependency test that fails a bypass.",
           "reason": "States the invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Hidden cross-module database access, cyclic dependencies and event-based coupling that recreates a distributed monolith are common.",
+          "quote": "Synchronous call chains across modules and one deployment blast radius are the operational risk",
           "reason": "Names failure and recovery."
         },
         "alternative": {
@@ -266,7 +266,7 @@
         "heading": "Hexagonal Architecture and Ports and Adapters",
         "anchor": "hexagonal-architecture-and-ports-and-adapters",
         "level": 3,
-        "line": 152,
+        "line": 151,
         "unit_kind": "dedicated",
         "unit_terms": [
           "ports",
@@ -326,7 +326,7 @@
         "heading": "Clean-Onion Architecture",
         "anchor": "clean-onion-architecture",
         "level": 3,
-        "line": 168,
+        "line": 167,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Clean and onion",
@@ -408,7 +408,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "The model owner may reject a term carrying a conflicting invariant, even when another team introduced it.",
+          "quote": "Model behavior changes are reviewed with the domain expert before a boundary moves.",
           "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
@@ -449,7 +449,10 @@
         "line": 87,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Database per Service"
+          "schema ownership",
+          "outbox",
+          "cross-service transactions",
+          "shared database"
         ]
       },
       "technical_evidence": {
@@ -465,7 +468,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Shared-table shortcuts and distributed joins reappear as hidden coupling; detect them through schema ownership review and cross-service access inspection rather than assuming the boundary exists.",
+          "quote": "Strong cross-service transactions remain a contraindication: an outbox or reconciliation reduces, but does not remove, that coordination cost.",
           "reason": ""
         },
         "alternative": {

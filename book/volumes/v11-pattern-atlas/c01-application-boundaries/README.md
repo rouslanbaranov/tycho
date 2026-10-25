@@ -308,7 +308,7 @@ Domain-Driven Design / Bounded Context.
 ### Domain-Driven Design / Bounded Context
 
 **Identity.** Domain-Driven Design / Bounded Context; aliases DDD, Bounded Context;
-family Application architecture and boundaries; kind modeling-discipline; priority core.
+family Application architecture and boundaries; kind architecture-style; priority core.
 
 **Decision question.** Should models and ownership be separated by bounded context
 rather than forced into one shared enterprise model?
@@ -347,7 +347,7 @@ Architecture; Database per Service.
 ### Database per Service
 
 **Identity.** Database per Service; family Application architecture and boundaries; kind
-data-ownership-pattern; priority core.
+pattern; priority core.
 
 **Decision question.** Should each service own its authoritative data and expose only a
 contract, rather than share one database across services?

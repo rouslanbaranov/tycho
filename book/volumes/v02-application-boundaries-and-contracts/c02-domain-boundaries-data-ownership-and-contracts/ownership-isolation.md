@@ -97,6 +97,8 @@ writes, stale replicas and cross-service queries are common; use an outbox or id
 reconciliation for cross-service effects and verify replica freshness before joining. A shared
 database with enforced module ownership is simpler when teams release together; choose separate
 stores only when independent ownership, scaling or recovery justify the coordination cost.
+Strong cross-service transactions remain a contraindication: an outbox or reconciliation
+reduces, but does not remove, that coordination cost.
 
 **Limits.** Schema ownership adds migration, cross-service query and reporting costs; a shared
 database with enforced modules is often cheaper until independent failure or scaling domains
