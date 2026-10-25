@@ -295,7 +295,8 @@ A materialized view stores the result of a query so repeated reads avoid recompu
 derived data, not the base table: the stored rows can be stale until a refresh replaces them.
 
 Refresh is a separate write operation with an owner and a mode. An on-demand refresh can block reads
-while it rebuilds; a concurrent refresh needs a unique key and still consumes I/O; a refresh on every
+while it rebuilds; a concurrent refresh needs a unique key and still consumes I/O; a refresh on
+every
 write turns the view into a cache. Define the freshness contract, the refresh trigger, the lock or
 blocking behavior and a rebuild path. A view that cannot be rebuilt from the authority is a second
 database without an owner.
