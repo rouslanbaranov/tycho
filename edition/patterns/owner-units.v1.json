@@ -1014,7 +1014,7 @@
       "decision_evidence": {
         "atlas_section": "backend-for-frontend-bff",
         "question": "Should each client population get a tailored server contract, rather than share one general-purpose API?",
-        "competing_alternative": "One API with versioned representations or a gateway aggregation. Reverse the choice when BFF maintenance and duplication exceed the client fit benefit.",
+        "competing_alternative": "A shared API with client-side selection when the differences are small. Reverse the choice when BFF maintenance and duplication exceed the client fit benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -5123,16 +5123,16 @@
         "line": 175,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "retry delay should grow",
-          "bounded attempt/backoff budget",
-          "explicit overload result",
-          "effect identity"
+          "Grow the delay",
+          "cap it",
+          "jitter",
+          "remaining deadline"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A retry delay should grow with each failed attempt, be capped, and be randomized with jitter so clients do not retry in lockstep.",
+          "quote": "Grow the delay after each failure, cap it and add jitter so clients do not synchronize.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
@@ -5237,7 +5237,7 @@
         "heading": "Timeout",
         "anchor": "timeout",
         "level": 3,
-        "line": 191,
+        "line": 190,
         "unit_kind": "dedicated",
         "unit_terms": [
           "local wait bound",
@@ -5297,7 +5297,7 @@
         "heading": "Deadline Propagation",
         "anchor": "deadline-propagation",
         "level": 3,
-        "line": 205,
+        "line": 204,
         "unit_kind": "dedicated",
         "unit_terms": [
           "relative duration",
@@ -6110,7 +6110,7 @@
       "decision_evidence": {
         "atlas_section": "distributed-lock",
         "question": "Should a shared lock prevent concurrent access to one resource across processes?",
-        "competing_alternative": "Lease-based ownership with fencing or single-writer partitioning. Reverse the choice when lock safety cannot be proven.",
+        "competing_alternative": "Lease-based ownership with fencing, single-writer partitioning, or a conditional write/unique constraint. Reverse the choice when lock safety cannot be proven.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },

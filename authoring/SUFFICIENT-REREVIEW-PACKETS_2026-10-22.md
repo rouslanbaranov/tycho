@@ -13,10 +13,10 @@
 | Residual findings after re-review | 56 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 123 |
+| Reviewed by independent agent | 118 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 19, "report-section-missing": 3, "reviewed-by-independent-agent": 123}.
+Packet statuses: {"page-changed-since-review": 25, "report-section-missing": 2, "reviewed-by-independent-agent": 118}.
 
 ## Review procedure
 
@@ -190,7 +190,7 @@ blank verdict template in the machine-readable file.
 
 - **Deadline Propagation**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Deployment Stamps**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -366,7 +366,7 @@ blank verdict template in the machine-readable file.
 
 - **Microservices Architecture**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Modular Monolith**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -462,11 +462,11 @@ blank verdict template in the machine-readable file.
 
 - **Retry with Exponential Backoff**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Retry with Jitter**
   Current: pass; re-review: pass; report: None.
-  Status: report-section-missing.
+  Status: page-changed-since-review.
 
 - **Reverse Proxy**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -506,7 +506,7 @@ blank verdict template in the machine-readable file.
 
 - **Service-Oriented Architecture (SOA)**
   Current: pass; re-review: pass; report: reject.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Session Consistency**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -566,7 +566,7 @@ blank verdict template in the machine-readable file.
 
 - **Timeout**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Transactional Inbox**
   Current: pass; re-review: pass; report: pass-with-findings.

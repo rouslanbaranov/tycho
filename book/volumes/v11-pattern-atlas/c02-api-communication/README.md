@@ -239,13 +239,13 @@ client-specific composition is acceptable.
 BFFs would duplicate domain logic; when no team owns a BFF lifecycle; when the split
 multiplies deployments without a measured client benefit.
 
-**Competing alternative.** One API with versioned representations or a gateway
-aggregation. Reverse the choice when BFF maintenance and duplication exceed the client
-fit benefit.
+**Competing alternative.** A shared API with client-side selection when the differences are
+small. Reverse the choice when BFF maintenance and duplication exceed the client fit
+benefit.
 
-**Failure and recovery.** Contract drift across BFFs and duplicated logic are common.
-Recovery requires shared domain contracts and per-BFF observability; verify the API
-contract boundary in the owner section.
+**Failure and recovery.** Contract drift between the BFF and the domain API and duplicated
+logic are common. Recovery requires versioned composition and contract tests; verify the
+API contract boundary in the owner section.
 
 **Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#backend-for-frontend-bff) — API contract ownership; BFF tailoring is not a dedicated section.
 

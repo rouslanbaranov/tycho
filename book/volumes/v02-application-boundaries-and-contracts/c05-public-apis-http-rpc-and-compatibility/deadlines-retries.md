@@ -174,10 +174,9 @@ idempotent; jitter cannot make a non-idempotent effect safe.
 
 ### Retry with Exponential Backoff
 
-A retry delay should grow with each failed attempt, be capped, and be randomized with jitter so
-clients do not retry in lockstep. Define the attempt count, base and multiplier explicitly, plus an
-aggregate retry budget across calls; an exponential curve alone is not a policy. The cap and the
-caller's remaining budget, not a fixed attempt count, bound the useful retry window.
+Grow the delay after each failure, cap it and add jitter so clients do not synchronize. State the
+attempt count, base, multiplier and aggregate budget across calls; the curve alone is not a policy.
+The cap and the caller's remaining deadline bound the useful window, not a fixed attempt count.
 
 Retry only a documented retryable failure class, with a bounded total deadline and bounded
 attempt/backoff budget; observe server pushback/backpressure. If a large fraction of instances is
