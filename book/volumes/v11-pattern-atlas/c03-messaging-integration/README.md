@@ -90,7 +90,7 @@ when one work item needs one consumer, not an independent copy per subscriber.
 **Failure and recovery.** Fan-out amplifies load and duplicate effects; verify retention
 and acknowledgement semantics in the owner section.
 
-**Technical owner.** [Publish / Subscribe](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#publish-subscribe) — bridge contract and failure-domain ownership is the bounded owner, not a channel page.
+**Technical owner.** [Publish / Subscribe](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#publish-subscribe) — topic/cursor delivery ownership is the bounded owner, not a channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -124,7 +124,7 @@ subscribers need the same event rather than one shared work item.
 **Failure and recovery.** Duplicate delivery and poison messages are normal; verify
 acknowledgement and redelivery semantics in the owner section.
 
-**Technical owner.** [Point-to-Point Queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#point-to-point-queue) — bridge contract and failure-domain ownership is the bounded owner, not a channel page.
+**Technical owner.** [Point-to-Point Queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#point-to-point-queue) — queue dispatch and acknowledgement ownership is the bounded owner, not a channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -158,7 +158,7 @@ queue. Reverse the choice when ordering dominates throughput.
 **Failure and recovery.** Concurrency increases duplicate and reorder exposure; verify
 ordering and acknowledgement in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#competing-consumers) — bridge contract and failure-domain ownership is the bounded owner, not a channel page.
+**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#competing-consumers) — consumer-pool ownership is the bounded owner, not a channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -192,7 +192,7 @@ when event volume and concurrency overwhelm the consumer.
 **Failure and recovery.** Push delivery can outrun processing; verify backpressure and
 acknowledgement in the owner section.
 
-**Technical owner.** [Event-Driven Consumer](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#event-driven-consumer) — bridge contract and failure-domain ownership is the bounded owner, not a channel page.
+**Technical owner.** [Event-Driven Consumer](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#event-driven-consumer) — handler delivery and acknowledgement ownership is the bounded owner, not a channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -519,7 +519,7 @@ the choice when replay cost and retention exceed the continuity benefit.
 **Failure and recovery.** Retention growth and stale replay are common; verify retention
 and acknowledgement in the owner section.
 
-**Technical owner.** [Durable Subscriber](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#durable-subscriber) — bridge contract and failure-domain ownership is the bounded owner, not a channel page.
+**Technical owner.** [Durable Subscriber](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#durable-subscriber) — durable cursor and retention ownership is the bounded owner, not a channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
