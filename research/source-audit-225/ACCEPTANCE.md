@@ -7,8 +7,8 @@
 | Complete source inventory reconciles register and external links | Partial | 247 sources and 406 documents represented; external-link inventory beyond the register is incomplete. |
 | Every source has a finite unit and honest full/partial/blocked status | Partial | 471 reference records plus 6 source reconciliations; no source remains landing-only. |
 | Every accessible scoped source read completely | Not met | No landing-only source remains; RFC 9110 is now read with labelled supplements; 19 blocked records (14 baseline pages) and 12 sources excluded. |
-| All 406 canonical documents have a review status | Partial | All 406 have a status; 294 are comparison-assessed and 112 are explicit gaps. |
-| Findings include exact source locations, anchors and confidence | Partial | 366 comparisons carry anchors and source records; most pages have no comparison. |
+| All 406 canonical documents have a review status | Partial | All 406 have a status; 300 are comparison-assessed, 97 are landing-reviewed, and 9 are explicit gaps. |
+| Findings include exact source locations, anchors and confidence | Partial | 403 comparisons carry anchors and source records; most pages have no comparison. |
 | Deep research synthesis delivered | Yes, negative | `FINAL-SYNTHESIS.md` records the evidence and the unmet criteria. |
 | No book content changed, baseline verified | Yes | 681 tracked files match; no book, register, index or edition change. |
 | Research artifacts independently reviewed | Not met | Reviewer-preset child returned no report; human review not performed. |
@@ -23,6 +23,6 @@ review acceptance. A closure would be an unsupported completion claim.
 
 - Resolve the 19 blocked records and 20 partial records where lawful access
   exists, or keep the recorded access limitation.
-- Reduce the 112 page gaps through bounded comparisons.
+- Resolve or keep the 9 blocked-page gaps; no readable page remains unassessed.
 - Complete the external-link census.
 - Obtain and verify an independent review on a bounded delta.

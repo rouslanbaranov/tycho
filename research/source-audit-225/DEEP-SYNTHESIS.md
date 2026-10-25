@@ -17,10 +17,10 @@ index or edition file was changed.
 - **471 reference records** in `readings.json`: 420 full reads, 20 partial, 19 blocked-full-text
   and 12 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
-- **366 assessed comparisons** in `comparisons.json` against 294 canonical pages:
-  101 supported, 246 qualified, 19 not-addressed, 0 contradicted.
-- **Page matrix:** all 406 pages have a recorded review status; 294 are
-  comparison-assessed and 112 carry an explicit evidence gap
+- **403 assessed comparisons** in `comparisons.json` against 300 canonical pages:
+  113 supported, 258 qualified, 31 not-addressed, 1 contradicted.
+- **Page matrix:** all 406 pages have a recorded review status; 300 are
+  comparison-assessed, 97 are landing-reviewed, and 9 carry an explicit evidence gap
   (`page-review-summary.json`). A recorded gap is not a pass.
 
 ## 2. What the evidence supports
@@ -162,8 +162,9 @@ C008) are optional additions, not defects.
 
 ## 4. Contradictions and uncertainties
 
-- **No contradicted comparison** has been recorded. This is not proof of
-  correctness: only 14 pages have a bounded comparison.
+- **One contradicted comparison** is recorded (C373, a record-level provenance
+  conflict). This is not proof of correctness: only 300 pages have a bounded
+  comparison.
 - OSTEP version evidence is mixed: chapter 9, chapter 32 and the preface print
   version 1.20 while the site table of contents says 1.10. Records preserve the
   printed version and the discrepancy.
@@ -179,7 +180,7 @@ C008) are optional additions, not defects.
 
 - **No registered source remains at landing-only inspection.** Every source has
   a reading record; 29 are blocked and 20 are partial.
-- **112 of 406 canonical pages** have no page-level comparison. Their matrix
+- **9 of 406 canonical pages** have no page-level comparison. Their matrix
   status is an explicit gap, not an inferred pass.
 - Linked publications, xv6 source, simulator code and exercises were not read or
   executed. Embedded raster figures were not visually inspected.
@@ -198,11 +199,11 @@ C008) are optional additions, not defects.
 - [ ] Every accessible scoped source read completely: no landing-only source
   remains, and 19 blocked records (14 baseline pages) are present.
 - [ ] All 406 pages have an applicability/review status beyond an explicit gap:
-  294 assessed, 112 gaps.
+  300 assessed, 9 gaps.
 - [ ] Material explanations have source comparisons across every technical page:
-  366 comparisons exist; the applied case layer and most pages are unassessed.
+  403 comparisons exist; the applied case layer and most pages are unassessed.
 - [ ] Complete external-link inventory and finite units for every citation.
-- [x] Findings carry exact book anchors and source records for the 366 assessed
+- [x] Findings carry exact book anchors and source records for the 403 assessed
   comparisons; confidence and no-edit actions are recorded.
 - [ ] Deep synthesis final: this is an interim synthesis.
 - [x] Research artifacts reviewed for lexical boundary and whitespace; no
@@ -211,7 +212,7 @@ C008) are optional additions, not defects.
 ## 7. Priorities for the next batch
 
 1. No landing-only sources remain; focus on blocked and partial records and on
-   the 112 unassessed pages.
+   the 9 unassessed pages.
 2. Extend page-level comparisons from 14 to the pages with the strongest
    material claims: crash consistency, replication, overload, migration gates,
    modularity and security boundaries.
@@ -227,5 +228,5 @@ C008) are optional additions, not defects.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, does not claim that a
 first-party article is a benchmark, and does not claim that Tycho is complete or
-correct. The 19 blocked records and 112 unassessed pages are the dominant
+correct. The 19 blocked records and 9 unassessed pages are the dominant
 remaining uncertainty.

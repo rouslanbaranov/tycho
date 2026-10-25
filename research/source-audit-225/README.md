@@ -13,9 +13,9 @@ appendices A-H and the preface; sixty-five new records are in [the OSTEP
 continuation ledger](ostep-continuation-readings.json). Embedded raster figures
 were not visually inspected, and linked publications remain separate.
 
-Comparison checkpoint: two hundred sixty-eight candidate comparisons are assessed in
-[comparisons.json](comparisons.json): forty-seven supported, thirty-two qualified, three
-source mechanisms not addressed and zero contradicted. These are bounded
+Comparison checkpoint: four hundred three candidate comparisons are assessed in
+[comparisons.json](comparisons.json): one hundred thirteen supported, two hundred
+fifty-eight qualified, thirty-one not-addressed and one record-level contradiction. These are bounded
 comparisons, not independent review, book findings or permission to edit.
 
 Reference batch 2026-10-24: three hundred thirty-eight full reads, twelve partial, nineteen blocked records and two
@@ -31,7 +31,7 @@ independent review.
 [Interim synthesis](DEEP-SYNTHESIS.md) records what the evidence supports and
 what remains open. [Final synthesis](FINAL-SYNTHESIS.md) and the [acceptance
 review](ACCEPTANCE.md) record why #225 is not accepted yet. All 406 canonical pages have a review status in
-[the page census](page-census.json): 294 are comparison-assessed and 112 carry an
+[the page census](page-census.json): 300 are comparison-assessed, 97 are landing-reviewed, and 9 carry an
 explicit evidence gap, summarized in [the page review summary]
 (page-review-summary.json). A recorded gap is not a pass.
 

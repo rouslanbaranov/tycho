@@ -5,9 +5,8 @@ complete; it does not authorize book edits.
 
 ## Page coverage
 
-- 406 canonical documents: 294 comparison-assessed, 112 not yet assessed.
-- Of the 112, nine are content pages; the rest are volume/chapter landings without
-  page-level comparisons.
+- 406 canonical documents: 300 comparison-assessed, 97 landing-reviewed, 9 not yet assessed.
+- All 9 are content pages dependent on blocked or non-public records.
 - The nine content pages depend only on records that are `blocked-full-text`,
   `excluded-from-scope` or otherwise non-public. No full public text exists in the
   ledger for their central claims, so they cannot be assessed without new admissible
