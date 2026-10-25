@@ -41647,6 +41647,40 @@
         "Representation recipe: lxml 6.1.3 parse of the saved HTML; select <article>; skip script/style/noscript/nav/aside, the #toc block and site header/footer/version selector; emit headings, paragraphs, list items, table captions and rows and preformatted lines in document order; normalize prose whitespace to single spaces; preserve empty non-image table cells to keep column alignment; omit admonition icon labels; one block per line; UTF-8 with final LF."
       ],
       "omissions": "Single-page reference only. Not read: linked pages for the MongoDB outbox event router, distributed tracing, the 'Reliable Microservices Data Exchange With the Outbox Pattern' blog post, the outbox pattern demo, other Debezium versions (3.6, 2.7 and older), connector-specific pages, source code and runnable examples. Excluded chrome: site header/navigation, version selector, table of contents, search, footer and feedback controls. No connector, database, Kafka cluster or outbox table was run; the example JSON and DDL were read as text only."
+    },
+    {
+      "id": "R449",
+      "source_ids": [
+        "src.wrk2"
+      ],
+      "url": "https://github.com/giltene/wrk2",
+      "unit": "giltene/wrk2 repository landing document: README.md overview, basic usage, scripting API, benchmarking tips, and the appended note on the latency-measurement technique (Coordinated Omission) with its two demonstration transcripts",
+      "revision": "master HEAD 44a94c17d8e6a0bac8559b53da76848e430cb7a7 (2019-09-24T04:46:42Z); README.md 36,097 bytes retrieved from raw.githubusercontent.com on 2026-10-25",
+      "status": "full-scoped-text-read",
+      "coverage": "README.md read in full: 728/728 lines, 3,554 words, L1-L728. All five headings and the unheaded appendix (technique note L291-L369, demonstration transcripts L370-L728) are inside the unit. Repository source code, SCRIPTING, LICENSE/NOTICE, issues and GitHub UI are outside the unit. Sections: L1-L51 Overview: constant-throughput load generation, --rate/-R argument, HdrHistogram recording, +/-1 ms accuracy caveat, experimental status, L62-L201 Basic Usage: command line, 10 s calibration note, --latency output and detailed percentile spectrum, L204-L260 Scripting: Lua API init/request/response/done, wrk table, latency and requests statistics objects, L262-L274 Benchmarking Tips: ephemeral ports, listen backlog, cost of per-request scripting, L276-L289 Acknowledgements: wrk lineage, HdrHistogram C port, bundled components, L291-L369 Unheaded appendix: 'A note about wrk2's latency measurement technique' - Coordinated Omission and the intended-start-time model, L370-L728 Demonstration transcripts: Example 1 (quiet run) and Example 2 (1.4 s server pause), each with corrected and --u_latency distributions",
+      "retrieval_refs": [
+        "curl -sSL https://raw.githubusercontent.com/giltene/wrk2/master/README.md -> /tmp/read14/wrk2_README.md (HTTP 200, 36,097 bytes)",
+        "curl -sSL https://github.com/giltene/wrk2 -> /tmp/read14/wrk2_page.html (HTTP 200, 387,988 bytes; landing page that renders this README)",
+        "curl -sS https://api.github.com/repos/giltene/wrk2/commits/master -> /tmp/read14/wrk2_commit.json (commit 44a94c1..., 2019-09-24T04:46:42Z)"
+      ],
+      "omissions": "No README section omitted. Not retrieved or inspected: src/*.c implementation (rate limiter, HdrHistogram recorder), SCRIPTING document, NOTICE/LICENSE, earlier commit history, issue tracker, the pixels of the referenced 'CO example' PNG, and GitHub UI chrome (file browser, stars, badges)."
+    },
+    {
+      "id": "R450",
+      "source_ids": [
+        "src.tpc"
+      ],
+      "url": "https://www.tpc.org/information/benchmarks5.asp",
+      "unit": "TPC 'Benchmarks Overview' landing page - main content region: Active TPC Benchmarks (TPC-C, TPC-DI, TPC-DS, TPC-E, TPC-H, TPC-VMS, TPCx-BB, TPCx-HS, TPCx-V) and Supporting TPC Benchmarks (TPC-Energy, TPC-Pricing)",
+      "revision": "Live page with no version identifier; retrieved 2026-10-25 (HTTP Date Sun, 25 Oct 2026 12:36:07 GMT); footer 'Copyright (c) 1988-2026 TPC'; response carried no Last-Modified or ETag header",
+      "status": "full-scoped-text-read",
+      "coverage": "Main content region read in full: 61/61 lines, 1,300 words (L1-L61 of the scoped representation), covering every benchmark description the page carries. Site navigation, breadcrumbs, search, newsletter and footer chrome (about 318 lines of the normalized page) are outside the unit. Sections: L1: page heading 'TPC Benchmarks Overview', L2-L51 Active TPC Benchmarks: TPC-C (L3-L15), TPC-DI (L16-L17), TPC-DS (L18-L29), TPC-E (L30-L33), TPC-H (L34-L36), TPC-VMS (L37-L39), TPCx-BB (L40-L44), TPCx-HS (L45-L47), TPCx-V (L48-L51), L52-L61 Supporting TPC Benchmarks: TPC-Energy (L53-L58), TPC-Pricing (L59-L61)",
+      "retrieval_refs": [
+        "curl -sSL https://www.tpc.org/information/benchmarks5.asp -> /tmp/read14/tpc.html (HTTP 200, 117,245 bytes, content-type text/html)",
+        "python3 tag-strip of the HTML (scripts/styles removed, block tags to newlines, whitespace collapsed) -> /tmp/read14/tpc_text.txt (418 lines)",
+        "main content slice tpc_text.txt lines 356-416 -> /tmp/read14/tpc_overview.txt (61 lines, 8,962 bytes); raw HTML sha256 07b6e8a22b8be8bc8fa2720763a205df4dc196a92646036fb982e17d8de90f49"
+      ],
+      "omissions": "Excluded from the representation: navigation menus listing benchmark families and result-sort options, breadcrumb/search/login/newsletter chrome, and the footer. Not retrieved at all: per-benchmark Description pages, specification PDFs, result listings, the obsolete-benchmark pages (TPC-A, TPC-APP, TPC-B, TPC-D, TPC-R, TPC-W), and any JavaScript-rendered content."
     }
   ],
   "updated": "2026-10-25",
