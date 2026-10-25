@@ -5,8 +5,8 @@
 | Criterion | Status | Evidence |
 |---|---|---|
 | Complete source inventory reconciles register and external links | Partial | 247 sources and 406 documents represented; external-link inventory beyond the register is incomplete. |
-| Every source has a finite unit and honest full/partial/blocked status | Partial | 385 reference records plus 6 source reconciliations; 74 sources remain landing-only. |
-| Every accessible scoped source read completely | Not met | 74 landing-only sources remain; RFC 9110 is now read with labelled supplements; 19 blocked records (14 baseline pages) and 2 sources excluded. |
+| Every source has a finite unit and honest full/partial/blocked status | Partial | 389 reference records plus 6 source reconciliations; 70 sources remain landing-only. |
+| Every accessible scoped source read completely | Not met | 70 landing-only sources remain; RFC 9110 is now read with labelled supplements; 19 blocked records (14 baseline pages) and 2 sources excluded. |
 | All 406 canonical documents have a review status | Partial | All 406 have a status; 294 are comparison-assessed and 112 are explicit gaps. |
 | Findings include exact source locations, anchors and confidence | Partial | 272 comparisons carry anchors and source records; most pages have no comparison. |
 | Deep research synthesis delivered | Yes, negative | `FINAL-SYNTHESIS.md` records the evidence and the unmet criteria. |
@@ -21,7 +21,7 @@ review acceptance. A closure would be an unsupported completion claim.
 
 ## Conditions for a future acceptance
 
-- Reconcile and read the remaining 74 landing-only sources, or record lawful
+- Reconcile and read the remaining 70 landing-only sources, or record lawful
   access limitations.
 - Reduce the 112 page gaps through bounded comparisons.
 - Complete the external-link census.
