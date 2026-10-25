@@ -14,8 +14,8 @@ continuation ledger](ostep-continuation-readings.json). Embedded raster figures
 were not visually inspected, and linked publications remain separate.
 
 Comparison checkpoint: four hundred thirteen candidate comparisons are assessed in
-[comparisons.json](comparisons.json): one hundred twenty supported, two hundred
-sixty-one qualified, thirty-one not-addressed and one record-level contradiction. These are bounded
+[comparisons.json](comparisons.json): one hundred twenty-two supported, two hundred
+sixty-one qualified, twenty-nine not-addressed and one record-level contradiction. These are bounded
 comparisons, not independent review, book findings or permission to edit.
 
 Current ledger: four hundred thirty-eight full reads, five partial, fifteen

@@ -276,7 +276,8 @@ a96c6b7 are outside that attempted review's stated HEAD.
   excluded sources (2 internal team sites, 11 unavailable commercial books). All 45 baseline fetch-incomplete sources are
   accounted for: 30 full, 13 blocked, 2 excluded, 0 unaccounted.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
-  two candidate page actions, 31 not-addressed assessments (2 high, C399 and C412), one
+  two candidate page actions, 29 not-addressed assessments (no high severity; C399 and C412
+  closed by PR #388), one
   contradiction, no landing-only source, 7 unassessed pages and the missing
   independent review. It does not claim #225 completion.
 - Boundary, whitespace, JSON, candidate-path and anchor checks passed. No book,

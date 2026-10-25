@@ -18,7 +18,7 @@ index or edition file was changed.
   and 13 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 30 read, 13 blocked, 2 excluded; none unaccounted.
 - **413 assessed comparisons** in `comparisons.json` against 302 canonical pages:
-  120 supported, 261 qualified, 31 not-addressed, 1 contradicted.
+  122 supported, 261 qualified, 29 not-addressed, 1 contradicted.
 - **Page matrix:** all 406 pages have a recorded review status; 302 are
   comparison-assessed, 97 are landing-reviewed, and 7 carry an explicit evidence gap
   (`page-review-summary.json`). A recorded gap is not a pass.
@@ -156,8 +156,8 @@ Only two candidate actions have direct page evidence:
    cancellation page, name the socket-close side effect and its JDK/release
    boundary. No edit under #225.
 
-Thirty-one assessments are "not-addressed", two of them high severity:
-C399 and C412 attribute specifics to fetch-incomplete or unread sources.
+Twenty-nine assessments are "not-addressed"; none is high severity. The former
+C399 and C412 high findings were closed by the merged editorial rewrite in PR #388.
 C373 is the single record-level contradiction. These are open items requiring
 verification, restatement or removal, not optional additions.
 
