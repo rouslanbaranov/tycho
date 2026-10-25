@@ -262,15 +262,16 @@ participants must remain autonomous, or when no team can own workflow state.
 central coordination becomes a bottleneck or single point of failure.
 
 **Failure and recovery.** Coordinator loss, stuck histories, duplicate activities and
-incompatible upgrades are common; replay from durable history and hold unknown external
+upgrade conflicts are possible; replay from durable history and hold unknown external
 effects for repair.
 
 **Technical owner.** [Saga Orchestration](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga-orchestration) — workflow selection is bounded, not a dedicated Temporal or orchestration manual.
 
 **Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-temporal-workflows.2026-10-21: sections "Workflows", "Workflow
-Execution", "Determinism". The source is a public pattern/specification
-unit, not a benchmark.
+Execution", "Determinism". The record supports durable orchestration only; saga
+compensation semantics are synthetic guidance. The source is a public
+pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

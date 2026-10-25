@@ -229,11 +229,11 @@ An orchestrator persists a state machine and sends commands to participants. Its
 only as strong as versioned state persistence, activity semantics, timer reliability and recovery
 configuration.
 
-Coordinator loss, stuck histories and duplicate activities are operational hazards. Replay durable
-history, keep activities idempotent and hold an ambiguous external effect for repair rather than
-marking it complete. Central compensation ordering improves visibility but adds a bottleneck and a
-single point of failure; choreography is preferable when participant autonomy dominates. The
-coordinator also needs an owner, backup, upgrade path and recovery drills.
+Operational failure appears as a lost coordinator, a history that cannot advance, or an activity
+applied twice. Replay durable history, keep activities idempotent and park an uncertain external
+effect for repair. Central compensation ordering improves visibility but adds a bottleneck and a
+single point of failure; choreography wins when participant autonomy dominates. The coordinator
+itself needs an owner, backup, upgrade path and drills.
 
 One service and one database transaction are often simpler than a saga. Move to orchestration only
 when a business operation genuinely spans multiple independently owned effects with different

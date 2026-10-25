@@ -149,9 +149,9 @@ timers, retries, human tasks and compensation must survive process loss.
 
 Recovery replays durable history, so activities need stable identities and explicit retry, cancel
 and compensation outcomes. Keep a repair state for an unknown external effect; a completed flag is
-not proof that the effect committed. Version workflow code so replay preserves meaning. Record the workflow version and repair owner
-in the runbook.
+not proof that the effect committed. Version workflow code so replay preserves meaning. Record the
+workflow version and repair owner in the runbook.
 
-Saga choreography, a database-backed job table, or a simple queue pipeline may be simpler when steps
-are few, no long timers are needed, or the team cannot operate an engine. Orchestration is
-a fit when long waits, visibility and compensation justify the engine.
+Use choreography, a job table or a simple queue when steps are few, timers are short, or no engine
+can be operated. An engine is justified by long waits, visibility and compensation.
+Escalate a history that cannot progress to the named workflow owner.
