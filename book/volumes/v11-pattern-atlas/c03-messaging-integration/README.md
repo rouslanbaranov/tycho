@@ -82,15 +82,15 @@ owned.
 
 **Hard contraindications.** Reject when one consumer must receive every message exactly
 once, when subscriber count is unknown and unbounded, or when the broker cannot express
-retention.
+retention and durable delivery is required.
 
 **Competing alternative.** Point-to-point queue with explicit routing. Reverse the choice
-when every subscriber needs the same durable work, not an independent copy.
+when one work item needs one consumer, not an independent copy per subscriber.
 
 **Failure and recovery.** Fan-out amplifies load and duplicate effects; verify retention
 and acknowledgement semantics in the owner section.
 
-**Technical owner.** [Publish / Subscribe](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#publish-subscribe) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Publish / Subscribe](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#publish-subscribe) — bridge contract and failure-domain ownership is the bounded owner, not a channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -124,7 +124,7 @@ subscribers need the same event rather than one shared work item.
 **Failure and recovery.** Duplicate delivery and poison messages are normal; verify
 acknowledgement and redelivery semantics in the owner section.
 
-**Technical owner.** [Point-to-Point Queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#point-to-point-queue) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Point-to-Point Queue](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#point-to-point-queue) — bridge contract and failure-domain ownership is the bounded owner, not a channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -158,7 +158,7 @@ queue. Reverse the choice when ordering dominates throughput.
 **Failure and recovery.** Concurrency increases duplicate and reorder exposure; verify
 ordering and acknowledgement in the owner section.
 
-**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#competing-consumers) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Consumer requirements and messaging families](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#competing-consumers) — bridge contract and failure-domain ownership is the bounded owner, not a channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -192,7 +192,7 @@ when event volume and concurrency overwhelm the consumer.
 **Failure and recovery.** Push delivery can outrun processing; verify backpressure and
 acknowledgement in the owner section.
 
-**Technical owner.** [Event-Driven Consumer](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#event-driven-consumer) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Event-Driven Consumer](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#event-driven-consumer) — bridge contract and failure-domain ownership is the bounded owner, not a channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -519,7 +519,7 @@ the choice when replay cost and retention exceed the continuity benefit.
 **Failure and recovery.** Retention growth and stale replay are common; verify retention
 and acknowledgement in the owner section.
 
-**Technical owner.** [Durable Subscriber](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#durable-subscriber) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Durable Subscriber](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#durable-subscriber) — bridge contract and failure-domain ownership is the bounded owner, not a channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -646,10 +646,10 @@ an unowned single point, or when protocol bridging hides semantic loss.
 **Competing alternative.** Direct messaging or a simpler queue. Reverse the choice when
 broker complexity and operational cost exceed decoupling benefit.
 
-**Failure and recovery.** Broker outage and bridge semantic drift are common; verify
-bridge contracts in the owner section.
+**Failure and recovery.** Bridge semantic drift and duplicate or delayed crossing are common;
+verify the bridge contract, identity mapping and dead-letter path in the owner section.
 
-**Technical owner.** [Message Broker / Messaging Bridge](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-broker-messaging-bridge) — consumer ownership is the bounded owner, not a dedicated channel page.
+**Technical owner.** [Message Broker / Messaging Bridge](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-broker-messaging-bridge) — bridge contract and failure-domain ownership is the bounded owner, not a channel page.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
