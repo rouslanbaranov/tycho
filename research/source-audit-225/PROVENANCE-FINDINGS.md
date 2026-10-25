@@ -38,7 +38,6 @@ authorize edits to the book under #225.
 
 ## Remaining page gaps
 
-Nine case pages remain `not-yet-assessed`. Seven depend only on blocked or
-non-public records and are access-limited. Two also cite fully-read records
-(R045/R020 and R046) but have no page-level comparison; they are comparison-incomplete,
-not access-limited.
+Seven case pages remain not-yet-assessed. Each cites at least one blocked or
+non-public record and is access-limited; the comparison-incomplete cases were closed
+from existing full records.

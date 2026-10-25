@@ -17,10 +17,10 @@ index or edition file was changed.
 - **471 reference records** in `readings.json`: 438 full reads, 5 partial, 15 blocked-full-text
   and 13 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
   disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
-- **403 assessed comparisons** in `comparisons.json` against 300 canonical pages:
-  113 supported, 258 qualified, 31 not-addressed, 1 contradicted.
-- **Page matrix:** all 406 pages have a recorded review status; 300 are
-  comparison-assessed, 97 are landing-reviewed, and 9 carry an explicit evidence gap
+- **413 assessed comparisons** in `comparisons.json` against 300 canonical pages:
+  118 supported, 261 qualified, 33 not-addressed, 1 contradicted.
+- **Page matrix:** all 406 pages have a recorded review status; 302 are
+  comparison-assessed, 97 are landing-reviewed, and 7 carry an explicit evidence gap
   (`page-review-summary.json`). A recorded gap is not a pass.
 
 ## 2. What the evidence supports
@@ -156,15 +156,15 @@ Only two candidate actions have direct page evidence:
    cancellation page, name the socket-close side effect and its JDK/release
    boundary. No edit under #225.
 
-Thirty-one assessments are "not-addressed", three of them high severity:
-C384, C386 and C399 attribute specifics to fetch-incomplete or unread sources.
+Thirty-three assessments are "not-addressed", four of them high severity:
+C384, C386, C399 and C412 attribute specifics to fetch-incomplete or unread sources.
 C373 is the single record-level contradiction. These are open items requiring
 verification, restatement or removal, not optional additions.
 
 ## 4. Contradictions and uncertainties
 
 - **One contradicted comparison** is recorded (C373, a record-level provenance
-  conflict). This is not proof of correctness: only 300 pages have a bounded
+  conflict). This is not proof of correctness: only 302 pages have a bounded
   comparison.
 - OSTEP version evidence is mixed: chapter 9, chapter 32 and the preface print
   version 1.20 while the site table of contents says 1.10. Records preserve the
@@ -181,7 +181,7 @@ verification, restatement or removal, not optional additions.
 
 - **No registered source remains at landing-only inspection.** Every source has
   a reading record; 15 are blocked and 5 are partial.
-- **9 of 406 canonical pages** have no page-level comparison. Their matrix
+- **7 of 406 canonical pages** have no page-level comparison. Their matrix
   status is an explicit gap, not an inferred pass.
 - Linked publications, xv6 source, simulator code and exercises were not read or
   executed. Embedded raster figures were not visually inspected.
@@ -200,11 +200,11 @@ verification, restatement or removal, not optional additions.
 - [ ] Every accessible scoped source read completely: no landing-only source
   remains, and 15 blocked records (14 baseline pages) are present.
 - [ ] All 406 pages have an applicability/review status beyond an explicit gap:
-  300 assessed, 9 gaps.
+  302 assessed, 7 gaps.
 - [ ] Material explanations have source comparisons across every technical page:
-  403 comparisons exist; the applied case layer and most pages are unassessed.
+  413 comparisons exist; the applied case layer and most pages are unassessed.
 - [ ] Complete external-link inventory and finite units for every citation.
-- [x] Findings carry exact book anchors and source records for the 403 assessed
+- [x] Findings carry exact book anchors and source records for the 413 assessed
   comparisons; confidence and no-edit actions are recorded.
 - [ ] Deep synthesis final: this is an interim synthesis.
 - [x] Research artifacts reviewed for lexical boundary and whitespace; no
@@ -213,7 +213,7 @@ verification, restatement or removal, not optional additions.
 ## 7. Priorities for the next batch
 
 1. No landing-only sources remain; focus on blocked and partial records and on
-   the 9 unassessed pages.
+   the 7 unassessed pages.
 2. Extend page-level comparisons from 14 to the pages with the strongest
    material claims: crash consistency, replication, overload, migration gates,
    modularity and security boundaries.
@@ -229,5 +229,5 @@ verification, restatement or removal, not optional additions.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, does not claim that a
 first-party article is a benchmark, and does not claim that Tycho is complete or
-correct. The 15 blocked records and 9 unassessed pages are the dominant
+correct. The 15 blocked records and 7 unassessed pages are the dominant
 remaining uncertainty.

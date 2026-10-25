@@ -5,15 +5,12 @@ complete; it does not authorize book edits.
 
 ## Page coverage
 
-- 406 canonical documents: 300 comparison-assessed, 97 landing-reviewed, 9 not yet assessed.
-- All 9 are case pages and cite at least one blocked/non-public record. Two also
-  cite fully-read records but have no page-level comparison.
-- The seven access-limited pages depend only on records that are `blocked-full-text`,
-  `excluded-from-scope` or otherwise non-public. The two comparison-incomplete pages
-  already have readable records and need bounded comparisons, not new retrieval.
-- One page additionally carries a provenance defect: it cites an excluded non-public
-  team site. It remains unassessed pending editorial remediation; see
-  `PROVENANCE-FINDINGS.md`.
+- 406 canonical documents: 302 comparison-assessed, 97 landing-reviewed, 7 not yet assessed.
+- All 7 are case pages and cite at least one blocked/non-public record; they are
+  access-limited, not comparison-incomplete.
+- One assessed page additionally carries a provenance defect: it cites an excluded
+  non-public team site. Claims that rest on that source remain unresolved pending
+  editorial remediation; see PROVENANCE-FINDINGS.md.
 
 ## Source coverage
 
