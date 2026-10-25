@@ -166,7 +166,7 @@ class HttpMcpTests(unittest.TestCase):
             2, "tools/list", {"_meta": META},
             {"Mcp-Method": "tools/list"})
         self.assertEqual(status, 200)
-        self.assertEqual(len(listed["result"]["tools"]), 7)
+        self.assertEqual(len(listed["result"]["tools"]), 8)
         status, called = self.mcp(3, "tools/call", {
             "_meta": META,
             "name": "tycho_search",
@@ -187,6 +187,21 @@ class HttpMcpTests(unittest.TestCase):
                 payload["results"][0]["citation"],
                 "book/alpha.md#retry-budget",
             )
+        status, context = self.mcp(4, "tools/call", {
+            "_meta": META,
+            "name": "tycho_context",
+            "arguments": {"question": "retry budget", "max_chars": 4000},
+        }, {
+            "Mcp-Method": "tools/call",
+            "Mcp-Name": "tycho_context",
+        })
+        self.assertEqual(status, 200)
+        result = context["result"]
+        self.assertFalse(result["isError"])
+        bundle = result["structuredContent"]
+        self.assertEqual(bundle["tool"], "tycho_context")
+        self.assertIn("notice", bundle)
+        self.assertLessEqual(bundle["returned_chars"], 4000)
 
     def test_search_book_health_and_readiness(self):
         status, search = self.request("GET", "/search?q=zebra&limit=2")
