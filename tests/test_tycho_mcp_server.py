@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import mcp_server  # noqa: E402
+import route_index  # noqa: E402
 import section_fts_index  # noqa: E402
 
 MODERN = mcp_server.MODERN_VERSION
@@ -48,7 +49,7 @@ def frontmatter(identity, kind, parent, path, title, summary,
         "  prerequisites: []\n"
         "  related_ids: []\n"
         "  excludes: []\n"
-        '  keywords: ["synthetic", "mcp"]\n'
+        '  keywords: ["synthetic", "mcp", "quasar"]\n'
         "evidence_scope:\n"
         "  source_ids: []\n"
         "  claim_ids: []\n"
@@ -107,6 +108,11 @@ class McpServerTests(unittest.TestCase):
         )
         cls.snapshot = section_fts_index.publish(
             cls.root, full=True)["snapshot"]
+        route_payload = route_index.canonical_scan(cls.root)
+        (cls.root / "generated" / "route-index.v1.json").write_text(
+            json.dumps(route_payload, sort_keys=True),
+            encoding="utf-8",
+        )
         cls.write_patterns()
 
     @classmethod
@@ -390,6 +396,18 @@ class McpServerTests(unittest.TestCase):
         self.assertTrue(weak["next_actions"])
         self.assertEqual(payload["content_trust"],
                          mcp_server.CONTENT_TRUST)
+
+    def test_metadata_expansion_returns_weak_candidates(self):
+        payload = self.call(self.server(), "tycho_search", {
+            "query": "quasar",
+            "mode": "exploratory",
+            "limit": 2,
+        })["structuredContent"]
+        self.assertEqual(payload["status"], "no-confident-answer")
+        self.assertTrue(payload["metadata_expanded"])
+        self.assertGreater(payload["weak_returned"], 0)
+        self.assertEqual(
+            payload["weak_results"][0]["match_source"], "route-metadata")
 
     def test_context_bundle_is_extractive_and_bounded(self):
         payload = self.call(self.server(), "tycho_context", {

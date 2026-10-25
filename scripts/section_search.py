@@ -201,6 +201,91 @@ def candidate_priority(candidate):
     return h2_score, "parent-h2", passage_score
 
 
+_METADATA_CACHE = {}
+
+
+def load_document_metadata(root):
+    path = Path(root) / "generated/route-index.v1.json"
+    try:
+        stat = path.stat()
+    except OSError:
+        return {}
+    key = (str(path), stat.st_mtime_ns, stat.st_size)
+    if key in _METADATA_CACHE:
+        return _METADATA_CACHE[key]
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    documents = payload.get("documents")
+    if not isinstance(documents, list):
+        return {}
+    metadata = {
+        document["path"]: document
+        for document in documents
+        if isinstance(document, dict) and isinstance(document.get("path"), str)
+    }
+    if len(_METADATA_CACHE) >= 4:
+        _METADATA_CACHE.clear()
+    _METADATA_CACHE[key] = metadata
+    return metadata
+
+
+def metadata_fallback(db, metadata, query, terms, limit):
+    if not metadata:
+        return []
+    route = route_index.route(
+        {"documents": list(metadata.values()),
+         "snapshot_sha256": "", "coverage": "metadata-only",
+         "unannotated_paths": []},
+        query,
+        limit=limit,
+    )
+    results = []
+    for candidate in route.get("results", []):
+        row = db.execute(
+            "SELECT " + sections_select() +
+            " FROM sections s WHERE s.path = ?"
+            " ORDER BY s.heading_level, s.char_start LIMIT 1",
+            (candidate["path"],),
+        ).fetchone()
+        if row is None:
+            continue
+        meta = metadata.get(row["path"], {})
+        content = row["content"]
+        results.append({
+            "section_key": row["section_key"],
+            "document_id": row["document_id"],
+            "section_id": row["section_id"],
+            "path": row["path"],
+            "heading": row["heading"],
+            "heading_level": row["heading_level"],
+            "title": row["title"],
+            "kind": row["kind"],
+            "evidence_status": row["evidence_status"],
+            "char_start": row["char_start"],
+            "char_end": row["char_end"],
+            "score": 0.0,
+            "score_kind": "route-metadata",
+            "matched_terms": [
+                term for term in terms if term in content.casefold()],
+            "excerpt": excerpt(content, terms) or meta.get("summary", ""),
+            "metadata_snippet": meta.get("summary"),
+            "route_questions": (meta.get("questions") or [])[:3],
+            "route_keywords": (meta.get("keywords") or [])[:8],
+            "citation": row["path"] + "#" + row["section_id"],
+            "match_source": "route-metadata",
+            "why": "metadata route matched the question; no FTS section matched",
+            "next_actions": [
+                {"tool": "tycho_read",
+                 "arguments": {"section_key": row["section_key"]}},
+                {"tool": "tycho_page",
+                 "arguments": {"path": row["path"]}},
+            ],
+        })
+    return results
+
+
 def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
            path_prefix=None, index_path=None, all_sections=False, abstain=True,
            include_weak=False, detail="snippets", max_chars=None):
@@ -220,6 +305,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                  name + " filter must be a non-empty string")
     prefix = None if path_prefix is None else path_prefix_pattern(path_prefix)
     db, manifest = open_snapshot(root, index_path)
+    metadata = load_document_metadata(root)
     try:
         filters, params = [], []
         if kind is not None:
@@ -363,6 +449,10 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                      "arguments": {"path": row["path"]}},
                 ],
             }
+            document_meta = metadata.get(row["path"], {})
+            if document_meta and not any(
+                    term in item["excerpt"].casefold() for term in terms):
+                item["metadata_snippet"] = document_meta.get("summary")
             passage = candidate["passage"]
             if passage is not None:
                 item.update({
@@ -382,7 +472,17 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             assessment = answerability_policy.assess(
                 query, results[0]["score"] if results else 0, unknown)
         weak_results = []
-        if not results:
+        if not results and include_weak:
+            weak_results = metadata_fallback(
+                db, metadata, query, terms, limit)
+        if weak_results:
+            status = "no-confident-answer"
+            assessment = dict(assessment)
+            assessment["no_confident_answer"] = True
+            assessment["confident"] = False
+            assessment["state"] = "metadata-expansion"
+            assessment["basis"] = "route-metadata-fallback"
+        elif not results:
             status = "no-results"
             assessment = dict(assessment)
             assessment["no_confident_answer"] = True
@@ -442,6 +542,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             "max_chars": max_chars,
             "returned": len(results),
             "weak_returned": len(weak_results),
+            "metadata_expanded": bool(weak_results),
             "truncated": truncated,
             "facets": facets,
             "next_actions": next_actions,
