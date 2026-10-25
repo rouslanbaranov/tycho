@@ -86,7 +86,7 @@ flowchart LR
 | Evidence question | Historical source | Qualification |
 |---|---|---|
 | What was modified? | src.m9-n02: gRPC clients' thread worker pool | This is an outbound-client worker pool, not necessarily the entire gRPC service tier |
-| What was the result? | src.m9-n02: performance decreased by **a few percent** | **No exact number, hardware, load generator or p99 distribution provided**; never re-express as a precise percent |
+| Result? | **A few percent slower** (src.m9-n02) | No exact number, hardware, load or p99 |
 | Why? | src.m9-n02: the workers were CPU intensive | Mechanistic interpretation: virtual threads are cheaper to *block*, not faster at CPU instructions |
 | Did Netflix abandon all virtual threads? | **Not established** by src.m9-n02 | Bakker discusses finding appropriate adoption points rather than global prohibition |
 | Was this JDK 21 monitor pinning? | **No**: different mechanism | Do not mix CPU overhead with carrier pinning |
@@ -162,17 +162,17 @@ Virtual threads are **not** admission control. Even if waiting no longer holds O
 
 **Stop and rollback** if CPU cost increases for comparable successful work, p99 rises,
 downstream errors grow, or carrier pinning blocks progress. The last failure mode is the **JDK
-21 monitor-pinning risk** documented in [Java 21 pinning](netflix-java21-virtual-thread-
-pinning.md); it must not be retroactively attributed to src.m9-n02's 2023 CPU-pool experiment. A
+21 monitor-pinning risk** documented in [Java 21 pinning][pin]; it must not be retroactively attributed to src.m9-n02's 2023 CPU-pool experiment. A
 future JDK/library upgrade may change results, requiring a new measured comparison.
 
 ## Evidence and non-claims
 
 This is one engineer's **first-party qualitative performance report**, not a published peer-reviewed benchmark or a quantified Netflix fleet-wide rollout. Runtime version details for the specific outbound gRPC pool are not sufficiently pinned by this transcript; do not assert it used Java 21 production for that experiment. The transcript's later online publication date is distinct from its October 2023 presentation. No copied publisher diagrams, transcribed passages or company-private source code are included.
 
-Related independently authored cases: [Java 21 monitor-pinning risk](netflix-java21-virtual-
-thread-pinning.md), [Zuul 2 I/O multiplexing](netflix-zuul2-nonblocking-gateway.md)
+Related independently authored cases: [Java 21 monitor-pinning risk][pin], [Zuul 2 I/O multiplexing](netflix-zuul2-nonblocking-gateway.md)
 (src.m9-n07), and [Generational ZGC workload selectivity](netflix-generational-zgc-workloads.md)
 (src.m9-n05). Comparative pattern selection: [Reactive versus virtual
 threads](decisions/reactive-vs-virtual-threads.md). Final acceptance still requires E16-08 #121
 independent review and source-grounded claim verification.
+
+[pin]: netflix-java21-virtual-thread-pinning.md

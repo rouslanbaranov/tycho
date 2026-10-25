@@ -57,13 +57,15 @@ content_verified_at: null
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
 
-**Case lens — [Netflix — Java platform convergence][platform].** **Relevant mechanism or architectural contrast:** Separate GraphQL
+**Case lens — [Netflix — Java platform convergence][platform].** **Relevant mechanism or
+architectural contrast:** Separate GraphQL
 composition and Java platform modernization; staged compatibility changes coordination
 ownership. **Not established by this report/playbook:** The historical talk and later abstract
 do not establish a universal RxJava-versus-Spring performance ranking or identical fleet
 versions.
 
-**Case lens — [Netflix — Java 21 virtual-thread pinning][pinning].** **Relevant mechanism or architectural contrast:** JDK 21 monitor pinning
+**Case lens — [Netflix — Java 21 virtual-thread pinning][pinning].** **Relevant mechanism or
+architectural contrast:** JDK 21 monitor pinning
 makes synchronization and tracing part of concurrency acceptance. **Not established by this
 report/playbook:** The JEP mechanism is not a failure rate and must not be extrapolated
 unchanged to later JDKs.

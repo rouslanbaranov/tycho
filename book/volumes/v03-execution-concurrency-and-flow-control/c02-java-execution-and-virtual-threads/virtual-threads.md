@@ -100,7 +100,13 @@ Text alternative: a virtual task temporarily uses a carrier. Supported blocking 
 
 ### Worked counterexample: fixing monitor pinning cannot fix a DB bottleneck
 
-[JEP 444](https://openjdk.org/jeps/444) describes JDK 21 virtual threads and warns against pooling them like scarce platform workers. [JEP 491](https://openjdk.org/jeps/491) addresses carrier pinning due to synchronized monitors in JDK 24; it does **not** guarantee that native/foreign calls always release carriers, eliminate lock contention or increase downstream capacity. The [Netflix JDK 21 page](../../../cases/netflix-java21-virtual-thread-pinning.md) now documents only the general monitor-pinning risk; its publisher incident report remains an unresolved citation.
+[JEP 444](https://openjdk.org/jeps/444) describes JDK 21 virtual threads and warns against
+pooling them like scarce platform workers. [JEP 491](https://openjdk.org/jeps/491) addresses
+carrier pinning due to synchronized monitors in JDK 24; it does **not** guarantee that
+native/foreign calls always release carriers, eliminate lock contention or increase downstream
+capacity. The [Netflix JDK 21 page](../../../cases/netflix-java21-virtual-thread-pinning.md) now
+documents only the general monitor-pinning risk; its publisher incident report remains an
+unresolved citation.
 
 **Original synthetic scenario:** 1,000 accepted virtual tasks contend for twelve database connections. A driver holds one while an unrelated remote call waits; a monitor protects an in-memory counter. Moving to a JDK with changed monitor-pinning behavior could reduce one scheduler hazard, but cannot expand the twelve-connection resource, undo a previously committed request or make the counter authoritative across replicas.
 
