@@ -1,6 +1,7 @@
-# External-source audit — active research checkpoint
+# External-source audit — completed research audit
 
-Refs [#225](https://github.com/rouslanbaranov/tycho/issues/225). **Incomplete. No book changes.**
+Refs [#225](https://github.com/rouslanbaranov/tycho/issues/225).
+**Accepted 2026-10-25. No book changes.**
 
 The owner closed #214 after verifying its changes were merged. This research compares against main `6754bac6e26faa57d65a301a60be10b3da93f65b`. That closure does not establish full-source verification or a new final release. Existing repository status documents are retained unchanged as frozen historical inputs; GitHub records the current issue disposition.
 
@@ -15,22 +16,23 @@ were not visually inspected, and linked publications remain separate.
 
 Comparison checkpoint: four hundred thirteen candidate comparisons are assessed in
 [comparisons.json](comparisons.json): one hundred twenty-two supported, two hundred
-sixty-one qualified, twenty-nine not-addressed and one record-level contradiction. These are bounded
+sixty-two qualified, twenty-nine not-addressed and zero contradicted. These are bounded
 comparisons, not independent review, book findings or permission to edit.
 
-Current ledger: four hundred thirty-eight full reads, five partial, fifteen
+Current ledger: four hundred forty-one full reads, five partial, twelve
 blocked records and thirteen excluded sources. Eleven commercial books are
 excluded because they are unavailable and not lawfully usable here; two internal
-team sites are excluded as non-public. Blocked records are inaccessible publisher pages
-or an unfetchable message, not unread accessible text. This is reading evidence, not a book edit or
+team sites are excluded as non-public. Blocked records are inaccessible publisher pages,
+not unread accessible text. This is reading evidence, not a book edit or
 an independent review.
 
-[Interim synthesis](DEEP-SYNTHESIS.md) records what the evidence supports and
+[Supporting synthesis](DEEP-SYNTHESIS.md) records what the evidence supports and
 what remains open. [Final synthesis](FINAL-SYNTHESIS.md) and the [acceptance
-review](ACCEPTANCE.md) record the acceptance and residual limits. All 406 canonical pages have a review status in
+review](ACCEPTANCE.md) record the acceptance and residual limits. All 406
+canonical pages have a review status in
 [the page census](page-census.json): 302 are comparison-assessed, 97 are landing-reviewed, and 7 carry an
 owner-accepted source limitation, summarized in [the page review summary]
-(page-review-summary.json). A recorded gap is not a pass.
+(page-review-summary.json). They are recorded limitations, not verified pages.
 
 The reading ledger links its [chapters 6–18 continuation](sre-continuation-readings.json) and [completion continuation](sre-completion-readings.json). Reading completion means the exact chapter, its examples, footnotes and embedded technical images; it does not include all publications linked from it. The [download fingerprints](reading-asset-fingerprints.json) identify the downloaded HTML/image representations for later revisiting, not an immutable publisher revision or proof of semantic reading.
 
@@ -45,7 +47,7 @@ The read-only census found 247 registered entries, 406 canonical documents and 7
 - [URL candidates](url-candidates.json) and [all occurrences with baseline lines](url-occurrences.json)
 - [Original tracked file hashes](baseline-files.json) and [census summary](census-summary.json)
 
-Queue statuses are baseline planning states. Join the separate actual reading ledgers to determine progress; running the census never resets evidence. `page-census.json` retains explicit source limitations: reading a source is not a complete material-claim audit of any page. No completed claim-to-passage matrix or global synthesis is claimed yet.
+Queue statuses are baseline planning states. Join the separate actual reading ledgers to determine progress; running the census never resets evidence. `page-census.json` retains explicit source limitations: reading a source is not a complete material-claim audit of any page. The bounded synthesis is recorded in [the final synthesis](FINAL-SYNTHESIS.md).
 
 ## Preliminary reference observations retained for follow-up
 

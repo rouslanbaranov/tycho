@@ -1,6 +1,6 @@
 # Complete-source research and book comparison
 
-Issue: [#225](https://github.com/rouslanbaranov/tycho/issues/225). Started 2026-10-21. Status: in progress.
+Issue: [#225](https://github.com/rouslanbaranov/tycho/issues/225). Started 2026-10-21. Status: accepted and closed 2026-10-25.
 
 The owner authorized complete external-source reading and deep comparison after closing #214. Frozen book baseline: `6754bac6e26faa57d65a301a60be10b3da93f65b`, tree `751d6e08650173d4655370b4989585e4c7ecdaea`. All original tracked files are protected by `baseline-files.json`; research outputs stay in this directory. No book, source register, index, edition, historical audit or release changes are authorized. Repository status documents retain their historical wording; the current task disposition is recorded in GitHub.
 

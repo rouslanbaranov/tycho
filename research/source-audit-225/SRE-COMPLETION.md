@@ -45,6 +45,6 @@ The source's 2016 setting matters. Published operational outcomes are author rep
 
 ## Task disposition
 
-One whole scoped book is now complete. The other books retain their individual full/partial/blocked states. The source inventory reconciliation, remaining full-source reading, material-claim matrix and final deep synthesis for #225 remain incomplete. Keep #225 open and PR #226 draft. No book, canonical metadata, source register, index, edition, release, workflow or original historical record is changed.
+One whole scoped book is now complete. The other books retain their individual full/partial/blocked states. At this checkpoint the source inventory reconciliation, remaining full-source reading, material-claim matrix and final synthesis were still incomplete; that instruction was superseded on 2026-10-25 when the audit was accepted and PR #226 merged. No book, canonical metadata, source register, index, edition, release, workflow or original historical record is changed.
 
 Publisher HTML and images stay outside Git. This directory contains bibliographic locations, coverage metadata and brief original notes only; it does not redistribute the book. Publisher footer license: [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/).

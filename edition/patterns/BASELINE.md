@@ -53,7 +53,8 @@ separate research ledger; its SRE completion is not copied into this baseline.
 
 - Issue #214 is closed. The accepted manuscript and edition baseline remain
   historical evidence.
-- Issue #225 is open and research-only. Do not modify its frozen baseline.
+- Issue #225 was research-only and closed on 2026-10-25. Do not modify its
+  frozen baseline.
 - Issue #227 is closed; its P1 and P2 content is already on `main`.
 - Issue #19 owns the applicability-card model and template.
 - V10/C03 owns the existing pattern-applicability material; no registry or
