@@ -9,14 +9,14 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 99 |
-| Residual findings after re-review | 46 |
+| Promoted after remediation | 100 |
+| Residual findings after re-review | 45 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 107 |
+| Reviewed by independent agent | 108 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 37, "report-section-missing": 1, "reviewed-by-independent-agent": 107}.
+Packet statuses: {"page-changed-since-review": 36, "report-section-missing": 1, "reviewed-by-independent-agent": 108}.
 
 ## Review procedure
 
@@ -217,8 +217,8 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Domain-Driven Design / Bounded Context**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Durable Subscriber**
   Current: pass; re-review: pass; report: pass-with-findings.
