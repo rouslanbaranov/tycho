@@ -235,9 +235,8 @@ effect for repair. Central compensation ordering improves visibility but adds a 
 single point of failure; choreography wins when participant autonomy dominates. The coordinator
 itself needs an owner, backup, upgrade path and drills.
 
-One service and one database transaction are often simpler than a saga. Move to orchestration only
-when a business operation genuinely spans multiple independently owned effects with different
-failure and recovery boundaries.
+Prefer one transaction when every effect shares an owner and a database. Orchestration earns its
+cost only when the operation spans independently owned effects whose failures and repairs differ.
 
 ### Compensating Transaction
 
