@@ -316,9 +316,11 @@ Neither side may claim authority merely because it can read the other's tables. 
 must expose no write path for command-owned state, and a command handler must not depend on a
 lagging view for an invariant decision.
 
-Record who approves changes to each contract. Revisit the separation when command contention,
-projection lag or rebuild duration outweighs the read benefit, and prefer one model when that
-case cannot be made. A reversal deserves the same written rationale as the initial choice.
+Record who approves changes to each contract. Apply projection events idempotently: commit the
+derived row and its cursor atomically, and disable outbound side effects during rebuild. Revisit
+the separation when command contention, projection lag or rebuild duration outweighs the read
+benefit, and prefer one model when that case cannot be made. A reversal deserves the same written
+rationale as the initial choice.
 
 ### CQRS Read Projections
 
@@ -331,8 +333,9 @@ version falls outside it. Silent coercion of unknown fields turns a contract bre
 corrupted rows.
 
 Authorize rebuilds through a named procedure that preserves log offsets and blocks outbound
-effects. A query needing a newer position waits, reroutes or fails; an older row must never pass
-as current.
+effects. Apply events idempotently and reject a position that would move the projection backwards;
+a duplicate must not create a second effect. A query needing a newer position waits, reroutes or
+fails; an older row must never pass as current.
 
 End the projection when its refresh burden outgrows the queries it serves. An authority read or
 simpler cache may serve the journey with fewer contracts, and that reversal should be recorded.
