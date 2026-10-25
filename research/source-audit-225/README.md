@@ -31,7 +31,7 @@ independent review.
 [Interim synthesis](DEEP-SYNTHESIS.md) records what the evidence supports and
 what remains open. [Final synthesis](FINAL-SYNTHESIS.md) and the [acceptance
 review](ACCEPTANCE.md) record why #225 is not accepted yet. All 406 canonical pages have a review status in
-[the page census](page-census.json): 287 are comparison-assessed and 119 carry an
+[the page census](page-census.json): 288 are comparison-assessed and 118 carry an
 explicit evidence gap, summarized in [the page review summary]
 (page-review-summary.json). A recorded gap is not a pass.
 
