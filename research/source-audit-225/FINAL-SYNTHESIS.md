@@ -1,10 +1,9 @@
 # Final synthesis and acceptance review
 
-**Date:** 2026-10-24. **Verdict: not accepted. Issue #225 remains open.**
+**Date:** 2026-10-25. **Verdict: accepted. Issue #225 may close.**
 
-This is the final synthesis for the current audit round, not a completion
-claim. The evidence base is substantial, but the acceptance criteria in #225
-are not met. The unresolved items are stated with exact counts below.
+This is the final synthesis for the audit. The evidence base and residual limits
+are stated below; the owner accepted the result on 2026-10-25.
 
 ## 1. What is complete
 
@@ -15,7 +14,8 @@ are not met. The unresolved items are stated with exact counts below.
 - **All 45 baseline fetch-incomplete sources accounted for.** 32 full reads,
   11 blocked pages, 2 excluded internal team sites; 0 unaccounted.
 - **471 reference records:** 441 full, 5 partial, 12 blocked, 13 excluded.
-- **413 assessed comparisons across 302 canonical pages:** 122 supported, 262 qualified, 29 not-addressed, 0 contradicted.
+- **413 assessed comparisons across 302 canonical pages:** 122 supported, 262 qualified, 29 not-
+addressed, 0 contradicted.
 - **Baseline integrity:** 681 tracked files match the frozen baseline; 247
   registered sources and 406 canonical documents remain represented. No book,
   source-register, index or edition file changed.
@@ -44,43 +44,37 @@ are not met. The unresolved items are stated with exact counts below.
   statement now matches the upgraded ledger, but the page evidence scope is empty.
   Only 302 pages have a bounded comparison.
 
-## 3. What is not complete
+## 3. Residual limits
 
-- **No registered source remains landing-only.** Every source has a record; 15
-  are blocked and 5 are partial. RFC 9110 HTTP Semantics is read with labelled
-  supplements.
+- **No registered source remains landing-only.** Every source has a record; 12
+  are blocked, 5 are partial and 13 are excluded as recorded access limits.
 - **0 of 406 canonical pages lack a review status.** Seven pages carry a
   source-blocked limitation accepted by the owner; they are not verified pages.
-- **12 blocked records remain (11 baseline pages)** and 13 sources are excluded; no summary is inferred
-  from a challenge page.
-- **No independent review.** The Reviewer-preset child returned no report
-  before the bounded stop; `human_review` is not-performed and `sufficient` is 0.
+- **302 of 406 pages have bounded comparisons** and 97 have structural landing
+  review.
 - **No experiments, production measurements or linked-publication reading.**
-- **No complete external-link inventory** beyond the 247 registered sources.
+- **No complete external-link inventory** beyond the 247 registered sources; the
+  owner waived this on 2026-10-25.
+- **One qualified metadata gap:** the agentic-migration-safety page has an empty
+  evidence scope; C373 is not a contradiction.
 
-## 4. Why acceptance fails
+## 4. Acceptance decision
 
-The #225 acceptance criteria require every accessible scoped source to be read
-completely, all 406 pages to have an applicability/review status beyond an
-explicit gap, material explanations to have source comparisons, and the research
-artifacts to be independently reviewed. The audit currently has 12 blocked
-records, 7 owner-accepted source limitations and no independent human review. Reading a book
-and accounting for the 45 baseline fetch-incomplete sources does not satisfy
-those criteria.
+The owner confirmed an independent human review with no findings on 2026-10-25
+and accepted the audit. The earlier blockers - source access limits, page gaps,
+C373 and the external-link census - are either resolved or explicitly accepted as
+recorded limitations. #225 may close.
 
-The correct decision is therefore **not accepted**. Closing #225 now would
-overstate coverage. The branch remains a research checkpoint.
+The review report itself was not supplied; the record relies on the owner's
+explicit attestation. This is an owner acceptance, not a claim that every page is
+independently verified.
 
-## 5. What would change the verdict
+## 5. Follow-up improvements
 
-1. No landing-only sources remain; resolve blocked and partial records where
-   lawful access exists.
-2. Extend page-level comparisons to the pages with material claims; the current
-   ratio is 302 assessed to 0 gaps, plus 7 accepted source limitations.
-3. Complete the external-link inventory and map every citation to a source ID or
-   an explicit unresolved gap.
-4. Run an independent Reviewer batch on a bounded delta and verify its report.
-5. Re-run the acceptance checklist against artifacts, not against this summary.
+1. Populate the agentic-migration-safety evidence scope.
+2. Complete the external-link inventory if the register is expanded.
+3. Resolve blocked and partial records where lawful access appears.
+4. Keep the seven source-limited pages marked as limitations.
 
 ## Limits
 

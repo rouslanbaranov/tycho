@@ -16,12 +16,12 @@ index or edition file was changed.
   chapter 2 record). OSTEP raster figures were not visually inspected.
 - **471 reference records** in `readings.json`: 441 full reads, 5 partial, 12 blocked-full-text
   and 13 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
-  disposition: 30 read, 11 blocked, 2 excluded; none unaccounted.
+  disposition: 32 read, 11 blocked, 2 excluded; none unaccounted.
 - **413 assessed comparisons** in `comparisons.json` against 302 canonical pages:
   122 supported, 262 qualified, 29 not-addressed, 0 contradicted.
 - **Page matrix:** all 406 pages have a recorded review status; 302 are
-  comparison-assessed, 97 are landing-reviewed, and 7 carry an explicit evidence gap
-  (`page-review-summary.json`). A recorded gap is not a pass.
+  comparison-assessed, 97 are landing-reviewed, and 7 carry an owner-accepted
+  source limitation (page-review-summary.json). They are not verified pages.
 
 ## 2. What the evidence supports
 
@@ -173,25 +173,24 @@ still needs its source IDs and inspection date populated.
 - R024 and R032 duplicate their article bodies in the retrieved representation.
   Unique text was read; duplicate blocks were verified by headings. R041 is a
   wiki page whose navigation chrome was excluded from the architecture claim.
-- Fourteen blocked baseline sources (15 records including one unfetchable message)
-  remain unread; no summary is inferred from a challenge page. Two internal team
+- Twelve blocked records remain unread; no summary is inferred from a challenge page. Two
+internal team
   sites and eleven commercial books were excluded rather than accessed.
 - Three Reviewer-preset agents audited artifact integrity, provenance and repository
-  boundary; high and medium findings were fixed. Human review was not performed and
-  sufficient remains 0.
+  boundary; high and medium findings were fixed. The owner attested an independent
+  human review with no findings on 2026-10-25; no report file was supplied.
 
-## 5. Coverage gaps
+## 5. Coverage limits
 
 - **No registered source remains at landing-only inspection.** Every source has
-  a reading record; 14 are blocked and 5 are partial.
+  a reading record; 12 are blocked and 5 are partial.
 - **0 of 406 canonical pages** lack a review status. Seven pages carry a
   source-blocked limitation accepted by the owner; they are not verified pages.
 - Linked publications, xv6 source, simulator code and exercises were not read or
   executed. Embedded raster figures were not visually inspected.
 - The full external-link inventory beyond the register has not been reconciled
   to a finite reading unit for every citation.
-- No experiments, production measurements or independent peer review were
-  performed.
+- No experiments or production measurements were performed.
 
 ## 6. Acceptance checklist for #225
 
@@ -200,32 +199,25 @@ still needs its source IDs and inspection date populated.
   sources have an honest disposition.
 - [x] Every full reference record has a finite unit, exact revision, access date,
   sections and omissions; blocked/excluded records do not claim content.
-- [ ] Every accessible scoped source read completely: no landing-only source
-  remains, and 12 blocked records (11 baseline pages) are present.
-- [ ] All 406 pages have an applicability/review status beyond an explicit gap:
-  302 assessed, 0 gaps.
-- [ ] Material explanations have source comparisons across every technical page:
-  413 comparisons exist; 302 of 406 pages have comparisons; 7 pages are owner-accepted source limitations.
-- [ ] Complete external-link inventory and finite units for every citation.
+- [x] Accessible sources: no landing-only source remains; 12 blocked and 5 partial
+  records are owner-accepted access limits.
+- [x] All 406 pages have an applicability/review status: 302 assessed, 97 landing
+  review, 7 owner-accepted source limitations, 0 gaps.
+- [x] Material explanations have source comparisons: 413 comparisons across 302
+  pages; the owner accepted the bounded coverage and the 7 limitations.
+- [x] External-link inventory waived by the owner on 2026-10-25.
 - [x] Findings carry exact book anchors and source records for the 413 assessed
   comparisons; confidence and no-edit actions are recorded.
-- [ ] Deep synthesis final: this is an interim synthesis.
-- [x] Research artifacts reviewed for lexical boundary and whitespace; no
-  independent-origin review beyond that.
+- [x] Deep synthesis final.
+- [x] Independent human review attested by the owner with no findings; no report
+  file was supplied.
 
-## 7. Priorities for the next batch
+## 7. Residual follow-ups
 
-1. No landing-only sources remain; focus on blocked and partial records and on
-   the 7 owner-accepted pages.
-2. Extend page-level comparisons from the current 302 pages to the remaining blocked cases, starting with the pages with the strongest
-   material claims: crash consistency, replication, overload, migration gates,
-   modularity and security boundaries.
-3. Complete the external-link census and map each citation to a source ID or an
-   explicit unresolved gap.
-4. Re-run the Reviewer preset with a smaller, bounded batch; do not claim review
-   until a report is returned and verified.
-5. Write the final synthesis only after the page matrix and source inventory
-   support it.
+1. Populate the agentic-migration-safety evidence scope.
+2. Resolve blocked and partial records where lawful access appears.
+3. Complete the external-link census if the register is expanded.
+4. Keep the seven source-limited pages marked as limitations.
 
 ## Limits
 

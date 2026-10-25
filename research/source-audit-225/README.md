@@ -27,9 +27,9 @@ an independent review.
 
 [Interim synthesis](DEEP-SYNTHESIS.md) records what the evidence supports and
 what remains open. [Final synthesis](FINAL-SYNTHESIS.md) and the [acceptance
-review](ACCEPTANCE.md) record why #225 is not accepted yet. All 406 canonical pages have a review status in
+review](ACCEPTANCE.md) record the acceptance and residual limits. All 406 canonical pages have a review status in
 [the page census](page-census.json): 302 are comparison-assessed, 97 are landing-reviewed, and 7 carry an
-explicit evidence gap, summarized in [the page review summary]
+owner-accepted source limitation, summarized in [the page review summary]
 (page-review-summary.json). A recorded gap is not a pass.
 
 The reading ledger links its [chapters 6–18 continuation](sre-continuation-readings.json) and [completion continuation](sre-completion-readings.json). Reading completion means the exact chapter, its examples, footnotes and embedded technical images; it does not include all publications linked from it. The [download fingerprints](reading-asset-fingerprints.json) identify the downloaded HTML/image representations for later revisiting, not an immutable publisher revision or proof of semantic reading.
@@ -57,4 +57,4 @@ The gRPC overview's immediate-cancellation wording must be read alongside the sp
 
 Run `python3 research/source-audit-225/census.py` to regenerate the lexical census and assert all 681 original tracked files still match their baseline Git blobs. Run `python3 scripts/check_boundary.py` and `git diff --check` before committing. These checks cannot prove reading, semantic correctness, source admissibility or independent review.
 
-No source publication text, third-party PDF or image is redistributed here. Original brief reading notes and bibliographic/coverage metadata are the research deliverables. Continue until the complete scoped source and comparison obligations in #225 are honestly accounted for; do not close the task on this checkpoint.
+No source publication text, third-party PDF or image is redistributed here. Original brief reading notes and bibliographic/coverage metadata are the research deliverables. The owner accepted the result on 2026-10-25; residual limits remain recorded in the acceptance review.
