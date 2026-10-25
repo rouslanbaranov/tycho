@@ -14,7 +14,7 @@ complete; it does not authorize book edits.
 
 ## Source coverage
 
-- 471 reference records: 438 full, 5 partial, 15 blocked, 13 excluded.
+- 471 reference records: 439 full, 5 partial, 14 blocked, 13 excluded.
 - 93 full records lack a representation digest; each carries a documented
   representation_gap, so hash coverage is not universal.
 - No registered source remains landing-only: every source has a reading record.

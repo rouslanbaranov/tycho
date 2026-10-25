@@ -14,11 +14,11 @@ index or edition file was changed.
   images. OSTEP: chapters 1-57, appendices A-H and the preface, in 65
   continuation records (20,189 lines, 323,810 words, 803 pages plus the earlier
   chapter 2 record). OSTEP raster figures were not visually inspected.
-- **471 reference records** in `readings.json`: 438 full reads, 5 partial, 15 blocked-full-text
+- **471 reference records** in `readings.json`: 439 full reads, 5 partial, 14 blocked-full-text
   and 13 excluded-from-scope. All 45 baseline fetch-incomplete sources have a
-  disposition: 29 read, 14 blocked, 2 excluded; none unaccounted.
+  disposition: 30 read, 13 blocked, 2 excluded; none unaccounted.
 - **413 assessed comparisons** in `comparisons.json` against 302 canonical pages:
-  118 supported, 261 qualified, 33 not-addressed, 1 contradicted.
+  120 supported, 261 qualified, 31 not-addressed, 1 contradicted.
 - **Page matrix:** all 406 pages have a recorded review status; 302 are
   comparison-assessed, 97 are landing-reviewed, and 7 carry an explicit evidence gap
   (`page-review-summary.json`). A recorded gap is not a pass.
@@ -156,8 +156,8 @@ Only two candidate actions have direct page evidence:
    cancellation page, name the socket-close side effect and its JDK/release
    boundary. No edit under #225.
 
-Thirty-three assessments are "not-addressed", four of them high severity:
-C384, C386, C399 and C412 attribute specifics to fetch-incomplete or unread sources.
+Thirty-one assessments are "not-addressed", two of them high severity:
+C399 and C412 attribute specifics to fetch-incomplete or unread sources.
 C373 is the single record-level contradiction. These are open items requiring
 verification, restatement or removal, not optional additions.
 
@@ -182,7 +182,7 @@ verification, restatement or removal, not optional additions.
 ## 5. Coverage gaps
 
 - **No registered source remains at landing-only inspection.** Every source has
-  a reading record; 15 are blocked and 5 are partial.
+  a reading record; 14 are blocked and 5 are partial.
 - **7 of 406 canonical pages** have no page-level comparison. Their matrix
   status is an explicit gap, not an inferred pass.
 - Linked publications, xv6 source, simulator code and exercises were not read or
@@ -200,7 +200,7 @@ verification, restatement or removal, not optional additions.
 - [x] Every full reference record has a finite unit, exact revision, access date,
   sections and omissions; blocked/excluded records do not claim content.
 - [ ] Every accessible scoped source read completely: no landing-only source
-  remains, and 15 blocked records (14 baseline pages) are present.
+  remains, and 14 blocked records (13 baseline pages) are present.
 - [ ] All 406 pages have an applicability/review status beyond an explicit gap:
   302 assessed, 7 gaps.
 - [ ] Material explanations have source comparisons across every technical page:
@@ -231,5 +231,5 @@ verification, restatement or removal, not optional additions.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, does not claim that a
 first-party article is a benchmark, and does not claim that Tycho is complete or
-correct. The 15 blocked records and 7 unassessed pages are the dominant
+correct. The 14 blocked records and 7 unassessed pages are the dominant
 remaining uncertainty.

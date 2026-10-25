@@ -12,10 +12,10 @@ are not met. The unresolved items are stated with exact counts below.
   images. OSTEP: chapters 1-57, appendices A-H and the preface, in 65
   continuation records (20,189 lines, 323,810 words, 803 pages, plus the earlier
   chapter 2 record). OSTEP raster figures were not visually inspected.
-- **All 45 baseline fetch-incomplete sources accounted for.** 29 full reads,
-  14 blocked pages, 2 excluded internal team sites; 0 unaccounted.
-- **471 reference records:** 438 full, 5 partial, 15 blocked, 13 excluded.
-- **413 assessed comparisons across 302 canonical pages:** 118 supported, 261 qualified, 33 not-addressed, 1 contradicted.
+- **All 45 baseline fetch-incomplete sources accounted for.** 30 full reads,
+  13 blocked pages, 2 excluded internal team sites; 0 unaccounted.
+- **471 reference records:** 439 full, 5 partial, 14 blocked, 13 excluded.
+- **413 assessed comparisons across 302 canonical pages:** 120 supported, 261 qualified, 31 not-addressed, 1 contradicted.
 - **Baseline integrity:** 681 tracked files match the frozen baseline; 247
   registered sources and 406 canonical documents remain represented. No book,
   source-register, index or edition file changed.
@@ -50,7 +50,7 @@ are not met. The unresolved items are stated with exact counts below.
   supplements.
 - **7 of 406 canonical pages have no page-level comparison.** Their matrix
   status is an explicit gap, not an inferred pass.
-- **15 blocked records remain (14 baseline pages)** and 13 sources are excluded; no summary is inferred
+- **14 blocked records remain (13 baseline pages)** and 13 sources are excluded; no summary is inferred
   from a challenge page.
 - **No independent review.** The Reviewer-preset child returned no report
   before the bounded stop; `human_review` is not-performed and `sufficient` is 0.
@@ -62,7 +62,7 @@ are not met. The unresolved items are stated with exact counts below.
 The #225 acceptance criteria require every accessible scoped source to be read
 completely, all 406 pages to have an applicability/review status beyond an
 explicit gap, material explanations to have source comparisons, and the research
-artifacts to be independently reviewed. The audit currently has 15 blocked
+artifacts to be independently reviewed. The audit currently has 14 blocked
 records, 7 unassessed pages and no independent review. Reading a book
 and accounting for the 45 baseline fetch-incomplete sources does not satisfy
 those criteria.
@@ -85,5 +85,5 @@ overstate coverage. The branch remains a research checkpoint.
 
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, claim that a first-party
-article is a benchmark, or claim that Tycho is correct. The 15 blocked records
+article is a benchmark, or claim that Tycho is correct. The 14 blocked records
 and 7 unassessed pages are the dominant remaining uncertainty.
