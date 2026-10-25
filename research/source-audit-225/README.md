@@ -21,8 +21,8 @@ comparisons, not independent review, book findings or permission to edit.
 Current ledger: four hundred thirty-eight full reads, five partial, fifteen
 blocked records and thirteen excluded sources. Eleven commercial books are
 excluded because they are unavailable and not lawfully usable here; two internal
-team sites are excluded as non-public. Blocked records are inaccessible publisher
-pages, not unread accessible text. This is reading evidence, not a book edit or
+team sites are excluded as non-public. Blocked records are inaccessible publisher pages
+or an unfetchable message, not unread accessible text. This is reading evidence, not a book edit or
 an independent review.
 
 [Interim synthesis](DEEP-SYNTHESIS.md) records what the evidence supports and

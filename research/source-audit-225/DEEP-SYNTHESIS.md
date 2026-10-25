@@ -172,10 +172,12 @@ verification, restatement or removal, not optional additions.
 - R024 and R032 duplicate their article bodies in the retrieved representation.
   Unique text was read; duplicate blocks were verified by headings. R041 is a
   wiki page whose navigation chrome was excluded from the architecture claim.
-- Fourteen blocked pages remain unread; no summary is inferred from a challenge
-  page. Two internal team sites were excluded rather than accessed.
-- No independent review was obtained. A Reviewer-preset child returned no report
-  before the bounded stop; `human_review` is not-performed and `sufficient` is 0.
+- Fourteen blocked baseline sources (15 records including one unfetchable message)
+  remain unread; no summary is inferred from a challenge page. Two internal team
+  sites and eleven commercial books were excluded rather than accessed.
+- Three Reviewer-preset agents audited artifact integrity, provenance and repository
+  boundary; high and medium findings were fixed. Human review was not performed and
+  sufficient remains 0.
 
 ## 5. Coverage gaps
 
