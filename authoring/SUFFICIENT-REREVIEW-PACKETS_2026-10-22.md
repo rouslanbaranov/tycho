@@ -9,14 +9,14 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 102 |
-| Residual findings after re-review | 43 |
+| Promoted after remediation | 105 |
+| Residual findings after re-review | 40 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 108 |
+| Reviewed by independent agent | 110 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 36, "report-section-missing": 1, "reviewed-by-independent-agent": 108}.
+Packet statuses: {"page-changed-since-review": 33, "report-section-missing": 2, "reviewed-by-independent-agent": 110}.
 
 ## Review procedure
 
@@ -329,8 +329,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Leader Election**
-  Current: pass-with-findings; re-review: pass-with-findings; report: None.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: None.
+  Status: report-section-missing.
 
 - **Leader-Follower Replication**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -429,8 +429,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Quorum Coordination**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Quorum-Based Reads/Writes**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -509,8 +509,8 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Session Consistency**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Sharding**
   Current: pass; re-review: pass; report: pass-with-findings.
