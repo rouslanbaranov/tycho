@@ -147,14 +147,14 @@ across processes?
 
 **Good-fit conditions.** The lock protects a correctness-critical section; the service
 can maintain quorum; expiry and ownership are explicit; the resource checks a fencing
-epoch, or the operation is safe under uncertain ownership.
+epoch.
 
 **Hard contraindications.** Reject when work is naturally partitioned, when lock loss
 would corrupt state, when the lock service cannot maintain quorum, or when the resource
 cannot reject a stale holder.
 
-**Competing alternative.** Lease-based ownership with fencing or single-writer
-partitioning. Reverse the choice when lock safety cannot be proven.
+**Competing alternative.** Lease-based ownership with fencing, single-writer partitioning,
+or a conditional write/unique constraint. Reverse the choice when lock safety cannot be proven.
 
 **Failure and recovery.** Pauses, delayed writes, quorum loss and release races are
 common. Treat ownership as uncertain after a missed renewal; fence stale epochs at the

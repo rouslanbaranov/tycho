@@ -99,8 +99,8 @@ Each service publishes its contract, version policy and supported consumer set. 
 hidden synchronous chains and lockstep migrations undermine that boundary regardless of
 repository layout. A shared client library does not make contract changes independent.
 
-Budget the remote surface explicitly: timeouts, retries, partial failure, tracing and rollback
-rehearsals. Record which dependency failures may degrade a journey and who decides to disable a
+Budget the remote surface explicitly: timeouts, retries, stable effect identity, partial failure,
+tracing and rollback rehearsals. Record which dependency failures may degrade a journey and who decides to disable a
 path.
 
 One team owning every invariant may do better with a modular monolith than with remote
