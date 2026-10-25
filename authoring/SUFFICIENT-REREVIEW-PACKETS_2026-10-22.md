@@ -13,10 +13,10 @@
 | Residual findings after re-review | 56 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 108 |
+| Reviewed by independent agent | 97 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 36, "report-section-missing": 1, "reviewed-by-independent-agent": 108}.
+Packet statuses: {"page-changed-since-review": 47, "report-section-missing": 1, "reviewed-by-independent-agent": 97}.
 
 ## Review procedure
 
@@ -102,7 +102,7 @@ blank verdict template in the machine-readable file.
 
 - **Canonical Data Model**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Causal Ordering**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -150,7 +150,7 @@ blank verdict template in the machine-readable file.
 
 - **Competing Consumers**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Consensus**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -162,7 +162,7 @@ blank verdict template in the machine-readable file.
 
 - **Content-Based Router**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Controlled Cutover**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -222,7 +222,7 @@ blank verdict template in the machine-readable file.
 
 - **Durable Subscriber**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Event Sourcing**
   Current: pass; re-review: pass; report: pass.
@@ -230,7 +230,7 @@ blank verdict template in the machine-readable file.
 
 - **Event-Driven Consumer**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Expand-and-Contract**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -358,11 +358,11 @@ blank verdict template in the machine-readable file.
 
 - **Message Broker / Messaging Bridge**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Message Filter**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Microservices Architecture**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -402,11 +402,11 @@ blank verdict template in the machine-readable file.
 
 - **Pipes and Filters**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Point-to-Point Queue**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Polyglot Persistence**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -422,7 +422,7 @@ blank verdict template in the machine-readable file.
 
 - **Publish/Subscribe**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Queue-Based Load Leveling**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -458,7 +458,7 @@ blank verdict template in the machine-readable file.
 
 - **Resequencer**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Retry with Exponential Backoff**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.

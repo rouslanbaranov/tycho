@@ -305,17 +305,19 @@ consumer still needs an effect key, a deduplication rule and an acknowledgement 
 A fictional notification can use ephemeral pub/sub if losing a signal when no subscriber is
 listening is acceptable. A durable business task should not casually use Core alone if clients
 require recoverable delivery; a JetStream durable consumer or another persisted queue may better
-match that requirement. Record whether the subscription is ephemeral or durable before claiming a
-delivery guarantee.
+match that requirement. Record whether the subscription is ephemeral or durable before claiming a delivery guarantee.
+An unknown or unbounded subscriber count makes fan-out load and cost unownable; cap registration
+or partition the topic before treating the contract as bounded.
 
 ### Point-to-Point Queue
 
 A queue dispatches each message to one eligible consumer; competing consumers share the work, and a
-consumer acknowledgement retires the message (after any configured redelivery policy). These are
-independent; publisher confirm does **not** mean the consumer performed a business transaction.
+consumer acknowledgement retires the message after any redelivery policy. A publisher confirmation
+is not evidence that a consumer committed its effect.
 
-If the worker crashes after local effect but before acknowledgement, task redelivery may occur.
-Consumer-side deduplication is necessary for nonrepeatable effects. A worker pool therefore needs a
+A worker that crashes after a local effect but before acknowledgement can cause redelivery, so
+nonrepeatable effects need consumer-side deduplication and a stable effect identity. If ordering or
+poison-message handling matters, state the queue's ordering scope and terminal path. A worker pool therefore needs a
 stable effect identity, a visible in-flight count and a redelivery limit, not only a higher
 prefetch.
 
@@ -366,10 +368,9 @@ translates between brokers/protocols, adding another hop, retention policy and f
 bridge must preserve message identity, ordering and delivery semantics across the translation; a
 faithful broker contract on one side does not imply the same contract on the other.
 
-These are independent; publisher confirm does **not** mean the consumer performed a business
-transaction. If the worker crashes after local effect but before acknowledgement, task redelivery may
-occur. The bridge needs its own delivery contract, identity mapping and dead-letter path; a message
-that crosses two brokers can be duplicated or delayed at either boundary.
+A publisher confirmation is not a consumer commit. A bridge needs its own delivery contract,
+identity mapping and dead-letter path; crossing two brokers can duplicate or delay at either
+boundary.
 
 Direct request/response, pub/sub fan-out or a shared log may be preferable when one consumer owns
 each task or when brokered indirection adds no routing/reliability value. A bridge is justified when
