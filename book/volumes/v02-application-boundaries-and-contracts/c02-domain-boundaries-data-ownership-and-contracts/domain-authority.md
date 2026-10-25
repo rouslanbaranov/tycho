@@ -139,6 +139,7 @@ each invariant.
 
 Model behavior changes are reviewed with the domain expert before a boundary moves. Reopen the
 boundary when a shared term changes meaning, a translation gains a second owner or releases become
-unavoidably coupled. Merging models is honest when the vocabularies truly
-coincide. Record the rationale so a later team can distinguish a deliberate merger from an
+unavoidably coupled. Translation has a maintenance cost: each mapping needs an owner and a review path. Merge models
+when that cost exceeds the value of keeping separate meanings; merging is honest when the
+vocabularies truly coincide. Record the rationale so a later team can distinguish a deliberate merger from an
 accidental one.

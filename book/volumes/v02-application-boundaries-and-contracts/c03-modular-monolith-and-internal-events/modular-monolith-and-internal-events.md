@@ -123,14 +123,13 @@ The detailed pages separate the mechanisms that make this decision conditional:
 Modules own their rules, data and contracts. The deployable is one unit, but each module has a
 named owner, an allowed-call surface and a dependency test that fails a bypass.
 
-Hidden cross-module database access, cyclic dependencies and event coupling that recreates a
-distributed monolith are the failure modes. Internal events are not automatically durable with the
-module's database commit: state whether the event uses a local outbox or is best-effort, and who
-repairs a missed event. Test schema ownership as well as the public API.
+Bypasses show up as shared tables, import cycles, or events that exist only to recreate a remote
+call. Internal events also need a durability decision: a local outbox or best-effort delivery, plus
+the owner who repairs a missed event. Test schema ownership as well as the public API.
 
 Synchronous call chains across modules and one deployment blast radius are the operational risk;
 keep a rollback path and verify event durability before treating the boundary as a contract.
 
-Microservices, hexagonal architecture or a simpler layered application may be preferable when
-module enforcement cost exceeds the coordination benefit. A modular monolith is a fit when the team
-wants one operational unit without surrendering internal ownership, with a documented interface and an owner now.
+Choose services or a layered structure only when module enforcement costs more than the
+coordination benefit. A modular monolith fits when the team wants one operational unit without
+surrendering internal ownership, with a documented interface and a named owner.
