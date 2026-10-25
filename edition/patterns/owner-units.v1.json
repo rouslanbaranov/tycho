@@ -1511,7 +1511,7 @@
         "heading": "Point-to-Point Queue",
         "anchor": "point-to-point-queue",
         "level": 3,
-        "line": 311,
+        "line": 312,
         "unit_kind": "dedicated",
         "unit_terms": [
           "queue dispatches",
@@ -1523,17 +1523,17 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A queue dispatches each message to one eligible consumer; competing consumers share the work, and a consumer acknowledgement retires the message (after any configured redelivery policy).",
+          "quote": "A queue dispatches each message to one eligible consumer; competing consumers share the work, and a consumer acknowledgement retires the message after any redelivery policy.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
-          "quote": "These are independent; publisher confirm does **not** mean the consumer performed a business transaction.",
+          "quote": "A publisher confirmation is not evidence that a consumer committed its effect.",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "If the worker crashes after local effect but before acknowledgement, task redelivery may occur. Consumer-side deduplication is necessary for nonrepeatable effects.",
+          "quote": "A worker that crashes after a local effect but before acknowledgement can cause redelivery",
           "reason": ""
         },
         "alternative": {
@@ -1628,7 +1628,7 @@
         "heading": "Event-Driven Consumer",
         "anchor": "event-driven-consumer",
         "level": 3,
-        "line": 326,
+        "line": 328,
         "unit_kind": "dedicated",
         "unit_terms": [
           "push subscription",
@@ -2222,7 +2222,7 @@
         "heading": "Durable Subscriber",
         "anchor": "durable-subscriber",
         "level": 3,
-        "line": 345,
+        "line": 347,
         "unit_kind": "dedicated",
         "unit_terms": [
           "server-side cursor",
@@ -2462,7 +2462,7 @@
         "heading": "Message Broker-Messaging Bridge",
         "anchor": "message-broker-messaging-bridge",
         "level": 3,
-        "line": 362,
+        "line": 364,
         "unit_kind": "dedicated",
         "unit_terms": [
           "routes, stores",
@@ -2479,12 +2479,12 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "These are independent; publisher confirm does **not** mean the consumer performed a business transaction.",
+          "quote": "A publisher confirmation is not a consumer commit.",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "If the worker crashes after local effect but before acknowledgement, task redelivery may occur.",
+          "quote": "A bridge needs its own delivery contract, identity mapping and dead-letter path",
           "reason": ""
         },
         "alternative": {
