@@ -14,7 +14,7 @@ are not met. The unresolved items are stated with exact counts below.
   chapter 2 record). OSTEP raster figures were not visually inspected.
 - **All 45 baseline fetch-incomplete sources accounted for.** 29 full reads,
   14 blocked pages, 2 excluded internal team sites; 0 unaccounted.
-- **471 reference records:** 420 full, 20 partial, 29 blocked, 2 excluded.
+- **471 reference records:** 420 full, 20 partial, 19 blocked, 12 excluded.
 - **268 assessed comparisons across 236 canonical pages:** 101 supported, 246 qualified, 19 not-addressed, 0 contradicted.
 - **Baseline integrity:** 681 tracked files match the frozen baseline; 247
   registered sources and 406 canonical documents remain represented. No book,
@@ -50,7 +50,7 @@ are not met. The unresolved items are stated with exact counts below.
   supplements.
 - **112 of 406 canonical pages have no page-level comparison.** Their matrix
   status is an explicit gap, not an inferred pass.
-- **29 blocked records remain (14 baseline pages)** and 2 sources are excluded; no summary is inferred
+- **19 blocked records remain (14 baseline pages)** and 12 sources are excluded; no summary is inferred
   from a challenge page.
 - **No independent review.** The Reviewer-preset child returned no report
   before the bounded stop; `human_review` is not-performed and `sufficient` is 0.
@@ -62,7 +62,7 @@ are not met. The unresolved items are stated with exact counts below.
 The #225 acceptance criteria require every accessible scoped source to be read
 completely, all 406 pages to have an applicability/review status beyond an
 explicit gap, material explanations to have source comparisons, and the research
-artifacts to be independently reviewed. The audit currently has 29 blocked
+artifacts to be independently reviewed. The audit currently has 19 blocked
 records, 112 unassessed pages and no independent review. Reading a book
 and accounting for the 45 baseline fetch-incomplete sources does not satisfy
 those criteria.
@@ -85,5 +85,5 @@ overstate coverage. The branch remains a research checkpoint.
 
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, claim that a first-party
-article is a benchmark, or claim that Tycho is correct. The 29 blocked records
+article is a benchmark, or claim that Tycho is correct. The 19 blocked records
 and 112 unassessed pages are the dominant remaining uncertainty.

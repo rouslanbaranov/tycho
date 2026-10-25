@@ -271,7 +271,7 @@ a96c6b7 are outside that attempted review's stated HEAD.
 - The 406-page census records a review status for every canonical page:
   294 are comparison-assessed and 112 carry an explicit evidence gap. The
   per-page list is in page-review-summary.json; a gap is not a pass.
-- The reference ledger has 471 records: 420 full reads, 20 partial, 29 blocked and 2
+- The reference ledger has 471 records: 420 full reads, 20 partial, 19 blocked and 12
   excluded internal team sites. All 45 baseline fetch-incomplete sources are
   accounted for: 29 full, 14 blocked, 2 excluded, 0 unaccounted.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
@@ -285,7 +285,7 @@ a96c6b7 are outside that attempted review's stated HEAD.
 
 - FINAL-SYNTHESIS.md records the current evidence base and the unmet criteria.
 - ACCEPTANCE.md records verdict **not accepted**: no landing-only sources,
-  365 page gaps, 18 blocked records and 2 excluded sources, and no independent review.
+  112 page gaps, 19 blocked records and 12 excluded sources, and no independent review.
 - The six source records are reconciled to existing reading IDs
   in source-coverage-reconciliation.json; three SRE chapters, two PostgreSQL units and the completed OSTEP book, and they are not new reads.
 - No book, source-register, index or edition file changed. The issue remains
