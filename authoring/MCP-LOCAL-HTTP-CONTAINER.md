@@ -121,7 +121,7 @@ a book page. They are transport checks, not agent answer-quality evaluation.
 | Vercel-ready port run | `PORT=8080`; health, standard client and SDK passed |
 | Health | HTTP 200, no auth |
 | MCP discovery | HTTP 200, modern 2026-07-28 only |
-| Tools | 7 |
+| Tools | 7 at 2026-10-24; 11 in server 0.2.0 |
 | Search call | `ok`, 2 results, citation returned |
 | HTTP search | `ok`, 2 results |
 | Book page | HTTP 200, 10,181 bytes |
@@ -288,3 +288,4 @@ mismatch. The container build and client smokes remain manual evidence.
 - [Service container issue](https://github.com/rouslanbaranov/tycho/issues/367)
 - [Update model issue](https://github.com/rouslanbaranov/tycho/issues/377)
 - [Vercel deployment policy](https://github.com/rouslanbaranov/tycho/issues/392)
+- [Agent-facing tool contract](MCP-AGENT-TOOL-CONTRACT.md)
