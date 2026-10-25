@@ -1473,7 +1473,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A crash after the effect but before acknowledgement causes redelivery; acknowledging before the effect can lose work.",
+          "quote": "Redelivery follows an effect that committed before its acknowledgement; the opposite order loses work.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
@@ -1514,7 +1514,7 @@
         "line": 310,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "eligible consumer",
+          "eligible worker",
           "acknowledgement",
           "ordering scope",
           "terminal path"
@@ -1523,7 +1523,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A queue delivers each message to one eligible consumer.",
+          "quote": "One message has one eligible worker at a time",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
@@ -1538,7 +1538,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Use direct request/response, fan-out or a shared log when one owner per task is enough or brokering adds no routing value.",
+          "quote": "When one task has one natural owner, direct request/response, fan-out or a shared log may avoid brokered indirection.",
           "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
@@ -2474,7 +2474,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A broker moves messages between producers and consumers; a bridge translates across brokers or protocols",
+          "quote": "A bridge sits between broker contracts: it translates protocols or formats and therefore adds a hop, a retention policy and a failure domain.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
@@ -2489,7 +2489,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Use direct request/response, fan-out or a shared log when brokering adds no routing value.",
+          "quote": "A bridge is justified only when a protocol or ownership boundary cannot be removed",
           "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
