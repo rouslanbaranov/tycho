@@ -24,6 +24,7 @@ import sqlite3
 import stat
 import sys
 
+import route_index
 import section_search
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -55,8 +56,9 @@ PATTERN_CITATION_SCHEME = "tycho.markdown-heading-anchor.v1"
 INSTRUCTIONS = (
     "Tycho is a snapshot-bound, read-only System Design book collection. "
     "Use tycho_search or tycho_context to assemble cited sections, "
-    "tycho_compare for cited option matrices without a winner, then "
-    "tycho_read or tycho_page for bounded reads, tycho_patterns or "
+    "tycho_outline to plan a topic, tycho_compare for cited option "
+    "matrices without a winner, then tycho_read or tycho_page for bounded "
+    "reads, tycho_patterns or "
     "tycho_pattern for the draft pattern registry, and tycho_evidence to "
     "resolve registered evidence. The context bundle is extractive and does "
     "not contain a final answer or verdict. "
@@ -300,6 +302,44 @@ def search_schema():
                 "type": "string",
                 "pattern": "^[0-9a-f]{64}$",
                 "description": "Optional snapshot pin for consistency.",
+            },
+        },
+    }
+
+
+def outline_schema():
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "topic": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "description": "Topic, chapter or pattern family to outline.",
+            },
+            "path_prefix": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Optional relative book path prefix.",
+            },
+            "kind": {
+                "type": "string",
+                "description": "Optional document-kind filter.",
+            },
+            "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20,
+                "default": 8,
+                "description": "Maximum outline entries.",
+            },
+            "max_chars": {
+                "type": "integer",
+                "minimum": 2048,
+                "maximum": 20000,
+                "default": 6000,
+                "description": "Hard UTF-8 response budget.",
             },
         },
     }
@@ -625,6 +665,24 @@ TOOL_SPECS = {
             "openWorldHint": False,
         },
     },
+    "tycho_outline": {
+        "name": "tycho_outline",
+        "title": "Outline a topic before reading",
+        "description": (
+            "Return canonical paths, summaries, route questions and a reading "
+            "order for a topic or path prefix. It does not claim complete "
+            "coverage or return full page text."
+        ),
+        "inputSchema": outline_schema(),
+        "handler": "_tool_outline",
+        "annotations": {
+            "title": "Outline a topic before reading",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+    },
     "tycho_compare": {
         "name": "tycho_compare",
         "title": "Compare cited options extractively",
@@ -757,6 +815,7 @@ TOOL_SPECS = {
 TOOL_ORDER = (
     "tycho_describe",
     "tycho_search",
+    "tycho_outline",
     "tycho_compare",
     "tycho_context",
     "tycho_read",
@@ -1192,6 +1251,96 @@ class TychoMcpServer:
         payload["tool"] = "tycho_search"
         self.log_query(payload, args, query, limit)
         return payload
+
+    def _tool_outline(self, args):
+        reject_unknown(args, {
+            "topic", "path_prefix", "kind", "limit", "max_chars",
+        })
+        topic = arg_string(args, "topic", maximum=200)
+        path_prefix = arg_string(args, "path_prefix", maximum=500)
+        kind = arg_string(args, "kind", maximum=100)
+        limit = arg_int(args, "limit", 8, 1, 20)
+        max_chars = arg_int(args, "max_chars", 6000, 2048, 20000)
+        if not topic and not path_prefix:
+            raise ProtocolFailure(
+                -32602, "topic or path_prefix is required")
+        try:
+            route_payload = json.loads(
+                (self.root / "generated/route-index.v1.json").read_text(
+                    encoding="utf-8"))
+            db, manifest = self.open_snapshot()
+            db.close()
+        except (OSError, json.JSONDecodeError, section_search.SearchError):
+            return self.tool_error(
+                "not-available", "Outline is not available",
+                tool="tycho_outline")
+        if route_payload.get("snapshot_sha256") != (
+                manifest.get("route_snapshot_sha256")):
+            return self.tool_error(
+                "snapshot-mismatch", "Route metadata and index differ",
+                tool="tycho_outline")
+        documents = route_payload.get("documents") or []
+        if topic:
+            routed = route_index.route(
+                route_payload, topic, kind=kind, limit=limit * 4)
+            paths = [item["path"] for item in routed.get("results", [])]
+            by_path = {
+                document["path"]: document
+                for document in documents
+                if isinstance(document, dict) and "path" in document
+            }
+            selected = [by_path[path] for path in paths if path in by_path]
+        else:
+            selected = [
+                document for document in documents
+                if isinstance(document, dict)
+                and (kind is None or document.get("kind") == kind)
+                and document.get("path", "").startswith(path_prefix)
+            ]
+            selected.sort(key=lambda item: item["path"])
+        selected = selected[:limit]
+        entries = []
+        for order, document in enumerate(selected, start=1):
+            entries.append({
+                "order": order,
+                "citation": document["path"],
+                "path": document["path"],
+                "title": document.get("title"),
+                "kind": document.get("kind"),
+                "summary": document.get("summary"),
+                "questions": (document.get("questions") or [])[:3],
+                "evidence_status": document.get("evidence_status"),
+            })
+        response = {
+            "status": "ok" if entries else "no-results",
+            "snapshot": manifest.get("snapshot_id"),
+            "route_snapshot": route_payload.get("snapshot_sha256"),
+            "topic": topic,
+            "path_prefix": path_prefix,
+            "kind": kind,
+            "entries": entries,
+            "returned": len(entries),
+            "max_chars": max_chars,
+            "returned_chars": 0,
+            "truncated": False,
+            "gaps": [] if entries else [
+                "No canonical documents matched the outline request."],
+            "notice": (
+                "Outline only. It is not a completeness claim; read each "
+                "cited page before drawing conclusions."),
+            "content_trust": CONTENT_TRUST,
+            "tool": "tycho_outline",
+        }
+        def encoded_size():
+            return len(json.dumps(
+                response, ensure_ascii=False,
+                separators=(",", ":")).encode("utf-8"))
+        while encoded_size() > max_chars and response["entries"]:
+            response["entries"].pop()
+            response["returned"] = len(response["entries"])
+            response["truncated"] = True
+        response["returned_chars"] = encoded_size()
+        return response
 
     def _tool_compare(self, args):
         reject_unknown(args, {
@@ -1935,6 +2084,7 @@ class TychoMcpServer:
             },
             "operations": {
                 "search": "lexical BM25 over indexed sections",
+                "outline": "canonical planning outline without full text",
                 "compare": "extractive cited option matrix without a winner",
                 "context": "bounded extractive analysis bundle",
                 "read": "bounded codepoint range from one section",

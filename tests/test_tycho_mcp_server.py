@@ -409,6 +409,20 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(
             payload["weak_results"][0]["match_source"], "route-metadata")
 
+    def test_outline_returns_canonical_paths_without_full_text(self):
+        payload = self.call(self.server(), "tycho_outline", {
+            "topic": "synthetic",
+            "limit": 3,
+            "max_chars": 5000,
+        })["structuredContent"]
+        self.assertEqual(payload["tool"], "tycho_outline")
+        self.assertGreater(payload["returned"], 0)
+        self.assertLessEqual(payload["returned_chars"], 5000)
+        self.assertTrue(payload["entries"])
+        self.assertIn("citation", payload["entries"][0])
+        self.assertNotIn("content", payload["entries"][0])
+        self.assertIn("notice", payload)
+
     def test_compare_returns_cited_cells_without_winner(self):
         payload = self.call(self.server(), "tycho_compare", {
             "options": ["retry budget", "cache stampede"],
@@ -991,7 +1005,7 @@ class McpServerTests(unittest.TestCase):
             listed = send({
                 "jsonrpc": "2.0", "id": 2, "method": "tools/list",
             })
-            self.assertEqual(len(listed["result"]["tools"]), 9)
+            self.assertEqual(len(listed["result"]["tools"]), 10)
             called = send({
                 "jsonrpc": "2.0", "id": 3, "method": "tools/call",
                 "params": {
