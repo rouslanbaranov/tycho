@@ -4644,25 +4644,25 @@
         "unit_kind": "dedicated",
         "unit_terms": [
           "W voters",
-          "Quorums must intersect",
-          "too small R",
-          "leader-based protocol"
+          "version selector",
+          "membership change",
+          "intersection"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A write is acknowledged by W voters and a read consults R voters; when R + W > N and membership is correctly configured, the sets intersect on the latest committed value.",
+          "quote": "A write is acknowledged by W voters and a read consults R voters.",
           "reason": "Defines the mechanism."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Quorums must intersect and every membership change must preserve that intersection; a minority partition cannot commit authoritatively.",
+          "quote": "Membership changes must preserve the intersection",
           "reason": "States the invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A read with too small R can return stale data, and an unsafe membership edit can remove progress.",
+          "quote": "A small R returns stale data, and an unsafe membership edit removes progress.",
           "reason": "Names failure and recovery."
         },
         "alternative": {
@@ -6073,7 +6073,7 @@
         "heading": "Distributed Lock",
         "anchor": "distributed-lock",
         "level": 3,
-        "line": 188,
+        "line": 194,
         "unit_kind": "dedicated",
         "unit_terms": [
           "A distributed lock needs",
@@ -6133,7 +6133,7 @@
         "heading": "Lease-Based Ownership",
         "anchor": "lease-based-ownership",
         "level": 3,
-        "line": 206,
+        "line": 212,
         "unit_kind": "dedicated",
         "unit_terms": [
           "bounded interval",
@@ -6193,7 +6193,7 @@
         "heading": "Fencing Tokens",
         "anchor": "fencing-tokens",
         "level": 3,
-        "line": 219,
+        "line": 225,
         "unit_kind": "dedicated",
         "unit_terms": [
           "monotonic epoch",
@@ -6257,25 +6257,25 @@
         "unit_kind": "dedicated",
         "unit_terms": [
           "floor(N/2)+1",
-          "assumes the quorum protocol",
-          "3-voter",
-          "leader-based protocol"
+          "minority must refuse",
+          "joint or overlapping",
+          "term, vote"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "In a simplified majority-voting cluster of N eligible voters, a quorum is floor(N/2)+1.",
+          "quote": "A quorum is floor(N/2)+1 only when the replica set and membership rules are correct.",
           "reason": "Explains majority quorum arithmetic and the failure envelope for N voters."
         },
         "invariant": {
           "state": "supported",
-          "quote": "This arithmetic assumes the quorum protocol and membership-change rules are correct.",
+          "quote": "A minority must refuse conflicting authority",
           "reason": "States the correctness precondition for quorum arithmetic and membership changes."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A **3-voter** cluster requires 2 votes, and can normally make progress with one unavailable voter if remaining voters can communicate and have necessary log state.",
+          "quote": "A reachable voter without the current log may be unable to form a safe quorum",
           "reason": "Shows continued progress with one unavailable voter under stated communication and log conditions."
         },
         "alternative": {

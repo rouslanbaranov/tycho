@@ -58,11 +58,12 @@ Under a Raft-style model:
 5. Reads require a separately defined policy: local follower reads can be stale; linearizable reads require valid confirmation/lease/read-index semantics as implemented.
 6. Client retries need stable effect identity because a network error alone cannot tell whether the previous attempt committed.
 
-A leader process's health endpoint or elected status is not the same as the cluster having quorum and serving correct reads.
+A leader process's health endpoint or elected status is not the same as the cluster having
+quorum and serving correct reads.
 
 **Failure and recovery.** Elections can fail to reach quorum, split votes, or elect a
-leader whose log is behind. Randomized timeouts and pre-vote reduce disruption; log
-reconciliation, stable storage and membership rules preserve committed entries. A leader
+leader whose log is behind. Randomized timeouts reduce split votes; log reconciliation,
+stable storage and membership rules preserve committed entries. A leader
 that cannot confirm quorum must stop serving authoritative writes and linearizable reads.
 Client retries still need stable effect identity because an election does not resolve an
 unknown outcome. [Raft](https://raft.github.io/) documents the election and log rules.
@@ -70,7 +71,12 @@ unknown outcome. [Raft](https://raft.github.io/) documents the election and log 
 **Alternative.** Leaderless quorum coordination, static primary assignment or single-writer
 partitioning may be simpler when elections add latency without a real failover
 requirement. Reverse the choice when election latency and split-brain risk exceed the
-coordination benefit. [Tycho causality/consensus](../c01-time-causality-and-ordering/causality-ordering-and-consensus.md) explains order/time relationships; [transaction/idempotency](../../../distributed/transactional-outbox-and-idempotency.md) explains state effects across service boundaries.
+coordination benefit. [Tycho causality/consensus][causality] explains order/time
+relationships; [transaction/idempotency][transaction-id] explains state effects across
+service boundaries.
+
+[causality]: ../c01-time-causality-and-ordering/causality-ordering-and-consensus.md
+[transaction-id]: ../../../distributed/transactional-outbox-and-idempotency.md
 
 <!-- /tycho-question-source -->
 

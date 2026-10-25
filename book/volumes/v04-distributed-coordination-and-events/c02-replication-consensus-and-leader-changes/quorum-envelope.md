@@ -163,14 +163,14 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Quorum-Based Reads-Writes
 
-A write is acknowledged by W voters and a read consults R voters; when R + W > N and membership is
-correctly configured, the sets intersect on the latest committed value. The arithmetic is a
-correctness rule, not a performance slogan.
+A write is acknowledged by W voters and a read consults R voters. When R + W > N, the sets
+intersect, but intersection alone does not identify the newest value: the reader must select the
+highest version and repair stale replicas. The arithmetic is a consistency rule, not a
+performance slogan.
 
-Quorums must intersect and every membership change must preserve that intersection; a minority
-partition cannot commit authoritatively. A read with too small R can return stale data, and an unsafe
-membership edit can remove progress. Document N, R, W and the membership-change procedure, and test a
-partition on both sides of the quorum boundary.
+Membership changes must preserve the intersection; a minority cannot commit authoritatively. A
+small R returns stale data, and an unsafe membership edit removes progress. Record N, R, W, the
+version selector and the membership-change procedure, and test a partition on both sides.
 
 A leader-based protocol can simplify reads and writes but still needs a quorum for election and
 commit. Quorum reads/writes are a fit when the operation can tolerate the chosen R/W latency and the
@@ -178,15 +178,15 @@ membership service is trustworthy.
 
 ### Quorum Coordination
 
-In a simplified majority-voting cluster of N eligible voters, a quorum is floor(N/2)+1. This
-arithmetic assumes the quorum protocol and membership-change rules are correct. The number is not a
-substitute for the protocol's term, vote and log rules.
+A quorum is floor(N/2)+1 only when the replica set and membership rules are correct. A
+reachable voter without the current log may be unable to form a safe quorum, so track term, vote
+and log state rather than process count alone.
 
-A **3-voter** cluster requires 2 votes, and can normally make progress with one unavailable voter if
-remaining voters can communicate and have necessary log state. The exception matters: a voter that
-is reachable but has not caught up may not be able to form a safe quorum. Track membership and log
-state, not only process count.
+A minority must refuse conflicting authority, and a membership change needs joint or overlapping
+safeguards so the old and new sets still intersect. Test asymmetric partitions and a membership
+change while the cluster is serving.
 
 A leader-based protocol can simplify reads and writes but still needs a quorum for election and
-commit. Quorum coordination is a fit when the cluster can keep a stable majority and the operator can
-test asymmetric partitions and membership changes.
+commit. Quorum coordination is a fit when the cluster can keep a stable majority and the
+operator can test asymmetric partitions and membership changes. The same rule applies to every
+authoritative decision, not only to writes.

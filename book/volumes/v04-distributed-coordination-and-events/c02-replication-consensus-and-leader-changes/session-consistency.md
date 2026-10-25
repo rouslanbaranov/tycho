@@ -160,7 +160,8 @@ receive when no replica can satisfy it. The routing layer owns the wait, reroute
 policy.
 
 An epoch or lineage field stops a token from crossing a leadership change as though positions
-remained comparable. External indexes and caches need their own watermark before claiming the
+remained comparable. A multiwriter frontier can expose two writes with no total order; the reader
+must reject a frontier it cannot order rather than serving one arbitrarily. External indexes and caches need their own watermark before claiming the
 same session view.
 
 Record the chosen scope and why a weaker guarantee is acceptable. Narrow any route that cannot
