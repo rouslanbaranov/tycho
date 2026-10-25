@@ -159,9 +159,10 @@ common; jitter the delay, cap attempts and total delay, and stop on server pushb
 **Technical owner.** [Retry with Exponential Backoff](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-exponential-backoff) — deadlines/retries are bounded, not a complete timeout policy.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-retry.2026-10-21: sections "Retry", "Backoff", "Jitter". The
-read record notes a 100,000-character truncation; later sections are unverified. The source is a
-public pattern/documentation unit, not a benchmark.
+read record read.batch4-r4j-retry.2026-10-21: only the "Retry" section is verified; the
+record's "Backoff"/"Jitter" section list is unverified against the current public page. The read
+record notes a 100,000-character truncation; later sections are unverified. The source is a public
+pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -193,9 +194,10 @@ retry budget.
 **Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-jitter) — deadlines/retries are bounded, not a complete timeout policy.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-retry.2026-10-21: sections "Retry", "Backoff", "Jitter". The
-read record notes a 100,000-character truncation; later sections are unverified. The source is a
-public pattern/documentation unit, not a benchmark.
+read record read.batch4-r4j-retry.2026-10-21: only the "Retry" section is verified; the
+record's "Backoff"/"Jitter" section list is unverified against the current public page. The read
+record notes a 100,000-character truncation; later sections are unverified. The source is a public
+pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
