@@ -145,8 +145,10 @@ only forwards calls, a cyclic import, or shared mutable data crossing the bounda
 the layer is not a real change boundary. Detect these in the build and fail the change.
 
 Limits: layers are not deployment units, and a domain model already spread across layers is not
-rescued by renaming folders. Choose hexagonal ports or a clear modular monolith when explicit substitution
-or module ownership adds more value than layer count.
+rescued by renaming folders. Transaction boundaries that span layers and anemic domain models are
+the failure modes; keep transactions in the application layer and put behavior with the data.
+Choose hexagonal ports or a clear modular monolith when explicit substitution or module ownership
+adds more value than layer count.
 
 ### Hexagonal Architecture and Ports and Adapters
 

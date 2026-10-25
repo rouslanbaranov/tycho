@@ -357,8 +357,9 @@ failure isolation matters; duplication and eventual consistency are acceptable; 
 service can own its queries and migrations.
 
 **Hard contraindications.** Reject the claim when strong cross-service transactions are
-unavoidable, when reporting requires one shared schema, when one team owns all services,
-or when "database per service" is implemented as one server with shared tables.
+unavoidable, when reporting requires one shared schema, when one team owns all services
+with a shared release cadence and a shared database is cheaper, or when "database per
+service" is implemented as one server with shared tables.
 
 **Competing alternative.** Shared database with a modular monolith, or a deliberately
 governed shared read model. Reverse the choice when cross-service consistency and
