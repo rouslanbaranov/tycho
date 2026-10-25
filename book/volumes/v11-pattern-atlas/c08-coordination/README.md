@@ -364,8 +364,9 @@ keep activities idempotent and use a repair state for unknown external effects.
 
 **Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-temporal-workflows.2026-10-21: sections "Workflows", "Workflow
-Execution", "Determinism". The source is a public pattern/documentation
-unit, not a benchmark.
+Execution", "Determinism". The record supports durable orchestration only; saga
+compensation semantics are synthetic guidance, not a source claim. The source is a public
+pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

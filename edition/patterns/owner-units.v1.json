@@ -2942,31 +2942,31 @@
         "line": 226,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "coordinator persists",
-          "versioned workflow state",
-          "Coordinator loss",
-          "One service and one database"
+          "orchestrator",
+          "state machine",
+          "compensation",
+          "coordinator"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A coordinator persists the workflow state machine and issues commands to participants, waiting for replies and timers.",
+          "quote": "An orchestrator persists a state machine and sends commands to participants.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "invariant": {
           "state": "supported",
-          "quote": "its actual guarantees depend on versioned workflow state persistence, activity semantics, timer reliability and recovery configuration.",
+          "quote": "Its guarantees are only as strong as versioned state persistence, activity semantics, timer reliability and recovery configuration.",
           "reason": ""
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Coordinator loss, stuck histories, duplicate activities and incompatible workflow upgrades are common.",
+          "quote": "Coordinator loss, stuck histories and duplicate activities are operational hazards.",
           "reason": "States the mechanism, invariant, failure or alternative."
         },
         "alternative": {
           "state": "supported",
-          "quote": "One service and one database transaction are often simpler than a saga. Move to orchestration only when a business operation genuinely spans multiple independently owned effects with different failure and recovery boundaries.",
+          "quote": "One service and one database transaction are often simpler than a saga.",
           "reason": ""
         }
       },
@@ -2999,7 +2999,7 @@
         "heading": "Compensating Transaction",
         "anchor": "compensating-transaction",
         "level": 3,
-        "line": 244,
+        "line": 242,
         "unit_kind": "dedicated",
         "unit_terms": [
           "new business action",
@@ -3182,10 +3182,10 @@
         "line": 103,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "An idempotency key belongs",
-          "Callers choose a value",
-          "The owner also names",
-          "The outcome record and"
+          "idempotency key",
+          "fingerprint",
+          "retention",
+          "uniqueness rule"
         ]
       },
       "technical_evidence": {
@@ -3206,14 +3206,14 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "The outcome record and business effect must commit together; a later separate write leaves a window for duplicate execution.",
+          "quote": "Some effects can rely on a uniqueness rule, a compare-and-set or one writer instead of a key store.",
           "reason": "Bounded owner statement from the current section."
         }
       },
       "decision_evidence": {
         "atlas_section": "idempotency-key",
         "question": "Should a client-supplied key let the server recognize retries of one logical request?",
-        "competing_alternative": "Natural idempotency or server-generated operation identity. Reverse the choice when key storage and fingerprinting cost exceed retry risk.",
+        "competing_alternative": "Natural idempotency, a uniqueness rule or one writer. Reverse the choice when key storage and fingerprinting cost exceed retry risk.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -3440,7 +3440,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A saga with compensating actions avoids prepared locks at the cost of visible intermediate states and non-atomic business outcomes; prefer 2PC when participants can hold locks and atomic durability is required.",
+          "quote": "A saga with compensating actions avoids prepared locks at the cost of visible intermediate states and non-atomic business outcomes; prefer 2PC when participants can hold locks and atomic durability is required. A single local transaction is preferable when every resource shares one database.",
           "reason": ""
         }
       },
@@ -6439,26 +6439,26 @@
         "line": 145,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "persistent state machine",
-          "Recovery needs replay",
-          "Do not infer success",
-          "Saga choreography"
+          "state machine",
+          "durable history",
+          "repair state",
+          "replay"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A durable workflow is a persistent state machine: steps, timers, retries, versions, compensation and human tasks survive process loss.",
+          "quote": "A durable workflow records progress as a state machine, not as an in-memory coroutine.",
           "reason": "Defines the durable state machine and replay model."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Recovery needs replay from durable history, idempotent activities, explicit retry/cancel/compensation, and a repair state for unknown external effects.",
+          "quote": "Recovery replays durable history, so activities need stable identities and explicit retry, cancel and compensation outcomes.",
           "reason": "States the recovery invariants."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Do not infer success from a completed workflow flag when an external effect is uncertain.",
+          "quote": "Keep a repair state for an unknown external effect; a completed flag is not proof that the effect committed.",
           "reason": "Names the unknown-effect failure and the repair boundary."
         },
         "alternative": {

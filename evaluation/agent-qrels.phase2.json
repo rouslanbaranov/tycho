@@ -487,13 +487,13 @@
         {
           "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Orchestration centralizes compensation ordering and visibility but adds a coordinator bottleneck and single point of failure; participants must remain able to compensate independently, and choreography is the alternative when autonomy dominates.",
+          "quote": "Central compensation ordering improves visibility but adds a bottleneck and a single point of failure; choreography is preferable when participant autonomy dominates.",
           "rationale": "Orchestration adds a coordinator bottleneck and single point of failure."
         },
         {
           "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Coordinator loss, stuck histories, duplicate activities and incompatible workflow upgrades are common. Recover from durable history, keep activities idempotent and hold or repair an ambiguous external effect rather than marking the workflow complete.",
+          "quote": "Coordinator loss, stuck histories and duplicate activities are operational hazards. Replay durable history, keep activities idempotent and hold an ambiguous external effect for repair rather than marking it complete.",
           "rationale": "Both styles need idempotent steps and recovery, not only a happy path."
         }
       ],
