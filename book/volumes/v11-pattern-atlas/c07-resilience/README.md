@@ -160,8 +160,8 @@ common; jitter the delay, cap attempts and total delay, and stop on server pushb
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-retry.2026-10-21: sections "Retry", "Backoff", "Jitter". The
-source is a public pattern/documentation
-unit, not a benchmark.
+read record notes a 100,000-character truncation; later sections are unverified. The source is a
+public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -194,8 +194,8 @@ retry budget.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-retry.2026-10-21: sections "Retry", "Backoff", "Jitter". The
-source is a public pattern/documentation
-unit, not a benchmark.
+read record notes a 100,000-character truncation; later sections are unverified. The source is a
+public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

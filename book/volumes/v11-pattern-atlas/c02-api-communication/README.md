@@ -247,7 +247,7 @@ benefit.
 logic are common. Recovery requires versioned composition and contract tests; verify the
 API contract boundary in the owner section.
 
-**Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#backend-for-frontend-bff) — API contract ownership; BFF tailoring is not a dedicated section.
+**Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#backend-for-frontend-bff) — BFF tailoring has a dedicated owner section; it is bounded, not a complete API contract guide.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)

@@ -177,6 +177,7 @@ idempotent; jitter cannot make a non-idempotent effect safe.
 Grow the delay after each failure, cap it and add jitter so clients do not synchronize. State the
 attempt count, base, multiplier and aggregate budget across calls; the curve alone is not a policy.
 The cap and the caller's remaining deadline bound the useful window, not a fixed attempt count.
+For attempt n, use min(cap, base * multiplier^(n-1)) with jitter inside the resulting delay.
 
 Retry only a documented retryable failure class, with a bounded total deadline and bounded
 attempt/backoff budget; observe server pushback/backpressure. If a large fraction of instances is
