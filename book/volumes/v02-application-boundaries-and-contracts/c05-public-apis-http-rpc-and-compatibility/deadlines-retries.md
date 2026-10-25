@@ -180,11 +180,10 @@ The cap and the caller's remaining deadline bound the useful window, not a fixed
 For retry n (n=1 is the first retry), sleep a jittered value in
 [0, min(cap, remaining_deadline, base * multiplier^(n-1))].
 
-Retry only a documented retryable failure class, with a bounded total deadline and bounded
-attempt/backoff budget; observe server pushback/backpressure. If a large fraction of instances is
-overloaded, another attempt is likely to meet the same condition. Return an explicit overload
-result and let the caller decide. Do not retry when the failure is permanent, the operation has no
-effect identity, or the remaining deadline cannot fit the attempt; fail fast or queue.
+Reserve the policy for a documented transient class. Keep the total deadline, attempt budget and
+server pushback in view; when many instances are overloaded, a retry is likely to hit the same
+condition. Return an explicit overload result instead. Do not retry a permanent failure, an
+operation without effect identity, or one whose remaining time cannot fit the attempt.
 
 The policy needs an owner and a visible attempt metric; an exponential curve without a deadline
 check can spend the caller's budget after the result stopped being useful.

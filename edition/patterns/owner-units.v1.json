@@ -5137,17 +5137,17 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Retry only a documented retryable failure class, with a bounded total deadline and bounded attempt/backoff budget; observe server pushback/backpressure.",
+          "quote": "Reserve the policy for a documented transient class.",
           "reason": "States retry preconditions and bounded budgets that must hold."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "If a large fraction of instances is overloaded, another attempt is likely to meet the same condition. Return an explicit overload result and let the caller decide.",
+          "quote": "Do not retry a permanent failure, an operation without effect identity, or one whose remaining time cannot fit the attempt.",
           "reason": "Describes broad-overload detection and containment by returning an explicit result instead of retrying."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Do not retry when the failure is permanent, the operation has no effect identity, or the remaining deadline cannot fit the attempt; fail fast or queue.",
+          "quote": "Return an explicit overload result instead.",
           "reason": "States the mechanism, invariant, failure or alternative."
         }
       },
@@ -5168,7 +5168,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Owner unit defines attempt count, base, multiplier, cap, jitter and remaining deadline; no separate exponential-growth formula is stated."
+      "notes": "Owner unit defines attempt count, base, multiplier, cap, jitter, remaining deadline and the formula min(cap, remaining_deadline, base * multiplier^(n-1)); no page-prose duplication remains."
     },
     {
       "pattern_id": "tycho.pattern.retry-with-jitter",
@@ -5237,7 +5237,7 @@
         "heading": "Timeout",
         "anchor": "timeout",
         "level": 3,
-        "line": 192,
+        "line": 191,
         "unit_kind": "dedicated",
         "unit_terms": [
           "local wait bound",
@@ -5297,7 +5297,7 @@
         "heading": "Deadline Propagation",
         "anchor": "deadline-propagation",
         "level": 3,
-        "line": 206,
+        "line": 205,
         "unit_kind": "dedicated",
         "unit_terms": [
           "relative duration",
