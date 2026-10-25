@@ -57,7 +57,8 @@ INSTRUCTIONS = (
     "Tycho is a snapshot-bound, read-only System Design book collection. "
     "Use tycho_search or tycho_context to assemble cited sections, "
     "tycho_outline to plan a topic, tycho_compare for cited option "
-    "matrices without a winner, then tycho_read or tycho_page for bounded "
+    "matrices without a winner, tycho_batch for bounded multi-section reads, "
+    "then tycho_read or tycho_page for bounded "
     "reads, tycho_patterns or "
     "tycho_pattern for the draft pattern registry, and tycho_evidence to "
     "resolve registered evidence. The context bundle is extractive and does "
@@ -304,6 +305,53 @@ def search_schema():
                 "description": "Optional snapshot pin for consistency.",
             },
         },
+    }
+
+
+def batch_schema():
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "section_keys": {
+                "type": "array",
+                "maxItems": 8,
+                "items": {"type": "string", "minLength": 1, "maxLength": 500},
+            },
+            "document_ids": {
+                "type": "array",
+                "maxItems": 8,
+                "items": {"type": "string", "minLength": 1, "maxLength": 500},
+            },
+            "claim_ids": {
+                "type": "array",
+                "maxItems": 8,
+                "items": {"type": "string", "minLength": 1, "maxLength": 500},
+            },
+            "source_ids": {
+                "type": "array",
+                "maxItems": 8,
+                "items": {"type": "string", "minLength": 1, "maxLength": 500},
+            },
+            "budget_chars": {
+                "type": "integer",
+                "minimum": 100,
+                "maximum": 2000,
+                "default": 800,
+            },
+            "max_chars": {
+                "type": "integer",
+                "minimum": 2048,
+                "maximum": 20000,
+                "default": 8000,
+            },
+        },
+        "anyOf": [
+            {"required": ["section_keys"]},
+            {"required": ["document_ids"]},
+            {"required": ["claim_ids"]},
+            {"required": ["source_ids"]},
+        ],
     }
 
 
@@ -665,6 +713,24 @@ TOOL_SPECS = {
             "openWorldHint": False,
         },
     },
+    "tycho_batch": {
+        "name": "tycho_batch",
+        "title": "Read and resolve bounded batches",
+        "description": (
+            "Read up to eight sections and/or resolve up to eight registered "
+            "evidence IDs in one call. Per-item failures are isolated; no "
+            "unbounded fetching is performed."
+        ),
+        "inputSchema": batch_schema(),
+        "handler": "_tool_batch",
+        "annotations": {
+            "title": "Read and resolve bounded batches",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+    },
     "tycho_outline": {
         "name": "tycho_outline",
         "title": "Outline a topic before reading",
@@ -815,6 +881,7 @@ TOOL_SPECS = {
 TOOL_ORDER = (
     "tycho_describe",
     "tycho_search",
+    "tycho_batch",
     "tycho_outline",
     "tycho_compare",
     "tycho_context",
@@ -1251,6 +1318,122 @@ class TychoMcpServer:
         payload["tool"] = "tycho_search"
         self.log_query(payload, args, query, limit)
         return payload
+
+    def _tool_batch(self, args):
+        reject_unknown(args, {
+            "section_keys", "document_ids", "claim_ids", "source_ids",
+            "budget_chars", "max_chars",
+        })
+        groups = {}
+        for name in ("section_keys", "document_ids", "claim_ids", "source_ids"):
+            value = args.get(name, [])
+            if not isinstance(value, list):
+                raise ProtocolFailure(-32602, name + " must be an array")
+            if len(value) > 8:
+                raise ProtocolFailure(-32602, name + " exceeds 8 items")
+            if any(not isinstance(item, str) or not item.strip()
+                   or len(item) > 500 for item in value):
+                raise ProtocolFailure(
+                    -32602, name + " must contain non-empty strings")
+            groups[name] = value
+        total = sum(len(value) for value in groups.values())
+        if total == 0:
+            raise ProtocolFailure(-32602, "At least one batch item is required")
+        if total > 8:
+            raise ProtocolFailure(-32602, "The combined batch exceeds 8 items")
+        budget = arg_int(args, "budget_chars", 800, 100, 2000)
+        max_chars = arg_int(args, "max_chars", 8000, 2048, 20000)
+        items = []
+        errors = 0
+        for section_key in groups["section_keys"]:
+            try:
+                payload = section_search.read(
+                    self.root,
+                    section_key,
+                    offset=0,
+                    budget_chars=budget,
+                    index_path=self.index_path,
+                )
+                items.append({
+                    "kind": "section",
+                    "status": payload.get("status"),
+                    "section_key": section_key,
+                    "result": payload,
+                })
+            except section_search.SearchError as exc:
+                errors += 1
+                items.append({
+                    "kind": "section",
+                    "status": getattr(exc, "status", "invalid-request"),
+                    "section_key": section_key,
+                    "error": str(exc),
+                })
+            except (OSError, sqlite3.Error, ValueError):
+                errors += 1
+                items.append({
+                    "kind": "section",
+                    "status": "not-available",
+                    "section_key": section_key,
+                    "error": "Read unavailable",
+                })
+        for name, kind in (
+                ("document_ids", "document"),
+                ("claim_ids", "claim"),
+                ("source_ids", "source")):
+            for identity in groups[name]:
+                try:
+                    payload = section_search.evidence(
+                        self.root,
+                        **{name[:-1]: identity},
+                        index_path=self.index_path,
+                    )
+                    items.append({
+                        "kind": kind,
+                        "status": payload.get("status"),
+                        "id": identity,
+                        "result": payload,
+                    })
+                except section_search.SearchError as exc:
+                    errors += 1
+                    items.append({
+                        "kind": kind,
+                        "status": getattr(exc, "status", "invalid-request"),
+                        "id": identity,
+                        "error": str(exc),
+                    })
+                except (OSError, sqlite3.Error, ValueError, RuntimeError):
+                    errors += 1
+                    items.append({
+                        "kind": kind,
+                        "status": "not-available",
+                        "id": identity,
+                        "error": "Evidence unavailable",
+                    })
+        response = {
+            "status": "partial" if errors else "ok",
+            "items": items,
+            "returned": len(items),
+            "errors": errors,
+            "budget_chars": budget,
+            "max_chars": max_chars,
+            "returned_chars": 0,
+            "truncated": False,
+            "notice": (
+                "Bounded batch output; failed items are isolated. Evidence "
+                "metadata is not source text and is not a final answer."),
+            "content_trust": CONTENT_TRUST,
+            "tool": "tycho_batch",
+        }
+        def encoded_size():
+            return len(json.dumps(
+                response, ensure_ascii=False,
+                separators=(",", ":")).encode("utf-8"))
+        while encoded_size() > max_chars and response["items"]:
+            response["items"].pop()
+            response["returned"] = len(response["items"])
+            response["truncated"] = True
+        response["returned_chars"] = encoded_size()
+        return response
 
     def _tool_outline(self, args):
         reject_unknown(args, {
@@ -2084,6 +2267,7 @@ class TychoMcpServer:
             },
             "operations": {
                 "search": "lexical BM25 over indexed sections",
+                "batch": "bounded multi-read and evidence resolution",
                 "outline": "canonical planning outline without full text",
                 "compare": "extractive cited option matrix without a winner",
                 "context": "bounded extractive analysis bundle",
