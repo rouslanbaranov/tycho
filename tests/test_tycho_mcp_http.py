@@ -18,6 +18,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import mcp_http_server  # noqa: E402
+import mcp_server  # noqa: E402
+import route_index  # noqa: E402
 import section_fts_index  # noqa: E402
 
 META = {
@@ -98,6 +100,11 @@ class HttpMcpTests(unittest.TestCase):
         )
         cls.snapshot = section_fts_index.publish(
             cls.root, full=True)["snapshot"]
+        route_payload = route_index.canonical_scan(cls.root)
+        (cls.root / "generated" / "route-index.v1.json").write_text(
+            json.dumps(route_payload, sort_keys=True),
+            encoding="utf-8",
+        )
         cls.application = mcp_http_server.TychoHttpApplication(
             cls.root, token=TOKEN)
         cls.httpd = mcp_http_server.build_server(
@@ -264,6 +271,71 @@ class HttpMcpTests(unittest.TestCase):
         self.assertEqual(payload["error"]["code"], -32601)
         status, _ = self.request("GET", "/missing")
         self.assertEqual(status, 404)
+
+    def test_contract_version_and_tool_list(self):
+        status, health = self.request("GET", "/health", auth=False)
+        self.assertEqual(status, 200)
+        self.assertEqual(health["version"], mcp_http_server.SERVICE_VERSION)
+        status, listed = self.mcp(
+            20, "tools/list", {"_meta": META},
+            {"Mcp-Method": "tools/list"})
+        self.assertEqual(status, 200)
+        names = [tool["name"] for tool in listed["result"]["tools"]]
+        self.assertEqual(names, list(mcp_server.TOOL_ORDER))
+        for tool in listed["result"]["tools"]:
+            self.assertFalse(tool["inputSchema"]["additionalProperties"])
+            self.assertTrue(tool["annotations"]["readOnlyHint"])
+
+    def test_context_compare_outline_and_batch_over_http(self):
+        status, context = self.mcp(21, "tools/call", {
+            "_meta": META,
+            "name": "tycho_context",
+            "arguments": {"question": "retry budget", "max_chars": 4000},
+        }, {"Mcp-Method": "tools/call", "Mcp-Name": "tycho_context"})
+        self.assertEqual(status, 200)
+        self.assertEqual(
+            context["result"]["structuredContent"]["tool"], "tycho_context")
+
+        status, compare = self.mcp(22, "tools/call", {
+            "_meta": META,
+            "name": "tycho_compare",
+            "arguments": {"options": ["retry", "cache"]},
+        }, {"Mcp-Method": "tools/call", "Mcp-Name": "tycho_compare"})
+        self.assertEqual(status, 200)
+        self.assertNotIn(
+            "winner", compare["result"]["structuredContent"])
+
+        status, outline = self.mcp(23, "tools/call", {
+            "_meta": META,
+            "name": "tycho_outline",
+            "arguments": {"topic": "synthetic", "limit": 2},
+        }, {"Mcp-Method": "tools/call", "Mcp-Name": "tycho_outline"})
+        self.assertEqual(status, 200)
+        self.assertIn(
+            "entries", outline["result"]["structuredContent"])
+
+        status, search = self.request("GET", "/search?q=zebra&abstain=false")
+        key = search["results"][0]["section_key"]
+        status, batch = self.mcp(24, "tools/call", {
+            "_meta": META,
+            "name": "tycho_batch",
+            "arguments": {"section_keys": [key]},
+        }, {"Mcp-Method": "tools/call", "Mcp-Name": "tycho_batch"})
+        self.assertEqual(status, 200)
+        self.assertEqual(
+            batch["result"]["structuredContent"]["returned"], 1)
+
+    def test_search_detail_ids_and_validation(self):
+        status, payload = self.request(
+            "GET", "/search?q=zebra&detail=ids&max_chars=2048")
+        self.assertEqual(status, 200)
+        self.assertLessEqual(payload["returned_chars"], 2048)
+        if payload["results"]:
+            self.assertNotIn("excerpt", payload["results"][0])
+        status, _ = self.request("GET", "/search?q=zebra&detail=full")
+        self.assertEqual(status, 400)
+        status, _ = self.request("GET", "/search?q=zebra&max_chars=100")
+        self.assertEqual(status, 400)
 
 
 if __name__ == "__main__":
