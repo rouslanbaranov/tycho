@@ -48,8 +48,8 @@ are not met. The unresolved items are stated with exact counts below.
 - **No registered source remains landing-only.** Every source has a record; 15
   are blocked and 5 are partial. RFC 9110 HTTP Semantics is read with labelled
   supplements.
-- **7 of 406 canonical pages have no page-level comparison.** Their matrix
-  status is an explicit gap, not an inferred pass.
+- **0 of 406 canonical pages lack a review status.** Seven pages carry a
+  source-blocked limitation accepted by the owner; they are not verified pages.
 - **14 blocked records remain (13 baseline pages)** and 13 sources are excluded; no summary is inferred
   from a challenge page.
 - **No independent review.** The Reviewer-preset child returned no report
@@ -63,7 +63,7 @@ The #225 acceptance criteria require every accessible scoped source to be read
 completely, all 406 pages to have an applicability/review status beyond an
 explicit gap, material explanations to have source comparisons, and the research
 artifacts to be independently reviewed. The audit currently has 14 blocked
-records, 7 unassessed pages and no independent review. Reading a book
+records, 7 owner-accepted source limitations and no independent human review. Reading a book
 and accounting for the 45 baseline fetch-incomplete sources does not satisfy
 those criteria.
 
@@ -75,7 +75,7 @@ overstate coverage. The branch remains a research checkpoint.
 1. No landing-only sources remain; resolve blocked and partial records where
    lawful access exists.
 2. Extend page-level comparisons to the pages with material claims; the current
-   ratio is 302 assessed to 7 gaps.
+   ratio is 302 assessed to 0 gaps, plus 7 accepted source limitations.
 3. Complete the external-link inventory and map every citation to a source ID or
    an explicit unresolved gap.
 4. Run an independent Reviewer batch on a bounded delta and verify its report.
@@ -86,4 +86,4 @@ overstate coverage. The branch remains a research checkpoint.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, claim that a first-party
 article is a benchmark, or claim that Tycho is correct. The 14 blocked records
-and 7 unassessed pages are the dominant remaining uncertainty.
+and 7 owner-accepted source limitations are the dominant remaining uncertainty.

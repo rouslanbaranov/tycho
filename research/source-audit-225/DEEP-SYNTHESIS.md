@@ -183,8 +183,8 @@ verification, restatement or removal, not optional additions.
 
 - **No registered source remains at landing-only inspection.** Every source has
   a reading record; 14 are blocked and 5 are partial.
-- **7 of 406 canonical pages** have no page-level comparison. Their matrix
-  status is an explicit gap, not an inferred pass.
+- **0 of 406 canonical pages** lack a review status. Seven pages carry a
+  source-blocked limitation accepted by the owner; they are not verified pages.
 - Linked publications, xv6 source, simulator code and exercises were not read or
   executed. Embedded raster figures were not visually inspected.
 - The full external-link inventory beyond the register has not been reconciled
@@ -202,9 +202,9 @@ verification, restatement or removal, not optional additions.
 - [ ] Every accessible scoped source read completely: no landing-only source
   remains, and 14 blocked records (13 baseline pages) are present.
 - [ ] All 406 pages have an applicability/review status beyond an explicit gap:
-  302 assessed, 7 gaps.
+  302 assessed, 0 gaps.
 - [ ] Material explanations have source comparisons across every technical page:
-  413 comparisons exist; 302 of 406 pages have comparisons; 7 blocked-source gaps remain.
+  413 comparisons exist; 302 of 406 pages have comparisons; 7 pages are owner-accepted source limitations.
 - [ ] Complete external-link inventory and finite units for every citation.
 - [x] Findings carry exact book anchors and source records for the 413 assessed
   comparisons; confidence and no-edit actions are recorded.
@@ -215,7 +215,7 @@ verification, restatement or removal, not optional additions.
 ## 7. Priorities for the next batch
 
 1. No landing-only sources remain; focus on blocked and partial records and on
-   the 7 unassessed pages.
+   the 7 owner-accepted pages.
 2. Extend page-level comparisons from the current 302 pages to the remaining blocked cases, starting with the pages with the strongest
    material claims: crash consistency, replication, overload, migration gates,
    modularity and security boundaries.
@@ -231,5 +231,5 @@ verification, restatement or removal, not optional additions.
 This synthesis is based on public sources read through the recorded
 representations. It does not reproduce source text, does not claim that a
 first-party article is a benchmark, and does not claim that Tycho is complete or
-correct. The 14 blocked records and 7 unassessed pages are the dominant
+correct. The 14 blocked records and 7 owner-accepted source limitations are the dominant
 remaining uncertainty.

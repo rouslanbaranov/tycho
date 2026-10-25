@@ -37,9 +37,8 @@ authorize edits to the book under #225.
   the claim; the page remains comparison-assessed only for the evidence that was
   available.
 
-## Remaining page gaps
+## Owner-accepted source limitations
 
-Seven case pages remain not-yet-assessed. Each cites at least one blocked or
-non-public record and is access-limited. The Java-platform page was closed from full
-R045/R020; the Java 21 page has C413 from full R046, while its central pinning claim
-remains a high not-addressed item (C412) because R023 is blocked.
+Seven case pages are recorded as owner-accepted source limitations. Each cites at
+least one blocked or non-public record; they are not verified pages. The former
+Java-platform and Java 21 pinning gaps were closed by C404-C413.

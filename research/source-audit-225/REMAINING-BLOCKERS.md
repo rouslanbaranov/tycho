@@ -5,7 +5,7 @@ complete; it does not authorize book edits.
 
 ## Page coverage
 
-- 406 canonical documents: 302 comparison-assessed, 97 landing-reviewed, 7 not yet assessed.
+- 406 canonical documents: 302 comparison-assessed, 97 landing-reviewed, 7 owner-accepted source limitations.
 - All 7 are case pages and cite at least one blocked/non-public record; they are
   access-limited, not comparison-incomplete.
 - One assessed page additionally carries a provenance defect: it cites an excluded

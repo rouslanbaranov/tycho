@@ -45,7 +45,7 @@ The read-only census found 247 registered entries, 406 canonical documents and 7
 - [URL candidates](url-candidates.json) and [all occurrences with baseline lines](url-occurrences.json)
 - [Original tracked file hashes](baseline-files.json) and [census summary](census-summary.json)
 
-Queue statuses are baseline planning states. Join the separate actual reading ledgers to determine progress; running the census never resets evidence. `page-census.json` deliberately retains not-yet-assessed: reading a source is not a complete material-claim audit of any page. No completed claim-to-passage matrix or global synthesis is claimed yet.
+Queue statuses are baseline planning states. Join the separate actual reading ledgers to determine progress; running the census never resets evidence. `page-census.json` retains explicit source limitations: reading a source is not a complete material-claim audit of any page. No completed claim-to-passage matrix or global synthesis is claimed yet.
 
 ## Preliminary reference observations retained for follow-up
 

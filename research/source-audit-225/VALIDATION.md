@@ -278,7 +278,7 @@ a96c6b7 are outside that attempted review's stated HEAD.
 - DEEP-SYNTHESIS.md is an interim synthesis. It lists supported findings, the
   two candidate page actions, 29 not-addressed assessments (no high severity; C399 and C412
   closed by PR #388), one
-  contradiction, no landing-only source, 7 unassessed pages and the missing
+  contradiction, no landing-only source, 7 owner-accepted source limitations and the missing
   independent review. It does not claim #225 completion.
 - Boundary, whitespace, JSON, candidate-path and anchor checks passed. No book,
   source register, index or edition file changed.
