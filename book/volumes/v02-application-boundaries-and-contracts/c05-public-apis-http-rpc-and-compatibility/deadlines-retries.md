@@ -180,10 +180,11 @@ The cap and the caller's remaining deadline bound the useful window, not a fixed
 For retry n (n=1 is the first retry), sleep a jittered value in
 [0, min(cap, remaining_deadline, base * multiplier^(n-1))].
 
-Reserve the policy for a documented transient class. Keep the total deadline, attempt budget and
-server pushback in view; when many instances are overloaded, a retry is likely to hit the same
-condition. Return an explicit overload result instead. Do not retry a permanent failure, an
-operation without effect identity, or one whose remaining time cannot fit the attempt.
+Budget retries per dependency and caller class, not as one global counter: one failing dependency
+can otherwise starve unrelated calls. Emit attempt and terminal-outcome labels, and reset the
+budget only after a healthy window. When the budget is exhausted, return the overload result and
+let the caller choose fail-fast or queue; do not retry a permanent failure or an operation
+without effect identity.
 
 The policy needs an owner and a visible attempt metric; an exponential curve without a deadline
 check can spend the caller's budget after the result stopped being useful.
