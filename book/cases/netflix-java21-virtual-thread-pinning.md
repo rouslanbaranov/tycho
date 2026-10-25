@@ -32,7 +32,9 @@ evidence_scope:
   source_ids: []
   claim_ids: []
   status: "unknown"
-  notes: "JEP 444/491 are cited public specifications; no repository reading record is claimed. The publisher report is an unresolved citation, not evidence."
+  notes: >-
+    JEP 444/491 are cited specifications; no repository reading record is
+    claimed. The publisher report is an unresolved citation, not evidence.
 content_review:
   status: "draft"
   reviewed_at: null

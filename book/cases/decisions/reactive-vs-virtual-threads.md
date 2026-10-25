@@ -121,7 +121,9 @@ Categorize I/O waits vs CPU work *separately for outgoing gRPC worker pools, inb
 | [Java 21 pinning][pin] | Pinning blocks carriers | General JDK 21 risk | No incident counts |
 | [Cloudflare object copying, 2025](../cloudflare-super-slurper-queues.md) (src.m9-cf01) | Long remote-object transfer waits and centralized job coordination | Large-object-count queue migration sped up; small-object proof of concept regressed | Queues and worker orchestration reduce tiny request latency or provide exactly-once delivery |
 
-The underlying categories are **network wait**, **CPU cycles**, **monitor/carrier scheduling**, and **durable asynchronous batch work**. They have different latency, scaling and rollback goals. The examples come from different contexts and years and are not one A/B experiment.
+The underlying categories are **network wait**, **CPU cycles**, **monitor/carrier scheduling**,
+and **durable asynchronous batch work**. They have different latency, scaling and rollback
+goals. The examples come from different contexts and years and are not one A/B experiment.
 
 ## A capacity-and-correctness decision matrix
 
