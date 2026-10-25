@@ -57,9 +57,18 @@ content_verified_at: null
 
 These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision.
 
-**Case lens — [Netflix — Java platform convergence](../../../cases/netflix-java-platform-convergence.md)**. **Relevant mechanism or architectural contrast:** Separate GraphQL composition and Java platform modernization; staged compatibility changes coordination ownership. **Not established by this report/playbook:** The historical talk and later abstract do not establish a universal RxJava-versus-Spring performance ranking or identical fleet versions.
+**Case lens — [Netflix — Java platform convergence][platform].** **Relevant mechanism or
+architectural contrast:** Separate GraphQL
+composition and Java platform modernization; staged compatibility changes coordination
+ownership. **Not established by this report/playbook:** The historical talk and later abstract
+do not establish a universal RxJava-versus-Spring performance ranking or identical fleet
+versions.
 
-**Case lens — [Netflix — Java 21 virtual-thread pinning](../../../cases/netflix-java21-virtual-thread-pinning.md)**. **Relevant mechanism or architectural contrast:** JDK21 monitor-related carrier starvation makes tracing/instrumentation part of concurrency acceptance. **Not established by this report/playbook:** An observed JVM incident is not a general virtual-thread failure rate and must not be extrapolated unchanged to later JDKs.
+**Case lens — [Netflix — Java 21 virtual-thread pinning][pinning].** **Relevant mechanism or
+architectural contrast:** JDK 21 monitor pinning
+makes synchronization and tracing part of concurrency acceptance. **Not established by this
+report/playbook:** The JEP mechanism is not a failure rate and must not be extrapolated
+unchanged to later JDKs.
 
 **Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.
 <!-- /tycho-question-source -->
@@ -77,3 +86,6 @@ The detailed pages separate the mechanisms that make this decision conditional:
 - [Context, cancellation and framework integration](context-cancellation.md) — How do execution choices propagate context and handle effects after a caller stops waiting?
 
 [Chapter introduction, ordered pages and full source ledger](README.md). Original source labels retain their historical scope; this editorial decomposition does not turn proposed experiments into executed evidence.
+
+[platform]: ../../../cases/netflix-java-platform-convergence.md
+[pinning]: ../../../cases/netflix-java21-virtual-thread-pinning.md
