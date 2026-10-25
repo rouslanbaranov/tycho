@@ -1,8 +1,8 @@
 # Independent Reviewer batch — 2026-10-25
 
 > Evidence record. Not human review, owner acceptance, sufficient coverage, CI or
-> permission to merge. The parent applied only editorial card changes; review
-> records were not changed.
+> permission to merge. The parent applied editorial card changes and, after the
+> owner's decision, the three corresponding review records.
 
 ## Delegation
 
@@ -65,10 +65,17 @@ owner-unit files. Neither is a content defect; both remain cautions.
 - Reviewer wrote nothing to the repository; the only untracked path is the
   pre-existing `deliverables/`.
 
+## Owner decision and application
+
+- The owner authorized applying the Reviewer verdicts and merging the result on
+  2026-10-25.
+- Ambassador and API Composition records are now `pass` with 0 findings.
+- Structured Logging remains `pass-with-findings` with 1 finding (F7).
+
 ## Limits
 
 - F7 remains open; no source record or ledger pin was changed.
-- Review records still report 59 pass-with-findings and 199 findings. Applying
-  any Reviewer verdict to those records requires an explicit owner decision.
+- After application, records report 88 pass, 57 pass-with-findings and 197
+  findings. F7 remains open.
 - No human review, owner acceptance, sufficient coverage, CI or merge permission
   is claimed.
