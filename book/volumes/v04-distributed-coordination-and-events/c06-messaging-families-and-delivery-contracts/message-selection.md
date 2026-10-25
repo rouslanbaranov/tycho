@@ -298,9 +298,9 @@ and each current subscriber gets its own cursor; a subscriber absent during publ
 nothing unless the subscription is durable. Record whether it is ephemeral or durable before
 claiming a guarantee.
 
-A crash after the effect but before acknowledgement causes redelivery; acknowledging before the
-effect can lose work. Each consumer therefore needs an effect key, a deduplication rule and an
-acknowledgement policy. A subscription name is not a business identity.
+Redelivery follows an effect that committed before its acknowledgement; the opposite order loses
+work. Each consumer therefore needs an effect key, a deduplication rule and an acknowledgement
+policy. A subscription name is not a business identity.
 
 Fan-out cost grows with subscriber count; an unknown or unbounded population makes load and
 retention unownable. Cap registration or partition the topic. Use ephemeral pub/sub only when
@@ -309,16 +309,16 @@ consumer or queue.
 
 ### Point-to-Point Queue
 
-A queue delivers each message to one eligible consumer. The acknowledgement retires it after the
+One message has one eligible worker at a time; the acknowledgement retires it after the
 configured redelivery policy; a publisher confirmation does not prove the consumer committed its
 effect. A worker crash after the effect but before acknowledgement can cause redelivery, so
 nonrepeatable effects need consumer-side deduplication and stable effect identity.
 
 The queue contract must state its ordering scope and terminal path for poison messages. A worker
-pool needs a visible in-flight count and a redelivery limit, not only higher prefetch. Use direct
-request/response, fan-out or a shared log when one owner per task is enough or brokering adds no
-routing value. A queue fits when each task needs exactly one owner and the consumer can absorb
-redelivery. The queue owner records that choice.
+pool needs a visible in-flight count and a redelivery limit, not only higher prefetch.
+When one task has one natural owner, direct request/response, fan-out or a shared log may avoid
+brokered indirection. A queue fits when each task needs exactly one owner and the consumer can
+absorb redelivery. The queue owner records that choice.
 
 ### Event-Driven Consumer
 
@@ -358,14 +358,14 @@ subscription alone.
 
 ### Message Broker-Messaging Bridge
 
-A broker moves messages between producers and consumers; a bridge translates across brokers or
-protocols and adds a hop, retention policy and failure domain. The bridge contract must preserve
-identity, ordering and delivery semantics across translation.
+A bridge sits between broker contracts: it translates protocols or formats and therefore adds a
+hop, a retention policy and a failure domain. The bridge contract must preserve identity, ordering
+and delivery semantics across translation.
 
 A publisher confirmation is not a consumer commit. Crossing two brokers can duplicate or delay at
 either boundary. The bridge needs its own identity mapping, dead-letter path and delivery contract;
 a faithful contract on one side does not imply the same on the other.
 
-Use direct request/response, fan-out or a shared log when brokering adds no routing value. A bridge
-is justified when protocol or organizational boundaries cannot be removed and its extra failure
-domain is owned. The bridge owner records the translation contract.
+A bridge is justified only when a protocol or ownership boundary cannot be removed; otherwise
+direct calls, fan-out or a shared log are simpler. Its extra failure domain must have an owner.
+The bridge owner records the translation contract before release.
