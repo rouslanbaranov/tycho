@@ -180,8 +180,9 @@ simplify ordering, but it still needs a majority for election and commit.
 
 Compute the voting threshold from the configured replica set, not from the number of
 processes that happen to answer; section 2 derives floor(N/2)+1. A voter that is reachable but
-behind the current term cannot safely complete a quorum; inspect term, vote and log position
-before counting it.
+behind the current term cannot confirm the current term's entry; inspect term, vote and log
+position before counting the response. A lagging voter remains a voter; a lagging candidate cannot
+win.
 
 On a membership change, require joint or overlapping agreement so old and new configurations
 intersect. A minority must reject conflicting authority rather than serving a split view. Rehearse

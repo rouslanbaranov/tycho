@@ -66,7 +66,8 @@ leader whose log is behind. Randomized timeouts reduce split votes; log reconcil
 stable storage and membership rules preserve committed entries. A leader
 that cannot confirm quorum must stop serving authoritative writes and linearizable reads.
 Client retries still need stable effect identity because an election does not resolve an
-unknown outcome. [Raft](https://raft.github.io/) documents the election and log rules.
+unknown outcome. The Raft paper documents the election and log rules; the landing page recorded
+here does not.
 
 **Alternative.** Leaderless quorum coordination, static primary assignment or single-writer
 partitioning may be simpler when elections add latency without a real failover
