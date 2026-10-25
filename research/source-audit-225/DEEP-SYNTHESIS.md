@@ -214,7 +214,7 @@ verification, restatement or removal, not optional additions.
 
 1. No landing-only sources remain; focus on blocked and partial records and on
    the 7 unassessed pages.
-2. Extend page-level comparisons from 14 to the pages with the strongest
+2. Extend page-level comparisons from the current 302 pages to the remaining blocked cases, starting with the pages with the strongest
    material claims: crash consistency, replication, overload, migration gates,
    modularity and security boundaries.
 3. Complete the external-link census and map each citation to a source ID or an

@@ -7295,48 +7295,37 @@
       ],
       "notes": [
         {
-          "kind": "source_claim",
-          "text": "Defines 'happened before' (arrow) as the smallest relation closed under same-process order, message send-before-receipt and transitivity; events with neither a->b nor b->a are concurrent (lines 113-125)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "The Clock Condition (a->b implies C(a)<C(b), not the converse) follows from C1 (same-process monotonicity) and C2 (send precedes receipt), realised by IR1 (increment between events) and IR2 (timestamp messages; receiver advances past Tm) (lines 176-194)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Any clock system satisfying the Clock Condition yields a total order by comparing (Ci(a), process id) lexicographically; the order extends the partial order, is not unique, and different clocks give different total orders (lines 209-226)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Mutual exclusion is solved with timestamped request/acknowledgement/release messages and per-process request queues: a process may use the resource when its own request is ordered first in its queue and it has received a later-timestamped message from every other process; the algorithm has no central process or storage (lines 232-290)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "The total order supports replicated state machines: each process executes commands in timestamp order once it knows all commands with smaller timestamps; because every process must participate, failure of one process halts progress (lines 291-325)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Anomalous behavior occurs when the algorithm's order contradicts an order users perceive through channels outside the system (telephone example); remedies are to inject external precedence into timestamps or to use physical clocks meeting the Strong Clock Condition (lines 277-320)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Physical clocks must satisfy PC1 (rate error below kappa, kappa about 1e-6 for crystal clocks) and PC2 (mutual skew below epsilon), and are only ever reset forward; IR1'/IR2' reset to max(local clock, Tm + minimum delay) (lines 349-372, 423-427)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Theorem: for a strongly connected graph of diameter d where a message with unpredictable delay at most xi crosses every arc within tau seconds, PC2 holds with epsilon = d(2*kappa*tau + xi) for t > t0 + tau*d; the Appendix proves it via inequalities (1)-(12) (lines 411-431, 473-538)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Anomalous behavior is impossible if epsilon/(1-kappa) <= mu, where mu is a lower bound on interprocess transmission time (lines 428-433)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "The author argues failure is meaningful only relative to physical time, calls failure handling out of scope, and points to a separate method for tolerating process and link failure (lines 321-334)."
+          "kind": "source_claim"
         },
         {
-          "kind": "inference",
-          "text": "Read as architecture guidance, the paper establishes causal ordering and deterministic command sequencing only; it contains no leader election, quorum commitment or crash-recovery protocol, so treating it as a consensus algorithm would overstate the source (inference from lines 232-334)."
+          "kind": "inference"
         }
       ],
       "tycho_candidates": [
@@ -7530,52 +7519,40 @@
       ],
       "notes": [
         {
-          "kind": "source_claim",
-          "text": "Raft decomposes consensus into leader election, log replication, safety and membership change, and enforces a strong leader so log entries flow only from leader to followers (lines 57-71, 154-173)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Terms are consecutive integers that act as a logical clock: currentTerm increases monotonically, at most one leader exists per term, and any RPC carrying a higher term forces a server to adopt it and revert to follower (lines 286-325)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Leader election uses randomized timeouts from a fixed interval (for example 150-300 ms) to make split votes rare; a candidate needs a majority, and RequestVote carries lastLogIndex/lastLogTerm so voters reject candidates whose logs are less up to date (lines 189-253, 325-374, 484-503)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Log Matching (equal index and term imply identical prefixes) is enforced by the AppendEntries prevLogIndex/prevLogTerm consistency check with an induction argument; a leader repairs a follower by decrementing nextIndex and retrying (lines 376-446)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Only entries from the leader's current term are committed by counting replicas; committing one such entry commits all preceding entries indirectly, and a leader must not infer commitment of a previous-term entry from replica counts alone (Figure 8) (lines 399-417, 532-560)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Five properties are stated to hold at all times: Election Safety, Leader Append-Only, Log Matching, Leader Completeness and State Machine Safety (lines 259-273)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "The safety argument proves Leader Completeness by contradiction using a voter in the intersection of the electing majority and the committing majority, then derives State Machine Safety and identical application order (lines 561-580)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Timing requirement: broadcastTime much less than electionTimeout much less than MTBF; safety must not depend on timing, while availability inevitably does (lines 599-637)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Membership changes use joint consensus C_old,new requiring separate majorities of both configurations; new servers join first as non-voting members, and removed servers are neutralised by ignoring RequestVote within the minimum election timeout of hearing from a leader (lines 603-696)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Log compaction uses snapshots recording lastIncludedIndex, lastIncludedTerm and the latest configuration; InstallSnapshot streams chunks, and a follower receiving a prefix snapshot deletes covered entries but keeps later ones (lines 686-799, 699-736)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Client interaction: linearizable semantics are obtained with per-client serial numbers and cached responses to suppress duplicate execution; read-only requests require a committed no-op from the leader's term and a heartbeat majority check (lines 765-779, 800-818)."
+          "kind": "source_claim"
         },
         {
-          "kind": "inference",
-          "text": "The user study (43 participants, mean 25.7 vs 20.8 out of 60, 4.9-point difference, 33 of 41 self-reports favoring Raft) measures learnability of two lecture-and-quiz presentations prepared by the authors, not runtime behavior or independent adoption (inference from lines 810-892)."
+          "kind": "inference"
         }
       ],
       "tycho_candidates": [
@@ -7708,48 +7685,37 @@
       ],
       "notes": [
         {
-          "kind": "source_claim",
-          "text": "Safety requirements are stated as: only a proposed value may be chosen, only a single value is chosen, and a process learns a value only if it has actually been chosen; liveness is deliberately not specified precisely (lines 44-53)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Model is asynchronous and non-Byzantine: agents run at arbitrary speed, may stop and restart, messages may take arbitrarily long, be duplicated or lost, but are not corrupted (lines 59-70)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Majorities intersect, so a single value per acceptor would suffice in the absence of failure, but P1 (accept the first proposal) plus majority choice forces acceptors to accept multiple numbered proposals (lines 77-110)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Safety is reduced in steps from P2 to P2a to P2b to the invariant P2c, which a proposer maintains by learning the highest-numbered proposal accepted in some majority and by extracting a promise not to accept lower-numbered proposals (lines 111-166)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "The algorithm runs in two phases: prepare (promise plus highest accepted proposal) and accept (value fixed by the highest-numbered response, or free if none); acceptors keep the highest accepted proposal and highest promised prepare in stable storage across restarts (lines 167-244, 219-225, 323-326)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Learning options are acceptors replying to every learner (acceptors x learners messages), a distinguished learner (sum of acceptors and learners), or a set of distinguished learners trading reliability against message count (lines 257-287)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Progress requires a distinguished proposer; two proposers can keep raising proposal numbers and starve each other, and the FLP result implies leader election must use randomness or real time, while safety holds regardless of election success (lines 289-311)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "In the implementation each process plays all roles, one leader acts as distinguished proposer and learner, proposal numbers come from disjoint per-proposer sets, and acceptors record intended responses before sending them (lines 313-333)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "The state machine is a sequence of consensus instances where the i-th chosen value is the i-th command; a leader that gets alpha commands ahead can leave a gap of up to alpha-1, filled with no-op commands, and phase 1 over infinitely many instances costs one short message (lines 336-431)."
+          "kind": "source_claim"
         },
         {
-          "kind": "source_claim",
-          "text": "Reconfiguration is itself a state-machine decision: the set of servers implementing instance i+alpha is determined by the state after the i-th command, permitting arbitrary reconfiguration policies (lines 451-459)."
+          "kind": "source_claim"
         },
         {
-          "kind": "inference",
-          "text": "The text is a derivation and specification, not an evaluation: it reports no measurements, implementation or failure-injection results, so it cannot evidence performance or operational behavior (inference from the whole document, especially lines 374-438)."
+          "kind": "inference"
         }
       ],
       "tycho_candidates": [
@@ -8127,7 +8093,6 @@
       "coverage": "Read sequentially, all 851 extracted lines. Content: abstract; 1 Introduction; 2 Programming Model (2.1 Example, 2.2 Types, 2.3 More Examples); 3 Implementation (3.1 Execution Overview, 3.2 Master Data Structures, 3.3 Fault Tolerance incl. worker/master failure and semantics, 3.4 Locality, 3.5 Task Granularity, 3.6 Backup Tasks); 4 Refinements (4.1-4.9); 5 Performance (5.1-5.5); 6 Experience (6.1); 7 Related Work; 8 Conclusions; Acknowledgements; References; Appendix A. Excluded from claims: 13 running footers 'To appear in OSDI 2004' with page number 1-13, and column-formatting artifacts. Note: two-column extraction interleaves the columns, so sentences alternate between the printed left and right column; printed reading order was reconstructed from context, not from line order. Appendix A's C++ listing shares lines with the reference column and is fragmented by that interleaving. Figure captions 1-4 and Table 1 are present; figure interiors survive only as scattered axis tick labels, never as data series.",
       "retrieval_refs": {
         "manifest": "/tmp/B18/manifest.json#R137",
-        "text": "/tmp/B18/raw/src.mapreduce.txt",
         "line_span": "1-851",
         "verification": "sha256 and word count recomputed 2026-10-24; splitlines=851, newline-terminated lines=838, 13 form-feed page separators"
       },
@@ -8241,7 +8206,6 @@
       "coverage": "Read sequentially, all 1141 extracted lines. Content: abstract and index terms; 1 Introduction; 2 Related Works (2.1 Proximity graph techniques, 2.2 Navigable small world models); 3 Motivation; 4 Algorithm Description (Algorithms 1-5) with 4.1 Influence of the construction parameters; 4.2 Complexity analysis (4.2.1 Search, 4.2.2 Construction, 4.2.3 Memory); 5 Performance Evaluation (5.1 Comparison with baseline NSW, 5.2 Comparison in Euclid spaces, 5.3 Comparison in general spaces, 5.4 Comparison with product quantization based algorithms); 6 Discussion; 7 Acknowledgements; 8 References; author biographies. Excluded from claims: 7 'IEEE TRANSACTIONS ON JOURNAL NAME, MANUSCRIPT ID' headers, 6 'AUTHOR ET AL.: TITLE' headers and the page numbers carried with them, plus column-formatting artifacts. Two-column extraction interleaves the columns, so Algorithms 1-5, Tables 1-3 and the running text alternate between printed columns; figures 1-15 survive as captions and scattered axis tick labels only, so no plotted series was read or reconstructed.",
       "retrieval_refs": {
         "manifest": "/tmp/B18/manifest.json#R138",
-        "text": "/tmp/B18/raw/src.hnsw.txt",
         "line_span": "1-1141",
         "verification": "sha256 and word count recomputed 2026-10-24; splitlines=1141, newline-terminated lines=1128, 13 form-feed page separators"
       },
@@ -8963,52 +8927,40 @@
       ],
       "notes": [
         {
-          "kind": "source-claim",
-          "text": "The document header declares CloudEvents Version 1.0.3-wip. The specversion attribute must be the string '1.0' for this version, and patch-level changes are not reflected in specversion (lines 1, 335-351)."
+          "kind": "source-claim"
         },
         {
-          "kind": "source-claim",
-          "text": "REQUIRED context attributes are id, source, specversion and type. Producers MUST ensure source+id is unique per distinct event; a re-sent duplicate MAY keep the same id, and consumers MAY treat identical source+id as duplicates (lines 282-370)."
+          "kind": "source-claim"
         },
         {
-          "kind": "source-claim",
-          "text": "OPTIONAL core attributes are datacontenttype, dataschema, subject and time. Extension attributes MAY be added provided they follow the same naming convention and type system (lines 372-507)."
+          "kind": "source-claim"
         },
         {
-          "kind": "source-claim",
-          "text": "Attribute names are restricted to lowercase ASCII a-z and 0-9, SHOULD start with a letter, SHOULD NOT exceed 20 characters, and MUST NOT be 'data'. Values use Boolean, Integer (signed 32-bit), String, Binary, URI, URI-reference or Timestamp (lines 187-248)."
+          "kind": "source-claim"
         },
         {
-          "kind": "source-claim",
-          "text": "Intermediaries MUST forward events of 64 KiB or less and consumers SHOULD accept at least 64 KiB. Size is wire-size, including protocol frame metadata, event metadata and data (lines 549-574)."
+          "kind": "source-claim"
         },
         {
-          "kind": "source-claim",
-          "text": "All implementations MUST support the JSON event format. Every event format MUST define a structured-mode representation and MAY define batch mode; all events in one batch MUST share the same specversion (lines 32-35, 127-154)."
+          "kind": "source-claim"
         },
         {
-          "kind": "source-claim",
-          "text": "Privacy guidance says sensitive information SHOULD NOT be carried in context attributes, event data SHOULD be encrypted, and protocol-level security SHOULD be employed (lines 584-611)."
+          "kind": "source-claim"
         },
         {
-          "kind": "inference",
-          "text": "CloudEvents is an event-format and interoperability specification; it does not define delivery guarantees, retry policy, ordering or exactly-once processing. Those claims would need a separate source."
+          "kind": "inference"
         },
         {
-          "kind": "inference",
-          "text": "Because source+id uniqueness is scoped to a producer/source, the duplicate assumption is local to that scope; global deduplication needs additional identity beyond CloudEvents."
+          "kind": "inference"
         },
         {
-          "kind": "inference",
-          "text": "The 64 KiB rule is a forwarding floor, not an end-to-end size guarantee: larger events are permitted where intermediaries and consumers accept them."
+          "kind": "inference"
         },
         {
-          "kind": "inference",
-          "text": "dataschema identifies a schema by URI but the specification imposes no schema language, validation algorithm or compatibility test."
+          "kind": "inference"
         },
         {
-          "kind": "metadata",
-          "text": "Manifest entry R141 has an empty url and title. Batch file /tmp/B19/raw/urls.txt records https://github.com/cloudevents/spec, and the document header supplies the 1.0.3-wip title. This is a manifest metadata omission, not a representation gap and not a different edition."
+          "kind": "metadata"
         }
       ],
       "tycho_candidates": [
@@ -14273,58 +14225,47 @@
       "notes": [
         {
           "kind": "source_claim",
-          "lines": "L13-L37",
-          "text": "On 27 September 2012, a company-wide announcement that a guest WiFi password had changed drove traffic far beyond an internal password manager built years earlier for a small administrator audience. The primary replica became unresponsive and the secondary failed the same way; the on-call engineer had no experience with the service, and restart required a hardware security module smart card. The card safe's combination was stored in the now-offline password manager, a card had to be fetched from another continent, one safe was drilled open, and the outage ended only after the engineer flipped the card over because the reader's green light did not prove correct insertion."
+          "lines": "L13-L37"
         },
         {
           "kind": "source_claim",
-          "lines": "L51-L57",
-          "text": "Reliability risk is described as nonmalicious (bad software update, physical device failure) while security risk comes from an adversary actively trying to make things go wrong. Without an adversary, systems often fail safe or fail open, as an electronic lock that stays open on power loss; defending against an adversary who could exploit that power loss motivates failing secure instead."
+          "lines": "L51-L57"
         },
         {
           "kind": "source_claim",
-          "lines": "L40-L79",
-          "text": "The three asides add authored qualifications rather than decoration: security and privacy are closely related and often share approaches; redundancy raises reliability but expands attack surface because an adversary needs only one vulnerable path; and security incident management favors a small need-to-know group, unlike reliability incidents that benefit from multiple perspectives, while voluminous logs can themselves be an attractive target."
+          "lines": "L40-L79"
         },
         {
           "kind": "source_claim",
-          "lines": "L82-L92",
-          "text": "The chapter reads confidentiality, integrity, and availability through both reliability and security lenses; the key difference is the presence or absence of a malicious adversary. A note defines the CIA triad as a long-standing security model and states that the acronym is unrelated to the Central Intelligence Agency."
+          "lines": "L82-L92"
         },
         {
           "kind": "source_claim",
-          "lines": "L94-L113",
-          "text": "Examples include a stuck cockpit push-to-talk microphone as an accidental confidentiality breach; a 2015 incident in which end-to-end cryptographic integrity checks failed on a few data blocks, were traced to uncorrectable memory errors, and were recovered by testing every single-bit variant against the original check; and availability attacks that can be indistinguishable from design flaws or legitimate traffic spikes, illustrated by a 2018 clock-adjustment spike and a magnitude 4.5 earthquake."
+          "lines": "L94-L113"
         },
         {
           "kind": "source_claim",
-          "lines": "L115-L133",
-          "text": "Reliability and security are called emergent properties that are hard to bolt on and need attention across the lifecycle. Invisibility is tied to cost perception, with media-reported examples of a $350 million reduction in an acquisition price and roughly 60% of a day's flight throughput lost. Assessment separates error-budget reasoning for reliability, which can assume independent failures, from design analysis and adversarial testing for security."
+          "lines": "L115-L133"
         },
         {
           "kind": "source_claim",
-          "lines": "L136-L151",
-          "text": "Simplicity is recommended to reduce attack surface and mean time to repair. Evolution is illustrated by a two-line Debian OpenSSL change that left a pseudo-random generator seeded only by a process ID bounded at 32,768, and by an October 2018 global YouTube outage caused by a logging-library change that exhausted memory and cascaded."
+          "lines": "L136-L151"
         },
         {
           "kind": "source_claim",
-          "lines": "L154-L172",
-          "text": "Resilience is framed as managing load (volume times average request cost) by shedding or cheapening work, plus redundancy and distinct failure domains. Security additions include defense in depth such as application-layer encryption over disk encryption, region-scoped credentials, least privilege, and multi-party authorization, which the authors say also reduces innocent human error and has noncomputing precedents."
+          "lines": "L154-L172"
         },
         {
           "kind": "source_claim",
-          "lines": "L175-L217",
-          "text": "Production controls span code review and shared frameworks, load and fuzz and cryptographic testing, canaries, slow rollouts, and reviewed-code-only deployment. Logging is the foundation of detection but costly at scale and risky when it holds credentials or personal data. Crisis response cites Code Spaces being destroyed within hours, Incident Management at Google modeled on the US Incident Command System, and DiRT rehearsals; recovery treats fast patching as a risk trade-off and calls for reliable current and desired fleet state with backstops."
+          "lines": "L175-L217"
         },
         {
           "kind": "source_claim",
-          "lines": "L220-L232",
-          "text": "The conclusion argues that security and reliability are easy to sacrifice for velocity and costly to fix later, that roles and culture matter, and that risk profiles vary widely between systems. The single endnote points readers to Chapter 3 of the SRE book for error budgets."
+          "lines": "L220-L232"
         },
         {
           "kind": "inference",
-          "lines": "L127-L133",
-          "text": "The chapter is an introductory synthesis rather than a report of original measurement. Its two numeric cost examples are attributed to media reports, and the error-budget and adversarial-testing discussion states no method or result, so the incidents illustrate the argument rather than test it."
+          "lines": "L127-L133"
         }
       ],
       "omissions": "Other book chapters outside this batch not read; no production experiment. Within this chapter, Figure 1-1 was not viewed (caption only), external links and cited works were not opened, and the note's and endnote's references were not pursued. No other edition, PDF, or secondary summary was used.",
@@ -14627,63 +14568,51 @@
       "notes": [
         {
           "kind": "source_claim",
-          "lines": "L13-L25",
-          "text": "The chapter opens with Clifford Stoll's 1986 Lawrence Livermore accounting anomaly and a 2012 Belgian datacenter outage caused by a cat damaging an external power supply. Reliability adversaries are described as usually benign and abstract (hardware failure, success disasters, configuration change, fishing vessels cutting cables); security adversaries are human and calculated. The authors propose studying motivations, profiles, and methods to build an adversarial mindset."
+          "lines": "L13-L25"
         },
         {
           "kind": "source_claim",
-          "lines": "L28-L37",
-          "text": "Eight motivations are listed: fun, fame, activism, financial gain, coercion, manipulation, espionage, and destruction. The Park Jin Hyok indictment is used to show one actor spanning ransomware, a studio compromise, and utility intrusions; a money-transfer example then links motivation analysis to system design."
+          "lines": "L28-L37"
         },
         {
           "kind": "source_claim",
-          "lines": "L40-L72",
-          "text": "Hobbyists are curious technologists who often act as allies; vulnerability researchers work under disclosure norms and bug-bounty programs; red teams and penetration testers attack with owner permission. The early-hacking aside traces the term to 1950s MIT pranks and says the book separates nonmalicious hacking from malicious attacking."
+          "lines": "L40-L72"
         },
         {
           "kind": "source_claim",
-          "lines": "L75-L114",
-          "text": "Government and law-enforcement activity is split into intelligence gathering, military purposes, and domestic policing. Examples include the 2011 RSA seed theft used against Lockheed Martin, Stuxnet against Iranian centrifuges, NSO Group spyware sold to governments, Operation Aurora's at least 20 victims, and Strava heatmap exposure of military sites. The defense advice is to identify attractive assets, expect to be a target without knowing it, and impose costs that raise an adversary's risk of exposure."
+          "lines": "L75-L114"
         },
         {
           "kind": "source_claim",
-          "lines": "L117-L135",
-          "text": "Activists range from website defacement, illustrated by the Syrian Electronic Army's 2015 takeover of a CDN serving an army site, to denial of service, illustrated by Anonymous actions against Israeli websites in 2012 and rented botnets. They are described as often vocal about their activity and variable in technical skill, which complicates prediction; layered patching, DoS resilience, and fast restore are recommended."
+          "lines": "L117-L135"
         },
         {
           "kind": "source_claim",
-          "lines": "L138-L159",
-          "text": "Criminal actors range from sophisticated tool writers to buyers of click-to-attack kits, with social engineering described as highly effective and cheap. Examples include merger-and-acquisition data theft, ransomware, stalkerware sold for as little as $20, and hired attacks in election and telecom disputes. CAPTCHA evolution is used to illustrate raising attacker cost over time."
+          "lines": "L138-L159"
         },
         {
           "kind": "source_claim",
-          "lines": "L162-L174",
-          "text": "The 2015 DARPA Cyber Grand Challenge is described as seven teams building self-learning systems that found, exploited, and patched flaws without human intervention, with one winner. The authors expect some future attacks may run without direct human control and argue for automated defenses and secure defaults."
+          "lines": "L162-L174"
         },
         {
           "kind": "source_claim",
-          "lines": "L177-L205",
-          "text": "Insiders are current or former employees trusted with internal access. Three categories are tabulated: first-party (employees, interns, executives, board), third-party (app developers, open-source contributors, content contributors, partners, contractors, vendors, auditors), and related (friends, family, roommates). The aside argues this is where reliability and security intersect most: insiders cause many reliability incidents unintentionally, while an attacker who takes over an account inherits the insider's permissions."
+          "lines": "L177-L205"
         },
         {
           "kind": "source_claim",
-          "lines": "L208-L249",
-          "text": "First-party examples include an engineer indicted for stealing files inside photographs, hospital workers fired for snooping on patient records, and a fired employee convicted of deleting 23 virtual servers. Third-party risk is illustrated by malicious open-source contributions and privileged partner APIs; related-insider risk by a laptop left unlocked at home, with an endnote pointing to domestic-partner abuse research. The intent aside says an accident claim may be impossible to verify and recommends planning for both malicious and unintended action."
+          "lines": "L208-L249"
         },
         {
           "kind": "source_claim",
-          "lines": "L252-L302",
-          "text": "The insider threat-modeling framework crosses actor/role, motive, action, and target, with four worked scenarios. The mistakes aside recounts a 2009 Google Search incident in which an accidentally added '/' matched every site and displayed a malware warning for about 40 minutes, arguing for automated configuration checks. Design levers are least privilege, zero trust, multi-party authorization, business justifications, auditing and detection, and recoverability."
+          "lines": "L252-L302"
         },
         {
           "kind": "source_claim",
-          "lines": "L304-L358",
-          "text": "Attacker methods are organized as threat intelligence (written reports, indicators of compromise, malware reports), the Lockheed Martin Cyber Kill Chain with a five-stage attack/defense table, and MITRE ATT&CK's expansion into techniques such as reading .bash_history. Risk-assessment considerations include unnoticed targets (a stolen code-signing certificate), simple phishing beating sophistication, well-funded adversaries such as the reported Cisco shipment interception, and hard attribution illustrated by Petya becoming NotPetya."
+          "lines": "L304-L358"
         },
         {
           "kind": "source_claim",
-          "lines": "L360-L405",
-          "text": "The conclusion returns to assessing who might target the system, comparing defensive and offensive resources, not overlooking small adversaries, and staying current on threat intelligence. The 11 endnotes are bibliographic and explanatory, covering Stoll's book, the Persian Gulf War example, NSO reporting, hacktivism history, CAPTCHA research, intimate-partner abuse, STIX/TAXII, annual threat reports, the kill-chain trademark, and the Snowden book."
+          "lines": "L360-L405"
         }
       ],
       "omissions": "Other book chapters outside this batch not read; no production experiment. Within this chapter, external indictments, vendor reports, ATT&CK and kill-chain sites, and the works cited in the 11 endnotes were not opened; table and list layouts are flattened in the text. No other edition, PDF, or secondary summary was used.",
@@ -14825,53 +14754,43 @@
       "notes": [
         {
           "kind": "source_claim",
-          "lines": "L13-L21",
-          "text": "The opening aside asks the reader to imagine an adversary deliberately disrupting systems, or a well-intentioned privileged engineer making a far-reaching mistake, in an environment with least privilege and recovery. It says such a scenario may not represent every organization and introduces safe proxies as a way to make a running system safer and less outage-prone."
+          "lines": "L13-L21"
         },
         {
           "kind": "source_claim",
-          "lines": "L24-L46",
-          "text": "Proxies are presented as a way to add reliability and security requirements without substantial changes to deployed systems: clients route through the proxy, which applies controls before forwarding. Safe proxies let authorized persons access or modify physical servers, virtual machines, or applications; at Google they review, approve, and run risky commands without SSH, grant fine-grained debugging access, and rate-limit restarts. The stated goals are auditing every operation, controlling access, and protecting production from human mistakes at scale."
+          "lines": "L24-L46"
         },
         {
           "kind": "source_claim",
-          "lines": "L48-L52",
-          "text": "Zero Touch Prod requires every production change to be made by automation, prevalidated by software, or triggered through an audited breakglass mechanism. Safe proxies are described as one of the tools used to achieve those principles, and the authors estimate that about 13% of all Google-evaluated outages could have been prevented or mitigated with Zero Touch Prod."
+          "lines": "L48-L52"
         },
         {
           "kind": "source_claim",
-          "lines": "L51-L110",
-          "text": "In the proxy model, targets are configured to accept calls only from the proxy; ACLs bind application-layer RPCs to client roles, and the proxy logs requests and commands. Benefits are central multi-party authorization, administrative usage auditing, rate limiting, compatibility with closed-source targets, and concentrated security/reliability improvements. Downsides are maintenance cost, a single point of failure mitigated by replicas and dependency SLAs, error-prone access policy mitigated by templates and secure defaults, a central machine an adversary could seize (though requests execute under client identity, not a proxy role), and user resistance mitigated by breakglass. The proxy should expose the target's own APIs and remain transparent."
+          "lines": "L51-L110"
         },
         {
           "kind": "source_claim",
-          "lines": "L113-L122",
-          "text": "Google's administrative CLI tools can be dangerous: an incorrect scope selector can stop several service frontends. Tracking every CLI and ensuring centralized logging is described as difficult and expensive, so Google built a Tool Proxy, a binary exposing a generic RPC that executes a specified command line through fork and exec. Invocations are policy-controlled, logged for auditing, and can require multi-party authorization; engineers cannot run arbitrary commands directly on servers."
+          "lines": "L113-L122"
         },
         {
           "kind": "source_claim",
-          "lines": "L125-L145",
-          "text": "The policy example allows members of group:admin to run the latest borg CLI with any parameter after approval from group:admin-leads. It includes a unit test expecting an ALLOW result for a file.borgcfg command. The proxy instances are typically deployed as Borg jobs."
+          "lines": "L125-L145"
         },
         {
           "kind": "source_claim",
-          "lines": "L148-L179",
-          "text": "The command sends an RPC to the proxy, which logs the RPC and checks performed, verifies the caller's group, triggers multi-party authorization for the sensitive command, and after approval executes it and returns the exit code, stdout, and stderr. Engineers prepend tool-proxy-cli --proxy_address to their commands; the server allows administrative actions only to admin-proxy and denies direct connections outside breakglass, because otherwise the control is bypassable."
+          "lines": "L148-L179"
         },
         {
           "kind": "source_claim",
-          "lines": "L182-L194",
-          "text": "The conclusion says safe proxies add logging and multi-party authorization and can be cost-effective for an existing system, but are more resilient when paired with the design principles in Part II; new projects should start with frameworks that integrate logging and access control. The two endnotes define a breakglass mechanism as a policy bypass for quickly resolving outages, and multi-party authorization as requiring an additional user's approval."
+          "lines": "L182-L194"
         },
         {
           "kind": "inference",
-          "lines": "L48-L52",
-          "text": "The ~13% figure is presented as an internal estimate without a stated method, denominator, or confidence interval, and the text does not report an experiment. It should be read as an illustrative company estimate rather than a reproducible measurement."
+          "lines": "L48-L52"
         },
         {
           "kind": "inference",
-          "lines": "L54-L110",
-          "text": "The chapter's benefit and downside lists are qualitative and largely symmetrical: the same centralization that enables auditing and MPA also creates a high-value dependency and an error-prone policy surface. The text notes mitigations but gives no comparative data on their effectiveness."
+          "lines": "L54-L110"
         }
       ],
       "omissions": "Other book chapters outside this batch not read; no production experiment. Within this chapter, Figures 3-1 and 3-2 were not viewed (captions only), the linked Zero Touch Prod talk, Part II material, and the breakglass/MPA definitions behind the endnotes were not opened, and code behavior was not executed. No other edition, PDF, or secondary summary was used.",
@@ -15075,63 +14994,51 @@
       "notes": [
         {
           "kind": "source_claim",
-          "lines": "L24-L58",
-          "text": "The chapter opens with the product journey: a rough product idea acquires feature requirements and cost, security and reliability constraints, some of which conflict, so the designer must make tradeoffs. Feature (functional) requirements identify the primary function and are stated as use cases, user stories or user journeys; the critical subset is what makes the product viable, and some requirements are stated once for the whole application rather than per user story."
+          "lines": "L24-L58"
         },
         {
           "kind": "source_claim",
-          "lines": "L63-L77",
-          "text": "Nonfunctional requirements concern general system attributes: who may access certain data under which circumstances, SLOs for uptime and 95th/99th-percentile response latency, and behavior above a load threshold. The authors add development efficiency, deployment velocity, engineer iteration speed and overall cost as broader areas that affect core requirements."
+          "lines": "L63-L77"
         },
         {
           "kind": "source_claim",
-          "lines": "L82-L104",
-          "text": "Feature requirements trace cleanly from specification to code to tests, illustrated by a profile-editing user story with typed data, UI code, handlers and integration/unit tests. Security and reliability do not work that way: there is no --enable_high_reliability_mode flag and no module that implements reliability, so they are described as emergent properties of the whole design and workflow."
+          "lines": "L82-L104"
         },
         {
           "kind": "source_claim",
-          "lines": "L112-L163",
-          "text": "The aside expands the emergent-property claim. Reliability emerges from component decomposition, dependency availability, communication/routing/load-balancing/load-shedding choices, the placement of unit, end-to-end, PRR and load testing in the workflow, and monitoring that can detect and explain failures. Security emerges from decomposition and trust relationships, languages/platforms/frameworks, security review and testing in the workflow, and monitoring, audit logging and anomaly detection for responders."
+          "lines": "L112-L163"
         },
         {
           "kind": "source_claim",
-          "lines": "L171-L228",
-          "text": "Google's design-document template reminds teams to consider reliability and security early, sometimes multiple quarters before launch, and to start production-readiness or security review. The template prompts on scalability, redundancy and backup/restore, dependency failure and dependency cycles, data-integrity detection and recovery, SLA auditing, and security/privacy attacks, known vulnerabilities and worst-case impact; it asks teams with no such concerns to say so and why, and to file a quick security design review."
+          "lines": "L171-L228"
         },
         {
           "kind": "source_claim",
-          "lines": "L236-L250",
-          "text": "The Balancing Requirements aside argues that emergent security and reliability choices are as fundamental as relational-versus-NoSQL or monolith-versus-microservices choices. Bolting them onto an existing system is hard: tangled dependencies and weak interfaces tend to lower availability and breed security bugs, and 'no amount of testing and tactical bug-fixing' fixes that. Retrofitting can require major refactoring or partial rewrites, is expensive and risky under incident time pressure, and should involve security and SRE teams from early planning."
+          "lines": "L236-L250"
         },
         {
           "kind": "source_claim",
-          "lines": "L259-L304",
-          "text": "In the payment example, card data and PII bring regulatory scope such as PCI DSS and breach consequences. The preferred mitigation is not to hold the data; a third-party payment provider can remove storage and at-rest protection work, may simplify compliance and can supply fraud services. The authors still note that a vendor compromise can expose the same data, and that fees and API-tracking costs rise with dependence."
+          "lines": "L259-L304"
         },
         {
           "kind": "source_claim",
-          "lines": "L312-L339",
-          "text": "Outsourcing adds an external failure mode: the payment provider can be down or unreachable. Redundancy through a second provider adds cost, two APIs and more bug/compromise exposure. A queue can buffer transactions, but a volatile queue can lose them, a reliable distributed queue adds complexity, and persistent storage reintroduces the sensitive-data risk the design was avoiding, including insider attacks that deliberately break the provider link to trigger local queueing. The section closes with a security risk created by mitigating a reliability risk created by mitigating a security risk."
+          "lines": "L312-L339"
         },
         {
           "kind": "source_claim",
-          "lines": "L345-L357",
-          "text": "Security risks of the vendor route include evaluating the vendor's security over time and linking a vendor library with its transitive dependencies into the application. Mitigations such as sandboxing and fast updates shift rather than erase the problem; browser-side payment libraries run with full privileges in the application origin, and a separate origin or sandboxed iframe needs secure cross-origin communication, while redirect flows can hurt usability."
+          "lines": "L345-L357"
         },
         {
           "kind": "source_claim",
-          "lines": "L369-L416",
-          "text": "The microservices/web framework example uses static and dynamic conformance checks (immutable values across concurrent contexts, component isolation) and was built with SRE and security teams so common vulnerabilities, monitoring, health checking and SLA compliance are handled by the framework. The aside calls this a win-win: developers get automation, security and SRE get a common feature surface, reviews become faster, error-budget stops enforce the SLA, and central fixes propagate on rebuild and redeploy."
+          "lines": "L369-L416"
         },
         {
           "kind": "source_claim",
-          "lines": "L422-L475",
-          "text": "The chapter distinguishes initial from sustained velocity. Deferring security, reliability and maintainability may speed the first release but usually slows the project later; invasive late changes can add new risk, so the authors urge embedding these concerns in team culture early. Internet protocol history is the cautionary analogy: survivability was an explicit early design goal while security was largely absent, and HTTPS/IPsec took decades to deploy. Agile and CI/CD likewise need up-front test coverage, a reliable pipeline, rollout/rollback infrastructure and decoupled releases; the investment is modest early and amortizes across projects."
+          "lines": "L422-L475"
         },
         {
           "kind": "inference",
-          "lines": "L24-L484",
-          "text": "The chapter offers practitioner reasoning and historical narrative, not measurements: it reports no cost curve, defect rate or controlled comparison for the claim that early security and reliability investment lowers lifetime effort, and the payment and framework examples are illustrative rather than evaluated. The tradeoff magnitudes and the initial-versus-sustained velocity claim should therefore be treated as experience-based hypotheses, not established causal findings."
+          "lines": "L24-L484"
         }
       ],
       "tycho_candidates": [
@@ -15340,63 +15247,51 @@
       "notes": [
         {
           "kind": "source_claim",
-          "lines": "L24-L54",
-          "text": "The chapter rejects reliance on human perfection: engineers make mistakes, fat-finger commands, get phished and compromised, and can act maliciously, so systems should limit what any bad action can do; 'hope is not a strategy.' Least privilege applies to humans, automated tasks and machines across every authentication and authorization layer, rejects implicit authority for tooling and minimizes ambient authority such as root login. Zero trust networking makes network location grant nothing and bases access on user plus device credentials (BeyondCorp); Zero Touch removes direct human production access in favor of automation, safe APIs and multi-party approval."
+          "lines": "L24-L54"
         },
         {
           "kind": "source_claim",
-          "lines": "L60-L103",
-          "text": "Access should be classified before controls are chosen, along dimensions of who should have access, how tightly it is controlled, read versus write, and infrastructure controls. The example table rates public read and write low but infrastructure access high, sensitive data medium/high, and highly sensitive data high with no permanent access. The aside adds that infrastructure controls protect availability, but overly broad read permissions can cause a mass data breach, so security and reliability perspectives must both shape the classification."
+          "lines": "L60-L103"
         },
         {
           "kind": "source_claim",
-          "lines": "L118-L173",
-          "text": "Small functional APIs let least privilege be granted per action, following the Unix advice to make each program do one thing well. The administrative API is at least as important as the user-facing API because typos there can cause catastrophic outages or data exposure. POSIX over OpenSSH exposes a very large API that is hard to constrain and audit; the aside shows that bash history and script(1) logs only keep honest people honest, since an attacker can run :!/bin/evilcmd from vim. The note distinguishes the POSIX API from the OpenSSH protocol, whose AAA controls can back a small surface such as git-shell."
+          "lines": "L118-L173"
         },
         {
           "kind": "source_claim",
-          "lines": "L179-L263",
-          "text": "Breakglass bypasses authorization for emergencies. Auditing detects incorrect authorization use by malicious operators, compromised credentials or rogue software and depends on decision granularity and metadata (what, where, who, when, why). When small APIs are insufficient, teams either expose an interactive powerful API or hand out credentials, and both weaken granular audit; session logging is hard to review and can be bypassed. Auditors need context and objectivity; Google separates team-level best-practice reviews of breakglass from centralized breach detection. Structured justification (bug, ticket or case ID) enables programmatic checks and scaling."
+          "lines": "L179-L263"
         },
         {
           "kind": "source_claim",
-          "lines": "L269-L359",
-          "text": "Least privilege is tested in two directions. Testing of least privilege defines role profiles, action scenarios and expected impact and runs them before code or ACL changes, with monitoring as fallback when coverage is incomplete. Testing with least privilege uses separate environments and credentials, limits access types and exposes only representative or anonymized data, so tests cannot damage production. The aside warns that production test accounts muddy auditing and ACLs; the cost-benefit discussion recommends starting small but building a framework people will actually use, because otherwise they test in production and bypass controls."
+          "lines": "L269-L359"
         },
         {
           "kind": "source_claim",
-          "lines": "L365-L424",
-          "text": "Denials can be correct, correct but remediable through an advanced control, or believed incorrect and escalated. Low-privilege callers should see a blind 403; minimally privileged callers can receive a denial token for temporary access or support diagnosis; more privileged callers can get remediation information, but too much detail lets attackers reverse-engineer policy. Early zero-trust deployments should use tokens and route all clients to the support channel. Breakglass should be restricted to the team owning the operational SLA, location-bound through panic rooms for zero-trust networking, closely monitored, and regularly tested."
+          "lines": "L365-L424"
         },
         {
           "kind": "source_claim",
-          "lines": "L430-L533",
-          "text": "The configuration-distribution example prescribes version control, code review, canary-first health-checked rollout and then compares four API styles on surface, preexistence, complexity, scaling, auditability and ability to express least privilege. POSIX over OpenSSH risks a role that can stop servers, automation bugs that cause fleet outages, and credential compromise equivalent to compromising all servers. Software update APIs reuse binary infrastructure but may not converge fast enough. OpenSSH ForceCommand gives a small auditable API but scales poorly; sidecar and in-process HTTP receivers trade code/daemon overhead for flexibility. Signing configs separately and using an independently built per-host rate limiter segment trust."
+          "lines": "L430-L533"
         },
         {
           "kind": "source_claim",
-          "lines": "L545-L608",
-          "text": "Authentication verifies identity; authorization decides whether the authenticated party may perform the request. The authors recommend reusing strong cryptographic authentication and external policy frameworks so authorization is configuration rather than bespoke code. A shared authorization library can add MFA/MPA or require it for risky actions with one library or configuration change, improving both security and incident response. Policy languages that are too simple spread decisions into application code; those too general are hard to reason about. Policy is security-sensitive configuration and may need independent shipping from the binary."
+          "lines": "L545-L608"
         },
         {
           "kind": "source_claim",
-          "lines": "L620-L718",
-          "text": "Multi-party authorization prevents mistakes, deters insiders and attackers, raises attack cost, creates durable audit and can reassure customers, but broad approvals are weaker than approvals against a small functional API, and approvers need enough context. Social pressure can defeat MPA, so refusal must be possible and suspicious approvals auditable. Three-factor authorization addresses compromise of a homogeneous workstation fleet by requiring approval from a second, hardened mobile platform; 3FA strengthens authorization of a specific request, not authentication of a user, and the '3' is a misnomer for a second platform. 3FA alone does not stop insiders; 3FA plus web MPA covers more threats."
+          "lines": "L620-L718"
         },
         {
           "kind": "source_claim",
-          "lines": "L724-L785",
-          "text": "Business justifications tie access to a structured bug, incident, ticket, case or account, and can progress from role-wide access to ticket-scoped, customer-scoped and time-bound access with customer approval. Generic justifications such as 'Team foo needed access' should trigger audit alarms, and the usability aside warns that hard approval workflows push engineers into dangerous workarounds. Temporary access can be scheduled (on-call, expiring groups) or on-demand, creates a natural audit point and reduces ambient authority, as with sudo. Where fine-grained controls are missing, a monitored, restricted proxy or bastion can rate-limit, log and constrain emergency actions."
+          "lines": "L724-L785"
         },
         {
           "kind": "source_claim",
-          "lines": "L791-L827",
-          "text": "The costs of least privilege are explicit: granular policy needs tooling to answer who can access what, and otherwise becomes overwhelming; broad source-code access can aid learning and transparency even as it carries risk; every zero-trust decision depends on the quality of security-relevant data; extra 3FA/MPA steps can hurt user productivity and need self-service diagnosis or fast support; and developers need training, documentation, security consulting and wrapping for third-party software. The conclusion restates classification, fine partitioning and small APIs, authentication, policy-based authorization, advanced controls, audit, policy reasoning/testing, and breakglass as the key components."
+          "lines": "L791-L827"
         },
         {
           "kind": "inference",
-          "lines": "L24-L884",
-          "text": "The chapter is a practitioner account of one organization's access-control programme. It reports no measured reduction in incidents, no comparison of MPA versus 3FA outcomes, and no cost data for the tooling and productivity tradeoffs it names; the recommendations are contingent on organizational maturity and on fine-grained APIs being available, with proxies and temporary access explicitly presented as fallbacks. The claims should be read as design heuristics and operating experience, not as evaluated causal results."
+          "lines": "L24-L884"
         }
       ],
       "tycho_candidates": [
@@ -15587,63 +15482,51 @@
       "notes": [
         {
           "kind": "source_claim",
-          "lines": "L24-L41",
-          "text": "Understandability is defined as the extent to which a person with relevant technical background can accurately and confidently reason about the system's operational behavior and its invariants, including security and availability. The benefits are fewer vulnerabilities or resilience failures during modification, faster and more accurate incident response, and greater confidence in security assertions. Testing is insufficient for 'for all possible behaviors' properties because it exercises only a small fraction of behavior, so the chapter relies on design-level reasoning."
+          "lines": "L24-L41"
         },
         {
           "kind": "source_claim",
-          "lines": "L46-L102",
-          "text": "A system invariant always holds however the environment behaves, including malicious inputs and hardware failure; if a stated security property is not an invariant, the system has a vulnerability. Examples include authorization before persistent-store access, audit logging of sensitive-data operations, validation before injection-prone sinks, frontend-to-backend query scaling, graceful degradation after timeouts, overload errors instead of crashes, and designated RPC peers. Analysis ranges from a few tests and code reading, which gives low confidence ('absence of evidence is not evidence of absence'), to formal proof; the seL4 microkernel verification is cited at roughly 20 person-years. The chapter proposes design for understandability as a practical middle ground."
+          "lines": "L46-L102"
         },
         {
           "kind": "source_claim",
-          "lines": "L108-L120",
-          "text": "Mental models simplify complex systems and are therefore limited. A model formed under typical operation may fail under attack, overload or component failure; memory thrashing beyond a load threshold can reduce throughput and mislead responders. Designers should make a new component's natural model consistent with similar existing subsystems and keep models predictive in extreme conditions; disabling on-disk swap is offered as a way to make memory exhaustion fail predictably and remain attributable."
+          "lines": "L108-L120"
         },
         {
           "kind": "source_claim",
-          "lines": "L132-L240",
-          "text": "Unmanaged complexity is the primary enemy of understandability. Some complexity is inherent - Google's repository has over a billion lines of code, and Gmail's feature list is long - so the goal is to compartmentalize complexity that blocks reasoning about relevant properties, not to remove features. Systems should be composed from smaller components whose properties can be established in isolation and combined. Horizontal requirements such as authentication, authorization, audit logging, deadline propagation and cancellation are best centralized in a framework or library, which makes review local and reduces the chance of an ad hoc omission or mistake, at an upfront cost amortized across applications."
+          "lines": "L132-L240"
         },
         {
           "kind": "source_claim",
-          "lines": "L249-L362",
-          "text": "Boundaries and interfaces matter as much as components. Treating internal callers as trustworthy pushes the need to understand every call site and its preconditions; components should make as few caller assumptions as possible and state unavoidable assumptions explicitly. Narrow typed interfaces (gRPC, Thrift, OpenAPI) provide method names, typed inputs/outputs, tooling, versioning and safer evolution, while free-form JSON or REST can hide shared assumptions and cause client/server mismatch or obstruct security auditing. A common object model such as Kubernetes' gives one mental model across resource types, and idempotent operations simplify retries and incident response; UUIDs can make a mutating RPC idempotent."
+          "lines": "L249-L362"
         },
         {
           "kind": "source_claim",
-          "lines": "L368-L430",
-          "text": "All active entities need meaningful identities: humans, machines, workloads and customers. The [NOTE] argues that IP addresses and ports are poor identifiers in microservices because they are unstable, spoofable, shared across services and reused. The [ASIDE] adds that identifiers should be human-readable, robust against spoofing and nonreusable; reusing a departed administrator's email address could transfer privileges. Google's model uses administrators, machines, workloads and customers, with workloads scheduled by Borg and constrained so a workload cannot take root on its host; customer identity is a separate subsystem and OIDC externalizes identity assertion with a simplicity-versus-trust tradeoff."
+          "lines": "L368-L430"
         },
         {
           "kind": "source_claim",
-          "lines": "L436-L507",
-          "text": "Authentication and transport security are specialized, so engineers should work with understandable abstractions: ALTS supplies automatic service-to-service authentication and transport security, and the developer's model is simply that an application runs as a meaningful identity while ALTS secures the wire and access-control APIs expose the authenticated peer. Without a systematic approach, verifying authentication requires reading all application code and does not scale. Access-control frameworks codify policies, handle multi-identity flows such as the Figure 6-1 chain of Ingress, Frontend and Backend identities plus a customer, and enable declarative exposure analysis; ad hoc per-service logic makes such tooling essentially impossible."
+          "lines": "L436-L507"
         },
         {
           "kind": "source_claim",
-          "lines": "L512-L594",
-          "text": "The trusted computing base is the set of components whose correct functioning enforces the security policy; the security boundary is its interface with everything else, and the TCB must treat everything crossing that boundary as untrusted. TCBs are relative to a policy and can be layered (OS user isolation versus application-level document sharing). A monolithic widget application makes the entire application, database and OS part of the address-data TCB, so a catalog SQL injection or server RCE can expose addresses. Microservices with separate databases shrink the TCB; an end-user context ticket prevents a compromised frontend from requesting arbitrary users' data; separate web origins for catalog and checkout contain XSS. Small TCBs also aid understandability and form failure domains, though Figure 6-2 to 6-4 images were not viewed."
+          "lines": "L512-L594"
         },
         {
           "kind": "source_claim",
-          "lines": "L602-L680",
-          "text": "Application frameworks bundle canonical subframeworks with reasonable defaults and a guarantee that they work together, avoiding the combinatorial burden of choosing and configuring each one. They prevent dangerous omissions: a developer who sets up authentication but forgets authorization can expose a method that reconfigures network switches, whereas an application framework can require a valid policy and deny all clients not explicitly permitted. The chapter lists request dispatch, deadline propagation, sanitization, authentication/authorization/audit, logging, health, quota, load balancing, deployment, testing, dashboards, capacity and outage handling, and argues that a shared framework creates a common language and empathy across teams."
+          "lines": "L602-L680"
         },
         {
           "kind": "source_claim",
-          "lines": "L686-L731",
-          "text": "Security properties often depend on values flowing through the system. A URL represented as a plain string carries only an implicit assumption of well-formedness, so reasoning requires understanding every upstream caller. A Url type whose constructors or Url.parse() enforce well-formedness localizes that reasoning to the type implementation and its consumers. Type encapsulation is not a security boundary against malicious code, because reflection or casts can break it; the guarantee assumes a nonmalicious codebase protected by repository access, review and hardening. The same pattern yields SafeSql and SafeHtml: constructors/builders validate or encode, sinks accept only safe types, and an application-wide injection-freedom assertion follows from understanding those types and sink APIs rather than every data flow."
+          "lines": "L686-L731"
         },
         {
           "kind": "source_claim",
-          "lines": "L737-L773",
-          "text": "API usability affects adoption: cumbersome APIs slow developers or drive avoidance, while secure-by-construction APIs can make the secure path the easy one. Contextually autoescaping templates take responsibility for escaping interpolated data and prevent XSS at the template boundary without extra developer work. Tink is the cryptographic example: secure by default (including refusal to reuse GCM nonces), usable, readable/auditable, extensible, agile with key rotation and interoperability. It avoids accepting raw key material and encourages KMS-backed keys. Tink cannot prevent design-level mistakes such as hashing low-entropy identifiers, or use of the wrong cryptographic primitive; reviewers must understand what a library does and does not guarantee."
+          "lines": "L737-L773"
         },
         {
           "kind": "inference",
-          "lines": "L24-L811",
-          "text": "The chapter's argument is analytical and experience-based, with the seL4 verification effort as its only quantified figure. It reports no defect-rate, incident or review-effort measurement for understandability, TCB size, frameworks or typed interfaces, and its security guarantees are explicitly relative to a declared policy, threat model and nonmalicious-code assumption. The claims are therefore design heuristics supported by examples, not evaluated causal findings; the figure captions were read but the diagrams were not inspected."
+          "lines": "L24-L811"
         }
       ],
       "tycho_candidates": [
@@ -15854,63 +15737,51 @@
       "notes": [
         {
           "kind": "source_claim",
-          "lines": "L24-L67",
-          "text": "The chapter starts from rising device variety, library and application vulnerabilities, and rising user and regulator expectations, so infrastructure must change often while staying reliable; the practical question becomes when and how fast to roll out a change. Five change categories are listed: incident response, newly discovered vulnerabilities, product or feature changes, internally motivated posture improvements, and externally motivated regulatory changes. Two special cases follow: an optional stage before a mandatory one requires sufficient early-adopter feedback and tested instrumentation, and a dependency or vendor change must be checked against security requirements."
+          "lines": "L24-L67"
         },
         {
           "kind": "source_claim",
-          "lines": "L76-L107",
-          "text": "All changes should be incremental (no unrelated refactoring), documented (requirements, systems and teams in scope, proof-of-concept lessons, decision rationale, points of contact), tested (unit and integration tests plus peer review), isolated behind feature flags whose off state changes no behavior, qualified through the normal binary release stages, and staged with canarying instrumentation. The authors call the resulting slow-and-steady speed/safety tradeoff deliberate, because a broken rollout risks wider downtime or data loss."
+          "lines": "L76-L107"
         },
         {
           "kind": "source_claim",
-          "lines": "L119-L137",
-          "text": "Dependency references should track current releases, especially for fast-moving open source with backported critical patches, and frequent rebuilds keep an emergency rollout able to pick up the latest change. Splitting one large release into many smaller ones makes each release easier to reason about and less likely to need rollback, and automated test and validation gates let good releases proceed while blocking deficient ones; containers and microservices shrink the patching surface."
+          "lines": "L119-L137"
         },
         {
           "kind": "source_claim",
-          "lines": "L143-L173",
-          "text": "Containers decouple application binaries and libraries from the host OS, are treated as immutable (rebuild and redeploy, never patch live), and are patched by rebuilding the registry image so patching reuses the normal monitored, canaried release process. Immutability also gives content addressability, so a newly vulnerable image can be found in the registry rather than by scanning production; container age limits and a recently-built-only deploy policy are recommended. Microservices allow independent scaling and rollout, defense in depth, limited or zero trust inside the perimeter, and shared crypto or monitoring services, provided services stay as simple as possible."
+          "lines": "L143-L173"
         },
         {
           "kind": "source_claim",
-          "lines": "L179-L205",
-          "text": "Google Front End is the worked microservices example: it fronts most services, terminates HTTP(S), TCP and TLS, absorbs DDoS traffic, and load balances to backends, so frontend and backend can be partitioned and scaled independently. GFE can drop or absorb connections before overload reaches backends and can terminate new protocols or certificates centrally; a discovered SSL renegotiation vulnerability was contained for every service behind GFE. The section closes by generalizing to a service mesh and to separating the data plane (request processing) from the control plane (policy and configuration)."
+          "lines": "L179-L205"
         },
         {
           "kind": "source_claim",
-          "lines": "L211-L247",
-          "text": "Rollout speed is governed by severity (only some vulnerabilities are critical, exploited and applicable), dependent systems and teams, sensitivity (nonurgent posture changes can wait, including during critical production windows), and deadlines such as a compliance date or a news embargo. The [ASIDE] on embargoed vulnerabilities says that if patching would break an embargo the patch must wait for public announcement, and that responders should agree an announcement date, for example a Monday, that suits most organizations' rollout processes. The authors deny a universal speed rule and split examples into short-, medium- and long-term horizons."
+          "lines": "L211-L247"
         },
         {
           "kind": "source_claim",
-          "lines": "L252-L280",
-          "text": "Zero-day response begins with discovery channels (code review, internal scanning, fuzzing, external scans, bug bounties) and triage for severity and impact, including which systems run the affected binary and whether the version is deployed, plus monitoring for active exploitation. The [NOTE] warns that zero-days are not necessarily the most exploited vulnerabilities and that organizations should first be patched for recent years' top hits. A patch must be verified, ideally with a working exploit while accepting that a failed exploit proves nothing, then rolled out gradually even on an accelerated timeline; when no patch exists, access to the vulnerable component is limited or removed."
+          "lines": "L252-L280"
         },
         {
           "kind": "source_claim",
-          "lines": "L285-L371",
-          "text": "Shellshock (September 2014) was handled through Google's Black Swan protocol: scope and risk identification, internal notification, rapid patching, external communication, and scanning folded into standard security monitoring. Low-risk production servers were patched by automated rollout faster than usual, higher-risk workstations were patched quickly, and a small high-risk nonstandard tail needed manual team-by-team follow-up. The seven lessons are: standardize software distribution, use public distribution standards, keep an acceleration mechanism for emergency changes, monitor rollout progress and unpatched systems, prepare external communications early, keep a reusable incident response plan, and know which systems are nonstandard."
+          "lines": "L285-L371"
         },
         {
           "kind": "source_claim",
-          "lines": "L376-L452",
-          "text": "Medium-term posture changes phase by affected group or system rather than by percentage, with success criteria per phase; the team can start with the easiest population to prove value or the hardest to find bugs, should dogfood the change, and can run it in alerting or auditing mode before enforcement. The FIDO security-key case began investigating stronger 2FA in 2011, chose U2F hardware tokens for security and usability, and rolled out from 2013 with self-service enrollment, trust on first use, multiple keys per user, and user-updatable firmware. OTP usage was tracked by application to find the long tail, reminders and eventually OTP blocking drove adoption, and company-wide rollout finished in 2015; lessons cover accessibility, ease of learning, self-service, visible proof of value, fast noncompliance feedback, and long-tail tracking."
+          "lines": "L376-L452"
         },
         {
           "kind": "source_claim",
-          "lines": "L457-L508",
-          "text": "Long-term change, such as a multiyear regulatory or ecosystem effort, needs explicit goals, documentation for handoff, instrumentation and dashboards, self-serve compliance checks, and a single source of truth for reporting; if a change is not mandatory, 80-90% adoption can still measurably reduce risk. The HTTPS campaign used worldwide usage data, user surveys, site-behavior measurement and developer case studies; it monitored telemetry for years, overcommunicated through blogs, lists, press, forums and partners, tailored outreach regionally (Japan), and tied migration to business incentives such as Service Worker. Figure 7-1 reports Chrome users spending over 90% of time on HTTPS, up from as low as 70% on Windows and 37% on Android."
+          "lines": "L457-L508"
         },
         {
           "kind": "source_claim",
-          "lines": "L513-L538",
-          "text": "Plans change when an exploited vulnerability forces acceleration or when patch problems, missed deadlines or business changes force a slowdown; accelerating carries regression risk, so higher-risk systems can be reordered or attackers can be denied by rate limiting or taking a critical system offline. If slowing does not fix the issue, rolling back, debugging and rolling out again is described as painful but cautious. Heartbleed (bug introduced December 2011, disclosed April 2014) is used to argue for planning for a broken embargo, pre-staging patches, rapid deployment at scale with canaries, regular key rotation because private keys may leak, and communication channels to internal and external users."
+          "lines": "L513-L538"
         },
         {
           "kind": "inference",
-          "lines": "L16-L549",
-          "text": "The chapter is an experience-based design narrative: the cases report what Google did and the lessons drawn, without controlled comparisons, base rates or measured effect sizes for the recommended practices. The HTTPS percentages are adoption telemetry, not an evaluation of the campaign's causal effect, and the Shellshock, FIDO and Heartbleed accounts are retrospective. Its claims are therefore practice guidance and design heuristics, not verified causal findings; linked advisories, SRE book chapters and the Figure 7-1 chart were not consulted."
+          "lines": "L16-L549"
         }
       ],
       "omissions": "Other book chapters outside this batch not read; no production experiment.",
@@ -16150,63 +16021,51 @@
       "notes": [
         {
           "kind": "source_claim",
-          "lines": "L16-L72",
-          "text": "Resilience is defined as the ability to protect against attacks and withstand unusual circumstances, holding out against major malfunction and recovering automatically or in a degraded mode. Designing for resilience differs from designing for recovery: recovery fixes systems after breakage, while resilience delays or withstands it. The six principles are: make each layer independently resilient (defense in depth), prioritize features and their cost, compartmentalize along clear boundaries, use compartment redundancy against localized failures, automate response to reduce reaction time, and continuously validate the resulting properties."
+          "lines": "L16-L72"
         },
         {
           "kind": "source_claim",
-          "lines": "L84-L172",
-          "text": "The Trojan Horse is analyzed as a defense-in-depth failure with four attack stages: threat modeling and vulnerability discovery (reconnaissance of gates and defenses), deployment (the horse brought inside), execution (soldiers leave the horse and open the gates), and compromise. Defenders should limit reconnaissance, treat it as a signal, monitor scans and lookalike DNS registrations, buy threat intelligence or build a team as scale justifies, inspect or refuse untrusted deployments, use traffic inspection, sandboxing and least privilege, and contain the blast radius once execution begins. EternalBlue and WannaCry are cited as 2018 examples of late-detected compromise."
+          "lines": "L84-L172"
         },
         {
           "kind": "source_claim",
-          "lines": "L181-L232",
-          "text": "App Engine had to run untrusted third-party code on Google infrastructure. Threat modeling identified network access to internal APIs, local filesystem access, and the Linux kernel attack surface; the team removed built-in network and filesystem APIs, replaced them with safe versions, and disallowed user-supplied bytecode or shared libraries. They audited runtime data-object code, compiled Python to Native Client to block memory-corruption and control-flow attacks, and added a ptrace sandbox that terminated and alerted on unexpected system calls. Over five years this caught a few exploitable conditions, all attributed to security researchers, with the layered signals strengthening as activity crossed layers."
+          "lines": "L181-L232"
         },
         {
           "kind": "source_claim",
-          "lines": "L238-L321",
-          "text": "Failures can be physical, hardware, network, configuration, software or compromise; their impact extends to dependent systems, shrinks the global resource pool and can compound. When load exceeds capacity, degradation begins and may end in total unavailability, usually at the weakest point, so degradation should be designed in advance: drop infrequently used or high-cost features (RSA versus ECC under resource pressure), respond quickly and automatically, and know which systems are mission-critical (Gmail's simple HTML mode is the example). Every failed operation also has a cost, so flows should fail early or cheaply: identify per-operation CPU, memory and bandwidth costs and where they are incurred, then defer expensive work until success is more likely. Checking errors before allocating memory or starting reads/writes, SYN cookies, CAPTCHA, lame-duck mode and releasing drained capacity are examples, with forensic data preserved before reuse. User experience should stay functional and honest about staleness or disabled features; a GUI that blocks on one timed-out RPC and shows no cached data is the counterexample. Mitigation speed, including client update lag, is part of failure cost."
+          "lines": "L238-L321"
         },
         {
           "kind": "source_claim",
-          "lines": "L327-L423",
-          "text": "Automated measures generally beat humans for speed and multi-variable response, but humans should stay in the loop for unforeseen cases. Overprovisioning is wasteful and no guarantee; instead servers should adjust to load with load shedding (return errors rather than serve excess requests) and throttling (delay responses toward the deadline). Load shedding needs request priority and cost, assigned by business criticality with security-critical functions ranked high, and policies based on utilization. A central internal service can translate business priorities into policies and distribute them near real time; automation can also shift traffic, invoke DoS protections, prepare failover, and let a server self-degrade, which avoids trusting attacker-influenced external signals."
+          "lines": "L327-L423"
         },
         {
           "kind": "source_claim",
-          "lines": "L434-L470",
-          "text": "Failing open maximizes availability (an unloaded ACL defaults to allow all) while failing closed maximizes security (default deny), and the two are explicitly at odds; each organization must set a minimal nonnegotiable security posture and then find reliable ways to provide critical security functions. The [ASIDE] adds that security-critical operations should not fail open, because DoS alone could then degrade security, but a lower-cost alternative control with equal or stronger security can replace a failing one. Humans need a foothold: automation must not disable the recovery services employees use, and a change budget should cap unsupervised policy changes of large magnitude or scope."
+          "lines": "L434-L470"
         },
         {
           "kind": "source_claim",
-          "lines": "L476-L615",
-          "text": "Blast radius control starts with compartmentalization: segment networks and grant each segment only the access it needs, so one compromised credential or overloaded component does not expose everything. Compartments aid quarantine, evidence preservation, replacement and repair, and they require authenticated, mutually authenticated RPCs so both ends can verify identity, optionally with location metadata in certificates. The chapter separates role separation (distinct service accounts per job), location separation (per-datacenter or region roles, aligned physical and logical boundaries, per-location certificates), and time separation (key and credential rotation). Google's BeyondCorp is cited to argue location implies no trust: a Red Team access point was zip-tied by a technician who assumed it was legitimate."
+          "lines": "L476-L615"
         },
         {
           "kind": "source_claim",
-          "lines": "L620-L721",
-          "text": "A failure domain is a blast-radius control that partitions a system into equivalent, independent copies; any partition can take over but only at a fraction of capacity. Functional isolation needs each domain to have its own data copy, and data isolation has two parts: restrict how updates enter (validation, escalation, breakglass) and let systems write the last known good configuration locally. Google rate-limits global changes with per-application quotas and forbids multi-application or too-fast capacity changes. Two domains already provide A/B regression and canary isolation, disaster separation, and different software versions, at the cost of configuration consistency, simultaneous-corruption protection, hiding the partition from clients, and partitioning all dependencies."
+          "lines": "L620-L721"
         },
         {
           "kind": "source_claim",
-          "lines": "L727-L836",
-          "text": "Component types form a reliability hierarchy: high-capacity components are the main fleet and absorb normal spikes and DoS traffic until mitigation; high-availability copies have provably lower outage probability through fewer dependencies and limited change, for example local caches and older code; low-dependency components are alternative implementations with minimal dependencies, used when even high availability is insufficient. Redundancy succeeds inversely to the chance that one root cause affects both components. Failover needs distinct interchangeable backend sets and explicit logic or flags to choose behavior, tuned throttling after failover, and a way to disable failback. Common pitfalls are overloading the backup during an outage, letting rarely used alternatives rot, and unchecked dependency or resource growth."
+          "lines": "L727-L836"
         },
         {
           "kind": "source_claim",
-          "lines": "L842-L1025",
-          "text": "Continuous validation exercises the system under realistic controlled conditions to confirm specific properties, unlike exploratory chaos engineering, and it is needed because new features can erode layered defenses. The maintenance cycle is discover failures (bug reports, fuzzing, failure injection, expert judgment), implement validators, run them repeatedly, and retire them when behavior disappears; automation must itself be monitored and audited. Focus areas include end-to-end behavior on slow or unreachable backends and resource shortage, log analysis of boundary violations, recovery instructions and human workflows, penetration testing, and low-dependency interactions. The five practice scenarios are injecting delays and failures in steps, mirroring requests to compare responses, splitting traffic when mirroring is impossible, oversubscribing with measured rebalancing, and measuring key rotation latency plus verified loss of old-key access."
+          "lines": "L842-L1025"
         },
         {
           "kind": "source_claim",
-          "lines": "L1028-L1113",
-          "text": "Practical advice orders investment by cost: failure domains and blast-radius controls are cheapest because they are relatively static and produce lasting design pressure; high-availability services come next; load shedding and throttling follow when scale or risk aversion justifies active automation; DoS defense should be evaluated; and any low-dependency solution needs a process to keep it low dependency. Arguments for funding include lasting isolation effects, cryptographic agility from rotation exercises, cheap experimentation with high-availability copies, resource savings from degradation, faster first response to DoS, and the option value of low dependency. The conclusion frames defense in depth as N+1 redundancy for defenses and warns that resilience can still fall short, which leads into recovery."
+          "lines": "L1028-L1113"
         },
         {
           "kind": "inference",
-          "lines": "L30-L1116",
-          "text": "The chapter is design guidance built from Google experience and worked examples (Troy, App Engine, BeyondCorp, load shedding, validation scenarios); it reports no controlled measurements of resilience outcomes, incident rates or the recommended redundancy levels. The App Engine account gives a qualitative five-year observation and the key-rotation section gives measurement advice, but neither supplies comparative effectiveness data. Claims should therefore be treated as design heuristics and operational practices, not verified causal findings; figure images and linked SRE book chapters were not consulted."
+          "lines": "L30-L1116"
         }
       ],
       "omissions": "Other book chapters outside this batch not read; no production experiment.",
@@ -16453,63 +16312,51 @@
       "notes": [
         {
           "kind": "source_claim",
-          "lines": "L24-L78",
-          "text": "Recovery is framed as returning a failed or compromised system to a stable, secure state, complicated by tradeoffs such as a rollback that reintroduces a vulnerability or a security patch that introduces a stability bug. Four error classes are distinguished: random physical errors (including silent bit flips and power anomalies), accidental human errors with good intent (an internal 2015-2018 analysis found a meaningful fraction, though not most, outages came from a unilateral human action without a safety check), software errors (bugs as delayed accidental errors), and malicious actions by insiders, social-engineering victims, coerced staff or third-party attackers. Design should not wait for classification of every edge case but should prepare to recover from all of them."
+          "lines": "L24-L78"
         },
         {
           "kind": "source_claim",
-          "lines": "L87-L149",
-          "text": "Update mechanisms should be built to run as fast as imaginable, then constrained by policy; decoupling actuation from rate lets policy change without refactoring and lets an emergency push use the normal system turned up to maximum, so emergency and regular rollback paths are the same and are exercised often. The [ASIDE] proposes a standalone, single-purpose rate-limiting microservice that issues a short-lived cryptographic token approving a change and logs changes for audit. The Linux distribution example shows how Google abandoned a monthly base-image assumption for per-package rollouts with separate rollout, configuration-store and actuator components, enabling wider velocity ranges and emergency releases by adjusting rate limits."
+          "lines": "L87-L149"
         },
         {
           "kind": "source_claim",
-          "lines": "L155-L203",
-          "text": "Wall-clock time is state that recovery cannot control, so dependencies on it can break recovery: replayed transactions may carry expired-certificate signatures unless the original transaction date is honored, and Y2K, Unix epoch rollover, far-future expirations, unauthenticated NTP and hardcoded date offsets are cited. The first [NOTE] recommends rates, manually advanced epoch or version numbers, and validity lists instead of wall-clock time, and describes ALTS as using revocation lists over certificate expiration. The chapter still allows deliberately time-bounded access such as daily reauthentication, but wants a repair path that does not depend on wall-clock time. The second [NOTE] warns that aggressively incremented epochs can overflow and that an adversary could accelerate or roll over the epoch, so a large integer with a backstop rate limit (for example once per second) is advised."
+          "lines": "L155-L203"
         },
         {
           "kind": "source_claim",
-          "lines": "L209-L242",
-          "text": "Most production incidents that need human attention are self-inflicted changes, so the first mitigation is often rollback to the last known good state; but after a security patch is deployed and stable, attackers must be prevented from rolling the vulnerability back in, while a voluntary rollback remains possible because patches are code and can carry their own bugs. Two extreme policies are rejected: allowing arbitrary rollbacks is insecure because older vulnerabilities are more likely to have weaponized exploits, and never allowing rollbacks removes the path to a known stable state and forces forward-only rebuilds. The chapter assumes all updates are signed over image and version metadata and discusses deny lists, SVNs/MASVNs and signing-key rotation as practical middle grounds, cautioning that combining all three is a large undertaking and should be introduced one capability at a time."
+          "lines": "L209-L242"
         },
         {
           "kind": "source_claim",
-          "lines": "L248-L302",
-          "text": "A hardcoded Release[DenyList] checked by IsUpdateAllowed stops accidental rollback to a bad version but cannot resolve the security/reliability tradeoff: leaving any older good image allowed permits 'unzipping', where an attacker steps back through versions to one with a known exploit, while blocking all rollbacks recreates the never-allow extreme. Storing the deny list outside the self-updating component in ComponentState preserves it across upgrades and downgrades and lets policy deliberately weigh unzipping risk against instability. Drawbacks remain: the list must still be monitored, removing an accidental entry can open unzipping, and the list can grow without bound until storage limits, raising garbage-collection questions."
+          "lines": "L248-L302"
         },
         {
           "kind": "source_claim",
-          "lines": "L307-L374",
-          "text": "A Security Version Number (Release[SVN]) marks security milestones and allows older deny-list entries to be dropped while still blocking them; a Minimum Acceptable SVN sets a low-water mark below which a component must never operate, and must be ordered, preferably an integer. Each release carries Release[MASVN], and a global ComponentState[MASVN] is maintained outside the deployment system and updated at component initialization to the maximum of the two. Raising MASVN in release i+1 makes the i security patch mandatory after it has proven stable in production; never raising it emulates arbitrary rollback, and raising it in lockstep with SVN emulates never allowing rollback. The scheme can be combined with rapid deny listing during incidents and calmer MASVN maintenance afterward."
+          "lines": "L307-L374"
         },
         {
           "kind": "source_claim",
-          "lines": "L379-L422",
-          "text": "Self-updating components authenticate releases against a hardcoded key list or an independent key database; rollback can be prevented by removing an old key or adding a new one, but an abrupt key change is a reliability risk. Gradual rotation introduces key k+1 alongside k and accepts either signature until stability is proven, then drops k; this requires multiple signatures and verification keys but exercises rotation regularly. Key rotation also recovers from an attacker who briefly controls release management and sets MASVN to its maximum: new releases signed by a new key revoke the compromised key and use dedicated logic to reset the inflated state, logic the authors call subtle and dangerous and to be revoked once used. Firmware adds OTP fuses, forward-only MASVN, limited key slots, and spare parts with old firmware; the [NOTE] suggests walking devices through intermediate releases or supporting multiple signatures per release so old firmware can still verify an update."
+          "lines": "L379-L422"
         },
         {
           "kind": "source_claim",
-          "lines": "L428-L497",
-          "text": "A revocation system stops access or function and can restore control during a compromise, but its own failures can cause outages. A centralized certificate-validity database is authoritative and must be maintained, yet if it is down every dependent system is down, creating pressure to fail open that the chapter says to resist. Distributing a locally cached revocation list is more secure than timing out and failing open, and explicit revocation also removes dependence on accurate time. Managing authorized_keys or known_hosts directly scales poorly and smears ground truth, per the [NOTE]; central key management with pushed revocation lists is preferred. At scale, a blindly replaced KRL can revoke every credential, so servers should evaluate a new KRL and refuse one that revokes their own credentials, guaranteeing at least half the fleet survives; sharding the list avoids a rarely used emergency path that may not work."
+          "lines": "L428-L497"
         },
         {
           "kind": "source_claim",
-          "lines": "L500-L600",
-          "text": "Recovery requires a known intended state and a way to read deployed state; the more completely state is encoded and the more mutable state is reduced, the easier recovery and intrusion detection become. The [ASIDE] defines state broadly, including code version, listening port, startup behavior, configuration and environment even for nominally stateless services. Google's host management hashes every file, compares the map with the assigned packages, and repairs deviations, with idempotent post_install and pre_rm hooks to repair in-memory state (restarting SSH, for example). Firmware uses the same package model plus activation checks; global services need multiple instances and turnup automation; persistent data needs integrity-protected backups, compartmentalized restores, and care that recovery cannot resurrect data meant to be deleted, including key destruction versus data deletion. Recovery processes should also be tested, because they run unusual tasks under unfamiliar conditions: automated creation of a clean instance can reveal assumptions such as a service having only one global instance, and Google's cryptographic key-management protocol was implemented once in a portable, compiler-neutral and bit-width-neutral way and unit tested extensively with fake interfaces for flash, key storage and performance counters because realistic hardware-failure emulation was impractical. Continuous validation should check that recovery instructions are readable and that human workflows are effective and interoperable, since unit tests cannot check human skill or habit."
+          "lines": "L500-L600"
         },
         {
           "kind": "source_claim",
-          "lines": "L605-L669",
-          "text": "Emergency access is the last-resort path when normal access is broken and must be minimal, dependency-poor and still access-controlled; the [ASIDE] lists networks, access-control systems and recovery tools as the relevant assets. Google distributes self-contained critical services to geographically separated racks so responders can fix what they can reach and expand radially during a global outage. Access credentials cannot depend on SSO or federated identity unless low-dependency replacements exist, and short credential lifetimes become a time bomb if an outage outlasts them. The second [ASIDE] describes offline alternate credentials and alternate authentication/authorization algorithms restricted to people who need immediate access. Communications need few dependencies, and responder habits matter: minimizing the difference between normal and emergency processes, practicing regularly, and keeping documentation available reduces the chance that human confusion defeats breakglass tools."
+          "lines": "L605-L669"
         },
         {
           "kind": "source_claim",
-          "lines": "L675-L687",
-          "text": "The chapter closes with unexpected benefits: machines engineered for attested firmware updates and secure recovery also suit bare-metal cloud cleaning and resale, and supply-chain assurance improves because components whose integrity can be restored automatically need less scrutiny, while repurposing recovery procedures keeps them exercised. It argues recovery design is advanced work whose value appears only when a system is out of its intended state, yet error budgets imply systems run in error states regularly, so teams should invest early in rate limiting and rollback mechanisms."
+          "lines": "L675-L687"
         },
         {
           "kind": "inference",
-          "lines": "L24-L687",
-          "text": "The chapter is design guidance grounded in Google operational experience and pseudocode, not an empirical study: the 2015-2018 outage analysis is reported only qualitatively ('a meaningful fraction, though not most'), and no measurements compare deny lists, MASVNs, key rotation or emergency-access designs. The historical and incident examples are retrospective, and the code is illustrative pseudocode rather than tested implementation. Claims are thus design heuristics and tradeoff reasoning; linked SRE book chapters, CVEs and figure images were not consulted."
+          "lines": "L24-L687"
         }
       ],
       "omissions": "Other book chapters outside this batch not read; no production experiment.",
@@ -17411,58 +17258,47 @@
       "notes": [
         {
           "kind": "source_claim",
-          "lines": "L13-L18",
-          "text": "The opening aside states that early security work at Google, including product-focused security, was entirely centralized; Chrome was one of the first products to build a security-focused organization, and the case study covers that organization's evolution, principles, and ideas for scaling security."
+          "lines": "L13-L18"
         },
         {
           "kind": "source_claim",
-          "lines": "L24-L42",
-          "text": "In 2006 a team was formed to build an open source Windows browser in under two years that would be more secure, faster, and more stable than alternatives. The stated challenges were browser complexity comparable to an operating system, limited transferable client-side and Windows security expertise in Google's central team, and open source development and operational requirements that ruled out dependence on corporate security practices. Chrome launched in 2008."
+          "lines": "L24-L42"
         },
         {
           "kind": "source_claim",
-          "lines": "L45-L46",
-          "text": "The team describes four stages. v0.1 had no formal security team before the 2008 launch and relied on distributed engineering expertise, central consulting, and third-party vendors; critical buffer overflows were found in the first two weeks. v1.0 added a dedicated team a year after the public beta. v2.0 began the 2010 Vulnerability Reward Program and a flood of WebKit reports that the team often fixed itself, creating a hybrid engineering team rather than isolated consultants. v3.0 published core principles in 2012 and held a 2013 mission-setting offsite."
+          "lines": "L45-L46"
         },
         {
           "kind": "source_claim",
-          "lines": "L48-L54",
-          "text": "The 2013 offsite used Post-it notes and collective clustering to define five evergreen focus areas: security reviews, bug finding and fixing, architecture and exploit mitigation, usable security, and web platform security. Accountable leads and later managers scaled the organization, while leads were expected to share information and swarm rather than silo."
+          "lines": "L48-L54"
         },
         {
           "kind": "source_claim",
-          "lines": "L57-L60",
-          "text": "Hiring relied on personal networks, diverse backgrounds, intern conversion, conference speakers, and cold outreach, with public Chromium material helping candidates understand the work. The team deliberately considered people with security interest but accomplishments elsewhere, including an engineer with an SRE background, and calls this diversity of experience a key success factor."
+          "lines": "L57-L60"
         },
         {
           "kind": "source_claim",
-          "lines": "L69-L87",
-          "text": "The chapter argues that security is a team responsibility because the security team cannot own all of Chrome. All engineers, including security staff, fix bugs and write code; fuzzing infrastructure grew from one computer under a desk to serving fuzzing across Google and the world by 2019; contests, tutorials, and safe base libraries make the secure path the default. Peer bonuses and positive feedback reward visible security practice, and the authors say organizations without security as a core value need fundamental reflection."
+          "lines": "L69-L87"
         },
         {
           "kind": "source_claim",
-          "lines": "L93-L99",
-          "text": "Usable security is presented as necessary because effective security should not depend on user expertise. In Team v3.0 the team acknowledged phishing, social engineering, and warning effectiveness as open problems, lacked human-centered expertise, and hired a research scientist despite no precedent on that job ladder, then partnered with UX and added designers and researchers. The authors observe that security experts are often blind to user challenges."
+          "lines": "L93-L99"
         },
         {
           "kind": "source_claim",
-          "lines": "L105-L108",
-          "text": "Speed is tied to fast, automatic updates and to release TPMs who watch crash rates, prioritize fixes, roll forward incrementally, and resist unsafe speed. Pwn2Own and Pwnium were used as forcing functions to prove critical fixes could be released and deployed in under 24 hours; the team says it can, but has rarely needed to because of defense in depth."
+          "lines": "L105-L108"
         },
         {
           "kind": "source_claim",
-          "lines": "L114-L126",
-          "text": "Defense in depth is illustrated by the 2008 multiprocess architecture with sandboxed renderers, which contained the then-dominant threat of a malicious page installing malware, and by Site Isolation from 2012 after cross-site data theft became a plausible target. Site Isolation was predicted to take a year and ran more than five times longer; the team communicated the defense-in-depth rationale and code-health benefits to leadership. The authors note it coincidentally mitigates 2018 speculative-execution vulnerabilities and that user-invisible work needs proactive leadership support."
+          "lines": "L114-L126"
         },
         {
           "kind": "source_claim",
-          "lines": "L132-L141",
-          "text": "Transparency is described as a founding value: no silent fixes or downplayed impact, public handling process, disclosure of all fixed vulnerabilities including dependencies, and release notes listing every fixed security issue where possible. The team also publishes quarterly summaries, runs a public mailing list, encourages conference and social sharing, pays and attributes VRP rewards, sponsors conferences, and connects embedded security teams at an annual offsite; the HTTPS adoption effort in Chapter 7 is cited as ecosystem change."
+          "lines": "L132-L141"
         },
         {
           "kind": "inference",
-          "lines": "L45-L46,L105-L126",
-          "text": "This is a self-reported practitioner case study, not an independent evaluation. The 24-hour fix claim, the fivefold schedule overrun, and the organizational history are team recollections without measurement or comparison cases, so they illustrate the team's account rather than establish causal effects."
+          "lines": "L45-L46,L105-L126"
         }
       ],
       "omissions": "Other book chapters outside this batch not read; no production experiment. Within this chapter, external links, cited works, and the endnote reference were not opened. No figures or tables are present. Only extractor artifacts were excluded from interpretation (missing space after the endnote number); no authored prose was omitted. No other edition, PDF, or secondary summary was used.",
@@ -17705,63 +17541,51 @@
       "notes": [
         {
           "kind": "source_claim",
-          "lines": "L13-L34",
-          "text": "The opening aside and introduction argue against the myth that only experts should handle security: security and reliability should be integrated into the system lifecycle and are everyone's responsibility, while specialists remain necessary in some cases. The chapter asks who is responsible and how the work is integrated, and says the answer depends on organizational objectives and culture, the next chapter's topic."
+          "lines": "L13-L34"
         },
         {
           "kind": "source_claim",
-          "lines": "L37-L45",
-          "text": "A reliability aside says reliability roles are covered elsewhere and points to Chapter 32 of the SRE book and Chapters 18-20 of the SRE workbook, explaining why most of this chapter discusses security."
+          "lines": "L37-L45"
         },
         {
           "kind": "source_claim",
-          "lines": "L51-L68",
-          "text": "An isolated security or reliability team without a mandate is said to produce repeated failures and Sisyphean work. Responsibility is assigned to developers, SREs, security engineers, test engineers, tech leads, managers, project managers, tech writers, and executives so nonfunctional requirements are considered across the lifecycle. A car analogy says every component and every builder embeds safety and reliability, not just experts."
+          "lines": "L51-L68"
         },
         {
           "kind": "source_claim",
-          "lines": "L74-L112",
-          "text": "Specialists complement developers by viewing a system as an attacker, mapping dependency chains, and defining metrics. Their advice is meant to be integrated through design review at project outset, ongoing audits, and independent testing. Security specialists own cryptography ('don't roll your own crypto'), AAA systems, and secure frameworks; SREs own centralized infrastructure and organization-wide automation; specialists also codify practices, policies, and training and build a knowledge brain trust."
+          "lines": "L74-L112"
         },
         {
           "kind": "source_claim",
-          "lines": "L115-L183",
-          "text": "Hiring is compared to medicine: all security professionals share a general body of knowledge but specialize. Small organizations may need a generalist, while growth creates specialized needs; a table maps Google Search (1998), AdWords (2000), Blogger (2003), and Gmail (2004) to expertise and security challenges. Certifications show interest and learning ability but not necessarily applied aptitude, and academic programs should be weighed with practical experience and organizational need; an experienced first hire can mentor early-career staff, while a niche problem may suit a new PhD."
+          "lines": "L115-L183"
         },
         {
           "kind": "source_claim",
-          "lines": "L186-L243",
-          "text": "Security work should start before it is forced. Triggers listed are personal or sensitive data, highly secure or custom technology, regulation or audit (Sarbanes-Oxley, PCI DSS, GDPR), contractual security or breach-notification terms, a breach (ideally before one), and a peer's breach. A payment-vendor example connects insecure integration to fines, trust loss, and rework, with endnotes citing Code Spaces and the American Medical Collection Agency. Cost must be balanced against business requirements because turning everything off would be safe but fatal to availability; distributing firewall configuration across six product teams through an automated approval system is offered as cheaper and more reliable than a central team maintaining 120 firewalls. Boards and shareholder suits, including Yahoo! in 2017, are cited as nontechnical stakeholders."
+          "lines": "L186-L243"
         },
         {
           "kind": "source_claim",
-          "lines": "L246-L291",
-          "text": "Embedding ranges from fully embedded specialists to a fully centralized team, with Google using a hybrid. CISO reporting lines vary across CEO, CFO, CIO, COO, general counsel, VP Engineering, and CSO, and the authors say there is no universally right configuration. At Google the central security organization is a peer to product engineering led by a VP, preserving independence; failure modes are inability to raise issues, being circumvented through silent launches, and poor documentation or code access. Security champions in product teams act as gateways, central teams keep design review, policy, frameworks, and least privilege, and Android and Chrome have decentralized product security teams. The section stresses an open, approachable team and timely feedback."
+          "lines": "L246-L291"
         },
         {
           "kind": "source_claim",
-          "lines": "L294-L339",
-          "text": "An aside describes Google's smart intake system: a dynamic questionnaire replaces a one-size-fits-most ticket form, asks context-aware questions about memory safety, templating, sensitive data, and critical systems, warns about risky choices, routes structured tickets, and lets users bypass to 'other' for time-sensitive one-offs. Security engineers review commonly bypassed sections and adjust the questionnaire. Claimed outcomes are user self-service and education, faster and better recommendations, more tickets closed per week, and higher information quality."
+          "lines": "L294-L339"
         },
         {
           "kind": "source_claim",
-          "lines": "L342-L395",
-          "text": "Blue Teams assess and harden software and infrastructure and handle detection, containment, and recovery; Red Teams run goal-oriented offensive exercises. Red Team goals include exfiltrating customer data to a safe destination, testing whether reconnaissance is detected, and demonstrating that theoretical issues are exploitable. Buy-in from legal and executives and boundaries such as no real customer data or production disruption are recommended, with test accounts as approximations. Some Red Teams share plans with Blue Teams or use a Purple Team. A note says Red Team attacks are not a perfect test because internal engineers know the systems and exercises cannot be frequent enough for real-time or statistically significant metrics; they still find rare edge cases and can teach an adversarial mindset. The post-note paragraph says embedding system engineers in an attack team teaches them how attackers work."
+          "lines": "L342-L395"
         },
         {
           "kind": "source_claim",
-          "lines": "L398-L474",
-          "text": "External researchers are engaged through Vulnerability Reward Programs. Google's first VRP in 2006 offered a T-shirt and a public thank-you. Before launching a VRP, organizations should cover basic finding and scanning so they do not pay outsiders for bugs their own teams could catch and to reduce duplicate reports. Suggested steps are readiness, scope, payout levels and funds, in-house versus specialist operation, an intake/triage/investigation/validation/follow-up/fix process estimated at about 40 hours per serious issue excluding fixes, a payment process that accounts for global reporters and legal and finance constraints, and launch-learn-iterate. Expected challenges are report volume, poor-quality or non-bug reports, language barriers, and unsettled disclosure norms; the chapter points to Google, Project Zero, Oulu University, and ISO material."
+          "lines": "L398-L474"
         },
         {
           "kind": "source_claim",
-          "lines": "L477-L480",
-          "text": "The conclusion says security and reliability are created by the quality or absence of processes and practices, that people are the most important drivers, and that effective employees collaborate across roles, departments, and cultural boundaries. Because the future and adversaries are unpredictable, making everyone responsible is called the best defense."
+          "lines": "L477-L480"
         },
         {
           "kind": "inference",
-          "lines": "L122-L169,L434",
-          "text": "The chapter is prescriptive and experience-based. The milestone table is a historical illustration rather than a tested model, and the roughly 40-hour triage estimate is stated as experience without a sample, distribution, or method."
+          "lines": "L122-L169,L434"
         }
       ],
       "omissions": "Other book chapters outside this batch not read; no production experiment. Within this chapter, external links, cited works, and the 11 endnote references were not opened. The one table's 15 cells were read as flattened text; its row and column structure is lost in the local representation. Only extractor artifacts were excluded from interpretation (missing spaces after footnote numbers and flattened table cells); no authored prose was omitted. No other edition, PDF, or secondary summary was used.",
@@ -18056,63 +17880,51 @@
       "notes": [
         {
           "kind": "source_claim",
-          "lines": "L13-L24",
-          "text": "The opening aside asks whether a new employee understands security and reliability priorities and their own role, then frames the chapter as healthy-culture patterns, practices for changing culture, and ways to influence leadership. It cautions that no two organizations are alike, that not every practice will fit, and that Google does not follow its own advice perfectly."
+          "lines": "L13-L24"
         },
         {
           "kind": "source_claim",
-          "lines": "L27-L39",
-          "text": "Two scenarios set up the argument: a CEO-prioritized deal threatened by an attacker, where a healthy culture reports the incident despite delay, and an accidental frontend push that takes revenue offline, where a reliability culture redesigns the process. The chapter recommends blameless postmortems, error budgets instead of 100% targets, safe code pushes, and transparency rather than hiding incidents."
+          "lines": "L27-L39"
         },
         {
           "kind": "source_claim",
-          "lines": "L48-L63",
-          "text": "Security and reliability should be secure and reliable by default rather than retrofitted, compared to buying a car and separately sourcing seat belts, windshield review, and airbag inspection. Early lifecycle choices are said to preserve sustained velocity and consistency; automation, sanitizers, vulnerability discovery, testing, frameworks, libraries, and language guidance reduce friction and memory-safety errors. The authors point to Chapters 12, 13, and 19 for Google's evolution."
+          "lines": "L48-L63"
         },
         {
           "kind": "source_claim",
-          "lines": "L66-L113",
-          "text": "A review culture makes everyone think about approval before a change. Examples are multi-party authorization for access, peer code review, and configuration review before production. Practices should be documented, new developers and reviewers educated, and reviewers onboarded through apprenticeship; owners are responsible for standards but not exempt from review of their own changes. The Reducing Friction aside recommends lightweight paths for minor changes and good tooling, while still requiring review; reviewers need enough context and may decline or redirect, with automated checks such as Tricorder helping."
+          "lines": "L66-L113"
         },
         {
           "kind": "source_claim",
-          "lines": "L116-L132",
-          "text": "Awareness means people know their security and reliability responsibilities and how to carry them out, with examples of account security, phishing exposure, and executive travel. Education should be lighthearted and interactive because retention varies; Google uses mandatory annual training plus role-specific programs, interactive talks on root causes, games such as the XSS game in Figure 21-1, reference documentation with clear ownership, weekly one-page 'Testing on the Toilet' flyers in restrooms (Figure 21-2), and just-in-time notifications for actions such as upgrading from an untrusted repository or uploading sensitive data."
+          "lines": "L116-L132"
         },
         {
           "kind": "source_claim",
-          "lines": "L134-L157",
-          "text": "A culture of no avoids risk and can stagnate an organization; healthy cultures take risks deliberately and measure them. Google App Engine is the example: running third-party untrusted code looked too risky, but a layered hardened collaboration between product and security made launch possible and built trust for later security work. The Balancing Accountability aside says fear of making the wrong call makes reviewers less willing to accept risk, and layered controls such as least privilege, resiliency, and testing lift the burden of individual perfection. Error budgets give explicit room for risky changes until a limit is reached."
+          "lines": "L134-L157"
         },
         {
           "kind": "source_claim",
-          "lines": "L160-L180",
-          "text": "No system is perfect, so teams should assume failure can happen and prepare. Preparation includes tabletops, Red Team attacks, recovery tests, and role playing; incident skills need regular use. The chapter recommends studying failures through blameless postmortems and after-action reports from other organizations and industries. A NASA aside describes the 2003 Columbia Disaster Investigation Board report, whose Chapter 7 found that NASA's organizational setup and norms impeded a safety culture, as a public example of learning from failure."
+          "lines": "L160-L180"
         },
         {
           "kind": "source_claim",
-          "lines": "L183-L226",
-          "text": "Sustainability requires continuous resources and processes for outages, incidents, and emergencies, plus balance between reactive work and proactive investment. Teams should measure operational workload and improvement investment, consider stress, burnout, and morale, avoid heroics through repeatable processes and staff rotation, and surface concerns. Google's follow-the-sun staffing, protected improvement time, and manager training under Project Oxygen are cited. Exceptional all-hands periods should be declared temporary, run by a standby group with decision authority and exception power, have bypasses flagged and reviewed later, and end with a postmortem that examines whether reward systems caused the emergency."
+          "lines": "L183-L226"
         },
         {
           "kind": "source_claim",
-          "lines": "L230-L296",
-          "text": "Resistance to change is often fear of friction, but the authors call the belief that security and reliability must create friction a myth. Risk-reduction tactics are canaries and staged rollouts, dogfooding, trusted testers, opting in before mandates, and progressive stringency; the staged Chrome release and internal adoption of security keys or endpoint software are examples. Safety nets such as breakglass procedures let teams bypass a stringent control sparingly and with audit. Usability work includes secure-by-construction APIs, security keys that are easier than one-time passwords and allow less frequent password changes, and the Upvote self-service portal where peers can approve software not on an allow list."
+          "lines": "L230-L296"
         },
         {
           "kind": "source_claim",
-          "lines": "L299-L330",
-          "text": "Communication advice is to document why a change is happening, what success looks like, how it rolls back, and whom to contact; to create feedback channels; to use dashboards for multi-team changes; and to write frequent stakeholder updates for long efforts. Empathy is built through shared work, Chrome fixits, job shadowing or swapping, the SRE Security Exchange, Mission Control, and Hacker Camp, plus thank-you mechanisms such as peer bonuses, Kudos, and postcards."
+          "lines": "L299-L330"
         },
         {
           "kind": "source_claim",
-          "lines": "L333-L401",
-          "text": "For leadership buy-in, the chapter advises identifying the actual decider, which may be an executive, a lawyer or risk officer, a tech lead, a stakeholder group, or a community, and understanding that person's pressures and priorities. A case for change should gather data, educate others (including through Red Team postmortems), align incentives, find allies, observe industry trends, and change the zeitgeist over time. Teams should pick battles and treat lost causes as preparation. Escalation guidance is to form an unbiased group, summarize options factually, align one's own leadership, and convene affected management chains with designated deciders; Google security disputes between product and reviewer are cited as a normalized escalation."
+          "lines": "L333-L401"
         },
         {
           "kind": "inference",
-          "lines": "L137-L157,L233-L296",
-          "text": "The chapter is prescriptive and anecdotal. The claim that security and reliability improvements need not create friction is explicitly an opinion, and the Google programs and error-budget advice are not accompanied by measurements, comparison cases, or failure rates, so they document practitioner belief and experience rather than tested effectiveness."
+          "lines": "L137-L157,L233-L296"
         }
       ],
       "omissions": "Other book chapters outside this batch not read; no production experiment. Within this chapter, external links, cited works, and the 16 endnote references were not opened. Figure 21-1 (XSS game) and Figure 21-2 (Testing on the Toilet) were available only as captions and alt text; the images were not viewed. Only extractor artifacts were excluded from interpretation (missing spaces after footnote numbers); no authored prose was omitted. No other edition, PDF, or secondary summary was used.",
@@ -22980,24 +22792,19 @@
       },
       "passages": [
         {
-          "lines": "450-456",
-          "text": "If a reference retrieval system’s1 response to each request is a ranking of the documents in the collection in order of decreasing probability of rel- evance to the user who submitted the request, where the probabilities are estimated as accurately as possible on the basis of whatever data have been made available to the system for this purpose, the overall eﬀectiveness of the system to its user will be the best that is obtainable on the basis of those data."
+          "lines": "450-456"
         },
         {
-          "lines": "730-736",
-          "text": "The constant k1 determines how the tf component of the term weight changes as fi increases. If k1 = 0, the term frequency component would be ignored and only term presence or absence would matter. If k1 is large, the term weight compo- nent would increase nearly linearly with fi . In TREC experiments, a typical value for k1 is 1.2, which causes the eﬀect of fi to be very non-linear, similar to the use of log f in the term weights discussed in section 7.1.2. This means that after three or four occurrences of a term, additional occurrences will have little impact. The"
+          "lines": "730-736"
         },
         {
-          "lines": "2019-2024",
-          "text": "Given the size of the Web, many pages will contain all the query terms. Some ranking algorithms rank only those pages which, in eﬀect, filters the results us- ing a Boolean AND. This can cause problems if only a subset of the Web is used (such as in a site search application) and is particularly risky with topical searches. For example, only about 50% of the pages judged relevant in the TREC topical web searches contain all the query terms. Instead of filtering, the ranking algo-"
+          "lines": "2019-2024"
         },
         {
-          "lines": "2391-2394",
-          "text": "If the LDA probabilities are used directly as the document representation, the eﬀectiveness of the ranking will be significantly reduced because the features are too smoothed. In TREC experiments, K (the number of topics) has a value of around 400. This means that all documents in the collection are represented as"
+          "lines": "2391-2394"
         },
         {
-          "lines": "2475-2482",
-          "text": "Much of the time spent in developing a search application will be spent on tuning the retrieval eﬀectiveness of the ranking algorithm. Doing this without some concept of the underlying retrieval model can be very unrewarding. The re- trieval models described in this chapter (namely BM25, query likelihood, rele- vance models, inference network, and Ranking SVM) provide the best possible blueprints for a successful ranking algorithm. For these models, good parame- ter values and weights are already known from extensive published experiments. These values can be used as a starting point for the process of determining whether"
+          "lines": "2475-2482"
         }
       ]
     },
@@ -23175,24 +22982,19 @@
       },
       "passages": [
         {
-          "lines": "52-57",
-          "text": "fast is of no use unless it produces good results. So is there a trade-oﬀ between eﬃciency and eﬀectiveness? Some search en- gine designers discuss having “knobs,” or parameters, on their system that can be turned to favor either high-quality results or improved eﬃciency. The current sit- uation, however, is that there is no reliable technique that significantly improves eﬀectiveness that cannot be incorporated into a search engine due to eﬃciency"
+          "lines": "52-57"
         },
         {
-          "lines": "286-294",
-          "text": "specific. For example, in the case of the high-recall TREC task, a number of diﬀerent news and government collections were used for evaluation. • The queries that are used for the test collection should also be representative of the queries submitted by users of the target application. These may be acquired either from a query log from a similar application or by asking potential users for examples of queries. Although it may be possible to gather tens of thou- sands of queries in some applications, the need for relevance judgments is a major constraint. The number of queries must be suﬃcient to establish that a new technique makes a significant diﬀerence. An analysis of TREC experi-"
+          "lines": "286-294"
         },
         {
-          "lines": "613-623",
-          "text": "If there are a large number of relevant documents for a query, or if the relevant documents are widely distributed in the ranking, a list of recall-precision values for every rank position will be long and unwieldy. Instead, a number of techniques have been developed to summarize the eﬀectiveness of a ranking. The first of these is simply to calculate recall-precision values at a small number of predefined rank positions. In fact, to compare two or more rankings for a given query, only the 312    8 Evaluating Search Engines"
+          "lines": "613-623"
         },
         {
-          "lines": "1036-1038",
-          "text": "8.4.4 Using Preferences In section 8.3, we discussed how user preferences can be inferred from query logs."
+          "lines": "1036-1038"
         },
         {
-          "lines": "1513-1517",
-          "text": "f (λx1 + (1 − λ)x2 ) ≤ λf (x1 ) + (1 − λ)f (x2 ) 8.7 The Bottom Line     333"
+          "lines": "1513-1517"
         }
       ]
     },
@@ -23364,24 +23166,19 @@
       },
       "passages": [
         {
-          "lines": "43-46",
-          "text": "items. Both classification and clustering have been studied for many years by infor- mation retrieval researchers, with the aim of improving the eﬀectiveness, or in some cases the eﬃciency, of search applications. From another perspective, these"
+          "lines": "43-46"
         },
         {
-          "lines": "352-364",
-          "text": "P (dinner|spam) = 0, P (dinner|not spam) = 17 , and so on. Using the multiple-Bernoulli model, the document likelihood, P (d|c), can be written as: ∏ P (d|c) =       P (w|c)δ(w,d) (1 − P (w|c))1−δ(w,d) w∈V where δ(w, D) is 1 if and only if term w occurs in document d. In practice, it is not possible to use the maximum likelihood estimate because of the zero probability problem. In order to illustrate the zero probability problem, let us return to the spam classification example from Figure 9.1. Suppose that we receive a spam email that happens to contain the term “dinner”. No matter what other terms the email does or does not contain, the probability P (d|c) will always"
+          "lines": "352-364"
         },
         {
-          "lines": "592-596",
-          "text": "common case where the data points are not linearly separable. 9.1 Classification and Categorization    353"
+          "lines": "592-596"
         },
         {
-          "lines": "2115-2121",
-          "text": "B       B C C Fig. 9.17. Example of overlapping clustering using Parzen windows. The clusters for the"
+          "lines": "2115-2121"
         },
         {
-          "lines": "2252-2256",
-          "text": "retrieval, ranks clusters instead of individual documents in response to a query. If there were K clusters C1 . . . CK , for example, we could rank clusters using the query likelihood retrieval model. This means that we rank clusters by P (Q|Cj ), where Q is the query, and:"
+          "lines": "2252-2256"
         }
       ]
     },
