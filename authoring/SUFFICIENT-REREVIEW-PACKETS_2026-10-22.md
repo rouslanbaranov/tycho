@@ -9,14 +9,14 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 89 |
-| Residual findings after re-review | 56 |
+| Promoted after remediation | 93 |
+| Residual findings after re-review | 52 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 97 |
+| Reviewed by independent agent | 101 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 47, "report-section-missing": 1, "reviewed-by-independent-agent": 97}.
+Packet statuses: {"page-changed-since-review": 43, "report-section-missing": 1, "reviewed-by-independent-agent": 101}.
 
 ## Review procedure
 
@@ -149,8 +149,8 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Competing Consumers**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass.
+  Status: reviewed-by-independent-agent.
 
 - **Consensus**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -357,8 +357,8 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Message Broker / Messaging Bridge**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Message Filter**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -405,8 +405,8 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Point-to-Point Queue**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass.
+  Status: reviewed-by-independent-agent.
 
 - **Polyglot Persistence**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -421,8 +421,8 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Publish/Subscribe**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Queue-Based Load Leveling**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
