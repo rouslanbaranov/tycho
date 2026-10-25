@@ -151,19 +151,18 @@ rule and the domain can stay independent of delivery technology.
 
 ### Hexagonal Architecture and Ports and Adapters
 
-The application defines an InventoryPort.reserve(unitId, interval, operationId) capability. One
-JDBC adapter implements the port with a database transaction. An HTTP adapter might instead talk to
-a remote inventory service.
+Hexagonal architecture makes substitution a domain decision. A port names the capability the
+application needs; an adapter maps a technology to it. For reservations, define
+reserve(unitId, interval, operationId), then implement it with a local transaction or a remote call.
 
-Neither implementation changes the *domain invariant*: a confirmed reservation must have one
-authoritative result for its logical operation. When a unique constraint rejects a competing
-booking, the adapter must translate the database exception into an explicit domain conflict, not a
-generic retry. Port tests should run against both adapters and assert the same contract, including
-timeout and conflict behavior.
+The domain owns the contract: a confirmed reservation has one authoritative result for the
+operation, and a uniqueness conflict becomes an explicit domain conflict. Adapter-specific errors,
+timeouts and retries stay at the edge; they do not become domain states.
 
-If the application will always have one simple persistence choice, avoid a hierarchy of adapters
-that adds indirection without needed substitution. Ports are justified by a real substitution or
-test boundary, not by the number of rings.
+Keep the boundary only where substitution or testing justifies it. A distributed split is a
+separate decision: if the adapter calls another service, it must own remote failure, latency and
+versioned contracts, not merely rename a network call a port. A layered or modular-monolith
+structure can be simpler when one persistence choice is stable.
 
 ### Clean-Onion Architecture
 

@@ -269,31 +269,31 @@
         "line": 152,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "InventoryPort",
-          "domain invariant",
-          "unique constraint",
-          "one simple persistence"
+          "ports",
+          "adapter",
+          "domain conflict",
+          "distributed split"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "The application defines an InventoryPort.reserve(unitId, interval, operationId) capability.",
+          "quote": "A port names the capability the application needs; an adapter maps a technology to it.",
           "reason": "Shows the port contract with two interchangeable adapters."
         },
         "invariant": {
           "state": "supported",
-          "quote": "Neither implementation changes the *domain invariant*: a confirmed reservation must have one authoritative result for its logical operation.",
+          "quote": "The domain owns the contract: a confirmed reservation has one authoritative result for the operation",
           "reason": "States the domain invariant that adapter substitution must preserve."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "When a unique constraint rejects a competing booking, the adapter must translate the database exception into an explicit domain conflict, not a generic retry.",
+          "quote": "Adapter-specific errors, timeouts and retries stay at the edge",
           "reason": "Specifies failure translation into a domain conflict instead of blind retry."
         },
         "alternative": {
           "state": "supported",
-          "quote": "If the application will always have one simple persistence choice, avoid a hierarchy of adapters that adds indirection without needed substitution.",
+          "quote": "A layered or modular-monolith structure can be simpler when one persistence choice is stable.",
           "reason": "Names simple direct persistence and the condition that removes the need for an adapter hierarchy."
         }
       },
@@ -326,7 +326,7 @@
         "heading": "Clean-Onion Architecture",
         "anchor": "clean-onion-architecture",
         "level": 3,
-        "line": 168,
+        "line": 167,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Clean and onion",
@@ -2658,7 +2658,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "The read side owns a derived view, its freshness declaration and its rebuild procedure.",
+          "quote": "Apply projection events idempotently: commit the derived row and its cursor atomically, and disable outbound side effects during rebuild.",
           "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
@@ -4760,7 +4760,7 @@
         "heading": "CQRS Read Projections",
         "anchor": "cqrs-read-projections",
         "level": 3,
-        "line": 323,
+        "line": 325,
         "unit_kind": "dedicated",
         "unit_terms": [
           "The projection owner publishes",
@@ -4782,7 +4782,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "That owner also sets the compatibility window for schema changes and rejects an event whose version falls outside it.",
+          "quote": "Apply events idempotently and reject a position that would move the projection backwards; a duplicate must not create a second effect.",
           "reason": "Bounded owner statement from the current section."
         },
         "alternative": {
