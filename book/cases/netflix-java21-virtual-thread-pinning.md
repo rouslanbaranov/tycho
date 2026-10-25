@@ -29,12 +29,10 @@ route_hints:
     - "tracing"
     - "synchronization"
 evidence_scope:
-  source_ids:
-    - "src.jep444"
-    - "src.jep491"
+  source_ids: []
   claim_ids: []
-  status: "source-linked"
-  notes: "Claims limited to JEP 444/491; publisher report is unresolved, not evidence."
+  status: "unknown"
+  notes: "JEP 444/491 are cited public specifications; no repository reading record is claimed. The publisher report is an unresolved citation, not evidence."
 content_review:
   status: "draft"
   reviewed_at: null
@@ -53,7 +51,7 @@ content_verified_at: null
 **Status:** generalized risk note, not incident evidence
 
 **Primary sources:** JEP 444 and JEP 491. The publisher incident report
-(src.m9-n06) could not be lawfully retrieved and is an unresolved citation, not
+(src.m9-n06) was not retrieved during this audit and is an unresolved citation, not
 evidence for any count, date or diagnosis below.
 
 ## The mechanism

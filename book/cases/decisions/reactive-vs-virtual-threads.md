@@ -121,7 +121,7 @@ Categorize I/O waits vs CPU work *separately for outgoing gRPC worker pools, inb
 | [Java 21 pinning][pin] | Pinning blocks carriers | General JDK 21 risk | No incident counts |
 | [Cloudflare object copying, 2025](../cloudflare-super-slurper-queues.md) (src.m9-cf01) | Long remote-object transfer waits and centralized job coordination | Large-object-count queue migration sped up; small-object proof of concept regressed | Queues and worker orchestration reduce tiny request latency or provide exactly-once delivery |
 
-The underlying categories are **network wait**, **CPU cycles**, **monitor/carrier scheduling**, and **durable asynchronous batch work**. They have different latency, scaling and rollback goals. The examples come from different organizations and years and are not one A/B experiment.
+The underlying categories are **network wait**, **CPU cycles**, **monitor/carrier scheduling**, and **durable asynchronous batch work**. They have different latency, scaling and rollback goals. The examples come from different contexts and years and are not one A/B experiment.
 
 ## A capacity-and-correctness decision matrix
 
@@ -149,13 +149,17 @@ This is **Tycho's synthetic verification process**. It is not Netflix's or Cloud
 - **"Virtual threads are nonblocking."** Not in every relevant sense: synchronized monitor regions or native library behavior can pin carriers on some JDKs, and CPU-bound work still consumes CPU.
 - **"Reactive always wins CPU."** Zuul's logging cluster and API cluster had different efficiency profiles; nonblocking I/O reduces *waiting overhead*, not arbitrary computation.
 - **"Queues guarantee exactly once."** The Cloudflare case explicitly includes at-least-once delivery and requires object-level deduplication.
-- **"One architecture applies to every service."** The four precedents are compatible once workload type and resource pressure are separated.
+- **"One architecture applies to every service."** The four precedents are compatible once
+workload type and resource pressure are separated.
 
 Reject the redesign if the dominant bottleneck has not been measured, the target library stack is not verified under blocking conditions, security/tracing context cannot cross execution boundaries, or error cleanup/rollback has not been tested. Return **insufficient evidence** instead of guessing a universal scheduler ranking.
 
 ## Failure analysis and evidence provenance
 
-The cases and the JEP mechanism are not A/B comparisons under one workload. Published outcomes describe different organizations, production periods, release versions, traffic mixes and operating constraints. This playbook compares *mechanisms and constraints*, not raw numerical results across companies.
+The cases and the JEP mechanism are not A/B comparisons under one workload. Published outcomes
+describe different organizations, production periods, release versions, traffic mixes and
+operating constraints. This playbook compares *mechanisms and constraints*, not raw numerical
+results across companies.
 
 Before presenting a recommendation to its user, an architecture-analysis agent should return: legacy facts, requirement/SLO evidence, selected/avoided pattern, evidence rows with company/date/source ID, alternative mechanism, caveats, a reversible transition sequence, what would falsify the choice, and whether human review is needed. Never invent what original engineering teams rejected.
 

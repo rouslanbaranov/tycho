@@ -59,7 +59,7 @@ These examples connect the chapter's conditional mechanism to published experien
 
 **Case lens — [Netflix — Java platform convergence](../../../cases/netflix-java-platform-convergence.md)**. **Relevant mechanism or architectural contrast:** Separate GraphQL composition and Java platform modernization; staged compatibility changes coordination ownership. **Not established by this report/playbook:** The historical talk and later abstract do not establish a universal RxJava-versus-Spring performance ranking or identical fleet versions.
 
-**Case lens — [Netflix — Java 21 virtual-thread pinning](../../../cases/netflix-java21-virtual-thread-pinning.md)**. **Relevant mechanism or architectural contrast:** JDK21 monitor-related carrier starvation makes tracing/instrumentation part of concurrency acceptance. **Not established by this report/playbook:** An observed JVM incident is not a general virtual-thread failure rate and must not be extrapolated unchanged to later JDKs.
+**Case lens — [Netflix — Java 21 virtual-thread pinning](../../../cases/netflix-java21-virtual-thread-pinning.md)**. **Relevant mechanism or architectural contrast:** JDK 21 monitor pinning makes synchronization and tracing part of concurrency acceptance. **Not established by this report/playbook:** The JEP mechanism is not a failure rate and must not be extrapolated unchanged to later JDKs.
 
 **Transfer test:** before applying the lesson to another legacy system, identify the exact workload, source date, relevant runtime/protocol versions, state authority, failure/recovery gate and the new observation that would reverse the choice. Follow the case's public evidence ledger rather than treating its link as independent proof.
 <!-- /tycho-question-source -->

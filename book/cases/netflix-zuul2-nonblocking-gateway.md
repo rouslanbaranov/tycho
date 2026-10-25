@@ -113,7 +113,7 @@ In the Servlet model a thread can remain attached to a request while it waits on
 
 **Operating guards for a different gateway (Tycho synthesis):** explicit event-loop blocking detector; bounded offload executor for unavoidable synchronous dependencies; request context and principal propagation across callbacks; cancellation/deadline cleanup; leak detection for reference-counted buffers; retry/hedging and upstream admission limits; p99 measured by route and connection cohort rather than aggregated at cluster level. A partially converted framework must support a known rollback version while downstream contract and security behavior are stable. No universal Netflix rollback threshold is documented.
 
-These are the actual distinctions in src.m9-n07, **Results of Zuul 2 in Production**. A second modern Java case about a CPU-bound [gRPC worker-pool regression under virtual threads](netflix-grpc-cpu-workerpool-virtual-thread-regression.md) is a different scheduling experiment and must not be collapsed into this 2016 result. The [2024 tracing-lock virtual-thread incident](netflix-java21-virtual-thread-pinning.md) is likewise a different failure mechanism.
+These are the actual distinctions in src.m9-n07, **Results of Zuul 2 in Production**. A second modern Java case about a CPU-bound [gRPC worker-pool regression under virtual threads](netflix-grpc-cpu-workerpool-virtual-thread-regression.md) is a different scheduling experiment and must not be collapsed into this 2016 result. The [JDK 21 monitor-pinning risk](netflix-java21-virtual-thread-pinning.md) is likewise a different mechanism.
 
 ## Two incompatible architecture choices for a hypothetical legacy gateway
 
