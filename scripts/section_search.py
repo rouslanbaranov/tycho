@@ -381,6 +381,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
         if assessment is None:
             assessment = answerability_policy.assess(
                 query, results[0]["score"] if results else 0, unknown)
+        weak_results = []
         if not results:
             status = "no-results"
             assessment = dict(assessment)
@@ -390,12 +391,40 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             assessment["basis"] = "zero-results"
         elif abstain and assessment["no_confident_answer"]:
             status = "no-confident-answer"
+            if include_weak:
+                weak_results = results
             results = []
             truncated = False
         else:
             status = "ok"
-        returned = len(results)
-        return {
+        facets = {"kind": {}, "evidence_status": {}}
+        for item in results + weak_results:
+            kind_value = item.get("kind") or "unknown"
+            evidence_value = item.get("evidence_status") or "unknown"
+            facets["kind"][kind_value] = facets["kind"].get(kind_value, 0) + 1
+            facets["evidence_status"][evidence_value] = (
+                facets["evidence_status"].get(evidence_value, 0) + 1)
+        if detail == "ids":
+            keep = (
+                "section_key", "document_id", "section_id", "path", "heading",
+                "heading_level", "title", "kind", "evidence_status", "score",
+                "score_kind", "matched_terms", "citation", "anchor", "why",
+                "next_actions",
+            )
+            results = [
+                {key: item[key] for key in keep if key in item}
+                for item in results
+            ]
+            weak_results = [
+                {key: item[key] for key in keep if key in item}
+                for item in weak_results
+            ]
+        next_actions = []
+        for item in results + weak_results:
+            next_actions = item.get("next_actions") or []
+            if next_actions:
+                break
+        response = {
             "status": status,
             "snapshot": manifest["snapshot_id"],
             "coverage": manifest["coverage"],
@@ -409,11 +438,43 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             "filters": {"kind": kind, "topic": topic,
                         "evidence_status": evidence_status,
                         "path_prefix": path_prefix},
-            "returned": returned,
+            "detail": detail,
+            "max_chars": max_chars,
+            "returned": len(results),
+            "weak_returned": len(weak_results),
             "truncated": truncated,
+            "facets": facets,
+            "next_actions": next_actions,
             "answerability": assessment,
             "results": results,
+            "weak_results": weak_results,
         }
+        if max_chars is not None:
+            def encoded_size():
+                return len(json.dumps(
+                    response, ensure_ascii=False,
+                    separators=(",", ":")).encode("utf-8"))
+            while encoded_size() > max_chars:
+                if response["weak_results"]:
+                    response["weak_results"].pop()
+                    response["weak_returned"] = len(response["weak_results"])
+                elif response["results"]:
+                    response["results"].pop()
+                    response["returned"] = len(response["results"])
+                elif response.get("facets"):
+                    response.pop("facets", None)
+                elif response.get("next_actions"):
+                    response.pop("next_actions", None)
+                elif isinstance(response.get("answerability"), dict) and (
+                        "features" in response["answerability"]):
+                    response["answerability"].pop("features", None)
+                else:
+                    break
+                response["truncated"] = True
+        response["returned_chars"] = len(json.dumps(
+            response, ensure_ascii=False,
+            separators=(",", ":")).encode("utf-8"))
+        return response
     finally:
         db.close()
 

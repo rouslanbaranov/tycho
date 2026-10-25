@@ -181,6 +181,26 @@ class TychoHttpApplication:
         if not isinstance(all_sections, bool):
             raise HttpRequestError(400, "all_sections must be boolean")
         args["all_sections"] = all_sections
+        mode = values.get("mode", "strict")
+        if mode not in ("strict", "exploratory"):
+            raise HttpRequestError(400, "mode must be strict or exploratory")
+        args["mode"] = mode
+        detail = values.get("detail", "snippets")
+        if detail not in ("ids", "snippets"):
+            raise HttpRequestError(400, "detail must be ids or snippets")
+        args["detail"] = detail
+        max_chars = values.get("max_chars")
+        if max_chars is not None:
+            if isinstance(max_chars, str):
+                try:
+                    max_chars = int(max_chars)
+                except ValueError as exc:
+                    raise HttpRequestError(
+                        400, "max_chars must be an integer") from exc
+            if not isinstance(max_chars, int) or isinstance(max_chars, bool):
+                raise HttpRequestError(
+                    400, "max_chars must be an integer")
+            args["max_chars"] = max_chars
         snapshot = values.get("snapshot_id")
         if snapshot is not None:
             if not isinstance(snapshot, str):

@@ -124,7 +124,8 @@ def call_tool(process, request_id, name, arguments):
 
 def row_for(task, payload, reads, latency_ms, tool_calls):
     accepted = [entry["path"] for entry in task["accepted"]]
-    results = payload.get("results") or []
+    confident_results = payload.get("results") or []
+    results = confident_results or payload.get("weak_results") or []
     paths = [item.get("path") for item in results]
     rank = first_relevant_rank(paths, accepted)
     accepted_sections = {
@@ -154,6 +155,8 @@ def row_for(task, payload, reads, latency_ms, tool_calls):
         "policy_state": assessment.get("state"),
         "default_would_abstain": policy_abstained,
         "returned": payload.get("returned"),
+        "weak_returned": payload.get("weak_returned", 0),
+        "visible_returned": len(results),
         "doc_hit": bool(rank),
         "section_hit": section_hit,
         "top1": rank == 1,
@@ -162,7 +165,8 @@ def row_for(task, payload, reads, latency_ms, tool_calls):
         "path_precision": precision,
         "abstained": abstained,
         "confident_wrong": (
-            unanswerable and assessment.get("confident") is True and bool(paths)),
+            unanswerable and assessment.get("confident") is True
+            and bool(confident_results)),
 
         "tool_calls": tool_calls,
         "context_bytes": len(json.dumps(payload, ensure_ascii=False)) + sum(
@@ -179,7 +183,12 @@ def main(argv=None):
     parser.add_argument("--limit", type=int, default=10)
     parser.add_argument("--strategy", choices=("search-once", "search-read"),
                         default="search-once")
+    parser.add_argument(
+        "--mode", choices=("diagnostic", "strict", "exploratory"),
+        default="diagnostic",
+        help="diagnostic uses abstain=False; strict/exploratory use the policy")
     parser.add_argument("--max-tasks", type=int)
+    parser.add_argument("--max-chars", type=int)
     parser.add_argument("--json", type=Path)
     args = parser.parse_args()
     dataset = json.loads(args.dataset.read_text(encoding="utf-8"))
@@ -202,6 +211,8 @@ def main(argv=None):
             "selection": dataset["selection"],
             "snapshot": describe.get("snapshot"),
             "strategy": args.strategy,
+            "mode": args.mode,
+            "max_chars": args.max_chars,
             "limit": args.limit,
             "head": subprocess.check_output(
                 ["git", "rev-parse", "HEAD"], cwd=str(ROOT), text=True).strip(),
@@ -209,11 +220,18 @@ def main(argv=None):
         for task in items:
             start = time.perf_counter()
             request_id += 1
-            payload = call_tool(process, request_id, "tycho_search", {
-                "query": task["question"],
-                "limit": args.limit,
-                "abstain": False,
-            })
+            search_args = {"query": task["question"], "limit": args.limit}
+            if args.max_chars is not None:
+                search_args["max_chars"] = args.max_chars
+            if args.mode == "diagnostic":
+                search_args["abstain"] = False
+            elif args.mode == "strict":
+                search_args["mode"] = "strict"
+                search_args["abstain"] = True
+            else:
+                search_args["mode"] = "exploratory"
+                search_args["abstain"] = True
+            payload = call_tool(process, request_id, "tycho_search", search_args)
             reads = []
             calls = 1
             if args.strategy == "search-read" and payload.get("results"):
