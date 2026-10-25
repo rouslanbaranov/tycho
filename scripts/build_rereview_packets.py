@@ -101,7 +101,9 @@ def find_section(name, sections):
     return None, "missing"
 
 
-def build_packet(candidate, record, recon_row, sections, route_docs):
+def build_packet(candidate, record, recon_row, sections, route_docs, sections_source=None):
+    if sections_source is None:
+        sections_source = record["report_path"]
     page = route_docs.get(candidate["owner_path"])
     page_sha = page["sha256"] if page else None
     re_review = record.get("re_review") or {}
@@ -142,6 +144,8 @@ def build_packet(candidate, record, recon_row, sections, route_docs):
         "re_review_findings": re_review.get("findings"),
         "derived_state": recon_row["derived_state"],
         "report_path": record["report_path"],
+        "report_section_source": sections_source,
+        "report_section_inherited": sections_source != record["report_path"],
         "report_verdict": recon_row["report_verdict"],
         "report_match": recon_row["report_match"],
         "report_section": section,
@@ -168,12 +172,12 @@ def build_packets():
         if not record.get("re_reviewed"):
             continue
         candidate = by_id[record["pattern_id"]]
-        sections = (sufficient_sections
-                    if "SUFFICIENT-CANDIDATES" in record["report_path"]
-                    else batch_sections)
+        use_sufficient = "SUFFICIENT-CANDIDATES" in record["report_path"]
+        sections = sufficient_sections if use_sufficient else batch_sections
+        sections_source = (SUFFICIENT if use_sufficient else BATCH).relative_to(ROOT).as_posix()
         packets.append(build_packet(
             candidate, record, recon_rows[record["pattern_id"]],
-            sections, route_docs))
+            sections, route_docs, sections_source))
     packets.sort(key=lambda item: item["catalog_name"].casefold())
     status_counts = {}
     for packet in packets:
