@@ -161,8 +161,9 @@ See the public Vercel guide
 
 ## Update and release model
 
-The deployed image is immutable. A book or API change produces a new image and
-a new Vercel deployment; there is no in-place update of the running container.
+The deployed image is immutable. A merged book or API change produces a new
+image and a new Vercel deployment; there is no in-place update of the running
+container.
 
 ### Book-only change
 
@@ -177,9 +178,9 @@ a new Vercel deployment; there is no in-place update of the running container.
    .venv/bin/python -m unittest discover -s tests \
      -p 'test_tycho_mcp*.py' -v
    ~~~
-4. Open a PR and merge it. The Vercel build runs
-   `section_fts_index.py build --full` inside `Dockerfile.vercel`; the
-   committed SQLite artifact is not used.
+4. Open a PR and merge it. Only the merge to `main` triggers an automatic
+   Vercel build; the build runs `section_fts_index.py build --full` inside
+   `Dockerfile.vercel`, and the committed SQLite artifact is not used.
 5. Check `/ready` and rerun the remote SDK smoke.
 
 No MCP code or `SERVER_VERSION` change is needed for book-only changes.
@@ -194,7 +195,8 @@ No MCP code or `SERVER_VERSION` change is needed for book-only changes.
   and `/health` expose it. The MCP protocol version (`2026-07-28`) is
   independent and changes only with the protocol.
 - Test old and new client paths; update the stdlib and SDK smokes.
-- Merge; Vercel replaces the deployment atomically after the build succeeds.
+- Merge to `main`; Vercel replaces the deployment atomically after the build
+  succeeds.
 
 ### Snapshot semantics and client pinning
 
@@ -208,12 +210,30 @@ snapshot switch. Treat a snapshot-mismatch response as a signal to re-read
 
 ### Preview, production and rollback
 
-- A feature branch can create a Vercel Preview deployment; set Preview
-  `TYCHO_MCP_TOKEN` and `PORT=8080` before testing.
+- Automatic Vercel deployments are limited to `main` by the root
+  `vercel.json` policy (`git.deploymentEnabled`). Pushing a feature branch
+  does not create a Preview deployment.
+- A preview is an explicit owner action. Set Preview `TYCHO_MCP_TOKEN` and
+  `PORT=8080`, then deploy the branch from the Vercel dashboard or with an
+  authenticated CLI. A manual preview consumes one deployment.
 - Merge to `main` creates the production test deployment.
 - Vercel keeps previous immutable deployments; use Instant Rollback to return
   to a prior image. Rollback restores the old index and API together.
 - There is no database migration or persistent state to reconcile.
+
+### Deployment budget
+
+The free plan allows 100 deployments per day. Automatic preview builds for
+high-volume issue branches exhausted that budget and produced the
+`api-deployments-free-per-day` failure on #390. The committed policy enables
+`main` and uses `**` as an explicit deny-all fallback because Vercel enables
+unspecified branches by default and a true match wins over a false match.
+
+The fallback is deliberate: removing it would silently re-enable preview
+builds for every new branch. The policy test
+`tests/test_tycho_vercel_deployment_policy.py` guards this shape. A merge to
+`main` still creates one production deployment, so release work should stay
+batched rather than merging many small changes in one day.
 
 ### What the platform does not enforce
 
@@ -221,6 +241,8 @@ snapshot switch. Treat a snapshot-mismatch response as a signal to re-read
 - Vercel does not check local index freshness; the image build always rebuilds
   the full index.
 - A successful build is not evidence that the API or clients work.
+- Vercel does not provide a separate audit message for a branch-policy skip;
+  verify a skipped preview by the absence of a Vercel status on the commit.
 - `scripts/premerge_check.py` and the remote smoke remain mandatory release
   gates.
 
@@ -251,6 +273,8 @@ mismatch. The container build and client smokes remain manual evidence.
 - No legacy HTTP handshake, sessions, SSE subscriptions, cancellation
   processing or progress forwarding.
 - The book route returns raw Markdown; it does not render a reading site.
+- Automatic preview deployments are disabled. Preview testing requires an
+  explicit owner action and is not part of the normal issue-branch flow.
 - A stable host beyond the Vercel test needs explicit capacity, auth and
   operations decisions. GitHub Pages cannot run it; GitHub Actions runners
   are ephemeral.
@@ -263,3 +287,4 @@ mismatch. The container build and client smokes remain manual evidence.
 - [MCP follow-up questions](https://github.com/rouslanbaranov/tycho/issues/362)
 - [Service container issue](https://github.com/rouslanbaranov/tycho/issues/367)
 - [Update model issue](https://github.com/rouslanbaranov/tycho/issues/377)
+- [Vercel deployment policy](https://github.com/rouslanbaranov/tycho/issues/392)
