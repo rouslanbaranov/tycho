@@ -166,7 +166,7 @@ class HttpMcpTests(unittest.TestCase):
             2, "tools/list", {"_meta": META},
             {"Mcp-Method": "tools/list"})
         self.assertEqual(status, 200)
-        self.assertEqual(len(listed["result"]["tools"]), 9)
+        self.assertEqual(len(listed["result"]["tools"]), 10)
         status, called = self.mcp(3, "tools/call", {
             "_meta": META,
             "name": "tycho_search",
