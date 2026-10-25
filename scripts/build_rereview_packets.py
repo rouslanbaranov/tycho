@@ -104,17 +104,20 @@ def find_section(name, sections):
 def build_packet(candidate, record, recon_row, sections, route_docs):
     page = route_docs.get(candidate["owner_path"])
     page_sha = page["sha256"] if page else None
+    re_review = record.get("re_review") or {}
+    reviewed_sha = re_review.get("reviewed_page_sha256") or page_sha
     disk_sha = None
     if page is not None:
         path = ROOT / candidate["owner_path"]
         if path.is_file():
             disk_sha = digest(path)
     section, _ = find_section(candidate["catalog_name"], sections)
-    re_review = record.get("re_review") or {}
     if page is None:
         status = "owner-page-missing"
     elif disk_sha is None or disk_sha != page_sha:
         status = "hash-mismatch"
+    elif disk_sha != reviewed_sha:
+        status = "page-changed-since-review"
     elif section is None:
         status = "report-section-missing"
     elif re_review.get("report_path"):
@@ -127,7 +130,8 @@ def build_packet(candidate, record, recon_row, sections, route_docs):
         "owner_path": candidate["owner_path"],
         "owner_heading": candidate["owner_heading"],
         "source_read": candidate["source_read"],
-        "page_sha256": page_sha,
+        "page_sha256": reviewed_sha,
+        "current_page_sha256": page_sha,
         "disk_sha256": disk_sha,
         "packet_status": status,
         "current_verdict": record["verdict"],
@@ -143,7 +147,7 @@ def build_packet(candidate, record, recon_row, sections, route_docs):
         "report_section": section,
         "review_checklist": CHECKS,
         "verdict_template": {**TEMPLATE,
-                             "page_sha256": page_sha,
+                             "page_sha256": reviewed_sha,
                              "checks": dict(TEMPLATE["checks"])},
     }
 

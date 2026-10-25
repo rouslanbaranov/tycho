@@ -13,10 +13,10 @@
 | Residual findings after re-review | 56 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 139 |
+| Reviewed by independent agent | 126 |
 | Rejected after review | 0 |
 
-Packet statuses: {"report-section-missing": 6, "reviewed-by-independent-agent": 139}.
+Packet statuses: {"page-changed-since-review": 16, "report-section-missing": 3, "reviewed-by-independent-agent": 126}.
 
 ## Review procedure
 
@@ -130,7 +130,7 @@ blank verdict template in the machine-readable file.
 
 - **Clean / Onion Architecture**
   Current: pass-with-findings; re-review: pass-with-findings; report: None.
-  Status: report-section-missing.
+  Status: page-changed-since-review.
 
 - **Client-Side Discovery**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -138,11 +138,11 @@ blank verdict template in the machine-readable file.
 
 - **Command Query Responsibility Segregation (CQRS)**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Command-Side Replica**
   Current: pass; re-review: pass; report: None.
-  Status: report-section-missing.
+  Status: page-changed-since-review.
 
 - **Compensating Transaction**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -174,7 +174,7 @@ blank verdict template in the machine-readable file.
 
 - **CQRS Read Projections**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Dark Launching / Shadow Traffic**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -202,7 +202,7 @@ blank verdict template in the machine-readable file.
 
 - **Distributed Lock**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Distributed Tracing**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -214,7 +214,7 @@ blank verdict template in the machine-readable file.
 
 - **Domain Events**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Domain-Driven Design / Bounded Context**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -226,7 +226,7 @@ blank verdict template in the machine-readable file.
 
 - **Event Sourcing**
   Current: pass; re-review: pass; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Event-Driven Consumer**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -258,7 +258,7 @@ blank verdict template in the machine-readable file.
 
 - **Fencing Tokens**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Gatekeeper**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -302,7 +302,7 @@ blank verdict template in the machine-readable file.
 
 - **Hexagonal Architecture / Ports and Adapters**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Horizontal Scaling**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -326,11 +326,11 @@ blank verdict template in the machine-readable file.
 
 - **Layered Architecture**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Leader Election**
   Current: pass-with-findings; re-review: pass-with-findings; report: None.
-  Status: report-section-missing.
+  Status: page-changed-since-review.
 
 - **Leader-Follower Replication**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -338,7 +338,7 @@ blank verdict template in the machine-readable file.
 
 - **Lease-Based Ownership**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Least Privilege**
   Current: pass; re-review: pass; report: pass.
@@ -354,7 +354,7 @@ blank verdict template in the machine-readable file.
 
 - **Materialized View**
   Current: pass; re-review: pass; report: reject.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Message Broker / Messaging Bridge**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -430,11 +430,11 @@ blank verdict template in the machine-readable file.
 
 - **Quorum Coordination**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Quorum-Based Reads/Writes**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Rate Limiting**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -510,7 +510,7 @@ blank verdict template in the machine-readable file.
 
 - **Session Consistency**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Sharding**
   Current: pass; re-review: pass; report: pass-with-findings.
