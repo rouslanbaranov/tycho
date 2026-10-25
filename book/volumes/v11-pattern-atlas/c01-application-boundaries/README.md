@@ -471,12 +471,13 @@ network hop is acceptable.
 operational owner exists for the proxy, when latency or resource constraints forbid an
 extra hop, or when the proxy becomes a single point of failure.
 
-**Competing alternative.** A sidecar, service mesh or in-process client library. Reverse
-the choice when the proxy adds a hop without providing a needed capability.
+**Competing alternative.** A shared ingress gateway when the concern is ingress rather than
+per-client egress, or an in-process client library. Reverse the choice when the proxy adds a
+hop without providing a needed capability.
 
-**Failure and recovery.** Proxy outage, configuration drift and retry amplification are
-common. Recovery requires health checks and bounded retries; the bounded owner section
-covers traffic intermediaries, not a dedicated ambassador lifecycle page.
+**Failure and recovery.** Proxy outage, configuration drift and control-plane divergence are
+common. Recovery requires configuration rollback and a direct-path recovery; the bounded owner
+section covers per-client egress, not an ingress gateway.
 
 **Technical owner.** [Ambassador](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — per-client egress proxy ownership is bounded, not a shared ingress gateway.
 

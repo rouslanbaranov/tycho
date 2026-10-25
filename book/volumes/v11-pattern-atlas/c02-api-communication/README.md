@@ -275,15 +275,15 @@ the response does not require a distributed transaction.
 fan-out latency exceeds the client budget; when composition needs writes across owners;
 when one service can answer the query directly without duplicating authority.
 
-**Competing alternative.** A materialized read model, CQRS projection or direct
-service query. Reverse the choice when composition latency and partial-failure
-complexity exceed the duplication alternative.
+**Competing alternative.** A maintained read model or a client-specific backend for frontend.
+Reverse the choice when composition latency and partial-failure complexity exceed the
+duplication alternative.
 
-**Failure and recovery.** Slow dependencies, partial results and retry amplification are
-common. Recovery requires deadlines and explicit degradation; verify the API contract
-boundary in the owner section.
+**Failure and recovery.** Slow dependencies and partial results are common. Recovery requires
+per-call deadlines and explicit partial results; verify the API contract boundary in the
+owner section.
 
-**Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#api-composition) — contract boundary; composition is not a dedicated section.
+**Technical owner.** [API Composition](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#api-composition) — composition is a dedicated bounded section, not a full composition platform.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
