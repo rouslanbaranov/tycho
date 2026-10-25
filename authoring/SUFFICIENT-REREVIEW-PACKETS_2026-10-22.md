@@ -13,10 +13,10 @@
 | Residual findings after re-review | 56 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 118 |
+| Reviewed by independent agent | 110 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 25, "report-section-missing": 2, "reviewed-by-independent-agent": 118}.
+Packet statuses: {"page-changed-since-review": 33, "report-section-missing": 2, "reviewed-by-independent-agent": 110}.
 
 ## Review procedure
 
@@ -146,7 +146,7 @@ blank verdict template in the machine-readable file.
 
 - **Compensating Transaction**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Competing Consumers**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass.
@@ -210,7 +210,7 @@ blank verdict template in the machine-readable file.
 
 - **Distributed Workflow Orchestration**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Domain Events**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -418,7 +418,7 @@ blank verdict template in the machine-readable file.
 
 - **Process Manager / Routing Slip**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Publish/Subscribe**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -478,15 +478,15 @@ blank verdict template in the machine-readable file.
 
 - **Saga**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Saga Choreography**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Saga Orchestration**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Scatter-Gather**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -574,7 +574,7 @@ blank verdict template in the machine-readable file.
 
 - **Transactional Outbox**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **TTL-Based Expiration**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
@@ -582,7 +582,7 @@ blank verdict template in the machine-readable file.
 
 - **Two-Phase Commit (2PC)**
   Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Valet Key**
   Current: pass; re-review: pass; report: pass-with-findings.

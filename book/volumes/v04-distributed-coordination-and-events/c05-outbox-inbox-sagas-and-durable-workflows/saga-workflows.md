@@ -225,17 +225,15 @@ and the emitted events are the real business protocol.
 
 ### Saga Orchestration
 
-A coordinator persists the workflow state machine and issues commands to participants, waiting for
-replies and timers. Its actual guarantees depend on versioned workflow state persistence, activity
-semantics, timer reliability and recovery configuration.
+An orchestrator persists a state machine and sends commands to participants. Its guarantees are
+only as strong as versioned state persistence, activity semantics, timer reliability and recovery
+configuration.
 
-Coordinator loss, stuck histories, duplicate activities and incompatible workflow upgrades are
-common. Recover from durable history, keep activities idempotent and hold or repair an ambiguous
-external effect rather than marking the workflow complete. Orchestration centralizes compensation
-ordering and visibility but adds a coordinator bottleneck and single point of failure; participants
-must remain able to compensate independently, and choreography is the alternative when autonomy
-dominates. The coordinator is another operational dependency, so its own backup, upgrade and
-ownership path must be designed. It needs an owner and recovery drills.
+Coordinator loss, stuck histories and duplicate activities are operational hazards. Replay durable
+history, keep activities idempotent and hold an ambiguous external effect for repair rather than
+marking it complete. Central compensation ordering improves visibility but adds a bottleneck and a
+single point of failure; choreography is preferable when participant autonomy dominates. The
+coordinator also needs an owner, backup, upgrade path and recovery drills.
 
 One service and one database transaction are often simpler than a saga. Move to orchestration only
 when a business operation genuinely spans multiple independently owned effects with different

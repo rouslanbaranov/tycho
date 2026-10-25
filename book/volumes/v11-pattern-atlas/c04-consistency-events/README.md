@@ -393,8 +393,8 @@ window are defined; the server records the outcome atomically with the effect.
 **Hard contraindications.** Reject when operations are naturally idempotent, when keys can
 collide across tenants, or when retention cannot cover the retry window.
 
-**Competing alternative.** Natural idempotency or server-generated operation identity.
-Reverse the choice when key storage and fingerprinting cost exceed retry risk.
+**Competing alternative.** Natural idempotency, a uniqueness rule or one writer. Reverse the
+choice when key storage and fingerprinting cost exceed retry risk.
 
 **Failure and recovery.** Expiry ends historical deduplication; a reused key with changed
 intent is a conflict, not idempotency. Reject mismatched fingerprints and keep the record
