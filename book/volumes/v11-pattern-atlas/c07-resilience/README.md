@@ -293,7 +293,7 @@ bounded degraded result is more useful than no result.
 **Failure and recovery.** Fallback can mask failures and drift; a stale or partial result
 must be labelled, and an explicit failure is safer than a plausible but wrong value.
 
-**Technical owner.** [Fallback](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#fallback) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Fallback](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#fallback) — fallback selection is bounded to the overload path, not a universal degradation strategy.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: section "Fallback and graceful
@@ -323,7 +323,7 @@ service creates more confusion than value.
 **Failure and recovery.** Hidden degradation, sticky reduced modes and unclear recovery are
 common; expose the reduced state and define how normal service resumes.
 
-**Technical owner.** [Graceful Degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#graceful-degradation) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Graceful Degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#graceful-degradation) — graceful degradation is bounded to the overload path, not a complete capacity plan.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: sections "Fallback and graceful
@@ -354,7 +354,7 @@ acceptable and capacity can expand.
 **Failure and recovery.** Shedding the wrong work, unfair tenant impact and synchronized
 retry storms are common; declare quotas and retry hints, and protect essential outcomes.
 
-**Technical owner.** [Load Shedding](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#load-shedding) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Load Shedding](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#load-shedding) — load shedding is bounded to the overload path, not a universal admission policy.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: sections "Handling Overload Errors",
@@ -383,7 +383,7 @@ choice when per-client fairness matters more than aggregate rate.
 **Failure and recovery.** Throttle oscillation, hidden capacity loss and unfairness are
 common; keep a bounded queue, propagate backpressure and measure per-class latency.
 
-**Technical owner.** [Throttling](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#throttling) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Throttling](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#throttling) — throttling is bounded to already-admitted work, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: sections "Client-Side Throttling",
@@ -412,7 +412,7 @@ per-client fairness is not required.
 **Failure and recovery.** Bypass through many keys, burst doubling and unfair quotas are
 common; bind limits to the scarce resource and declare retry guidance.
 
-**Technical owner.** [Rate Limiting](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#rate-limiting) — overload policy is bounded, not a universal rate-limit algorithm.
+**Technical owner.** [Rate Limiting](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#rate-limiting) — rate limiting is bounded to request admission, not a universal overload policy.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: sections "Per-Customer Limits",
