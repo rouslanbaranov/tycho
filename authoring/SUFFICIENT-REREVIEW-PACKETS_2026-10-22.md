@@ -9,14 +9,14 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 126 |
-| Residual findings after re-review | 19 |
+| Promoted after remediation | 127 |
+| Residual findings after re-review | 18 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 108 |
+| Reviewed by independent agent | 109 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 35, "report-section-missing": 2, "reviewed-by-independent-agent": 108}.
+Packet statuses: {"page-changed-since-review": 34, "report-section-missing": 2, "reviewed-by-independent-agent": 109}.
 
 ## Review procedure
 
@@ -97,8 +97,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Canary Release**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Canonical Data Model**
   Current: pass; re-review: pass; report: pass-with-findings.
