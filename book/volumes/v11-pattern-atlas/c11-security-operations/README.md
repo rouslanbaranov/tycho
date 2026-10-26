@@ -170,7 +170,7 @@ in the owner section.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements". The source is a public pattern/specification
+Standard", "Verification Requirements", "Levels". The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -201,8 +201,9 @@ the owner section.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements". The source is a public pattern/specification
-unit, not a benchmark.
+Standard", "Verification Requirements", "Levels". ASVS provides verification framing; it does
+not define RBAC/ABAC role or attribute mechanics. Policy-decision guidance is synthetic. The
+source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -297,7 +298,7 @@ in the owner section.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements". The source is a public pattern/specification
+Standard", "Verification Requirements", "Levels". The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
