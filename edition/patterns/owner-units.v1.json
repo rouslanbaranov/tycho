@@ -1469,7 +1469,7 @@
         "invariant": {
           "state": "supported",
           "quote": "Record whether it is ephemeral or durable before claiming a guarantee.",
-          "reason": ""
+          "reason": "Requires recording ephemeral versus durable delivery before claiming a guarantee."
         },
         "failure_recovery": {
           "state": "supported",
@@ -1479,7 +1479,7 @@
         "alternative": {
           "state": "supported",
           "quote": "Use ephemeral pub/sub only when losing a signal with no listener is acceptable; a durable business task needs a persisted consumer or queue.",
-          "reason": ""
+          "reason": "Contrasts ephemeral loss with a persisted consumer or queue for durable tasks."
         }
       },
       "decision_evidence": {
@@ -1529,12 +1529,12 @@
         "invariant": {
           "state": "supported",
           "quote": "The queue contract must state its ordering scope and terminal path for poison messages.",
-          "reason": ""
+          "reason": "Requires the contract to state ordering scope and a poison-message terminal path."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A worker crash after the effect but before acknowledgement can cause redelivery",
-          "reason": ""
+          "reason": "Names crash-after-effect redelivery and requires an idempotent effect boundary."
         },
         "alternative": {
           "state": "supported",
@@ -1581,22 +1581,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Several consumers read from one queue, and each message is delivered to one of them so the work is processed in parallel.",
-          "reason": ""
+          "reason": "Defines multiple consumers sharing one queue with one delivery per message."
         },
         "invariant": {
           "state": "supported",
           "quote": "Acknowledgment must follow the durable business effect, and redelivery after a missing acknowledgment must not duplicate that effect.",
-          "reason": ""
+          "reason": "Requires acknowledgment after the durable effect and deduplication on redelivery."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A slow or poisoned message blocks progress through visibility timeouts and repeated redelivery; bound attempts and route permanently failing work to a declared terminal path.",
-          "reason": ""
+          "reason": "Names visibility-timeout redelivery and requires attempt bounds and a terminal path."
         },
         "alternative": {
           "state": "supported",
           "quote": "Partitioned consumers own a stable key range and preserve per-key order; prefer competing consumers when order is not required and pool parallelism is the goal.",
-          "reason": ""
+          "reason": "Contrasts partitioned consumers that preserve per-key order."
         }
       },
       "decision_evidence": {
@@ -1698,22 +1698,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A requester sends a message with a reply address and a correlation value, and the responder returns a message that the requester matches to the original request.",
-          "reason": ""
+          "reason": "Defines a reply address and correlation value matched to the request."
         },
         "invariant": {
           "state": "supported",
           "quote": "A reply must correlate to exactly one outstanding request and must not be processed as a new command by another consumer.",
-          "reason": ""
+          "reason": "Requires one outstanding request per correlation value and no command reinterpretation."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A lost request or reply leaves an unresolved operation; expose the outstanding request record, apply a reply deadline and reconcile before retrying.",
-          "reason": ""
+          "reason": "Requires an outstanding-request record, reply deadline and reconciliation before retry."
         },
         "alternative": {
           "state": "supported",
           "quote": "Synchronous RPC with a deadline is simpler when the responder is reachable and the work fits the request budget; choose messaging when availability or latency requires decoupling.",
-          "reason": ""
+          "reason": "Contrasts synchronous RPC with messaging for availability or latency decoupling."
         }
       },
       "decision_evidence": {
@@ -1758,22 +1758,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A correlation identifier ties together messages that belong to one request, workflow or conversation.",
-          "reason": ""
+          "reason": "Defines an identifier tying messages to one request, workflow or conversation."
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs a generation rule, propagation across asynchronous boundaries, a retention window and a collision check.",
-          "reason": ""
+          "reason": "Requires generation, propagation, retention and collision rules."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a lost or duplicated identifier; carry it in the message contract and record it at every boundary.",
-          "reason": ""
+          "reason": "Names lost or duplicated identifiers and requires contract carriage and boundary recording."
         },
         "alternative": {
           "state": "supported",
           "quote": "A transport-native message identity is the alternative when the broker guarantees the needed scope and lifetime.",
-          "reason": ""
+          "reason": "Contrasts transport-native message identity."
         }
       },
       "decision_evidence": {
@@ -1818,22 +1818,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A content-based router chooses a destination from message content.",
-          "reason": ""
+          "reason": "Defines destination selection from message content."
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs a versioned predicate set, a default or dead-letter path and an owner for rule changes.",
-          "reason": ""
+          "reason": "Requires versioned predicates, a default or DLQ and rule ownership."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is an unmatched or misrouted message; route to a declared fallback and record the predicate version.",
-          "reason": ""
+          "reason": "Names unmatched or misrouted messages and requires fallback plus predicate version recording."
         },
         "alternative": {
           "state": "supported",
           "quote": "A workflow/orchestrator is the alternative when routing needs multiple steps or compensations; do not hide a process engine inside the router.",
-          "reason": ""
+          "reason": "Contrasts a workflow/orchestrator for multi-step routing."
         }
       },
       "decision_evidence": {
@@ -1875,22 +1875,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A message filter evaluates a predicate and forwards only matching messages to a consumer, discarding the rest by policy.",
-          "reason": ""
+          "reason": "Defines predicate-based forwarding and policy discard."
         },
         "invariant": {
           "state": "supported",
           "quote": "Every discarded message must be an intentional drop under a versioned predicate, not an unobserved loss.",
-          "reason": ""
+          "reason": "Requires intentional drops under a versioned predicate rather than unobserved loss."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Predicate drift or a missing default path silently removes traffic; monitor filter rates and keep a declared fallback for unmatched messages.",
-          "reason": ""
+          "reason": "Names predicate drift and requires filter-rate monitoring and a fallback."
         },
         "alternative": {
           "state": "supported",
           "quote": "A content-based router sends different subsets to different destinations; prefer filtering when the destination is the same and only selection changes.",
-          "reason": ""
+          "reason": "Contrasts a router that sends subsets to different destinations."
         }
       },
       "decision_evidence": {
@@ -1935,22 +1935,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Pipes and filters decompose processing into ordered, replaceable stages connected by a message contract.",
-          "reason": ""
+          "reason": "Defines ordered replaceable stages connected by a message contract."
         },
         "invariant": {
           "state": "supported",
           "quote": "Each stage needs its own failure and retry policy, and the pipeline needs backpressure, a rule for partial completion and a declared ordering scope.",
-          "reason": ""
+          "reason": "Requires per-stage retry, backpressure, partial-completion rules and ordering scope."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a failed middle stage with earlier effects already applied; record stage identity and compensate or replay from a declared checkpoint.",
-          "reason": ""
+          "reason": "Requires stage identity and compensation or replay from a checkpoint."
         },
         "alternative": {
           "state": "supported",
           "quote": "A single in-process transformation is the alternative when the stages are small and cannot be operated independently.",
-          "reason": ""
+          "reason": "Contrasts a single in-process transformation for small non-independent stages."
         }
       },
       "decision_evidence": {
@@ -1995,22 +1995,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A splitter turns one input into several independently processable messages.",
-          "reason": ""
+          "reason": "Defines one input becoming several processable messages."
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs part identity, per-part idempotency, a completion or compensation rule and a bounded fan-out.",
-          "reason": ""
+          "reason": "Requires part identity, per-part idempotency, completion/compensation and bounded fan-out."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a split that produces only some parts; record part identity and completion, then retry missing parts without duplicating completed effects.",
-          "reason": ""
+          "reason": "Requires partial-split recording and retry of missing parts without duplicating completed effects."
         },
         "alternative": {
           "state": "supported",
           "quote": "A single consumer with internal fan-out is the alternative when the parts are small and atomicity is required.",
-          "reason": ""
+          "reason": "Contrasts a single consumer with internal fan-out when atomicity is required."
         }
       },
       "decision_evidence": {
