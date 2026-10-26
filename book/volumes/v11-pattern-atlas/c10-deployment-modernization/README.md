@@ -353,8 +353,9 @@ in the owner section.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-This reused unit supports a bounded comparison; it is not a dedicated treatment of this
-pattern. The source is a public pattern/documentation unit, not a benchmark.
+This reused unit covers Strangler Fig only; it is context, not source support for this
+pattern. The pattern guidance is synthetic and is not claimed as source-supported. The source
+is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -384,8 +385,9 @@ isolation in the owner section.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-This reused unit supports a bounded comparison; it is not a dedicated treatment of this
-pattern. The source is a public pattern/documentation unit, not a benchmark.
+This reused unit covers Strangler Fig only; it is context, not source support for this
+pattern. The pattern guidance is synthetic and is not claimed as source-supported. The source
+is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -448,8 +450,9 @@ in the owner section.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-This reused unit supports a bounded comparison; it is not a dedicated treatment of this
-pattern. The source is a public pattern/documentation unit, not a benchmark.
+This reused unit covers Strangler Fig only; it is context, not source support for this
+pattern. The pattern guidance is synthetic and is not claimed as source-supported. The source
+is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
