@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 129 |
+| Reviewed by independent agent | 132 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 12, "report-section-missing": 4, "reviewed-by-independent-agent": 129}.
+Packet statuses: {"page-changed-since-review": 9, "report-section-missing": 4, "reviewed-by-independent-agent": 132}.
 
 ## Review procedure
 
@@ -74,7 +74,7 @@ blank verdict template in the machine-readable file.
 
 - **Blue/Green Deployment**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Branch by Abstraction**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -98,7 +98,7 @@ blank verdict template in the machine-readable file.
 
 - **Canary Release**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Canonical Data Model**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -474,7 +474,7 @@ blank verdict template in the machine-readable file.
 
 - **Rolling Deployment**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Saga**
   Current: pass; re-review: pass; report: pass-with-findings.

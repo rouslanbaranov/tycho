@@ -115,8 +115,9 @@ changing user-visible state. Do not use it when shadow requests would write, cha
 notify or leak data.
 
 The failure path is a mirrored request that causes a real effect or doubles load; isolate
-the shadow path and stop it when the comparison or capacity contract fails. A canary, feature flag or environment switch that receives a small real share is the alternative
-when shadow traffic cannot be made side-effect free.
+the shadow path and stop it when the comparison or capacity contract fails. A canary, feature
+flag or environment switch that receives a small real share is the alternative when shadow
+traffic cannot be made side-effect free.
 
 **Limits.** Shadow traffic is not a user-behavior sample; comparison coverage and data
 sensitivity bound what it can prove.
@@ -167,6 +168,7 @@ instances cannot read, and rollback does not undo committed data. Watch metric l
 cohorts, shared-state contamination and sample size. Small samples hide rare errors, and an
 unrepresentative cohort can pass while a rare failure hides.
 
-Shadow traffic tests reads but not writes; blue/green moves the whole state boundary. Use either
-only when the cohort cannot be isolated. Canary is a fit when traffic can be split safely and the
-SLI comparison has enough signal and an owner.
+Shadow traffic tests reads but not writes; blue/green moves the whole state boundary; a feature
+flag can scope exposure without a second copy. Use any only when the cohort cannot be isolated.
+Canary is a fit when traffic can be split safely and the SLI comparison has enough signal and an
+owner.
