@@ -5,7 +5,8 @@ acceptance, CI result or sufficient-coverage claim.
 
 - Issue: #535
 - Branch: `feature/TYCHO-535-read-the-155-pattern-source-plan-units-in-full`
-- Remediation baseline: `bbe1c0c6`
+- Reviewed snapshot: `0531e9ce`
+- Remediation commits: `5f05ad7d`, `bbe1c0c6`, `e11839d2`
 - Original review: `ai-reviews/2026-10-26-full-unit-reading-codex.md`
 - Original report SHA-256: `4e9ed912281f84346dfa11caec0a05b50ef613de461443afb662481f37b0eb90`
 - Original verdict: **reject**
@@ -66,7 +67,8 @@ remediation. Do not edit, commit, open a PR or change configuration.
 
 Repository: /Users/rbaranov/Projects/tycho
 Checkout: current branch HEAD; record `git rev-parse HEAD`.
-Remediation baseline: bbe1c0c6.
+Reviewed snapshot: 0531e9ce.
+Remediation HEAD: current branch HEAD (record it).
 Original report: authoring/ai-reviews/2026-10-26-full-unit-reading-codex.md
 Original report SHA-256: 4e9ed912281f84346dfa11caec0a05b50ef613de461443afb662481f37b0eb90
 Hand-off: authoring/AI-REVIEW-HANDOFF-REMEDIATION_2026-10-26.md
@@ -90,7 +92,7 @@ Required checks:
 9. Run the validators in the hand-off and record exact exit statuses.
 
 Return one Markdown report with: harness/vendor, model/version, session id, timestamp,
-repository path, review HEAD, remediation baseline, exact scope, verdict
+repository path, review HEAD, reviewed snapshot, exact scope, verdict
 (pass / pass-with-findings / reject), findings by severity with paths and evidence,
 limits, and `ai_review: performed` only if the checks ran. State `sufficient: 0`.
 Do not claim owner acceptance, CI or merge permission.
