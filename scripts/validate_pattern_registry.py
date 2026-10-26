@@ -134,6 +134,9 @@ def validate_data(data, root=ROOT):
             + path + ": " + first.message
         )
 
+    promotion_data = load_json(root / "edition/patterns/sufficient-promotions.v1.json")
+    promotions = {item["pattern_id"]: item
+                  for item in promotion_data["promotions"]}
     patterns = data["patterns"]
     families = data["families"]
     require(len(patterns) == 145, "registry-pattern-count")
@@ -242,6 +245,10 @@ def validate_data(data, root=ROOT):
             require(any(unit["status"] == "read"
                         for unit in pattern["source_units"]),
                     "registry-sufficient-without-read-source: " + pattern_id)
+            require(pattern_id in promotions
+                    and promotions[pattern_id]["technical"] == "pass"
+                    and promotions[pattern_id]["decision"] == "pass",
+                    "registry-sufficient-without-promotion: " + pattern_id)
         if pattern["review_status"] == "independent-reviewed":
             require(data["review"]["independent_review"] is True,
                     "registry-independent-review-claim: " + pattern_id)

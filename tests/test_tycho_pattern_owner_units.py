@@ -6,7 +6,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from validate_pattern_owner_units import load, validate_data
+from validate_pattern_owner_units import expected_coverage, load, validate_data
 
 
 class PatternOwnerUnitTests(unittest.TestCase):
@@ -96,10 +96,17 @@ class PatternOwnerUnitTests(unittest.TestCase):
         data["shared_pages"][0]["pattern_ids"].pop()
         self.check_error(data, "owner-units-shared-patterns")
 
+    def test_sufficient_needs_a_promotion(self):
+        evidence = self.data["entries"][0]["technical_evidence"]
+        self.assertEqual(expected_coverage(evidence, "test"), "partial-bounded")
+        self.assertEqual(
+            expected_coverage(evidence, "test", {"technical": "pass"}),
+            "sufficient")
+
     def test_sufficient_claim_is_rejected(self):
         data = self.copy()
         data["entries"][0]["technical_coverage"] = "sufficient"
-        self.check_error(data, "owner-units-schema")
+        self.check_error(data, "owner-units-technical-derivation")
 
     def test_reviewed_claim_is_rejected(self):
         data = self.copy()

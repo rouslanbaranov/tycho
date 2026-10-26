@@ -84,8 +84,10 @@ def validate_data(data, root=ROOT):
             == owner_units["summary"]["owner_units"], "delivery-owner-unit-count")
     require(data["summary"]["shared_pages"]
             == len(owner_units["shared_pages"]), "delivery-shared-page-count")
-    require(data["summary"]["sufficient_technical"] == 0, "delivery-sufficient-technical")
-    require(data["summary"]["sufficient_decision"] == 0, "delivery-sufficient-decision")
+    require(data["summary"]["sufficient_technical"] == technical["sufficient"],
+            "delivery-sufficient-technical")
+    require(data["summary"]["sufficient_decision"] == decision["sufficient"],
+            "delivery-sufficient-decision")
     dod = {item["id"]: item for item in data["dod"]}
     require(dod.get("independent-editorial-review", {}).get("status") == "not-met",
             "delivery-independent-review-claim")
