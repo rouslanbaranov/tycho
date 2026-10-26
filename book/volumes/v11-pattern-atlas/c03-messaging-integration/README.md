@@ -94,7 +94,7 @@ and acknowledgement semantics in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-pubsub.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-pubsub.2026-10-21: served problem/solution; publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -128,7 +128,7 @@ acknowledgement and redelivery semantics in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-p2p.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-p2p.2026-10-21: served problem/solution; publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -162,7 +162,7 @@ ordering and acknowledgement in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-competing.2026-10-21: sections "Problem", "Solution", "Example".
+read record read.batch2-competing.2026-10-21: served problem/solution; publisher-abridged.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -196,8 +196,9 @@ acknowledgement in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-event-consumer.2026-10-21: sections "Problem", "Solution",
-"Example". The source is a public pattern/documentation
+read record read.batch2-event-consumer.2026-10-21: Problem and Solution are
+unheaded; only the RabbitMQ example is an H2. The page is
+publisher-abridged. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -229,8 +230,9 @@ correlation and timeout handling in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-request-reply.2026-10-21: sections "Problem", "Solution",
-"Example". The source is a public pattern/documentation
+read record read.batch2-request-reply.2026-10-21: Problem and Solution are
+unheaded; the page is publisher-abridged and has no Example
+section. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -263,7 +265,7 @@ scope and retention in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-correlation.2026-10-21: sections "Problem", "Solution", "Example".
+read record read.batch2-correlation.2026-10-21: served problem/solution; publisher-abridged.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -296,7 +298,8 @@ ownership and fallback in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-cbr.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-cbr.2026-10-21: only the Camel example is an H2;
+Problem and Solution are unheaded, and the page is publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -328,7 +331,8 @@ the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-filter.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-filter.2026-10-21: only the RabbitMQ example is an H2;
+Problem and Solution are unheaded, and the page is publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -363,7 +367,8 @@ verify stage contracts in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-pipes.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-pipes.2026-10-21: the page is publisher-abridged and
+has no Example; it has no article headings at all. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -395,7 +400,7 @@ aggregation and error policy in the owner section.
 **Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#splitter) — split policy and completeness marker are bounded; durable fan-out is owner-specific.
 
 **Sources.** [src.camel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-splitter.2026-10-21: sections "Split", "Options". The source is a
+read record read.batch2-splitter.2026-10-21: all thirty served headings read. The source is a
 public pattern/documentation
 unit, not a benchmark.
 
@@ -427,7 +432,8 @@ completion and eviction in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-aggregator.2026-10-21: sections "Problem", "Solution", "Example".
+read record read.batch2-aggregator.2026-10-21: two H2 examples; Problem and
+Solution are unheaded, and the page is publisher-abridged.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -459,7 +465,8 @@ deadlines and partial results in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-scatter.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-scatter.2026-10-21: three H2 examples; Problem and
+Solution are unheaded, and the page is publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -491,7 +498,7 @@ policy in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-dlq.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-dlq.2026-10-21: served problem/solution; publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -523,7 +530,8 @@ and acknowledgement in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-durable.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-durable.2026-10-21: no article headings; Example is
+absent and the page is publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -555,7 +563,7 @@ effects; verify dedup authority in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-idempotent.2026-10-21: sections "Problem", "Solution", "Example".
+read record read.batch2-idempotent.2026-10-21: served problem/solution; publisher-abridged.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -588,7 +596,8 @@ timeout and missing policy in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-resequencer.2026-10-21: sections "Problem", "Solution", "Example".
+read record read.batch2-resequencer.2026-10-21: no article headings; Example
+is absent and the page is publisher-abridged.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -621,7 +630,8 @@ retrieval policy in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-claim.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-claim.2026-10-21: no article headings; Example is
+absent and the page is publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -654,7 +664,8 @@ path in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-broker.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-broker.2026-10-21: no article headings; Example is
+absent and the page is publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -687,7 +698,8 @@ and versioning in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-canonical.2026-10-21: sections "Problem", "Solution", "Example".
+read record read.batch2-canonical.2026-10-21: no article headings; Example is
+absent and the page is publisher-abridged.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -720,7 +732,8 @@ effects are common; verify recorded dispatch intent in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-process.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-process.2026-10-21: two H2 vendor examples; Problem
+and Solution are unheaded, and the page is publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark. The cited source supports the process-manager concept; the
 routing-slip variant is bounded to the owner section's original design guidance, not this

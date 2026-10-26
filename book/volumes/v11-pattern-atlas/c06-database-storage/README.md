@@ -126,8 +126,8 @@ pruning/lifecycle in the owner section.
 **Technical owner.** [Sharding, partition keys, hotspots and safe resharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#partitioning) — partition key and pruning are bounded; per-engine partition mechanics are implementation-specific.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-partition.2026-10-21: sections "Table Partitioning", "Partition
-Pruning", "Partitioning Best Practices". The source is a public pattern/documentation
+read record read.batch3-pg-partition.2026-10-21: all thirteen headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -157,9 +157,10 @@ ownership in the owner section.
 **Technical owner.** [Resharding is a multi-state data transition](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md#consistent-hashing) — resharding transition is bounded, not a consistent-hashing implementation.
 
 **Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-cassandra-arch.2026-10-21: sections "Overview", "Architecture".
-The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.batch3-cassandra-arch.2026-10-21: sections "Overview", "Features",
+"Operating". The page does not describe consistent hashing, replication factor or consistency
+levels; consistent-hashing guidance here is synthetic and needs a dedicated source. The source
+is a public documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -188,8 +189,8 @@ in the owner section.
 **Technical owner.** [Leader-Follower Replication](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#leader-follower-replication) — replication/leader change is bounded, not a complete multi-leader protocol.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",
-"Planning", "Failover". The source is a public pattern/documentation
+read record read.batch3-pg-warm.2026-10-21: all twenty headings read; Hot
+Standby and Failover are separate pages. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -218,8 +219,8 @@ versioning in the owner section.
 **Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#multi-leader-replication) — replication/leader change is bounded, not a complete multi-leader protocol.
 
 **Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-cassandra-dynamo.2026-10-21: sections "Dynamo", "Multi-master
-Replication: Versioned Data and Tunable Consistency". The source is a public
+read record read.batch3-cassandra-dynamo.2026-10-21: all nineteen served headings
+read. The source is a public
 pattern/documentation
 unit, not a benchmark.
 
@@ -250,8 +251,8 @@ the owner section.
 **Technical owner.** [Read Replicas](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#read-replicas) — read-replica scaling is bounded by replica lag, read routing and staleness.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",
-"Implementation". The source is a public pattern/documentation
+read record read.batch3-pg-warm.2026-10-21: all twenty headings read; Hot
+Standby and Failover are separate pages. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -281,8 +282,8 @@ envelope in the owner section.
 **Technical owner.** [Quorum-Based Reads / Writes](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#quorum-based-reads-writes) — quorum arithmetic is bounded, not a universal consistency guarantee.
 
 **Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-cassandra-dynamo.2026-10-21: sections "Tunable Consistency",
-"Multi-master Replication: Versioned Data and Tunable Consistency". The source is a public
+read record read.batch3-cassandra-dynamo.2026-10-21: all nineteen served
+headings read. The source is a public
 pattern/documentation
 unit, not a benchmark.
 
@@ -313,8 +314,8 @@ lifecycle in the owner section.
 **Technical owner.** [Index Table](../../v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md#index-table) — index lifecycle is bounded, not a full access-path catalogue.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-indexes.2026-10-21: sections "Indexes", "Index Types",
-"Multicolumn Indexes". The source is a public pattern/documentation
+read record read.batch3-pg-indexes.2026-10-21: all nineteen headings read
+across the chapter and its twelve section pages. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -381,8 +382,8 @@ the owner section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-cqrs.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/documentation
+read record read.batch3-ms-cqrs.2026-10-21: all nine served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -413,8 +414,8 @@ the owner section.
 **Technical owner.** [Expand-and-Contract Schema](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#expand-and-contract-schema) — expand/contract is bounded, not a complete migration runbook.
 
 **Sources.** [src.flyway](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-flyway.2026-10-21: sections "Migrations", "Versioned Migrations",
-"Repeatable Migrations". The source is a public pattern/documentation
+read record read.batch3-flyway.2026-10-21: all seventeen served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -445,7 +446,7 @@ acceptance in the owner section.
 **Technical owner.** [Online Data Migration](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#online-data-migration) — backfill acceptance is bounded, not an online migration tool guide.
 
 **Sources.** [src.gh-ost](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-gh-ost.2026-10-21: sections "How?", "Highlights", "Usage". The
+read record read.batch3-gh-ost.2026-10-21: all ten served headings read. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -476,9 +477,8 @@ the owner section.
 **Technical owner.** [Backup, restore and recovery drills: proving data recoverability](../../v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md#backup-pitr-and-restore) — backup/restore is bounded, not a universal RPO/RTO model.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-archiving.2026-10-21: sections "Continuous Archiving and
-Point-in-Time Recovery (PITR)", "Setting Up WAL Archiving", "Recovering Using a Continuous
-Archive Backup". The source is a public pattern/documentation
+read record read.batch3-pg-archiving.2026-10-21: all thirteen headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

@@ -1,5 +1,9 @@
 # Human review — 2026-10-21
 
+> **Historical.** The human-review gate was retired on 2026-10-26. This record is kept as
+> historical evidence and is not a current acceptance path. New reviews use
+> [the AI review policy](../governance/AI-INDEPENDENT-REVIEW.md).
+
 Status: owner-confirmed human review pass. This is not owner acceptance of the Pattern
 Atlas and not a per-page reviewer sign-off.
 

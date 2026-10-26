@@ -101,18 +101,15 @@ validation in the owner section.
 **Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#federated-identity) — federation trust and token validation are bounded; IdP lifecycle is owner-specific.
 
 **Sources.** [src.oauth-security](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-rfc9700.2026-10-21: sections "1. Introduction", "2.1. Protecting
-Redirect-Based Flows", "2.1.1. Authorization Code Grant", "2.2. Token Replay Prevention",
-"2.2.2. Refresh Tokens", "2.3. Access Token Privilege Restriction". The record is truncated
-at 100,000 characters; Sender-Constrained Access Tokens and Security Considerations lie
-beyond it.
+read record read.batch6-rfc9700.2026-10-21: all 78 numbered sections read;
+the prior 100,000-character truncation is superseded.
 [src.openid-federation](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.openid-federation.2026-10-26: sections "1. Introduction",
-"3. Entity Statement", "4. Trust Chain", "5. Metadata",
-"11. Updating Metadata, Key Rollover, and Revocation". OpenID Federation supports trust
-anchors, Entity Statements, trust chains, metadata refresh and key rollover. It defines no
-revocation process; federation-specific replay and revocation are synthetic, not source
-claims. The source is a public pattern/specification unit, not a benchmark.
+read record read.openid-federation.2026-10-26: all 25 top-level sections and
+199 headings read. OpenID Federation supports trust anchors, Entity Statements, trust
+chains, metadata refresh and key rollover. It defines revocation status data for keys
+and trust marks, but no revocation process; federation-specific replay and revocation
+mechanics are synthetic, not source claims.
+The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -143,8 +140,8 @@ common; deny by default, test indirect paths and keep a bounded audited break-gl
 **Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#zero-trust-architecture) — policy enforcement points and trust assumptions are bounded; network architecture is owner-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements", "Levels". The source is a public
+read record read.batch6-asvs.2026-10-21: all fourteen headings read. The page
+is an overview: it has no Levels or Verification Requirements headings. The source is a public
 pattern/specification
 unit, not a benchmark.
 
@@ -176,8 +173,9 @@ in the owner section.
 **Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#least-privilege) — permission scope and review cadence are bounded; entitlement catalogue is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements", "Levels". The source is a public pattern/specification
+read record read.batch6-asvs.2026-10-21: all fourteen headings read. The page
+is an overview: it has no Levels or Verification Requirements headings.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -207,11 +205,11 @@ the owner section.
 **Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#rbac-abac) — role/attribute model and decision point are bounded; policy administration is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements", "Levels".
+read record read.batch6-asvs.2026-10-21: all fourteen headings read. The page
+is an overview: it has no Levels or Verification Requirements headings.
 [src.nist-sp-800-162](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.nist-sp-800-162.2026-10-26: sections "2. Understanding ABAC",
-"3. ABAC Enterprise Considerations". ASVS provides verification framing; NIST supports
+read record read.nist-sp-800-162.2026-10-26: all eight top-level sections read.
+ASVS provides verification framing; NIST supports
 PDP/PEP/PIP/PAP and policy administration. Revocation mechanics, role explosion and
 attribute-freshness guidance are synthetic. The sources are public standards, not
 attribute-freshness guidance are synthetic. The sources are public standards, not benchmarks.
@@ -244,9 +242,8 @@ rotation in the owner section.
 **Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#workload-identity-mtls) — workload identity binding and mTLS trust are bounded; credential issuance is platform-specific.
 
 **Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-istio.2026-10-21: sections "Security", "High-level architecture",
-"Istio identity", "Identity and certificate management", "Authentication", "Mutual TLS
-authentication", "Authorization", "Principals". The page supports workload identity binding,
+read record read.batch6-istio.2026-10-21: all thirty-four served headings read.
+The page supports workload identity binding,
 certificate rotation, mTLS and authorization policy. Certificate revocation, trust-root
 bootstrapping, key storage and lifetime policy are not supported by the cited sections;
 the full page was read, but these claims are not in the eight cited sections. The source is
@@ -280,8 +277,8 @@ in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-valet.2026-10-21: sections "Valet Key pattern", "Context and
-problem", "Solution". The source is a public pattern/specification
+read record read.batch6-valet.2026-10-21: all nine served headings read.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -311,8 +308,9 @@ in the owner section.
 **Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#multitenant-isolation-1) — tenant boundary and isolation evidence are bounded; infrastructure tenancy is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements", "Levels". The source is a public pattern/specification
+read record read.batch6-asvs.2026-10-21: all fourteen headings read. The page
+is an overview: it has no Levels or Verification Requirements headings.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -343,8 +341,8 @@ in the owner section.
 **Technical owner.** [Distributed Tracing](../../v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md#distributed-tracing) — tracing is bounded, not an SDK implementation.
 
 **Sources.** [src.otel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-otel-traces.2026-10-21: sections "Traces", "Spans", "Context
-Propagation". Sampling was not a section; sampling policy is synthetic guidance. The source is a
+read record read.batch6-otel-traces.2026-10-21: all nineteen served headings read.
+Sampling was not a section; sampling policy is synthetic guidance. The source is a
 public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -374,7 +372,7 @@ records and notify. On schema drift, migrate/backfill or dual-write with a compa
 **Technical owner.** [Structured logging, authoritative audit and data lineage](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#structured-logging) — logging/audit is bounded, not a logging platform manual.
 
 **Sources.** [src.otel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-otel-logs.2026-10-21: sections "Logs", "Log Record". Attributes and
+read record read.batch6-otel-logs.2026-10-21: all seventeen served headings read. Attributes and
 correlation were not headings; correlation policy is synthetic guidance. The source is a public
 pattern/specification unit, not a benchmark.
 
@@ -405,7 +403,8 @@ owner section.
 **Technical owner.** [Audit Trail](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#audit-trail) — logging/audit is bounded, not a logging platform manual.
 
 **Sources.** [src.openlineage](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-openlineage.2026-10-21: sections "About OpenLineage", "Scope". The unit
+read record read.batch6-openlineage.2026-10-21: sections "About OpenLineage",
+"Object Model". The unit
 covers lineage, not tamper-proof audit records; audit policy is synthetic design guidance.
 The source is a public pattern/specification unit, not a benchmark.
 
@@ -436,8 +435,8 @@ owner section.
 **Technical owner.** [SLI / SLO and Error Budgets](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md#sli-slo-and-error-budgets) — SLOs are bounded, not a complete measurement system.
 
 **Sources.** [src.sre](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-sre-slo.2026-10-21: sections "Service Level Objectives",
-"Indicators", "Objectives". Error Budgets was not a section; budget arithmetic is synthetic
+read record read.batch6-sre-slo.2026-10-21: all eighteen served headings
+read. Error Budgets was not a section; budget arithmetic is synthetic
 guidance. The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -467,8 +466,8 @@ journey coverage in the owner section.
 **Technical owner.** [Burn-rate and alerts are actions, not decorations](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/budget-actions.md#synthetic-monitoring) — synthetic monitoring is bounded to alert/action reasoning.
 
 **Sources.** [src.sre-workbook](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-sre-workbook-monitoring.2026-10-21: sections "Monitoring Systems
-with Advanced Analytics", "Synthetic Monitoring", "Alerting". The source is a public
+read record read.batch6-sre-workbook-monitoring.2026-10-21: all twenty-three
+headings read; no Synthetic Monitoring or Alerting headings exist. The source is a public
 pattern/specification
 unit, not a benchmark.
 
@@ -500,8 +499,7 @@ verify semantics in the owner section.
 **Technical owner.** [Practice response before production failure](../../v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md#health-readiness-and-liveness-checks) — health checks are bounded to recovery readiness.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-k8s-probes.2026-10-21: sections "Liveness", "Readiness",
-"Startup". The read record notes a 100,000-character truncation; later sections are unverified.
+read record read.batch4-k8s-probes.2026-10-21: all fifteen served headings read.
 The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

@@ -17,7 +17,8 @@ Status: v0.1 authoring workflow, Issue [#25](https://github.com/rouslanbaranov/t
 
 A first researched page is intentionally focused. A deepening pass is justified by (a) a material omitted mechanism, (b) a contradiction or source revision, (c) a failure case that changes applicability, or (d) evaluation showing a concrete unanswered question. Capture the delta in a bounded contract and edit only the canonical owner(s), then re-check affected links/claims. **Do not automatically re-enrich the corpus.**
 
-A new major source version does **not** automatically prove an older claim wrong. Mark affected claims as *potentially stale*, identify the changed behavior and comparison scope, and re-verify before closing that flag. Keep source metadata freshness, factual verification, editorial edits and actual human review distinct.
+A new major source version does **not** automatically prove an older claim wrong. Mark affected claims as *potentially stale*, identify the changed behavior and comparison scope, and re-verify before closing that flag. Keep source metadata freshness, factual verification, editorial edits and actual
+independent AI review distinct.
 
 ## Readiness dimensions (not one unreliable percentage)
 

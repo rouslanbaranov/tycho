@@ -100,9 +100,8 @@ test the bypass path and version gateway policy.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-api-gateway.2026-10-21: API Gateway, sections
-"Context", "Problem", "Forces", "Solution", "Variation: Backends for frontends",
-"Examples", "Resulting context", "Related patterns". Pattern page, not a benchmark.
+read record read.microservices-api-gateway.2026-10-21: all ten served headings
+read. Pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -137,10 +136,7 @@ precedence tests and observability.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gateway-routing.2026-10-21: Gateway Routing pattern,
-sections "Context and problem", "Solution", "Multiple disparate services", "Multiple
-instances of the same service", "Multiple versions of the same service", "Issues and
-considerations", "When to use this pattern", "Workload design", "Example". Vendor
+read record read.microsoft-gateway-routing.2026-10-21: all eleven served headings read. Vendor
 pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -177,9 +173,8 @@ verify the gateway boundary and aggregation mechanics in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gateway-aggregation.2026-10-21: Gateway Aggregation pattern,
-sections "Context and problem", "Solution", "Problems and considerations", "When to use
-this pattern", "Workload design", "Example". Vendor pattern page, not a benchmark.
+read record read.microsoft-gateway-aggregation.2026-10-21: all nine served
+headings read. Vendor pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -214,10 +209,8 @@ an explicit trust boundary with downstream authorization.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gateway-offloading.2026-10-21: Gateway Offloading pattern,
-sections "Context and problem", "Solution", "Problems and considerations", "When to use
-this pattern", "Workload design", "Example", "Application Gateway with TLS offloading",
-"Supporting technologies". Vendor pattern page, not a benchmark.
+read record read.microsoft-gateway-offloading.2026-10-21: all eleven served
+headings read. Vendor pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -251,9 +244,8 @@ API contract boundary in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-bff.2026-10-21: Backends for Frontends pattern, sections
-"Context and problem", "Solution", "Problems and considerations", "When to use this
-pattern", "Workload design", "Example", "Design". Vendor pattern page, not a benchmark.
+read record read.microsoft-bff.2026-10-21: all thirteen served headings
+read. Vendor pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -287,8 +279,8 @@ owner section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-api-composition.2026-10-21: API Composition, sections
-"Context", "Problem", "Solution", "Example", "Resulting context", "Related patterns".
+read record read.microservices-api-composition.2026-10-21: all nine served
+headings read.
 Pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -323,9 +315,7 @@ draining policy.
 **Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#reverse-proxy) — proxy and gateway boundary; not a full Envoy operations guide.
 
 **Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.envoy-http-connection.2026-10-21: HTTP connection management, sections
-"HTTP protocols", "HTTP lifecycle", "HTTP header sanitizing", "Route table
-configuration", "Retry plugin configuration", "Internal redirects", "Timeouts". Vendor
+read record read.envoy-http-connection.2026-10-21: all fourteen served headings read. Vendor
 documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -469,9 +459,8 @@ contract in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-async-request-reply.2026-10-21: Asynchronous Request-Reply
-pattern, sections "Context and problem", "Solution", "Problems and considerations",
-"When to use this pattern", "Workload design", "Example". Vendor pattern page, not a
+read record read.microsoft-async-request-reply.2026-10-21: all twelve served
+headings read. Vendor pattern page, not a
 benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -507,9 +496,8 @@ verify the authorization boundary in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gatekeeper.2026-10-21: Gatekeeper pattern, sections "Context
-and problem", "Solution", "Problems and considerations", "When to use this pattern",
-"Workload design", "Example". Vendor pattern page, not a benchmark.
+read record read.microsoft-gatekeeper.2026-10-21: all nine served headings
+read. Vendor pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

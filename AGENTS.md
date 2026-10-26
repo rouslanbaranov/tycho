@@ -68,8 +68,8 @@ tool invocation that retrieves sources, or change.
     `regulated environments`, `corporate infrastructure`, or
     `security-constrained deployments`. This applies in English, Russian, and
     translated/inflected variants. Run the lexical boundary check and perform a separate
-    human editorial review; the checker is not proof of neutrality outside scanned
-    repository text. Never quote prohibited terminology while explaining or enforcing this
+    independent AI editorial review; the checker is not proof of neutrality outside
+    scanned repository text. Never quote prohibited terminology while explaining or enforcing this
     rule.
 
 15. **Readable volume/chapter directories:** follow
@@ -85,34 +85,40 @@ tool invocation that retrieves sources, or change.
     cannot fit. Apply this rule to new and edited Markdown from 2026-10-21 onward; do not
     reformat unrelated files in the same change.
 
-## Independent audit and review via Reviewer (DeepSeek Harness)
+## Independent audit and review via external AI
 
-17. **Use the Reviewer preset for delegated independent audit.** When the session runs in
-    DeepSeek Harness and the `subagent` tool exposes `agent_preset`, delegate an independent
-    audit, review or challenge to a fresh child with `agent_preset: reviewer`. Do not
-    role-play Reviewer with a generic subagent when the preset is unavailable; record the
-    limitation and ask the owner to enable the preset or run a separate Reviewer session.
-18. **Keep the reviewer independent.** Start a fresh child with `subagent`, not
-    `subagent_fork`; do not pass the author's conversation, conclusions or desired verdict.
-    Give the child the repository path, exact HEAD and content commit, bounded scope,
+17. **Use an external AI reviewer from a different vendor.** The independent review gate
+    is an AI review performed in a separate harness from a different vendor than the
+    authoring agent: for example ChatGPT (OpenAI) or Claude Code (Anthropic) when the
+    authoring session is DeepSeek Harness. Do not use the DeepSeek `reviewer` preset, a
+    subagent of this session, the same vendor or the authoring agent as the reviewer. If
+    no qualifying reviewer is available, record the gate as blocked; never waive it.
+18. **Keep the reviewer independent.** Use a fresh external session, not a fork of this
+    conversation. Do not pass the author's conclusions, desired verdict or private context.
+    Give the reviewer the repository path, exact HEAD and content commit, bounded scope,
     artifact paths and hashes, required checks, report schema and explicit limits. For a
-    delta or re-review, pass the prior finding IDs and changed artifacts, not the outcome.
-    Require current counts to be derived from artifacts, not supplied as expected values.
-19. **One bounded batch per child.** For a large audit, split the scope into batches and
-    give each child one batch, one report path and one non-overlapping evidence set. The
-    Reviewer preset removes write and edit filesystem tools, but shell access remains:
-    instruct the child not to write to the repository, change configuration, commit, open
-    a pull request or use restricted material. Give it only public sources.
+    delta review, pass prior finding IDs and changed artifacts only. Require counts to be
+    derived from artifacts, not supplied as expected values. When the owner asks for a
+    review hand-off, include an exact copy-paste prompt for the external reviewer; a
+    summary or checklist alone is not sufficient.
+19. **One bounded batch per run.** Split a large audit into non-overlapping batches. The
+    reviewer must use read-only repository access, must not write, commit, open a pull
+    request or change configuration, and must receive public sources only. Do not send
+    restricted, employer-specific or private material.
 20. **Treat the output as evidence, not acceptance.** Require a verdict, evidence, findings
-    by severity with exact paths, and limits. Preserve the raw report and verify its
-    metadata, HEAD, hashes and scope. A Reviewer pass is not human review, owner
-    acceptance, CI, sufficiency or permission to merge. The owner decides whether to apply
-    verdicts; records and acceptance documents change only after that decision.
-21. **Record the delegation.** State the reviewer preset (`reviewer`), child id or session,
-    review timestamp, HEAD, content commit, scope, report path and any prior involvement.
-    State `human_review: not-performed` and `sufficient: 0` unless separate evidence exists.
-    After the run, check `git status` and report hashes; if the reviewer wrote to the
-    repository, stop, quarantine the changes and treat the review as contaminated.
+    by severity with exact paths, and limits. Save the raw report verbatim under
+    `authoring/ai-reviews/`, add it to the index with its SHA-256, and verify its
+    metadata, HEAD, hashes and scope. An AI review pass satisfies the independent review
+    gate, but it is not owner acceptance, CI, sufficient coverage or permission to merge.
+    The owner decides whether to apply verdicts; records and acceptance documents change
+    only after that decision.
+21. **Record the review.** State the reviewer harness and vendor, model and version when
+    exposed, session or run id, review timestamp, HEAD, content commit, scope, saved
+    report path and any prior involvement. Use `ai_review` for the new gate;
+    `human_review` is retired for future work. State `sufficient: 0` unless separate
+    evidence exists. After the run, check `git status` and report hashes; if the reviewer
+    wrote to the repository, stop,
+    quarantine the changes and treat the review as contaminated.
 
 
 ## Delegated full reading (DeepSeek Harness)
@@ -120,7 +126,7 @@ tool invocation that retrieves sources, or change.
 22. **Delegate extraction, not judgment.** A reader child may read a bounded source
     unit and return evidence. It must not produce book findings, support
     classifications, severity or acceptance verdicts; those stay with the parent
-    and, where required, an independent Reviewer under rules 17-21.
+    and, where required, an external AI reviewer under rules 17-21.
 23. **One finite unit per child.** Define the unit before dispatch: exact edition
     or live-page revision, public URL, local representation, line and word counts
     and SHA-256. A whole documentation site or a book is not a unit; a bounded
@@ -150,6 +156,6 @@ tool invocation that retrieves sources, or change.
     stay outside the canonical ledger until the batch is accepted.
 27. **Record the delegation.** Preserve the manifest, child IDs, model/preset,
     timestamps, hashes, parent corrections and the pilot outcome. State that
-    delegated reading is not independent review, human review, CI or source
+    delegated reading is not independent AI review, CI or source
     completeness. Do not close a source-reading issue or claim whole-book
     coverage from child summaries alone.

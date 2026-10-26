@@ -1,0 +1,292 @@
+{
+  "issue": 535,
+  "goal": "goal-969f4dc9-3408-4afc-8b76-65dcc025b8a5",
+  "updated": "2026-10-26",
+  "results": [
+    {
+      "claim_id": "FS-22",
+      "source_id": "src.owasp-asvs",
+      "source": "OWASP ASVS 5.0.0 complete English document plus CSV/JSON exports",
+      "revision": "v5.0.0_release 5cf9b032440be53ce345ab3c130fda46ba1ce7a2; site PDF 120 pages; 345 requirements",
+      "hashes": {
+        "pdf_sha256": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5",
+        "csv_sha256": "98c8fe911b9edb403af8ee05d3ce8201ecac2659e313b053890a62847cdcf680"
+      },
+      "coverage": "front matter pp.1-22, chapters V1-V17 pp.23-95, appendices A-E pp.96-119; all 345 requirement IDs checked",
+      "classification": "partially-supported",
+      "supported": [
+        "three verification levels L1/L2/L3 with 70/183/92 requirements",
+        "least privilege V8 and V13.2.2/V13.3.2",
+        "authorization V8.1.1-V8.4.2",
+        "tenant isolation in substance V8.4.1"
+      ],
+      "unconfirmed": [
+        "trust-boundary framing: zero occurrences of trust boundary across PDF, CSV, JSON and source markdown"
+      ],
+      "conclusion": "The leveled clause is supported and three of four framing clauses are supported, but the trust-boundary clause is not present. The conjunction is not fully supported."
+    },
+    {
+      "claim_id": "FS-23",
+      "source_id": "src.openid-federation",
+      "source": "OpenID Federation 1.0 complete specification",
+      "revision": "Final, 17 February 2026; 21 numbered sections plus appendices A-B",
+      "hashes": {
+        "html_sha256": "4a71afdfbed5755d6704d6a089f450f10aa9914204b283eae5fadee2897d1911"
+      },
+      "coverage": "all 199 headings, 5,470 lines, 42,240 words",
+      "classification": "contradicted",
+      "evidence": "Section 11.4 Revocation states that the specification does not define a revocation process.",
+      "nuance": "Key revocation status fields exist in 8.7.2-8.7.3 and trust-mark revoked status in 8.4.2, but no revocation process is defined.",
+      "conclusion": "The removed claim is contradicted by the specification's own Section 11.4.",
+      "resolution_status": "resolved",
+      "resolution": "Split the claim. The process clause is contradicted; revocation status data for keys and trust marks is supported."
+    },
+    {
+      "claim_id": "FS-21",
+      "source_id": "src.sre-workbook",
+      "source": "Google SRE Workbook, all content chapters and appendices",
+      "revision": "live 2026-10-08 Last-Modified; 34 pages",
+      "coverage": "forewords, preface, Parts I-III, chapters 1-21, appendices A-C, index, editors, colophon; all 34 content pages read",
+      "classification": "partially-supported",
+      "evidence": "Evernote uses an external prober outside the environment, multiple geographic locations and a second prober to confirm failures; Chapter 2 describes browser probes and a browser home-page SLI; Chapter 5 describes synthetic user activity and coverage limits. The exact definition and the explicit-design rule are absent.",
+      "conclusion": "Clause-level support exists for external probing, locations, false positives, browser probes and artificial activity; the exact synthetic-monitoring definition and design rule remain unconfirmed. Reclassified under R-01.",
+      "final_disposition": "partially-supported-accepted"
+    },
+    {
+      "claim_ids": [
+        "FS-06",
+        "FS-07",
+        "FS-08",
+        "FS-09",
+        "FS-11",
+        "FS-12",
+        "FS-13",
+        "FS-14",
+        "FS-15",
+        "FS-16",
+        "FS-17"
+      ],
+      "source_id": "src.enterprise-integration",
+      "source": "Enterprise Integration Patterns book; public pattern pages are publisher-abridged",
+      "coverage": "All cited public pages read; Chapter 3 PDF read. Chapters 4+ are withheld from the public site. A controlled-lending copy exists at archive.org/details/enterpriseintegr0000hohp but was not borrowed, so the full text was not obtained.",
+      "classification": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "conclusion": "Each conjunction is split into supported and unconfirmed clauses; the original conjunction is not fully supported and the full Chapter 4+ text remains unavailable. Reclassified under R-03.",
+      "final_disposition": "partially-supported-accepted",
+      "clause_support": {
+        "FS-06": {
+          "supported": [
+            "automatic acknowledgement before processing"
+          ],
+          "unconfirmed": [
+            "channel-specific acknowledgement/failure semantics"
+          ]
+        },
+        "FS-07": {
+          "supported": [
+            "request/reply channels",
+            "synchronous block",
+            "asynchronous callback"
+          ],
+          "unconfirmed": [
+            "correlation mechanics",
+            "timeout",
+            "ambiguous outcomes"
+          ]
+        },
+        "FS-08": {
+          "supported": [
+            "content-based routing",
+            "configurable rules engine"
+          ],
+          "unconfirmed": [
+            "contract",
+            "versioning",
+            "testing"
+          ]
+        },
+        "FS-09": {
+          "supported": [
+            "single output channel",
+            "non-matching messages discarded"
+          ],
+          "unconfirmed": [
+            "audit boundary",
+            "explicit disposition requirement"
+          ]
+        },
+        "FS-11": {
+          "supported": [
+            "incomplete-set strategies"
+          ],
+          "unconfirmed": [
+            "duplicate handling",
+            "partial-results rule"
+          ]
+        },
+        "FS-12": {
+          "supported": [
+            "broadcast/aggregate",
+            "route error propagation"
+          ],
+          "unconfirmed": [
+            "latency",
+            "response correlation",
+            "general partial-failure rule"
+          ]
+        },
+        "FS-13": {
+          "supported": [
+            "saved messages for inactive subscriber",
+            "delivery on reconnect"
+          ],
+          "unconfirmed": [
+            "bounded retention/replay scope"
+          ]
+        },
+        "FS-14": {
+          "supported": [
+            "internal buffer",
+            "specified output order"
+          ],
+          "unconfirmed": [
+            "timeout/gap policy",
+            "missing-message policy"
+          ]
+        },
+        "FS-15": {
+          "supported": [
+            "persistent storage",
+            "key-based retrieval"
+          ],
+          "unconfirmed": [
+            "large payload",
+            "storage lifetime",
+            "access control"
+          ]
+        },
+        "FS-16": {
+          "supported": [
+            "destination selection and routing"
+          ],
+          "unconfirmed": [
+            "end-to-end delivery",
+            "bridge protocol/contract mapping"
+          ]
+        },
+        "FS-17": {
+          "supported": [
+            "canonical format",
+            "translator-count comparison"
+          ],
+          "unconfirmed": [
+            "translation ownership",
+            "version drift"
+          ]
+        }
+      }
+    },
+    {
+      "claim_id": "FS-18",
+      "source_id": "src.enterprise-integration",
+      "source": "Routing Slip public pattern page",
+      "revision": "2024-07-31 served page; SHA-256 5e46ed0bbff9cbd9b7d56986a778230fcbffd4de408735b71e34b93b428844cd",
+      "coverage": "complete served page; publisher-abridged after the mechanics paragraph",
+      "classification": "partially-supported",
+      "evidence": "The page states that a Routing Slip specifying the sequence of processing steps is attached to each message, and that each step reads it to choose the next step.",
+      "conclusion": "The per-message path mechanism is supported by the served page. The word variants, serialization detail and the Process Manager relationship remain unconfirmed; the full book is unavailable.",
+      "remediation": "R-07 applied: supported mechanism separated from unconfirmed variants and encoding detail."
+    },
+    {
+      "claim_id": "FS-01",
+      "source_id": "src.event-sourcing",
+      "source": "microservices.io Event Sourcing pattern page",
+      "revision": "full page SHA-256 aade58421e5ad48ba8092b614a33c6e9efc34389bcde5429a4b045322a6f4edb",
+      "coverage": "all 9 headings and body read in B1 batch 7",
+      "classification": "still-unconfirmed",
+      "evidence": "The page describes event sourcing, its example and resulting context, but does not state schema evolution or duplicate handling as required mechanics.",
+      "conclusion": "No contradiction; the removed claim is not present in the complete page.",
+      "final_disposition": "unconfirmed-accepted"
+    },
+    {
+      "claim_id": "FS-02",
+      "source_id": "src.microservices-patterns",
+      "source": "microservices.io Idempotent Consumer pattern page",
+      "revision": "full page SHA-256 3edddaa1959c70dbd9953648e54759b5a2bc167cd121805124e5faafa0eca40f",
+      "coverage": "all 5 headings and body read in B1 batch 7",
+      "classification": "still-unconfirmed",
+      "evidence": "The page defines the pattern and its problem/solution but states no retention or concurrency limits.",
+      "conclusion": "No contradiction; the removed claim is not present in the complete page.",
+      "final_disposition": "unconfirmed-accepted"
+    },
+    {
+      "claim_id": "FS-03",
+      "source_id": "src.microservices-patterns",
+      "source": "microservices.io CQRS pattern page",
+      "revision": "full page SHA-256 592b31fe177a9522f8c3c863e79f9cae0ac17e8a1dff2d89ed0690e40696b9ac",
+      "coverage": "all 9 headings and body read in B1 batch 7",
+      "classification": "still-unconfirmed",
+      "evidence": "The page covers commands, queries, examples and resulting context but does not state duplicate, ordering or failure handling as mechanics.",
+      "conclusion": "No contradiction; the removed claim is not present in the complete page.",
+      "final_disposition": "unconfirmed-accepted"
+    },
+    {
+      "claim_id": "FS-19",
+      "source_id": "src.microservices-patterns",
+      "source": "microservices.io Command-side Replica pattern page",
+      "revision": "full page SHA-256 ef4d815712f4a5e31ac94966fccf20dc434bd4d320380d8ef7e47184b348c306",
+      "coverage": "all 9 headings and body read in B1 batch 19",
+      "classification": "still-unconfirmed",
+      "evidence": "The page says the replica is read-only and potentially stale, but says nothing about bounding staleness or reconciliation.",
+      "conclusion": "No contradiction; the removed claim is not present in the complete page.",
+      "final_disposition": "unconfirmed-accepted"
+    },
+    {
+      "claim_id": "FS-04",
+      "source_id": "src.cassandra",
+      "source": "Apache Cassandra Architecture Overview page",
+      "revision": "full page SHA-256 53c36bff1a2152563143c4be01c9302ea682445f314b8e0769a70b8219904336",
+      "coverage": "all headings Overview, Features, Operating read in B1 batch 1",
+      "classification": "contradicted",
+      "evidence": "The overview does not describe consistent hashing. Consistent hashing is documented on the separate dynamo.html architecture page.",
+      "conclusion": "The claim as worded (the overview describes consistent hashing) is contradicted by the complete overview page."
+    },
+    {
+      "claim_id": "FS-05",
+      "source_id": "src.keda",
+      "source": "KEDA documentation landing page",
+      "revision": "full page SHA-256 8c704134e53dcad3b724345ae03898697b0825380417decaa3cbf7656f7baa1f",
+      "coverage": "all headings and body read in B1 batch 14",
+      "classification": "contradicted",
+      "evidence": "The landing page has one H2, Where to go, and only routes to child pages; it does not describe scalers, ScaledObjects, metric lag or cooldowns.",
+      "conclusion": "The claim as worded (the landing page describes these) is contradicted; the detail lives on child pages."
+    },
+    {
+      "claim_id": "FS-20",
+      "source_id": "src.postgresql",
+      "source": "PostgreSQL 18.6 Continuous Archiving and PITR page",
+      "revision": "full page SHA-256 0c5f4cb3a63b500ad55966358d7ae0253939fd650daca3083b9ff413358ee31f",
+      "coverage": "all 13 numbered headings and 3 admonitions read in B1 batch 20",
+      "classification": "still-unconfirmed",
+      "evidence": "The page covers recovery targets, base-backup retention and WAL retention, but never states RPO, RTO or restore verification as determinants.",
+      "conclusion": "No contradiction; the removed claim is not present in the complete page.",
+      "full_manual_search": "PostgreSQL 18 A4 PDF, 185,110 lines / 1,111,161 words: zero occurrences of failback, RPO, RTO, recovery point objective, recovery time objective, restore verification, restore drill or restore test.",
+      "status_detail": "absent-from-full-manual",
+      "final_disposition": "unconfirmed-accepted"
+    },
+    {
+      "claim_id": "FS-10",
+      "source_id": "src.enterprise-integration",
+      "source": "Enterprise Integration Patterns, Chapter 3 Messaging Systems, author-hosted PDF",
+      "revision": "2003 PDF, 42 pages, printed pp.57-97",
+      "hashes": {
+        "pdf_sha256": "c1e7125dcebfdd9a2b23a922dfbbc9694e5f8048e81e14dc95e2882043ac4f66"
+      },
+      "coverage": "complete chapter, all 42 pages; Pipes and Filters pp.70-77",
+      "classification": "partially-supported",
+      "evidence": "p.72 attributes buffering to channels; p.74 says concurrency can reorder messages; p.77 says the simple filter is not transactional. These support the concerns but do not demonstrate the universal every-stage wording.",
+      "conclusion": "The universal claim is not supported; clause-level support exists. Reclassified under R-02.",
+      "final_disposition": "partially-supported-accepted"
+    }
+  ]
+}

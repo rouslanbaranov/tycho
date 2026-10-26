@@ -97,8 +97,8 @@ resource problem are common; probe with a bounded budget and do not treat open a
 **Technical owner.** [Circuit Breaker](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#circuit-breaker) — dependency isolation is bounded, not a full circuit-breaker library guide.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-circuit.2026-10-21: sections "CircuitBreaker",
-"Configuration", "Examples". The source is a public pattern/documentation
+read record read.batch4-r4j-circuit.2026-10-21: all eleven served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -128,8 +128,8 @@ starvation are common; detect per-pool metrics and fail the isolated class expli
 **Technical owner.** [Bulkhead](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#bulkhead) — bulkhead isolation is bounded, not a full resilience-library guide.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-bulkhead.2026-10-21: sections "Bulkhead", "Semaphore",
-"ThreadPool". The source is a public pattern/documentation
+read record read.batch4-r4j-bulkhead.2026-10-21: all eight served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -159,9 +159,7 @@ common; jitter the delay, cap attempts and total delay, and stop on server pushb
 **Technical owner.** [Retry with Exponential Backoff](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-exponential-backoff) — retry budget and backoff are bounded; permanent-failure classification is caller-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-retry.2026-10-21: only the "Retry" section is verified; the
-record contains no Backoff/Jitter heading. The read
-record notes a 100,000-character truncation; later sections are unverified. The source is a public
+read record read.batch4-r4j-retry.2026-10-21: all six served headings read. The source is a public
 pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -194,9 +192,7 @@ retry budget.
 **Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-jitter) — jitter and budget are bounded; PRNG quality is implementation-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-retry.2026-10-21: only the "Retry" section is verified; the
-record contains no Backoff/Jitter heading. The read
-record notes a 100,000-character truncation; later sections are unverified. The source is a public
+read record read.batch4-r4j-retry.2026-10-21: all six served headings read. The source is a public
 pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -229,8 +225,8 @@ non-idempotent work.
 **Technical owner.** [Timeout](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#timeout) — timeout values and cancellation are bounded; transport timeout behavior is implementation-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-timelimiter.2026-10-21: section "TimeLimiter". The page has no
-Cancel running futures heading; cancellation semantics are synthetic guidance. The source is
+read record read.batch4-r4j-timelimiter.2026-10-21: all four served headings read.
+Cancellation semantics remain synthetic guidance. The source is
 a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -263,8 +259,8 @@ explicit cleanup path.
 **Technical owner.** [Deadline Propagation](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadline-propagation) — deadline propagation and budget are bounded; clock-skew handling is platform-specific.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: sections "Addressing Cascading Failures",
-"Latency and Deadlines". The source is a public pattern/documentation
+read record read.batch4-sre-cascading.2026-10-21: all forty-four served
+headings read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -296,8 +292,8 @@ must be labelled, and an explicit failure is safer than a plausible but wrong va
 **Technical owner.** [Fallback](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#fallback) — fallback selection is bounded to the overload path, not a universal degradation strategy.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: section "Load Shedding and Graceful
-Degradation". The section covers graceful degradation, not fallback; the fallback
+read record read.batch4-sre-cascading.2026-10-21: all forty-four served
+headings read. The section covers graceful degradation, not fallback; the fallback
 freshness/authority/independence contract is synthetic owner guidance. The source is a public
 pattern/documentation unit, not a benchmark.
 
@@ -328,8 +324,8 @@ common; expose the reduced state and define how normal service resumes.
 **Technical owner.** [Graceful Degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#graceful-degradation) — graceful degradation is bounded to the overload path, not a complete capacity plan.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: section "Load Shedding and Graceful
-Degradation". The source is a public pattern/documentation
+read record read.batch4-sre-cascading.2026-10-21: all forty-four served
+headings read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -359,8 +355,8 @@ retry storms are common; declare quotas and retry hints, and protect essential o
 **Technical owner.** [Load Shedding](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#load-shedding) — load shedding is bounded to the overload path, not a universal admission policy.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.sre-overload.2026-10-21: sections "Handling Overload Errors",
-"Per-Customer Limits". The source is a public pattern/documentation unit, not a benchmark.
+read record read.sre-overload.2026-10-21: all eleven served headings read.
+The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -388,8 +384,8 @@ common; keep a bounded queue, propagate backpressure and measure per-class laten
 **Technical owner.** [Throttling](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#throttling) — throttling is bounded to already-admitted work, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.sre-overload.2026-10-21: sections "Client-Side Throttling",
-"Handling Overload Errors". The record covers client-side adaptive rejection, not server-side
+read record read.sre-overload.2026-10-21: all eleven served headings read.
+The record covers client-side adaptive rejection, not server-side
 pacing; server-side pacing is synthetic owner guidance. The source is a public
 pattern/documentation unit, not a benchmark.
 
@@ -419,8 +415,8 @@ common; bind limits to the scarce resource and declare retry guidance.
 **Technical owner.** [Rate Limiting](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#rate-limiting) — rate limiting is bounded to request admission, not a universal overload policy.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.sre-overload.2026-10-21: sections "Per-Customer Limits",
-"Client-Side Throttling". The source is a public pattern/documentation unit, not a benchmark.
+read record read.sre-overload.2026-10-21: all eleven served headings read.
+The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -484,8 +480,8 @@ each hop.
 **Technical owner.** [Priority Queue](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md#priority-queue) — admission/queue policy is bounded, not a universal priority scheme.
 
 **Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-rabbit-priority.2026-10-21: sections "Priority Support in Queues",
-"How it works", "Limitations". The source is a public pattern/documentation
+read record read.batch4-rabbit-priority.2026-10-21: all twenty-two served headings
+read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -550,8 +546,8 @@ no-response behavior, keep probes on an independent path, and bound frequency/ex
 **Technical owner.** [Request routing and health signals](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#health-endpoint-monitoring) — readiness/health is bounded, not a full monitoring product.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-k8s-probes.2026-10-21: sections "Liveness", "Readiness",
-"Startup". The source is a public pattern/documentation
+read record read.batch4-k8s-probes.2026-10-21: all fifteen served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -582,8 +578,8 @@ authority, reconcile before failback, and hold writes when fencing evidence is m
 **Technical owner.** [Failover / Failback](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md#failover-failback) — failover/failback is bounded to recovery state machines.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",
-"Failover". The source is a public pattern/documentation
+read record read.batch3-pg-warm.2026-10-21: all twenty headings read; Failover
+is a separate page. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

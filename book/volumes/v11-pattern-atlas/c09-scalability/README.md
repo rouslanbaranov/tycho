@@ -99,8 +99,8 @@ selection in the owner section.
 
 **Sources.**
 [src.sre-frontend-enrichment](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-sre-frontend.2026-10-21: sections "Load Balancing at the
-Frontend", "DNS", "VIP", "Anycast". The source is a public pattern/documentation
+read record read.batch5-sre-frontend.2026-10-21: all four headings read; DNS,
+VIP and anycast are not literal headings. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -130,8 +130,8 @@ the owner section.
 **Technical owner.** [Horizontal Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#horizontal-scaling) — replica scaling and coordination cost are bounded; per-service capacity math is owner-specific.
 
 **Sources.** [src.k8s-hpa](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-k8s-hpa.2026-10-21: sections "Horizontal Pod Autoscaling", "How
-does it work", "Metrics". The source is a public pattern/documentation
+read record read.batch5-k8s-hpa.2026-10-21: all thirty served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -161,8 +161,8 @@ section.
 **Technical owner.** [Vertical Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#vertical-scaling) — resource ceiling and restart cost are bounded; instance sizing is platform-specific.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-k8s-resources.2026-10-21: sections "Resource Management for Pods
-and Containers", "Requests and limits". The source is a public pattern/documentation
+read record read.batch5-k8s-resources.2026-10-21: all thirty-three served
+headings read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -192,8 +192,8 @@ section.
 **Technical owner.** [Autoscaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#autoscaling) — signal, lag and hysteresis are bounded; capacity forecast is service-specific.
 
 **Sources.** [src.keda](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-keda.2026-10-21: sections "Getting Started", "Scalers",
-"ScaledObject". The source is a public pattern/documentation
+read record read.batch5-keda.2026-10-21: the single served heading read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -258,8 +258,8 @@ the owner section.
 
 **Sources.**
 [src.cortex-shuffle-sharding](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-cortex-shuffle.2026-10-21: sections "Shuffle Sharding", "How it
-works", "Implementation". The source is a public pattern/documentation
+read record read.batch5-cortex-shuffle.2026-10-21: all eighteen served headings
+read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -290,8 +290,8 @@ boundaries in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-deployment-stamps.2026-10-21: sections "Deployment Stamps
-pattern", "Context and problem", "Solution". The source is a public pattern/documentation
+read record read.batch5-deployment-stamps.2026-10-21: all thirteen served
+headings read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -322,8 +322,8 @@ recovery in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-geode.2026-10-21: sections "Geode pattern", "Context and problem",
-"Solution". The source is a public pattern/documentation
+read record read.batch5-geode.2026-10-21: all seven served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -355,8 +355,8 @@ miss storm are common; prewarm, verify propagation and keep versioned rollback.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-static.2026-10-21: sections "Static Content Hosting pattern",
-"Context and problem", "Solution". The source is a public pattern/documentation
+read record read.batch3-ms-static.2026-10-21: all nine served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -387,8 +387,8 @@ isolation in the owner section.
 
 **Sources.**
 [src.microsoft-multitenant](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-ms-multitenant.2026-10-21: sections "Architectural approaches",
-"Tenant isolation", "Deployment models". The source is a public pattern/documentation
+read record read.batch5-ms-multitenant.2026-10-21: all three served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

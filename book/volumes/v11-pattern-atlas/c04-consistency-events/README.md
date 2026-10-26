@@ -134,8 +134,8 @@ effects and duplicate delivery need an explicit boundary, not an assumed idempot
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-event-sourcing.2026-10-21: sections "Context", "Problem",
-"Forces", "Solution", "Example", "Resulting context". The source is a public
+read record read.batch2-event-sourcing.2026-10-21: all nine served headings
+read. The source is a public
 pattern/specification
 unit, not a benchmark.
 
@@ -203,8 +203,8 @@ saga protocol in the owner section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-saga.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/specification
+read record read.batch2-saga.2026-10-21: all eleven served headings read.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -237,8 +237,8 @@ compensations are common; traces show correlation, not durable business truth.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-saga.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/specification
+read record read.batch2-saga.2026-10-21: all eleven served headings read.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -269,8 +269,8 @@ effects for repair.
 **Technical owner.** [Saga Orchestration](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga-orchestration) — workflow selection is bounded, not a dedicated Temporal or orchestration manual.
 
 **Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-temporal-workflows.2026-10-21: sections "Workflows", "Workflow
-Execution", "Determinism". The record supports durable orchestration only; saga
+read record read.batch2-temporal-workflows.2026-10-21: all four served headings read.
+The record supports durable orchestration only; saga
 compensation semantics are synthetic guidance. The source is a public
 pattern/specification unit, not a benchmark.
 
@@ -303,8 +303,8 @@ counter-effects.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-saga.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/specification
+read record read.batch2-saga.2026-10-21: all eleven served headings read.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -338,8 +338,8 @@ connector manual.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-outbox.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/specification
+read record read.batch2-outbox.2026-10-21: all nine served headings read.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -371,8 +371,8 @@ inbox atomicity in the owner section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-idempotent-consumer.2026-10-21: sections "Context", "Problem",
-"Forces", "Solution", "Example", "Resulting context". The source is a public
+read record read.batch2-idempotent-consumer.2026-10-21: all five served
+headings read. The source is a public
 pattern/specification
 unit, not a benchmark.
 
@@ -406,9 +406,8 @@ for the retry window.
 
 **Sources.**
 [src.ietf-idempotency-key](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-ietf.2026-10-21: sections "Introduction", "Uniqueness of
-Idempotency Key", "Idempotency Key Validity and Expiry", "Idempotency Fingerprint", "Error
-Handling". The source is a public pattern/specification
+read record read.batch2-ietf.2026-10-21: all twenty-four served headings
+read. The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -476,8 +475,8 @@ treating the view as an authority.
 **Technical owner.** [Materialized View](../../../distributed/cqrs-event-sourcing-and-projections.md#materialized-view) — stored-query freshness is bounded, not a full PostgreSQL materialized-view manual.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch9-pg-matview-refresh.2026-10-22: section "REFRESH MATERIALIZED
-VIEW" (PostgreSQL 18). The source is public documentation, not a benchmark.
+read record read.batch9-pg-matview-refresh.2026-10-22: all eight served headings
+read. The source is public documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -507,8 +506,8 @@ authority in the owner section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-command-side.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/specification
+read record read.batch2-command-side.2026-10-21: Forces is not a heading and no
+Example section exists. The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -539,8 +538,8 @@ protocol limits in the owner section.
 **Technical owner.** [Two-Phase Commit (2PC)](../../v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md#two-phase-commit-2pc) — local/global commit limits are bounded, not a 2PC protocol reference.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-pg-2pc.2026-10-21: sections "Two-Phase Transactions", "Prepare
-Transaction", "Commit Prepared". The source is a public pattern/specification
+read record read.batch2-pg-2pc.2026-10-21: the single served heading read.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

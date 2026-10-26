@@ -259,7 +259,7 @@
         {
           "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "It needs an admission rule, a retention/age bound, durable acceptance when the caller is told \"accepted\", and idempotent consumers. An unbounded queue converts overload into memory growth and expired work; retries can duplicate effects after an ambiguous acknowledgment. Track queue age, rejection rate and drain rate, and set a terminal policy for expired work.",
+          "quote": "It needs an admission rule, a retention/age bound, durable acceptance when the caller is told \"accepted\", and idempotent consumers. A queue does not create capacity: if offered work exceeds drain rate, backlog and age grow even while every worker is busy.",
           "rationale": "Admission, retention, idempotence, drain, terminal policy."
         }
       ],
@@ -1347,7 +1347,7 @@
         {
           "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates both ends of a service connection with short-lived credentials. The identity must bind to the workload, not to a network location, and authorization must still check the operation rather than assuming trust from the connection.",
+          "quote": "Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates both ends of a service connection with automatically rotated credentials. The identity must bind to the workload, not to a network location, and authorization must still check the operation rather than assuming trust from the connection.",
           "rationale": "Workload identity with short-lived credentials; still check the operation."
         }
       ],

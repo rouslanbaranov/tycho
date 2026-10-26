@@ -108,8 +108,8 @@ remaining limits.
 
 **Sources.** [src.fowler-layering](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-layering.2026-10-21: Presentation Domain Data Layering,
-sections "Presentation Domain Data Layering", "Further Reading", "Notes". This is a
-definitional article, not a comparative study.
+sections "Presentation Domain Data Layering", "Further Reading", "Acknowledgements",
+"Notes". This is a definitional article, not a comparative study.
 
 **Decision state.** `applicable-under-conditions`.
 
@@ -146,8 +146,8 @@ and transaction semantics must be verified in the technical owner.
 **Technical owner.** [Modular Monolith](../../v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md#modular-monolith).
 
 **Sources.** [src.monolith-first](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.monolith-first.2026-10-21`: Monolith First, sections "Monolith
-First", "Microservices Guide", "Further Reading", "Notes". The source is architectural
+read record `read.monolith-first.2026-10-21`: all five served headings read.
+The source is architectural
 guidance, not a benchmark.
 
 **Decision state.** `applicable-under-conditions`.
@@ -185,9 +185,8 @@ synthetic owner guidance. The linked owner section states the remaining limits.
 **Technical owner.** [Microservices Architecture](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#microservices-architecture) — The section explicitly owns SOA and microservice boundary choices.
 
 **Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-article.2026-10-21: Microservices, sections
-"Characteristics of a Microservice Architecture", "Microservices and SOA",
-"Decentralized Data Management", "Design for failure", "Microservice Trade-Offs".
+read record read.microservices-article.2026-10-21: Microservices, all twenty-four
+headings read, including the SOA sidebar and the trade-offs card.
 This is an architectural article, not a benchmark.
 
 **Decision state.** `applicable-under-conditions`.
@@ -223,8 +222,8 @@ the linked owner section states the remaining limits.
 **Technical owner.** [Service-Oriented Architecture (SOA)](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#service-oriented-architecture-soa) — The section explicitly owns SOA and microservice boundary choices.
 
 **Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-article.2026-10-21: Microservices, section
-"Microservices and SOA" plus the surrounding trade-off discussion. This is a bounded
+read record read.microservices-article.2026-10-21: Microservices, all twenty-four
+headings read; SOA is a sidebar and trade-offs are a card link. This is a bounded
 comparison, not an OASIS SOA reference.
 
 **Decision state.** `applicable-under-conditions`.
@@ -260,9 +259,8 @@ explicit error translation and a review of the adapter boundary in the technical
 **Technical owner.** [Hexagonal Architecture / Ports and Adapters](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#hexagonal-architecture-and-ports-and-adapters).
 
 **Sources.** [src.aws-hexagonal](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.aws-hexagonal.2026-10-21`: AWS Prescriptive Guidance, sections
-"Hexagonal architecture pattern", "Intent", "Motivation", "Applicability", "Issues and
-considerations", "Implementation", "High-level architecture". This is a vendor pattern
+read record `read.aws-hexagonal.2026-10-21`: all sixteen served headings read.
+This is a vendor pattern
 page, not a comparative study.
 
 **Decision state.** `applicable-under-conditions`.
@@ -449,9 +447,10 @@ owner section states the remaining limits.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-sidecar.2026-10-21: Sidecar pattern, sections "Context
+read record read.microsoft-sidecar.2026-10-21: sections "Sidecar pattern", "Context
 and problem", "Solution", "Problems and considerations", "When to use this pattern",
-"Workload design", "Example". This is a vendor pattern page, not a comparative study.
+"Workload design", "Example", "Next steps", "Related resource". This is a vendor
+pattern page, not a comparative study.
 
 **Decision state.** `applicable-under-conditions`.
 
@@ -485,9 +484,8 @@ section covers per-client egress, not an ingress gateway.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-ambassador.2026-10-21: Ambassador pattern, sections
-"Context and problem", "Solution", "Problems and considerations", "When to use this
-pattern", "Workload design", "Example". This is a vendor pattern page, not a comparative
+read record read.microsoft-ambassador.2026-10-21: all eight served headings read.
+This is a vendor pattern page, not a comparative
 study.
 
 **Decision state.** `applicable-under-conditions`.
@@ -523,9 +521,7 @@ explicit cutover path; verify those mechanics in the technical owner.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.microsoft-acl.2026-10-21`: Anti-Corruption Layer pattern, sections
-"Anti-Corruption Layer pattern", "Context and problem", "Solution", "Problems and
-considerations", "When to use this pattern", "Workload design", "Example". This is a
+read record `read.microsoft-acl.2026-10-21`: all nine served headings read. This is a
 vendor pattern page, not a comparative study.
 
 **Decision state.** `applicable-under-conditions`.

@@ -96,7 +96,7 @@ common; bound fallback so a cache outage does not overload the source.
 **Technical owner.** [Distributed Cache](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#distributed-cache) — invalidation authority and freshness are bounded; topology and replication are owner-specific.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-hazelcast-cache.2026-10-21: sections "Caching Data". The source is
+read record read.batch3-hazelcast-cache.2026-10-21: all twelve served headings read. The source is
 a public pattern/documentation
 unit, not a benchmark.
 
@@ -361,8 +361,8 @@ scope keys by tenant/principal, delete or version on change, bound TTL and test 
 
 **Sources.**
 [src.google-cdn-negative-caching](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-google-negative.2026-10-21: sections "Use negative caching",
-"Status codes and default TTLs". The source is a public pattern/documentation
+read record read.batch3-google-negative.2026-10-21: all eleven served headings
+read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -494,7 +494,7 @@ verify placement in the owner section.
 **Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#multi-level-caching) — multi-level authority and coherence are bounded; per-tier eviction is page-specific.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-hazelcast-near.2026-10-21: sections "Near Cache". The source is a
+read record read.batch3-hazelcast-near.2026-10-21: all fifteen served headings read. The source is a
 public pattern/documentation
 unit, not a benchmark.
 
@@ -527,8 +527,8 @@ cacheability in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-static.2026-10-21: sections "Static Content Hosting pattern",
-"Context and problem", "Solution". The source is a public pattern/documentation
+read record read.batch3-ms-static.2026-10-21: all nine served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

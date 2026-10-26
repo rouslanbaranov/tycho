@@ -99,8 +99,8 @@ owner section.
 **Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#rolling-deployment) — rolling replacement and readiness are bounded; controller-specific surge math is platform-specific.
 
 **Sources.** [src.k8s-deployments](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-k8s-deployment.2026-10-21: sections "Deployments", "Rolling
-update", "Rollback". The source is a public pattern/documentation
+read record read.batch5-k8s-deployment.2026-10-21: all 48 headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -132,8 +132,8 @@ in the owner section.
 **Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#blue-green-deployment) — traffic switch and rollback are bounded; infrastructure provisioning is platform-specific.
 
 **Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-argo-bluegreen.2026-10-21: sections "BlueGreen", "Overview",
-"Service". The source is a public pattern/documentation
+read record read.batch5-argo-bluegreen.2026-10-21: all fifteen served headings
+read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -164,7 +164,7 @@ contamination are common; a binary rollback does not undo committed data.
 **Technical owner.** [Canary Release](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#canary-release) — canary analysis and abort are bounded; metric selection is service-specific.
 
 **Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-argo-canary.2026-10-21: sections "Canary", "Overview", "Analysis".
+read record read.batch5-argo-canary.2026-10-21: all fifteen served headings read.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -196,8 +196,8 @@ unauthorized overrides are common; audit changes, expire flags and bound snapsho
 
 **Sources.**
 [src.fowler-feature-toggles](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-fowler-feature-toggles.2026-10-21: sections "Feature Toggles (aka
-Feature Flags)", "Categories of toggles", "Implementation". The source is a public
+read record read.batch5-fowler-feature-toggles.2026-10-21: all seven top-level sections
+and 40 headings read. The source is a public
 pattern/documentation
 unit, not a benchmark.
 
@@ -228,7 +228,7 @@ artifact references are common; alert on drift, revert reviewed commits and scop
 **Technical owner.** [GitOps](../../v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md#gitops) — GitOps is bounded to desired-state reconciliation.
 
 **Sources.** [src.opengitops](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-opengitops.2026-10-21: sections "Home", "Principles". The source
+read record read.batch5-opengitops.2026-10-21: all seven served headings read. The source
 is a public pattern/documentation
 unit, not a benchmark.
 
@@ -260,8 +260,8 @@ the owner section.
 
 **Sources.**
 [src.ibm-immutable-infrastructure](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-ibm-immutable.2026-10-21: sections "What is immutable
-infrastructure?", "Benefits", "Challenges". The source is a public pattern/documentation
+read record read.batch5-ibm-immutable.2026-10-21: all twelve served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -323,8 +323,8 @@ behavior are common; use contract tests, a bounded switch and a removal owner.
 **Technical owner.** [Branch by Abstraction](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#branch-by-abstraction) — branch by abstraction is bounded to internal interface replacement.
 
 **Sources.** [src.fowler-branch](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-fowler-branch.2026-10-21: sections "Branch By Abstraction", "How
-it works". The source is a public pattern/documentation
+read record read.batch5-fowler-branch.2026-10-21: sections "Branch By Abstraction",
+"Further Reading", "Acknowledgements", "Notes". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -357,9 +357,8 @@ in the owner section.
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading";
 context for the transition narrative.
 [src.minimumcd-parallel-run](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.minimumcd-parallel-run.2026-10-26: sections "What is a parallel run?",
-"What a parallel run improves", "Running the comparison", "When a parallel run is not enough",
-"Key pitfalls", "Measuring success". MinimumCD supports dual execution, background
+read record read.minimumcd-parallel-run.2026-10-26: all eight served
+headings read. MinimumCD supports dual execution, background
 comparison and harness removal. Mismatch thresholds, sampling and cost bounds are synthetic.
 The sources are public articles, not benchmarks.
 
@@ -427,8 +426,8 @@ the owner section.
 **Technical owner.** [Expand-and-Contract](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md#expand-and-contract) — expand/contract is bounded to reader/writer compatibility.
 
 **Sources.** [src.flyway](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-flyway.2026-10-21: sections "Migrations", "Versioned Migrations",
-"Repeatable Migrations". The source is a public pattern/documentation
+read record read.batch3-flyway.2026-10-21: all seventeen served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -463,8 +462,8 @@ in the owner section.
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading";
 context for the transition narrative.
 [src.gcp-spanner-cutover](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.gcp-spanner-cutover.2026-10-26: sections "Before you begin", "Perform cutover",
-"Perform application cutover". Spanner supports a bounded drain-and-switch example. General
+read record read.gcp-spanner-cutover.2026-10-26: all ten served headings read.
+Spanner supports a bounded drain-and-switch example. General
 no-return gates, fallback execution, RTO and zero-loss guarantees are synthetic. The sources
 are public articles/documentation, not benchmarks.
 

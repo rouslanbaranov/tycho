@@ -1,11 +1,17 @@
 # Current state — Tycho
 
+> **Review-policy change — 2026-10-26:** the human-review gate is retired for future work.
+> Independent review is now performed by a different AI harness from a different vendor
+> (for example ChatGPT or Claude Code), read-only and pinned to HEAD. Historical human
+> review records remain historical evidence. See
+> [the AI review policy](../governance/AI-INDEPENDENT-REVIEW.md).
+
 > **Current structural candidate — 2026.10.2-rc.1 (cut 2026-10-21):** 11
 > volumes, 82 chapters and 423 canonical pages in the current tree. The book
 > and edition landings still record the 419-page cut; the #228 deep-source
 > splits added four pages after the cut. V11 is a self-checked Phase 6
-> pattern-atlas candidate (#288); human review is recorded and owner acceptance
-> remains open. The #214/rc.3 status below is historical.
+> pattern-atlas candidate (#288); a historical human review is recorded and owner
+> acceptance remains open. The #214/rc.3 status below is historical.
 
 **Owner-unit audit — 2026-10-21 (#286):** 144 carded entries now map to 118
 section-level owner units on the same 65 registered pages: 96 partial-bounded,
@@ -21,7 +27,7 @@ refreshed, the 40 non-catalog related
 labels are recorded as non-routes, three catalog-index reads are intentionally
 unused, and three split decisions are deferred. The independent review agent
 **Reviewer** returned ACCEPT-WITH-FINDINGS; its 17 findings and 7 re-review
-residuals were addressed. Owner-confirmed human review passed on 2026-10-21; no
+residuals were addressed. Historical owner-confirmed human review passed on 2026-10-21; no
 per-page reviewer record was supplied. No low findings remain; #292 is closed.
 Owner acceptance remains open. See
 [the semantic audit](PATTERN-SEMANTIC-AUDIT_2026-10-21.md),
