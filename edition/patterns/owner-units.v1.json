@@ -1986,7 +1986,7 @@
         "unit_kind": "dedicated",
         "unit_terms": [
           "one input into several independently processable messages",
-          "stable partition identity",
+          "part identity",
           "bounded fan-out",
           "completion or compensation rule"
         ]
@@ -1999,7 +1999,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "It needs stable partition identity, per-part idempotency, a completion or compensation rule and a bounded fan-out.",
+          "quote": "It needs part identity, per-part idempotency, a completion or compensation rule and a bounded fan-out.",
           "reason": ""
         },
         "failure_recovery": {
@@ -8597,12 +8597,12 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A projection view may lag; the response needs a freshness contract.",
+          "quote": "Dual-write ambiguity and partial migration need an explicit reconciliation owner; a half-migrated projection is not a valid serving state.",
           "reason": "Names projection lag and the required freshness contract."
         },
         "alternative": {
           "state": "supported",
-          "quote": "A single store with secondary indexes may be preferable when one engine can meet the query shapes and the team cannot operate a second consistency contract.",
+          "quote": "A single store with derived projections or query-time joins may be preferable when one engine can meet the query shapes and the team cannot operate a second consistency contract.",
           "reason": "Names the single-store alternative and reversal."
         }
       },
