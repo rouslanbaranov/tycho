@@ -445,8 +445,9 @@ acknowledgment are possible; bound age, reject early and drain.
 **Technical owner.** [Queue-Based Load Leveling](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#queue-based-load-leveling) — recovery behavior is bounded, not a complete load-leveling design.
 
 **Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-rabbit-reliability.2026-10-21: sections "Reliability Guide",
-"Acknowledgements", "Publisher Confirms". The source supports reliability mechanics only;
+read record read.batch4-rabbit-reliability.2026-10-21: sections "Acknowledgements and
+Confirms", "Data Safety on the Publisher Side", "Data Safety on the Consumer Side". The source
+supports reliability mechanics only;
 admission and drain guidance is synthetic. The source is a public pattern/documentation unit,
 not a benchmark.
 
