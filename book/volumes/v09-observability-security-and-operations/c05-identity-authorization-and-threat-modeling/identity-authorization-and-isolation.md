@@ -103,15 +103,15 @@ source.
 **Limits.** Federation concentrates trust in the issuer and metadata; key rotation, audience
 restriction and issuer compromise are ongoing costs, not one-time setup. Metadata caching and
 issuer discovery need their own availability, rollback plan, audit evidence and an owner.
-Token replay and revocation are not covered by the cited federation sections; that part
-remains synthetic.
+Federation-specific token-replay and revocation guidance is not covered by the cited RFC 9700
+sections; that part remains synthetic.
 
 ### Workload Identity-mTLS
 
 Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates
-both ends of a service connection with automatically rotated credentials. The identity must bind to the
-workload, not to a network location, and authorization must still check the operation rather than
-assuming trust from the connection.
+both ends of a service connection with automatically rotated credentials. The identity must
+bind to the workload, not to a network location, and authorization must still check the
+operation rather than assuming trust from the connection.
 
 Expired or shared credentials break authentication or erase the distinction between workloads;
 rotate, revoke and test an unauthorized peer. Network policy with shared secrets is easier when PKI
@@ -123,7 +123,8 @@ authenticates the workload, not every operation it requests. Certificate issuanc
 is part of the request path, and a failed rotation can be an outage; both claims are plausible
 but synthetic, and the cited page does not measure them.
 
-**Source boundary.** Only the following claims are supported by the cited Istio record:
+**Source boundary.** Only the following claims are supported by the cited
+[read.batch6-istio.2026-10-21](../../../../edition/patterns/reading-ledger.v1.json) record:
 workload identity binding, certificate issuance and rotation, mTLS authentication and
 authorization policy. Certificate revocation, trust-root bootstrap, key storage, lifetime
 policy and rotation-failure impact are not in the cited sections; all other guidance in this

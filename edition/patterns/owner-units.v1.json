@@ -7093,7 +7093,7 @@
         "heading": "Rolling Deployment",
         "anchor": "rolling-deployment",
         "level": 3,
-        "line": 125,
+        "line": 135,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Rolling Deployment"
@@ -7150,7 +7150,7 @@
         "heading": "Blue-Green Deployment",
         "anchor": "blue-green-deployment",
         "level": 3,
-        "line": 142,
+        "line": 152,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Blue-Green Deployment",
@@ -7210,7 +7210,7 @@
         "heading": "Canary Release",
         "anchor": "canary-release",
         "level": 3,
-        "line": 159,
+        "line": 169,
         "unit_kind": "dedicated",
         "unit_terms": [
           "small, identifiable cohort",
@@ -7630,32 +7630,32 @@
         "line": 109,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "mirrored or synthetic traffic",
-          "old path remains authoritative",
-          "side-effect suppression",
+          "new or changed back-end behavior",
+          "side-effect boundary",
+          "mirrored request",
           "small real share"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Dark launching sends mirrored or synthetic traffic to new code while the old path remains authoritative.",
-          "reason": "States the shadow-traffic mechanism and the authoritative old path."
+          "quote": "Dark launching calls new or changed back-end behavior from existing user requests without showing the result, so the new path does real work under production load.",
+          "reason": "Fowler supports hidden invocation and production work."
         },
         "invariant": {
-          "state": "supported",
-          "quote": "It needs side-effect suppression, a comparison method, a bounded load budget and a rule for sensitive data.",
-          "reason": "Lists the four preconditions that make shadow traffic safe."
+          "state": "partial",
+          "quote": "Both need a side-effect boundary, a comparison method, a load budget and a rule for sensitive data.",
+          "reason": "Source supports comparison and load assessment; side-effect boundary and data rule are synthetic."
         },
         "failure_recovery": {
-          "state": "supported",
-          "quote": "The failure path is a mirrored request that causes a real effect or doubles load; isolate the shadow path and stop it when the comparison or capacity contract fails.",
-          "reason": "Names real effects and load doubling, with isolation and stop conditions."
+          "state": "partial",
+          "quote": "The failure path is a hidden or mirrored request that causes a real effect or doubles load; isolate the shadow path and stop it when the comparison or capacity contract fails.",
+          "reason": "Sources name real mirrored requests and load but give no suppression or capacity method."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A canary, feature flag or environment switch that receives a small real share is the alternative when shadow traffic cannot be made side-effect free.",
-          "reason": "Names canary release and the condition that reverses the dark-launch choice."
+          "reason": "Fowler supports feature-flag rollback and canary for user choice; the fallback rule is synthetic."
         }
       },
       "decision_evidence": {
@@ -7666,14 +7666,14 @@
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.fowler-strangler.2026-10-21",
-        "source_id": "src.fowler-strangler",
+        "ledger_record": "read.fowler-dark-launching.2026-10-26",
+        "source_id": "src.fowler-dark-launching",
         "unit_type": "article",
         "status": "read",
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Bounded ownership note; the only completed owner unit on this page."
     },
@@ -7807,7 +7807,7 @@
         "heading": "Federated Identity",
         "anchor": "federated-identity",
         "level": 3,
-        "line": 91,
+        "line": 92,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Federated Identity"
@@ -8041,19 +8041,19 @@
         "heading": "Workload Identity-mTLS",
         "anchor": "workload-identity-mtls",
         "level": 3,
-        "line": 106,
+        "line": 109,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Workload identity",
           "mutual TLS",
-          "short-lived credentials",
+          "automatically rotated credentials",
           "authorization must still"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates both ends of a service connection with short-lived credentials.",
+          "quote": "Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates both ends of a service connection with automatically rotated credentials.",
           "reason": ""
         },
         "invariant": {
@@ -8062,9 +8062,9 @@
           "reason": ""
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Expired or shared credentials break authentication or erase the distinction between workloads; rotate, revoke and test an unauthorized peer.",
-          "reason": ""
+          "reason": "Source supports certificate rotation but not revocation; revocation guidance is synthetic."
         },
         "alternative": {
           "state": "supported",
@@ -8982,7 +8982,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 4,
+      "bounded_entries": 3,
       "decision": "deepen",
       "rationale": "Canary Release now has a dedicated owner unit with explicit limits."
     },
@@ -9141,11 +9141,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 145,
-    "invariant_supported": 145,
-    "failure_recovery_supported": 141,
-    "alternative_supported": 145,
-    "technical_partial_bounded": 145,
-    "technical_partial": 0,
+    "invariant_supported": 144,
+    "failure_recovery_supported": 139,
+    "alternative_supported": 144,
+    "technical_partial_bounded": 144,
+    "technical_partial": 1,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
