@@ -232,8 +232,8 @@ rotation in the owner section.
 **Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-istio.2026-10-21: sections "Security", "High-level architecture". The
 record is truncated at 100,000 characters; workload identity, Mutual TLS authentication and
-Authorization lie beyond the recorded prefix and are synthetic guidance, not source claims. The source is a public
-pattern/specification unit, not a benchmark.
+Authorization lie beyond the recorded prefix and are synthetic guidance, not source claims. The
+source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
