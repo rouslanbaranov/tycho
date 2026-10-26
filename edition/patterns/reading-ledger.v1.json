@@ -1570,7 +1570,7 @@
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Re-read 2026-10-26. Publisher-abridged; no Example, buffering, ordering or failure text is served. Prior buffering/ordering/failure claim removed.",
+      "limitations": "Re-read 2026-10-26. Public page is publisher-abridged; the complete Pipes and Filters section was read in the official Chapter 3 PDF, pp.70-77. That text contradicts the removed per-stage buffering/ordering/failure claim.",
       "content_sha256": "850988a7f88fc170ad5d90f5791040fff4bc4b42643ce851466db4b4f6fb1d90",
       "read_scope": "complete publicly served page as returned by fetch, excluding navigation, linked pages and the publisher-abridged book remainder",
       "reviewer": "Automated authoring agent",
@@ -2843,7 +2843,9 @@
         "26.2.8.2. Multiple Synchronous Standbys",
         "26.2.8.3. Planning for Performance",
         "26.2.8.4. Planning for High Availability",
-        "26.2.9. Continuous Archiving in Standby"
+        "26.2.9. Continuous Archiving in Standby",
+        "26.3. Failover",
+        "26.4. Hot Standby"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2857,14 +2859,16 @@
       "claims_supported": [
         "PostgreSQL log-shipping standbys replay WAL from an archive or a streaming connection and can be promoted.",
         "Streaming replication is asynchronous by default; synchronous replication waits for named standbys and can lose data only under stated conditions.",
-        "Hot Standby and Failover are separate documentation pages, not sections of this page."
+        "Hot Standby and Failover are separate documentation pages, not sections of this page.",
+        "Section 26.3 covers STONITH, heartbeat/witness servers, the post-failover degenerate state and pg_ctl promote; failback is absent.",
+        "Section 26.4 covers read-only hot standby, query conflicts, delay parameters, hot_standby_feedback and caveats."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Re-read 2026-10-26. Page text covers warm standby fully; the read-replicas and failover plan units are partial because sections 26.4 and 26.3 were not read.",
+      "limitations": "Re-read 2026-10-26. Sections 26.2, 26.3 and 26.4 read; failback is absent from 26.3.",
       "content_sha256": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -4546,20 +4550,28 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "OWASP Application Security Verification Standard",
-        "Put ASVS to work",
-        "Understand ASVS",
-        "Use the standard",
-        "Help shape ASVS",
-        "ASVS 5.0.0",
-        "The people behind the standard",
-        "What is the ASVS?",
-        "Support the ASVS",
-        "Stay up to date with the ASVS",
-        "More Details on the ASVS",
-        "How To Reference ASVS Requirements",
-        "Related Projects",
-        "Project team"
+        "V1 Encoding and Sanitization",
+        "V2 Validation and Business Logic",
+        "V3 Web Frontend Security",
+        "V4 API and Web Service",
+        "V5 File Handling",
+        "V6 Authentication",
+        "V7 Session Management",
+        "V8 Authorization",
+        "V9 Self-contained Tokens",
+        "V10 OAuth and OIDC",
+        "V11 Cryptography",
+        "V12 Secure Communication",
+        "V13 Configuration",
+        "V14 Data Protection",
+        "V15 Secure Coding and Architecture",
+        "V16 Security Logging and Error Handling",
+        "V17 WebRTC",
+        "Appendix A",
+        "Appendix B",
+        "Appendix C",
+        "Appendix D",
+        "Appendix E"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -4573,14 +4585,15 @@
       "claims_supported": [
         "ASVS is an OWASP framework of security requirements for designing, developing and testing web applications and web services.",
         "ASVS 5.0.0, published 30 May 2025, is the latest stable version; requirements use chapter.section.requirement identifiers.",
-        "The page is an overview landing page, not the requirement catalogue; it does not define verification levels."
+        "The page is an overview landing page, not the requirement catalogue; it does not define verification levels.",
+        "The complete 5.0.0 document contains 345 requirements across 17 chapters and defines levels L1/L2/L3 with 70/183/92 requirements."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Re-read 2026-10-26 at the redirected asvs.owasp.org landing page. The declared Verification Requirements and Levels sections are absent; prior leveled/trust-boundary claim removed.",
+      "limitations": "Full 120-page ASVS 5.0.0 document read 2026-10-26: 345 requirements, 17 chapters, appendices A-E. Prior record covered the landing page only.",
       "content_sha256": "34fcc53aa30ea62fbc75c0ad5473d1284b6f6f0653feffefb20abfa00367355a",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
