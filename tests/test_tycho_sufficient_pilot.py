@@ -9,7 +9,7 @@ from validate_sufficient_pilot import validate
 
 class SufficientPilotTests(unittest.TestCase):
     def test_six_pilot_inputs_are_current(self):
-        self.assertEqual(validate(ROOT), {"entries": 6})
+        self.assertEqual(validate(ROOT), {"entries": 6, "batches": 18})
 
 
 if __name__ == "__main__":

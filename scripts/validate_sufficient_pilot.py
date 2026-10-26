@@ -8,6 +8,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = Path("research/sufficient-pilot-540/manifest.json")
+PLAN = Path("research/sufficient-pilot-540/batch-plan.json")
 OWNER = Path("edition/patterns/owner-units.v1.json")
 REGISTRY = Path("edition/patterns/registry.v1.json")
 SOURCE = Path("edition/patterns/source-plan.v1.json")
@@ -85,7 +86,16 @@ def validate(root=ROOT):
         card = (root / entry["card_path"]).read_text(encoding="utf-8")
         require(chr(96) + "sufficient" + chr(96) not in card,
                 "pilot-sufficient-claim: " + pid)
-    return {"entries": len(entries)}
+    plan = load(root / PLAN)
+    require(set(plan["pilot_entries"]) == seen, "pilot-plan-mismatch")
+    planned = [item["pattern_id"] for batch in plan["batches"]
+               for item in batch["entries"]]
+    require(len(planned) == len(set(planned)), "pilot-plan-duplicate")
+    require(len(planned) == plan["remaining_entries"], "pilot-plan-count")
+    require(all(1 <= len(batch["entries"]) <= plan["batch_size"]
+                for batch in plan["batches"]), "pilot-plan-size")
+    require(set(planned) == set(patterns) - seen, "pilot-plan-partition")
+    return {"entries": len(entries), "batches": len(plan["batches"])}
 
 
 def main():
@@ -97,7 +107,8 @@ def main():
     except (ValueError, OSError, KeyError, json.JSONDecodeError) as exc:
         print("FAIL:", exc, file=sys.stderr)
         return 1
-    print("PASS: sufficient pilot inputs", result["entries"])
+    print("PASS: sufficient pilot inputs", result["entries"],
+          "entries;", result["batches"], "remaining batches")
     return 0
 
 
