@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "issue": 532,
+  "created_at": "2026-10-26",
+  "scope": "pilot-six",
+  "status": "in-progress",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.federated-identity",
+      "catalog_name": "Federated Identity",
+      "owner_path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+      "owner_heading": "Federated Identity",
+      "gap_class": "source-and-owner",
+      "required_evidence": [
+        "federation trust and metadata",
+        "issuer discovery",
+        "token validation",
+        "revocation and replay"
+      ],
+      "candidate_sources": [
+        "OpenID Federation specification",
+        "OIDC Core"
+      ],
+      "status": "source-needed"
+    },
+    {
+      "pattern_id": "tycho.pattern.rbac-abac",
+      "catalog_name": "RBAC/ABAC",
+      "owner_path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md",
+      "owner_heading": "RBAC-ABAC",
+      "gap_class": "source",
+      "required_evidence": [
+        "role and attribute model",
+        "policy decision and enforcement points",
+        "policy administration",
+        "least-privilege review"
+      ],
+      "candidate_sources": [
+        "NIST SP 800-162",
+        "OWASP Authorization Cheat Sheet"
+      ],
+      "status": "source-needed"
+    },
+    {
+      "pattern_id": "tycho.pattern.workload-identity-mtls",
+      "catalog_name": "Workload Identity / mTLS",
+      "owner_path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+      "owner_heading": "Workload Identity-mTLS",
+      "gap_class": "source",
+      "required_evidence": [
+        "workload identity binding",
+        "certificate issuance and rotation",
+        "mTLS authentication",
+        "authorization policy"
+      ],
+      "candidate_sources": [
+        "Istio security documentation (full page or mTLS section)"
+      ],
+      "status": "source-needed"
+    },
+    {
+      "pattern_id": "tycho.pattern.dark-launching-shadow-traffic",
+      "catalog_name": "Dark Launching / Shadow Traffic",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+      "owner_heading": "Dark Launching-Shadow Traffic",
+      "gap_class": "source",
+      "required_evidence": [
+        "hidden back-end invocation",
+        "load/performance assessment",
+        "side-effect-free shadow path",
+        "traffic comparison"
+      ],
+      "candidate_sources": [
+        "Martin Fowler, Dark Launching"
+      ],
+      "status": "source-ready-to-record"
+    },
+    {
+      "pattern_id": "tycho.pattern.controlled-cutover",
+      "catalog_name": "Controlled Cutover",
+      "owner_path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
+      "owner_heading": "Controlled Cutover",
+      "gap_class": "source",
+      "required_evidence": [
+        "go/no-go gate",
+        "no-return point",
+        "partial-switch detection",
+        "forward repair"
+      ],
+      "candidate_sources": [
+        "Google SRE, graceful degradation/cutover material"
+      ],
+      "status": "source-needed"
+    },
+    {
+      "pattern_id": "tycho.pattern.parallel-run",
+      "catalog_name": "Parallel Run",
+      "owner_path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md",
+      "owner_heading": "Parallel Run",
+      "gap_class": "source",
+      "required_evidence": [
+        "old/new comparison",
+        "side-effect boundary",
+        "divergence owner",
+        "commit rule"
+      ],
+      "candidate_sources": [
+        "Martin Fowler, ParallelChange / ParallelRun material"
+      ],
+      "status": "source-needed"
+    }
+  ],
+  "limits": [
+    "Plan only; no source unit is claimed read unless a ledger record exists.",
+    "No sufficient coverage is claimed.",
+    "Human review and owner acceptance are separate gates."
+  ]
+}
