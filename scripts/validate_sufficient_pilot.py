@@ -112,6 +112,15 @@ def validate(root=ROOT):
     require(all(1 <= len(batch["entries"]) <= plan["batch_size"]
                 for batch in plan["batches"]), "pilot-plan-size")
     require(set(planned) == set(patterns) - seen, "pilot-plan-partition")
+    for pid in planned:
+        owner = owners[pid]
+        require(all(owner["technical_evidence"][name]["state"] == "supported"
+                    for name in DIMENSIONS),
+                "batch-dimension: " + pid)
+        require(owner["technical_coverage"]
+                in ("partial-bounded", "partial", "sufficient"),
+                "batch-coverage: " + pid)
+        require(pid not in promoted, "batch-premature-promotion: " + pid)
     return {"entries": len(entries), "batches": len(plan["batches"])}
 
 
