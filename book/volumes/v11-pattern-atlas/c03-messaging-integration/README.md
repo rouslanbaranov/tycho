@@ -94,7 +94,7 @@ and acknowledgement semantics in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-pubsub.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-pubsub.2026-10-21: served problem/solution; publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -128,7 +128,7 @@ acknowledgement and redelivery semantics in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-p2p.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-p2p.2026-10-21: served problem/solution; publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -162,7 +162,7 @@ ordering and acknowledgement in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-competing.2026-10-21: sections "Problem", "Solution", "Example".
+read record read.batch2-competing.2026-10-21: served problem/solution; publisher-abridged.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -263,7 +263,7 @@ scope and retention in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-correlation.2026-10-21: sections "Problem", "Solution", "Example".
+read record read.batch2-correlation.2026-10-21: served problem/solution; publisher-abridged.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -491,7 +491,7 @@ policy in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-dlq.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-dlq.2026-10-21: served problem/solution; publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -555,7 +555,7 @@ effects; verify dedup authority in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-idempotent.2026-10-21: sections "Problem", "Solution", "Example".
+read record read.batch2-idempotent.2026-10-21: served problem/solution; publisher-abridged.
 The source is a public pattern/documentation
 unit, not a benchmark.
 

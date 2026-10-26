@@ -1191,9 +1191,11 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Problem",
-        "Solution",
-        "Example"
+        "Problem (unlabelled)",
+        "Solution (unlabelled)",
+        "Example: Google Cloud Pub/Sub",
+        "Related patterns",
+        "Further reading"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -1205,14 +1207,16 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "A publish-subscribe channel delivers one event to all interested subscribers and decouples publishers from subscriber count; durability and delivery guarantees are separate."
+        "A Publish-Subscribe Channel delivers a copy of an event to each receiver.",
+        "One input channel splits into output channels, one per subscriber.",
+        "The page is a publisher-abridged excerpt and does not state durability or delivery guarantees."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One public unit; linked examples, implementations and related pages were not read; no benchmark or independent review.",
+      "limitations": "Publisher-abridged page: after the solution it shows \"...\" and points to the book. The Google Cloud Pub/Sub example is served; book-only forces and remaining text are absent.",
       "content_sha256": "ecc6aeec40253b2dba2f326af9fce678bb110a0d26902339f2184db7129196b4",
       "read_scope": "complete publicly served unit as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -1227,9 +1231,9 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Problem",
-        "Solution",
-        "Example"
+        "Problem (unlabelled)",
+        "Solution (unlabelled)",
+        "Related patterns"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -1241,14 +1245,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "A point-to-point channel delivers each message to one consumer; ordering, retry and duplicate behavior depend on the channel implementation."
+        "A Point-to-Point Channel ensures that only one receiver receives a particular message.",
+        "Multiple receivers may consume different messages concurrently, but only one consumes any one message."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One public unit; linked examples, implementations and related pages were not read; no benchmark or independent review.",
+      "limitations": "Publisher-abridged page: no Example section and no ordering, retry or duplicate-delivery text. Book remainder absent.",
       "content_sha256": "d49b1e29621d358d9132f88cf051f320778547c1136a5e97c5a9467dd9631291",
       "read_scope": "complete publicly served unit as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -1263,9 +1268,10 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Problem",
-        "Solution",
-        "Example"
+        "Problem (unlabelled)",
+        "Solution (unlabelled)",
+        "Example: Apache Kafka",
+        "Related patterns"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -1277,14 +1283,16 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "Competing consumers allow multiple consumers to share a channel and scale processing; ordering and duplicate handling require explicit contracts."
+        "Competing Consumers share a single Point-to-Point Channel and process messages concurrently.",
+        "The messaging system chooses which consumer receives a message.",
+        "Kafka uses partitions as point-to-point channels and cannot have more group consumers than partitions."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One public unit; linked examples, implementations and related pages were not read; no benchmark or independent review.",
+      "limitations": "Publisher-abridged page: book-only failure and redelivery text absent; Kafka example is served in full.",
       "content_sha256": "4e7aeddaaaf41076903f75e647af7990dcdb940fb5c13c1da0793261f33f003d",
       "read_scope": "complete publicly served unit as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -1371,9 +1379,9 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Problem",
-        "Solution",
-        "Example"
+        "Problem (unlabelled)",
+        "Solution (unlabelled)",
+        "Related patterns"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -1385,14 +1393,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "A correlation identifier links related messages across asynchronous flows; it does not by itself guarantee ordering or deduplication."
+        "A reply carries a Correlation Identifier matching the Request ID of the request it answers.",
+        "The pattern has six parts: Requestor, Replier, Request, Reply, Request ID and Correlation ID."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One public unit; linked examples, implementations and related pages were not read; no benchmark or independent review.",
+      "limitations": "Publisher-abridged page: no Example section and no ordering or deduplication claim. Book remainder absent.",
       "content_sha256": "d388f9c3f4b82638a3d57033e9e8e779ab919370c13af8a5fd79c76219e327e1",
       "read_scope": "complete publicly served unit as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -1622,9 +1631,11 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Problem",
-        "Solution",
-        "Example"
+        "Problem (unlabelled)",
+        "Solution (unlabelled)",
+        "Example: Dead Letter Queue in Amazon SQS",
+        "Example: Kafka Connect",
+        "Related patterns"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -1636,14 +1647,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "A dead-letter channel isolates messages that cannot be safely processed; requeue, replay and ownership need explicit policy."
+        "A Dead Letter Channel holds a message the messaging system cannot or should not deliver.",
+        "DLC behavior is implementation-specific; SQS uses a receive-count limit and Kafka Connect requires errors.tolerance=all."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One public unit; linked examples, implementations and related pages were not read; no benchmark or independent review.",
+      "limitations": "Publisher-abridged page: requeue, replay, ownership, retention and alerting are not stated. Book remainder absent.",
       "content_sha256": "714f6babd327e622695d9be989c93c704d23b034cb2e0fcc1065a0eaa203a278",
       "read_scope": "complete publicly served unit as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -1694,9 +1706,8 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Problem",
-        "Solution",
-        "Example"
+        "Problem (unlabelled)",
+        "Solution (unlabelled)"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -1708,14 +1719,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "An idempotent receiver detects duplicate deliveries and avoids duplicate effects; identity scope and retention are part of the contract."
+        "An Idempotent Receiver safely receives the same message more than once.",
+        "Idempotency means f(x)=f(f(x)); explicit de-duping or idempotent message semantics are the two stated means."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One public unit; linked examples, implementations and related pages were not read; no benchmark or independent review.",
+      "limitations": "Publisher-abridged page: no Example section; duplicate detection, identity scope and retention are not stated. Book remainder absent.",
       "content_sha256": "e9c278723f6c5bdcab0fdd9c410e8a17bc4eda0b2f63aefb8fe4afb22d76a86d",
       "read_scope": "complete publicly served unit as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
