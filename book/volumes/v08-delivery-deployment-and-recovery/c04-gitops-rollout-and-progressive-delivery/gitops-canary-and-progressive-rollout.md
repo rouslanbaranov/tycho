@@ -131,6 +131,9 @@ whole overlap, or the rollout must stop before an incompatible state is written.
 Mixed versions expose an incompatibility that a single-version test missed; gate each batch on
 readiness and error signals and keep a tested stop condition. Blue/green switches a complete
 environment at once; choose rolling when the extra capacity for a second environment is unavailable.
+Before the first batch, define the drain window and the rollback gate: a failed batch must be
+replaceable without replacing the whole fleet. Recreate is an alternative when a brief full outage
+is acceptable and mixed versions cannot coexist.
 
 **Limits.** Batch size, drain time and mixed-version compatibility are costs; a rolling rollout
 cannot prove a new-only write is reversible. Capacity during the overlap must be budgeted,
