@@ -33,6 +33,7 @@ def main():
         [sys.executable, "scripts/validate_sufficient_promotions.py"],
         [sys.executable, "scripts/validate_sufficient_pilot.py"],
         [sys.executable, "scripts/validate_sufficient_owner_acceptance.py"],
+        [sys.executable, "scripts/validate_ai_reviews.py"],
         [sys.executable, "scripts/phase4_audit.py", "--check"],
         [sys.executable, "scripts/validate_pattern_phase4.py"],
         [sys.executable, "scripts/validate_delivery_evidence.py"],
