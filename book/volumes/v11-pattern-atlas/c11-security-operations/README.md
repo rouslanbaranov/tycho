@@ -242,10 +242,12 @@ rotation in the owner section.
 
 **Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-istio.2026-10-21: all thirty-four served headings read.
-The eight cited headings support workload identity binding, certificate rotation, mTLS
-and authorization policy. Certificate revocation, trust-root bootstrapping, key storage
-and lifetime policy are outside those headings and remain synthetic. The source is
-official documentation, not a benchmark.
+The supported subset is: Istio identity; Identity and certificate management;
+Authentication; Mutual TLS authentication; Secure naming; Peer authentication;
+Authorization; Authorization policies. These support workload identity binding,
+certificate rotation, mTLS and authorization policy. Certificate revocation,
+trust-root bootstrapping, key storage and lifetime policy are outside those headings
+and remain synthetic. The source is official documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

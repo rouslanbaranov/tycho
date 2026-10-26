@@ -44,3 +44,28 @@ Artifact counts after remediation: 141 `partial-bounded` technical, 4 `partial`,
 
 A focused re-review of the changed evidence is required. The prior reject remains
 historical for `cf9e02f2`.
+
+## R2 review — 2026-10-27
+
+Report: `authoring/ai-reviews/2026-10-27-sufficient-r2-codex.md`.
+SHA-256: `3997c55722125ca28477b4a0e07feb57437710ed334708595187effb1ded5278`.
+Reviewed HEAD: `55649c3a`.
+
+Verdict: **pass-with-findings** for the bounded remediation. The six technical
+promotion verdicts remain **reject**; no entry qualifies for promotion. `sufficient: 0`.
+
+Residual findings:
+
+- **R2-01:** ASVS source unit still mixed the overview URL/label with the full PDF, and
+  one ledger claim still described the page as an overview. Corrected: manifest now
+  points to the PDF/versioned label; stale claim removed.
+- **R2-02:** Spanner raw HTML hash is not reproducible. Recorded as an unreproduced
+  mutable representation; the ledger no longer implies a verified revision.
+- **R2-03:** four manifest `current_coverage` fields were stale. Synchronized with
+  owner units and registry.
+- **R2-04:** the mTLS card cited an unexplained eight-heading subset. The eight named
+  headings are now listed.
+
+R2 accepts retaining the rejected/blocked pilot; it does not authorize promotion. Any
+future promotion requires new evidence and its own review. R2-02 remains a revision
+verification gap, not a sufficient claim.
