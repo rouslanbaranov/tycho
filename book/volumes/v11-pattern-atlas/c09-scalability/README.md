@@ -127,7 +127,7 @@ shared-state contention dominates added instances.
 **Failure and recovery.** Coordination and cold-start lag are common; verify ceiling in
 the owner section.
 
-**Technical owner.** [Horizontal Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#horizontal-scaling) — scaling trade-offs are bounded, not a capacity-planning benchmark.
+**Technical owner.** [Horizontal Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#horizontal-scaling) — replica scaling and coordination cost are bounded; per-service capacity math is owner-specific.
 
 **Sources.** [src.k8s-hpa](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-k8s-hpa.2026-10-21: sections "Horizontal Pod Autoscaling", "How
@@ -158,7 +158,7 @@ larger node no longer meets availability/cost constraints.
 **Failure and recovery.** Ceiling and restart risk are common; verify limits in the owner
 section.
 
-**Technical owner.** [Vertical Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#vertical-scaling) — scaling trade-offs are bounded, not a capacity-planning benchmark.
+**Technical owner.** [Vertical Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#vertical-scaling) — resource ceiling and restart cost are bounded; instance sizing is platform-specific.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-k8s-resources.2026-10-21: sections "Resource Management for Pods
@@ -189,7 +189,7 @@ autoscaling churn and cold starts dominate cost.
 **Failure and recovery.** Lag and oscillation are common; verify stability in the owner
 section.
 
-**Technical owner.** [Autoscaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#autoscaling) — scaling trade-offs are bounded, not a capacity-planning benchmark.
+**Technical owner.** [Autoscaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#autoscaling) — signal, lag and hysteresis are bounded; capacity forecast is service-specific.
 
 **Sources.** [src.keda](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-keda.2026-10-21: sections "Getting Started", "Scalers",
