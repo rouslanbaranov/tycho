@@ -297,7 +297,9 @@ must be labelled, and an explicit failure is safer than a plausible but wrong va
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: section "Load Shedding and Graceful
-Degradation". The source is a public pattern/documentation unit, not a benchmark.
+Degradation". The section covers graceful degradation, not fallback; the fallback
+freshness/authority/independence contract is synthetic owner guidance. The source is a public
+pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

@@ -168,8 +168,8 @@ correctness failure; do not let the alternate impersonate the primary.
 
 A read-only fallback may serve a display; a fallback that writes needs duplicate protection,
 reconciliation and a repair procedure. State the fallback freshness, authority and caller-visible
-label, and require it to be cheaper, independently safe and independent of the failed resource. An explicit error remains valid when no alternate
-satisfies the contract.
+label, and require it to be cheaper, independently safe and independent of the failed resource.
+An explicit error remains valid when no alternate satisfies the contract.
 
 Exercise the alternate under the same load profile as the primary and record how often it
 activates. Remove it when the failure it hides outlives its usefulness. Ownership includes the
