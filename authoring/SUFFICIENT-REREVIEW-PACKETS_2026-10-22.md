@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 120 |
+| Reviewed by independent agent | 122 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 22, "report-section-missing": 3, "reviewed-by-independent-agent": 120}.
+Packet statuses: {"page-changed-since-review": 19, "report-section-missing": 4, "reviewed-by-independent-agent": 122}.
 
 ## Review procedure
 
@@ -142,7 +142,7 @@ blank verdict template in the machine-readable file.
 
 - **Command-Side Replica**
   Current: pass; re-review: pass; report: None.
-  Status: page-changed-since-review.
+  Status: report-section-missing.
 
 - **Compensating Transaction**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -226,7 +226,7 @@ blank verdict template in the machine-readable file.
 
 - **Event Sourcing**
   Current: pass; re-review: pass; report: pass.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Event-Driven Consumer**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -354,7 +354,7 @@ blank verdict template in the machine-readable file.
 
 - **Materialized View**
   Current: pass; re-review: pass; report: reject.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Message Broker / Messaging Bridge**
   Current: pass; re-review: pass; report: pass-with-findings.
