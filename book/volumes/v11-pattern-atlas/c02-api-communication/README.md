@@ -461,9 +461,8 @@ contract in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-async-request-reply.2026-10-21: Asynchronous Request-Reply
-pattern, sections "Context and problem", "Solution", "Problems and considerations",
-"When to use this pattern", "Workload design", "Example". Vendor pattern page, not a
+read record read.microsoft-async-request-reply.2026-10-21: all twelve served
+headings read. Vendor pattern page, not a
 benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -499,9 +498,8 @@ verify the authorization boundary in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gatekeeper.2026-10-21: Gatekeeper pattern, sections "Context
-and problem", "Solution", "Problems and considerations", "When to use this pattern",
-"Workload design", "Example". Vendor pattern page, not a benchmark.
+read record read.microsoft-gatekeeper.2026-10-21: all nine served headings
+read. Vendor pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

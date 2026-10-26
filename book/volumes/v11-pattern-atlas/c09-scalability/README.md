@@ -290,8 +290,8 @@ boundaries in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-deployment-stamps.2026-10-21: sections "Deployment Stamps
-pattern", "Context and problem", "Solution". The source is a public pattern/documentation
+read record read.batch5-deployment-stamps.2026-10-21: all thirteen served
+headings read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -322,8 +322,8 @@ recovery in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-geode.2026-10-21: sections "Geode pattern", "Context and problem",
-"Solution". The source is a public pattern/documentation
+read record read.batch5-geode.2026-10-21: all seven served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

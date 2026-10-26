@@ -280,8 +280,8 @@ in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-valet.2026-10-21: sections "Valet Key pattern", "Context and
-problem", "Solution". The source is a public pattern/specification
+read record read.batch6-valet.2026-10-21: all nine served headings read.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
