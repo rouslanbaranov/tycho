@@ -229,8 +229,8 @@ non-idempotent work.
 **Technical owner.** [Timeout](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#timeout) — timeout values and cancellation are bounded; transport timeout behavior is implementation-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-timelimiter.2026-10-21: sections "TimeLimiter", "Cancel
-running futures". The source is a public pattern/documentation
+read record read.batch4-r4j-timelimiter.2026-10-21: section "TimeLimiter". The page has no
+Cancel running futures heading; cancellation semantics are synthetic guidance. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
