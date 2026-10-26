@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-26. Entries: 274.
+Inventory date: 2026-10-26. Entries: 275.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -232,6 +232,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.flyway / supporting | [Flyway Documentation](https://documentation.red-gate.com/flyway) — Redgate | Database migration ordering and delivery integration. | admitted-for-research / public-web-or-author-download |
 | src.liquibase / supporting | [Liquibase Documentation](https://docs.liquibase.com/) — Liquibase | Change management and deployment compatibility. | admitted-for-research / public-web-or-author-download |
 | src.fowler-dark-launching / supporting | [Dark Launching](https://martinfowler.com/bliki/DarkLaunching.html) — Martin Fowler | Hidden back-end invocation, load assessment and feature-flag rollback. | admitted-for-research / public-web-or-author-download |
+| src.minimumcd-parallel-run / supporting | [Parallel Run](https://beyond.minimumcd.org/docs/foundations/evolutionary-coding/parallel-run/) — MinimumCD Practice Guide | Parallel Run mechanism, comparison workflow, pitfalls and side-effect boundary. | admitted-for-research / public-web-or-author-download |
 
 ## Scaling
 
