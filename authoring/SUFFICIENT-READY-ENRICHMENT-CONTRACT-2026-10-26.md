@@ -21,7 +21,7 @@ Move six pattern entries from `partial-bounded` toward **sufficient-ready** evid
 2. Read a bounded public source unit and record exact sections/hash.
 3. Reconcile card, owner section and source; remove synthetic-only claims where evidence exists.
 4. Produce an evidence matrix: claim -> source section, mechanism, invariant, failure/recovery, alternative, limits.
-5. Request an independent Reviewer decision.
+5. Request an independent external AI review decision.
 6. Record `sufficient-ready` or `insufficient-evidence`; never record `sufficient` in this issue.
 
 ## Acceptance

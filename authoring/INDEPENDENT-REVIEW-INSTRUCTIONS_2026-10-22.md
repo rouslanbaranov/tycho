@@ -1,5 +1,9 @@
 # Independent re-review instructions — current HEAD
 
+> **Superseded 2026-10-26.** This instruction set describes the retired same-harness review
+> model. New reviews must use an external AI harness from a different vendor under
+> [the AI review policy](../governance/AI-INDEPENDENT-REVIEW.md). This file is historical.
+
 > Issue [#330](https://github.com/rouslanbaranov/tycho/issues/330), child of #228.
 > This is an instruction set, not a review, promotion or acceptance. The auditor must
 > produce a separate report; the owner decides whether to apply it.

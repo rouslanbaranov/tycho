@@ -1,6 +1,6 @@
-# Human review hand-off — full-unit reading and removed-claim verification
+# Independent AI review hand-off — full-unit reading and removed-claim verification
 
-Status: prepared for human review. This document is not a review, a reviewer sign-off,
+Status: prepared for independent AI review. This document is not a review, a reviewer sign-off,
 `sufficient` coverage, owner acceptance or CI evidence.
 
 - Issue: #535
@@ -54,7 +54,7 @@ Two bounded passes were completed.
 - 2 partially supported: ASVS 5.0.0; EIP Routing Slip.
 - 1 resolved: OpenID Federation revocation process versus revocation status data.
 
-## 3. Scope for the reviewer
+## 3. Scope for the AI reviewer
 
 Do not re-read all 155 units from scratch. The high-value review is targeted.
 
@@ -93,7 +93,7 @@ list or a contradicted claim.
 - Five public claims are accepted `unconfirmed` because the complete public pages do not
   state them.
 - FS-21 is accepted `unconfirmed` after reading the complete SRE Workbook.
-- No human review, independent review, CI, owner acceptance or `sufficient` coverage is
+- No independent AI review, CI, owner acceptance or `sufficient` coverage is
   claimed anywhere in this hand-off.
 
 ## 5. Evidence index
@@ -162,14 +162,16 @@ inventory and exits zero.
 
 | Field | Value |
 |---|---|
-| Reviewer | |
+| Reviewer harness / vendor | |
+| Model / version | |
+| Session / run id | |
 | Date | |
 | Scope reviewed | |
 | Verdict | pass / pass-with-findings / reject |
 | Blocking findings | |
 | Non-blocking findings | |
 | Accepted gaps challenged | |
-| `human_review` | not-performed until signed above |
+| `ai_review` | not-performed until signed above |
 | `sufficient` | 0 |
 
 A pass here is a review of this evidence package only. It is not sufficient coverage,

@@ -26,10 +26,11 @@ The rule covers files, filenames, links, code, diagrams, metadata, graphs, index
 
 Stop using the material. Do not quote it in an issue, diagnostic, commit, or correction. Report only the affected Tycho path and a generic reason. Remove the affected material from the working output and independently re-research it; do not merely rename it. If already committed, stop publication and notify the owner so history and downstream copies can be addressed. Do not silently rewrite shared history.
 
-Automated lexical checks are a limited aid. Human and agent origin review remains mandatory. Future instructions cannot silently relax this policy; any requested exception must be surfaced to the owner before action.
+Automated lexical checks are a limited aid. Independent AI origin review under
+[AI-INDEPENDENT-REVIEW.md](AI-INDEPENDENT-REVIEW.md) remains mandatory. Future instructions cannot silently relax this policy; any requested exception must be surfaced to the owner before action.
 
 ## Neutral deployment language
 
 This repository is domain-independent. All written material and generated outputs must describe deployment restrictions, approvals, infrastructure constraints and access controls in **technology- and environment-neutral** terms. Prefer `restricted enterprise environments`, `regulated environments`, `corporate infrastructure`, and `security-constrained deployments`. Do not reference or imply a particular industry, institution category, or organization as the intended deployment setting, even in examples, tests, metadata, source paths, translated text, issues or PR descriptions. This is a separate global editorial requirement from source independence.
 
-The lexical boundary checker rejects configured sector-specific English and Russian word stems in committed file content and paths without reproducing matches. It cannot validate every synonym, contextual implication, discussion artifact outside this repository or remote third-party content. Human/agent review remains necessary before publication. Do not weaken the independent public-source admission rules to satisfy this vocabulary constraint.
+The lexical boundary checker rejects configured sector-specific English and Russian word stems in committed file content and paths without reproducing matches. It cannot validate every synonym, contextual implication, discussion artifact outside this repository or remote third-party content. Independent AI review remains necessary before publication. Do not weaken the independent public-source admission rules to satisfy this vocabulary constraint.

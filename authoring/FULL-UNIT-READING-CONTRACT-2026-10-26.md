@@ -32,4 +32,4 @@ scope. The 211 other registered sources are outside this contract.
 - 19 units with a partial #225 record.
 - 1 blocked unit.
 
-No sufficient or human-review claim.
+No sufficient or independent-AI-review claim.

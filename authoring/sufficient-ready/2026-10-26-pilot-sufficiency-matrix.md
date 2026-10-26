@@ -10,7 +10,7 @@ An entry is `sufficient-ready` for this pilot when:
 2. all four owner-unit technical dimensions are `supported`;
 3. the atlas card has its decision question, fit conditions, contraindications,
    competing alternative and failure/recovery;
-4. an independent Reviewer pass covers the current card/owner/source binding;
+4. an independent external AI review pass covers the current card/owner/source binding;
 5. remaining gaps are named as synthetic or operational limits.
 
 `sufficient-ready` does not mean `sufficient`: decision coverage is still
