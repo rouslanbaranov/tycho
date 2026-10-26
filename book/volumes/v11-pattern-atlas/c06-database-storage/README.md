@@ -157,9 +157,10 @@ ownership in the owner section.
 **Technical owner.** [Resharding is a multi-state data transition](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md#consistent-hashing) — resharding transition is bounded, not a consistent-hashing implementation.
 
 **Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-cassandra-arch.2026-10-21: sections "Overview", "Architecture".
-The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.batch3-cassandra-arch.2026-10-21: sections "Overview", "Features",
+"Operating". The page does not describe consistent hashing, replication factor or consistency
+levels; consistent-hashing guidance here is synthetic and needs a dedicated source. The source
+is a public documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
