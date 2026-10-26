@@ -147,7 +147,9 @@ yet migrated.
 Keep one authoritative writer for each invariant and define routing plus data compatibility during
 coexistence. Interception may be impossible, internal callers may bypass the façade, and old/new
 state can diverge. Add a bypass detector, a routing inventory and a data reconciliation check before
-retiring the old path.
+retiring the old path. Fund coexistence and name owners for both paths. Rollback remains
+possible until a recorded no-return point, where routing inventory and reconciliation
+evidence authorize retirement.
 
 Branch by abstraction, parallel run or a big-bang replacement may be preferable when interception is
 impossible or the system is small enough to replace whole. Strangler fig is a fit when requests can
