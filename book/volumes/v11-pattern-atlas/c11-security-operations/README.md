@@ -104,11 +104,12 @@ validation in the owner section.
 read record read.batch6-rfc9700.2026-10-21: all 78 numbered sections read;
 the prior 100,000-character truncation is superseded.
 [src.openid-federation](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.openid-federation.2026-10-26: all twenty-six served headings read.
-OpenID Federation supports trust
-anchors, Entity Statements, trust chains, metadata refresh and key rollover. It defines no
-revocation process; federation-specific replay and revocation are synthetic, not source
-claims. The source is a public pattern/specification unit, not a benchmark.
+read record read.openid-federation.2026-10-26: all 25 top-level sections and
+199 headings read. OpenID Federation supports trust anchors, Entity Statements, trust
+chains, metadata refresh and key rollover. It defines revocation status data for keys
+and trust marks, but no revocation process; federation-specific replay and revocation
+mechanics are synthetic, not source claims.
+The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
