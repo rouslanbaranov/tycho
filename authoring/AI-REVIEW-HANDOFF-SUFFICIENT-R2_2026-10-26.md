@@ -7,7 +7,8 @@ promotion or sufficient-coverage claim.
 - Prior report: `authoring/ai-reviews/2026-10-26-sufficient-pilot-codex.md`
 - Prior report SHA-256: `b755e412cf6de44e58d111448dd2595a228dbd4a133d20087f65ffccd13faaa9`
 - Prior reviewed HEAD: `cf9e02f2`
-- Remediation HEAD: `6ff461e7`
+- Evidence baseline: `6ff461e7`
+- Current remediation HEAD: `a9279b74`
 - Policy: `governance/SUFFICIENT-COVERAGE.md`
 - Manifest: `research/sufficient-pilot-540/manifest.json`
 - Outcome: `research/sufficient-pilot-540/REVIEW-OUTCOME.md`
@@ -27,6 +28,9 @@ repeat the 155-unit reading. No entry is promoted; all six are rejected and bloc
   hashes refreshed to the served representations and documented.
 - **P540-04:** RBAC/ABAC and Workload Identity card source notes rewritten; duplicate
   prose removed.
+- **After the evidence baseline:** cutover mechanism was narrowed to `partial`, pilot
+  rationales were added, and owner-acceptance/AI-review-index validators were added.
+  The extra tooling is outside the six-entry evidence scope.
 
 ## Required checks
 
@@ -47,7 +51,8 @@ sufficient-pilot remediation. Do not edit, commit, open a PR or change configura
 Repository: /Users/rbaranov/Projects/tycho
 Checkout: current branch HEAD; record `git rev-parse HEAD`.
 Prior reviewed HEAD: cf9e02f2.
-Remediation HEAD: 6ff461e7.
+Evidence baseline: 6ff461e7.
+Current remediation HEAD: a9279b74 (record the actual checked-out HEAD).
 Prior report: authoring/ai-reviews/2026-10-26-sufficient-pilot-codex.md
 Prior report SHA-256: b755e412cf6de44e58d111448dd2595a228dbd4a133d20087f65ffccd13faaa9
 Policy: governance/SUFFICIENT-COVERAGE.md
@@ -55,6 +60,8 @@ Manifest: research/sufficient-pilot-540/manifest.json
 Outcome: research/sufficient-pilot-540/REVIEW-OUTCOME.md
 
 Review only the remediation of P540-01 through P540-04 for the six pilot entries.
+The current HEAD adds rationale edits and tooling after the evidence baseline; treat
+the six-entry evidence as the review target, not the extra tooling.
 Verify that all six remain rejected and blocked and that the promotion allowlist is
 empty. Do not accept sufficient-ready as evidence. Re-read the changed owner-unit
 technical dimensions, ledger scopes, ASVS/RFC/Spanner hashes and the two corrected
