@@ -1,8 +1,8 @@
 # External AI review outcome — #535
 
-Status: two review rounds performed; both verdicts **reject**. Corrections after the second
-round are applied; a third focused re-review is still required. The owner decides whether
-to accept the corrections.
+Status: three review rounds performed. Round 3 returned **pass** for the bounded remediation
+scope. The independent AI review gate for #535 is satisfied; earlier reject verdicts remain
+historical for their snapshots.
 
 ## Review identity
 
@@ -100,4 +100,20 @@ Verdict: **reject**.
 - R-03a: the Aggregator ledger limitation still denied incomplete-set handling. Corrected.
 - R-05a: the RESOLUTIONS range included FS-10. FS-10 is now listed separately.
 
-No claim disposition changed in this round. A third focused re-review is required.
+No claim disposition changed in this round. The third focused re-review returned pass; see below.
+
+
+## Third focused re-review — 2026-10-26
+
+Report: `authoring/ai-reviews/2026-10-26-round3-rereview-codex.md`.
+SHA-256: `b4ecbb26a1eaf395df439d82a98a21c819ea3d4c428818a6338076955c34dbe1`.
+
+Verdict: **pass**. No blocking or non-blocking finding remains in the round-3 scope.
+R-04, R-03a and R-05a are resolved; R-01, R-02, R-06, R-07 and R-08 show no regression.
+
+Verified counts: 155 units (129 full, 14 exact, 1 partial, 11 blocked); 23 claims
+(15 partially-supported, 5 unconfirmed, 2 contradicted, 1 resolved). All eight validators
+and `check_boundary` exited 0 on an isolated copy.
+
+This pass covers the remediation delta and the #535 evidence package, not a fresh
+full-atlas review, EIP Chapter 4+, DDIA, sufficient coverage or CI.
