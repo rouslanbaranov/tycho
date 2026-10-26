@@ -169,9 +169,10 @@ when publication is not atomic with the state change.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-domain-event.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/specification
-unit, not a benchmark.
+read record read.batch2-domain-event.2026-10-21: sections "Context", "Problem", "Solution",
+"Related patterns", "See also". The page has no Forces/Example/Resulting context sections; event
+identity, ordering and reliability are synthetic guidance, not source claims. The source is a
+public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
