@@ -233,10 +233,12 @@ rotation in the owner section.
 **Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#workload-identity-mtls) — workload identity binding and mTLS trust are bounded; credential issuance is platform-specific.
 
 **Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-istio.2026-10-21: sections "Security", "High-level architecture". The
-record is truncated at 100,000 characters; workload identity, Mutual TLS authentication and
-Authorization lie beyond the recorded prefix and are synthetic guidance, not source claims. The
-source is a public pattern/specification unit, not a benchmark.
+read record read.batch6-istio.2026-10-21: sections "Security", "High-level architecture",
+"Istio identity", "Identity and certificate management", "Authentication", "Mutual TLS
+authentication", "Authorization", "Principals". The page supports workload identity binding,
+certificate rotation, mTLS and authorization policy. Certificate revocation, trust-root
+bootstrapping, key storage and lifetime policy are outside the read scope. The source is
+official documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

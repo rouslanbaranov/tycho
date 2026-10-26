@@ -85,8 +85,8 @@ The detailed pages separate the mechanisms that make this decision conditional:
 ## Bounded pattern ownership notes
 
 These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
-this page. They are synthetic design guidance, not measured evidence, and they do not create a new
-source claim.
+this page. They are synthetic design guidance unless a section cites a dedicated source record;
+they are not measured evidence and do not create a new source claim by themselves.
 
 ### Federated Identity
 
@@ -118,6 +118,11 @@ the dominant risk.
 **Limits.** PKI, certificate rotation and revocation are operational costs; a valid certificate
 authenticates the workload, not every operation it requests. Certificate issuance availability
 is part of the request path; a failed rotation is an outage.
+
+**Source boundary.** The Istio record supports workload identity binding, certificate
+issuance and rotation, mTLS authentication and authorization policy. Certificate
+revocation, trust-root bootstrap, key storage and lifetime policy are not in the scoped
+source; the revocation and lifecycle guidance above remains synthetic.
 
 ## Navigation
 
