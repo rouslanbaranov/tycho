@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 138 |
+| Reviewed by independent agent | 139 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 1, "report-section-missing": 6, "reviewed-by-independent-agent": 138}.
+Packet statuses: {"report-section-missing": 6, "reviewed-by-independent-agent": 139}.
 
 ## Review procedure
 
@@ -254,7 +254,7 @@ blank verdict template in the machine-readable file.
 
 - **Federated Identity**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Fencing Tokens**
   Current: pass; re-review: pass; report: pass-with-findings.
