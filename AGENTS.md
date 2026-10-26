@@ -116,7 +116,8 @@ tool invocation that retrieves sources, or change.
     exposed, session or run id, review timestamp, HEAD, content commit, scope, saved
     report path and any prior involvement. Use `ai_review` for the new gate;
     `human_review` is retired for future work. State `sufficient: 0` unless separate
-    evidence exists. After the run, check `git status` and report hashes; if the reviewer wrote to the repository, stop,
+    evidence exists. After the run, check `git status` and report hashes; if the reviewer
+    wrote to the repository, stop,
     quarantine the changes and treat the review as contaminated.
 
 
