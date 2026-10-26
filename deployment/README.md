@@ -8,15 +8,15 @@ merge from filling the Hobby container-registry limit.
 
 ## Make a release
 
-1. Resolve the container-registry capacity or cleanup issue in the Vercel
-   project before the release.
+1. Confirm the container registry has room for one more image; clean up old
+   images when it is near the Hobby limit.
 2. Replace the contents of `deployment/vercel-release` with a new UTC
    timestamp or release identifier.
 3. Include that change in the release pull request and merge it.
 4. Check the Vercel status on the merge commit and verify `/ready`.
 
-The marker is intentionally absent until the first gated release. A merge
-that does not add or change it produces no Vercel deployment.
+The first gated release added the marker on 2026-10-26. A merge that does not
+add or change it produces no Vercel deployment.
 
 ## Container registry cleanup
 
