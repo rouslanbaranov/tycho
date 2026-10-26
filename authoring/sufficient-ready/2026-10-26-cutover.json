@@ -1,0 +1,37 @@
+{
+  "source_id": "src.gcp-spanner-cutover",
+  "unit_url": "https://docs.cloud.google.com/spanner/docs/mysql-perform-cutover",
+  "unit_label": "Perform cutover from MySQL (Spanner)",
+  "access_date": "2026-10-26",
+  "content_sha256": "9e9cf60892a2dcf6e793f015746d44ba540929f50ede47e297931cbce6a1210e",
+  "content_sha256_scope": "first GET full body; second GET differed in site chrome; scoped HTML 47e62b30... and text db8ca697... were stable",
+  "retrieved_lines": 242,
+  "retrieved_words": 1182,
+  "status": "partial-scoped-text-read",
+  "sections_read": [
+    "Before you begin",
+    "Perform cutover",
+    "Perform application cutover"
+  ],
+  "claims_supported": [
+    "Cutover drains the write pipeline and verifies replication before switching application writes.",
+    "Application downtime is declared from pausing writes to application cutover.",
+    "Pre-cutover checks include schema, backfill, CDC health, validation, empty severe DLQ and optional reverse replication.",
+    "Post-drain checks include zero Pub/Sub unacked messages, zero replication lag and zero write throughput."
+  ],
+  "claims_not_supported": [
+    "general cutover proof",
+    "safe/reversible/zero-loss guarantee",
+    "quantified downtime/RTO/RPO",
+    "application compatibility or rolling cutover",
+    "formal no-return point or fallback execution",
+    "independent verification"
+  ],
+  "limitations": [
+    "Product-specific vendor documentation.",
+    "Only three sections read.",
+    "No immutable version selector.",
+    "Full-body hash is fetch-specific."
+  ],
+  "reader": "a0ffec13-b43d-4bdd-a577-329595ec9dad"
+}

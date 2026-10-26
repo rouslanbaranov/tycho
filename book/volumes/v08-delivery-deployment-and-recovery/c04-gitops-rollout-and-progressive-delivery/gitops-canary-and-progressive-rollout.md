@@ -47,7 +47,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-22"
+updated_at: "2026-10-26"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -103,21 +103,36 @@ The detailed pages separate the mechanisms that make this decision conditional:
 ## Bounded pattern ownership notes
 
 These notes define the decision boundary for atlas cards whose mechanism is
-not the main subject of this page. They are synthetic design guidance, not
-measured evidence, and they do not create a new source claim.
+not the main subject of this page. They are synthetic design guidance unless a
+sentence explicitly attributes the claim to a dedicated source record; all other
+guidance remains synthetic. They are not measured evidence and do not create a new
+source claim by themselves.
 
 ### Dark Launching-Shadow Traffic
 
-Dark launching sends mirrored or synthetic traffic to new code while the old path remains
-authoritative. It needs side-effect suppression, a comparison method, a bounded load
-budget and a rule for sensitive data. Use it when behavior can be observed without
-changing user-visible state. Do not use it when shadow requests would write, charge,
-notify or leak data.
+Dark launching calls new or changed back-end behavior from existing user requests without
+showing the result, so the new path does real work under production load. Shadow traffic
+copies live requests to a mirrored service while the old path remains authoritative.
 
-The failure path is a mirrored request that causes a real effect or doubles load; isolate
-the shadow path and stop it when the comparison or capacity contract fails. A canary, feature
-flag or environment switch that receives a small real share is the alternative when shadow
-traffic cannot be made side-effect free.
+Both need a side-effect boundary, a comparison method, a load budget and a rule for sensitive
+data. Mirroring is fire-and-forget for the primary request, but the mirrored request is real
+and appears in the new service's logs; a write, charge or notification can execute twice.
+Dark launching without mirroring still changes production state unless the hidden path is
+side-effect free.
+
+The failure path is a hidden or mirrored request that causes a real effect or doubles load;
+isolate the shadow path and stop it when the comparison or capacity contract fails. A canary,
+feature flag or environment switch that receives a small real share is the alternative when
+shadow traffic cannot be made side-effect free.
+
+**Source boundary.** The
+[read.fowler-dark-launching.2026-10-26](../../../../edition/patterns/reading-ledger.v1.json)
+record supports hidden invocation, load assessment, feature-flag rollback and old/new
+comparison; the
+[read.batch7-istio-mirroring.2026-10-26](../../../../edition/patterns/reading-ledger.v1.json)
+record supports request mirroring, fire-and-forget responses and fractional mirroring.
+Neither source supplies a measurement method, side-effect suppression or a capacity bound;
+those remain synthetic.
 
 **Limits.** Shadow traffic is not a user-behavior sample; comparison coverage and data
 sensitivity bound what it can prove.
@@ -168,7 +183,8 @@ instances cannot read, and rollback does not undo committed data. Watch metric l
 cohorts, shared-state contamination and sample size. Small samples hide rare errors, and an
 unrepresentative cohort can pass while a rare failure hides.
 
-Shadow traffic tests reads but not writes; blue/green moves the whole state boundary; a feature
-flag can scope exposure without a second copy. Use any only when the cohort cannot be isolated.
+Shadow traffic tests reads safely only when writes are suppressed; a mirrored write can execute
+twice. Blue/green moves the whole state boundary; a feature flag can scope exposure without a
+second copy. Use any only when the cohort cannot be isolated.
 Canary is a fit when traffic can be split safely and the SLI comparison has enough signal and an
 owner.

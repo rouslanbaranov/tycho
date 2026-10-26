@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 139 |
+| Reviewed by independent agent | 145 |
 | Rejected after review | 0 |
 
-Packet statuses: {"report-section-missing": 6, "reviewed-by-independent-agent": 139}.
+Packet statuses: {"reviewed-by-independent-agent": 145}.
 
 ## Review procedure
 
@@ -46,7 +46,7 @@ blank verdict template in the machine-readable file.
 
 - **API Composition**
   Current: pass; re-review: pass; report: None.
-  Status: report-section-missing.
+  Status: reviewed-by-independent-agent.
 
 - **API Gateway**
   Current: pass; re-review: pass; report: pass.
@@ -130,7 +130,7 @@ blank verdict template in the machine-readable file.
 
 - **Clean / Onion Architecture**
   Current: pass; re-review: pass; report: None.
-  Status: report-section-missing.
+  Status: reviewed-by-independent-agent.
 
 - **Client-Side Discovery**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -142,7 +142,7 @@ blank verdict template in the machine-readable file.
 
 - **Command-Side Replica**
   Current: pass; re-review: pass; report: None.
-  Status: report-section-missing.
+  Status: reviewed-by-independent-agent.
 
 - **Compensating Transaction**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -330,7 +330,7 @@ blank verdict template in the machine-readable file.
 
 - **Leader Election**
   Current: pass; re-review: pass; report: None.
-  Status: report-section-missing.
+  Status: reviewed-by-independent-agent.
 
 - **Leader-Follower Replication**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -466,7 +466,7 @@ blank verdict template in the machine-readable file.
 
 - **Retry with Jitter**
   Current: pass; re-review: pass; report: None.
-  Status: report-section-missing.
+  Status: reviewed-by-independent-agent.
 
 - **Reverse Proxy**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -550,7 +550,7 @@ blank verdict template in the machine-readable file.
 
 - **Structured Logging**
   Current: pass; re-review: pass; report: None.
-  Status: report-section-missing.
+  Status: reviewed-by-independent-agent.
 
 - **Synthetic Monitoring**
   Current: pass; re-review: pass; report: pass-with-findings.

@@ -45,12 +45,12 @@ evidence_scope:
   notes: "13 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-26"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-26"
+source_inspection_date: "2026-10-26"
 content_verified_at: null
 ---
 # V11/C11 — Security, isolation and operational architecture
@@ -104,8 +104,15 @@ validation in the owner section.
 read record read.batch6-rfc9700.2026-10-21: sections "1. Introduction", "2.1. Protecting
 Redirect-Based Flows", "2.1.1. Authorization Code Grant", "2.2. Token Replay Prevention",
 "2.2.2. Refresh Tokens", "2.3. Access Token Privilege Restriction". The record is truncated
-at 100,000 characters; Sender-Constrained Access Tokens and Security Considerations lie beyond it. Federation trust, metadata, revocation and replay guidance is
-synthetic, not a source claim. The source is a public pattern/specification unit, not a benchmark.
+at 100,000 characters; Sender-Constrained Access Tokens and Security Considerations lie
+beyond it.
+[src.openid-federation](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.openid-federation.2026-10-26: sections "1. Introduction",
+"3. Entity Statement", "4. Trust Chain", "5. Metadata",
+"11. Updating Metadata, Key Rollover, and Revocation". OpenID Federation supports trust
+anchors, Entity Statements, trust chains, metadata refresh and key rollover. It defines no
+revocation process; federation-specific replay and revocation are synthetic, not source
+claims. The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -201,9 +208,13 @@ the owner section.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements", "Levels". ASVS provides verification framing; it does
-not define RBAC/ABAC role or attribute mechanics. Policy-decision guidance is synthetic. The
-source is a public pattern/specification unit, not a benchmark.
+Standard", "Verification Requirements", "Levels".
+[src.nist-sp-800-162](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.nist-sp-800-162.2026-10-26: sections "2. Understanding ABAC",
+"3. ABAC Enterprise Considerations". ASVS provides verification framing; NIST supports
+PDP/PEP/PIP/PAP and policy administration. Revocation mechanics, role explosion and
+attribute-freshness guidance are synthetic. The sources are public standards, not
+attribute-freshness guidance are synthetic. The sources are public standards, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
@@ -233,10 +244,13 @@ rotation in the owner section.
 **Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#workload-identity-mtls) — workload identity binding and mTLS trust are bounded; credential issuance is platform-specific.
 
 **Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-istio.2026-10-21: sections "Security", "High-level architecture". The
-record is truncated at 100,000 characters; workload identity, Mutual TLS authentication and
-Authorization lie beyond the recorded prefix and are synthetic guidance, not source claims. The
-source is a public pattern/specification unit, not a benchmark.
+read record read.batch6-istio.2026-10-21: sections "Security", "High-level architecture",
+"Istio identity", "Identity and certificate management", "Authentication", "Mutual TLS
+authentication", "Authorization", "Principals". The page supports workload identity binding,
+certificate rotation, mTLS and authorization policy. Certificate revocation, trust-root
+bootstrapping, key storage and lifetime policy are not supported by the cited sections;
+the full page was read, but these claims are not in the eight cited sections. The source is
+official documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

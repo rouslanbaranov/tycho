@@ -4080,36 +4080,44 @@
       "unit_url": "https://istio.io/latest/docs/concepts/security/",
       "unit_label": "Istio Security — workload identity and mTLS",
       "unit_type": "documentation-page",
-      "access_date": "2026-10-21",
-      "access_method": "public HTTP fetch; served text/html inspected",
+      "access_date": "2026-10-26",
+      "access_method": "public HTTPS GET; full article text inspected; content hash pins the 2026-10-26 retrieval",
       "sections_read": [
         "Security",
-        "High-level architecture"
+        "High-level architecture",
+        "Istio identity",
+        "Identity and certificate management",
+        "Authentication",
+        "Mutual TLS authentication",
+        "Authorization",
+        "Principals"
       ],
       "sections_not_read": [
         "linked child pages",
+        "six SVG figure interiors",
         "navigation and unrelated chrome",
-        "examples not reproduced"
+        "examples not executed"
       ],
       "tables_figures": [
-        "tables and figures in inspected sections were read in text form; not reproduced"
+        "six SVG figures read as captions/alt text only; no tables"
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "The high-level architecture section describes Istio security components."
+        "Istio assigns X.509 identities to workloads and rotates certificates through istiod and the agent.",
+        "mTLS authenticates service-to-service traffic and secure naming binds identity to service.",
+        "AuthorizationPolicy supports ALLOW, DENY and CUSTOM with deny precedence and mTLS-dependent principal rules."
       ],
       "claims_not_supported": [
-        "linked pages",
-        "implementation behavior",
-        "independent reproduction or benchmark",
-        "workload identity binding",
-        "certificate issuance",
-        "mTLS enforcement",
-        "authorization policy"
+        "certificate revocation",
+        "trust-root bootstrap",
+        "key storage or HSM",
+        "certificate lifetime and renewal policy",
+        "SPIFFE semantics",
+        "runtime enforcement or security outcome"
       ],
-      "limitations": "Page returned truncated at 100000 characters; only the Security heading and High-level architecture section are inside the recorded prefix. Workload identity, mTLS and authorization lie beyond it and are synthetic guidance, not source claims.",
-      "content_sha256": "ef456268a4c5006bb1bed23c0a52396fea178d49374600bb3228f420ce0149c5",
-      "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
+      "limitations": "Unversioned latest documentation; six SVG figure interiors not read; YAML examples not executed; source register URL was corrected to this page.",
+      "content_sha256": "0291fb8211b0215a91fe1c2bf389db7b3cdb6fffd57605f13fb4e6b402eb66e4",
+      "read_scope": "publicly served HTML article; all 34 headings and prose read; linked pages and figure interiors excluded",
       "reviewer": "Automated authoring agent",
       "status": "read"
     },
@@ -4520,6 +4528,265 @@
       "status": "read",
       "citation_status": "intentionally-unused",
       "citation_note": "Secondary datacenter unit in the load-balancing source plan; the card primary ledger record remains read.batch5-sre-frontend.2026-10-21."
+    },
+    {
+      "id": "read.fowler-dark-launching.2026-10-26",
+      "source_id": "src.fowler-dark-launching",
+      "unit_url": "https://martinfowler.com/bliki/DarkLaunching.html",
+      "unit_label": "Dark Launching — bliki entry",
+      "unit_type": "article",
+      "access_date": "2026-10-26",
+      "access_method": "public HTTPS GET; served HTML inspected",
+      "sections_read": [
+        "Dark Launching"
+      ],
+      "sections_not_read": [
+        "embedded figure",
+        "linked pages"
+      ],
+      "tables_figures": [
+        "no tables; one embedded sketch not retrieved"
+      ],
+      "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Dark launching calls new or changed back-end behavior from existing users without revealing the call.",
+        "The purpose is to assess load and performance impact before public release.",
+        "A feature flag can switch the hidden behavior off in production.",
+        "Dark launching can compare old and new implementations while returning one answer."
+      ],
+      "claims_not_supported": [
+        "traffic mirroring",
+        "measured load impact",
+        "measurement method or threshold",
+        "side-effect isolation",
+        "staged exposure"
+      ],
+      "limitations": "387-word definitional bliki entry; no benchmark or production report; embedded figure not read.",
+      "content_sha256": "3e39819c496dd5b8ee803eb43688992aa16814b9e9cd751214cf23c64c6a31bb",
+      "read_scope": "full article text; site chrome excluded",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.batch7-istio-mirroring.2026-10-26",
+      "source_id": "src.istio-traffic-mirroring",
+      "unit_url": "https://istio.io/latest/docs/tasks/traffic-management/mirroring/",
+      "unit_label": "Istio Mirroring task page",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-26",
+      "access_method": "public HTTPS GET; served HTML inspected",
+      "sections_read": [
+        "Mirroring",
+        "Before you begin",
+        "Creating a default routing policy",
+        "Mirroring traffic to httpbin-v2",
+        "Cleaning up",
+        "See also"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "raw Markdown manifests"
+      ],
+      "tables_figures": [
+        "no tables; 18 code blocks read as text"
+      ],
+      "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Traffic mirroring sends a copy of live traffic to a mirrored service out of band of the primary path.",
+        "The example keeps 100% on v1 and mirrors 100% to v2; a fraction can be configured.",
+        "Mirrored requests are fire-and-forget and their responses are discarded.",
+        "Mirrored requests are real requests that reach v2 and appear in its access logs."
+      ],
+      "claims_not_supported": [
+        "side-effect suppression or idempotency",
+        "latency or capacity guarantee",
+        "production rollout or abort gate",
+        "TCP/gRPC coverage",
+        "security or privacy constraints"
+      ],
+      "limitations": "The page warns of a template bug; served YAML manifests are misnested. Raw Markdown was not read. No local reproduction.",
+      "content_sha256": "dc18301fbbca9d374536e582e055c60b5594014d2fe88d4e0763b551de51765e",
+      "read_scope": "all six article headings and both tab panels; site chrome excluded",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.nist-sp-800-162.2026-10-26",
+      "source_id": "src.nist-sp-800-162",
+      "unit_url": "https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf",
+      "unit_label": "NIST SP 800-162 — Guide to Attribute Based Access Control",
+      "unit_type": "specification",
+      "access_date": "2026-10-26",
+      "access_method": "public HTTPS GET; PDF text extracted with pdftotext; figures visually inspected",
+      "sections_read": [
+        "2. Understanding ABAC",
+        "3. ABAC Enterprise Considerations"
+      ],
+      "sections_not_read": [
+        "4. Conclusion",
+        "Appendices A-B",
+        "references"
+      ],
+      "tables_figures": [
+        "eight figures visually inspected; no tables used as evidence"
+      ],
+      "license_notes": "Public NIST publication; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The basic ABAC mechanism contains a policy decision point and a policy enforcement point.",
+        "A policy information point supplies attributes; a policy administration point manages policy.",
+        "PDP/PEP can be distributed or centralized and may be separated.",
+        "Policy administration covers policy creation, testing, storage, authority and traceability."
+      ],
+      "claims_not_supported": [
+        "all four components mandatory",
+        "PDP/PEP necessarily separate",
+        "XACML mandated",
+        "centralization required",
+        "revocation mechanics"
+      ],
+      "limitations": "Secondary standard, not implementation evidence; appendices not read; no local reproduction.",
+      "content_sha256": "ea90ee967a7011c8de5cfaffe0820d157167edefdea5fc2a84af730af4295cd7",
+      "read_scope": "printed pp. i-33; sections 2-3 complete; appendices excluded",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.openid-federation.2026-10-26",
+      "source_id": "src.openid-federation",
+      "unit_url": "https://openid.net/specs/openid-federation-1_0.html",
+      "unit_label": "OpenID Federation 1.0 — Final Specification",
+      "unit_type": "specification",
+      "access_date": "2026-10-26",
+      "access_method": "public HTTPS GET; served HTML inspected",
+      "sections_read": [
+        "1. Introduction",
+        "3. Entity Statement",
+        "4. Trust Chain",
+        "5. Metadata",
+        "11. Updating Metadata, Key Rollover, and Revocation"
+      ],
+      "sections_not_read": [
+        "2. Overall Architecture",
+        "6. Federation Policy",
+        "7. Trust Marks",
+        "8. Federation Endpoints",
+        "9-10",
+        "12-21",
+        "Appendices"
+      ],
+      "tables_figures": [
+        "ASCII figures read as text; JWT examples not decoded"
+      ],
+      "license_notes": "Public specification; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Federation statements are anchored in Trust Anchors; entities may belong to multiple federations.",
+        "An Entity Statement is a signed JWT; Entity Configuration is self-issued and Subordinate Statement is issued by a superior.",
+        "Trust chains link adjacent statements by issuer/subject and signature and end at a Trust Anchor.",
+        "Trust Chains must be refreshed when they expire; Entity Configuration exp controls key retrieval.",
+        "Trust Anchor rollover adds new keys, keeps old keys long enough, switches, then removes old keys.",
+        "The specification does not define a revocation process; federations may define their own."
+      ],
+      "claims_not_supported": [
+        "OIDC issuer discovery",
+        "token replay prevention",
+        "revocation protocol or propagation time",
+        "fixed rollover overlap",
+        "algorithm or key-size requirements"
+      ],
+      "limitations": "Scoped read of five sections; no signature verification or full-document read; no local reproduction.",
+      "content_sha256": "4a71afdfbed5755d6704d6a089f450f10aa9914204b283eae5fadee2897d1911",
+      "read_scope": "sections 1,3,4,5,11 of the live specification",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.gcp-spanner-cutover.2026-10-26",
+      "source_id": "src.gcp-spanner-cutover",
+      "unit_url": "https://docs.cloud.google.com/spanner/docs/mysql-perform-cutover",
+      "unit_label": "Perform cutover from MySQL (Spanner)",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-26",
+      "access_method": "public HTTPS GET; served HTML inspected",
+      "sections_read": [
+        "Before you begin",
+        "Perform cutover",
+        "Perform application cutover"
+      ],
+      "sections_not_read": [
+        "page preamble",
+        "What's next",
+        "linked pages"
+      ],
+      "tables_figures": [
+        "no tables; MQL and console steps read as text"
+      ],
+      "license_notes": "Public vendor documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Cutover drains the write pipeline and verifies replication before switching application writes.",
+        "Application downtime starts when writes are paused and ends at application cutover.",
+        "Pre-cutover checks cover schema, backfill, CDC health, validation, severe DLQ and optional reverse replication.",
+        "Post-drain checks cover zero Pub/Sub unacked messages, zero replication lag and zero write throughput."
+      ],
+      "claims_not_supported": [
+        "general cutover proof",
+        "safe or reversible guarantee",
+        "quantified RTO/RPO",
+        "application compatibility",
+        "formal no-return point or fallback execution",
+        "independent verification"
+      ],
+      "limitations": "Product-specific vendor documentation; only three sections read; no immutable version selector; no local reproduction.",
+      "content_sha256": "9e9cf60892a2dcf6e793f015746d44ba540929f50ede47e297931cbce6a1210e",
+      "read_scope": "three named sections; site chrome and linked pages excluded",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.minimumcd-parallel-run.2026-10-26",
+      "source_id": "src.minimumcd-parallel-run",
+      "unit_url": "https://beyond.minimumcd.org/docs/foundations/evolutionary-coding/parallel-run/",
+      "unit_label": "Parallel Run — MinimumCD Practice Guide",
+      "unit_type": "article",
+      "access_date": "2026-10-26",
+      "access_method": "public HTTPS GET; served HTML inspected",
+      "sections_read": [
+        "What is a parallel run?",
+        "What a parallel run improves",
+        "Running the comparison",
+        "When a parallel run is not enough",
+        "Key pitfalls",
+        "Measuring success"
+      ],
+      "sections_not_read": [
+        "Next step",
+        "Related content",
+        "linked pages"
+      ],
+      "tables_figures": [
+        "tables and code read as text"
+      ],
+      "license_notes": "Public practice guide; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Parallel run executes both incumbent and candidate against identical production input; only the incumbent result is returned.",
+        "Every request runs both paths; parallel run is not a percentage traffic split.",
+        "The candidate runs in the background; mismatches are logged with context and candidate failures must not affect the caller.",
+        "Side-effecting operations should use branch by abstraction with monitored rollout instead of dual execution.",
+        "The comparison window should cover rare and periodic input cases, not a fixed number of days.",
+        "After cutover the candidate becomes primary and the comparison harness is removed."
+      ],
+      "claims_not_supported": [
+        "statistical confidence level or sample size",
+        "coverage measurement",
+        "mismatch safety threshold",
+        "weeks-scale duration evidence",
+        "cost measurement",
+        "Scientist provenance"
+      ],
+      "limitations": "Practice guide, not a measurement study; six sections read; no local execution or independent verification.",
+      "content_sha256": "e8cf036da19b3f03456a0eb2aa735d1f8d6a738a46449f451a509395d95fc832",
+      "read_scope": "six named H2 sections; next-step and related content excluded",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }

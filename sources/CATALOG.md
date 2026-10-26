@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-22. Entries: 269.
+Inventory date: 2026-10-26. Entries: 275.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -189,12 +189,13 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 |---|---|---|---|
 | src.kubernetes / supporting | [Kubernetes Concepts](https://kubernetes.io/docs/concepts/) — Kubernetes | Scheduling, lifecycle, probes, configuration and service networking. | admitted-for-research / public-web-or-author-download |
 | src.envoy / supporting | [Envoy Architecture Overview](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/arch_overview) — Envoy | Traffic management, timeouts and observability boundaries. | admitted-for-research / public-web-or-author-download |
-| src.istio / supporting | [Istio Architecture](https://istio.io/latest/docs/ops/deployment/architecture/) — Istio | Control/data plane responsibilities and deployment trade-offs. | admitted-for-research / public-web-or-author-download |
+| src.istio / supporting | [Istio Security](https://istio.io/latest/docs/concepts/security/) — Istio | Workload identity, certificate rotation, mTLS and authorization policy. | admitted-for-research / public-web-or-author-download |
 | src.etcd / supporting | [etcd Documentation](https://etcd.io/docs/) — etcd | Coordination APIs, watches, leases and operational guarantees. | admitted-for-research / public-web-or-author-download |
 | src.helm / supporting | [Helm Documentation](https://helm.sh/docs/) — Helm | Package templating and release lifecycle; distinguish from reconciliation. | admitted-for-research / public-web-or-author-download |
 | src.opentofu / supporting | [OpenTofu Documentation](https://opentofu.org/docs/) — OpenTofu | Infrastructure state, planning and change execution boundaries. | admitted-for-research / public-web-or-author-download |
 | src.docker / supporting | [Docker Overview](https://docs.docker.com/get-started/docker-overview/) — Docker | Image, container, registry and runtime boundaries. | admitted-for-research / public-web-or-author-download |
 | src.lambda / supporting | [AWS Lambda Execution Environments](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html) — AWS | Execution environment reuse, lifecycle and deployment constraints. | admitted-for-research / public-web-or-author-download |
+| src.istio-traffic-mirroring / supporting | [Istio Mirroring](https://istio.io/latest/docs/tasks/traffic-management/mirroring/) — Istio | Request mirroring, fire-and-forget responses and fractional mirroring. | admitted-for-research / public-web-or-author-download |
 
 ## Security
 
@@ -202,6 +203,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 |---|---|---|---|
 | src.owasp-asvs / supporting | [Application Security Verification Standard](https://owasp.org/www-project-application-security-verification-standard/) — OWASP | Security verification requirements and scope. | admitted-for-research / public-web-or-author-download |
 | src.oauth-security / supporting | [Best Current Practice for OAuth 2.0 Security — RFC 9700](https://www.rfc-editor.org/rfc/rfc9700.html) — IETF | OAuth threat models and security guidance. | admitted-for-research / public-web-or-author-download |
+| src.nist-sp-800-162 / supporting | [Guide to Attribute Based Access Control (ABAC) Definition and Considerations](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf) — NIST | ABAC policy decision/enforcement points, policy administration and implementation considerations. | admitted-for-research / public-web-or-author-download |
+| src.openid-federation / supporting | [OpenID Federation 1.0](https://openid.net/specs/openid-federation-1_0.html) — OpenID Foundation | Federation trust anchors, Entity Statements, trust chains, metadata and key rollover. | admitted-for-research / public-web-or-author-download |
 
 ## Quality
 
@@ -228,6 +231,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.opengitops / supporting | [OpenGitOps Principles](https://opengitops.dev/) — OpenGitOps | Vendor-neutral GitOps principles. | admitted-for-research / public-web-or-author-download |
 | src.flyway / supporting | [Flyway Documentation](https://documentation.red-gate.com/flyway) — Redgate | Database migration ordering and delivery integration. | admitted-for-research / public-web-or-author-download |
 | src.liquibase / supporting | [Liquibase Documentation](https://docs.liquibase.com/) — Liquibase | Change management and deployment compatibility. | admitted-for-research / public-web-or-author-download |
+| src.fowler-dark-launching / supporting | [Dark Launching](https://martinfowler.com/bliki/DarkLaunching.html) — Martin Fowler | Hidden back-end invocation, load assessment and feature-flag rollback. | admitted-for-research / public-web-or-author-download |
+| src.minimumcd-parallel-run / supporting | [Parallel Run](https://beyond.minimumcd.org/docs/foundations/evolutionary-coding/parallel-run/) — MinimumCD Practice Guide | Parallel Run mechanism, comparison workflow, pitfalls and side-effect boundary. | admitted-for-research / public-web-or-author-download |
 
 ## Scaling
 
@@ -389,3 +394,9 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 |---|---|---|---|
 | src.cortex-shuffle-sharding / supporting | [Shuffle Sharding](https://cortexmetrics.io/docs/guides/shuffle-sharding/) — Cortex | Public explanation of shuffle-sharding allocation and blast-radius reduction. | admitted-for-research / public-web-or-author-download |
 | src.microsoft-multitenant / supporting | [Architectural Approaches for a Multitenant Solution](https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/approaches/overview) — Microsoft Learn | Public guidance for tenant isolation across compute, data, networking and identity. | admitted-for-research / public-web-or-author-download |
+
+## Data
+
+| ID / priority | Source | Planned use | Admission / access |
+|---|---|---|---|
+| src.gcp-spanner-cutover / supporting | [Perform cutover from MySQL (Spanner)](https://docs.cloud.google.com/spanner/docs/mysql-perform-cutover) — Google Cloud | Bounded drain-and-switch cutover checks for a MySQL-to-Spanner migration. | admitted-for-research / public-web-or-author-download |

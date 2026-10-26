@@ -118,6 +118,15 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
     if rebind.get("page_sha256") == disk_sha:
         reviewed_sha = disk_sha
     section, _ = find_section(candidate["catalog_name"], sections)
+    section_source = sections_source
+    if section is None and re_review.get("report_path"):
+        report_path = ROOT / re_review["report_path"]
+        if report_path.is_file():
+            alternate = parse_batch_sections(report_path.read_text(encoding="utf-8"))
+            alternate_section, _ = find_section(candidate["catalog_name"], alternate)
+            if alternate_section is not None:
+                section = alternate_section
+                section_source = re_review["report_path"]
     if page is None:
         status = "owner-page-missing"
     elif disk_sha is None or disk_sha != page_sha:
@@ -148,8 +157,8 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
         "re_review_findings": re_review.get("findings"),
         "derived_state": recon_row["derived_state"],
         "report_path": record["report_path"],
-        "report_section_source": sections_source,
-        "report_section_inherited": sections_source != record["report_path"],
+        "report_section_source": section_source,
+        "report_section_inherited": section_source != record["report_path"],
         "report_verdict": recon_row["report_verdict"],
         "report_match": recon_row["report_match"],
         "report_section": section,

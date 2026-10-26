@@ -230,8 +230,8 @@ non-idempotent work.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-timelimiter.2026-10-21: section "TimeLimiter". The page has no
-Cancel running futures heading; cancellation semantics are synthetic guidance. The source is a public pattern/documentation
-unit, not a benchmark.
+Cancel running futures heading; cancellation semantics are synthetic guidance. The source is
+a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

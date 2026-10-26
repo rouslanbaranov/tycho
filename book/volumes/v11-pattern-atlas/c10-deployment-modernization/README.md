@@ -30,6 +30,8 @@ route_hints:
     - "decision layer"
 evidence_scope:
   source_ids:
+    - "src.fowler-dark-launching"
+    - "src.istio-traffic-mirroring"
     - "src.k8s-deployments"
     - "src.argo-rollouts"
     - "src.fowler-feature-toggles"
@@ -47,7 +49,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
+updated_at: "2026-10-26"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -352,10 +354,14 @@ in the owner section.
 **Technical owner.** [Parallel Run](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md#parallel-run) — parallel run is bounded to coexistence/authority states.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-This reused unit covers Strangler Fig only; it is context, not source support for this
-pattern. The pattern guidance is synthetic and is not claimed as source-supported. The source
-is a public pattern/documentation unit, not a benchmark.
+read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading";
+context for the transition narrative.
+[src.minimumcd-parallel-run](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.minimumcd-parallel-run.2026-10-26: sections "What is a parallel run?",
+"What a parallel run improves", "Running the comparison", "When a parallel run is not enough",
+"Key pitfalls", "Measuring success". MinimumCD supports dual execution, background
+comparison and harness removal. Mismatch thresholds, sampling and cost bounds are synthetic.
+The sources are public articles, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
@@ -383,11 +389,16 @@ isolation in the owner section.
 
 **Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#dark-launching-shadow-traffic) — dark launch/shadow traffic is bounded to progressive exposure.
 
-**Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-This reused unit covers Strangler Fig only; it is context, not source support for this
-pattern. The pattern guidance is synthetic and is not claimed as source-supported. The source
-is a public pattern/documentation unit, not a benchmark.
+**Sources.** [src.fowler-dark-launching](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.fowler-dark-launching.2026-10-26: section "Dark Launching".
+[src.istio-traffic-mirroring](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch7-istio-mirroring.2026-10-26: sections "Mirroring", "Before you begin",
+"Creating a default routing policy", "Mirroring traffic to httpbin-v2", "Cleaning up",
+"See also". The first supports hidden invocation, load assessment, feature-flag rollback and
+old/new comparison; the second supports request mirroring, fire-and-forget responses and fractional
+mirroring. Measurement method, side-effect
+suppression and capacity bounds are synthetic. The sources are public
+articles/documentation, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
@@ -449,10 +460,13 @@ in the owner section.
 **Technical owner.** [Controlled Cutover](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#controlled-cutover) — controlled cutover is bounded to gate/reversal reasoning.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-This reused unit covers Strangler Fig only; it is context, not source support for this
-pattern. The pattern guidance is synthetic and is not claimed as source-supported. The source
-is a public pattern/documentation unit, not a benchmark.
+read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading";
+context for the transition narrative.
+[src.gcp-spanner-cutover](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.gcp-spanner-cutover.2026-10-26: sections "Before you begin", "Perform cutover",
+"Perform application cutover". Spanner supports a bounded drain-and-switch example. General
+no-return gates, fallback execution, RTO and zero-loss guarantees are synthetic. The sources
+are public articles/documentation, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 

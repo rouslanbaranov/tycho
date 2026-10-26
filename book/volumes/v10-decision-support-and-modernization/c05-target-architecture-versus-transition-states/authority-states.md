@@ -141,3 +141,7 @@ shadow traffic is the alternative when full parallel processing is unnecessary.
 
 **Limits.** Doubled compute and comparison storage are costs; a comparison that ignores
 nondeterminism or side effects produces false confidence.
+
+**Source boundary.** The MinimumCD record supports dual execution, incumbent-only return,
+background candidate comparison, the side-effect boundary and harness removal. It gives no
+mismatch threshold, sample size or cost measurement; those remain synthetic.

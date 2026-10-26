@@ -32,6 +32,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.oauth-security"
+    - "src.istio"
   claim_ids: []
   status: "source-linked"
   notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
@@ -41,7 +42,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-26"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -85,8 +86,9 @@ The detailed pages separate the mechanisms that make this decision conditional:
 ## Bounded pattern ownership notes
 
 These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
-this page. They are synthetic design guidance, not measured evidence, and they do not create a new
-source claim.
+this page. They are synthetic design guidance unless a sentence explicitly attributes the claim
+to a dedicated source record; all other guidance remains synthetic. They are not measured
+evidence and do not create a new source claim by themselves.
 
 ### Federated Identity
 
@@ -102,22 +104,40 @@ source.
 **Limits.** Federation concentrates trust in the issuer and metadata; key rotation, audience
 restriction and issuer compromise are ongoing costs, not one-time setup. Metadata caching and
 issuer discovery need their own availability, rollback plan, audit evidence and an owner.
+Federation-specific token-replay and revocation guidance is not covered by the cited
+[read.batch6-rfc9700.2026-10-21](../../../../edition/patterns/reading-ledger.v1.json)
+sections; the cited record covers OAuth token handling, not federation metadata replay. That part
+remains synthetic.
+
+**Source boundary.** The
+[read.openid-federation.2026-10-26](../../../../edition/patterns/reading-ledger.v1.json)
+record supports trust anchors, signed Entity Statements, trust chains, metadata refresh and
+Trust Anchor key rollover. It defines no revocation process; federation-specific replay and
+revocation remain synthetic.
 
 ### Workload Identity-mTLS
 
 Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates
-both ends of a service connection with short-lived credentials. The identity must bind to the
-workload, not to a network location, and authorization must still check the operation rather than
-assuming trust from the connection.
+both ends of a service connection with automatically rotated credentials. The identity must
+bind to the workload, not to a network location, and authorization must still check the
+operation rather than assuming trust from the connection.
 
 Expired or shared credentials break authentication or erase the distinction between workloads;
-rotate, revoke and test an unauthorized peer. Network policy with shared secrets is easier when PKI
+rotate, isolate and test an unauthorized peer. Network policy with shared secrets is easier when PKI
 operations are unavailable; choose workload identity when lateral movement and credential reuse are
 the dominant risk.
 
 **Limits.** PKI, certificate rotation and revocation are operational costs; a valid certificate
 authenticates the workload, not every operation it requests. Certificate issuance availability
-is part of the request path; a failed rotation is an outage.
+is part of the request path, and a failed rotation can be an outage; both claims are plausible
+but synthetic, and the cited page does not measure them.
+
+**Source boundary.** Only the following claims are supported by the cited
+[read.batch6-istio.2026-10-21](../../../../edition/patterns/reading-ledger.v1.json) record:
+workload identity binding, certificate issuance and rotation, mTLS authentication and
+authorization policy. Certificate revocation, trust-root bootstrap, key storage, lifetime
+policy and rotation-failure impact are not in the cited sections; all other guidance in this
+section remains synthetic.
 
 ## Navigation
 
