@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 126 |
+| Reviewed by independent agent | 129 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 15, "report-section-missing": 4, "reviewed-by-independent-agent": 126}.
+Packet statuses: {"page-changed-since-review": 12, "report-section-missing": 4, "reviewed-by-independent-agent": 129}.
 
 ## Review procedure
 
@@ -202,7 +202,7 @@ blank verdict template in the machine-readable file.
 
 - **Distributed Lock**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Distributed Tracing**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -258,7 +258,7 @@ blank verdict template in the machine-readable file.
 
 - **Fencing Tokens**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Gatekeeper**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -338,7 +338,7 @@ blank verdict template in the machine-readable file.
 
 - **Lease-Based Ownership**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Least Privilege**
   Current: pass; re-review: pass; report: pass.
