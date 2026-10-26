@@ -392,7 +392,7 @@ independent processing creates more coordination than value.
 **Failure and recovery.** Partial completion and orphaned parts are common; verify
 aggregation and error policy in the owner section.
 
-**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#splitter) — the walkthrough owns fan-out/history trade-offs, not a dedicated splitter/aggregator page.
+**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#splitter) — split policy and completeness marker are bounded; durable fan-out is owner-specific.
 
 **Sources.** [src.camel](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-splitter.2026-10-21: sections "Split", "Options". The source is a
@@ -423,7 +423,7 @@ aggregation state and timeout complexity exceed the combined result benefit.
 **Failure and recovery.** Late, missing and duplicate messages are common; verify
 completion and eviction in the owner section.
 
-**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#aggregator) — the walkthrough owns fan-out/history trade-offs, not a dedicated splitter/aggregator page.
+**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#aggregator) — aggregation key and timeout are bounded; partial-result policy is owner-specific.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -455,7 +455,7 @@ latency benefit is outweighed by fan-out and partial-failure cost.
 **Failure and recovery.** Slow or missing recipients dominate tail latency; verify
 deadlines and partial results in the owner section.
 
-**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#scatter-gather) — the walkthrough owns fan-out/history trade-offs, not a dedicated splitter/aggregator page.
+**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#scatter-gather) — fan-out/fan-in deadline is bounded; partial-response handling is owner-specific.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
