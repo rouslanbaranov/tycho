@@ -301,8 +301,8 @@ define a merge; if total order is mandatory, use consensus and accept its cost.
 **Technical owner.** [Causal Ordering](../../v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md#causal-ordering) — causal ordering is bounded, not a universal clock service.
 
 **Sources.** [src.jepsen-consistency](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-causal.2026-10-21: sections "Causal Consistency", "Example",
-"Convergent causal systems", "Sticky availability", "Formally". The source is a public
+read record read.batch4-causal.2026-10-21: both served headings read; Example,
+convergence and sticky availability are unheaded paragraphs. The source is a public
 pattern/documentation
 unit, not a benchmark.
 
