@@ -231,7 +231,7 @@ The free plan allows 100 deployments per day, and the Hobby container
 registry allows 50 images per repository. Main-only preview suppression was
 not enough: every merge to `main` still created one deployment and one image.
 A burst of merges on 2026-10-25 and 2026-10-26 produced rate-limited failures
-and then registry push failures consistent with the image cap.
+and then registry push failures after the repository reached the 50-image cap.
 
 Production builds are now gated by `ignoreCommand` on
 `deployment/vercel-release`. A merge that does not change that file is
