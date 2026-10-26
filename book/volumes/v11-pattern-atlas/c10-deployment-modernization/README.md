@@ -30,6 +30,8 @@ route_hints:
     - "decision layer"
 evidence_scope:
   source_ids:
+    - "src.fowler-dark-launching"
+    - "src.istio-traffic-mirroring"
     - "src.k8s-deployments"
     - "src.argo-rollouts"
     - "src.fowler-feature-toggles"
@@ -47,7 +49,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
+updated_at: "2026-10-26"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -389,8 +391,8 @@ read record read.fowler-dark-launching.2026-10-26: section "Dark Launching".
 read record read.batch7-istio-mirroring.2026-10-26: sections "Mirroring", "Before you begin",
 "Creating a default routing policy", "Mirroring traffic to httpbin-v2", "Cleaning up",
 "See also". The first supports hidden invocation, load assessment, feature-flag rollback and
-old/new comparison; the second supports request mirroring, shadow host rewrite,
-fire-and-forget responses and fractional mirroring. Measurement method, side-effect
+old/new comparison; the second supports request mirroring, fire-and-forget responses and fractional
+mirroring. Measurement method, side-effect
 suppression and capacity bounds are synthetic. The sources are public
 articles/documentation, not benchmarks.
 

@@ -42,7 +42,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-20"
+updated_at: "2026-10-26"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -106,8 +106,8 @@ restriction and issuer compromise are ongoing costs, not one-time setup. Metadat
 issuer discovery need their own availability, rollback plan, audit evidence and an owner.
 Federation-specific token-replay and revocation guidance is not covered by the cited
 [read.batch6-rfc9700.2026-10-21](../../../../edition/patterns/reading-ledger.v1.json)
-sections; the RFC's Token Replay Prevention section covers OAuth token handling, not federation
-metadata replay. That part remains synthetic.
+sections; the cited record covers OAuth token handling, not federation metadata replay. That part
+remains synthetic.
 
 ### Workload Identity-mTLS
 
