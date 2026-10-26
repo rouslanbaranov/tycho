@@ -7934,22 +7934,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Least privilege grants each principal only the permissions its task needs, limited in resource scope, action and time.",
-          "reason": ""
+          "reason": "Defines task-scoped permissions bounded by resource, action and time."
         },
         "invariant": {
           "state": "supported",
           "quote": "Every credential must have a bounded scope, an owner and a revocation path that does not depend on the compromised principal.",
-          "reason": ""
+          "reason": "Requires bounded scope, ownership and a revocation path independent of the principal."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Permission creep and long-lived credentials widen the blast radius without any visible incident; review grants on a schedule and prefer short-lived scoped credentials.",
-          "reason": ""
+          "reason": "Names permission creep and long-lived credentials and requires scheduled review and short-lived credentials."
         },
         "alternative": {
           "state": "supported",
           "quote": "Coarse roles are simpler to administer for small stable systems; narrow them once measured access reviews or incident impact justify the overhead.",
-          "reason": ""
+          "reason": "Contrasts coarse roles for small stable systems with measured narrowing."
         }
       },
       "decision_evidence": {
@@ -8171,22 +8171,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Multitenant isolation keeps tenant data and effects separate inside a shared application by deriving tenant scope from authenticated context at every access path.",
-          "reason": ""
+          "reason": "Derives tenant scope from authenticated context on every access path."
         },
         "invariant": {
           "state": "supported",
           "quote": "The tenant identifier must be derived from authentication and authorization, never accepted from an arbitrary caller field alone.",
-          "reason": ""
+          "reason": "Forbids trusting an arbitrary caller-supplied tenant field."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A missing tenant predicate in a query, cache or background task exposes another tenant's records; test indirect paths and enforce the predicate centrally.",
-          "reason": ""
+          "reason": "Names missing predicates in query, cache or background work and requires indirect-path tests and central enforcement."
         },
         "alternative": {
           "state": "supported",
           "quote": "A tenant-per-deployment boundary removes shared-code risk at higher cost; share a deployment only when scoping is enforced consistently across every path.",
-          "reason": ""
+          "reason": "Contrasts tenant-per-deployment isolation with shared deployment scope enforcement."
         }
       },
       "decision_evidence": {
@@ -8288,22 +8288,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Structured logging emits events with stable field names and types so records can be queried and compared without parsing free text.",
-          "reason": ""
+          "reason": "Defines stable field names and types for queryable events."
         },
         "invariant": {
           "state": "supported",
           "quote": "Field names, meaning and redaction rules must be versioned, and sensitive values must be excluded before emission.",
-          "reason": ""
+          "reason": "Requires versioned fields, meaning and redaction before emission."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Schema drift or an unredacted field breaks queries or leaks data; validate the schema at the emitter and review field allowlists when adding events.",
-          "reason": ""
+          "reason": "Names schema drift and unredacted fields and requires emitter validation and allowlists."
         },
         "alternative": {
           "state": "supported",
           "quote": "Unstructured text parsed at query time is cheaper to start; adopt structured events when consistent querying, correlation or retention obligations justify the schema.",
-          "reason": ""
+          "reason": "Contrasts unstructured query-time parsing with structured events."
         }
       },
       "decision_evidence": {
