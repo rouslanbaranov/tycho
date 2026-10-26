@@ -465,7 +465,8 @@ deadlines and partial results in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-scatter.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-scatter.2026-10-21: three H2 examples; Problem and
+Solution are unheaded, and the page is publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -529,7 +530,8 @@ and acknowledgement in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-durable.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-durable.2026-10-21: no article headings; Example is
+absent and the page is publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -594,7 +596,8 @@ timeout and missing policy in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-resequencer.2026-10-21: sections "Problem", "Solution", "Example".
+read record read.batch2-resequencer.2026-10-21: no article headings; Example
+is absent and the page is publisher-abridged.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -627,7 +630,8 @@ retrieval policy in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-claim.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-claim.2026-10-21: no article headings; Example is
+absent and the page is publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -660,7 +664,8 @@ path in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-broker.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-broker.2026-10-21: no article headings; Example is
+absent and the page is publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -693,7 +698,8 @@ and versioning in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-canonical.2026-10-21: sections "Problem", "Solution", "Example".
+read record read.batch2-canonical.2026-10-21: no article headings; Example is
+absent and the page is publisher-abridged.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
