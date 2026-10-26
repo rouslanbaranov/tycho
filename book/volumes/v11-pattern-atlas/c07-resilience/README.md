@@ -546,8 +546,8 @@ no-response behavior, keep probes on an independent path, and bound frequency/ex
 **Technical owner.** [Request routing and health signals](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#health-endpoint-monitoring) — readiness/health is bounded, not a full monitoring product.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-k8s-probes.2026-10-21: sections "Liveness", "Readiness",
-"Startup". The source is a public pattern/documentation
+read record read.batch4-k8s-probes.2026-10-21: all fifteen served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

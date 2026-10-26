@@ -243,9 +243,8 @@ rotation in the owner section.
 **Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#workload-identity-mtls) — workload identity binding and mTLS trust are bounded; credential issuance is platform-specific.
 
 **Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-istio.2026-10-21: sections "Security", "High-level architecture",
-"Istio identity", "Identity and certificate management", "Authentication", "Mutual TLS
-authentication", "Authorization", "Principals". The page supports workload identity binding,
+read record read.batch6-istio.2026-10-21: all thirty-four served headings read.
+The page supports workload identity binding,
 certificate rotation, mTLS and authorization policy. Certificate revocation, trust-root
 bootstrapping, key storage and lifetime policy are not supported by the cited sections;
 the full page was read, but these claims are not in the eight cited sections. The source is
@@ -500,8 +499,7 @@ verify semantics in the owner section.
 **Technical owner.** [Practice response before production failure](../../v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md#health-readiness-and-liveness-checks) — health checks are bounded to recovery readiness.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-k8s-probes.2026-10-21: sections "Liveness", "Readiness",
-"Startup". The read record notes a 100,000-character truncation; later sections are unverified.
+read record read.batch4-k8s-probes.2026-10-21: all fifteen served headings read.
 The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

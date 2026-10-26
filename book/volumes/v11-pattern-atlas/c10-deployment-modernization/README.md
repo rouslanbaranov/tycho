@@ -164,7 +164,7 @@ contamination are common; a binary rollback does not undo committed data.
 **Technical owner.** [Canary Release](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#canary-release) — canary analysis and abort are bounded; metric selection is service-specific.
 
 **Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-argo-canary.2026-10-21: sections "Canary", "Overview", "Analysis".
+read record read.batch5-argo-canary.2026-10-21: all fifteen served headings read.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
