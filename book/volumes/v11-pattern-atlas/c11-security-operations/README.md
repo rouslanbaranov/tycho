@@ -202,9 +202,12 @@ the owner section.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements", "Levels". ASVS provides verification framing; it does
-not define RBAC/ABAC role or attribute mechanics. Policy-decision guidance is synthetic. The
-source is a public pattern/specification unit, not a benchmark.
+Standard", "Verification Requirements", "Levels".
+[src.nist-sp-800-162](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.nist-sp-800-162.2026-10-26: sections "2. Core Components of ABAC",
+"3. ABAC Architecture", "4. ABAC Implementation Considerations". ASVS provides verification
+framing; NIST supports PDP/PEP/PIP/PAP and policy administration. Revocation mechanics and
+role-explosion guidance are synthetic. The sources are public standards, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 

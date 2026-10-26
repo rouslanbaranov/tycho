@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-26. Entries: 271.
+Inventory date: 2026-10-26. Entries: 272.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -203,6 +203,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 |---|---|---|---|
 | src.owasp-asvs / supporting | [Application Security Verification Standard](https://owasp.org/www-project-application-security-verification-standard/) — OWASP | Security verification requirements and scope. | admitted-for-research / public-web-or-author-download |
 | src.oauth-security / supporting | [Best Current Practice for OAuth 2.0 Security — RFC 9700](https://www.rfc-editor.org/rfc/rfc9700.html) — IETF | OAuth threat models and security guidance. | admitted-for-research / public-web-or-author-download |
+| src.nist-sp-800-162 / supporting | [Guide to Attribute Based Access Control (ABAC) Definition and Considerations](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf) — NIST | ABAC policy decision/enforcement points, policy administration and implementation considerations. | admitted-for-research / public-web-or-author-download |
 
 ## Quality
 
