@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 113 |
+| Reviewed by independent agent | 120 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 29, "report-section-missing": 3, "reviewed-by-independent-agent": 113}.
+Packet statuses: {"page-changed-since-review": 22, "report-section-missing": 3, "reviewed-by-independent-agent": 120}.
 
 ## Review procedure
 
@@ -102,7 +102,7 @@ blank verdict template in the machine-readable file.
 
 - **Canonical Data Model**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Causal Ordering**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -162,7 +162,7 @@ blank verdict template in the machine-readable file.
 
 - **Content-Based Router**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Controlled Cutover**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -222,7 +222,7 @@ blank verdict template in the machine-readable file.
 
 - **Durable Subscriber**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Event Sourcing**
   Current: pass; re-review: pass; report: pass.
@@ -230,7 +230,7 @@ blank verdict template in the machine-readable file.
 
 - **Event-Driven Consumer**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Expand-and-Contract**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -362,7 +362,7 @@ blank verdict template in the machine-readable file.
 
 - **Message Filter**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Microservices Architecture**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -402,7 +402,7 @@ blank verdict template in the machine-readable file.
 
 - **Pipes and Filters**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Point-to-Point Queue**
   Current: pass; re-review: pass; report: pass.
@@ -458,7 +458,7 @@ blank verdict template in the machine-readable file.
 
 - **Resequencer**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Retry with Exponential Backoff**
   Current: pass; re-review: pass; report: pass-with-findings.
