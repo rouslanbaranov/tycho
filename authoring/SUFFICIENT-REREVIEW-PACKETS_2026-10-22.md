@@ -9,8 +9,8 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 129 |
-| Residual findings after re-review | 16 |
+| Promoted after remediation | 131 |
+| Residual findings after re-review | 14 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 109 |
@@ -57,7 +57,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Audit Trail**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Autoscaling**
@@ -549,7 +549,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Structured Logging**
-  Current: pass-with-findings; re-review: pass-with-findings; report: None.
+  Current: pass; re-review: pass; report: None.
   Status: report-section-missing.
 
 - **Synthetic Monitoring**
