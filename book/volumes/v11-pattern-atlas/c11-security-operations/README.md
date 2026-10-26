@@ -98,7 +98,7 @@ the choice when federation trust and revocation cost exceed single-sign-on benef
 **Failure and recovery.** Audience confusion and stale trust are common; verify token
 validation in the owner section.
 
-**Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#federated-identity) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#federated-identity) — federation trust and token validation are bounded; IdP lifecycle is owner-specific.
 
 **Sources.** [src.oauth-security](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-rfc9700.2026-10-21: sections "Token Handling", "Redirect URI",
@@ -131,7 +131,7 @@ the choice when zero-trust policy complexity exceeds the trust-boundary risk.
 **Failure and recovery.** Policy gaps, legacy bypasses and identity-provider outages are
 common; deny by default, test indirect paths and keep a bounded audited break-glass path.
 
-**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#zero-trust-architecture) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#zero-trust-architecture) — policy enforcement points and trust assumptions are bounded; network architecture is owner-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
@@ -164,7 +164,7 @@ when permission granularity creates unmanageable operational overhead.
 **Failure and recovery.** Permission creep and orphaned grants are common; verify review
 in the owner section.
 
-**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#least-privilege) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#least-privilege) — permission scope and review cadence are bounded; entitlement catalogue is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
@@ -195,7 +195,7 @@ choice when policy administration cost exceeds access-control benefit.
 **Failure and recovery.** Role explosion and stale attributes are common; verify model in
 the owner section.
 
-**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#rbac-abac) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#rbac-abac) — role/attribute model and decision point are bounded; policy administration is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
@@ -227,7 +227,7 @@ Reverse the choice when mTLS operational cost exceeds lateral-movement risk.
 **Failure and recovery.** Certificate expiry and identity mismatch are common; verify
 rotation in the owner section.
 
-**Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#workload-identity-mtls) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#workload-identity-mtls) — workload identity binding and mTLS trust are bounded; credential issuance is platform-specific.
 
 **Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-istio.2026-10-21: sections "Workload Identity", "Mutual TLS",
@@ -290,7 +290,7 @@ isolation cost exceeds residual risk.
 **Failure and recovery.** Cross-tenant leakage and quota bypass are common; verify layers
 in the owner section.
 
-**Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#multitenant-isolation-1) — identity/authorization is bounded, not a complete security control catalogue.
+**Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#multitenant-isolation-1) — tenant boundary and isolation evidence are bounded; infrastructure tenancy is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
