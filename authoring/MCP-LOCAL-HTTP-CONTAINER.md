@@ -161,9 +161,10 @@ See the public Vercel guide
 
 ## Update and release model
 
-The deployed image is immutable. A merged book or API change produces a new
+The deployed image is immutable. A released book or API change produces a new
 image and a new Vercel deployment; there is no in-place update of the running
-container.
+container. Normal merges to `main` do not deploy; the release marker gates the
+build.
 
 ### Book-only change
 
@@ -178,9 +179,10 @@ container.
    .venv/bin/python -m unittest discover -s tests \
      -p 'test_tycho_mcp*.py' -v
    ~~~
-4. Open a PR and merge it. Only the merge to `main` triggers an automatic
-   Vercel build; the build runs `section_fts_index.py build --full` inside
-   `Dockerfile.vercel`, and the committed SQLite artifact is not used.
+4. Open a PR and merge it. A normal merge does not deploy. To release,
+   update `deployment/vercel-release` in the release PR; the build runs
+   `section_fts_index.py build --full` inside `Dockerfile.vercel`, and the
+   committed SQLite artifact is not used.
 5. Check `/ready` and rerun the remote SDK smoke.
 
 No MCP code or `SERVER_VERSION` change is needed for book-only changes.
@@ -195,8 +197,8 @@ No MCP code or `SERVER_VERSION` change is needed for book-only changes.
   and `/health` expose it. The MCP protocol version (`2026-07-28`) is
   independent and changes only with the protocol.
 - Test old and new client paths; update the stdlib and SDK smokes.
-- Merge to `main`; Vercel replaces the deployment atomically after the build
-  succeeds.
+- Merge the release PR with an updated `deployment/vercel-release`; Vercel
+  replaces the deployment atomically after the build succeeds.
 
 ### Snapshot semantics and client pinning
 
@@ -216,24 +218,34 @@ snapshot switch. Treat a snapshot-mismatch response as a signal to re-read
 - A preview is an explicit owner action. Set Preview `TYCHO_MCP_TOKEN` and
   `PORT=8080`, then deploy the branch from the Vercel dashboard or with an
   authenticated CLI. A manual preview consumes one deployment.
-- Merge to `main` creates the production test deployment.
+- A merge to `main` creates the production test deployment only when
+  `deployment/vercel-release` changes. Other merges skip the build.
 - Vercel keeps previous immutable deployments; use Instant Rollback to return
-  to a prior image. Rollback restores the old index and API together.
+  to a prior image. Rollback restores the old index and API together. Keep
+  the live image and at least one rollback candidate when pruning the registry.
 - There is no database migration or persistent state to reconcile.
 
 ### Deployment budget
 
-The free plan allows 100 deployments per day. Automatic preview builds for
-high-volume issue branches exhausted that budget and produced the
-`api-deployments-free-per-day` failure on #390. The committed policy enables
-`main` and uses `**` as an explicit deny-all fallback because Vercel enables
-unspecified branches by default and a true match wins over a false match.
+The free plan allows 100 deployments per day, and the Hobby container
+registry allows 50 images per repository. Main-only preview suppression was
+not enough: every merge to `main` still created one deployment and one image.
+A burst of merges on 2026-10-25 and 2026-10-26 produced rate-limited failures
+and then registry push failures consistent with the image cap.
 
-The fallback is deliberate: removing it would silently re-enable preview
-builds for every new branch. The policy test
-`tests/test_tycho_vercel_deployment_policy.py` guards this shape. A merge to
-`main` still creates one production deployment, so release work should stay
-batched rather than merging many small changes in one day.
+Production builds are now gated by `ignoreCommand` on
+`deployment/vercel-release`. A merge that does not change that file is
+skipped before the build. A release PR changes the marker and builds once.
+This also keeps the per-commit image count under the Hobby repository limit.
+
+The gate is not a preview switch: `git.deploymentEnabled` still disables every
+non-`main` branch. Use the explicit preview path above when a preview is
+needed. The policy test
+`tests/test_tycho_vercel_deployment_policy.py` guards both settings.
+
+See [the release procedure](../deployment/README.md) and the public Vercel
+limits for [deployments](https://vercel.com/docs/limits) and
+[container images](https://vercel.com/docs/container-registry/limits-and-pricing).
 
 ### What the platform does not enforce
 
@@ -241,8 +253,10 @@ batched rather than merging many small changes in one day.
 - Vercel does not check local index freshness; the image build always rebuilds
   the full index.
 - A successful build is not evidence that the API or clients work.
+- Vercel does not prune per-commit container images automatically; the Hobby
+  registry cap is an owner-managed resource.
 - Vercel does not provide a separate audit message for a branch-policy skip;
-  verify a skipped preview by the absence of a Vercel status on the commit.
+  verify a skipped build by the absence of a Vercel status on the commit.
 - `scripts/premerge_check.py` and the remote smoke remain mandatory release
   gates.
 
@@ -273,6 +287,10 @@ mismatch. The container build and client smokes remain manual evidence.
 - No legacy HTTP handshake, sessions, SSE subscriptions, cancellation
   processing or progress forwarding.
 - The book route returns raw Markdown; it does not render a reading site.
+- Production deployment is release-gated. Content merged without a marker
+  change is not served by the test deployment until the next release.
+- The Hobby container registry keeps at most 50 images per repository. Old
+  images must be deleted before a release when the cap is reached.
 - Automatic preview deployments are disabled. Preview testing requires an
   explicit owner action and is not part of the normal issue-branch flow.
 - A stable host beyond the Vercel test needs explicit capacity, auth and
@@ -288,4 +306,5 @@ mismatch. The container build and client smokes remain manual evidence.
 - [Service container issue](https://github.com/rouslanbaranov/tycho/issues/367)
 - [Update model issue](https://github.com/rouslanbaranov/tycho/issues/377)
 - [Vercel deployment policy](https://github.com/rouslanbaranov/tycho/issues/392)
+- [Vercel release gate](https://github.com/rouslanbaranov/tycho/issues/475)
 - [Agent-facing tool contract](MCP-AGENT-TOOL-CONTRACT.md)

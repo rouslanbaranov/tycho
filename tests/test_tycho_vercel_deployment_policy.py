@@ -29,3 +29,14 @@ class VercelDeploymentPolicyTest(unittest.TestCase):
             {"main": True, "**": False},
             "automatic Vercel deployments must remain limited to main",
         )
+
+    def test_production_builds_require_a_release_marker_change(self):
+        # Exit 0 skips the build and exit 1 continues it. The first command
+        # makes a missing parent fail open to a build instead of an obscure
+        # error, while the diff keeps normal merges from deploying.
+        self.assertEqual(
+            self.config.get("ignoreCommand"),
+            "if git rev-parse HEAD^ >/dev/null 2>&1; then "
+            "git diff --quiet HEAD^ HEAD -- deployment/vercel-release; "
+            "else exit 1; fi",
+        )
