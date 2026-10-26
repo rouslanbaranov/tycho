@@ -108,8 +108,8 @@ remaining limits.
 
 **Sources.** [src.fowler-layering](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-layering.2026-10-21: Presentation Domain Data Layering,
-sections "Presentation Domain Data Layering", "Further Reading", "Notes". This is a
-definitional article, not a comparative study.
+sections "Presentation Domain Data Layering", "Further Reading", "Acknowledgements",
+"Notes". This is a definitional article, not a comparative study.
 
 **Decision state.** `applicable-under-conditions`.
 
@@ -449,9 +449,10 @@ owner section states the remaining limits.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-sidecar.2026-10-21: Sidecar pattern, sections "Context
+read record read.microsoft-sidecar.2026-10-21: sections "Sidecar pattern", "Context
 and problem", "Solution", "Problems and considerations", "When to use this pattern",
-"Workload design", "Example". This is a vendor pattern page, not a comparative study.
+"Workload design", "Example", "Next steps", "Related resource". This is a vendor
+pattern page, not a comparative study.
 
 **Decision state.** `applicable-under-conditions`.
 

@@ -323,8 +323,8 @@ behavior are common; use contract tests, a bounded switch and a removal owner.
 **Technical owner.** [Branch by Abstraction](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#branch-by-abstraction) — branch by abstraction is bounded to internal interface replacement.
 
 **Sources.** [src.fowler-branch](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-fowler-branch.2026-10-21: sections "Branch By Abstraction", "How
-it works". The source is a public pattern/documentation
+read record read.batch5-fowler-branch.2026-10-21: sections "Branch By Abstraction",
+"Further Reading", "Acknowledgements", "Notes". The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
