@@ -387,7 +387,9 @@ common; keep a bounded queue, propagate backpressure and measure per-class laten
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: sections "Client-Side Throttling",
-"Handling Overload Errors". The source is a public pattern/documentation unit, not a benchmark.
+"Handling Overload Errors". The record covers client-side adaptive rejection, not server-side
+pacing; server-side pacing is synthetic owner guidance. The source is a public
+pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
