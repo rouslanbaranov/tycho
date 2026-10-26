@@ -153,17 +153,17 @@ justify the double capacity.
 does not roll back persisted effects. Test the reverse switch under load, give the old
 environment an owner and expiry, and treat a rehearsed reverse switch as acceptance evidence.
 
-## Bounded pattern ownership notes
-
 ### Canary Release
 
-Route a small, identifiable cohort to the new version, compare its SLIs with a baseline, then expand
-or abort. The cohort and the metric window are part of the release contract.
+Route a small, identifiable cohort to the new version and check that it is representative; compare its SLIs with a baseline
+over a window long enough to expose rare errors, then expand or abort. The cohort, window and abort
+threshold are the release contract.
 
-The exposure slice is not a data-compatibility boundary: a canary can write state that older
-instances cannot read. Small samples hide rare errors, the canary can contaminate shared state, and a
-binary rollback does not undo committed data. Define the abort threshold, the shared-state guard and
-the rollback-versus-forward-repair path before exposure.
+The exposure slice is not a data-compatibility boundary: it can write shared state that older instances
+cannot read, and rollback does not undo committed data. Watch metric leakage across cohorts,
+shared-state contamination and sample size; Small samples hide rare errors, and an
+unrepresentative cohort can pass while a rare failure hides.
 
-Blue/green, shadow traffic or a feature flag may be preferable when a canary cannot isolate users or
-state. Canary is a fit when traffic can be split safely and the SLI comparison has enough signal and an owner.
+Blue/green, shadow traffic or a feature flag may be preferable when a canary cannot isolate users
+or state. Canary is a fit when traffic can be split safely and the SLI comparison has enough signal
+and an owner.
