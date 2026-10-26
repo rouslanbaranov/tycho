@@ -230,9 +230,9 @@ owner section.
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-ms-caching.2026-10-21: sections "Caching in distributed
-applications", "Manage concurrency in a cache". The source is a public
-pattern/documentation
-unit, not a benchmark.
+applications", "Manage concurrency in a cache". The record covers caching write consistency
+generally, not write-behind buffering or durability; that mechanism is synthetic owner guidance.
+The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -395,8 +395,10 @@ common; measure origin QPS, coalesce refreshes and cap source admission.
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-ms-caching.2026-10-21: sections "Manage concurrency in a cache",
-"Implement caching patterns". The source is a public pattern/documentation
-unit, not a benchmark.
+"Implement caching patterns", and read.batch4-sre-cascading.2026-10-21 section "Preventing
+Server Overload". The sources cover concurrency and cold-cache/source overload; coalescing and
+lease policy are synthetic owner guidance. The sources are public pattern/documentation units,
+not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
