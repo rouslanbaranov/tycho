@@ -22,3 +22,7 @@ No sufficient coverage, human review, CI or acceptance of a book claim is implie
    do not state them; no further public text search is planned.
 6. FS-21 is accepted as final `unconfirmed`. The complete SRE Workbook was read and does not
    define synthetic monitoring or state the design rule.
+7. The eleven EIP claims whose patterns are in Chapter 4 or later are accepted as final
+   `unconfirmed` with `source-unavailable`. The publisher withholds Chapter 4+, only Chapter 3
+   is author-hosted, and no open authorized mirror was found. The Internet Archive
+   controlled-lending copy was not borrowed.

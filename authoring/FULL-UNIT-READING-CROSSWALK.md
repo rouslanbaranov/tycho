@@ -7,15 +7,17 @@ Date: 2026-10-26. Refs #535.
 | Disposition | Units |
 |---|---:|
 | full-read-exact-reuse | 14 |
-| full-read | 121 |
-| partial-read | 19 |
-| blocked-current | 1 |
+| full-read | 129 |
+| partial-read | 1 |
+| blocked-current | 11 |
 | **Total** | **155** |
 
 ## Result
 
-154 units were read in full or to the publisher-served scope. 19 are partial because the publisher
-abridged the page or a declared section is not on the served URL. One DDIA unit remains blocked.
+143 units were read in full or with exact reuse. One PostgreSQL failback unit is partial
+and accepted. Eleven units are blocked: one DDIA unit and ten EIP Chapter 4+ units; both
+source gaps are accepted as source-unavailable.
+
 No unit was promoted to sufficient coverage.
 
 ## Limits
