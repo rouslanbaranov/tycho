@@ -63,6 +63,13 @@ class PatternOwnerUnitTests(unittest.TestCase):
         data["entries"][0]["technical_evidence"]["mechanism"]["reason"] = "test"
         self.check_error(data, "owner-units-name-only")
 
+    def test_supported_reason_is_required(self):
+        data = self.copy()
+        item = next(entry for entry in data["entries"]
+                    if entry["technical_evidence"]["mechanism"]["state"] == "supported")
+        item["technical_evidence"]["mechanism"]["reason"] = ""
+        self.check_error(data, "owner-units-reason-missing-supported")
+
     def test_invariant_without_evidence_is_rejected(self):
         data = self.copy()
         item = next(entry for entry in data["entries"]

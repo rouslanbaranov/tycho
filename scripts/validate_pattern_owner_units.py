@@ -282,6 +282,8 @@ def validate_data(data, root=ROOT):
                         "owner-units-quote-missing: " + pattern_id + ": " + name)
                 require(quote.lower() in flat,
                         "owner-units-quote-not-verbatim: " + pattern_id + ": " + name)
+                require(record.get("reason", "").strip(),
+                        "owner-units-reason-missing-supported: " + pattern_id + ": " + name)
             else:
                 if record["state"] == "absent":
                     require(record.get("reason", "").strip(),
