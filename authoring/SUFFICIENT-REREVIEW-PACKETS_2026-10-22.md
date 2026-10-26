@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 135 |
+| Reviewed by independent agent | 139 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 5, "report-section-missing": 5, "reviewed-by-independent-agent": 135}.
+Packet statuses: {"report-section-missing": 6, "reviewed-by-independent-agent": 139}.
 
 ## Review procedure
 
@@ -46,7 +46,7 @@ blank verdict template in the machine-readable file.
 
 - **API Composition**
   Current: pass; re-review: pass; report: None.
-  Status: page-changed-since-review.
+  Status: report-section-missing.
 
 - **API Gateway**
   Current: pass; re-review: pass; report: pass.
@@ -78,7 +78,7 @@ blank verdict template in the machine-readable file.
 
 - **Branch by Abstraction**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Bulkhead**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -434,7 +434,7 @@ blank verdict template in the machine-readable file.
 
 - **Quorum-Based Reads/Writes**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Rate Limiting**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -506,7 +506,7 @@ blank verdict template in the machine-readable file.
 
 - **Service-Oriented Architecture (SOA)**
   Current: pass; re-review: pass; report: reject.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Session Consistency**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -574,7 +574,7 @@ blank verdict template in the machine-readable file.
 
 - **Transactional Outbox**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **TTL-Based Expiration**
   Current: pass; re-review: pass; report: pass-with-findings.

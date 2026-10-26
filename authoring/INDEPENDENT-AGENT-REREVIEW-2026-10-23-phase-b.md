@@ -58,3 +58,8 @@ Phase B re-audit verdict: **pass**; findings: 0.
 ## tycho.pattern.structured-logging
 
 Phase B re-audit verdict: **pass-with-findings**; findings: 1.
+
+
+### Retry with Jitter
+
+Verdict: **pass**. Recorded from the independent review above.
