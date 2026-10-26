@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-22. Entries: 269.
+Inventory date: 2026-10-26. Entries: 269.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -189,7 +189,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 |---|---|---|---|
 | src.kubernetes / supporting | [Kubernetes Concepts](https://kubernetes.io/docs/concepts/) — Kubernetes | Scheduling, lifecycle, probes, configuration and service networking. | admitted-for-research / public-web-or-author-download |
 | src.envoy / supporting | [Envoy Architecture Overview](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/arch_overview) — Envoy | Traffic management, timeouts and observability boundaries. | admitted-for-research / public-web-or-author-download |
-| src.istio / supporting | [Istio Architecture](https://istio.io/latest/docs/ops/deployment/architecture/) — Istio | Control/data plane responsibilities and deployment trade-offs. | admitted-for-research / public-web-or-author-download |
+| src.istio / supporting | [Istio Security](https://istio.io/latest/docs/concepts/security/) — Istio | Workload identity, certificate rotation, mTLS and authorization policy. | admitted-for-research / public-web-or-author-download |
 | src.etcd / supporting | [etcd Documentation](https://etcd.io/docs/) — etcd | Coordination APIs, watches, leases and operational guarantees. | admitted-for-research / public-web-or-author-download |
 | src.helm / supporting | [Helm Documentation](https://helm.sh/docs/) — Helm | Package templating and release lifecycle; distinguish from reconciliation. | admitted-for-research / public-web-or-author-download |
 | src.opentofu / supporting | [OpenTofu Documentation](https://opentofu.org/docs/) — OpenTofu | Infrastructure state, planning and change execution boundaries. | admitted-for-research / public-web-or-author-download |
