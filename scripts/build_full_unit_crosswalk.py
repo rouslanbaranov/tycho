@@ -48,14 +48,23 @@ def main():
                          "current_status": unit.get("status"), "match_225": None,
                          "disposition": "blocked-current"})
             continue
-        candidates = []
-        for reading in readings:
-            if unit["source_id"] in reading.get("source_ids", []) or norm(unit.get("url")) == norm(reading.get("url")):
-                candidates.append(reading)
-        candidates += [x for x in by_url.get(norm(unit.get("url")), []) if x not in candidates]
+        url_matches = [r for r in readings if norm(unit.get("url")) == norm(r.get("url"))]
+        source_matches = [r for r in readings if unit["source_id"] in r.get("source_ids", [])]
+        candidates = list(url_matches)
+        for item in by_url.get(norm(unit.get("url")), []):
+            if item not in candidates:
+                candidates.append(item)
+        exact_url = bool(candidates)
         if not candidates:
-            disposition = "reread-no-225"
-            match = None
+            if source_matches:
+                best = max(source_matches, key=lambda x: len((x.get("unit", "") + " " + x.get("coverage", "")).lower()))
+                match = {"id": best.get("id"), "source_ids": best.get("source_ids", []),
+                         "url": best.get("url"), "unit": best.get("unit"),
+                         "status": best.get("status"), "revision": best.get("revision", "")}
+                disposition = "reread-scope"
+            else:
+                disposition = "reread-no-225"
+                match = None
         else:
             sections = [norm(s) for s in unit.get("sections", [])]
             def score(item):
