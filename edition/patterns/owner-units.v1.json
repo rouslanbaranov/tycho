@@ -4131,22 +4131,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Stale-while-revalidate serves the current stale value while one owner refreshes it in the background, within a bounded stale window.",
-          "reason": ""
+          "reason": "Defines serving stale data during one bounded background refresh."
         },
         "invariant": {
           "state": "supported",
           "quote": "The stale window and the refresh owner must be bounded and observable, and a failed refresh must not extend the window indefinitely.",
-          "reason": ""
+          "reason": "Requires a bounded observable stale window and refresh owner."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A failing refresh keeps serving the same stale value; cap the stale age, surface refresh failures and fall back to a blocking read when the bound is reached.",
-          "reason": ""
+          "reason": "Names repeated stale service and requires a stale-age cap, failure surfacing and blocking fallback."
         },
         "alternative": {
           "state": "supported",
           "quote": "A blocking refresh guarantees freshness at the cost of latency; choose stale-while-revalidate only when the declared stale window is acceptable to the reader.",
-          "reason": ""
+          "reason": "Contrasts blocking refresh for stronger freshness."
         }
       },
       "decision_evidence": {
@@ -4188,22 +4188,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A multi-level cache keeps a fast local tier in front of a shared tier, trading fewer remote reads for more places that can hold a stale copy.",
-          "reason": ""
+          "reason": "Defines a local tier in front of a shared tier."
         },
         "invariant": {
           "state": "supported",
           "quote": "Every tier must receive the invalidation, or each tier must carry a bounded staleness contract and a version check.",
-          "reason": ""
+          "reason": "Requires invalidation at every tier or a bounded staleness contract and version check."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Tier divergence serves different values from different processes; version keys and measure the propagation delay of each invalidation path.",
-          "reason": ""
+          "reason": "Names tier divergence and requires version keys and propagation-delay measurement."
         },
         "alternative": {
           "state": "supported",
           "quote": "One shared cache keeps a single copy but pays remote latency; add a local tier when the measured remote-read cost exceeds the staleness and invalidation effort.",
-          "reason": ""
+          "reason": "Contrasts one shared cache with a measured local tier."
         }
       },
       "decision_evidence": {
