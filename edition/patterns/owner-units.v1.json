@@ -3252,12 +3252,12 @@
         "mechanism": {
           "state": "supported",
           "quote": "Change data capture reads the database's own change log and turns committed row changes into a replayable stream.",
-          "reason": ""
+          "reason": "Defines reading the database change log as a replayable stream."
         },
         "invariant": {
           "state": "supported",
           "quote": "The stream must preserve per-key order and transaction grouping",
-          "reason": ""
+          "reason": "Requires per-key order and transaction grouping in the stream."
         },
         "failure_recovery": {
           "state": "supported",
@@ -3369,22 +3369,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A command-side replica serves reads that must observe the latest accepted command state while the read projections still lag. The query is routed to a replica of the command-side store, and the reply reports the applied position it observed.",
-          "reason": ""
+          "reason": "Routes reads to a command-store replica and reports the applied position."
         },
         "invariant": {
           "state": "supported",
           "quote": "The replica must apply a committed command before it answers a query that claims to include that command; otherwise the result is stale.",
-          "reason": ""
+          "reason": "Requires applying a committed command before answering a query that claims it."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Replication delay or failover can serve an older position, so the client must check the reported position or wait for the required one before treating a read as current.",
-          "reason": ""
+          "reason": "Requires checking or waiting for the reported position under lag or failover."
         },
         "alternative": {
           "state": "supported",
           "quote": "Serve the same read from the authoritative command store or block until the projection catches up; reverse the choice when replica lag is bounded and read load would otherwise overload the authority.",
-          "reason": ""
+          "reason": "Names the authoritative store or waiting for the projection."
         }
       },
       "decision_evidence": {
