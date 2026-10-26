@@ -439,15 +439,16 @@ backlog would violate a deadline, or when the queue becomes an unbounded hiding 
 **Competing alternative.** Direct synchronous calls or admission control. Reverse the
 choice when queue delay and backlog risk exceed smoothing benefit.
 
-**Failure and recovery.** Unbounded backlog, expired work, poison messages and duplicate
-effects after ambiguous acknowledgment are common; bound age, reject early and drain.
+**Failure and recovery.** Unbounded backlog, expired work and duplicate effects after ambiguous
+acknowledgment are possible; bound age, reject early and drain.
 
 **Technical owner.** [Queue-Based Load Leveling](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#queue-based-load-leveling) — recovery behavior is bounded, not a complete load-leveling design.
 
 **Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-rabbit-reliability.2026-10-21: sections "Reliability Guide",
-"Acknowledgements", "Publisher Confirms". The source is a public pattern/documentation
-unit, not a benchmark.
+"Acknowledgements", "Publisher Confirms". The source supports reliability mechanics only;
+admission and drain guidance is synthetic. The source is a public pattern/documentation unit,
+not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
