@@ -357,9 +357,8 @@ in the owner section.
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading";
 context for the transition narrative.
 [src.minimumcd-parallel-run](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.minimumcd-parallel-run.2026-10-26: sections "What is a parallel run?",
-"What a parallel run improves", "Running the comparison", "When a parallel run is not enough",
-"Key pitfalls", "Measuring success". MinimumCD supports dual execution, background
+read record read.minimumcd-parallel-run.2026-10-26: all eight served
+headings read. MinimumCD supports dual execution, background
 comparison and harness removal. Mismatch thresholds, sampling and cost bounds are synthetic.
 The sources are public articles, not benchmarks.
 

@@ -169,8 +169,8 @@ election". The read record notes a 100,000-character truncation; later sections 
 The record covers leases; fencing and quorum guidance is synthetic owner evidence.
 The source is a public pattern/documentation unit, not a benchmark.
 [src.kleppmann-distributed-locking](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-fencing.2026-10-21: sections "Protecting a resource with a lock",
-"Making the lock safe with fencing". The article supports fencing tokens; it does not benchmark
+read record read.batch4-fencing.2026-10-21: all nine served headings read.
+The article supports fencing tokens; it does not benchmark
 this design.
 
 **Decision state.** applicable-under-conditions.
@@ -234,8 +234,8 @@ enforcement in the owner section.
 
 **Sources.**
 [src.kleppmann-distributed-locking](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-fencing.2026-10-21: sections "Making the lock safe with fencing",
-"The synchrony assumptions of Redlock". The source is a public pattern/documentation
+read record read.batch4-fencing.2026-10-21: all nine served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

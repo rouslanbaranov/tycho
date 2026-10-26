@@ -258,8 +258,8 @@ the owner section.
 
 **Sources.**
 [src.cortex-shuffle-sharding](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-cortex-shuffle.2026-10-21: sections "Shuffle Sharding", "How it
-works", "Implementation". The source is a public pattern/documentation
+read record read.batch5-cortex-shuffle.2026-10-21: all eighteen served headings
+read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
