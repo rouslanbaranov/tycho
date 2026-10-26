@@ -406,9 +406,8 @@ for the retry window.
 
 **Sources.**
 [src.ietf-idempotency-key](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-ietf.2026-10-21: sections "Introduction", "Uniqueness of
-Idempotency Key", "Idempotency Key Validity and Expiry", "Idempotency Fingerprint", "Error
-Handling". The source is a public pattern/specification
+read record read.batch2-ietf.2026-10-21: all twenty-four served headings
+read. The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

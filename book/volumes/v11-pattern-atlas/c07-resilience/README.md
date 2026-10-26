@@ -263,8 +263,8 @@ explicit cleanup path.
 **Technical owner.** [Deadline Propagation](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadline-propagation) — deadline propagation and budget are bounded; clock-skew handling is platform-specific.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: sections "Addressing Cascading Failures",
-"Latency and Deadlines". The source is a public pattern/documentation
+read record read.batch4-sre-cascading.2026-10-21: all forty-four served
+headings read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -296,8 +296,8 @@ must be labelled, and an explicit failure is safer than a plausible but wrong va
 **Technical owner.** [Fallback](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#fallback) — fallback selection is bounded to the overload path, not a universal degradation strategy.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: section "Load Shedding and Graceful
-Degradation". The section covers graceful degradation, not fallback; the fallback
+read record read.batch4-sre-cascading.2026-10-21: all forty-four served
+headings read. The section covers graceful degradation, not fallback; the fallback
 freshness/authority/independence contract is synthetic owner guidance. The source is a public
 pattern/documentation unit, not a benchmark.
 
@@ -328,8 +328,8 @@ common; expose the reduced state and define how normal service resumes.
 **Technical owner.** [Graceful Degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#graceful-degradation) — graceful degradation is bounded to the overload path, not a complete capacity plan.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: section "Load Shedding and Graceful
-Degradation". The source is a public pattern/documentation
+read record read.batch4-sre-cascading.2026-10-21: all forty-four served
+headings read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

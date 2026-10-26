@@ -260,9 +260,8 @@ explicit error translation and a review of the adapter boundary in the technical
 **Technical owner.** [Hexagonal Architecture / Ports and Adapters](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#hexagonal-architecture-and-ports-and-adapters).
 
 **Sources.** [src.aws-hexagonal](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.aws-hexagonal.2026-10-21`: AWS Prescriptive Guidance, sections
-"Hexagonal architecture pattern", "Intent", "Motivation", "Applicability", "Issues and
-considerations", "Implementation", "High-level architecture". This is a vendor pattern
+read record `read.aws-hexagonal.2026-10-21`: all sixteen served headings read.
+This is a vendor pattern
 page, not a comparative study.
 
 **Decision state.** `applicable-under-conditions`.

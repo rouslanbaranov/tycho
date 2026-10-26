@@ -361,8 +361,8 @@ scope keys by tenant/principal, delete or version on change, bound TTL and test 
 
 **Sources.**
 [src.google-cdn-negative-caching](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-google-negative.2026-10-21: sections "Use negative caching",
-"Status codes and default TTLs". The source is a public pattern/documentation
+read record read.batch3-google-negative.2026-10-21: all eleven served headings
+read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
