@@ -5190,22 +5190,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Jitter randomizes each retry delay so independent clients do not retry in lockstep, spreading attempts across a window or adding a random offset to an exponential base.",
-          "reason": ""
+          "reason": "Defines randomized retry delays that break client lockstep."
         },
         "invariant": {
           "state": "supported",
           "quote": "Every attempt must consume the same end-to-end deadline and attempt budget, so added delay cannot extend the caller's useful completion window.",
-          "reason": ""
+          "reason": "Requires every attempt to share the end-to-end deadline and budget."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Synchronized retries convert a brief failure into a sustained overload; compare actual attempt counts and retry arrivals with the planned budget and stop the retry policy when pushback persists.",
-          "reason": ""
+          "reason": "Names synchronized retry overload and requires comparing attempts and arrivals with the budget."
         },
         "alternative": {
           "state": "supported",
           "quote": "Retry without jitter at a single layer, or do not retry at all when the failure is non-retryable; add jitter when many clients share the same dependency and retry signal.",
-          "reason": ""
+          "reason": "Contrasts unjittered single-layer retry or no retry for non-retryable failures."
         }
       },
       "decision_evidence": {
