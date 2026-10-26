@@ -67,11 +67,11 @@ records applicability, contraindications, alternatives, failure and recovery que
 candidate technical owners and exact source routes. The technical chapters remain
 canonical for mechanism, guarantees and deep evidence.
 
-Each of the 145 catalog entries has one stable heading in its family chapter. The 144
+Each of the 145 catalog entries has one stable heading in its family chapter. The 145
 authored cards record applicability, contraindications, an alternative, failure and
 recovery, a decision state, an exact owner link and a read source record. Polyglot
-Persistence remains blocked and uncarded because no technical owner exists. Decision
-coverage is partial-bounded for every card. Technical coverage remains partial or
+Persistence is carded with an owner link; only its DDIA source unit remains blocked.
+Decision coverage is partial-bounded for every card. Technical coverage is
 partial-bounded; no entry is sufficient without independent review.
 
 ## How to use this volume
@@ -143,16 +143,16 @@ technical owner. If no owner is confirmed, record the gap instead of inventing o
 
 ## Evidence and known limits
 
-- 144 of 145 entries have self-checked cards with exact owner links and read source
-  records; Polyglot Persistence is blocked and uncarded.
-- Technical coverage is 96 partial-bounded and 48 partial on 65 owner pages; no entry is
-  sufficient. Decision coverage is partial-bounded for all 144 cards.
-- The owner-unit audit records 118 section-level units on those pages. Thirty shared pages
-  have 14 keep, 13 deepen and 3 split decisions; the three splits are deferred with
+- 145 of 145 entries have self-checked cards with exact owner links and read source
+  records; the DDIA unit for Polyglot Persistence is blocked but the entry is carded.
+- Technical coverage is 145 partial-bounded on 69 owner pages; no entry is sufficient.
+  Decision coverage is partial-bounded for all 145 cards.
+- The owner-unit audit records 145 section-level units on those pages. Thirty-three shared
+  pages have 14 keep, 13 deepen and 3 split decisions; the three splits are deferred with
   migration gates and no split was performed.
-- The 40 related labels outside the catalog are recorded as deliberate non-routes, and
+- The 39 related labels outside the catalog are recorded as deliberate non-routes, and
   the three catalog-index reads are marked intentionally unused. The self-checked
-  semantic audit of all 419 pages is recorded in
+  semantic audit of all 423 pages is recorded in
   [semantic-audit.v1.json](../../../edition/patterns/semantic-audit.v1.json).
 - Owner-confirmed human review passed on 2026-10-21; an independent agent review is also
   recorded. Owner acceptance remains open. No release, deployment, hosted retrieval or
