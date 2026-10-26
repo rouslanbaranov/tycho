@@ -9,14 +9,14 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 111 |
-| Residual findings after re-review | 34 |
+| Promoted after remediation | 113 |
+| Residual findings after re-review | 32 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 114 |
+| Reviewed by independent agent | 116 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 29, "report-section-missing": 2, "reviewed-by-independent-agent": 114}.
+Packet statuses: {"page-changed-since-review": 27, "report-section-missing": 2, "reviewed-by-independent-agent": 116}.
 
 ## Review procedure
 
@@ -137,8 +137,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Command Query Responsibility Segregation (CQRS)**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Command-Side Replica**
   Current: pass; re-review: pass; report: None.
@@ -301,8 +301,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Hexagonal Architecture / Ports and Adapters**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Horizontal Scaling**
   Current: pass; re-review: pass; report: pass-with-findings.
