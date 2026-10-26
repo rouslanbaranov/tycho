@@ -134,10 +134,13 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Queue-Based Load Leveling
 
-The admission rule of a bounded queue decides four things that the queue cannot decide for itself: which producers may
-enqueue, the maximum accepted backlog age, what "accepted" means durably, and which worker pool
-drains it. Size the queue from observed peak arrival minus sustained drain, not from an average.
+The admission rule of a bounded queue decides four things that the queue cannot decide for itself:
+which producers may enqueue, the maximum accepted backlog age, what "accepted" means durably,
+and which worker pool drains it. Size the queue from observed peak arrival minus sustained drain,
+not from an average.
 An unbounded queue is not a capacity plan. Shedding is preferable when work cannot be deferred.
+The cited RabbitMQ guide supports reliability mechanics; admission and drain guidance here is
+synthetic.
 
 An enqueue acknowledgement must be a durable write; if it is not, the caller keeps the effect
 identity and retries the enqueue. Workers commit their outcome and queue offset together, or
