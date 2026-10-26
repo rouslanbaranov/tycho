@@ -45,12 +45,12 @@ evidence_scope:
   notes: "13 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-26"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-26"
+source_inspection_date: "2026-10-26"
 content_verified_at: null
 ---
 # V11/C11 — Security, isolation and operational architecture
@@ -238,7 +238,8 @@ read record read.batch6-istio.2026-10-21: sections "Security", "High-level archi
 "Istio identity", "Identity and certificate management", "Authentication", "Mutual TLS
 authentication", "Authorization", "Principals". The page supports workload identity binding,
 certificate rotation, mTLS and authorization policy. Certificate revocation, trust-root
-bootstrapping, key storage and lifetime policy are outside the read scope. The source is
+bootstrapping, key storage and lifetime policy are not supported by the cited sections;
+the full page was read, but these claims are not in the eight cited sections. The source is
 official documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

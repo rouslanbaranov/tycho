@@ -22,11 +22,12 @@
         "OIDC Core"
       ],
       "status": "evidence-partial",
-      "finding": "OpenID Federation 1.0 supports trust anchors, entity statements, trust chains and metadata; revocation/replay (section 11) not read.",
+      "finding": "Sections 1,3,4,5 and section 11 support trust chains, metadata, key rollover and the absence of a defined revocation process. Token replay remains uncovered.",
       "sources": [
         "src.openid-federation"
       ],
-      "record": "authoring/sufficient-ready/2026-10-26-federation.json"
+      "record": "authoring/sufficient-ready/2026-10-26-federation-section11.json",
+      "next": "Add a replay-specific source or keep replay synthetic."
     },
     {
       "pattern_id": "tycho.pattern.rbac-abac",
@@ -45,11 +46,12 @@
         "OWASP Authorization Cheat Sheet"
       ],
       "status": "evidence-partial",
-      "finding": "OWASP supports RBAC/ABAC/ReBAC definitions and least-privilege guidance; PDP/PEP, attribute staleness and revocation remain unsupported.",
+      "finding": "NIST SP 800-162 supports PDP/PEP/PIP/PAP, policy administration and implementation considerations; revocation mechanics remain uncovered.",
       "sources": [
         "src.owasp-authorization"
       ],
-      "record": "authoring/sufficient-ready/2026-10-26-rbac.json"
+      "record": "authoring/sufficient-ready/2026-10-26-nist-abac.json",
+      "next": "Add revocation evidence or keep revocation synthetic."
     },
     {
       "pattern_id": "tycho.pattern.workload-identity-mtls",
@@ -66,8 +68,8 @@
       "candidate_sources": [
         "Istio security documentation (full page or mTLS section)"
       ],
-      "status": "source-integrated",
-      "finding": "Full Istio security page integrated into the card and owner note; src.istio URL corrected to the security page. Certificate revocation and lifecycle remain synthetic.",
+      "status": "source-integrated-review-pending",
+      "finding": "Corrections applied for per-claim attribution, read-scope wording, synthetic availability and ETag; re-review running.",
       "sources": [
         "src.istio"
       ],
@@ -94,8 +96,8 @@
       "candidate_sources": [
         "Martin Fowler, Dark Launching"
       ],
-      "status": "source-integrated",
-      "finding": "Fowler and Istio mirroring sources integrated into the card and owner note. Measurement method and side-effect suppression remain synthetic.",
+      "status": "source-integrated-review-pending",
+      "finding": "Fowler and Istio sources integrated; reviewer decision pending after owner/card rewrite.",
       "sources": [
         "src.fowler-dark-launching",
         "src.istio-traffic-mirroring"
@@ -143,12 +145,13 @@
       "candidate_sources": [
         "Martin Fowler, ParallelChange / ParallelRun material"
       ],
-      "status": "insufficient-evidence",
-      "finding": "Fowler Parallel Change supports expand-and-contract only; it does not support Parallel Run. A different source or a card/owner revision is required.",
+      "status": "evidence-partial",
+      "finding": "Secondary public handbook supports both-implementation comparison and single authority; it is not a specification or benchmark and lacks divergence mechanics.",
       "sources": [
         "src.fowler-parallel-change"
       ],
-      "record": "authoring/sufficient-ready/2026-10-26-parallel.json"
+      "record": "authoring/sufficient-ready/2026-10-26-parallel-handbook.json",
+      "next": "Seek a primary or independent source before sufficient-ready."
     }
   ],
   "limits": [

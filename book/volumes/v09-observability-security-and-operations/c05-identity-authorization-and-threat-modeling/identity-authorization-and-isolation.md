@@ -85,8 +85,9 @@ The detailed pages separate the mechanisms that make this decision conditional:
 ## Bounded pattern ownership notes
 
 These notes define the decision boundary for atlas cards whose mechanism is not the main subject of
-this page. They are synthetic design guidance unless a section cites a dedicated source record;
-they are not measured evidence and do not create a new source claim by themselves.
+this page. They are synthetic design guidance unless a sentence explicitly attributes the claim
+to a dedicated source record; all other guidance remains synthetic. They are not measured
+evidence and do not create a new source claim by themselves.
 
 ### Federated Identity
 
@@ -102,11 +103,13 @@ source.
 **Limits.** Federation concentrates trust in the issuer and metadata; key rotation, audience
 restriction and issuer compromise are ongoing costs, not one-time setup. Metadata caching and
 issuer discovery need their own availability, rollback plan, audit evidence and an owner.
+Token replay and revocation are not covered by the cited federation sections; that part
+remains synthetic.
 
 ### Workload Identity-mTLS
 
 Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates
-both ends of a service connection with short-lived credentials. The identity must bind to the
+both ends of a service connection with automatically rotated credentials. The identity must bind to the
 workload, not to a network location, and authorization must still check the operation rather than
 assuming trust from the connection.
 
@@ -117,12 +120,14 @@ the dominant risk.
 
 **Limits.** PKI, certificate rotation and revocation are operational costs; a valid certificate
 authenticates the workload, not every operation it requests. Certificate issuance availability
-is part of the request path; a failed rotation is an outage.
+is part of the request path, and a failed rotation can be an outage; both claims are plausible
+but synthetic, and the cited page does not measure them.
 
-**Source boundary.** The Istio record supports workload identity binding, certificate
-issuance and rotation, mTLS authentication and authorization policy. Certificate
-revocation, trust-root bootstrap, key storage and lifetime policy are not in the scoped
-source; the revocation and lifecycle guidance above remains synthetic.
+**Source boundary.** Only the following claims are supported by the cited Istio record:
+workload identity binding, certificate issuance and rotation, mTLS authentication and
+authorization policy. Certificate revocation, trust-root bootstrap, key storage, lifetime
+policy and rotation-failure impact are not in the cited sections; all other guidance in this
+section remains synthetic.
 
 ## Navigation
 
