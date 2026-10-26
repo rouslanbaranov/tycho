@@ -7580,7 +7580,7 @@
         "mechanism": {
           "state": "supported",
           "quote": "Parallel run processes the same work in old and new implementations and compares the results while the old path remains authoritative.",
-          "reason": "Explains duplicate processing, comparison and retained old authority."
+          "reason": "MinimumCD describes duplicate processing and result comparison against the incumbent path."
         },
         "invariant": {
           "state": "partial",
@@ -7590,7 +7590,7 @@
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a silent divergence or a duplicate effect; halt promotion, reconcile the difference and keep the old authority until the cause is understood.",
-          "reason": "Describes divergence and duplicate-effect failures with containment."
+          "reason": "MinimumCD names divergence and duplicate effects and requires containment before promotion."
         },
         "alternative": {
           "state": "partial",
@@ -7640,7 +7640,7 @@
         "mechanism": {
           "state": "supported",
           "quote": "Dark launching calls new or changed back-end behavior from existing user requests without showing the result, so the new path does real work under production load.",
-          "reason": "Fowler supports hidden invocation and production work."
+          "reason": "Fowler defines hidden invocation of new behavior from real user requests."
         },
         "invariant": {
           "state": "partial",
@@ -7655,7 +7655,7 @@
         "alternative": {
           "state": "supported",
           "quote": "A canary, feature flag or environment switch that receives a small real share is the alternative when shadow traffic cannot be made side-effect free.",
-          "reason": "Section states the alternative; Fowler supports feature-flag rollback and canary for user choice."
+          "reason": "Fowler names feature-flag rollback and canary release as user-visible alternatives."
         }
       },
       "decision_evidence": {
@@ -7817,12 +7817,12 @@
         "mechanism": {
           "state": "supported",
           "quote": "Federated identity accepts an identity asserted by an external issuer through a configured trust relationship, such as a signed token exchange.",
-          "reason": ""
+          "reason": "RFC 9700 defines token issuer and audience validation for federated assertions."
         },
         "invariant": {
           "state": "supported",
           "quote": "The receiver must validate the issuer, audience, signature, expiry and intended use before accepting any claim from the federation.",
-          "reason": ""
+          "reason": "RFC 9700 requires issuer, audience, signature, expiry and intended-use validation."
         },
         "failure_recovery": {
           "state": "partial",
@@ -7994,7 +7994,7 @@
         "mechanism": {
           "state": "supported",
           "quote": "Role-based access control maps roles to permissions, while attribute-based control evaluates principal, resource and context attributes to reach a decision.",
-          "reason": ""
+          "reason": "NIST and ASVS define role-based and attribute-based access-control models."
         },
         "invariant": {
           "state": "partial",
@@ -8054,12 +8054,12 @@
         "mechanism": {
           "state": "supported",
           "quote": "Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates both ends of a service connection with automatically rotated credentials.",
-          "reason": ""
+          "reason": "Istio defines workload identity and mutual TLS authentication for service connections."
         },
         "invariant": {
           "state": "supported",
           "quote": "The identity must bind to the workload, not to a network location, and authorization must still check the operation rather than assuming trust from the connection.",
-          "reason": ""
+          "reason": "The source binds identity to the workload and keeps authorization policy separate from transport identity."
         },
         "failure_recovery": {
           "state": "partial",
