@@ -7103,22 +7103,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A rolling deployment replaces instances in batches, so old and new versions serve traffic together during the rollout.",
-          "reason": ""
+          "reason": "Defines batch replacement with old and new versions serving together."
         },
         "invariant": {
           "state": "supported",
           "quote": "Both versions must be compatible with the shared data and contracts for the whole overlap, or the rollout must stop before an incompatible state is written.",
-          "reason": ""
+          "reason": "Requires data and contract compatibility for the whole overlap."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Mixed versions expose an incompatibility that a single-version test missed; gate each batch on readiness and error signals and keep a tested stop condition.",
-          "reason": ""
+          "reason": "Names mixed-version incompatibility and requires readiness/error gates and a stop condition."
         },
         "alternative": {
           "state": "supported",
           "quote": "Blue/green switches a complete environment at once; choose rolling when the extra capacity for a second environment is unavailable.",
-          "reason": ""
+          "reason": "Contrasts blue/green when a second environment is too costly."
         }
       },
       "decision_evidence": {
@@ -7163,22 +7163,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Blue/green runs two complete environments and switches traffic at a routing boundary, leaving the previous environment available for a short reversal.",
-          "reason": ""
+          "reason": "Defines two environments and a routing switch with short reversal."
         },
         "invariant": {
           "state": "supported",
           "quote": "The switch must remain reversible until the new version's persisted effects are proven compatible with the old version.",
-          "reason": ""
+          "reason": "Requires reversibility until persisted effects are proven compatible."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A half-switched route or a new-only write makes reversal unsafe; verify routing completeness and data compatibility before declaring the cutover.",
-          "reason": ""
+          "reason": "Names half-switched routes and new-only writes and requires routing/data checks."
         },
         "alternative": {
           "state": "supported",
           "quote": "A rolling or canary rollout uses less spare capacity; choose blue/green when a fast, complete reversal and a clean environment comparison justify the double capacity.",
-          "reason": ""
+          "reason": "Contrasts rolling/canary with lower spare capacity."
         }
       },
       "decision_evidence": {
@@ -7400,22 +7400,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Immutable infrastructure replaces instances from a versioned image or definition instead of mutating running hosts, so each instance is reproducible from a recorded artifact.",
-          "reason": ""
+          "reason": "Defines replacement from a versioned image or definition rather than mutation."
         },
         "invariant": {
           "state": "supported",
           "quote": "Every running instance must be reproducible from a recorded artifact digest, and drift must be detected rather than tolerated.",
-          "reason": ""
+          "reason": "Requires reproducibility from an artifact digest and drift detection."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled change; record digests and test the rebuild path.",
-          "reason": ""
+          "reason": "Names rebuilt images that diverge and requires digest recording and rebuild tests."
         },
         "alternative": {
           "state": "supported",
           "quote": "choose immutable replacement when reproducibility, an automated replacement path and artifact rollback speed matter",
-          "reason": ""
+          "reason": "Names immutable replacement when reproducibility and fast artifact rollback matter."
         }
       },
       "decision_evidence": {
