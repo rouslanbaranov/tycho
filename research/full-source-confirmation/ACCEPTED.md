@@ -17,3 +17,8 @@ Owner decisions:
    further public text has been found that states them.
 
 No sufficient coverage, human review, CI or acceptance of a book claim is implied.
+5. The five public-web claims FS-01, FS-02, FS-03, FS-19 and FS-20 are accepted as final
+   `unconfirmed`. Their complete public pages (and the full PostgreSQL 18 manual for FS-20)
+   do not state them; no further public text search is planned.
+6. FS-21 is accepted as final `unconfirmed`. The complete SRE Workbook was read and does not
+   define synthetic monitoring or state the design rule.
