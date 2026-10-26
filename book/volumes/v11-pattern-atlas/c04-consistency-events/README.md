@@ -475,8 +475,8 @@ treating the view as an authority.
 **Technical owner.** [Materialized View](../../../distributed/cqrs-event-sourcing-and-projections.md#materialized-view) — stored-query freshness is bounded, not a full PostgreSQL materialized-view manual.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch9-pg-matview-refresh.2026-10-22: section "REFRESH MATERIALIZED
-VIEW" (PostgreSQL 18). The source is public documentation, not a benchmark.
+read record read.batch9-pg-matview-refresh.2026-10-22: all eight served headings
+read. The source is public documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

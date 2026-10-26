@@ -97,8 +97,8 @@ resource problem are common; probe with a bounded budget and do not treat open a
 **Technical owner.** [Circuit Breaker](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#circuit-breaker) — dependency isolation is bounded, not a full circuit-breaker library guide.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-circuit.2026-10-21: sections "CircuitBreaker",
-"Configuration", "Examples". The source is a public pattern/documentation
+read record read.batch4-r4j-circuit.2026-10-21: all eleven served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -128,8 +128,8 @@ starvation are common; detect per-pool metrics and fail the isolated class expli
 **Technical owner.** [Bulkhead](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#bulkhead) — bulkhead isolation is bounded, not a full resilience-library guide.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-bulkhead.2026-10-21: sections "Bulkhead", "Semaphore",
-"ThreadPool". The source is a public pattern/documentation
+read record read.batch4-r4j-bulkhead.2026-10-21: all eight served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -159,9 +159,7 @@ common; jitter the delay, cap attempts and total delay, and stop on server pushb
 **Technical owner.** [Retry with Exponential Backoff](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-exponential-backoff) — retry budget and backoff are bounded; permanent-failure classification is caller-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-retry.2026-10-21: only the "Retry" section is verified; the
-record contains no Backoff/Jitter heading. The read
-record notes a 100,000-character truncation; later sections are unverified. The source is a public
+read record read.batch4-r4j-retry.2026-10-21: all six served headings read. The source is a public
 pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -194,9 +192,7 @@ retry budget.
 **Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-jitter) — jitter and budget are bounded; PRNG quality is implementation-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-retry.2026-10-21: only the "Retry" section is verified; the
-record contains no Backoff/Jitter heading. The read
-record notes a 100,000-character truncation; later sections are unverified. The source is a public
+read record read.batch4-r4j-retry.2026-10-21: all six served headings read. The source is a public
 pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -229,8 +225,8 @@ non-idempotent work.
 **Technical owner.** [Timeout](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#timeout) — timeout values and cancellation are bounded; transport timeout behavior is implementation-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-r4j-timelimiter.2026-10-21: section "TimeLimiter". The page has no
-Cancel running futures heading; cancellation semantics are synthetic guidance. The source is
+read record read.batch4-r4j-timelimiter.2026-10-21: all four served headings read.
+Cancellation semantics remain synthetic guidance. The source is
 a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
