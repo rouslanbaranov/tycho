@@ -4953,22 +4953,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A base backup plus a continuous archive of write-ahead records lets an operator restore the data to a chosen point in time before an incident.",
-          "reason": ""
+          "reason": "Defines a base backup plus archived WAL restored to a chosen point in time."
         },
         "invariant": {
           "state": "supported",
           "quote": "The backup chain must be complete and restorable, and a recovery target must be validated against the application's consistency requirements, not only produced.",
-          "reason": ""
+          "reason": "Requires a complete restorable chain and an application-consistency check for the target."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A missing or corrupt archive segment makes the target unreachable; run restore drills on a schedule and verify checksums and recovery completion.",
-          "reason": ""
+          "reason": "Names missing or corrupt archive segments and requires scheduled restore drills and checksums."
         },
         "alternative": {
           "state": "supported",
           "quote": "Promote a replica for availability, but it does not protect against replicated deletion or corruption; use backups when recovery point and retained history matter.",
-          "reason": ""
+          "reason": "Contrasts replica promotion, which does not protect against replicated deletion or corruption."
         }
       },
       "decision_evidence": {
