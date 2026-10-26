@@ -156,7 +156,7 @@ retry latency and load exceed transient-failure benefit.
 **Failure and recovery.** Retry storms, duplicate effects and synchronized clients are
 common; jitter the delay, cap attempts and total delay, and stop on server pushback.
 
-**Technical owner.** [Retry with Exponential Backoff](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-exponential-backoff) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Retry with Exponential Backoff](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-exponential-backoff) — retry budget and backoff are bounded; permanent-failure classification is caller-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-retry.2026-10-21: only the "Retry" section is verified; the
@@ -191,7 +191,7 @@ delays complicate tracing more than they reduce synchronization.
 or make a non-idempotent retry safe; bound the sampled delay and total attempts, and verify the
 retry budget.
 
-**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-jitter) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Deadlines, cancellation and retry budgets](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#retry-with-jitter) — jitter and budget are bounded; PRNG quality is implementation-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-retry.2026-10-21: only the "Retry" section is verified; the
@@ -226,7 +226,7 @@ synchronous waiting blocks capacity that could serve other work.
 effect stopped. Look up the durable outcome and clean up resources; do not blind-retry
 non-idempotent work.
 
-**Technical owner.** [Timeout](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#timeout) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Timeout](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#timeout) — timeout values and cancellation are bounded; transport timeout behavior is implementation-specific.
 
 **Sources.** [src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-r4j-timelimiter.2026-10-21: sections "TimeLimiter", "Cancel
@@ -260,7 +260,7 @@ choice when propagation complexity exceeds the benefit of end-to-end bounds.
 common; transmit remaining duration where possible, enforce expiry at each hop and keep an
 explicit cleanup path.
 
-**Technical owner.** [Deadline Propagation](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadline-propagation) — deadlines/retries are bounded, not a complete timeout policy.
+**Technical owner.** [Deadline Propagation](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadline-propagation) — deadline propagation and budget are bounded; clock-skew handling is platform-specific.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-sre-cascading.2026-10-21: sections "Timeouts and deadlines",
