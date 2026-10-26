@@ -102,8 +102,9 @@ validation in the owner section.
 
 **Sources.** [src.oauth-security](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-rfc9700.2026-10-21: sections "Token Handling", "Redirect URI",
-"PKCE", "Sender-Constrained Tokens". The source is a public pattern/specification
-unit, not a benchmark.
+"PKCE". The record is truncated at 100,000 characters; Sender-Constrained Tokens and Security
+Considerations lie beyond it. Federation trust, metadata, revocation and replay guidance is
+synthetic, not a source claim. The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
