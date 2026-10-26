@@ -123,7 +123,7 @@ bind to the workload, not to a network location, and authorization must still ch
 operation rather than assuming trust from the connection.
 
 Expired or shared credentials break authentication or erase the distinction between workloads;
-rotate, revoke and test an unauthorized peer. Network policy with shared secrets is easier when PKI
+rotate, isolate and test an unauthorized peer. Network policy with shared secrets is easier when PKI
 operations are unavailable; choose workload identity when lateral movement and credential reuse are
 the dominant risk.
 
