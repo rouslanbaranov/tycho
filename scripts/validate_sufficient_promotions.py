@@ -54,6 +54,9 @@ def validate(root=ROOT):
         require(pattern_id not in seen, "promotions-duplicate: " + pattern_id)
         seen.add(pattern_id)
         report = (root / item["report_path"]).resolve()
+        report_dir = (root / "authoring/ai-reviews").resolve()
+        require(report.is_relative_to(report_dir),
+                "promotions-report-location: " + pattern_id)
         require(report.is_file() and not report.is_symlink(),
                 "promotions-report-missing: " + pattern_id)
         require(hashlib.sha256(report.read_bytes()).hexdigest()

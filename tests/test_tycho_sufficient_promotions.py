@@ -22,7 +22,8 @@ class SufficientPromotionTests(unittest.TestCase):
                     self.root / "schemas/sufficient-promotions.v1.schema.json")
         (self.root / "edition/patterns/registry.v1.json").write_text(
             json.dumps({"patterns": [{"id": "tycho.pattern.test"}]}))
-        self.report = self.root / "report.md"
+        (self.root / "authoring/ai-reviews").mkdir(parents=True)
+        self.report = self.root / "authoring/ai-reviews/report.md"
         self.report.write_text("# Report\n\nTest only.\n")
         subprocess.run(["git", "init", "-q"], cwd=self.root, check=True)
         subprocess.run(["git", "config", "user.email", "test@example.invalid"],
@@ -41,7 +42,7 @@ class SufficientPromotionTests(unittest.TestCase):
             "owner_page_sha256": "a" * 64,
             "card_sha256": "b" * 64,
             "reviewer": "test/other",
-            "report_path": "report.md",
+            "report_path": "authoring/ai-reviews/report.md",
             "report_sha256": hashlib.sha256(self.report.read_bytes()).hexdigest(),
         }
 
@@ -72,9 +73,18 @@ class SufficientPromotionTests(unittest.TestCase):
             validate(self.root)
 
     def test_missing_report_is_rejected(self):
-        self.record["report_path"] = "missing.md"
+        self.record["report_path"] = "authoring/ai-reviews/missing.md"
         self.write([self.record])
         with self.assertRaisesRegex(ValueError, "promotions-report-missing"):
+            validate(self.root)
+
+    def test_report_outside_reviews_is_rejected(self):
+        outside = self.root / "outside.md"
+        outside.write_text("# Outside\n")
+        self.record["report_path"] = "outside.md"
+        self.record["report_sha256"] = hashlib.sha256(outside.read_bytes()).hexdigest()
+        self.write([self.record])
+        with self.assertRaisesRegex(ValueError, "promotions-report-location"):
             validate(self.root)
 
 
