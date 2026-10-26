@@ -210,8 +210,9 @@ policy should also state who may approve an emergency exception and for how long
 ### Throttling
 
 Throttling slows work that has already been admitted; it does not decide who deserves service.
-The invariant is that no admitted request waits past its deadline: excess work is rejected before
-it enters the queue. The owner must state which dependency is protected and which class waits. That declaration
+The invariant is that every admitted class has a bounded wait and a declared rejection point;
+no class waits without a deadline. The owner must state which dependency is protected and which
+class waits. That declaration
 belongs with the operational policy, not only in a dashboard.
 
 A finite buffer and an upstream backpressure signal make pacing enforceable. Without them,
