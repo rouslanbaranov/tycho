@@ -96,8 +96,11 @@ def validate_data(plan, ledger, registry, route, sources, root=ROOT):
     records = ledger["records"]
     require(len(records) == len({item["id"] for item in records}), "ledger-duplicate-id")
     cards = load(root / "edition/patterns/card-batches.v1.json")
-    cited = {entry["ledger_record"] for batch in cards["batches"]
-             for entry in batch["entries"]}
+    card_cited = {entry["ledger_record"] for batch in cards["batches"]
+                  for entry in batch["entries"]}
+    cited = set(card_cited)
+    cited |= {unit["read_record_id"] for entry in plan["entries"]
+              for unit in entry["required_units"] if unit.get("read_record_id")}
     by_record = {}
     for record in records:
         require(record["source_id"] in source_ids,
@@ -108,7 +111,7 @@ def validate_data(plan, ledger, registry, route, sources, root=ROOT):
                     "ledger-uncited-record: " + record["id"])
             require(len(record.get("citation_note", "")) >= 10,
                     "ledger-uncited-note: " + record["id"])
-        else:
+        elif record["id"] in card_cited:
             require(record.get("citation_status") != "intentionally-unused",
                     "ledger-cited-but-unused: " + record["id"])
         by_record[record["id"]] = record

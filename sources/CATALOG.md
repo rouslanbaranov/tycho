@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-26. Entries: 269.
+Inventory date: 2026-10-26. Entries: 271.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -195,6 +195,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.opentofu / supporting | [OpenTofu Documentation](https://opentofu.org/docs/) — OpenTofu | Infrastructure state, planning and change execution boundaries. | admitted-for-research / public-web-or-author-download |
 | src.docker / supporting | [Docker Overview](https://docs.docker.com/get-started/docker-overview/) — Docker | Image, container, registry and runtime boundaries. | admitted-for-research / public-web-or-author-download |
 | src.lambda / supporting | [AWS Lambda Execution Environments](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html) — AWS | Execution environment reuse, lifecycle and deployment constraints. | admitted-for-research / public-web-or-author-download |
+| src.istio-traffic-mirroring / supporting | [Istio Mirroring](https://istio.io/latest/docs/tasks/traffic-management/mirroring/) — Istio | Request mirroring, shadow host rewrite and fire-and-forget responses. | admitted-for-research / public-web-or-author-download |
 
 ## Security
 
@@ -228,6 +229,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.opengitops / supporting | [OpenGitOps Principles](https://opengitops.dev/) — OpenGitOps | Vendor-neutral GitOps principles. | admitted-for-research / public-web-or-author-download |
 | src.flyway / supporting | [Flyway Documentation](https://documentation.red-gate.com/flyway) — Redgate | Database migration ordering and delivery integration. | admitted-for-research / public-web-or-author-download |
 | src.liquibase / supporting | [Liquibase Documentation](https://docs.liquibase.com/) — Liquibase | Change management and deployment compatibility. | admitted-for-research / public-web-or-author-download |
+| src.fowler-dark-launching / supporting | [Dark Launching](https://martinfowler.com/bliki/DarkLaunching.html) — Martin Fowler | Hidden back-end invocation, load assessment and feature-flag rollback. | admitted-for-research / public-web-or-author-download |
 
 ## Scaling
 

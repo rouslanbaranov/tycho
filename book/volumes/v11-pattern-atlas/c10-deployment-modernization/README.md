@@ -383,11 +383,16 @@ isolation in the owner section.
 
 **Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#dark-launching-shadow-traffic) — dark launch/shadow traffic is bounded to progressive exposure.
 
-**Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-This reused unit covers Strangler Fig only; it is context, not source support for this
-pattern. The pattern guidance is synthetic and is not claimed as source-supported. The source
-is a public pattern/documentation unit, not a benchmark.
+**Sources.** [src.fowler-dark-launching](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.fowler-dark-launching.2026-10-26: section "Dark Launching".
+[src.istio-traffic-mirroring](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch7-istio-mirroring.2026-10-26: sections "Mirroring", "Before you begin",
+"Creating a default routing policy", "Mirroring traffic to httpbin-v2", "Cleaning up",
+"See also". The first supports hidden invocation, load assessment, feature-flag rollback and
+old/new comparison; the second supports request mirroring, shadow host rewrite,
+fire-and-forget responses and fractional mirroring. Measurement method, side-effect
+suppression and capacity bounds are synthetic. The sources are public
+articles/documentation, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 

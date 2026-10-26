@@ -108,16 +108,26 @@ measured evidence, and they do not create a new source claim.
 
 ### Dark Launching-Shadow Traffic
 
-Dark launching sends mirrored or synthetic traffic to new code while the old path remains
-authoritative. It needs side-effect suppression, a comparison method, a bounded load
-budget and a rule for sensitive data. Use it when behavior can be observed without
-changing user-visible state. Do not use it when shadow requests would write, charge,
-notify or leak data.
+Dark launching calls new or changed back-end behavior from existing user requests without
+showing the result, so the new path does real work under production load. Shadow traffic
+copies live requests to a mirrored service while the old path remains authoritative.
 
-The failure path is a mirrored request that causes a real effect or doubles load; isolate
-the shadow path and stop it when the comparison or capacity contract fails. A canary, feature
-flag or environment switch that receives a small real share is the alternative when shadow
-traffic cannot be made side-effect free.
+Both need a side-effect boundary, a comparison method, a load budget and a rule for sensitive
+data. Mirroring is fire-and-forget for the primary request, but the mirrored request is real
+and appears in the new service's logs; a write, charge or notification can execute twice.
+Dark launching without mirroring still changes production state unless the hidden path is
+side-effect free.
+
+The failure path is a hidden or mirrored request that causes a real effect or doubles load;
+isolate the shadow path and stop it when the comparison or capacity contract fails. A canary,
+feature flag or environment switch that receives a small real share is the alternative when
+shadow traffic cannot be made side-effect free.
+
+**Source boundary.** The Fowler record supports hidden invocation, load assessment,
+feature-flag rollback and old/new comparison; the Istio record supports request mirroring,
+shadow host rewrite, fire-and-forget responses and fractional mirroring. Neither source
+supplies a measurement method, side-effect suppression or a capacity bound; those remain
+synthetic.
 
 **Limits.** Shadow traffic is not a user-behavior sample; comparison coverage and data
 sensitivity bound what it can prove.
