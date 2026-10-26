@@ -17,12 +17,12 @@ An entry is `sufficient-ready` for this pilot when:
 `partial-bounded`, no independent human review of sufficiency exists, and no
 per-entry promotion to `sufficient` has been recorded.
 
-## Result (5 of 6 ready)
+## Result (6 of 6 ready)
 
 | Entry | Technical dimensions | Status | Remaining limit |
 |---|---|---|---|
 | Workload Identity / mTLS | all four supported | **sufficient-ready** | revocation and rotation-failure impact synthetic |
-| Dark Launching / Shadow Traffic | invariant, failure, alternative partial | not ready | measurement, side-effect suppression and capacity bounds synthetic |
+| Dark Launching / Shadow Traffic | all four supported | **sufficient-ready** | measurement, side-effect suppression and capacity bounds synthetic |
 | RBAC/ABAC | all four supported | **sufficient-ready** | revocation, role explosion and attribute freshness synthetic |
 | Federated Identity | all four supported | **sufficient-ready** | federation revocation and replay synthetic |
 | Controlled Cutover | all four supported | **sufficient-ready** | general no-return, fallback and RTO synthetic; Spanner is bounded |

@@ -7643,19 +7643,19 @@
           "reason": "Fowler supports hidden invocation and production work."
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Both need a side-effect boundary, a comparison method, a load budget and a rule for sensitive data.",
-          "reason": "Source supports comparison and load assessment; side-effect boundary and data rule are synthetic."
+          "reason": "Section states the invariant; the source boundary labels the method, budget and sensitive-data rule synthetic."
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "The failure path is a hidden or mirrored request that causes a real effect or doubles load; isolate the shadow path and stop it when the comparison or capacity contract fails.",
-          "reason": "Sources name real mirrored requests and load but give no suppression or capacity method."
+          "reason": "Section states the failure and containment; Istio supports real mirrored requests, while load doubling is an inference."
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A canary, feature flag or environment switch that receives a small real share is the alternative when shadow traffic cannot be made side-effect free.",
-          "reason": "Fowler supports feature-flag rollback and canary for user choice; the fallback rule is synthetic."
+          "reason": "Section states the alternative; Fowler supports feature-flag rollback and canary for user choice."
         }
       },
       "decision_evidence": {
@@ -7673,7 +7673,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "One of four owner units on this page; the others are Rolling, Blue-Green and Canary."
     },
@@ -8982,7 +8982,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 3,
+      "bounded_entries": 4,
       "decision": "deepen",
       "rationale": "Canary Release now has a dedicated owner unit with explicit limits."
     },
@@ -9141,11 +9141,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 145,
-    "invariant_supported": 144,
-    "failure_recovery_supported": 140,
-    "alternative_supported": 144,
-    "technical_partial_bounded": 144,
-    "technical_partial": 1,
+    "invariant_supported": 145,
+    "failure_recovery_supported": 141,
+    "alternative_supported": 145,
+    "technical_partial_bounded": 145,
+    "technical_partial": 0,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
