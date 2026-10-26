@@ -442,7 +442,7 @@ choice when queue delay and backlog risk exceed smoothing benefit.
 **Failure and recovery.** Unbounded backlog, expired work and duplicate effects after ambiguous
 acknowledgment are possible; bound age, reject early and drain.
 
-**Technical owner.** [Queue-Based Load Leveling](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#queue-based-load-leveling) — recovery behavior is bounded, not a complete load-leveling design.
+**Technical owner.** [Queue-Based Load Leveling](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#queue-based-load-leveling) — admission and drain guidance is synthetic; the cited guide covers reliability mechanics only.
 
 **Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-rabbit-reliability.2026-10-21: sections "Acknowledgements and
