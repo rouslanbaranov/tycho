@@ -91,7 +91,7 @@ the choice when operational shard complexity exceeds scale benefit.
 **Failure and recovery.** Hotspots and resharding are common; verify routing/rebalancing
 in the owner section.
 
-**Technical owner.** [Sharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#sharding) — sharding/partition keys are bounded, not a universal distribution recipe.
+**Technical owner.** [Sharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#sharding) — shard key choice and resharding cost are bounded; per-engine placement is platform-specific.
 
 **Sources.** [src.citus](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-citus.2026-10-21: sections "Concepts". The source is a public
@@ -123,7 +123,7 @@ when partition maintenance and pruning no longer justify the split.
 **Failure and recovery.** Partition skew and maintenance are common; verify
 pruning/lifecycle in the owner section.
 
-**Technical owner.** [Sharding, partition keys, hotspots and safe resharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#partitioning) — sharding/partition keys are bounded, not a universal distribution recipe.
+**Technical owner.** [Sharding, partition keys, hotspots and safe resharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#partitioning) — partition key and pruning are bounded; per-engine partition mechanics are implementation-specific.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-pg-partition.2026-10-21: sections "Table Partitioning", "Partition
