@@ -280,8 +280,8 @@ routing and data compatibility are explicit; rollback is possible until a no-ret
 **Hard contraindications.** Reject when the legacy has no seam, when dual-running data
 cannot be reconciled, or when the team cannot own two paths.
 
-**Competing alternative.** Branch by abstraction or a bounded rewrite. Reverse the choice
-when coexistence cost exceeds incremental replacement benefit.
+**Competing alternative.** Branch by abstraction, parallel run or a big-bang replacement.
+Reverse the choice when coexistence cost exceeds incremental replacement benefit.
 
 **Failure and recovery.** Interception may be impossible, callers may bypass the façade,
 and old/new state can diverge; detect bypass, hold and route back until proven.
@@ -312,7 +312,7 @@ implementations preserve the same contract; removal date and reversible switch a
 **Hard contraindications.** Reject when no internal seam exists, when the abstraction adds
 no substitution value, or when the old implementation cannot coexist.
 
-**Competing alternative.** Strangler Fig or a big-bang replacement. Reverse the choice
+**Competing alternative.** Strangler Fig, a façade or a parallel run. Reverse the choice
 when abstraction cost exceeds incremental change benefit.
 
 **Failure and recovery.** Permanent seams, bypass around the abstraction and divergent
