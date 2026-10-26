@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 144 |
+| Reviewed by independent agent | 145 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 1, "reviewed-by-independent-agent": 144}.
+Packet statuses: {"reviewed-by-independent-agent": 145}.
 
 ## Review procedure
 
@@ -442,7 +442,7 @@ blank verdict template in the machine-readable file.
 
 - **RBAC / ABAC**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Read Replicas**
   Current: pass; re-review: pass; report: pass-with-findings.
