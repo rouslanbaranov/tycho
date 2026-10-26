@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 112 |
+| Reviewed by independent agent | 113 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 31, "report-section-missing": 2, "reviewed-by-independent-agent": 112}.
+Packet statuses: {"page-changed-since-review": 29, "report-section-missing": 3, "reviewed-by-independent-agent": 113}.
 
 ## Review procedure
 
@@ -190,7 +190,7 @@ blank verdict template in the machine-readable file.
 
 - **Deadline Propagation**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Deployment Stamps**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -466,7 +466,7 @@ blank verdict template in the machine-readable file.
 
 - **Retry with Jitter**
   Current: pass; re-review: pass; report: None.
-  Status: page-changed-since-review.
+  Status: report-section-missing.
 
 - **Reverse Proxy**
   Current: pass; re-review: pass; report: pass-with-findings.
