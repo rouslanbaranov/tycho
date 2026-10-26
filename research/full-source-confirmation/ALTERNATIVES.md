@@ -8,7 +8,8 @@ Date: 2026-10-26. Refs #535.
   https://www.enterpriseintegrationpatterns.com/docs/EnterpriseIntegrationPatterns_HohpeWoolf_ch03.pdf
   - 42 pages, printed pp.57-97, SHA-256 c1e7125dcebfdd9a2b23a922dfbbc9694e5f8048e81e14dc95e2882043ac4f66.
   - Full sections: Message Channel, Message, Pipes and Filters, Message Router, Message Translator, Message Endpoint.
-  - Does not contain the Chapter 4 channel patterns, so Publish-Subscribe and Point-to-Point remain partial.
+  - Does not contain the Chapter 4 channel patterns, so Publish-Subscribe and Point-to-Point
+    remain blocked-current.
 - Enterprise Integration Patterns Pearson sample PDF:
   http://ptgmedia.pearsoncmg.com/images/9780321200686/samplepages/0321200683.pdf
   - 98 pages, front matter plus Chapters 1-3, SHA-256 b12e9c8323adf5d8b6a80c82b149edc8c0b1294682f9ec11f6782e7878781805.
@@ -41,7 +42,8 @@ Date: 2026-10-26. Refs #535.
 - PostgreSQL read-replicas is no longer partial: section 26.4 was read.
 - PostgreSQL failover remains partial: section 26.3 was read, but failback is absent.
 - Pipes and Filters is now full: the complete section is in Chapter 3.
-- The remaining ten EIP units stay partial because their full pattern sections are in Chapter 4 or later.
+- The remaining ten EIP units stay blocked-current because their full pattern sections are
+  in Chapter 4 or later.
 - DDIA remains blocked: only a controlled-lending copy was located, not an open full text.
 
 

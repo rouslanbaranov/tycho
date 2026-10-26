@@ -1,7 +1,7 @@
 # External AI review outcome — #535
 
-Status: review performed; verdict **reject**. No disposition was changed by this record.
-The owner decides whether to apply the findings.
+Status: review performed; verdict **reject**. Remediation was applied after the review;
+a focused re-review is still required. The owner decides whether to accept the remediation.
 
 ## Review identity
 
@@ -55,6 +55,25 @@ clauses from the unconfirmed remainder; it must not promote the original conjunc
 
 ## Current disposition
 
-No claim, unit, acceptance or sufficient status was changed in response to this report.
-The next step is owner direction: apply the findings and request a focused re-review, or
-challenge specific findings with evidence.
+At the time the review was recorded, no disposition was changed. Remediation was applied
+afterward; see the section below. A focused re-review is required before treating the
+reject verdict as resolved.
+
+
+## Remediation applied
+
+- **R-01 applied:** FS-21 reclassified to `partially-supported`. Supported case-study
+  clauses are recorded; the exact definition and design rule remain unconfirmed.
+- **R-02 applied:** FS-10 reclassified to `partially-supported`. The chapter supports
+  buffering, reordering risk and non-transactional loss, not every-stage wording.
+- **R-03 applied:** eleven EIP claims split into `supported_clauses` and
+  `unconfirmed_clauses`; original conjunctions are not fully supported.
+- **R-05 applied:** ACCEPTED, RESOLUTIONS and ALTERNATIVES now agree on EIP clause-level
+  support and blocked units.
+- **R-08 applied:** Workbook coverage corrected from chapters 1-20 to 1-21.
+
+R-04, R-06 and R-07 remain non-blocking open items. The review verdict remains `reject`
+for the reviewed snapshot; the post-remediation state needs a focused external re-review.
+
+Post-remediation claim counts: 15 partially-supported, 5 unconfirmed, 2 contradicted,
+1 resolved, total 23.

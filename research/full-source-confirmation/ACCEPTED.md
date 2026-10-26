@@ -10,19 +10,20 @@ Owner decisions:
    PostgreSQL 18 manual contains no failback procedure. A full-text search of the 18 A4 PDF
    (185,110 lines / 1,111,161 words) found zero occurrences of failback, RPO, RTO,
    recovery point objective, recovery time objective, restore verification or restore drill.
-3. The remaining EIP Chapter 4+ units are not accepted as final. The author-hosted Chapter 3
-   PDF covers only Message Channel, Message, Pipes and Filters, Message Router, Message
-   Translator and Message Endpoint. The full book or a legal Chapter 4+ copy is still required.
-4. The five public-web claims that are absent from fully read pages remain unconfirmed. No
-   further public text has been found that states them.
-
-No sufficient coverage, human review, CI or acceptance of a book claim is implied.
-5. The five public-web claims FS-01, FS-02, FS-03, FS-19 and FS-20 are accepted as final
+3. EIP Chapter 4+ remains `source-unavailable`. The author-hosted Chapter 3 PDF covers
+   only Message Channel, Message, Pipes and Filters, Message Router, Message Translator
+   and Message Endpoint. The full book or a legal Chapter 4+ copy is still required.
+4. The five public-web claims FS-01, FS-02, FS-03, FS-19 and FS-20 are accepted as final
    `unconfirmed`. Their complete public pages (and the full PostgreSQL 18 manual for FS-20)
    do not state them; no further public text search is planned.
-6. FS-21 is accepted as final `unconfirmed`. The complete SRE Workbook was read and does not
-   define synthetic monitoring or state the design rule.
-7. The eleven EIP claims whose patterns are in Chapter 4 or later are accepted as final
-   `unconfirmed` with `source-unavailable`. The publisher withholds Chapter 4+, only Chapter 3
-   is author-hosted, and no open authorized mirror was found. The Internet Archive
-   controlled-lending copy was not borrowed.
+5. FS-21 is reclassified as `partially-supported` after external review. External probing,
+   geographic probe locations, false-positive confirmation, browser probes and artificial
+   activity are supported; the exact definition and the explicit-design rule remain
+   unconfirmed.
+6. The eleven EIP claims whose patterns are in Chapter 4 or later are accepted as final
+   `partially-supported` at clause level. The publisher withholds Chapter 4+, so the original
+   conjunctions are not fully supported; Chapter 3 and the public pattern pages support only
+   the clauses listed in each claim record. No open authorized mirror was found.
+
+No sufficient coverage, independent AI review, CI or acceptance of a book claim is
+implied.

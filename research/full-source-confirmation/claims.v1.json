@@ -62,9 +62,17 @@
       "removed_claim": "Acknowledgement and failure semantics are channel-specific.",
       "full_source": "Enterprise Integration Patterns book / full pattern page",
       "availability": "publisher-withheld",
-      "status": "unconfirmed",
-      "status_detail": "source-unavailable-accepted",
-      "final": true
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "final": true,
+      "supported_clauses": [
+        "RabbitMQ consumer acknowledges automatically on receipt before processing.",
+        "The callback/asynchronous receiver mechanics are described."
+      ],
+      "unconfirmed_clauses": [
+        "Acknowledgement and failure semantics are channel-specific."
+      ],
+      "remediation": "R-03: split the conjunction into supported and unconfirmed clauses; full Chapter 4+ remains unavailable."
     },
     {
       "id": "FS-07",
@@ -73,9 +81,20 @@
       "removed_claim": "Asynchronous implementations need correlation, timeout and ambiguous-outcome handling.",
       "full_source": "Enterprise Integration Patterns book / full pattern page",
       "availability": "publisher-withheld",
-      "status": "unconfirmed",
-      "status_detail": "source-unavailable-accepted",
-      "final": true
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "final": true,
+      "supported_clauses": [
+        "Request and reply use separate messages/channels.",
+        "Synchronous block and asynchronous callback are described.",
+        "The callback re-establishes the caller context."
+      ],
+      "unconfirmed_clauses": [
+        "Correlation identifier mechanics.",
+        "Timeout handling.",
+        "Ambiguous-outcome handling."
+      ],
+      "remediation": "R-03: split the conjunction into supported and unconfirmed clauses; full Chapter 4+ remains unavailable."
     },
     {
       "id": "FS-08",
@@ -84,9 +103,18 @@
       "removed_claim": "Routing rules become part of the contract and require versioning and testing.",
       "full_source": "Enterprise Integration Patterns book / full pattern page",
       "availability": "publisher-withheld",
-      "status": "unconfirmed",
-      "status_detail": "source-unavailable-accepted",
-      "final": true
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "final": true,
+      "supported_clauses": [
+        "The router examines message content and routes to a different channel.",
+        "A configurable rules engine can compute the destination."
+      ],
+      "unconfirmed_clauses": [
+        "Routing rules become part of the contract.",
+        "Versioning and testing are required."
+      ],
+      "remediation": "R-03: split the conjunction into supported and unconfirmed clauses; full Chapter 4+ remains unavailable."
     },
     {
       "id": "FS-09",
@@ -95,9 +123,17 @@
       "removed_claim": "Filtered messages need an explicit disposition and audit boundary.",
       "full_source": "Enterprise Integration Patterns book / full pattern page",
       "availability": "publisher-withheld",
-      "status": "unconfirmed",
-      "status_detail": "source-unavailable-accepted",
-      "final": true
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "final": true,
+      "supported_clauses": [
+        "Matching messages go to one output channel.",
+        "Non-matching messages are discarded."
+      ],
+      "unconfirmed_clauses": [
+        "An explicit disposition or audit boundary is required for filtered messages."
+      ],
+      "remediation": "R-03: split the conjunction into supported and unconfirmed clauses; full Chapter 4+ remains unavailable."
     },
     {
       "id": "FS-10",
@@ -106,8 +142,18 @@
       "removed_claim": "Each stage adds buffering, ordering and failure behavior.",
       "full_source": "Enterprise Integration Patterns book / full pattern page",
       "availability": "publisher-withheld",
-      "status": "contradicted",
-      "status_detail": "full chapter 3 read"
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; universal-wording-unconfirmed",
+      "final": true,
+      "supported_clauses": [
+        "Channels provide buffering, and that buffering consumes memory and CPU cycles.",
+        "Concurrent processing can cause messages to be processed out of order; a Resequencer is the stated remedy.",
+        "The simple filter example is not transactional and loses a message on an error before output."
+      ],
+      "unconfirmed_clauses": [
+        "The universal statement that every stage adds buffering, ordering and failure behaviour."
+      ],
+      "remediation": "R-02: reclassified from contradicted to partially-supported; the chapter supports the concerns but not the universal wording."
     },
     {
       "id": "FS-11",
@@ -116,9 +162,18 @@
       "removed_claim": "Partial results and duplicates need handling.",
       "full_source": "Enterprise Integration Patterns book / full pattern page",
       "availability": "publisher-withheld",
-      "status": "unconfirmed",
-      "status_detail": "source-unavailable-accepted",
-      "final": true
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "final": true,
+      "supported_clauses": [
+        "Wait for All, Time Out, First Best, Time Out with Override and External Event are described.",
+        "Incomplete-set handling is described."
+      ],
+      "unconfirmed_clauses": [
+        "Duplicate handling.",
+        "A general partial-results rule."
+      ],
+      "remediation": "R-03: split the conjunction into supported and unconfirmed clauses; full Chapter 4+ remains unavailable."
     },
     {
       "id": "FS-12",
@@ -127,9 +182,19 @@
       "removed_claim": "Latency, partial failure and response correlation are explicit concerns.",
       "full_source": "Enterprise Integration Patterns book / full pattern page",
       "availability": "publisher-withheld",
-      "status": "unconfirmed",
-      "status_detail": "source-unavailable-accepted",
-      "final": true
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "final": true,
+      "supported_clauses": [
+        "A request is broadcast to multiple recipients and responses are aggregated.",
+        "MuleSoft route errors propagate to the Scatter-Gather."
+      ],
+      "unconfirmed_clauses": [
+        "Latency and tail behavior.",
+        "Response correlation.",
+        "A general partial-failure rule."
+      ],
+      "remediation": "R-03: split the conjunction into supported and unconfirmed clauses; full Chapter 4+ remains unavailable."
     },
     {
       "id": "FS-13",
@@ -138,9 +203,16 @@
       "removed_claim": "Retention and replay scope must be bounded.",
       "full_source": "Enterprise Integration Patterns book / full pattern page",
       "availability": "publisher-withheld",
-      "status": "unconfirmed",
-      "status_detail": "source-unavailable-accepted",
-      "final": true
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "final": true,
+      "supported_clauses": [
+        "Messages are saved for an inactive subscriber and delivered on reconnect."
+      ],
+      "unconfirmed_clauses": [
+        "Retention and replay scope are bounded."
+      ],
+      "remediation": "R-03: split the conjunction into supported and unconfirmed clauses; full Chapter 4+ remains unavailable."
     },
     {
       "id": "FS-14",
@@ -149,9 +221,18 @@
       "removed_claim": "Buffering, timeout and missing-message policy are required.",
       "full_source": "Enterprise Integration Patterns book / full pattern page",
       "availability": "publisher-withheld",
-      "status": "unconfirmed",
-      "status_detail": "source-unavailable-accepted",
-      "final": true
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "final": true,
+      "supported_clauses": [
+        "An internal buffer stores out-of-sequence messages.",
+        "Messages are published in a specified order."
+      ],
+      "unconfirmed_clauses": [
+        "Timeout or gap policy.",
+        "Missing-message policy."
+      ],
+      "remediation": "R-03: split the conjunction into supported and unconfirmed clauses; full Chapter 4+ remains unavailable."
     },
     {
       "id": "FS-15",
@@ -160,9 +241,19 @@
       "removed_claim": "Claim Check stores a large payload; storage lifetime and access control become part of the flow.",
       "full_source": "Enterprise Integration Patterns book / full pattern page",
       "availability": "publisher-withheld",
-      "status": "unconfirmed",
-      "status_detail": "source-unavailable-accepted",
-      "final": true
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "final": true,
+      "supported_clauses": [
+        "Message data is stored in a persistent store and a key is passed.",
+        "Later components retrieve the stored data."
+      ],
+      "unconfirmed_clauses": [
+        "The stored data is large.",
+        "Storage lifetime.",
+        "Access control."
+      ],
+      "remediation": "R-03: split the conjunction into supported and unconfirmed clauses; full Chapter 4+ remains unavailable."
     },
     {
       "id": "FS-16",
@@ -171,9 +262,18 @@
       "removed_claim": "A broker mediates delivery between producers and consumers; bridge semantics require protocol and contract mapping.",
       "full_source": "Enterprise Integration Patterns book / full pattern page",
       "availability": "publisher-withheld",
-      "status": "unconfirmed",
-      "status_detail": "source-unavailable-accepted",
-      "final": true
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "final": true,
+      "supported_clauses": [
+        "The broker receives messages, determines the destination and routes to a channel.",
+        "Hub-and-spoke is described."
+      ],
+      "unconfirmed_clauses": [
+        "End-to-end delivery between producers and consumers.",
+        "Bridge protocol and contract mapping."
+      ],
+      "remediation": "R-03: split the conjunction into supported and unconfirmed clauses; full Chapter 4+ remains unavailable."
     },
     {
       "id": "FS-17",
@@ -182,9 +282,18 @@
       "removed_claim": "Translation ownership and version drift are ongoing costs.",
       "full_source": "Enterprise Integration Patterns book / full pattern page",
       "availability": "publisher-withheld",
-      "status": "unconfirmed",
-      "status_detail": "source-unavailable-accepted",
-      "final": true
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "final": true,
+      "supported_clauses": [
+        "A common canonical format independent of applications is described.",
+        "Translator counts are given for 2, 3 and 6 applications."
+      ],
+      "unconfirmed_clauses": [
+        "Translation ownership.",
+        "Version drift as an ongoing cost."
+      ],
+      "remediation": "R-03: split the conjunction into supported and unconfirmed clauses; full Chapter 4+ remains unavailable."
     },
     {
       "id": "FS-18",
@@ -225,9 +334,22 @@
       "removed_claim": "Synthetic monitoring probes user-visible behavior; coverage, location and false positives require design.",
       "full_source": "Google SRE Workbook",
       "availability": "public-web",
-      "status": "unconfirmed",
-      "status_detail": "accepted-absent-from-complete-book",
-      "final": true
+      "status": "partially-supported",
+      "status_detail": "clause-level-support; design-rule-unconfirmed",
+      "final": true,
+      "supported_clauses": [
+        "Evernote uses an external prober outside its environment.",
+        "The prober location is configurable and multiple geographic probes are used.",
+        "A second geographically separate prober confirms failures and limits false positives.",
+        "Chapter 2 describes browser probes and a browser-based home-page SLI.",
+        "Chapter 5 describes synthetic user activity and its coverage limits."
+      ],
+      "unconfirmed_clauses": [
+        "The exact term synthetic monitoring and a generic definition.",
+        "The statement that coverage, probe location and false positives require explicit design.",
+        "The phrase user-visible behavior."
+      ],
+      "remediation": "R-01: reclassified from unconfirmed to partially-supported after clause-level Workbook evidence."
     },
     {
       "id": "FS-22",

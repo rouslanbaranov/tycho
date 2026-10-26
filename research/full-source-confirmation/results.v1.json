@@ -46,11 +46,11 @@
       "source_id": "src.sre-workbook",
       "source": "Google SRE Workbook, all content chapters and appendices",
       "revision": "live 2026-10-08 Last-Modified; 34 pages",
-      "coverage": "forewords, preface, Parts I-III, chapters 1-20, appendices A-C, index, editors, colophon; all 34 content pages read",
-      "classification": "unconfirmed",
-      "evidence": "No passage defines synthetic monitoring or states that coverage, probe location and false positives require explicit design. Evernote describes an external Pingdom prober against a status page and a second geographically separate prober, which partially corroborates external probing and false-positive handling but not the full claim.",
-      "conclusion": "Claim is not supported as worded and is not contradicted. Only partial corroboration exists in the SLO Engineering Case Studies chapter.",
-      "final_disposition": "unconfirmed-accepted"
+      "coverage": "forewords, preface, Parts I-III, chapters 1-21, appendices A-C, index, editors, colophon; all 34 content pages read",
+      "classification": "partially-supported",
+      "evidence": "Evernote uses an external prober outside the environment, multiple geographic locations and a second prober to confirm failures; Chapter 2 describes browser probes and a browser home-page SLI; Chapter 5 describes synthetic user activity and coverage limits. The exact definition and the explicit-design rule are absent.",
+      "conclusion": "Clause-level support exists for external probing, locations, false positives, browser probes and artificial activity; the exact synthetic-monitoring definition and design rule remain unconfirmed. Reclassified under R-01.",
+      "final_disposition": "partially-supported-accepted"
     },
     {
       "claim_ids": [
@@ -69,10 +69,122 @@
       "source_id": "src.enterprise-integration",
       "source": "Enterprise Integration Patterns book; public pattern pages are publisher-abridged",
       "coverage": "All cited public pages read; Chapter 3 PDF read. Chapters 4+ are withheld from the public site. A controlled-lending copy exists at archive.org/details/enterpriseintegr0000hohp but was not borrowed, so the full text was not obtained.",
-      "classification": "unconfirmed",
-      "status_detail": "source-unavailable-accepted",
-      "conclusion": "The eleven claims are accepted as final unconfirmed because the publisher withholds Chapter 4+ and no open authorized full text was found.",
-      "final_disposition": "unconfirmed-accepted"
+      "classification": "partially-supported",
+      "status_detail": "clause-level-support; chapter-4-unavailable",
+      "conclusion": "Each conjunction is split into supported and unconfirmed clauses; the original conjunction is not fully supported and the full Chapter 4+ text remains unavailable. Reclassified under R-03.",
+      "final_disposition": "partially-supported-accepted",
+      "clause_support": {
+        "FS-06": {
+          "supported": [
+            "automatic acknowledgement before processing"
+          ],
+          "unconfirmed": [
+            "channel-specific acknowledgement/failure semantics"
+          ]
+        },
+        "FS-07": {
+          "supported": [
+            "request/reply channels",
+            "synchronous block",
+            "asynchronous callback"
+          ],
+          "unconfirmed": [
+            "correlation mechanics",
+            "timeout",
+            "ambiguous outcomes"
+          ]
+        },
+        "FS-08": {
+          "supported": [
+            "content-based routing",
+            "configurable rules engine"
+          ],
+          "unconfirmed": [
+            "contract",
+            "versioning",
+            "testing"
+          ]
+        },
+        "FS-09": {
+          "supported": [
+            "single output channel",
+            "non-matching messages discarded"
+          ],
+          "unconfirmed": [
+            "audit boundary",
+            "explicit disposition requirement"
+          ]
+        },
+        "FS-11": {
+          "supported": [
+            "incomplete-set strategies"
+          ],
+          "unconfirmed": [
+            "duplicate handling",
+            "partial-results rule"
+          ]
+        },
+        "FS-12": {
+          "supported": [
+            "broadcast/aggregate",
+            "route error propagation"
+          ],
+          "unconfirmed": [
+            "latency",
+            "response correlation",
+            "general partial-failure rule"
+          ]
+        },
+        "FS-13": {
+          "supported": [
+            "saved messages for inactive subscriber",
+            "delivery on reconnect"
+          ],
+          "unconfirmed": [
+            "bounded retention/replay scope"
+          ]
+        },
+        "FS-14": {
+          "supported": [
+            "internal buffer",
+            "specified output order"
+          ],
+          "unconfirmed": [
+            "timeout/gap policy",
+            "missing-message policy"
+          ]
+        },
+        "FS-15": {
+          "supported": [
+            "persistent storage",
+            "key-based retrieval"
+          ],
+          "unconfirmed": [
+            "large payload",
+            "storage lifetime",
+            "access control"
+          ]
+        },
+        "FS-16": {
+          "supported": [
+            "destination selection and routing"
+          ],
+          "unconfirmed": [
+            "end-to-end delivery",
+            "bridge protocol/contract mapping"
+          ]
+        },
+        "FS-17": {
+          "supported": [
+            "canonical format",
+            "translator-count comparison"
+          ],
+          "unconfirmed": [
+            "translation ownership",
+            "version drift"
+          ]
+        }
+      }
     },
     {
       "claim_id": "FS-18",
@@ -170,9 +282,10 @@
         "pdf_sha256": "c1e7125dcebfdd9a2b23a922dfbbc9694e5f8048e81e14dc95e2882043ac4f66"
       },
       "coverage": "complete chapter, all 42 pages; Pipes and Filters pp.70-77",
-      "classification": "contradicted",
-      "evidence": "p.72 says channels provide buffering as a cost; p.74 says concurrent processing can cause out-of-order messages; p.77 says the simple filter example is not transactional and loses messages on error. No passage says each stage adds buffering, ordering and failure behavior.",
-      "conclusion": "The removed claim is contradicted by the full chapter text."
+      "classification": "partially-supported",
+      "evidence": "p.72 attributes buffering to channels; p.74 says concurrency can reorder messages; p.77 says the simple filter is not transactional. These support the concerns but do not demonstrate the universal every-stage wording.",
+      "conclusion": "The universal claim is not supported; clause-level support exists. Reclassified under R-02.",
+      "final_disposition": "partially-supported-accepted"
     }
   ]
 }
