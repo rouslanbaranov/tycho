@@ -137,10 +137,7 @@ precedence tests and observability.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gateway-routing.2026-10-21: Gateway Routing pattern,
-sections "Context and problem", "Solution", "Multiple disparate services", "Multiple
-instances of the same service", "Multiple versions of the same service", "Issues and
-considerations", "When to use this pattern", "Workload design", "Example". Vendor
+read record read.microsoft-gateway-routing.2026-10-21: all eleven served headings read. Vendor
 pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -177,9 +174,8 @@ verify the gateway boundary and aggregation mechanics in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gateway-aggregation.2026-10-21: Gateway Aggregation pattern,
-sections "Context and problem", "Solution", "Problems and considerations", "When to use
-this pattern", "Workload design", "Example". Vendor pattern page, not a benchmark.
+read record read.microsoft-gateway-aggregation.2026-10-21: all nine served
+headings read. Vendor pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -214,10 +210,8 @@ an explicit trust boundary with downstream authorization.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gateway-offloading.2026-10-21: Gateway Offloading pattern,
-sections "Context and problem", "Solution", "Problems and considerations", "When to use
-this pattern", "Workload design", "Example", "Application Gateway with TLS offloading",
-"Supporting technologies". Vendor pattern page, not a benchmark.
+read record read.microsoft-gateway-offloading.2026-10-21: all eleven served
+headings read. Vendor pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -251,9 +245,8 @@ API contract boundary in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-bff.2026-10-21: Backends for Frontends pattern, sections
-"Context and problem", "Solution", "Problems and considerations", "When to use this
-pattern", "Workload design", "Example", "Design". Vendor pattern page, not a benchmark.
+read record read.microsoft-bff.2026-10-21: all thirteen served headings
+read. Vendor pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

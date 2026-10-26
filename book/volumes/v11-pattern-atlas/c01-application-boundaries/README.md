@@ -486,9 +486,8 @@ section covers per-client egress, not an ingress gateway.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-ambassador.2026-10-21: Ambassador pattern, sections
-"Context and problem", "Solution", "Problems and considerations", "When to use this
-pattern", "Workload design", "Example". This is a vendor pattern page, not a comparative
+read record read.microsoft-ambassador.2026-10-21: all eight served headings read.
+This is a vendor pattern page, not a comparative
 study.
 
 **Decision state.** `applicable-under-conditions`.
@@ -524,9 +523,7 @@ explicit cutover path; verify those mechanics in the technical owner.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.microsoft-acl.2026-10-21`: Anti-Corruption Layer pattern, sections
-"Anti-Corruption Layer pattern", "Context and problem", "Solution", "Problems and
-considerations", "When to use this pattern", "Workload design", "Example". This is a
+read record `read.microsoft-acl.2026-10-21`: all nine served headings read. This is a
 vendor pattern page, not a comparative study.
 
 **Decision state.** `applicable-under-conditions`.
