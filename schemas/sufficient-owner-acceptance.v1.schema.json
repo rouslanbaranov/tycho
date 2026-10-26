@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.dev/schemas/sufficient-owner-acceptance.v1.schema.json",
+  "title": "Tycho sufficient owner acceptance v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "issue", "status", "scope", "owner", "accepted_at", "accepted_entries", "review_reports", "decision"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "issue": {"const": 540},
+    "status": {"enum": ["pending", "accepted", "rejected"]},
+    "scope": {"type": "string", "minLength": 1},
+    "owner": {"type": ["string", "null"]},
+    "accepted_at": {"type": ["string", "null"], "format": "date"},
+    "accepted_entries": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "review_reports": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "decision": {"type": "string", "minLength": 10}
+  }
+}

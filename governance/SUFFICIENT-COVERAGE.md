@@ -63,4 +63,5 @@ changed page, card or source binding.
 - This rule applies to the pattern atlas entries, not to unrelated book pages.
 - A sufficient entry is not a claim that every source claim is complete or that CI ran.
 - Human review is not required for this gate; the external AI review is the review gate.
-- Owner acceptance remains a separate decision.
+- Owner acceptance remains a separate decision, recorded in
+  `edition/patterns/sufficient-owner-acceptance.v1.json`; pending is not acceptance.
