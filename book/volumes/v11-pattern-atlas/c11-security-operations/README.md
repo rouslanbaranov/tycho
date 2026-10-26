@@ -356,7 +356,7 @@ records and notify. On schema drift, migrate/backfill or dual-write with a compa
 **Technical owner.** [Structured logging, authoritative audit and data lineage](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#structured-logging) — logging/audit is bounded, not a logging platform manual.
 
 **Sources.** [src.otel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-otel-logs.2026-10-21: sections "Logs", "Log Records". Attributes and
+read record read.batch6-otel-logs.2026-10-21: sections "Logs", "Log Record". Attributes and
 correlation were not headings; correlation policy is synthetic guidance. The source is a public
 pattern/specification unit, not a benchmark.
 
@@ -387,8 +387,8 @@ owner section.
 **Technical owner.** [Audit Trail](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#audit-trail) — logging/audit is bounded, not a logging platform manual.
 
 **Sources.** [src.openlineage](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-openlineage.2026-10-21: sections "About OpenLineage", "Events". The unit
-covers lineage events, not tamper-proof audit records; Namespaces and Datasets were not headings.
+read record read.batch6-openlineage.2026-10-21: sections "About OpenLineage", "Scope". The unit
+covers lineage, not tamper-proof audit records; audit policy is synthetic design guidance.
 The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
