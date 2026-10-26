@@ -527,8 +527,8 @@ cacheability in the owner section.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-static.2026-10-21: sections "Static Content Hosting pattern",
-"Context and problem", "Solution". The source is a public pattern/documentation
+read record read.batch3-ms-static.2026-10-21: all nine served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

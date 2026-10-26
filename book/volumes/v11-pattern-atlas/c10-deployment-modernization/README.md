@@ -196,8 +196,8 @@ unauthorized overrides are common; audit changes, expire flags and bound snapsho
 
 **Sources.**
 [src.fowler-feature-toggles](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-fowler-feature-toggles.2026-10-21: sections "Feature Toggles (aka
-Feature Flags)", "Categories of toggles", "Implementation". The source is a public
+read record read.batch5-fowler-feature-toggles.2026-10-21: all seven top-level sections
+and 40 headings read. The source is a public
 pattern/documentation
 unit, not a benchmark.
 

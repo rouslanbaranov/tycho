@@ -405,7 +405,8 @@ owner section.
 **Technical owner.** [Audit Trail](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#audit-trail) — logging/audit is bounded, not a logging platform manual.
 
 **Sources.** [src.openlineage](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-openlineage.2026-10-21: sections "About OpenLineage", "Scope". The unit
+read record read.batch6-openlineage.2026-10-21: sections "About OpenLineage",
+"Object Model". The unit
 covers lineage, not tamper-proof audit records; audit policy is synthetic design guidance.
 The source is a public pattern/specification unit, not a benchmark.
 
