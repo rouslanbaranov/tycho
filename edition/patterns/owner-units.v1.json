@@ -7046,22 +7046,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Tenant-based isolation assigns each tenant a bounded share of compute, storage and quota, with routing and credentials that keep the tenant scope explicit.",
-          "reason": ""
+          "reason": "Defines per-tenant compute, storage and quota with explicit routing and credentials."
         },
         "invariant": {
           "state": "supported",
           "quote": "No query, cache key, queue consumer or credential may cross a tenant boundary without an explicit shared-resource contract.",
-          "reason": ""
+          "reason": "Forbids crossing tenant boundaries without a shared-resource contract."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A shared cache or background worker leaks one tenant's data or consumes another's capacity; scope keys by tenant and test indirect paths with a foreign identifier.",
-          "reason": ""
+          "reason": "Names shared-cache and worker leaks and requires tenant-scoped keys and foreign-ID tests."
         },
         "alternative": {
           "state": "supported",
           "quote": "A shared pool with tenant-scoped predicates is cheaper at low scale; choose dedicated resources when noisy-neighbour or compliance risk dominates.",
-          "reason": ""
+          "reason": "Contrasts a shared pool with tenant predicates against dedicated resources."
         }
       },
       "decision_evidence": {
