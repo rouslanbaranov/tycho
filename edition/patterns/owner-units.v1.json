@@ -339,22 +339,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Clean and onion styles place domain rules at the centre and let source dependencies point inward only, with application services coordinating use cases and outer layers supplying technology adapters. The dependency rule, not the number of drawn rings, is the mechanism.",
-          "reason": ""
+          "reason": "Defines inward source dependencies and outer technology adapters."
         },
         "invariant": {
           "state": "supported",
           "quote": "No domain module may import a framework, transport or storage dependency, and an automated build check must enforce the direction rather than a diagram.",
-          "reason": ""
+          "reason": "Requires no domain import of framework, transport or storage and an automated direction check."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Convenience imports erode the boundary until the domain must change for a technology reason; the remedy is an enforceable dependency test and a deliberate adapter, not another layer name.",
-          "reason": ""
+          "reason": "Names convenience imports as erosion and requires a dependency test and adapter."
         },
         "alternative": {
           "state": "supported",
           "quote": "Hexagonal ports and adapters expresses the same inward rule with explicit application ports; prefer the simpler layering when the port indirection adds no tested change benefit.",
-          "reason": ""
+          "reason": "Contrasts explicit hexagonal ports with simpler layering."
         }
       },
       "decision_evidence": {
@@ -459,22 +459,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Each service owns its schema and storage, and other services reach that data only through the owner's contract or published events. The boundary is an ownership rule even when several schemas share one physical server.",
-          "reason": ""
+          "reason": "Defines service-owned schema and storage with access through contract or events."
         },
         "invariant": {
           "state": "supported",
           "quote": "Only the owning service writes its records, and no critical-path query joins another service's tables without an explicit contract.",
-          "reason": ""
+          "reason": "Requires only the owner to write and forbids undeclared cross-service joins."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Dual writes, stale replicas and cross-service queries are common; use an outbox or idempotent reconciliation for cross-service effects and verify replica freshness before joining.",
-          "reason": ""
+          "reason": "Names dual writes, stale replicas and cross-service queries with outbox/reconciliation."
         },
         "alternative": {
           "state": "supported",
           "quote": "A shared database with enforced module ownership is simpler when teams release together; choose separate stores only when independent ownership, scaling or recovery justify the coordination cost.",
-          "reason": ""
+          "reason": "Contrasts a shared database with enforced module ownership."
         }
       },
       "decision_evidence": {
@@ -516,22 +516,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A self-contained service completes a request using its own state and a bounded set of dependencies, instead of requiring a caller to coordinate several owners for one user-visible outcome.",
-          "reason": ""
+          "reason": "Defines local state plus a bounded dependency set for one request."
         },
         "invariant": {
           "state": "supported",
           "quote": "The service contract must state which dependencies are required, which are optional, and what response is valid when an optional dependency is unavailable.",
-          "reason": ""
+          "reason": "Requires the contract to declare required, optional and degraded responses."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Hidden shared state or a chatty dependency chain turns an apparently local request into a multi-owner transaction; dependency and latency traces reveal the undeclared coupling.",
-          "reason": ""
+          "reason": "Names hidden shared state and chatty chains and requires dependency/latency traces."
         },
         "alternative": {
           "state": "supported",
           "quote": "An orchestrating service or backend for frontend can coordinate owners explicitly; accept that composition when the workflow genuinely spans separate authorities and the coordinator's failure behaviour is designed.",
-          "reason": ""
+          "reason": "Names an orchestrator or backend for frontend with explicit coordination."
         }
       },
       "decision_evidence": {
@@ -573,22 +573,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A sidecar runs as a helper process or container beside each service instance and supplies networking, policy or telemetry behaviour without changing the application image.",
-          "reason": ""
+          "reason": "Defines a per-instance helper for networking, policy or telemetry."
         },
         "invariant": {
           "state": "supported",
           "quote": "its lifecycle and configuration must have an owner",
-          "reason": ""
+          "reason": "Requires named lifecycle and configuration ownership."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A missing or misconfigured sidecar silently removes a control or opens a bypass; readiness must include it, and the fail-open or fail-closed choice must be tested.",
-          "reason": ""
+          "reason": "Names missing or misconfigured sidecars and requires readiness and fail-mode tests."
         },
         "alternative": {
           "state": "supported",
           "quote": "A shared proxy or an in-process library provides the same control without per-instance overhead; choose a sidecar when per-instance isolation or independent upgrade matters.",
-          "reason": ""
+          "reason": "Contrasts a shared proxy or in-process library."
         }
       },
       "decision_evidence": {
@@ -1347,22 +1347,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "An asynchronous request-reply interface accepts a request, returns a durable handle and later exposes the terminal result through polling or a callback.",
-          "reason": ""
+          "reason": "Defines a durable handle and later polling or callback result."
         },
         "invariant": {
           "state": "supported",
           "quote": "The handle must identify one recorded operation whose outcome is durable, so a lost reply cannot turn an accepted request into an unknown effect.",
-          "reason": ""
+          "reason": "Requires the handle to identify one recorded durable operation."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A lost or expired reply leaves the caller unable to decide the outcome; keep the operation record queryable and reconcile before retrying the original request.",
-          "reason": ""
+          "reason": "Requires a queryable operation record and reconciliation before retry."
         },
         "alternative": {
           "state": "supported",
           "quote": "A synchronous call with a bounded deadline is simpler when the work reliably finishes inside the request budget; split the interaction only when waiting would exceed it.",
-          "reason": ""
+          "reason": "Names a synchronous bounded-deadline call when the work fits the request budget."
         }
       },
       "decision_evidence": {
@@ -1404,22 +1404,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A gatekeeper is a dedicated request-validation boundary that authenticates the caller and evaluates coarse authorization before forwarding a request to the protected service.",
-          "reason": ""
+          "reason": "Defines a validation boundary before forwarding to the protected service."
         },
         "invariant": {
           "state": "supported",
           "quote": "The protected service must reject calls that bypass the gatekeeper, or repeat the security-relevant checks, so the boundary cannot be sidestepped by an alternate route.",
-          "reason": ""
+          "reason": "Requires the protected service to reject bypasses or repeat security checks."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A stale policy or an undeclared direct path defeats the check while dashboards remain green; combine network policy, denial logs and a bypass test in the acceptance evidence.",
-          "reason": ""
+          "reason": "Names stale policy and direct paths and requires network policy, denial logs and a bypass test."
         },
         "alternative": {
           "state": "supported",
           "quote": "Enforce authorization inside the service at each effect boundary; use a gatekeeper when it centralizes a policy that every route must apply and the bypass surface is closed.",
-          "reason": ""
+          "reason": "Names in-service authorization at each effect boundary."
         }
       },
       "decision_evidence": {
