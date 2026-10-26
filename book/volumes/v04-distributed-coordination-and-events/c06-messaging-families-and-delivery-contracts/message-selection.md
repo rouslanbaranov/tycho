@@ -342,7 +342,8 @@ the operational cost of a push subscription.
 
 ### Durable Subscriber
 
-A server-side cursor plus retained messages lets an offline consumer resume after reconnect. Resume is bounded only by retention, acknowledgement timeout and replay policy.
+A server-side cursor plus retained messages lets an offline consumer resume after reconnect.
+Resume is bounded only by retention, acknowledgement timeout and replay policy.
 
 Delivery guarantees differ by broker and configuration. A durable stream commonly provides
 at-least-once delivery: the consumer needs a stable effect key and dedup before applying, or a
