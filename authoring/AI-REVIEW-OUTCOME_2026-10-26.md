@@ -1,7 +1,8 @@
 # External AI review outcome — #535
 
-Status: review performed; verdict **reject**. Remediation was applied after the review;
-a focused re-review is still required. The owner decides whether to accept the remediation.
+Status: two review rounds performed; both verdicts **reject**. Corrections after the second
+round are applied; a third focused re-review is still required. The owner decides whether
+to accept the corrections.
 
 ## Review identity
 
@@ -83,3 +84,20 @@ needs a focused external re-review.
 
 Post-remediation claim counts: 15 partially-supported, 5 unconfirmed, 2 contradicted,
 1 resolved, total 23.
+
+
+## Second focused re-review — 2026-10-26
+
+Report: `authoring/ai-reviews/2026-10-26-remediation-rereview-codex.md`.
+SHA-256: `430d30bbb689e5ad15127f7790eb2a0e0cc4b39fd663602ccde854cc7bfbb2f7`.
+
+Verdict: **reject**.
+
+- R-01, R-02, R-06, R-07 and R-08 were resolved in the reviewed scope.
+- R-04 regressed: sections were bound by `pattern_id` only, producing ten sibling-source
+  misbindings. Corrected by `(pattern_id, source_id, unit)`; 155 entries matched and zero
+  differences remain.
+- R-03a: the Aggregator ledger limitation still denied incomplete-set handling. Corrected.
+- R-05a: the RESOLUTIONS range included FS-10. FS-10 is now listed separately.
+
+No claim disposition changed in this round. A third focused re-review is required.

@@ -24,6 +24,9 @@ Owner decisions:
    `partially-supported` at clause level. The publisher withholds Chapter 4+, so the original
    conjunctions are not fully supported; Chapter 3 and the public pattern pages support only
    the clauses listed in each claim record. No open authorized mirror was found.
+7. FS-10 (Pipes and Filters) is separate: its Chapter 3 text is available and the claim is
+   `partially-supported` with `status_detail: clause-level-support;
+   universal-wording-unconfirmed`.
 
 No sufficient coverage, independent AI review, CI or acceptance of a book claim is
 implied.
