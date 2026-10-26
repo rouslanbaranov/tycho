@@ -20,6 +20,7 @@ Canonical owners are [requirements and workload](requirements-workload-profile.m
 | `hard_gates` | correctness, security, availability, compatible versions, data/downtime/RPO/RTO, budget | unknown gates veto unconditional adoption |
 | `query_scope` | canonical page IDs, sources, version/revision, graph neighbor direction and specific section | use targeted lexical/manual navigation until indices exist |
 | `decision_state` | candidate, conditionally applicable, contraindicated, not required, retained, insufficient evidence | never silently promote to accepted |
+| `stage_ladder` | proposed stages, each with gate and evidence | no stage theatre |
 | `support` | claim→source passage, assumption type, counterexample, falsifying test | state exactly what is missing |
 | `next_step` | finite experiment/inventory/review task with accountable owner | output insufficient evidence without false certainty |
 
@@ -62,6 +63,13 @@ This is a *proposed logical envelope*, not a JSON Schema or MCP interface. Stabl
 3. Compare retain/upgrade-in-place, branch-by-abstraction, strangler and replacement options **only when** their prerequisites are met.
 4. For any target, produce a separate transition with reversible states, observed go/no-go and rollback/forward-recovery limits.
 5. Record the decision and **revisit trigger**; never invent a successful migration.
+6. Express the transition as an evidence-gated stage ladder: proof of concept,
+   minimum viable product and product. Each stage may change the architecture
+   but must state its delta, its gate and its evidence; see
+   [the staged contract](../ROCINANTE-STAGED-MODERNIZATION-CONTRACT.md).
+7. Never present the target state as the first implementation step. If the
+   lowest stage has no falsifier or gate evidence, return insufficient
+   evidence with the next observation.
 
 **Example:** if a runtime must be upgraded but public API continuity is mandatory, upgrade-in-place may be the viable first option. A service split is not a default modernization goal.
 
@@ -71,6 +79,8 @@ This is a *proposed logical envelope*, not a JSON Schema or MCP interface. Stabl
 - Preserve source titles, inspected sections, versions and original claim validity. Never take a broad generated summary or graph edge as proof.
 - Use candidate applicability data as **conditional diagnostic material**, not a model ranking. If alternatives remain uncertain, return the particular missing primary source or experiment.
 - No universal number of users, RPS, nodes or milliseconds selects a pattern.
+- For modernization questions, propose staged evolution rather than one leap
+  and keep each stage's Tycho anchor and local gate visible.
 - Return a compact answer with: route, scoped facts, unknowns, excluded/possible options, reason and **next discriminating action**. Detailed provenance must be expandable.
 - If the required source is inaccessible, state `source-unavailable` and prefer a separately inspected official companion under its own citation; do not reconstruct unseen text.
 

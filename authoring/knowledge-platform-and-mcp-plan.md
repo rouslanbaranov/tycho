@@ -3,7 +3,9 @@
 > **Historical manuscript transition — 2026-10-20, before edition assembly:** The owner confirmed independent substantive/content acceptance of all 69 primary chapter manuscripts at `986b1ddbe985079b7c647182fcf1c2fc8911d96c`. PR #218 merged into main at `f9834ef903fc5808f3a1edede208d82aac08f4e6`; #213 and E14 #15 are completed. #214 is open and ready for ten-volume/69-chapter edition assembly and named publication. The exact accepted-head 13/13 validation groups and 215/215 tests PASS are owner-reported in [PR #218](https://github.com/rouslanbaranov/tycho/pull/218#issuecomment-6294804915), not a new run on a later status commit. Earlier pending/0-of-69/review-open rows and pre-merge instructions below are historical and superseded for the manuscript acceptance gate. Their original observations and evidence limits are retained; no signed per-chapter reviewer records are manufactured. No finished physical edition or deployed service is claimed; visual rendering/live MCP remain owner-cancelled. See [current state](STATE.md) and [reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md).
 
 
-Status: scope revised 2026-10-19. Prior plan dated 2026-10-18.
+Status: scope revised 2026-10-19. Prior plan dated 2026-10-18. A proposed
+staged-modernization behaviour contract for Rocinante was recorded 2026-10-26;
+it is not implemented.
 
 ## Product commitment and independence
 
@@ -41,14 +43,14 @@ Status describes Tycho now. A written plan is not an implementation. Each planne
 | K20 | Reusable retrieval service | Planned; required | Search/read/evidence and architecture-decision guidance independent of MCP transport, with bounded outputs and snapshot consistency. |
 | K21 | Remote read-only MCP service | Planned; required | Verified transport/SDK/client compatibility, schema-described capabilities, safe limits, citations and interoperability tests. |
 | K22 | Generic-agent onboarding | Planned; required | Versioned entry capability describing collection, structure, query strategy, evidence, limits, versions and supported operations. |
-| K23 | Integration with the shared Rocinante specialist | Planned; required | Versioned provider instructions, lightweight compatibility checks, collection-scoped retrieval and attributable evidence-backed outputs; no separate Tycho specialist. |
+| K23 | Integration with the shared Rocinante specialist | Planned; required | Versioned provider instructions, lightweight compatibility checks, collection-scoped retrieval, attributable evidence-backed outputs and evidence-gated POC/MVP/Product proposals; no separate Tycho specialist. |
 | K24 | Immutable knowledge snapshots | Planned; required | Manifest of book, metadata, provenance and approved retrieval indexes; integrity checks, atomic activation, version compatibility and rollback. |
 | K25 | Reproducible service deployment | Planned; required | Independent container build and deployment automation, environment configuration, smoke tests, readiness and rollback runbook. |
 | K26 | Safe access and source resolution | Planned; required | Explicit audience/auth policy, read-only boundaries, safe ID/path resolution, no arbitrary execution/fetching and no prohibited-source access. |
 | K27 | Service observability and capacity | Planned; required | Latency/error/resource metrics, privacy-conscious audit events, limits, alerting and representative multi-client load tests. |
 | K28 | Corpus/retrieval/agent evaluation | Planned; required | Evidence-grounded questions, quality/uncertainty/citation/coverage checks and total task cost comparison. |
 | K29 | Maintenance, freshness and change impact | Partial: method only | Source → claim/page/section-index impact, potentially-stale states, review responsibility and verified closure without date inflation. |
-| K30 | Architecture selection and modernization | Requirements/decision models and draft playbooks exist; independently evaluated selection outcomes not established | Requirements/legacy profiles, applicability cards, alternatives, ADRs, target/transition states and evidence-insufficient outcomes. |
+| K30 | Architecture selection and modernization | Requirements/decision models and draft playbooks exist; independently evaluated selection outcomes not established | Requirements/legacy profiles, applicability cards, alternatives, ADRs, target/transition states, staged POC/MVP/Product proposals with per-stage gates and evidence-insufficient outcomes. |
 
 ## Authoritative artifacts and source controls
 
@@ -121,6 +123,20 @@ Tycho must operate, build, validate, index, release and serve without any other 
 Generic MCP clients retain standalone access through Tycho onboarding. Rocinante is an optimized shared consumer, not a prerequisite for understanding the book or using its MCP service. Integration tests cover provider identity, missing/incompatible capabilities, unavailable evidence, correct attribution, isolation and response quality.
 
 The shared response contract covers findings, alternatives, constraints, evidence pointers, applicability, risks, inferences, unknowns, contradictions and next evidence needed. Tycho's MCP service remains read-only retrieval; an always-on hosted LLM is not a baseline dependency.
+
+### Staged modernization proposals (owner instruction, 2026-10-26)
+
+Rocinante must present modernization as a staged evolution: proof of concept,
+minimum viable product and product, with optional sub-stages, an architecture
+that may change at each stage, and per-stage justification that cites Tycho as
+the evidence source. The proposed ladder, evidence obligations, envelope,
+refusal rules and a synthetic example are defined in
+[the staged modernization contract](ROCINANTE-STAGED-MODERNIZATION-CONTRACT.md).
+
+This is a provider-boundary specification, not an implemented agent
+capability. Tycho's tools remain extractive and return no recommendation; the
+staged proposal is composed by the calling agent from cited evidence. Stage
+gates need local measurement and a named owner, not a citation.
 
 ## Snapshots, deployment, access and operations
 
