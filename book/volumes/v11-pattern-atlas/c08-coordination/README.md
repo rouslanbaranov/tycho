@@ -164,8 +164,8 @@ resource or keep the outcome explicitly unsafe.
 **Technical owner.** [Distributed Lock](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#distributed-lock) — locks/leases/fencing are bounded, not a lock-service API guide.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-k8s-leases.2026-10-21: sections "Leases", "Lease objects", "Leader
-election". The read record notes a 100,000-character truncation; later sections are unverified.
+read record read.batch4-k8s-leases.2026-10-21: all six served headings read.
+The prior truncation note is superseded.
 The record covers leases; fencing and quorum guidance is synthetic owner evidence.
 The source is a public pattern/documentation unit, not a benchmark.
 [src.kleppmann-distributed-locking](../../../../edition/patterns/reading-ledger.v1.json)
@@ -201,7 +201,7 @@ the destination.
 **Technical owner.** [Lease-Based Ownership](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#lease-based-ownership) — lease ownership is bounded, not a scheduler implementation.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-k8s-leases.2026-10-21: sections "Leases", "Lease objects". The
+read record read.batch4-k8s-leases.2026-10-21: all six served headings read. The
 source is a public pattern/documentation
 unit, not a benchmark.
 
@@ -370,8 +370,8 @@ keep activities idempotent and use a repair state for unknown external effects.
 **Technical owner.** [Distributed Workflow Orchestration](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#distributed-workflow-orchestration) — durable workflow coordination is bounded, not a Temporal product guide.
 
 **Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-temporal-workflows.2026-10-21: sections "Workflows", "Workflow
-Execution", "Determinism". The record supports durable orchestration only; saga
+read record read.batch2-temporal-workflows.2026-10-21: all four served headings read.
+The record supports durable orchestration only; saga
 compensation semantics are synthetic guidance, not a source claim. The source is a public
 pattern/documentation unit, not a benchmark.
 

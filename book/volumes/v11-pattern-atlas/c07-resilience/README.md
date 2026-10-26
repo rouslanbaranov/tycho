@@ -480,8 +480,8 @@ each hop.
 **Technical owner.** [Priority Queue](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md#priority-queue) — admission/queue policy is bounded, not a universal priority scheme.
 
 **Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-rabbit-priority.2026-10-21: sections "Priority Support in Queues",
-"How it works", "Limitations". The source is a public pattern/documentation
+read record read.batch4-rabbit-priority.2026-10-21: all twenty-two served headings
+read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

@@ -426,8 +426,8 @@ the owner section.
 **Technical owner.** [Expand-and-Contract](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md#expand-and-contract) — expand/contract is bounded to reader/writer compatibility.
 
 **Sources.** [src.flyway](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-flyway.2026-10-21: sections "Migrations", "Versioned Migrations",
-"Repeatable Migrations". The source is a public pattern/documentation
+read record read.batch3-flyway.2026-10-21: all seventeen served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

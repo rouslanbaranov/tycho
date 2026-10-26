@@ -269,8 +269,8 @@ effects for repair.
 **Technical owner.** [Saga Orchestration](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga-orchestration) — workflow selection is bounded, not a dedicated Temporal or orchestration manual.
 
 **Sources.** [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-temporal-workflows.2026-10-21: sections "Workflows", "Workflow
-Execution", "Determinism". The record supports durable orchestration only; saga
+read record read.batch2-temporal-workflows.2026-10-21: all four served headings read.
+The record supports durable orchestration only; saga
 compensation semantics are synthetic guidance. The source is a public
 pattern/specification unit, not a benchmark.
 
@@ -538,8 +538,8 @@ protocol limits in the owner section.
 **Technical owner.** [Two-Phase Commit (2PC)](../../v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md#two-phase-commit-2pc) — local/global commit limits are bounded, not a 2PC protocol reference.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-pg-2pc.2026-10-21: sections "Two-Phase Transactions", "Prepare
-Transaction", "Commit Prepared". The source is a public pattern/specification
+read record read.batch2-pg-2pc.2026-10-21: the single served heading read.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

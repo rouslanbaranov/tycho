@@ -219,8 +219,8 @@ versioning in the owner section.
 **Technical owner.** [Replication, consensus and leader change](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#multi-leader-replication) — replication/leader change is bounded, not a complete multi-leader protocol.
 
 **Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-cassandra-dynamo.2026-10-21: sections "Dynamo", "Multi-master
-Replication: Versioned Data and Tunable Consistency". The source is a public
+read record read.batch3-cassandra-dynamo.2026-10-21: all nineteen served headings
+read. The source is a public
 pattern/documentation
 unit, not a benchmark.
 
@@ -282,8 +282,8 @@ envelope in the owner section.
 **Technical owner.** [Quorum-Based Reads / Writes](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#quorum-based-reads-writes) — quorum arithmetic is bounded, not a universal consistency guarantee.
 
 **Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-cassandra-dynamo.2026-10-21: sections "Tunable Consistency",
-"Multi-master Replication: Versioned Data and Tunable Consistency". The source is a public
+read record read.batch3-cassandra-dynamo.2026-10-21: all nineteen served
+headings read. The source is a public
 pattern/documentation
 unit, not a benchmark.
 
@@ -414,8 +414,8 @@ the owner section.
 **Technical owner.** [Expand-and-Contract Schema](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#expand-and-contract-schema) — expand/contract is bounded, not a complete migration runbook.
 
 **Sources.** [src.flyway](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-flyway.2026-10-21: sections "Migrations", "Versioned Migrations",
-"Repeatable Migrations". The source is a public pattern/documentation
+read record read.batch3-flyway.2026-10-21: all seventeen served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
