@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 133 |
+| Reviewed by independent agent | 135 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 7, "report-section-missing": 5, "reviewed-by-independent-agent": 133}.
+Packet statuses: {"page-changed-since-review": 5, "report-section-missing": 5, "reviewed-by-independent-agent": 135}.
 
 ## Review procedure
 
@@ -214,7 +214,7 @@ blank verdict template in the machine-readable file.
 
 - **Domain Events**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Domain-Driven Design / Bounded Context**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -566,7 +566,7 @@ blank verdict template in the machine-readable file.
 
 - **Timeout**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Transactional Inbox**
   Current: pass; re-review: pass; report: pass-with-findings.
