@@ -71,9 +71,15 @@ reject verdict as resolved.
 - **R-05 applied:** ACCEPTED, RESOLUTIONS and ALTERNATIVES now agree on EIP clause-level
   support and blocked units.
 - **R-08 applied:** Workbook coverage corrected from chapters 1-20 to 1-21.
+- **R-04 applied:** 130 full-reading-plan section lists aligned to `source-plan.v1.json`;
+  `planned_sections` preserves the original reading scope.
+- **R-06 applied:** FS-01, FS-02, FS-03 and FS-19 `full_source` narrowed to the complete
+  pattern page; linked material is explicitly `not-read`.
+- **R-07 applied:** FS-18 records the supported per-message mechanism and separates the
+  unconfirmed `variants`/encoding detail; literal-word absence is not negative evidence.
 
-R-04, R-06 and R-07 remain non-blocking open items. The review verdict remains `reject`
-for the reviewed snapshot; the post-remediation state needs a focused external re-review.
+The review verdict remains `reject` for the reviewed snapshot; the post-remediation state
+needs a focused external re-review.
 
 Post-remediation claim counts: 15 partially-supported, 5 unconfirmed, 2 contradicted,
 1 resolved, total 23.
