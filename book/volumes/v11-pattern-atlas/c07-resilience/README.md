@@ -578,8 +578,8 @@ authority, reconcile before failback, and hold writes when fencing evidence is m
 **Technical owner.** [Failover / Failback](../../v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md#failover-failback) — failover/failback is bounded to recovery state machines.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",
-"Failover". The source is a public pattern/documentation
+read record read.batch3-pg-warm.2026-10-21: all twenty headings read; Failover
+is a separate page. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

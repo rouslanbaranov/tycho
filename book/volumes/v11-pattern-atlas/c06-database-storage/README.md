@@ -126,8 +126,8 @@ pruning/lifecycle in the owner section.
 **Technical owner.** [Sharding, partition keys, hotspots and safe resharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#partitioning) — partition key and pruning are bounded; per-engine partition mechanics are implementation-specific.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-partition.2026-10-21: sections "Table Partitioning", "Partition
-Pruning", "Partitioning Best Practices". The source is a public pattern/documentation
+read record read.batch3-pg-partition.2026-10-21: all thirteen headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -189,8 +189,8 @@ in the owner section.
 **Technical owner.** [Leader-Follower Replication](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#leader-follower-replication) — replication/leader change is bounded, not a complete multi-leader protocol.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",
-"Planning", "Failover". The source is a public pattern/documentation
+read record read.batch3-pg-warm.2026-10-21: all twenty headings read; Hot
+Standby and Failover are separate pages. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -251,8 +251,8 @@ the owner section.
 **Technical owner.** [Read Replicas](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#read-replicas) — read-replica scaling is bounded by replica lag, read routing and staleness.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-warm.2026-10-21: sections "Log-Shipping Standby Servers",
-"Implementation". The source is a public pattern/documentation
+read record read.batch3-pg-warm.2026-10-21: all twenty headings read; Hot
+Standby and Failover are separate pages. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -314,8 +314,8 @@ lifecycle in the owner section.
 **Technical owner.** [Index Table](../../v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md#index-table) — index lifecycle is bounded, not a full access-path catalogue.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-indexes.2026-10-21: sections "Indexes", "Index Types",
-"Multicolumn Indexes". The source is a public pattern/documentation
+read record read.batch3-pg-indexes.2026-10-21: all nineteen headings read
+across the chapter and its twelve section pages. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -477,9 +477,8 @@ the owner section.
 **Technical owner.** [Backup, restore and recovery drills: proving data recoverability](../../v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md#backup-pitr-and-restore) — backup/restore is bounded, not a universal RPO/RTO model.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-archiving.2026-10-21: sections "Continuous Archiving and
-Point-in-Time Recovery (PITR)", "Setting Up WAL Archiving", "Recovering Using a Continuous
-Archive Backup". The source is a public pattern/documentation
+read record read.batch3-pg-archiving.2026-10-21: all thirteen headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

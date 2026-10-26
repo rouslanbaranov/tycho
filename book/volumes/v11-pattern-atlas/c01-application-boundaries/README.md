@@ -185,9 +185,8 @@ synthetic owner guidance. The linked owner section states the remaining limits.
 **Technical owner.** [Microservices Architecture](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#microservices-architecture) — The section explicitly owns SOA and microservice boundary choices.
 
 **Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-article.2026-10-21: Microservices, sections
-"Characteristics of a Microservice Architecture", "Microservices and SOA",
-"Decentralized Data Management", "Design for failure", "Microservice Trade-Offs".
+read record read.microservices-article.2026-10-21: Microservices, all twenty-four
+headings read, including the SOA sidebar and the trade-offs card.
 This is an architectural article, not a benchmark.
 
 **Decision state.** `applicable-under-conditions`.
@@ -223,8 +222,8 @@ the linked owner section states the remaining limits.
 **Technical owner.** [Service-Oriented Architecture (SOA)](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#service-oriented-architecture-soa) — The section explicitly owns SOA and microservice boundary choices.
 
 **Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-article.2026-10-21: Microservices, section
-"Microservices and SOA" plus the surrounding trade-off discussion. This is a bounded
+read record read.microservices-article.2026-10-21: Microservices, all twenty-four
+headings read; SOA is a sidebar and trade-offs are a card link. This is a bounded
 comparison, not an OASIS SOA reference.
 
 **Decision state.** `applicable-under-conditions`.

@@ -139,8 +139,8 @@ common; deny by default, test indirect paths and keep a bounded audited break-gl
 **Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#zero-trust-architecture) — policy enforcement points and trust assumptions are bounded; network architecture is owner-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements", "Levels". The source is a public
+read record read.batch6-asvs.2026-10-21: all fourteen headings read. The page
+is an overview: it has no Levels or Verification Requirements headings. The source is a public
 pattern/specification
 unit, not a benchmark.
 
@@ -172,8 +172,9 @@ in the owner section.
 **Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#least-privilege) — permission scope and review cadence are bounded; entitlement catalogue is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements", "Levels". The source is a public pattern/specification
+read record read.batch6-asvs.2026-10-21: all fourteen headings read. The page
+is an overview: it has no Levels or Verification Requirements headings.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -203,8 +204,8 @@ the owner section.
 **Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#rbac-abac) — role/attribute model and decision point are bounded; policy administration is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements", "Levels".
+read record read.batch6-asvs.2026-10-21: all fourteen headings read. The page
+is an overview: it has no Levels or Verification Requirements headings.
 [src.nist-sp-800-162](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.nist-sp-800-162.2026-10-26: all eight top-level sections read.
 ASVS provides verification framing; NIST supports
@@ -306,8 +307,9 @@ in the owner section.
 **Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#multitenant-isolation-1) — tenant boundary and isolation evidence are bounded; infrastructure tenancy is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
-Standard", "Verification Requirements", "Levels". The source is a public pattern/specification
+read record read.batch6-asvs.2026-10-21: all fourteen headings read. The page
+is an overview: it has no Levels or Verification Requirements headings.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

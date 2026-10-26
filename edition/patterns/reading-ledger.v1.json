@@ -813,16 +813,26 @@
         "Characteristics of a Microservice Architecture",
         "Componentization via Services",
         "Organized around Business Capabilities",
+        "How big is a microservice?",
         "Products not Projects",
         "Smart endpoints and dumb pipes",
         "Microservices and SOA",
         "Decentralized Governance",
+        "Many languages, many options",
         "Decentralized Data Management",
+        "Battle-tested standards and enforced standards",
         "Infrastructure Automation",
+        "Make it easy to do the right thing",
         "Design for failure",
+        "The circuit breaker and production ready code",
+        "Synchronous calls considered harmful",
         "Evolutionary Design",
         "Are Microservices the Future?",
-        "Microservice Trade-Offs"
+        "Microservice Trade-Offs",
+        "Footnotes",
+        "References",
+        "Further Reading",
+        "Significant Revisions"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2730,10 +2740,19 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Table Partitioning",
-        "Declarative Partitioning",
-        "Partition Pruning",
-        "Partitioning Best Practices"
+        "5.12. Table Partitioning",
+        "5.12.1. Overview",
+        "5.12.2. Declarative Partitioning",
+        "5.12.2.1. Example",
+        "5.12.2.2. Partition Maintenance",
+        "5.12.2.3. Limitations",
+        "5.12.3. Partitioning Using Inheritance",
+        "5.12.3.1. Example",
+        "5.12.3.2. Maintenance for Inheritance Partitioning",
+        "5.12.3.3. Caveats",
+        "5.12.4. Partition Pruning",
+        "5.12.5. Partitioning and Constraint Exclusion",
+        "5.12.6. Best Practices for Declarative Partitioning"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2807,10 +2826,24 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Log-Shipping Standby Servers",
-        "Planning",
-        "Implementation",
-        "Failover"
+        "26.2. Log-Shipping Standby Servers",
+        "26.2.1. Planning",
+        "26.2.2. Standby Server Operation",
+        "26.2.3. Preparing the Primary for Standby Servers",
+        "26.2.4. Setting Up a Standby Server",
+        "26.2.5. Streaming Replication",
+        "26.2.5.1. Authentication",
+        "26.2.5.2. Monitoring",
+        "26.2.6. Replication Slots",
+        "26.2.6.1. Querying and Manipulating Replication Slots",
+        "26.2.6.2. Configuration Example",
+        "26.2.7. Cascading Replication",
+        "26.2.8. Synchronous Replication",
+        "26.2.8.1. Basic Configuration",
+        "26.2.8.2. Multiple Synchronous Standbys",
+        "26.2.8.3. Planning for Performance",
+        "26.2.8.4. Planning for High Availability",
+        "26.2.9. Continuous Archiving in Standby"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2822,14 +2855,16 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "PostgreSQL log-shipping standbys replay WAL to provide read replicas and failover targets; replication lag and promotion authority remain explicit."
+        "PostgreSQL log-shipping standbys replay WAL from an archive or a streaming connection and can be promoted.",
+        "Streaming replication is asynchronous by default; synchronous replication waits for named standbys and can lose data only under stated conditions.",
+        "Hot Standby and Failover are separate documentation pages, not sections of this page."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One documentation page; no failover drill or benchmark.",
+      "limitations": "Re-read 2026-10-26. Page text covers warm standby fully; the read-replicas and failover plan units are partial because sections 26.4 and 26.3 were not read.",
       "content_sha256": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -2844,10 +2879,25 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Indexes",
-        "Index Types",
-        "Multicolumn Indexes",
-        "Indexes and ORDER BY"
+        "Chapter 11. Indexes",
+        "11.1. Introduction",
+        "11.2. Index Types",
+        "11.2.1. B-Tree",
+        "11.2.2. Hash",
+        "11.2.3. GiST",
+        "11.2.4. SP-GiST",
+        "11.2.5. GIN",
+        "11.2.6. BRIN",
+        "11.3. Multicolumn Indexes",
+        "11.4. Indexes and ORDER BY",
+        "11.5. Combining Multiple Indexes",
+        "11.6. Unique Indexes",
+        "11.7. Indexes on Expressions",
+        "11.8. Partial Indexes",
+        "11.9. Index-Only Scans and Covering Indexes",
+        "11.10. Operator Classes and Operator Families",
+        "11.11. Indexes and Collations",
+        "11.12. Examining Index Usage"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2866,8 +2916,8 @@
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One documentation chapter; no production query plan or benchmark.",
-      "content_sha256": "7c829540ac870a1dbe4cc32526dc264d093675d250457f7b95e166cdb52713cd",
+      "limitations": "Full chapter read 2026-10-26 across the landing page and 12 section pages; hash is over the raw HTML bundle.",
+      "content_sha256": "fd1f107eb6b915766606ee3b63159bcd052fb71901f7c6ec3516fdfb42d1304b",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
       "status": "read"
@@ -2974,10 +3024,19 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Continuous Archiving and Point-in-Time Recovery (PITR)",
-        "Setting Up WAL Archiving",
-        "Making a Base Backup",
-        "Recovering Using a Continuous Archive Backup"
+        "25.3. Continuous Archiving and PITR",
+        "25.3.1. Setting Up WAL Archiving",
+        "25.3.2. Making a Base Backup",
+        "25.3.3. Making an Incremental Backup",
+        "25.3.4. Making a Base Backup Using the Low Level API",
+        "25.3.4.1. Backing Up the Data Directory",
+        "25.3.5. Recovering Using a Continuous Archive Backup",
+        "25.3.6. Timelines",
+        "25.3.7. Tips and Examples",
+        "25.3.7.1. Standalone Hot Backups",
+        "25.3.7.2. Compressed Archive Logs",
+        "25.3.7.3. archive_command Scripts",
+        "25.3.8. Caveats"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2989,14 +3048,16 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "PostgreSQL PITR combines base backups with archived WAL; recovery target, retention and restore verification determine RPO/RTO."
+        "PostgreSQL PITR combines a file-system base backup with archived WAL and replays WAL to a recovery target.",
+        "Recovery targets can be a time, named restore point or XID; a target must be after the base backup ended.",
+        "Incremental backups require a prior manifest and covering WAL summaries and restore through pg_combinebackup."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One documentation page; no restore drill or measured RPO/RTO.",
+      "limitations": "Re-read 2026-10-26. Prior RPO/RTO and restore-verification clause removed; the page gives no numeric objectives or drill evidence.",
       "content_sha256": "0c5f4cb3a63b500ad55966358d7ae0253939fd650daca3083b9ff413358ee31f",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -4484,9 +4545,20 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Application Security Verification Standard",
-        "Verification Requirements",
-        "Levels"
+        "OWASP Application Security Verification Standard",
+        "Put ASVS to work",
+        "Understand ASVS",
+        "Use the standard",
+        "Help shape ASVS",
+        "ASVS 5.0.0",
+        "The people behind the standard",
+        "What is the ASVS?",
+        "Support the ASVS",
+        "Stay up to date with the ASVS",
+        "More Details on the ASVS",
+        "How To Reference ASVS Requirements",
+        "Related Projects",
+        "Project team"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -4498,15 +4570,17 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "ASVS provides leveled application-security verification requirements; the overview supports trust-boundary, least-privilege, authorization and tenant-isolation framing, not a specific implementation."
+        "ASVS is an OWASP framework of security requirements for designing, developing and testing web applications and web services.",
+        "ASVS 5.0.0, published 30 May 2025, is the latest stable version; requirements use chapter.section.requirement identifiers.",
+        "The page is an overview landing page, not the requirement catalogue; it does not define verification levels."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Overview only; detailed requirement chapters were not read. RBAC/ABAC role/attribute mechanics are synthetic.",
-      "content_sha256": "817f942f517275b25e69e8ae3541a16a7ddd9e24874a569c81dacb7e53443f92",
+      "limitations": "Re-read 2026-10-26 at the redirected asvs.owasp.org landing page. The declared Verification Requirements and Levels sections are absent; prior leveled/trust-boundary claim removed.",
+      "content_sha256": "34fcc53aa30ea62fbc75c0ad5473d1284b6f6f0653feffefb20abfa00367355a",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
       "status": "read"
