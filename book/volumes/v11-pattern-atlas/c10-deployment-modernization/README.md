@@ -94,7 +94,7 @@ compatibility cost exceeds rollout benefit.
 **Failure and recovery.** Partial-version exposure is common; verify readiness in the
 owner section.
 
-**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#rolling-deployment) — rollout mechanisms are bounded, not a product-specific controller guide.
+**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#rolling-deployment) — rolling replacement and readiness are bounded; controller-specific surge math is platform-specific.
 
 **Sources.** [src.k8s-deployments](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-k8s-deployment.2026-10-21: sections "Deployments", "Rolling
@@ -127,7 +127,7 @@ environment cost exceeds rollback benefit.
 **Failure and recovery.** Data compatibility and switch atomicity are common; verify state
 in the owner section.
 
-**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#blue-green-deployment) — rollout mechanisms are bounded, not a product-specific controller guide.
+**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#blue-green-deployment) — traffic switch and rollback are bounded; infrastructure provisioning is platform-specific.
 
 **Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-argo-bluegreen.2026-10-21: sections "BlueGreen", "Overview",
@@ -159,7 +159,7 @@ analysis cost exceeds risk reduction.
 **Failure and recovery.** Low-traffic blindness, metric leakage and shared-state
 contamination are common; a binary rollback does not undo committed data.
 
-**Technical owner.** [Canary Release](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#canary-release) — rollout mechanisms are bounded, not a product-specific controller guide.
+**Technical owner.** [Canary Release](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#canary-release) — canary analysis and abort are bounded; metric selection is service-specific.
 
 **Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-argo-canary.2026-10-21: sections "Canary", "Overview", "Analysis".
