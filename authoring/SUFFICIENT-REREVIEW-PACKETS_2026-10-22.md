@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 107 |
+| Reviewed by independent agent | 112 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 36, "report-section-missing": 2, "reviewed-by-independent-agent": 107}.
+Packet statuses: {"page-changed-since-review": 31, "report-section-missing": 2, "reviewed-by-independent-agent": 112}.
 
 ## Review procedure
 
@@ -246,7 +246,7 @@ blank verdict template in the machine-readable file.
 
 - **Fallback**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Feature Flags / Feature Toggles**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -286,7 +286,7 @@ blank verdict template in the machine-readable file.
 
 - **Graceful Degradation**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Health Endpoint Monitoring**
   Current: pass; re-review: pass; report: pass.
@@ -350,7 +350,7 @@ blank verdict template in the machine-readable file.
 
 - **Load Shedding**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Materialized View**
   Current: pass; re-review: pass; report: reject.
@@ -438,7 +438,7 @@ blank verdict template in the machine-readable file.
 
 - **Rate Limiting**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **RBAC / ABAC**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -562,7 +562,7 @@ blank verdict template in the machine-readable file.
 
 - **Throttling**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Timeout**
   Current: pass; re-review: pass; report: pass-with-findings.

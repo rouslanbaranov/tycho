@@ -23,6 +23,7 @@ ROUTE = ROOT / "generated/route-index.v1.json"
 BATCH = ROOT / "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md"
 SUFFICIENT = ROOT / (
     "authoring/INDEPENDENT-AGENT-REVIEW-SUFFICIENT-CANDIDATES_2026-10-22.md")
+REBINDS = ROOT / "edition/patterns/section-rebinds.v1.json"
 OUTPUT_JSON = ROOT / "edition/patterns/sufficient-rereview-packets.v1.json"
 OUTPUT_MD = ROOT / "authoring/SUFFICIENT-REREVIEW-PACKETS_2026-10-22.md"
 
@@ -101,18 +102,21 @@ def find_section(name, sections):
     return None, "missing"
 
 
-def build_packet(candidate, record, recon_row, sections, route_docs, sections_source=None):
+def build_packet(candidate, record, recon_row, sections, route_docs, sections_source=None, rebind=None):
     if sections_source is None:
         sections_source = record["report_path"]
     page = route_docs.get(candidate["owner_path"])
     page_sha = page["sha256"] if page else None
     re_review = record.get("re_review") or {}
+    rebind = rebind or {}
     reviewed_sha = re_review.get("reviewed_page_sha256") or page_sha
     disk_sha = None
     if page is not None:
         path = ROOT / candidate["owner_path"]
         if path.is_file():
             disk_sha = digest(path)
+    if rebind.get("page_sha256") == disk_sha:
+        reviewed_sha = disk_sha
     section, _ = find_section(candidate["catalog_name"], sections)
     if page is None:
         status = "owner-page-missing"
@@ -149,6 +153,7 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
         "report_verdict": recon_row["report_verdict"],
         "report_match": recon_row["report_match"],
         "report_section": section,
+        "rebind_report_path": rebind.get("report_path"),
         "review_checklist": CHECKS,
         "verdict_template": {**TEMPLATE,
                              "page_sha256": reviewed_sha,
@@ -164,6 +169,9 @@ def build_packets():
     recon_rows = {row["pattern_id"]: row for row in recon["records"]}
     route = json.loads(ROUTE.read_text(encoding="utf-8"))
     route_docs = {doc["path"]: doc for doc in route["documents"]}
+    rebinds = {}
+    if REBINDS.is_file():
+        rebinds = {item["pattern_id"]: item for item in json.loads(REBINDS.read_text(encoding="utf-8"))["rebinds"]}
     batch_sections = parse_batch_sections(BATCH.read_text(encoding="utf-8"))
     sufficient_sections = parse_sufficient_sections(
         SUFFICIENT.read_text(encoding="utf-8"))
@@ -177,7 +185,7 @@ def build_packets():
         sections_source = (SUFFICIENT if use_sufficient else BATCH).relative_to(ROOT).as_posix()
         packets.append(build_packet(
             candidate, record, recon_rows[record["pattern_id"]],
-            sections, route_docs, sections_source))
+            sections, route_docs, sections_source, rebinds.get(record["pattern_id"])))
     packets.sort(key=lambda item: item["catalog_name"].casefold())
     status_counts = {}
     for packet in packets:
