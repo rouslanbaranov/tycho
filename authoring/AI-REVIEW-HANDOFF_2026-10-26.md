@@ -5,7 +5,8 @@ Status: prepared for independent AI review. This document is not a review, a rev
 
 - Issue: #535
 - Branch: `feature/TYCHO-535-read-the-155-pattern-source-plan-units-in-full`
-- Hand-off HEAD: `180597e52403e3dabb71c50eb92a5b991d6803b8`
+- Evidence HEAD: `180597e52403e3dabb71c50eb92a5b991d6803b8`
+- Hand-off/policy commit: `5afae41a`
 - Base dependency: the branch is based on the unmerged #532 work because the 155-unit
   plan and the newest records are not on `main`.
 - Pull request: #536 is a draft. #534 is also draft and unmerged. Nothing is merged.
@@ -176,3 +177,53 @@ inventory and exits zero.
 
 A pass here is a review of this evidence package only. It is not sufficient coverage,
 owner acceptance of the Pattern Atlas, or permission to merge.
+
+
+## 9. Exact prompt for the external reviewer
+
+Copy the block below into a fresh ChatGPT or Claude Code session. Do not pass this
+conversation or any author conclusion as context.
+
+```text
+You are an independent AI reviewer from a different vendor and harness than the
+DeepSeek Harness authoring agent. Review Tycho issue #535 read-only. Do not edit,
+commit, open a PR or change configuration.
+
+Repository: /Users/rbaranov/Projects/tycho
+Review checkout: 5afae41a (detached HEAD is fine)
+B1 evidence HEAD: 180597e52403e3dabb71c50eb92a5b991d6803b8
+Hand-off: authoring/AI-REVIEW-HANDOFF_2026-10-26.md
+Claims: research/full-source-confirmation/claims.v1.json
+Results: research/full-source-confirmation/results.v1.json
+
+Read the hand-off completely. Derive every count from the artifacts, not from this
+prompt. Do not trust the author's conclusions; test them against the evidence and
+public sources. Use public sources only. Never use restricted or private material.
+
+Verify at minimum:
+1. Unit counts: 129 full, 14 exact reuse, 1 partial, 11 blocked, total 155.
+2. Claim counts: 17 unconfirmed, 3 contradicted, 2 partially supported, 1 resolved,
+   total 23.
+3. ASVS FS-22: trust-boundary term is absent from ASVS 5.0.0; three other elements
+   are present.
+4. OpenID FS-23: Section 11.4 says the specification does not define a revocation
+   process; key and trust-mark status data are separate.
+5. EIP FS-10: official Chapter 3 PDF contradicts per-stage buffering, ordering and
+   failure behavior at printed pp.72, 74 and 77.
+6. EIP Chapter 4+ acceptance: check whether any of the 11 accepted-unconfirmed claims
+   is actually supported by the public pages or Chapter 3. If yes, say so.
+7. DDIA block: confirm no full text was used.
+8. Five public claims and FS-21: confirm they are absent from the complete public
+   sources and the complete SRE Workbook.
+
+Run the reproduction commands in the hand-off. You may sample at least one cited
+passage per claim and at least 15 of the 143 full units, including every batch with a
+corrected heading list or a contradicted claim. Do not re-read all 155 units.
+
+Return one Markdown report with: reviewer harness/vendor, model/version, session id,
+timestamp, repository path, review checkout, B1 evidence HEAD, exact scope, verdict
+(pass / pass-with-findings / reject), findings by severity with exact paths and
+evidence, limits, and the statement `ai_review: performed` only if you actually ran
+the checks. State `sufficient: 0`. Do not claim owner acceptance, CI or merge
+permission.
+```

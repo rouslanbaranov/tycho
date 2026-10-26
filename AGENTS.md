@@ -98,7 +98,9 @@ tool invocation that retrieves sources, or change.
     Give the reviewer the repository path, exact HEAD and content commit, bounded scope,
     artifact paths and hashes, required checks, report schema and explicit limits. For a
     delta review, pass prior finding IDs and changed artifacts only. Require counts to be
-    derived from artifacts, not supplied as expected values.
+    derived from artifacts, not supplied as expected values. When the owner asks for a
+    review hand-off, include an exact copy-paste prompt for the external reviewer; a
+    summary or checklist alone is not sufficient.
 19. **One bounded batch per run.** Split a large audit into non-overlapping batches. The
     reviewer must use read-only repository access, must not write, commit, open a pull
     request or change configuration, and must receive public sources only. Do not send

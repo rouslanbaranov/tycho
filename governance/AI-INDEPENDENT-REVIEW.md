@@ -29,6 +29,14 @@ product and a separate vendor from the authoring harness.
 5. For each source, pin the URL, revision or content hash and access date.
 6. Review one bounded scope per run. Large scopes are split into non-overlapping batches.
 
+## Hand-off prompt
+
+When the owner asks for a hand-off document for an external AI reviewer, the hand-off must
+contain an exact, copy-paste prompt for that reviewer. A summary, checklist or link alone is
+not sufficient. The prompt must be self-contained: reviewer role, repository path, pinned
+commit, read-only rule, scope, required checks, source rules, report schema and the rule
+that the reviewer must not claim owner acceptance, CI or sufficient coverage.
+
 ## Required record
 
 Every review must leave a report containing:
