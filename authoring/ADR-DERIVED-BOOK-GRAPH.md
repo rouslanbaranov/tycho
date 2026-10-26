@@ -139,7 +139,8 @@ requires a separate decision and an evaluation against existing qrels.
 ## Evidence and limits
 
 Counts in this addendum are observed from the route snapshot at commit
-`19d37017`, not an independent audit. No builder, query result, Graphify run,
-benchmark or independent review exists yet. This is a proposed scope, not
-delivery. Implementation is tracked in issue #538 and recorded in
+`68b328b8`, not an independent audit. The v0 builder and audit now exist on the
+issue branch; no Graphify run, benchmark or independent review exists. This is an
+owner-authorized bounded implementation, not product acceptance. Implementation
+is tracked in issue #538 and recorded in
 [DERIVED-BOOK-GRAPH-V0.md](DERIVED-BOOK-GRAPH-V0.md).
