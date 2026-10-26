@@ -205,14 +205,13 @@ the owner section.
 **Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#rbac-abac) — role/attribute model and decision point are bounded; policy administration is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: all fourteen headings read. The page
-is an overview: it has no Levels or Verification Requirements headings.
+read record read.batch6-asvs.2026-10-21: full 120-page ASVS 5.0.0 PDF read;
+V1-V17 and appendices A-E.
 [src.nist-sp-800-162](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.nist-sp-800-162.2026-10-26: all eight top-level sections read.
-ASVS provides verification framing; NIST supports
-PDP/PEP/PIP/PAP and policy administration. Revocation mechanics, role explosion and
-attribute-freshness guidance are synthetic. The sources are public standards, not
-attribute-freshness guidance are synthetic. The sources are public standards, not benchmarks.
+read record read.nist-sp-800-162.2026-10-26: full 47-page PDF read; appendices A-B.
+ASVS provides verification framing; NIST supports PDP/PEP/PIP/PAP and policy
+administration. Revocation mechanics, role explosion and attribute-freshness guidance
+remain synthetic. The sources are public standards, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
@@ -243,10 +242,9 @@ rotation in the owner section.
 
 **Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-istio.2026-10-21: all thirty-four served headings read.
-The page supports workload identity binding,
-certificate rotation, mTLS and authorization policy. Certificate revocation, trust-root
-bootstrapping, key storage and lifetime policy are not supported by the cited sections;
-the full page was read, but these claims are not in the eight cited sections. The source is
+The eight cited headings support workload identity binding, certificate rotation, mTLS
+and authorization policy. Certificate revocation, trust-root bootstrapping, key storage
+and lifetime policy are outside those headings and remain synthetic. The source is
 official documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

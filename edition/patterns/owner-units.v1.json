@@ -7583,9 +7583,9 @@
           "reason": "Explains duplicate processing, comparison and retained old authority."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "It needs a comparison key, a side-effect boundary, a divergence owner and a rule for which path may commit.",
-          "reason": "Lists the required comparison, side-effect, ownership and commit rules."
+          "reason": "MinimumCD supports dual execution and comparison; the divergence owner and complete commit rule are not established."
         },
         "failure_recovery": {
           "state": "supported",
@@ -7593,9 +7593,9 @@
           "reason": "Describes divergence and duplicate-effect failures with containment."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A canary or shadow traffic is the alternative when full parallel processing is unnecessary.",
-          "reason": "Names the alternative and the condition under which it is preferred."
+          "reason": "The canary/shadow comparison is editorial, not bound to the cited guide."
         }
       },
       "decision_evidence": {
@@ -7613,7 +7613,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Dedicated bounded note under 'Bounded pattern ownership notes'; all four dimensions are stated."
     },
@@ -7643,14 +7643,14 @@
           "reason": "Fowler supports hidden invocation and production work."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Both need a side-effect boundary, a comparison method, a load budget and a rule for sensitive data.",
-          "reason": "Section states the invariant; the source boundary labels the method, budget and sensitive-data rule synthetic."
+          "reason": "Fowler and Istio support hidden invocation and mirroring; side-effect, measurement, budget and sensitive-data rules remain synthetic."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The failure path is a hidden or mirrored request that causes a real effect or doubles load; isolate the shadow path and stop it when the comparison or capacity contract fails.",
-          "reason": "Section states the failure and containment; Istio supports real mirrored requests, while load doubling is an inference."
+          "reason": "Istio supports mirrored requests and discarded responses; load-doubling and containment are inferences."
         },
         "alternative": {
           "state": "supported",
@@ -7673,7 +7673,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "One of four owner units on this page; the others are Rolling, Blue-Green and Canary."
     },
@@ -7763,19 +7763,19 @@
           "reason": "Explains evidence-gated progression rather than schedule-driven cutover."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Before a transition changes authoritative state or retirements become irreversible, require evidence for:",
-          "reason": "States the evidence precondition before irreversible change."
+          "reason": "The general no-return gate is synthetic; the Spanner page supports only a bounded drain-and-switch sequence."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A failure after the no-return point must use an approved forward-repair path rather than fictional rollback.",
-          "reason": "Describes post-no-return failure and the required recovery path."
+          "reason": "Forward repair after no-return is synthetic; the bound source does not establish it."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Rolling or blue/green deployment, a canary with a reversible gate, or scheduled maintenance may be preferable when the no-return evidence cannot be obtained or the change is small enough to reverse.",
-          "reason": "Names the alternative and reversal."
+          "reason": "The rolling/blue-green comparison is editorial, not bound to the cited cutover page."
         }
       },
       "decision_evidence": {
@@ -7793,7 +7793,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Gated cutover is bounded to go/no-go evidence and forward repair; no dedicated controlled-cutover section."
     },
@@ -7825,14 +7825,14 @@
           "reason": ""
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A stale signing key or an over-broad trust configuration accepts the wrong issuer; rotate keys deliberately and test rejection of an unexpected audience.",
-          "reason": ""
+          "reason": "RFC 9700 supports validation rejection; acceptance of a wrong issuer and key-compromise recovery are not established."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Local accounts avoid external trust but duplicate identity lifecycle; federate when many services or partners need one governed identity source.",
-          "reason": ""
+          "reason": "The local-account lifecycle comparison is editorial, not bound to the cited specification."
         }
       },
       "decision_evidence": {
@@ -7997,19 +7997,19 @@
           "reason": ""
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Policy evaluation must be deterministic and deny by default, and every decision must be explainable from versioned policy and attributes.",
-          "reason": ""
+          "reason": "The deterministic, deny-by-default, versioned-policy clause is not fully bound to the cited requirement sections."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Role explosion or stale attributes grants unintended access; test policy changes against denied and allowed cases and record policy provenance.",
-          "reason": ""
+          "reason": "Role-explosion and attribute-freshness guidance is synthetic."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Explicit object access lists are transparent at small scale; move to roles or attributes when the number of objects and principals makes per-object grants unmaintainable.",
-          "reason": ""
+          "reason": "The object-ACL comparison is editorial, not bound to the cited standards."
         }
       },
       "decision_evidence": {
@@ -8027,7 +8027,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -8062,14 +8062,14 @@
           "reason": ""
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Expired or shared credentials break authentication or erase the distinction between workloads; rotate, isolate and test an unauthorized peer.",
-          "reason": "Source supports rotation and identity testing; revocation remains a synthetic boundary."
+          "reason": "Istio supports rotation and identity testing; revocation and the complete recovery rule are synthetic."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Network policy with shared secrets is easier when PKI operations are unavailable; choose workload identity when lateral movement and credential reuse are the dominant risk.",
-          "reason": ""
+          "reason": "The comparative network-policy recommendation is not in the bound Istio sections."
         }
       },
       "decision_evidence": {
@@ -8982,7 +8982,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 4,
+      "bounded_entries": 3,
       "decision": "deepen",
       "rationale": "Canary Release now has a dedicated owner unit with explicit limits."
     },
@@ -9069,7 +9069,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Branch by abstraction and controlled cutover now have two distinct dedicated units."
     },
@@ -9114,7 +9114,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 3,
+      "bounded_entries": 2,
       "decision": "keep",
       "rationale": "Zero trust, least privilege and RBAC/ABAC have dedicated bounded units on the authorization page."
     },
@@ -9141,11 +9141,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 145,
-    "invariant_supported": 145,
-    "failure_recovery_supported": 145,
-    "alternative_supported": 145,
-    "technical_partial_bounded": 145,
-    "technical_partial": 0,
+    "invariant_supported": 141,
+    "failure_recovery_supported": 140,
+    "alternative_supported": 140,
+    "technical_partial_bounded": 141,
+    "technical_partial": 4,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

@@ -2,6 +2,10 @@
 
 Date: 2026-10-26. Refs #532. This is not sufficient coverage and not human review.
 
+> **Superseded for the six pilot entries (2026-10-26).** External review rejected all six
+> technical assessments; see `authoring/ai-reviews/2026-10-26-sufficient-pilot-codex.md`
+> and #540. The 6/6 label below is historical.
+
 ## Criteria used
 
 An entry is `sufficient-ready` for this pilot when:

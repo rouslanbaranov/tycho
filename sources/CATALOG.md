@@ -201,7 +201,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 
 | ID / priority | Source | Planned use | Admission / access |
 |---|---|---|---|
-| src.owasp-asvs / supporting | [Application Security Verification Standard](https://owasp.org/www-project-application-security-verification-standard/) — OWASP | Security verification requirements and scope. | admitted-for-research / public-web-or-author-download |
+| src.owasp-asvs / supporting | [Application Security Verification Standard](https://github.com/OWASP/ASVS/raw/v5.0.0/5.0/OWASP_Application_Security_Verification_Standard_5.0.0_en.pdf) — OWASP | Security verification requirements and scope. | admitted-for-research / public-web-or-author-download |
 | src.oauth-security / supporting | [Best Current Practice for OAuth 2.0 Security — RFC 9700](https://www.rfc-editor.org/rfc/rfc9700.html) — IETF | OAuth threat models and security guidance. | admitted-for-research / public-web-or-author-download |
 | src.nist-sp-800-162 / supporting | [Guide to Attribute Based Access Control (ABAC) Definition and Considerations](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf) — NIST | ABAC policy decision/enforcement points, policy administration and implementation considerations. | admitted-for-research / public-web-or-author-download |
 | src.openid-federation / supporting | [OpenID Federation 1.0](https://openid.net/specs/openid-federation-1_0.html) — OpenID Foundation | Federation trust anchors, Entity Statements, trust chains, metadata and key rollover. | admitted-for-research / public-web-or-author-download |

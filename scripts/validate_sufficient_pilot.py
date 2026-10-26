@@ -9,6 +9,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = Path("research/sufficient-pilot-540/manifest.json")
 PLAN = Path("research/sufficient-pilot-540/batch-plan.json")
+PROMOTIONS = Path("edition/patterns/sufficient-promotions.v1.json")
 OWNER = Path("edition/patterns/owner-units.v1.json")
 REGISTRY = Path("edition/patterns/registry.v1.json")
 SOURCE = Path("edition/patterns/source-plan.v1.json")
@@ -44,6 +45,8 @@ def validate(root=ROOT):
                for item in load(root / SOURCE)["entries"]}
     ledger = {item["id"]: item
               for item in load(root / LEDGER)["records"]}
+    promoted = {item["pattern_id"]
+                for item in load(root / PROMOTIONS)["promotions"]}
     batches = load(root / BATCHES)["batches"]
     chapters = {item["code"]: item
                 for item in load(root / ATLAS)["chapters"]}
@@ -78,9 +81,23 @@ def validate(root=ROOT):
         require(record["status"] == "read", "pilot-ledger-status: " + pid)
         require(record["source_id"] in entry["sources"],
                 "pilot-ledger-source: " + pid)
-        require(all(owner["technical_evidence"][name]["state"] == "supported"
-                    for name in DIMENSIONS),
-                "pilot-dimension: " + pid)
+        status = entry["review_status"]
+        require(status in ("pending-independent-external-ai-review",
+                           "rejected", "passed"),
+                "pilot-review-status: " + pid)
+        if status == "pending-independent-external-ai-review":
+            require(all(owner["technical_evidence"][name]["state"] == "supported"
+                        for name in DIMENSIONS),
+                    "pilot-dimension: " + pid)
+        if status == "rejected":
+            require(entry["promotion_status"] == "blocked",
+                    "pilot-rejected-promotion: " + pid)
+            require(pid not in promoted, "pilot-rejected-promoted: " + pid)
+            require(entry.get("review_report"), "pilot-review-report: " + pid)
+            report = root / entry["review_report"]
+            require(report.is_file(), "pilot-review-report-missing: " + pid)
+            require(sha(report) == entry["review_report_sha256"],
+                    "pilot-review-report-hash: " + pid)
         require(owner["decision_evidence"]["card_components"] == 10,
                 "pilot-card-components: " + pid)
         card = (root / entry["card_path"]).read_text(encoding="utf-8")
