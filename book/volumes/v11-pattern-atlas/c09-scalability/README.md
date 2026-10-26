@@ -99,8 +99,8 @@ selection in the owner section.
 
 **Sources.**
 [src.sre-frontend-enrichment](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-sre-frontend.2026-10-21: sections "Load Balancing at the
-Frontend", "DNS", "VIP", "Anycast". The source is a public pattern/documentation
+read record read.batch5-sre-frontend.2026-10-21: all four headings read; DNS,
+VIP and anycast are not literal headings. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

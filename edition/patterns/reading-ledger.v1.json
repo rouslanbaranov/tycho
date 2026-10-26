@@ -3828,9 +3828,9 @@
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
         "Load Balancing at the Frontend",
-        "DNS",
-        "VIP",
-        "Anycast"
+        "Power Isn't the Answer",
+        "Load Balancing Using DNS",
+        "Load Balancing at the Virtual IP Address"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -3842,14 +3842,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "Frontend load balancing can use DNS, virtual IPs and anycast; each choice changes failover, client caching and traffic-shifting behavior."
+        "Frontend balancing can use DNS records, recursive resolvers and virtual IP addresses; anycast appears only as a DNS prose detail.",
+        "DNS gives little control and depends on resolver caching and TTL; VIPs hide backend count and require connection tracking or packet encapsulation."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One public SRE chapter; no traffic test.",
+      "limitations": "Re-read 2026-10-26. Anycast, DNS and VIP are not literal headings; the page has four headings.",
       "content_sha256": "18a223169690f9df2ccd534337c28de4ea54c2e45e4a72f14bf3042072d2918f",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -4901,9 +4902,29 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Monitoring Systems with Advanced Analytics",
-        "Synthetic Monitoring",
-        "Alerting"
+        "Monitoring",
+        "Desirable Features of a Monitoring Strategy",
+        "Speed",
+        "Calculations",
+        "Interfaces",
+        "Alerts",
+        "Sources of Monitoring Data",
+        "Examples",
+        "Move information from logs to metrics",
+        "Improve both logs and metrics",
+        "Keep logs as the data source",
+        "Managing Your Monitoring System",
+        "Treat Your Configuration as Code",
+        "Encourage Consistency",
+        "Prefer Loose Coupling",
+        "Metrics with Purpose",
+        "Intended Changes",
+        "Dependencies",
+        "Saturation",
+        "Status of Served Traffic",
+        "Implementing Purposeful Metrics",
+        "Testing Alerting Logic",
+        "Conclusion"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -4915,14 +4936,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "Synthetic monitoring probes user-visible behavior from outside the service; coverage, probe location and false positives require explicit design."
+        "The chapter covers desirable monitoring features, metrics versus logs, configuration as code, purposeful metrics and testing alerting logic.",
+        "Metrics are near-real-time but less granular; logs are granular but delayed; the mix is context-dependent."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One public workbook chapter; no probe deployment or measurement.",
+      "limitations": "Re-read 2026-10-26. The page has no Synthetic Monitoring or Alerting headings; prior synthetic-probe claim removed.",
       "content_sha256": "59b5a725916658fd26a0e7feff813f4854be46e878e0bf19ec7f040a71314143",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -5089,8 +5111,12 @@
         "Load Balancing in the Datacenter",
         "The Ideal Case",
         "Identifying Bad Tasks: Flow Control and Lame Ducks",
+        "A Simple Approach to Unhealthy Tasks: Flow Control",
+        "A Robust Approach to Unhealthy Tasks: Lame Duck State",
         "Limiting the Connections Pool with Subsetting",
         "Picking the Right Subset",
+        "A Subset Selection Algorithm: Random Subsetting",
+        "A Subset Selection Algorithm: Deterministic Subsetting",
         "Load Balancing Policies",
         "Simple Round Robin",
         "Small subsetting",

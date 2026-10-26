@@ -465,8 +465,8 @@ journey coverage in the owner section.
 **Technical owner.** [Burn-rate and alerts are actions, not decorations](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/budget-actions.md#synthetic-monitoring) — synthetic monitoring is bounded to alert/action reasoning.
 
 **Sources.** [src.sre-workbook](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-sre-workbook-monitoring.2026-10-21: sections "Monitoring Systems
-with Advanced Analytics", "Synthetic Monitoring", "Alerting". The source is a public
+read record read.batch6-sre-workbook-monitoring.2026-10-21: all twenty-three
+headings read; no Synthetic Monitoring or Alerting headings exist. The source is a public
 pattern/specification
 unit, not a benchmark.
 
