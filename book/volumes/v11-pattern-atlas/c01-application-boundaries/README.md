@@ -146,8 +146,8 @@ and transaction semantics must be verified in the technical owner.
 **Technical owner.** [Modular Monolith](../../v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md#modular-monolith).
 
 **Sources.** [src.monolith-first](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.monolith-first.2026-10-21`: Monolith First, sections "Monolith
-First", "Microservices Guide", "Further Reading", "Notes". The source is architectural
+read record `read.monolith-first.2026-10-21`: all five served headings read.
+The source is architectural
 guidance, not a benchmark.
 
 **Decision state.** `applicable-under-conditions`.

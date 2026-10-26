@@ -100,9 +100,8 @@ test the bypass path and version gateway policy.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-api-gateway.2026-10-21: API Gateway, sections
-"Context", "Problem", "Forces", "Solution", "Variation: Backends for frontends",
-"Examples", "Resulting context", "Related patterns". Pattern page, not a benchmark.
+read record read.microservices-api-gateway.2026-10-21: all ten served headings
+read. Pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -280,8 +279,8 @@ owner section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-api-composition.2026-10-21: API Composition, sections
-"Context", "Problem", "Solution", "Example", "Resulting context", "Related patterns".
+read record read.microservices-api-composition.2026-10-21: all nine served
+headings read.
 Pattern page, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
