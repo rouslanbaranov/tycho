@@ -9,8 +9,8 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 117 |
-| Residual findings after re-review | 28 |
+| Promoted after remediation | 119 |
+| Residual findings after re-review | 26 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 116 |
@@ -197,7 +197,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Distributed Cache**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Distributed Lock**
@@ -577,7 +577,7 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **TTL-Based Expiration**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Two-Phase Commit (2PC)**
