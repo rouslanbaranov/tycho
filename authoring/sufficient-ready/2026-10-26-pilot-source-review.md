@@ -50,8 +50,7 @@ Next: fix the register/ledger URL mismatch, then reconcile the owner section.
 ### Dark Launching / Shadow Traffic — evidence-partial
 
 Fowler supports hidden invocation from real user flows, load assessment, feature-flag
-rollback and old/new comparison. Istio supports traffic mirroring, shadow host rewrite,
-fire-and-forget responses and fractional mirroring. Neither source supplies a measurement
+rollback and old/new comparison. Istio supports traffic mirroring, fire-and-forget responses and fractional mirroring. Neither source supplies a measurement
 method, side-effect suppression or a capacity bound; those remain synthetic.
 
 Next: integrate both sources into the card and owner note, retaining the synthetic label for

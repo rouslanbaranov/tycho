@@ -183,7 +183,8 @@ instances cannot read, and rollback does not undo committed data. Watch metric l
 cohorts, shared-state contamination and sample size. Small samples hide rare errors, and an
 unrepresentative cohort can pass while a rare failure hides.
 
-Shadow traffic tests reads but not writes; blue/green moves the whole state boundary; a feature
-flag can scope exposure without a second copy. Use any only when the cohort cannot be isolated.
+Shadow traffic tests reads safely only when writes are suppressed; a mirrored write can execute
+twice. Blue/green moves the whole state boundary; a feature flag can scope exposure without a
+second copy. Use any only when the cohort cannot be isolated.
 Canary is a fit when traffic can be split safely and the SLI comparison has enough signal and an
 owner.

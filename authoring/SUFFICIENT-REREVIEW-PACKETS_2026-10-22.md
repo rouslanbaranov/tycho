@@ -98,7 +98,7 @@ blank verdict template in the machine-readable file.
 
 - **Canary Release**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Canonical Data Model**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -178,7 +178,7 @@ blank verdict template in the machine-readable file.
 
 - **Dark Launching / Shadow Traffic**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Database per Service**
   Current: pass; re-review: pass; report: pass-with-findings.

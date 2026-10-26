@@ -195,7 +195,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.opentofu / supporting | [OpenTofu Documentation](https://opentofu.org/docs/) — OpenTofu | Infrastructure state, planning and change execution boundaries. | admitted-for-research / public-web-or-author-download |
 | src.docker / supporting | [Docker Overview](https://docs.docker.com/get-started/docker-overview/) — Docker | Image, container, registry and runtime boundaries. | admitted-for-research / public-web-or-author-download |
 | src.lambda / supporting | [AWS Lambda Execution Environments](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html) — AWS | Execution environment reuse, lifecycle and deployment constraints. | admitted-for-research / public-web-or-author-download |
-| src.istio-traffic-mirroring / supporting | [Istio Mirroring](https://istio.io/latest/docs/tasks/traffic-management/mirroring/) — Istio | Request mirroring, shadow host rewrite and fire-and-forget responses. | admitted-for-research / public-web-or-author-download |
+| src.istio-traffic-mirroring / supporting | [Istio Mirroring](https://istio.io/latest/docs/tasks/traffic-management/mirroring/) — Istio | Request mirroring, fire-and-forget responses and fractional mirroring. | admitted-for-research / public-web-or-author-download |
 
 ## Security
 
