@@ -2832,17 +2832,17 @@
         "mechanism": {
           "state": "supported",
           "quote": "A saga is a long-running business protocol across independent owners.",
-          "reason": ""
+          "reason": "Defines a long-running protocol across independent owners."
         },
         "invariant": {
           "state": "supported",
           "quote": "The invariant is one authority and one effect identity per step; the saga never claims atomicity or rollback.",
-          "reason": ""
+          "reason": "Requires one authority and one effect identity per step without atomicity or rollback."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A lost acknowledgment is an unknown outcome, not a failure, and a failed compensation remains a repair item.",
-          "reason": ""
+          "reason": "Treats a lost acknowledgment as unknown and failed compensation as a repair item."
         },
         "alternative": {
           "state": "supported",
@@ -2957,7 +2957,7 @@
         "invariant": {
           "state": "supported",
           "quote": "Its guarantees are only as strong as versioned state persistence, activity semantics, timer reliability and recovery configuration.",
-          "reason": ""
+          "reason": "Bounds guarantees by versioned state, activity semantics, timers and recovery configuration."
         },
         "failure_recovery": {
           "state": "supported",
@@ -2967,7 +2967,7 @@
         "alternative": {
           "state": "supported",
           "quote": "Prefer one transaction when every effect shares an owner and a database.",
-          "reason": ""
+          "reason": "Names a single transaction when every effect shares one owner and database."
         }
       },
       "decision_evidence": {
@@ -3017,12 +3017,12 @@
         "invariant": {
           "state": "supported",
           "quote": "The domain must determine which actions are reversible and which require manual reconciliation.",
-          "reason": ""
+          "reason": "Leaves reversibility and manual reconciliation to the domain."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A release itself can fail; a delivered message cannot be un-delivered; the kit may already have been handed to a participant.",
-          "reason": ""
+          "reason": "Names irreversible delivery and already-released artifacts as repair items."
         },
         "alternative": {
           "state": "supported",
@@ -3132,17 +3132,17 @@
         "mechanism": {
           "state": "supported",
           "quote": "An inbox can persist a consumer's processed-event identity and business effect together in **one local transaction**.",
-          "reason": ""
+          "reason": "Persists processed-event identity and business effect in one local transaction."
         },
         "invariant": {
           "state": "supported",
           "quote": "The identity must include the correct subscriber and event/effect scope; two different consumers legitimately process the same event into different local states.",
-          "reason": ""
+          "reason": "Scopes identity by subscriber and event/effect."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "a notification consumer writes a processed marker then crashes before making an external non-idempotent send. On redelivery it may falsely skip the missing send. Reversing the order may send twice.",
-          "reason": ""
+          "reason": "Names marker-before-send crash windows that can skip or duplicate a send."
         },
         "alternative": {
           "state": "supported",
