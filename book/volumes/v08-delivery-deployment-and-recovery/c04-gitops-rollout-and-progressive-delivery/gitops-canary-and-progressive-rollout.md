@@ -123,11 +123,12 @@ isolate the shadow path and stop it when the comparison or capacity contract fai
 feature flag or environment switch that receives a small real share is the alternative when
 shadow traffic cannot be made side-effect free.
 
-**Source boundary.** The Fowler record supports hidden invocation, load assessment,
-feature-flag rollback and old/new comparison; the Istio record supports request mirroring,
-shadow host rewrite, fire-and-forget responses and fractional mirroring. Neither source
-supplies a measurement method, side-effect suppression or a capacity bound; those remain
-synthetic.
+**Source boundary.** The [read.fowler-dark-launching.2026-10-26](../../../../edition/patterns/reading-ledger.v1.json)
+record supports hidden invocation, load assessment, feature-flag rollback and old/new comparison;
+the [read.batch7-istio-mirroring.2026-10-26](../../../../edition/patterns/reading-ledger.v1.json)
+record supports request mirroring, shadow host rewrite, fire-and-forget responses and fractional
+mirroring. Neither source supplies a measurement method, side-effect suppression or a capacity
+bound; those remain synthetic.
 
 **Limits.** Shadow traffic is not a user-behavior sample; comparison coverage and data
 sensitivity bound what it can prove.

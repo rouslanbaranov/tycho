@@ -32,6 +32,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.oauth-security"
+    - "src.istio"
   claim_ids: []
   status: "source-linked"
   notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
@@ -103,8 +104,10 @@ source.
 **Limits.** Federation concentrates trust in the issuer and metadata; key rotation, audience
 restriction and issuer compromise are ongoing costs, not one-time setup. Metadata caching and
 issuer discovery need their own availability, rollback plan, audit evidence and an owner.
-Federation-specific token-replay and revocation guidance is not covered by the cited RFC 9700
-sections; that part remains synthetic.
+Federation-specific token-replay and revocation guidance is not covered by the cited
+[read.batch6-rfc9700.2026-10-21](../../../../edition/patterns/reading-ledger.v1.json)
+sections; the RFC's Token Replay Prevention section covers OAuth token handling, not federation
+metadata replay. That part remains synthetic.
 
 ### Workload Identity-mTLS
 
