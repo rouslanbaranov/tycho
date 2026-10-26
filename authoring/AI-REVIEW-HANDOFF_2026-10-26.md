@@ -190,7 +190,8 @@ DeepSeek Harness authoring agent. Review Tycho issue #535 read-only. Do not edit
 commit, open a PR or change configuration.
 
 Repository: /Users/rbaranov/Projects/tycho
-Review checkout: 5afae41a (detached HEAD is fine)
+Review checkout: current branch HEAD (record git rev-parse HEAD). B1 data is
+unchanged from 180597e5.
 B1 evidence HEAD: 180597e52403e3dabb71c50eb92a5b991d6803b8
 Hand-off: authoring/AI-REVIEW-HANDOFF_2026-10-26.md
 Claims: research/full-source-confirmation/claims.v1.json
