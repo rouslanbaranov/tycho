@@ -383,8 +383,8 @@ parts?
 policy is defined; each part has an identity; errors can be correlated.
 
 **Hard contraindications.** Reject when the parts must be processed atomically, when
-ordering across parts is mandatory without a coordinator, or when the split loses required
-context.
+ordering across parts is mandatory and no sequencer reconstructs it, or when the split loses
+required context.
 
 **Competing alternative.** Process the composite as one unit. Reverse the choice when
 independent processing creates more coordination than value.

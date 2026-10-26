@@ -116,10 +116,12 @@ truth. Each store has its own schema, failure mode and rebuild cost.
 Define freshness, rebuild, deduplication, schema migration and failure recovery explicitly. A
 projection view may lag; the response needs a freshness contract. The write owner must be named,
 and a projection must be rebuildable from the authority without relying on the projection itself.
-Test a partial projection failure and a stale read, not only the happy-path query.
+Test a partial projection failure and a stale read, not only the happy-path query. Dual-write
+ambiguity and partial migration need an explicit reconciliation owner; a half-migrated projection
+is not a valid serving state.
 
-A single store with secondary indexes may be preferable when one engine can meet the query shapes
-and the team cannot operate a second consistency contract. Polyglot persistence is a fit when a
+A single store with derived projections or query-time joins may be preferable when one engine can
+meet the query shapes and the team cannot operate a second consistency contract. Polyglot persistence is a fit when a
 specialized query engine buys measured value and the synchronization contract is owned.
 
 ## Navigation, prerequisites and source scope

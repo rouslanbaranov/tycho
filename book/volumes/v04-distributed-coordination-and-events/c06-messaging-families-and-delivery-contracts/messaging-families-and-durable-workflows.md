@@ -133,9 +133,9 @@ alternative when the caller can tolerate multiple responses.
 ### Splitter
 
 A splitter turns one input into several independently processable messages. It needs
-stable partition identity, per-part idempotency, a completion or compensation rule and a
-bounded fan-out. Carry a parent correlation key and an expected-part set; a coordinator owns
-completion and decides how missing parts are retried. Use it when downstream steps can make progress independently and partial
+part identity, per-part idempotency, a completion or compensation rule and a bounded fan-out. Carry a parent correlation key and an expected-part set; a coordinator owns
+completion and decides how missing parts are retried; completion tracking does not establish
+ordering, so a sequencer is still needed when causal order matters. Use it when downstream steps can make progress independently and partial
 completion is meaningful. Do not use it when the whole input must succeed atomically or
 when downstream ordering cannot be reconstructed.
 
