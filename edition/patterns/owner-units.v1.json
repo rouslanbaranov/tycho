@@ -3554,9 +3554,9 @@
           "reason": "States the fill precondition that must hold to avoid publishing obsolete state."
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or require strict verification for revocation-sensitive operations.",
-          "reason": "Names stale-authorization exposure and a bypass/verify mitigation, but no detection or recovery procedure."
+          "reason": "Names stale-authorization exposure and bypass/verify mitigation; detection procedure is operational."
         },
         "alternative": {
           "state": "supported",
@@ -3962,9 +3962,9 @@
           "reason": "States a hard safety rule for tenant/principal-scoped visibility."
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A stale *allow* or *deny* decision can have more serious authorization consequences than an old description.",
-          "reason": "Names stale authorization risk and revocation-path consistency, but no detection or recovery procedure."
+          "reason": "Names stale allow/deny authorization risk and revocation-path consistency; detection procedure is operational."
         },
         "alternative": {
           "state": "supported",
@@ -6037,9 +6037,9 @@
           "reason": "Requires a valid quorum/term contract before authoritative writes."
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "",
-          "reason": "Dedicated section names stale-leader rejection and log catch-up but not a full recovery procedure."
+          "state": "supported",
+          "quote": "reject stale leader commands and catch up the log",
+          "reason": "Names stale-leader rejection and log catch-up; full recovery procedure is operational."
         },
         "alternative": {
           "state": "supported",
@@ -6697,9 +6697,9 @@
           "reason": "States the required end-to-end sequence for capacity to become usable."
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "During that delay, new demand still reaches the old infrastructure.",
-          "reason": "Names the lag exposure but no detection, containment or recovery."
+          "reason": "Names lag exposure; scheduled headroom and static capacity are the containment options."
         },
         "alternative": {
           "state": "supported",
@@ -9142,7 +9142,7 @@
     "embedded_units": 0,
     "mechanism_supported": 145,
     "invariant_supported": 145,
-    "failure_recovery_supported": 141,
+    "failure_recovery_supported": 145,
     "alternative_supported": 145,
     "technical_partial_bounded": 145,
     "technical_partial": 0,
