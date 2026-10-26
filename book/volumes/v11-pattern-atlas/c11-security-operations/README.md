@@ -209,8 +209,8 @@ the owner section.
 read record read.batch6-asvs.2026-10-21: sections "Application Security Verification
 Standard", "Verification Requirements", "Levels".
 [src.nist-sp-800-162](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.nist-sp-800-162.2026-10-26: sections "2. Understanding ABAC",
-"3. ABAC Enterprise Considerations". ASVS provides verification framing; NIST supports
+read record read.nist-sp-800-162.2026-10-26: all eight top-level sections read.
+ASVS provides verification framing; NIST supports
 PDP/PEP/PIP/PAP and policy administration. Revocation mechanics, role explosion and
 attribute-freshness guidance are synthetic. The sources are public standards, not
 attribute-freshness guidance are synthetic. The sources are public standards, not benchmarks.
@@ -342,8 +342,8 @@ in the owner section.
 **Technical owner.** [Distributed Tracing](../../v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md#distributed-tracing) — tracing is bounded, not an SDK implementation.
 
 **Sources.** [src.otel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-otel-traces.2026-10-21: sections "Traces", "Spans", "Context
-Propagation". Sampling was not a section; sampling policy is synthetic guidance. The source is a
+read record read.batch6-otel-traces.2026-10-21: all nineteen served headings read.
+Sampling was not a section; sampling policy is synthetic guidance. The source is a
 public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -373,7 +373,7 @@ records and notify. On schema drift, migrate/backfill or dual-write with a compa
 **Technical owner.** [Structured logging, authoritative audit and data lineage](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#structured-logging) — logging/audit is bounded, not a logging platform manual.
 
 **Sources.** [src.otel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-otel-logs.2026-10-21: sections "Logs", "Log Record". Attributes and
+read record read.batch6-otel-logs.2026-10-21: all seventeen served headings read. Attributes and
 correlation were not headings; correlation policy is synthetic guidance. The source is a public
 pattern/specification unit, not a benchmark.
 
@@ -436,8 +436,8 @@ owner section.
 **Technical owner.** [SLI / SLO and Error Budgets](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md#sli-slo-and-error-budgets) — SLOs are bounded, not a complete measurement system.
 
 **Sources.** [src.sre](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-sre-slo.2026-10-21: sections "Service Level Objectives",
-"Indicators", "Objectives". Error Budgets was not a section; budget arithmetic is synthetic
+read record read.batch6-sre-slo.2026-10-21: all eighteen served headings
+read. Error Budgets was not a section; budget arithmetic is synthetic
 guidance. The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

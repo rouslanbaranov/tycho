@@ -387,8 +387,8 @@ isolation in the owner section.
 
 **Sources.**
 [src.microsoft-multitenant](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-ms-multitenant.2026-10-21: sections "Architectural approaches",
-"Tenant isolation", "Deployment models". The source is a public pattern/documentation
+read record read.batch5-ms-multitenant.2026-10-21: all three served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

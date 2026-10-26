@@ -228,7 +228,7 @@ artifact references are common; alert on drift, revert reviewed commits and scop
 **Technical owner.** [GitOps](../../v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md#gitops) — GitOps is bounded to desired-state reconciliation.
 
 **Sources.** [src.opengitops](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-opengitops.2026-10-21: sections "Home", "Principles". The source
+read record read.batch5-opengitops.2026-10-21: all seven served headings read. The source
 is a public pattern/documentation
 unit, not a benchmark.
 
