@@ -9,8 +9,8 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 131 |
-| Residual findings after re-review | 14 |
+| Promoted after remediation | 135 |
+| Residual findings after re-review | 10 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 109 |
@@ -133,7 +133,7 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Client-Side Discovery**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Command Query Responsibility Segregation (CQRS)**
@@ -345,7 +345,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Load Balancing**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Load Shedding**
@@ -469,7 +469,7 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Reverse Proxy**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Rolling Deployment**
@@ -497,7 +497,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Server-Side Discovery**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Service Discovery**
