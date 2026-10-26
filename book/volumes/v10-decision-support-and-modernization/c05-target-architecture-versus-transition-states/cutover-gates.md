@@ -125,7 +125,8 @@ can break that contract.
 
 A strangler facade can route requests by capability when the boundary is external. Branch by
 abstraction is a fit when the switch can stay inside one deployable and the interface is genuinely
-owned; otherwise a facade or a parallel run is simpler.
+owned; otherwise a facade or a parallel run is simpler. Reverse when abstraction cost exceeds
+incremental change benefit, and remove the seam once the old path is gone.
 
 ### Controlled Cutover
 
