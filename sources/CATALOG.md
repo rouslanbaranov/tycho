@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-26. Entries: 273.
+Inventory date: 2026-10-26. Entries: 274.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -393,3 +393,9 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 |---|---|---|---|
 | src.cortex-shuffle-sharding / supporting | [Shuffle Sharding](https://cortexmetrics.io/docs/guides/shuffle-sharding/) — Cortex | Public explanation of shuffle-sharding allocation and blast-radius reduction. | admitted-for-research / public-web-or-author-download |
 | src.microsoft-multitenant / supporting | [Architectural Approaches for a Multitenant Solution](https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/approaches/overview) — Microsoft Learn | Public guidance for tenant isolation across compute, data, networking and identity. | admitted-for-research / public-web-or-author-download |
+
+## Data
+
+| ID / priority | Source | Planned use | Admission / access |
+|---|---|---|---|
+| src.gcp-spanner-cutover / supporting | [Perform cutover from MySQL (Spanner)](https://docs.cloud.google.com/spanner/docs/mysql-perform-cutover) — Google Cloud | Bounded drain-and-switch cutover checks for a MySQL-to-Spanner migration. | admitted-for-research / public-web-or-author-download |

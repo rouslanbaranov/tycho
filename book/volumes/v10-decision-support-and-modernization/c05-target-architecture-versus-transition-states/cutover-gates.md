@@ -144,3 +144,7 @@ Rolling or blue/green deployment, a canary with a reversible gate, or scheduled 
 preferable when the no-return evidence cannot be obtained or the change is small enough to reverse.
 Controlled cutover is a fit when a real authority switch is unavoidable and the evidence gate is
 observable.
+
+**Source boundary.** The Google Spanner record supports a bounded drain-and-switch sequence:
+pre-cutover checks, pause writes, drain CDC, verify zero lag and switch. It is product-specific;
+general no-return gates, fallback execution, RTO and zero-loss guarantees remain synthetic.

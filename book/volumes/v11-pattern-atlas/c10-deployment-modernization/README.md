@@ -354,10 +354,13 @@ in the owner section.
 **Technical owner.** [Parallel Run](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md#parallel-run) — parallel run is bounded to coexistence/authority states.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-This reused unit covers Strangler Fig only; it is context, not source support for this
-pattern. The pattern guidance is synthetic and is not claimed as source-supported. The source
-is a public pattern/documentation unit, not a benchmark.
+read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading";
+context for the transition narrative.
+[src.gcp-spanner-cutover](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.gcp-spanner-cutover.2026-10-26: sections "Before you begin", "Perform cutover",
+"Perform application cutover". Spanner supports a bounded drain-and-switch example. General
+no-return gates, fallback execution, RTO and zero-loss guarantees are synthetic. The sources
+are public articles/documentation, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
@@ -456,10 +459,13 @@ in the owner section.
 **Technical owner.** [Controlled Cutover](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#controlled-cutover) — controlled cutover is bounded to gate/reversal reasoning.
 
 **Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-This reused unit covers Strangler Fig only; it is context, not source support for this
-pattern. The pattern guidance is synthetic and is not claimed as source-supported. The source
-is a public pattern/documentation unit, not a benchmark.
+read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading";
+context for the transition narrative.
+[src.gcp-spanner-cutover](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.gcp-spanner-cutover.2026-10-26: sections "Before you begin", "Perform cutover",
+"Perform application cutover". Spanner supports a bounded drain-and-switch example. General
+no-return gates, fallback execution, RTO and zero-loss guarantees are synthetic. The sources
+are public articles/documentation, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
