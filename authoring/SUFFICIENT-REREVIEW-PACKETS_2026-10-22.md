@@ -9,8 +9,8 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 123 |
-| Residual findings after re-review | 22 |
+| Promoted after remediation | 125 |
+| Residual findings after re-review | 20 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 112 |
@@ -89,7 +89,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Cache Stampede Protection**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Cache-Aside / Lazy Loading**
@@ -601,7 +601,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Write-Behind / Write-Back**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Write-Through Cache**
