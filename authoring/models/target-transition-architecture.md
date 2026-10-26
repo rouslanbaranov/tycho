@@ -8,6 +8,9 @@ A **target architecture** specifies responsibilities, interfaces, runtime/deploy
 
 Use the [target template](../../templates/target-architecture.md) and the independent [transition template](../../templates/transition-architecture.md). Keep owners explicit and links reversible to canonical book evidence. This is an authoring model, not a frontmatter JSON Schema or graph type.
 
+For the agent-facing staged proposal built on this model, see
+[the staged modernization contract](../ROCINANTE-STAGED-MODERNIZATION-CONTRACT.md).
+
 ## 1. Target architecture contract
 
 | Domain | Required design statement | Required verification before claiming success |

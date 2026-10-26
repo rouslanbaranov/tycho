@@ -86,6 +86,12 @@ New conceptual metadata (adapt to K10/K11 schema rather than inventing an incomp
 - Case relationships are **ordinary typed metadata and reviewable Markdown links**, not edges of a graph. A page may explicitly link to related patterns, contrary evidence, source sections, and applicable decision guides with the conditions in prose. No graph schema/ownership/assembly/traversal is requested.
 - Search routes by **problem first**, not company: e.g., 'high p99 JVM service with retry storms'; 'Cassandra hot partition'; 'complex microservice mesh ownership'; 'schema migration with no downtime'; 'Bazel vs Gradle build throughput'; 'migration agent with missing tests'.
 - A Rocinante response must separate **what a source says happened** from **what might work for the queried legacy system**. Test with candidate evaluation sets; never present these as measured agent gains before running benchmarks.
+- For modernization questions, the response also states which stage the case
+  evidence can support — proof of concept, minimum viable product or product —
+  and which stage it cannot support. See
+  [the staged modernization contract](ROCINANTE-STAGED-MODERNIZATION-CONTRACT.md).
+  Stage labels and gates are Tycho-defined; a published case does not prove a
+  reader's stage.
 
 ## Core evaluations
 
