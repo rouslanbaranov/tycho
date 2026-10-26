@@ -400,7 +400,7 @@ aggregation and error policy in the owner section.
 **Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#splitter) — split policy and completeness marker are bounded; durable fan-out is owner-specific.
 
 **Sources.** [src.camel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-splitter.2026-10-21: sections "Split", "Options". The source is a
+read record read.batch2-splitter.2026-10-21: all thirty served headings read. The source is a
 public pattern/documentation
 unit, not a benchmark.
 
@@ -732,7 +732,8 @@ effects are common; verify recorded dispatch intent in the owner section.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-process.2026-10-21: sections "Problem", "Solution", "Example". The
+read record read.batch2-process.2026-10-21: two H2 vendor examples; Problem
+and Solution are unheaded, and the page is publisher-abridged. The
 source is a public pattern/documentation
 unit, not a benchmark. The cited source supports the process-manager concept; the
 routing-slip variant is bounded to the owner section's original design guidance, not this

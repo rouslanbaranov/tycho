@@ -99,8 +99,8 @@ owner section.
 **Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#rolling-deployment) — rolling replacement and readiness are bounded; controller-specific surge math is platform-specific.
 
 **Sources.** [src.k8s-deployments](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-k8s-deployment.2026-10-21: sections "Deployments", "Rolling
-update", "Rollback". The source is a public pattern/documentation
+read record read.batch5-k8s-deployment.2026-10-21: all 48 headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

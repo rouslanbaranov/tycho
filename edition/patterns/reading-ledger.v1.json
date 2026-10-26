@@ -1576,7 +1576,35 @@
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
         "Split",
-        "Options"
+        "Options",
+        "Message Body",
+        "Exchange properties",
+        "Using Split",
+        "Splitting the message body",
+        "Splitting with a delimiter",
+        "Splitting with an expression",
+        "Splitting with parallel processing",
+        "Ending a Split block",
+        "What is returned from Split EIP when its complete",
+        "Aggregating",
+        "Splitting modes",
+        "Using streaming mode",
+        "Streaming big XML payloads",
+        "Streaming big XML payloads using Tokenize language",
+        "Streaming big XML payloads using XML Tokenize language",
+        "Splitting files by grouping N lines together",
+        "Split and aggregate example",
+        "Chunking with group",
+        "Error handling with maxFailedRecords and errorThreshold",
+        "maxFailedRecords",
+        "errorThreshold",
+        "SplitResult",
+        "Watermark tracking",
+        "Index-based watermark",
+        "Value-based watermark",
+        "Stop processing in case of exception",
+        "Sharing unit of work",
+        "See Also"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -1588,15 +1616,17 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "A splitter divides a composite message into independently processed parts; aggregation, correlation and error handling must be defined."
+        "A Splitter divides a composite message into parts that are processed individually.",
+        "Default output is the original input; an AggregationStrategy can aggregate the split replies.",
+        "Error handling defaults to continuing with remaining parts; stopOnException, maxFailedRecords and errorThreshold are optional policies."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Camel page truncated after the options section; linked examples and implementation behavior were not read; no benchmark.",
-      "content_sha256": "09397ad2275bd345d61476785355ab6b9329657a2ed59850d6d902c8b0035518",
+      "limitations": "Full Next (pre-release) page read 2026-10-26; prior record was truncated after Options. Canonical 4.22.x LTS page was not compared.",
+      "content_sha256": "9c0895e00caf441e3666ba3633df0a00f3a641ba92d51b4b916f8b8c6f9856f0",
       "read_scope": "main splitter description and options inspected; page was returned truncated after the options section",
       "reviewer": "Automated authoring agent",
       "status": "read"
@@ -1957,9 +1987,12 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Problem",
-        "Solution",
-        "Example"
+        "Problem (unheaded)",
+        "Solution (unheaded)",
+        "Mechanics and trade-offs",
+        "Example: Serverless Loan Broker with AWS Step Functions",
+        "Example: Serverless Loan Broker with GCP Workflows",
+        "Related patterns"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -1971,14 +2004,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "A process manager coordinates multi-step message flows and state; routing-slip variants encode the path in the message."
+        "A Process Manager maintains the state of a multi-step sequence and determines the next step from intermediate results.",
+        "It centralizes control in a hub-and-spoke flow, can run steps sequentially or in parallel, and can become a performance bottleneck."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One public unit; linked examples, implementations and related pages were not read; no benchmark or independent review.",
+      "limitations": "Re-read 2026-10-26. Publisher-abridged after six paragraphs. Prior routing-slip-encodes-path claim removed.",
       "content_sha256": "ac6e6180c5ee20833a84ff28fc856851828832cdbefd1fc3db2807007d4cbbd1",
       "read_scope": "complete publicly served unit as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -2166,10 +2200,13 @@
       "sections_read": [
         "Context",
         "Problem",
-        "Forces",
         "Solution",
-        "Example",
-        "Resulting context"
+        "Resulting context",
+        "Benefits",
+        "Drawbacks",
+        "Related patterns",
+        "See also",
+        "Learn more"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2181,14 +2218,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "A command-side replica maintains local read-only facts for decisions; staleness and reconciliation must be bounded."
+        "A command-side replica keeps a read-only replica of another service data, updated by subscribing to that service domain events.",
+        "The replica is potentially stale and adds design-time and deployment coupling."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "One public unit; linked examples, implementations and related pages were not read; no benchmark or independent review.",
+      "limitations": "Re-read 2026-10-26. Page has no Forces or Example headings; Forces are unheaded lists under Problem. Prior bounded-staleness/reconciliation claim removed.",
       "content_sha256": "ef4d815712f4a5e31ac94966fccf20dc434bd4d320380d8ef7e47184b348c306",
       "read_scope": "complete publicly served unit as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -2521,7 +2559,21 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Near Cache"
+        "Near Cache",
+        "Hazelcast Data Structures with Near Cache Support",
+        "Configuring Near Cache",
+        "Near Cache Configuration Examples",
+        "Near Cache Example for IMap",
+        "Near Cache Example for JCache Clients",
+        "Example for Near Cache with High-Density Memory Store",
+        "Near Cache Eviction",
+        "Near Cache Expiration",
+        "Caching of null values",
+        "Near Cache Invalidation",
+        "Near Cache Consistency",
+        "Eventual Consistency",
+        "Locally Initiated Changes",
+        "Near Cache Preloader"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2533,14 +2585,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "A near cache keeps a local copy of entries close to the client for low-latency reads; invalidation and consistency depend on near-cache configuration."
+        "A near cache keeps copies of distributed data in local memory; it is aimed at small-to-medium read-mostly data and is eventually consistent.",
+        "Invalidation is asynchronous and may be lost; Hazelcast detects loss and routes reads to the underlying structure."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Page returned truncated at 100000 characters; main near-cache description was inspected, configuration details were not.",
+      "limitations": "Full 5.6 page read 2026-10-26; prior record was truncated at 100,000 characters.",
       "content_sha256": "7b005e21be9446a60b04cd62f4c49357cc43af78d35fce610c32d0e8942de4b9",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -2555,7 +2608,18 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Caching Data"
+        "Caching Data",
+        "What is a Cache?",
+        "Caching Topologies",
+        "Caching Data on the Client-Side",
+        "Caching Patterns",
+        "Cache in Spring Applications",
+        "Second-Level Cache for Hibernate",
+        "Cache Manager in JCache",
+        "Caching Web Sessions in Hazelcast",
+        "Caching with JDBC Data Stores",
+        "Building a Custom Database Cache",
+        "Related Resources"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2567,14 +2631,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "Hazelcast provides distributed in-memory data structures and caching; partitioning, replication and client topology are explicit design choices."
+        "Hazelcast combines cluster-member memory into a distributed in-memory cache and describes embedded and client/server topologies.",
+        "A client-side near cache is checked first on reads and populated on a miss."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Page returned truncated at 100000 characters; main caching overview was inspected, configuration sections were not.",
+      "limitations": "Full 5.6 page read 2026-10-26; prior record was truncated at 100,000 characters.",
       "content_sha256": "c787d91df678cb6b34660d688310cecc98a23e6b7b978c375c3491f7631f7490",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -3949,8 +4014,17 @@
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
         "Deployments",
-        "Rolling update",
-        "Rollback"
+        "Use Case",
+        "Creating a Deployment",
+        "Updating a Deployment",
+        "Rolling Back a Deployment",
+        "Scaling a Deployment",
+        "Pausing and Resuming a rollout",
+        "Deployment status",
+        "Clean up Policy",
+        "Canary deployments",
+        "Writing a Deployment Spec",
+        "What's next"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -3962,14 +4036,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "Kubernetes Deployments perform rolling replacement with surge/unavailable controls and revision history; readiness and termination behavior determine safety."
+        "A Deployment provides declarative updates for Pods and ReplicaSets and moves actual state to desired state at a controlled rate.",
+        "RollingUpdate defaults to 25% maxUnavailable and 25% maxSurge; revisionHistoryLimit defaults to 10."
       ],
       "claims_not_supported": [
         "linked pages",
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Page returned truncated at 100000 characters; main rolling-update sections were inspected, examples were not reproduced.",
+      "limitations": "Full page read 2026-10-26; prior record was the first 100,000 characters only. Prior readiness/termination safety synthesis removed.",
       "content_sha256": "c82226c31d75f773ecb82ae0c09af9435648b0991082fa3bd2c467d29812cf7d",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",

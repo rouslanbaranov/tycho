@@ -506,8 +506,8 @@ authority in the owner section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-command-side.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/specification
+read record read.batch2-command-side.2026-10-21: Forces is not a heading and no
+Example section exists. The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

@@ -96,7 +96,7 @@ common; bound fallback so a cache outage does not overload the source.
 **Technical owner.** [Distributed Cache](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#distributed-cache) — invalidation authority and freshness are bounded; topology and replication are owner-specific.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-hazelcast-cache.2026-10-21: sections "Caching Data". The source is
+read record read.batch3-hazelcast-cache.2026-10-21: all twelve served headings read. The source is
 a public pattern/documentation
 unit, not a benchmark.
 
@@ -494,7 +494,7 @@ verify placement in the owner section.
 **Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#multi-level-caching) — multi-level authority and coherence are bounded; per-tier eviction is page-specific.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-hazelcast-near.2026-10-21: sections "Near Cache". The source is a
+read record read.batch3-hazelcast-near.2026-10-21: all fifteen served headings read. The source is a
 public pattern/documentation
 unit, not a benchmark.
 
