@@ -101,9 +101,10 @@ validation in the owner section.
 **Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#federated-identity) — federation trust and token validation are bounded; IdP lifecycle is owner-specific.
 
 **Sources.** [src.oauth-security](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-rfc9700.2026-10-21: sections "Token Handling", "Redirect URI",
-"PKCE". The record is truncated at 100,000 characters; Sender-Constrained Tokens and Security
-Considerations lie beyond it. Federation trust, metadata, revocation and replay guidance is
+read record read.batch6-rfc9700.2026-10-21: sections "1. Introduction", "2.1. Protecting
+Redirect-Based Flows", "2.1.1. Authorization Code Grant", "2.2. Token Replay Prevention",
+"2.2.2. Refresh Tokens", "2.3. Access Token Privilege Restriction". The record is truncated
+at 100,000 characters; Sender-Constrained Access Tokens and Security Considerations lie beyond it. Federation trust, metadata, revocation and replay guidance is
 synthetic, not a source claim. The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
