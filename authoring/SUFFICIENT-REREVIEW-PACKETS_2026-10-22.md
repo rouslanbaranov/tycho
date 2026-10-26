@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 122 |
+| Reviewed by independent agent | 126 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 19, "report-section-missing": 4, "reviewed-by-independent-agent": 122}.
+Packet statuses: {"page-changed-since-review": 15, "report-section-missing": 4, "reviewed-by-independent-agent": 126}.
 
 ## Review procedure
 
@@ -146,7 +146,7 @@ blank verdict template in the machine-readable file.
 
 - **Compensating Transaction**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Competing Consumers**
   Current: pass; re-review: pass; report: pass.
@@ -418,7 +418,7 @@ blank verdict template in the machine-readable file.
 
 - **Process Manager / Routing Slip**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Publish/Subscribe**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -478,11 +478,11 @@ blank verdict template in the machine-readable file.
 
 - **Saga**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Saga Choreography**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Saga Orchestration**
   Current: pass; re-review: pass; report: pass-with-findings.
