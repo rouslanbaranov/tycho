@@ -3,7 +3,7 @@
   "issue": 532,
   "created_at": "2026-10-26",
   "scope": "pilot-six",
-  "status": "pilot-integration-in-progress",
+  "status": "pilot-sufficient-ready-4-of-6",
   "entries": [
     {
       "pattern_id": "tycho.pattern.federated-identity",
@@ -21,14 +21,15 @@
         "OpenID Federation specification",
         "OIDC Core"
       ],
-      "status": "source-integrated-reviewed",
+      "status": "sufficient-ready",
       "finding": "OpenID Federation 1.0 integrated and reviewed; trust chains, metadata and key rollover supported. Revocation and federation-specific replay remain synthetic.",
       "sources": [
         "src.openid-federation",
         "src.oauth-security"
       ],
       "record": "authoring/sufficient-ready/2026-10-26-federation-section11.json",
-      "next": "Admit and ledger the OpenID Federation source before claiming support."
+      "next": "Admit and ledger the OpenID Federation source before claiming support.",
+      "sufficiency_note": "All four technical dimensions supported; decision card complete; Reviewer PASS; decision coverage remains partial-bounded."
     },
     {
       "pattern_id": "tycho.pattern.rbac-abac",
@@ -46,14 +47,15 @@
         "NIST SP 800-162",
         "OWASP Authorization Cheat Sheet"
       ],
-      "status": "source-integrated-reviewed",
+      "status": "sufficient-ready",
       "finding": "NIST SP 800-162 integrated and re-reviewed; section unchanged and rebound. Revocation, role explosion and attribute freshness remain synthetic.",
       "sources": [
         "src.owasp-asvs",
         "src.nist-sp-800-162"
       ],
       "record": "authoring/sufficient-ready/2026-10-26-nist-abac.json",
-      "next": "Add revocation evidence or keep revocation synthetic."
+      "next": "Add revocation evidence or keep revocation synthetic.",
+      "sufficiency_note": "All four technical dimensions supported; decision card complete; Reviewer PASS; decision coverage remains partial-bounded."
     },
     {
       "pattern_id": "tycho.pattern.workload-identity-mtls",
@@ -70,7 +72,7 @@
       "candidate_sources": [
         "Istio security documentation (full page or mTLS section)"
       ],
-      "status": "source-integrated-reviewed",
+      "status": "not-sufficient-ready",
       "finding": "Reviewer PASS at 62f83642; section unchanged and rebound to current page. Revocation/lifecycle remain synthetic.",
       "sources": [
         "src.istio"
@@ -81,7 +83,8 @@
         "owner": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
         "source_plan": "updated",
         "semantic_audit": "hash-updated"
-      }
+      },
+      "sufficiency_note": "Failure/recovery dimension partial; revocation and rotation-failure impact synthetic."
     },
     {
       "pattern_id": "tycho.pattern.dark-launching-shadow-traffic",
@@ -98,7 +101,7 @@
       "candidate_sources": [
         "Martin Fowler, Dark Launching"
       ],
-      "status": "source-integrated-review-pending",
+      "status": "not-sufficient-ready",
       "finding": "Fowler and Istio sources integrated; reviewer decision pending after owner/card rewrite.",
       "sources": [
         "src.fowler-dark-launching",
@@ -108,7 +111,8 @@
       "integration": {
         "card": "book/volumes/v11-pattern-atlas/c10-deployment-modernization/README.md",
         "owner": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md"
-      }
+      },
+      "sufficiency_note": "Invariant, failure and alternative dimensions partial; measurement, side-effect suppression and capacity bounds synthetic."
     },
     {
       "pattern_id": "tycho.pattern.controlled-cutover",
@@ -125,13 +129,14 @@
       "candidate_sources": [
         "Google SRE, graceful degradation/cutover material"
       ],
-      "status": "source-integrated-reviewed",
+      "status": "sufficient-ready",
       "finding": "Spanner bounded example integrated and reviewed; general no-return, fallback and RTO guarantees remain synthetic.",
       "sources": [
         "src.gcp-spanner-cutover",
         "src.fowler-strangler"
       ],
-      "record": "authoring/sufficient-ready/2026-10-26-cutover.json"
+      "record": "authoring/sufficient-ready/2026-10-26-cutover.json",
+      "sufficiency_note": "All four technical dimensions supported; decision card complete; Reviewer PASS; decision coverage remains partial-bounded."
     },
     {
       "pattern_id": "tycho.pattern.parallel-run",
@@ -148,14 +153,15 @@
       "candidate_sources": [
         "Martin Fowler, ParallelChange / ParallelRun material"
       ],
-      "status": "source-integrated-reviewed",
+      "status": "sufficient-ready",
       "finding": "MinimumCD integrated and reviewed; dual execution, background comparison and harness removal supported. Mismatch thresholds, sampling and cost bounds remain synthetic.",
       "sources": [
         "src.minimumcd-parallel-run",
         "src.fowler-strangler"
       ],
       "record": "authoring/sufficient-ready/2026-10-26-parallel-handbook.json",
-      "next": "Seek a primary or independent source before sufficient-ready."
+      "next": "Seek a primary or independent source before sufficient-ready.",
+      "sufficiency_note": "All four technical dimensions supported; decision card complete; Reviewer PASS; decision coverage remains partial-bounded."
     }
   ],
   "limits": [
