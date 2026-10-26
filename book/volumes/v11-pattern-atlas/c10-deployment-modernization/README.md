@@ -260,8 +260,8 @@ the owner section.
 
 **Sources.**
 [src.ibm-immutable-infrastructure](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-ibm-immutable.2026-10-21: sections "What is immutable
-infrastructure?", "Benefits", "Challenges". The source is a public pattern/documentation
+read record read.batch5-ibm-immutable.2026-10-21: all twelve served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -462,8 +462,8 @@ in the owner section.
 read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading";
 context for the transition narrative.
 [src.gcp-spanner-cutover](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.gcp-spanner-cutover.2026-10-26: sections "Before you begin", "Perform cutover",
-"Perform application cutover". Spanner supports a bounded drain-and-switch example. General
+read record read.gcp-spanner-cutover.2026-10-26: all ten served headings read.
+Spanner supports a bounded drain-and-switch example. General
 no-return gates, fallback execution, RTO and zero-loss guarantees are synthetic. The sources
 are public articles/documentation, not benchmarks.
 

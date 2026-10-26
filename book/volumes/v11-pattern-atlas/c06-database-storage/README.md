@@ -446,7 +446,7 @@ acceptance in the owner section.
 **Technical owner.** [Online Data Migration](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#online-data-migration) — backfill acceptance is bounded, not an online migration tool guide.
 
 **Sources.** [src.gh-ost](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-gh-ost.2026-10-21: sections "How?", "Highlights", "Usage". The
+read record read.batch3-gh-ost.2026-10-21: all ten served headings read. The
 source is a public pattern/documentation
 unit, not a benchmark.
 

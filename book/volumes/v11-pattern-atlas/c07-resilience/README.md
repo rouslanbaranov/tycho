@@ -359,8 +359,8 @@ retry storms are common; declare quotas and retry hints, and protect essential o
 **Technical owner.** [Load Shedding](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#load-shedding) — load shedding is bounded to the overload path, not a universal admission policy.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.sre-overload.2026-10-21: sections "Handling Overload Errors",
-"Per-Customer Limits". The source is a public pattern/documentation unit, not a benchmark.
+read record read.sre-overload.2026-10-21: all eleven served headings read.
+The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -388,8 +388,8 @@ common; keep a bounded queue, propagate backpressure and measure per-class laten
 **Technical owner.** [Throttling](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#throttling) — throttling is bounded to already-admitted work, not a universal rate-limit algorithm.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.sre-overload.2026-10-21: sections "Client-Side Throttling",
-"Handling Overload Errors". The record covers client-side adaptive rejection, not server-side
+read record read.sre-overload.2026-10-21: all eleven served headings read.
+The record covers client-side adaptive rejection, not server-side
 pacing; server-side pacing is synthetic owner guidance. The source is a public
 pattern/documentation unit, not a benchmark.
 
@@ -419,8 +419,8 @@ common; bind limits to the scarce resource and declare retry guidance.
 **Technical owner.** [Rate Limiting](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#rate-limiting) — rate limiting is bounded to request admission, not a universal overload policy.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.sre-overload.2026-10-21: sections "Per-Customer Limits",
-"Client-Side Throttling". The source is a public pattern/documentation unit, not a benchmark.
+read record read.sre-overload.2026-10-21: all eleven served headings read.
+The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
