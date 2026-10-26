@@ -104,8 +104,9 @@ validation in the owner section.
 read record read.batch6-rfc9700.2026-10-21: sections "1. Introduction", "2.1. Protecting
 Redirect-Based Flows", "2.1.1. Authorization Code Grant", "2.2. Token Replay Prevention",
 "2.2.2. Refresh Tokens", "2.3. Access Token Privilege Restriction". The record is truncated
-at 100,000 characters; Sender-Constrained Access Tokens and Security Considerations lie beyond it. Federation trust, metadata, revocation and replay guidance is
-synthetic, not a source claim. The source is a public pattern/specification unit, not a benchmark.
+at 100,000 characters; Sender-Constrained Access Tokens and Security Considerations lie
+beyond it. Federation trust, metadata, revocation and replay guidance is synthetic, not a
+source claim. The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
