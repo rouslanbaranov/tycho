@@ -1,7 +1,8 @@
-# ADR addendum — Proposed derived structural graph v0
+# ADR addendum — Derived structural graph v0
 
-> **Status: proposed scope addendum, 2026-10-26.** Issue #538. Owner approval is
-> required before implementation. This addendum does not reverse the
+> **Status: owner-authorized bounded v0 spike, 2026-10-26.** Issue #538.
+> The owner authorized implementation; this is not independent review or
+> acceptance of the v0 results. This addendum does not reverse the
 > [retirement decision](ADR-RETIRE-CURATED-KNOWLEDGE-GRAPH.md) and does not
 > restore graph operations in the retrieval contract.
 
@@ -37,15 +38,15 @@ already exist in canonical frontmatter and prose. It adds no conceptual edge and
 claims no retrieval benefit. The offline audit commands are not part of the
 retrieval contract, MCP surface or search ranker.
 
-If approved, this addendum authorizes only that offline structural tool. It does
-not reopen #44-#46, restore graph neighbors in search or permit a graph database.
-It would supersede the absolute wording in [the retrieval
-contract](models/retrieval-contracts.md) only for these offline audit commands;
-the retrieval contract itself remains graph-free.
+For the bounded spike, this addendum authorizes only that offline structural
+tool. It does not reopen #44-#46, restore graph neighbors in search or permit a
+graph database. The absolute wording in [the retrieval
+contract](models/retrieval-contracts.md) is narrowed only for these offline audit
+commands; the retrieval contract itself remains graph-free.
 
-## Proposed decision
+## Decision for the bounded spike
 
-If accepted, approve a bounded v0 spike to build a deterministic, read-only
+The owner authorized a bounded v0 spike to build a deterministic, read-only
 **derived structural graph**:
 
 - Input: canonical frontmatter, canonical Markdown body links and the pattern
@@ -140,4 +141,5 @@ requires a separate decision and an evaluation against existing qrels.
 Counts in this addendum are observed from the route snapshot at commit
 `19d37017`, not an independent audit. No builder, query result, Graphify run,
 benchmark or independent review exists yet. This is a proposed scope, not
-delivery. Implementation is tracked in issue #538.
+delivery. Implementation is tracked in issue #538 and recorded in
+[DERIVED-BOOK-GRAPH-V0.md](DERIVED-BOOK-GRAPH-V0.md).
