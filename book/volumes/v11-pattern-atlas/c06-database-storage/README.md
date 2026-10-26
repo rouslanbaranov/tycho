@@ -348,9 +348,10 @@ are common; verify freshness and rebuild in the owner section.
 — bounded selection criteria, not a complete multi-store design.
 
 **Sources.** [src.fowler-polyglot](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-fowler-polyglot.2026-10-22: sections "DatabaseThaw",
-"Polyglot persistence", "Complexity and consistency", "Strategic versus utility
-projects". The source is a public article, not a benchmark.
+read record read.batch3-fowler-polyglot.2026-10-22: sections "Polyglot Persistence",
+"Notes". The thematic paragraph labels DatabaseThaw, Complexity and consistency, and Strategic
+versus utility projects are not headings; linked material was not read. The source is a public
+article, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
