@@ -426,13 +426,13 @@ Reverse the choice when shared latency/failure outweighs duplicate-call reductio
 **Failure and recovery.** One failure fans out to all waiters; verify scope and
 cancellation in the owner section.
 
-**Technical owner.** [Single Flight / Request Coalescing](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#single-flight-request-coalescing) — source protection is bounded, not a request-coalescing library.
+**Technical owner.** [Single Flight / Request Coalescing](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md#single-flight-request-coalescing) — coalescing window and leader election are bounded; library semantics are implementation-specific.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Manage concurrency in a cache".
-The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.batch3-ms-caching.2026-10-21: section "Manage concurrency in a cache". The
+record covers cache concurrency, not request coalescing; coalescing and leader election are
+synthetic owner guidance. The source is a public pattern/documentation unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
