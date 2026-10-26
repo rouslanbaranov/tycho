@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 137 |
+| Reviewed by independent agent | 138 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 2, "report-section-missing": 6, "reviewed-by-independent-agent": 137}.
+Packet statuses: {"page-changed-since-review": 1, "report-section-missing": 6, "reviewed-by-independent-agent": 138}.
 
 ## Review procedure
 
@@ -98,7 +98,7 @@ blank verdict template in the machine-readable file.
 
 - **Canary Release**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Canonical Data Model**
   Current: pass; re-review: pass; report: pass-with-findings.
