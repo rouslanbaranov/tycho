@@ -3426,22 +3426,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A coordinator asks every participant to prepare, collects the votes, then records one commit or abort decision that the participants apply while holding prepared state.",
-          "reason": ""
+          "reason": "Defines prepare, vote and a single durable commit or abort decision."
         },
         "invariant": {
           "state": "supported",
           "quote": "No participant may commit before the coordinator's durable decision, and the decision must survive coordinator failure for prepared participants to recover.",
-          "reason": ""
+          "reason": "Forbids commit before the durable coordinator decision."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A coordinator crash after prepare leaves participants holding locks with an unknown outcome; recovery depends on a durable decision log and an explicit resolution procedure.",
-          "reason": ""
+          "reason": "Requires a durable decision log and resolution procedure after coordinator failure."
         },
         "alternative": {
           "state": "supported",
           "quote": "A saga with compensating actions avoids prepared locks at the cost of visible intermediate states and non-atomic business outcomes; prefer 2PC when participants can hold locks and atomic durability is required. A single local transaction is preferable when every resource shares one database.",
-          "reason": ""
+          "reason": "Contrasts a saga and a single local transaction."
         }
       },
       "decision_evidence": {
