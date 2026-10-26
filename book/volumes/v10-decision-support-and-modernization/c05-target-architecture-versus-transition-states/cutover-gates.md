@@ -137,7 +137,8 @@ Before a transition changes authoritative state or retirements become irreversib
 for: target correctness, data reconciliation, rollback or forward-repair readiness and the owner who
 accepts the residual risk. A failure after the no-return point must use an approved forward-repair
 path rather than fictional rollback. Publish the no-return point and the abort criteria before the
-change starts.
+change starts. Detect a partial switch by reconciling the routing inventory against observed
+authority; a half-completed cutover uses the forward-repair path and does not claim rollback.
 
 Rolling or blue/green deployment, a canary with a reversible gate, or scheduled maintenance may be
 preferable when the no-return evidence cannot be obtained or the change is small enough to reverse.

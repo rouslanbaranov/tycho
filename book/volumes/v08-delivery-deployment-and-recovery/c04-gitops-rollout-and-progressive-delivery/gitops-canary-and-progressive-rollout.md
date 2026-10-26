@@ -115,9 +115,8 @@ changing user-visible state. Do not use it when shadow requests would write, cha
 notify or leak data.
 
 The failure path is a mirrored request that causes a real effect or doubles load; isolate
-the shadow path and stop it when the comparison or capacity contract fails. A canary that
-receives a small real share is the alternative when shadow traffic cannot be made
-side-effect free.
+the shadow path and stop it when the comparison or capacity contract fails. A canary, feature flag or environment switch that receives a small real share is the alternative
+when shadow traffic cannot be made side-effect free.
 
 **Limits.** Shadow traffic is not a user-behavior sample; comparison coverage and data
 sensitivity bound what it can prove.
