@@ -9,14 +9,14 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 122 |
-| Residual findings after re-review | 23 |
+| Promoted after remediation | 123 |
+| Residual findings after re-review | 22 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 111 |
+| Reviewed by independent agent | 112 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 32, "report-section-missing": 2, "reviewed-by-independent-agent": 111}.
+Packet statuses: {"page-changed-since-review": 31, "report-section-missing": 2, "reviewed-by-independent-agent": 112}.
 
 ## Review procedure
 
@@ -561,8 +561,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Throttling**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Timeout**
   Current: pass; re-review: pass; report: pass-with-findings.
