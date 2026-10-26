@@ -922,7 +922,7 @@
         "independent reproduction or benchmark"
       ],
       "limitations": "One documentation page; no cluster deployment or failure test.",
-      "content_sha256": "7c4f9b2add75c489cda79b943fd951a9d37e654c838cdf158a780b8456a52521",
+      "content_sha256": "f8e4f3e08d81df8cb182ef8e7b443162d2180d8b2b6b653785722a6e282571af",
       "read_scope": "complete publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
       "status": "read"
@@ -942,8 +942,14 @@
         "HTTP header sanitizing",
         "Route table configuration",
         "Retry plugin configuration",
+        "Retry configuration examples",
+        "PreviousHostsPredicate",
+        "OmitHostMetadataConfig",
+        "PreviousPrioritiesConfig",
+        "Combined retry policy",
         "Internal redirects",
-        "Timeouts"
+        "Timeouts",
+        "HTTP header map settings"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -963,7 +969,7 @@
         "independent reproduction or benchmark"
       ],
       "limitations": "One documentation page; no proxy deployment or failure test.",
-      "content_sha256": "abc4d70c92d490a28405b9cf4dbccf57e6c74bf27bac3bc82461202a1c9ac8c5",
+      "content_sha256": "fb600d4e013c69d80e36491d19bd423ea1ad5917dab450d5fa7052d76b77b6f2",
       "read_scope": "complete publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
       "status": "read"
@@ -3698,8 +3704,35 @@
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
         "Horizontal Pod Autoscaling",
-        "How does it work",
-        "Metrics"
+        "How does a HorizontalPodAutoscaler work?",
+        "Algorithm details",
+        "Pod readiness and autoscaling metrics",
+        "Key behaviors for pod readiness",
+        "Good practice for pod readiness",
+        "API object",
+        "Stability of workload scale",
+        "Autoscaling during rolling update",
+        "Support for resource metrics",
+        "Note: summed container usage can hide one container high usage",
+        "Container resource metrics",
+        "Note: container-name change ordering",
+        "Scaling on custom metrics",
+        "Scaling on multiple metrics",
+        "Support for metrics APIs",
+        "Note: HPA supports metrics.k8s.io/v1beta1 not v1",
+        "Configurable scaling behavior",
+        "Scaling policies",
+        "Stabilization window",
+        "Tolerance",
+        "Default behavior",
+        "Example: change downscale stabilization window",
+        "Example: limit scale down rate",
+        "Example: disable scale down",
+        "Support for HorizontalPodAutoscaler in kubectl",
+        "Scaling to and from zero",
+        "Implicit maintenance-mode deactivation",
+        "Migrating Deployments and StatefulSets to horizontal autoscaling",
+        "What's next"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -3718,8 +3751,8 @@
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Page returned truncated at 100000 characters; main HPA sections were inspected, examples were not reproduced.",
-      "content_sha256": "bb86ceb20c53414734d67e2a4c702a4fe8f72e12737bec54499595c1a5d17d4f",
+      "limitations": "Full 30-heading page read 2026-10-26; the prior 100,000-character truncation is superseded.",
+      "content_sha256": "5b55be37d316eb65f59a93f058d3ef54b7388c9280440782180ff2e2e4823e3c",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
       "status": "read"
@@ -3735,7 +3768,37 @@
       "sections_read": [
         "Resource Management for Pods and Containers",
         "Requests and limits",
-        "Resource units"
+        "Resource types",
+        "Huge pages",
+        "Resource requests and limits of Pod and container",
+        "Pod-level resource specification",
+        "Resource units in Kubernetes",
+        "CPU resource units",
+        "Memory resource units",
+        "Container resources example",
+        "Pod resources example",
+        "How Pods with resource requests are scheduled",
+        "How Kubernetes applies resource requests and limits",
+        "Resizing container resources",
+        "In-place resize",
+        "Resizing by launching replacement Pods",
+        "Monitoring compute & memory resource usage",
+        "Considerations for memory backed emptyDir volumes",
+        "Local ephemeral storage",
+        "Resource monitoring for local ephemeral storage",
+        "Extended resources",
+        "Managing extended resources",
+        "Node-level extended resources",
+        "Device plugin managed resources",
+        "Other resources",
+        "Cluster-level extended resources",
+        "Extended resources allocation by DRA",
+        "Consuming extended resources",
+        "PID limiting",
+        "Troubleshooting",
+        "My Pods are pending with event message FailedScheduling",
+        "My container is terminated",
+        "What's next"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -3754,8 +3817,8 @@
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Page returned truncated at 100000 characters; main request/limit sections were inspected, examples were not reproduced.",
-      "content_sha256": "2156bf4e9e76088acf77c36fa597fb9720927bd5578385d2bd2cc7ad085308b8",
+      "limitations": "Full 33-heading page read 2026-10-26; the prior 100,000-character truncation is superseded.",
+      "content_sha256": "8eee4a66c18acfd2ad9798686ad1bec7831deaae5f71691e33217bc06e2c870e",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
       "status": "read"
@@ -3769,9 +3832,7 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "Getting Started",
-        "Scalers",
-        "ScaledObject"
+        "Where to go"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -3783,14 +3844,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "KEDA scales workloads from external event sources through scalers and ScaledObjects; metric lag, cooldowns and source failure shape behavior."
+        "The KEDA documentation landing page identifies KEDA as the Kubernetes Event-driven Autoscaler.",
+        "The page is an index/role-routing page; scaler and ScaledObject detail lives on linked child pages."
       ],
       "claims_not_supported": [
-        "linked pages",
-        "implementation behavior",
-        "independent reproduction or benchmark"
+        "scaler or ScaledObject mechanics",
+        "metric lag, cooldowns or source failure behavior",
+        "architecture, installation or HPA integration"
       ],
-      "limitations": "One getting-started page; individual scaler behavior and production tuning were not read.",
+      "limitations": "Landing page only; the single served heading is \"Where to go\". Scalers and ScaledObject are separate linked pages, not sections of this unit.",
       "content_sha256": "8c704134e53dcad3b724345ae03898697b0825380417decaa3cbf7656f7baa1f",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
@@ -3887,9 +3949,21 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
-        "BlueGreen",
+        "BlueGreen Deployment Strategy",
         "Overview",
-        "Service"
+        "Example",
+        "Configurable Features",
+        "Sequence of Events",
+        "autoPromotionEnabled",
+        "autoPromotionSeconds",
+        "antiAffinity",
+        "maxUnavailable",
+        "prePromotionAnalysis",
+        "postPromotionAnalysis",
+        "previewService",
+        "previewReplicaCount",
+        "scaleDownDelaySeconds",
+        "scaleDownDelayRevisionLimit"
       ],
       "sections_not_read": [
         "linked child pages",

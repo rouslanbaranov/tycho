@@ -132,8 +132,8 @@ in the owner section.
 **Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#blue-green-deployment) — traffic switch and rollback are bounded; infrastructure provisioning is platform-specific.
 
 **Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-argo-bluegreen.2026-10-21: sections "BlueGreen", "Overview",
-"Service". The source is a public pattern/documentation
+read record read.batch5-argo-bluegreen.2026-10-21: all fifteen served headings
+read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

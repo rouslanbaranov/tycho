@@ -130,8 +130,8 @@ the owner section.
 **Technical owner.** [Horizontal Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#horizontal-scaling) — replica scaling and coordination cost are bounded; per-service capacity math is owner-specific.
 
 **Sources.** [src.k8s-hpa](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-k8s-hpa.2026-10-21: sections "Horizontal Pod Autoscaling", "How
-does it work", "Metrics". The source is a public pattern/documentation
+read record read.batch5-k8s-hpa.2026-10-21: all thirty served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -161,8 +161,8 @@ section.
 **Technical owner.** [Vertical Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#vertical-scaling) — resource ceiling and restart cost are bounded; instance sizing is platform-specific.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-k8s-resources.2026-10-21: sections "Resource Management for Pods
-and Containers", "Requests and limits". The source is a public pattern/documentation
+read record read.batch5-k8s-resources.2026-10-21: all thirty-three served
+headings read. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -192,8 +192,8 @@ section.
 **Technical owner.** [Autoscaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#autoscaling) — signal, lag and hysteresis are bounded; capacity forecast is service-specific.
 
 **Sources.** [src.keda](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-keda.2026-10-21: sections "Getting Started", "Scalers",
-"ScaledObject". The source is a public pattern/documentation
+read record read.batch5-keda.2026-10-21: the single served heading read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

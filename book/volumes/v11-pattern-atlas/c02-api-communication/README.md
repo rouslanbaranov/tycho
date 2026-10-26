@@ -315,9 +315,7 @@ draining policy.
 **Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#reverse-proxy) — proxy and gateway boundary; not a full Envoy operations guide.
 
 **Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.envoy-http-connection.2026-10-21: HTTP connection management, sections
-"HTTP protocols", "HTTP lifecycle", "HTTP header sanitizing", "Route table
-configuration", "Retry plugin configuration", "Internal redirects", "Timeouts". Vendor
+read record read.envoy-http-connection.2026-10-21: all fourteen served headings read. Vendor
 documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
