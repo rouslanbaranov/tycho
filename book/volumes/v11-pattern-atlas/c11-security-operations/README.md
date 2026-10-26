@@ -105,8 +105,14 @@ read record read.batch6-rfc9700.2026-10-21: sections "1. Introduction", "2.1. Pr
 Redirect-Based Flows", "2.1.1. Authorization Code Grant", "2.2. Token Replay Prevention",
 "2.2.2. Refresh Tokens", "2.3. Access Token Privilege Restriction". The record is truncated
 at 100,000 characters; Sender-Constrained Access Tokens and Security Considerations lie
-beyond it. Federation trust, metadata, revocation and replay guidance is synthetic, not a
-source claim. The source is a public pattern/specification unit, not a benchmark.
+beyond it.
+[src.openid-federation](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.openid-federation.2026-10-26: sections "1. Introduction",
+"3. Entity Statement", "4. Trust Chain", "5. Metadata",
+"11. Updating Metadata, Key Rollover, and Revocation". OpenID Federation supports trust
+anchors, Entity Statements, trust chains, metadata refresh and key rollover. It defines no
+revocation process; federation-specific replay and revocation are synthetic, not source
+claims. The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

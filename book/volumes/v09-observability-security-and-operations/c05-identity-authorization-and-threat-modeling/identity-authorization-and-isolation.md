@@ -109,6 +109,12 @@ Federation-specific token-replay and revocation guidance is not covered by the c
 sections; the cited record covers OAuth token handling, not federation metadata replay. That part
 remains synthetic.
 
+**Source boundary.** The
+[read.openid-federation.2026-10-26](../../../../edition/patterns/reading-ledger.v1.json)
+record supports trust anchors, signed Entity Statements, trust chains, metadata refresh and
+Trust Anchor key rollover. It defines no revocation process; federation-specific replay and
+revocation remain synthetic.
+
 ### Workload Identity-mTLS
 
 Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates
