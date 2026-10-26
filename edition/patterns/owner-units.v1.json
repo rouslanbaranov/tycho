@@ -873,22 +873,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Gateway aggregation composes several owner responses into one client response at the edge.",
-          "reason": ""
+          "reason": "Defines edge-side composition of several owner responses."
         },
         "invariant": {
           "state": "supported",
           "quote": "Each downstream call carries its own deadline and authorization.",
-          "reason": ""
+          "reason": "Requires every downstream call to carry its own deadline and authorization."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "a gateway retry must not multiply load across every participant",
-          "reason": ""
+          "reason": "Limits gateway retries so one failure does not multiply load across participants."
         },
         "alternative": {
           "state": "supported",
           "quote": "Client-side composition, a backend for frontend or an API Composition layer with a narrow contract may be preferable",
-          "reason": ""
+          "reason": "Names client composition, a backend for frontend or a narrow API composition layer."
         }
       },
       "decision_evidence": {
@@ -1050,22 +1050,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "An API composition layer calls several owner APIs for one request and assembles their responses into a single caller-visible result.",
-          "reason": ""
+          "reason": "Defines query-time calls to several owner APIs and assembly of one caller-visible result."
         },
         "invariant": {
           "state": "supported",
           "quote": "The composed response must declare per-source freshness and what partial failure means, rather than presenting one aggregate result as uniformly current.",
-          "reason": ""
+          "reason": "Requires per-source freshness and an explicit partial-failure meaning."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "One slow or failed participant must not silently disappear from the result; apply per-call deadlines, mark missing parts or fail the composition explicitly.",
-          "reason": ""
+          "reason": "Requires per-call deadlines, missing-part marking or explicit failure."
         },
         "alternative": {
           "state": "supported",
           "quote": "Build a maintained read model or a client-specific backend for frontend; prefer composition when the sources are authoritative and the caller needs a live view.",
-          "reason": ""
+          "reason": "Names a maintained read model or client-specific backend for frontend."
         }
       },
       "decision_evidence": {
