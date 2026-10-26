@@ -134,16 +134,15 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Queue-Based Load Leveling
 
-A bounded queue between arrival and processing can absorb a short burst while workers drain at a
-sustainable rate. The queue levels load; it does not create capacity. The cited RabbitMQ guide
-supports reliability mechanics, not load-leveling policy; the admission and drain guidance here is
-synthetic.
+The admission rule of a bounded queue decides four things that the queue cannot decide for itself: which producers may
+enqueue, the maximum accepted backlog age, what "accepted" means durably, and which worker pool
+drains it. Size the queue from observed peak arrival minus sustained drain, not from an average.
+An unbounded queue is not a capacity plan. Shedding is preferable when work cannot be deferred.
 
-It needs an admission rule, a retention/age bound, durable acceptance when the caller is told
-"accepted", and idempotent consumers. An unbounded queue converts overload into memory growth and
-expired work; retries can duplicate effects after an ambiguous acknowledgment. Track queue age,
-rejection rate and drain rate, and set a terminal policy for expired work.
+An enqueue acknowledgement must be a durable write; if it is not, the caller keeps the effect
+identity and retries the enqueue. Workers commit their outcome and queue offset together, or
+deduplicate by effect identity, so a redelivery after an ambiguous ack cannot repeat a side effect.
 
-Shedding, backpressure or provisioning may be preferable when work is not deferrable or the burst is
-sustained. Queue leveling is a fit when deferral is valid and the consumer can own an idempotent
-effect, an owner and a documented drain rate.
+When backlog age crosses its bound, reject new work before enqueue or shed it at the worker; do not
+let the queue grow until memory or retention expires it. A backlog incident runbook names the
+producer to pause, the age threshold, and the drain-rate check that says when to resume.

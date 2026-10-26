@@ -5669,22 +5669,22 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A bounded queue between arrival and processing can absorb a short burst while workers drain at a sustainable rate.",
+          "quote": "The admission rule of a bounded queue decides four things that the queue cannot decide for itself",
           "reason": "Defines the mechanism and its scope."
         },
         "invariant": {
           "state": "supported",
-          "quote": "It needs an admission rule, a retention/age bound, durable acceptance when the caller is told \"accepted\", and idempotent consumers.",
+          "quote": "An enqueue acknowledgement must be a durable write; if it is not, the caller keeps the effect",
           "reason": "States the required invariant."
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "An unbounded queue converts overload into memory growth and expired work; retries can duplicate effects after an ambiguous acknowledgment.",
+          "quote": "When backlog age crosses its bound, reject new work before enqueue or shed it at the worker",
           "reason": "Names the failure and recovery response."
         },
         "alternative": {
           "state": "supported",
-          "quote": "Shedding, backpressure or provisioning may be preferable when work is not deferrable or the burst is sustained.",
+          "quote": "Shedding is preferable when work cannot be deferred.",
           "reason": "Names the competing choice and reversal."
         }
       },
