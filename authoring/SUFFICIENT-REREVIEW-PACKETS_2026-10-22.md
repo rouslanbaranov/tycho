@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 132 |
+| Reviewed by independent agent | 133 |
 | Rejected after review | 0 |
 
-Packet statuses: {"page-changed-since-review": 9, "report-section-missing": 4, "reviewed-by-independent-agent": 132}.
+Packet statuses: {"page-changed-since-review": 7, "report-section-missing": 5, "reviewed-by-independent-agent": 133}.
 
 ## Review procedure
 
@@ -130,7 +130,7 @@ blank verdict template in the machine-readable file.
 
 - **Clean / Onion Architecture**
   Current: pass; re-review: pass; report: None.
-  Status: page-changed-since-review.
+  Status: report-section-missing.
 
 - **Client-Side Discovery**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -326,7 +326,7 @@ blank verdict template in the machine-readable file.
 
 - **Layered Architecture**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Leader Election**
   Current: pass; re-review: pass; report: None.
