@@ -41,6 +41,15 @@ pages. The remaining semantic gate is owner acceptance; the remaining delivery g
 technical sufficiency, decision sufficiency and owner acceptance. See the
 [deep-source plan](DEEP-SOURCE-EXPANSION-PLAN_2026-10-22.md).
 
+**Rocinante staged modernization — 2026-10-26 (#61):** the owner asked the
+shared specialist to propose POC → MVP → Product evolution with sub-stages,
+evolving architecture and per-stage evidence from Tycho. Recorded as a
+proposed contract in
+[the staged modernization contract](ROCINANTE-STAGED-MODERNIZATION-CONTRACT.md),
+with links from the knowledge-platform plan, decision navigation and the
+target/transition model. No agent behaviour, tool, fixture, evaluation or
+human review is implemented or claimed; #61 remains open.
+
 **Updated:** 2026-10-20, after manuscript acceptance and merge. See [status reconciliation](PROJECT_STATUS_RECONCILIATION_2026-10-20.md) and [roadmap](ROADMAP.md).
 
 ## Accepted manuscript baseline

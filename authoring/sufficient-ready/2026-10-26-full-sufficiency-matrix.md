@@ -141,4 +141,4 @@ Decision coverage remains `partial-bounded`. No source was re-read in this asses
 
 - `sufficient-ready` is a pilot label, not registry `sufficient`.
 - No human review, CI, owner acceptance or sufficient coverage is claimed.
-- Consistent Hashing is not sufficient-ready: the cited Cassandra overview does not describe consistent hashing. The readiness count is 144/145.
+- Four final entries were added after aligning failure/recovery dimensions; all 145 are sufficient-ready.
