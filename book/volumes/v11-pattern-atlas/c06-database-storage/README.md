@@ -382,8 +382,8 @@ the owner section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-cqrs.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/documentation
+read record read.batch3-ms-cqrs.2026-10-21: all nine served headings read.
+The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.

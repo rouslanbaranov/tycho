@@ -134,8 +134,8 @@ effects and duplicate delivery need an explicit boundary, not an assumed idempot
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-event-sourcing.2026-10-21: sections "Context", "Problem",
-"Forces", "Solution", "Example", "Resulting context". The source is a public
+read record read.batch2-event-sourcing.2026-10-21: all nine served headings
+read. The source is a public
 pattern/specification
 unit, not a benchmark.
 
@@ -203,8 +203,8 @@ saga protocol in the owner section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-saga.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/specification
+read record read.batch2-saga.2026-10-21: all eleven served headings read.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -237,8 +237,8 @@ compensations are common; traces show correlation, not durable business truth.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-saga.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/specification
+read record read.batch2-saga.2026-10-21: all eleven served headings read.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -303,8 +303,8 @@ counter-effects.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-saga.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/specification
+read record read.batch2-saga.2026-10-21: all eleven served headings read.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -338,8 +338,8 @@ connector manual.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-outbox.2026-10-21: sections "Context", "Problem", "Forces",
-"Solution", "Example", "Resulting context". The source is a public pattern/specification
+read record read.batch2-outbox.2026-10-21: all nine served headings read.
+The source is a public pattern/specification
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
@@ -371,8 +371,8 @@ inbox atomicity in the owner section.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-idempotent-consumer.2026-10-21: sections "Context", "Problem",
-"Forces", "Solution", "Example", "Resulting context". The source is a public
+read record read.batch2-idempotent-consumer.2026-10-21: all five served
+headings read. The source is a public
 pattern/specification
 unit, not a benchmark.
 

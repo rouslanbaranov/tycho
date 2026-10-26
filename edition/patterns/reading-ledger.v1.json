@@ -1942,12 +1942,15 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
+        "Pattern: Event sourcing",
         "Context",
         "Problem",
         "Forces",
         "Solution",
         "Example",
-        "Resulting context"
+        "Resulting context",
+        "Related patterns",
+        "See also"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -1959,12 +1962,15 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "Event sourcing derives state from an ordered event history; replay, schema evolution, snapshots and duplicate handling are explicit costs."
+        "Event sourcing persists each state change as an appended event; state is rebuilt by replay, with snapshots as an optimization.",
+        "The event store also delivers saved events to subscribers.",
+        "The page lists benefits and drawbacks, including reliable publication, temporal queries, a learning curve, harder querying and eventual consistency."
       ],
       "claims_not_supported": [
-        "linked pages",
-        "implementation behavior",
-        "independent reproduction or benchmark"
+        "schema evolution or event versioning",
+        "duplicate or out-of-order delivery handling",
+        "snapshot retention or corruption recovery",
+        "performance or cost measurements"
       ],
       "limitations": "One public unit; linked examples, implementations and related pages were not read; no benchmark or independent review.",
       "content_sha256": "aade58421e5ad48ba8092b614a33c6e9efc34389bcde5429a4b045322a6f4edb",
@@ -2019,12 +2025,17 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
+        "Pattern: Saga",
         "Context",
         "Problem",
         "Forces",
         "Solution",
-        "Example",
-        "Resulting context"
+        "Example: Choreography-based saga",
+        "Example: Orchestration-based saga",
+        "Resulting context",
+        "Related patterns",
+        "Learn more",
+        "Example code"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2036,12 +2047,14 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "A saga coordinates local transactions through choreography or orchestration and compensates failed steps; intermediate states are visible and compensation is not rollback."
+        "A saga coordinates local transactions through choreography or orchestration and compensates failed steps.",
+        "The page states there is no automatic rollback and no ACID isolation; compensation and isolation countermeasures must be designed."
       ],
       "claims_not_supported": [
-        "linked pages",
-        "implementation behavior",
-        "independent reproduction or benchmark"
+        "technical failures, crashes or ambiguous outcomes",
+        "protocol, retry or timeout mechanics",
+        "compensation design method",
+        "isolation countermeasure details"
       ],
       "limitations": "One public unit; linked examples, implementations and related pages were not read; no benchmark or independent review.",
       "content_sha256": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047",
@@ -2058,12 +2071,15 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
+        "Pattern: Transactional outbox",
+        "Also known as",
         "Context",
         "Problem",
         "Forces",
         "Solution",
-        "Example",
-        "Resulting context"
+        "Result context",
+        "Related patterns",
+        "Learn more"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2136,12 +2152,11 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
+        "Pattern: Idempotent Consumer",
         "Context",
         "Problem",
-        "Forces",
         "Solution",
-        "Example",
-        "Resulting context"
+        "See also"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2153,12 +2168,14 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "An idempotent consumer records message identity with the local effect to avoid duplicate processing; identity retention and concurrent duplicates matter."
+        "An idempotent consumer records processed message IDs so a duplicate INSERT fails and the message can be ignored.",
+        "The page describes a PROCESSED_MESSAGES table keyed by subscriber and message ID."
       ],
       "claims_not_supported": [
-        "linked pages",
-        "implementation behavior",
-        "independent reproduction or benchmark"
+        "identity retention or cleanup",
+        "concurrent duplicate handling",
+        "exactly-once external effects",
+        "crash-window ordering"
       ],
       "limitations": "One public unit; linked examples, implementations and related pages were not read; no benchmark or independent review.",
       "content_sha256": "3edddaa1959c70dbd9953648e54759b5a2bc167cd121805124e5faafa0eca40f",
@@ -2738,12 +2755,15 @@
       "access_date": "2026-10-21",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
+        "Pattern: Command Query Responsibility Segregation (CQRS)",
         "Context",
         "Problem",
-        "Forces",
         "Solution",
-        "Example",
-        "Resulting context"
+        "Examples",
+        "Resulting context",
+        "Related patterns",
+        "See also",
+        "Learn more"
       ],
       "sections_not_read": [
         "linked child pages",
@@ -2755,12 +2775,13 @@
       ],
       "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
       "claims_supported": [
-        "CQRS separates command and query models; read projections are eventually consistent and require duplicate/order/failure handling."
+        "CQRS maintains a read-only view database updated from Domain events.",
+        "The view is eventually consistent and can lag behind the write side."
       ],
       "claims_not_supported": [
-        "linked pages",
-        "implementation behavior",
-        "independent reproduction or benchmark"
+        "duplicate suppression, event ordering or failure recovery",
+        "command-side model definition",
+        "projection rebuild or backfill"
       ],
       "limitations": "Pattern page only; linked implementation examples and book chapters were not read.",
       "content_sha256": "592b31fe177a9522f8c3c863e79f9cae0ac17e8a1dff2d89ed0690e40696b9ac",
