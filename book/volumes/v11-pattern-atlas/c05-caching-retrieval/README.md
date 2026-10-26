@@ -93,7 +93,7 @@ distributed coordination cost exceeds cross-instance reuse.
 **Failure and recovery.** Network partitions, stale replicas and a shared failure domain are
 common; bound fallback so a cache outage does not overload the source.
 
-**Technical owner.** [Distributed Cache](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#distributed-cache) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Distributed Cache](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#distributed-cache) — invalidation authority and freshness are bounded; topology and replication are owner-specific.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-hazelcast-cache.2026-10-21: sections "Caching Data". The source is
@@ -161,7 +161,7 @@ when cache-layer coupling or opaque failures outweigh simpler fill logic.
 **Failure and recovery.** Fill latency and error masking are common; verify loading
 semantics in the owner section.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#read-through-cache) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#read-through-cache) — read-through freshness and authority are bounded; loader failure semantics are page-specific.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -193,7 +193,7 @@ choice when write amplification or dual-write failure dominates.
 **Failure and recovery.** Partial writes and stale cache entries are common; verify
 ordering in the owner section.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#write-through-cache) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#write-through-cache) — write-through ordering and acknowledgement are bounded; backend durability is page-specific.
 
 **Sources.**
 [src.aws-caching-strategies](../../../../edition/patterns/reading-ledger.v1.json)
@@ -225,7 +225,7 @@ durability and replay complexity exceed latency benefit.
 **Failure and recovery.** Cache loss and reordering are common; verify durability in the
 owner section.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#write-behind-write-back) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#write-behind-write-back) — write-behind durability and ordering are bounded; flush retry policy is page-specific.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -257,7 +257,7 @@ post-write misses dominate the read path.
 **Failure and recovery.** Stale entries after invalidation failure are common; verify
 invalidation in the owner section.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#write-around) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#write-around) — write-around freshness and miss path are bounded; prefetch policy is page-specific.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
@@ -489,7 +489,7 @@ choice when tier coordination cost exceeds latency benefit.
 **Failure and recovery.** Cross-tier stale data and invalidation fan-out are common;
 verify placement in the owner section.
 
-**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#multi-level-caching) — authority/freshness is bounded, not a dedicated implementation for every cache pattern.
+**Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#multi-level-caching) — multi-level authority and coherence are bounded; per-tier eviction is page-specific.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-hazelcast-near.2026-10-21: sections "Near Cache". The source is a
