@@ -3603,22 +3603,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A read-through cache loads a miss from the source on behalf of the caller and stores the result, so the application never performs the fill itself.",
-          "reason": ""
+          "reason": "Defines source fill on a miss with the cache storing the result."
         },
         "invariant": {
           "state": "supported",
           "quote": "A fill failure must be returned or mapped explicitly, never hidden as an ordinary cache miss, and concurrent fills must not stampede the source.",
-          "reason": ""
+          "reason": "Requires explicit fill-error mapping and stampede control."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Slow fills and error masking make the cache appear healthy while the source degrades; bound fill concurrency, timeouts and error translation.",
-          "reason": ""
+          "reason": "Names slow fills and error masking and requires concurrency, timeout and translation bounds."
         },
         "alternative": {
           "state": "supported",
           "quote": "Cache-aside with application-owned fill keeps loading policy visible; prefer read-through when the cache can call the source and the loading contract is uniform.",
-          "reason": ""
+          "reason": "Contrasts application-owned cache-aside fill."
         }
       },
       "decision_evidence": {
@@ -3660,22 +3660,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A write-through path updates the cache and the authoritative store in one controlled sequence, so a later read can use the cached copy.",
-          "reason": ""
+          "reason": "Defines a controlled cache-and-store update sequence."
         },
         "invariant": {
           "state": "supported",
           "quote": "A write must not be acknowledged before both sides reach the declared state, or an explicit reconciliation must repair a partial write.",
-          "reason": ""
+          "reason": "Forbids acknowledging before both sides reach the declared state or an explicit reconciliation."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Failure between the two updates leaves cache and store divergent; version the value and retry or invalidate with an audit trail of the failed write.",
-          "reason": ""
+          "reason": "Names partial-write divergence and requires versioning plus retry or audited invalidation."
         },
         "alternative": {
           "state": "supported",
           "quote": "Write-behind or cache-aside with invalidation reduces write latency; choose write-through when read-after-write freshness outweighs the extra write cost.",
-          "reason": ""
+          "reason": "Contrasts write-behind or cache-aside invalidation for lower write latency."
         }
       },
       "decision_evidence": {
@@ -3720,22 +3720,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A write-behind cache acknowledges a write after placing it in a pending buffer and flushes it to durable storage asynchronously.",
-          "reason": ""
+          "reason": "Defines asynchronous flush from a pending write buffer."
         },
         "invariant": {
           "state": "supported",
           "quote": "If the buffer has its own durable or replicated record separate from the cache, cache loss is recoverable and the acknowledged write survives.",
-          "reason": ""
+          "reason": "Requires a durable or replicated buffer separate from the cache for acknowledged writes."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "If that buffer is the cache itself, cache loss can discard acknowledged writes; that is the card's hard contraindication.",
-          "reason": ""
+          "reason": "Names cache loss discarding acknowledged writes as the hard contraindication."
         },
         "alternative": {
           "state": "supported",
           "quote": "Write-through acknowledges only after both sides update; prefer write-behind when write throughput dominates and a measured loss window is acceptable for at-risk writes, not for durable acknowledged writes.",
-          "reason": ""
+          "reason": "Contrasts write-through acknowledgement after both sides update."
         }
       },
       "decision_evidence": {
@@ -3777,22 +3777,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A write-around policy writes directly to the authoritative store and does not populate the cache, leaving later reads to fill it.",
-          "reason": ""
+          "reason": "Defines direct store writes without cache population."
         },
         "invariant": {
           "state": "supported",
           "quote": "A cached copy must be invalidated or versioned at the update, or a later read can restore a value older than the committed write.",
-          "reason": ""
+          "reason": "Requires invalidation or versioning at update to prevent older reads."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "the policy requires reliable invalidation or versioning at the update and a read test immediately after a write.",
-          "reason": ""
+          "reason": "Requires reliable invalidation/versioning and a post-write read test."
         },
         "alternative": {
           "state": "supported",
           "quote": "Write-through keeps the cache current at the cost of write amplification; choose write-around when write volume is high and later reads can tolerate a refill.",
-          "reason": ""
+          "reason": "Contrasts write-through write amplification with later refill tolerance."
         }
       },
       "decision_evidence": {
@@ -3834,22 +3834,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Cache invalidation removes or versions a cached entry when the authoritative value changes, so a later read cannot reuse the superseded copy.",
-          "reason": ""
+          "reason": "Defines removal or versioning when the authoritative value changes."
         },
         "invariant": {
           "state": "supported",
           "quote": "The invalidation must be ordered with the write or guarded by a version, and a failed invalidation must remain visible rather than silently skipped.",
-          "reason": ""
+          "reason": "Requires write-order or version guard and visible failed invalidation."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A lost invalidation or in-flight fill resurrects stale data; bound the TTL, record failed invalidations and keep a durable retry path.",
-          "reason": ""
+          "reason": "Names lost invalidation and in-flight fill and requires TTL, recording and durable retry."
         },
         "alternative": {
           "state": "supported",
           "quote": "Prefer TTL-only when bounded staleness is acceptable, or versioned keys when every reader can carry the version.",
-          "reason": ""
+          "reason": "Contrasts TTL-only bounded staleness and versioned keys."
         }
       },
       "decision_evidence": {
