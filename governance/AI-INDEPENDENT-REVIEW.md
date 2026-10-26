@@ -53,8 +53,27 @@ Every review must leave a report containing:
 - limits, unresolved questions and any source unavailable;
 - a statement that the review is not owner acceptance or sufficient coverage by itself.
 
-Store the raw report in the repository when the owner asks for it. If the reviewer wrote
-to the repository, stop, quarantine the changes and treat the review as contaminated.
+Store the raw report in the repository for every completed review. The reviewer remains
+read-only; the author saves the reviewer output verbatim. If the reviewer wrote to the
+repository, stop, quarantine the changes and treat the review as contaminated.
+
+## Preservation of reports
+
+Every completed external AI review must be preserved in the repository.
+
+- Directory: `authoring/ai-reviews/`.
+- File name: `YYYY-MM-DD-<scope-slug>-<reviewer-slug>.md`.
+- Content: the reviewer output verbatim, including identity fields, scope, evidence,
+  findings, verdict and limits. Do not edit the report. Add corrections as a separate
+  addendum file.
+- Hash: record the SHA-256 of the saved file in `authoring/ai-reviews/README.md`.
+- Index: add one row per review with date, reviewer harness/vendor, scope, verdict, path
+  and SHA-256.
+- The hand-off or acceptance record must link the saved report. A review with no saved
+  report is not a completed review.
+
+If a report contains restricted or private material, do not commit it; quarantine it and
+follow the contamination procedure. Public-source reviews only.
 
 ## What the verdict means
 

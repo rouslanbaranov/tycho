@@ -172,11 +172,15 @@ inventory and exits zero.
 | Blocking findings | |
 | Non-blocking findings | |
 | Accepted gaps challenged | |
+| Saved report path | `authoring/ai-reviews/` |
+| Report SHA-256 | |
 | `ai_review` | not-performed until signed above |
 | `sufficient` | 0 |
 
-A pass here is a review of this evidence package only. It is not sufficient coverage,
-owner acceptance of the Pattern Atlas, or permission to merge.
+The author saves the reviewer output verbatim under `authoring/ai-reviews/` and records
+its SHA-256. A review without a saved report is not a completed review. A pass here is a
+review of this evidence package only; it is not sufficient coverage, owner acceptance or
+permission to merge.
 
 
 ## 9. Exact prompt for the external reviewer

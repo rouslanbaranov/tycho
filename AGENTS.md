@@ -106,16 +106,17 @@ tool invocation that retrieves sources, or change.
     request or change configuration, and must receive public sources only. Do not send
     restricted, employer-specific or private material.
 20. **Treat the output as evidence, not acceptance.** Require a verdict, evidence, findings
-    by severity with exact paths, and limits. Preserve the raw report and verify its
+    by severity with exact paths, and limits. Save the raw report verbatim under
+    `authoring/ai-reviews/`, add it to the index with its SHA-256, and verify its
     metadata, HEAD, hashes and scope. An AI review pass satisfies the independent review
     gate, but it is not owner acceptance, CI, sufficient coverage or permission to merge.
     The owner decides whether to apply verdicts; records and acceptance documents change
     only after that decision.
 21. **Record the review.** State the reviewer harness and vendor, model and version when
-    exposed, session or run id, review timestamp, HEAD, content commit, scope, report path
-    and any prior involvement. Use `ai_review` for the new gate; `human_review` is retired
-    for future work. State `sufficient: 0` unless separate evidence exists. After the run,
-    check `git status` and report hashes; if the reviewer wrote to the repository, stop,
+    exposed, session or run id, review timestamp, HEAD, content commit, scope, saved
+    report path and any prior involvement. Use `ai_review` for the new gate;
+    `human_review` is retired for future work. State `sufficient: 0` unless separate
+    evidence exists. After the run, check `git status` and report hashes; if the reviewer wrote to the repository, stop,
     quarantine the changes and treat the review as contaminated.
 
 
