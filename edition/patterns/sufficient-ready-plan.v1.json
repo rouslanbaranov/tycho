@@ -3,7 +3,7 @@
   "issue": 532,
   "created_at": "2026-10-26",
   "scope": "pilot-six",
-  "status": "in-progress",
+  "status": "source-extraction-complete",
   "entries": [
     {
       "pattern_id": "tycho.pattern.federated-identity",
@@ -21,7 +21,12 @@
         "OpenID Federation specification",
         "OIDC Core"
       ],
-      "status": "source-needed"
+      "status": "evidence-partial",
+      "finding": "OpenID Federation 1.0 supports trust anchors, entity statements, trust chains and metadata; revocation/replay (section 11) not read.",
+      "sources": [
+        "src.openid-federation"
+      ],
+      "record": "authoring/sufficient-ready/2026-10-26-federation.json"
     },
     {
       "pattern_id": "tycho.pattern.rbac-abac",
@@ -39,7 +44,12 @@
         "NIST SP 800-162",
         "OWASP Authorization Cheat Sheet"
       ],
-      "status": "source-needed"
+      "status": "evidence-partial",
+      "finding": "OWASP supports RBAC/ABAC/ReBAC definitions and least-privilege guidance; PDP/PEP, attribute staleness and revocation remain unsupported.",
+      "sources": [
+        "src.owasp-authorization"
+      ],
+      "record": "authoring/sufficient-ready/2026-10-26-rbac.json"
     },
     {
       "pattern_id": "tycho.pattern.workload-identity-mtls",
@@ -56,7 +66,12 @@
       "candidate_sources": [
         "Istio security documentation (full page or mTLS section)"
       ],
-      "status": "source-needed"
+      "status": "evidence-partial",
+      "finding": "Istio security page supports identity, certificate rotation, mTLS and authorization; registry src.istio URL mismatch must be fixed.",
+      "sources": [
+        "src.istio"
+      ],
+      "record": "authoring/sufficient-ready/2026-10-26-workload.json"
     },
     {
       "pattern_id": "tycho.pattern.dark-launching-shadow-traffic",
@@ -73,7 +88,13 @@
       "candidate_sources": [
         "Martin Fowler, Dark Launching"
       ],
-      "status": "source-ready-to-record"
+      "status": "evidence-partial",
+      "finding": "Fowler supports hidden invocation and flag rollback; Istio supports mirroring. Measurement method, side-effect suppression and capacity bounds remain unsupported.",
+      "sources": [
+        "src.fowler-dark-launching",
+        "src.istio-traffic-mirroring"
+      ],
+      "record": "authoring/sufficient-ready/2026-10-26-dark-launching.json"
     },
     {
       "pattern_id": "tycho.pattern.controlled-cutover",
@@ -90,7 +111,12 @@
       "candidate_sources": [
         "Google SRE, graceful degradation/cutover material"
       ],
-      "status": "source-needed"
+      "status": "evidence-partial",
+      "finding": "Google Spanner cutover supports a bounded drain-and-switch sequence; general cutover proof, no-return gate and fallback execution remain unsupported.",
+      "sources": [
+        "src.gcp-spanner-cutover"
+      ],
+      "record": "authoring/sufficient-ready/2026-10-26-cutover.json"
     },
     {
       "pattern_id": "tycho.pattern.parallel-run",
@@ -107,7 +133,12 @@
       "candidate_sources": [
         "Martin Fowler, ParallelChange / ParallelRun material"
       ],
-      "status": "source-needed"
+      "status": "insufficient-evidence",
+      "finding": "Fowler Parallel Change supports expand-and-contract only; it does not support Parallel Run. A different source or a card/owner revision is required.",
+      "sources": [
+        "src.fowler-parallel-change"
+      ],
+      "record": "authoring/sufficient-ready/2026-10-26-parallel.json"
     }
   ],
   "limits": [
