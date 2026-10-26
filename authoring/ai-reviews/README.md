@@ -20,5 +20,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 
 | Date | Reviewer harness / vendor | Scope | Verdict | Report | SHA-256 |
 |---|---|---|---|---|---|
-
-No external AI review reports are recorded yet.
+| 2026-10-26 | Codex / OpenAI | #535 full-unit reading and 23 removed claims | reject | `2026-10-26-full-unit-reading-codex.md` | `4e9ed912281f84346dfa11caec0a05b50ef613de461443afb662481f37b0eb90` |
