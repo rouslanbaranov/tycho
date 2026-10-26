@@ -4365,22 +4365,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Partitioning splits one logical data set into key ranges or lists inside a store so the planner can prune unrelated partitions for a query.",
-          "reason": ""
+          "reason": "Defines key-range or list splits for planner pruning."
         },
         "invariant": {
           "state": "supported",
           "quote": "Each row belongs to exactly one partition, and the main query must name a partition key so pruning is possible.",
-          "reason": ""
+          "reason": "Requires one partition per row and a named partition key for pruning."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A query without the partition key fans out across every partition; inspect plans and measure fan-out when access paths or keys change.",
-          "reason": ""
+          "reason": "Names fan-out without the key and requires plan and fan-out checks."
         },
         "alternative": {
           "state": "supported",
           "quote": "Keep one table and add an index when the main query already prunes; partition only when the data volume, retention or maintenance benefit is measured.",
-          "reason": ""
+          "reason": "Contrasts one indexed table with measured partitioning benefit."
         }
       },
       "decision_evidence": {
@@ -4422,22 +4422,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Consistent hashing maps keys onto a ring so adding or removing a node moves only the adjacent share of keys instead of remapping the whole keyspace.",
-          "reason": ""
+          "reason": "Defines ring placement with only adjacent key movement."
         },
         "invariant": {
           "state": "supported",
           "quote": "Clients and owners must agree on a versioned mapping, and a key must retain one authoritative owner at any mapping epoch.",
-          "reason": ""
+          "reason": "Requires a versioned mapping and one authoritative owner per epoch."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A ring change temporarily routes a key to the wrong owner or serves an incomplete copy; dual-read or version-check during the transition and record the epoch.",
-          "reason": ""
+          "reason": "Names wrong-owner or incomplete-copy transitions and requires dual-read or version checks."
         },
         "alternative": {
           "state": "supported",
           "quote": "Explicit key-range assignment gives direct control of hot ranges; choose consistent hashing when node membership changes often and manual range planning is impractical.",
-          "reason": ""
+          "reason": "Contrasts explicit key-range assignment for hot ranges."
         }
       },
       "decision_evidence": {
@@ -4539,22 +4539,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Several nodes accept writes for the same logical data and replicate them to each other, so every accepted write must eventually converge to one declared outcome.",
-          "reason": ""
+          "reason": "Defines multiple write acceptors with eventual convergence."
         },
         "invariant": {
           "state": "supported",
           "quote": "The system must define a conflict-resolution rule and preserve every acknowledged effect according to that rule; silent last-writer-wins is not a convergence proof.",
-          "reason": ""
+          "reason": "Requires a conflict rule and preservation of every acknowledged effect."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Concurrent writes to one key produce conflicts that surface later during reads or reconciliation; record the conflicting versions and expose a deterministic resolution path.",
-          "reason": ""
+          "reason": "Requires recording conflicting versions and a deterministic resolution path."
         },
         "alternative": {
           "state": "supported",
           "quote": "Single-leader replication avoids write conflicts at the cost of write availability across regions; choose multi-leader only when accepting local writes outweighs the conflict contract.",
-          "reason": ""
+          "reason": "Contrasts single-leader conflict avoidance with write availability."
         }
       },
       "decision_evidence": {
@@ -4596,22 +4596,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Read replicas serve read-only traffic from followers, reducing load on the leader while accepting that a replica can lag behind the latest committed write.",
-          "reason": ""
+          "reason": "Defines follower read serving with bounded lag."
         },
         "invariant": {
           "state": "supported",
           "quote": "A read must state the freshness it requires, and read-your-writes or monotonic guarantees must be enforced by routing, a position wait or an authority read.",
-          "reason": ""
+          "reason": "Requires a freshness statement and routing, wait or authority read for stronger guarantees."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A lag spike serves stale data even though replication is healthy; monitor applied position and lag, and route freshness-critical reads away from a lagging replica.",
-          "reason": ""
+          "reason": "Requires applied-position and lag monitoring with freshness-critical routing."
         },
         "alternative": {
           "state": "supported",
           "quote": "Read from the leader or use a quorum read when freshness dominates; add replicas when read volume and tolerance for bounded staleness justify the extra copies.",
-          "reason": ""
+          "reason": "Names leader or quorum reads when freshness dominates."
         }
       },
       "decision_evidence": {
