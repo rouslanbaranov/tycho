@@ -2055,22 +2055,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "An aggregator fans in related results from multiple participants and returns one composed result.",
-          "reason": ""
+          "reason": "Defines fan-in of participant results into one composed result."
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs correlation, a per-participant timeout, a partial-failure policy and a rule for late or duplicate responses.",
-          "reason": ""
+          "reason": "Requires correlation, per-participant timeout, partial-failure policy and late/duplicate handling."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a stuck or missing participant; the aggregator must return a declared partial result, cancel remaining work or fail as a whole.",
-          "reason": ""
+          "reason": "Names stuck or missing participants and requires partial result, cancellation or whole failure."
         },
         "alternative": {
           "state": "supported",
           "quote": "Client-side composition is the alternative when the caller can tolerate multiple responses.",
-          "reason": ""
+          "reason": "Contrasts client-side composition when multiple responses are acceptable."
         }
       },
       "decision_evidence": {
@@ -2115,22 +2115,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "Scatter-gather sends one request to several participants and gathers their responses.",
-          "reason": ""
+          "reason": "Defines one request sent to several participants with gathered responses."
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs a response contract, a quorum or completeness rule, a deadline and a policy for stragglers.",
-          "reason": ""
+          "reason": "Requires a response contract, quorum/completeness rule, deadline and straggler policy."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a slow or missing participant; gather must return a bounded partial result or fail under a declared rule, and cancel outstanding work.",
-          "reason": ""
+          "reason": "Requires bounded partial results or declared failure and cancellation of outstanding work."
         },
         "alternative": {
           "state": "supported",
           "quote": "A single authoritative call is the alternative when consistency matters more than coverage.",
-          "reason": ""
+          "reason": "Contrasts one authoritative call when consistency dominates coverage."
         }
       },
       "decision_evidence": {
@@ -2180,12 +2180,12 @@
         "invariant": {
           "state": "supported",
           "quote": "Retrying cannot repair an invalid schema or a permanently rejected target.",
-          "reason": ""
+          "reason": "States that retry cannot repair invalid schema or permanent target rejection."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Separate transient, permanent and unknown outcomes; bound attempts and age; keep diagnostic evidence without leaking payload.",
-          "reason": ""
+          "reason": "Requires separating transient, permanent and unknown outcomes with bounded attempts and evidence."
         },
         "alternative": {
           "state": "supported",
@@ -2240,7 +2240,7 @@
         "invariant": {
           "state": "supported",
           "quote": "Delivery guarantees differ by broker and configuration.",
-          "reason": ""
+          "reason": "Notes that delivery guarantees vary by broker and configuration."
         },
         "failure_recovery": {
           "state": "supported",
@@ -2250,7 +2250,7 @@
         "alternative": {
           "state": "supported",
           "quote": "Ephemeral pub/sub fits a notification whose loss while offline is acceptable. A recoverable business task needs a durable consumer or another persisted queue, not a best-effort subscription alone.",
-          "reason": ""
+          "reason": "Contrasts ephemeral pub/sub with a durable consumer or persisted queue for recoverable tasks."
         }
       },
       "decision_evidence": {
@@ -2355,22 +2355,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A resequencer restores an intended order from messages that arrive out of order.",
-          "reason": ""
+          "reason": "Defines restoring intended order from out-of-order arrivals."
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs a sequence domain, a bounded buffer, a gap timeout and a policy for missing or duplicate sequence numbers.",
-          "reason": ""
+          "reason": "Requires sequence domain, bounded buffer, gap timeout and missing/duplicate policy."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a missing sequence that blocks later messages; release the buffer after a declared timeout or fail the affected partition.",
-          "reason": ""
+          "reason": "Names a missing sequence blocking later messages and requires timeout release or partition failure."
         },
         "alternative": {
           "state": "supported",
           "quote": "A partitioned consumer that preserves order within a key is the alternative when global order is unnecessary.",
-          "reason": ""
+          "reason": "Contrasts partitioned per-key ordering when global order is unnecessary."
         }
       },
       "decision_evidence": {
@@ -2415,22 +2415,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A claim check stores a large or sensitive payload outside the message and sends a claim token instead.",
-          "reason": ""
+          "reason": "Defines storing the payload externally and sending a claim token."
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs payload lifecycle, authorization, expiry, integrity and a cleanup rule for abandoned claims.",
-          "reason": ""
+          "reason": "Requires payload lifecycle, authorization, expiry, integrity and cleanup."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is an orphaned payload or a token that outlives its authorization; expire and garbage-collect claims, and make the consumer fail closed when the claim cannot be resolved.",
-          "reason": ""
+          "reason": "Names orphaned payloads and overlong tokens and requires expiry, garbage collection and fail-closed resolution."
         },
         "alternative": {
           "state": "supported",
           "quote": "An inline payload with encryption and size limits is the alternative when the transport can carry it safely.",
-          "reason": ""
+          "reason": "Contrasts an inline encrypted size-limited payload."
         }
       },
       "decision_evidence": {
@@ -2480,12 +2480,12 @@
         "invariant": {
           "state": "supported",
           "quote": "The bridge contract must preserve identity, ordering and delivery semantics across translation.",
-          "reason": ""
+          "reason": "Requires the bridge contract to preserve identity, ordering and delivery semantics."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The broker half also needs an owner for outage, retention and delivery observability",
-          "reason": ""
+          "reason": "Requires an owner for broker outage, retention and delivery observability."
         },
         "alternative": {
           "state": "supported",
@@ -2532,22 +2532,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A canonical data model gives producers and consumers one versioned shared representation, with translation at the edges instead of pairwise formats.",
-          "reason": ""
+          "reason": "Defines one versioned shared representation with edge translation."
         },
         "invariant": {
           "state": "supported",
           "quote": "The canonical schema must be versioned and lossless for the fields each consumer needs, and translation must fail explicitly when a required meaning is absent.",
-          "reason": ""
+          "reason": "Requires versioning, lossless consumer fields and explicit translation failure."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A translation can preserve syntax while losing domain meaning; contract tests with representative payloads and an owner for schema changes are required.",
-          "reason": ""
+          "reason": "Names syntax-preserving semantic loss and requires contract tests and schema ownership."
         },
         "alternative": {
           "state": "supported",
           "quote": "Point-to-point translation or an anti-corruption layer avoids a central schema when integrations are few or their models genuinely differ.",
-          "reason": ""
+          "reason": "Contrasts point-to-point translation or an anti-corruption layer."
         }
       },
       "decision_evidence": {
@@ -2592,22 +2592,22 @@
         "mechanism": {
           "state": "supported",
           "quote": "A process manager keeps a central workflow state machine and decides the next step",
-          "reason": ""
+          "reason": "Defines a central workflow state machine that decides the next step."
         },
         "invariant": {
           "state": "supported",
           "quote": "The invariant is a recorded dispatch intent, not merely a progress row",
-          "reason": ""
+          "reason": "Requires a recorded dispatch intent rather than only a progress row."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A lost dispatch or duplicate step leaves the workflow stuck or duplicated",
-          "reason": ""
+          "reason": "Names lost dispatch and duplicate steps as stuck or duplicated workflows."
         },
         "alternative": {
           "state": "supported",
           "quote": "A routing slip is simpler when the itinerary is fixed and each hop can forward it",
-          "reason": ""
+          "reason": "Contrasts a fixed-itinerary routing slip with per-hop forwarding."
         }
       },
       "decision_evidence": {
