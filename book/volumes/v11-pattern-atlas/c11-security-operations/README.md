@@ -326,8 +326,8 @@ in the owner section.
 
 **Sources.** [src.otel](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-otel-traces.2026-10-21: sections "Traces", "Spans", "Context
-Propagation", "Sampling". The source is a public pattern/specification
-unit, not a benchmark.
+Propagation". Sampling was not a section; sampling policy is synthetic guidance. The source is a
+public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -356,9 +356,9 @@ records and notify. On schema drift, migrate/backfill or dual-write with a compa
 **Technical owner.** [Structured logging, authoritative audit and data lineage](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#structured-logging) — logging/audit is bounded, not a logging platform manual.
 
 **Sources.** [src.otel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-otel-logs.2026-10-21: sections "Logs", "Log Records",
-"Attributes", "Correlation". The source is a public pattern/specification
-unit, not a benchmark.
+read record read.batch6-otel-logs.2026-10-21: sections "Logs", "Log Records". Attributes and
+correlation were not headings; correlation policy is synthetic guidance. The source is a public
+pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -387,9 +387,9 @@ owner section.
 **Technical owner.** [Audit Trail](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#audit-trail) — logging/audit is bounded, not a logging platform manual.
 
 **Sources.** [src.openlineage](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-openlineage.2026-10-21: sections "About OpenLineage", "Events",
-"Namespaces and Datasets". The source is a public pattern/specification
-unit, not a benchmark.
+read record read.batch6-openlineage.2026-10-21: sections "About OpenLineage", "Events". The unit
+covers lineage events, not tamper-proof audit records; Namespaces and Datasets were not headings.
+The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
@@ -419,8 +419,8 @@ owner section.
 
 **Sources.** [src.sre](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-sre-slo.2026-10-21: sections "Service Level Objectives",
-"Indicators", "Objectives", "Error Budgets". The source is a public pattern/specification
-unit, not a benchmark.
+"Indicators", "Objectives". Error Budgets was not a section; budget arithmetic is synthetic
+guidance. The source is a public pattern/specification unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
