@@ -9,8 +9,8 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 127 |
-| Residual findings after re-review | 18 |
+| Promoted after remediation | 129 |
+| Residual findings after re-review | 16 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 109 |
@@ -205,7 +205,7 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Distributed Tracing**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Distributed Workflow Orchestration**
@@ -529,7 +529,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **SLI/SLO and Error Budgets**
-  Current: pass-with-findings; re-review: pass-with-findings; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: reviewed-by-independent-agent.
 
 - **Splitter**
