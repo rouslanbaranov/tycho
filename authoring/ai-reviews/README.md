@@ -41,7 +41,6 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 valet key round 4 | pass | `2026-10-27-valet-key-review4-codex.md` | `2aab633fc5a566532cc3973814f5803143cc979368a5ffd5855e22d4cdbe77ff` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 cache | pass | `2026-10-27-cache-invalidation-review-codex.md` | `26323bcdf779dbca8db2f9e4abe439affd94bb24143896d02df314d12b139a0b` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 ttl | reject | `2026-10-27-ttl-expiration-review-codex.md` | `06e0574b1134e12c6549f3725a8022e4cb947ec2029aa64bf92b6c56fc18404b` |
-| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar | reject | `2026-10-27-sidecar-review-codex.md` | `cc7208f6df8b790cb73bff93b4fe8e0381cafa9e4b06c3e3c5fae92b092e5bc7` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 anti-corruption layer | reject | `2026-10-27-anti-corruption-layer-review-codex.md` | `4b29a05eee669687ded6ab84d2ffb2248ec2cc74e188dbbc1569227f9d2419a1` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 dark launching | reject | `2026-10-27-dark-launching-review-codex.md` | `1d757b4448f2711e5cdcb67d987308413f89b3d9fd3d15abc3ca66f4b168a3d9` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 anti-corruption layer round 2 | reject | `2026-10-27-anti-corruption-layer-review2-codex.md` | `a437bb9ad9c9073b372540526ccc1c6620539d13133a3dfe4cec57e369feb9fb` |
@@ -56,3 +55,5 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 ACL after split | reject | `2026-10-27-anti-corruption-layer-split-review-codex.md` | `10d0e227d55b04c9daa5b281d19e0da58bb73758eadcc3fcc552850f3d73321c` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 ACL after split round 4 | pass | `2026-10-27-anti-corruption-layer-split-review4-codex.md` | `2c7c0220f0ca61cf4a75f86fda6edfbfc22e0de5265cd987a503f2d4420e4b90` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 parallel run after split round 2 | pass | `2026-10-27-parallel-run-split-review2-codex.md` | `f4db0f3d67061885e2dc47a743d2dc5a5c6f5d66df3511f8a86e361a1e829dfa` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar | reject |  |  |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar | reject | `2026-10-27-sidecar-review-codex.md` | `bf3cf2331ee6a342a3e3810f803d77ba57f9c963091e84502f05e41e0371980d` |
