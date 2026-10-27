@@ -55,3 +55,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 valet key after split | pass | `2026-10-27-valet-key-split-review6-codex.md` | `9ae5b68f13ffd8fe47d410bb2010ad4e561aa2848390d3cef59692a2f38dff04` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 ACL after split | reject | `2026-10-27-anti-corruption-layer-split-review-codex.md` | `10d0e227d55b04c9daa5b281d19e0da58bb73758eadcc3fcc552850f3d73321c` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 ACL after split round 4 | pass | `2026-10-27-anti-corruption-layer-split-review4-codex.md` | `2c7c0220f0ca61cf4a75f86fda6edfbfc22e0de5265cd987a503f2d4420e4b90` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 parallel run after split round 2 | pass | `2026-10-27-parallel-run-split-review2-codex.md` | `f4db0f3d67061885e2dc47a743d2dc5a5c6f5d66df3511f8a86e361a1e829dfa` |
