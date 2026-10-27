@@ -179,4 +179,4 @@ malicious use during its validity period; a key can usually be revoked or disabl
 The other is to implement the Gateway Routing pattern to set up an endpoint where clients
 use proxied access to storage.
 
-**Limits.** A key that cannot be revoked is a standing exposure.
+**Limits.** Direct access shifts enforcement to the resource; a short validity period bounds a leaked key's exposure.

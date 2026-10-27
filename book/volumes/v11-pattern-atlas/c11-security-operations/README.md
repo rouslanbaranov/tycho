@@ -264,7 +264,7 @@ direct resource access?
 **Good-fit conditions.** Access is limited in scope and duration; the key can be revoked or
 disabled.
 
-**Hard contraindications.** Reject when access must be mediated or the key cannot be revoked.
+**Hard contraindications.** Reject when access must be mediated.
 
 **Competing alternative.** Gateway Routing with proxied access to storage.
 
