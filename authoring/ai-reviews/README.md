@@ -33,3 +33,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 static content hosting round 3 | reject | `2026-10-27-static-content-hosting-review3-codex.md` | `520600735f49e8e434aeb0048a00b5679a795b4c877103c014f4386124ce96f5` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 static content hosting round 4 | reject | `2026-10-27-static-content-hosting-review4-codex.md` | `b531ce8b0146d06973ea677221091782eb45397aeabdc1ff7960c7fe60212e40` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 static content hosting round 6 | pass | `2026-10-27-static-content-hosting-review6-codex.md` | `e4b818e42ba61bc09040b4e9290a7935b32b0dbe47ceaa3a46b93962ee80a814` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 transactional outbox | reject | `2026-10-27-transactional-outbox-review-codex.md` | `35354132fe729ea1eb3c904fa8d164cb48d1b6ab4e99db488b6d223d860fd3c4` |
