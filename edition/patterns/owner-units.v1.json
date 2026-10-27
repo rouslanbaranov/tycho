@@ -6208,24 +6208,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A circuit breaker is a state machine around one dependency",
-          "reason": "States the breaker action: suppress repeated calls and probe recovery."
+          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The threshold needs a minimum request volume so one failure does not trip a quiet dependency.",
-          "reason": "Flags the safety constraint that an open breaker is neither recovery nor backpressure."
+          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "an open caused by local resource exhaustion hides the real bottleneck",
-          "reason": "Covers failure detection, call containment and recovery probing."
+          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A retry budget with jitter, a rate limit or a bounded timeout may be preferable when failures are not fast.",
-          "reason": "Names the competing controls and reversal condition."
+          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
         }
       },
       "decision_evidence": {
@@ -6243,7 +6243,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Shared dedicated section with Bulkhead; the control table gives one row per pattern."
     },
@@ -6268,24 +6268,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A bulkhead reserves bounded workers or pools for independent classes or dependencies.",
-          "reason": "States the isolation mechanism: separate bounded pools per class or dependency."
+          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Partition too tightly and waste capacity, or allow bypass",
-          "reason": "Names the two dangerous misuses that the isolation boundary must avoid."
+          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A bulkhead bypass, undersized partition or shared hidden queue can defeat isolation; detect per-pool queue age, utilization and rejected work, and rebalance or fail the isolated class explicitly.",
-          "reason": "Names the isolation failures and the detection/response."
+          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Admission/rate limiting bounds a shared resource; a circuit breaker rejects calls to a failing dependency; a bulkhead bounds concurrent capacity per class.",
-          "reason": "Names the competing controls and reversal condition."
+          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
         }
       },
       "decision_evidence": {
@@ -6303,7 +6303,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Shared dedicated section with Circuit Breaker; only a table row, no failure procedure."
     },
@@ -6445,24 +6445,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A timeout is a local wait bound on one operation; the request deadline is the caller's end-to-end budget.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Each hop should use at most the remaining deadline, minus its own processing and margin, and propagate the remainder.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Prefer explicit outcome lookup for an ambiguous durable command, rather than treating every timeout as \"nothing happened\".",
-          "reason": "Treats timeout as an ambiguous outcome and prescribes authority lookup."
+          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A shorter local timeout with explicit cancellation may protect capacity better than a long caller deadline",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
         }
       },
       "decision_evidence": {
@@ -6480,7 +6480,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Shared deadline/retry section; timeout appears mainly as a contrast to an end-to-end request deadline."
     },
@@ -6507,22 +6507,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Deadline propagation carries the caller's remaining budget as a relative duration.",
-          "reason": "Explains how elapsed time is subtracted and the remaining budget propagated."
+          "reason": "Explains how elapsed time is subtracted and the remaining budget propagated.",
+          "binding": {
+            "source_id": "src.sre-cascading",
+            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+            "section": "Latency and Deadlines",
+            "quote": "With deadline propagation, a deadline is set high in the stack (e.g., in the frontend). The tree of RPCs emanating from an initial request will all have the same absolute deadline.",
+            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "The ingress sets the budget and each hop checks expiry before starting work.",
-          "reason": "States the per-hop budget bound that must hold."
+          "reason": "States the per-hop budget bound that must hold.",
+          "binding": {
+            "source_id": "src.sre-cascading",
+            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+            "section": "Latency and Deadlines",
+            "quote": "If handling a request is performed over multiple stages (e.g., there are a few callbacks and RPC calls), the server should check the deadline left at each stage before attempting to perform any more work on the request.",
+            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Clock skew, a lost header and a hop that ignores expiry are the common failures.",
-          "reason": "Describes post-deadline cleanup and reconciliation via a durable workflow."
+          "reason": "Describes post-deadline cleanup and reconciliation via a durable workflow.",
+          "binding": {
+            "source_id": "src.sre-cascading",
+            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+            "section": "Latency and Deadlines",
+            "quote": "Using only simple deadline propagation, the initial call continues to use server resources until it eventually times out, despite being doomed to failure. Sending fatal errors or timeouts up the stack and cancelling other RPCs in the call tree prevents unneeded work if the request as a whole can't be fulfilled.",
+            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "independent per-hop timeouts fit only when the hops are genuinely independent.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.sre-cascading",
+            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+            "section": "Latency and Deadlines",
+            "quote": "If server B uses deadline propagation, it should set a 2-second deadline, but suppose it instead uses a hardcoded 20-second deadline for the RPC to server C .",
+            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+          }
         }
       },
       "decision_evidence": {
@@ -6565,24 +6593,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The owner of the primary outcome also owns its fallback, because only that owner can judge whether an alternate preserves the same correctness contract.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "SRE chapter has no fallback or alternate-result selection passage."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A dependency team's proposal needs explicit acceptance.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "SRE chapter has no fallback or alternate-result selection passage."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "State the fallback freshness, authority and caller-visible label, and require it to be cheaper, independently safe and independent of the failed resource.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "SRE chapter has no fallback or alternate-result selection passage."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A plausible substitute that hides its limits is a correctness failure; do not let the alternate impersonate the primary.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "SRE chapter has no fallback or alternate-result selection passage."
         }
       },
       "decision_evidence": {
@@ -6600,7 +6628,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -6627,22 +6655,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Degradation removes optional features or reduces quality to protect an essential outcome under overload.",
-          "reason": "Defines the mechanism and its scope."
+          "reason": "Defines the mechanism and its scope.",
+          "binding": {
+            "source_id": "src.sre-cascading",
+            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+            "section": "Load Shedding and Graceful Degradation",
+            "quote": "Graceful degradation takes the concept of load shedding one step further by reducing the amount of work that needs to be performed. In some applications, it’s possible to significantly decrease the amount of work or time needed by decreasing the quality of responses.",
+            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "which outcomes stay mandatory, which become unavailable and how callers observe the reduced state.",
-          "reason": "States the correctness or policy invariant."
+          "reason": "States the correctness or policy invariant.",
+          "binding": {
+            "source_id": "src.sre-cascading",
+            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+            "section": "Immediate Steps to Address Cascading Failures",
+            "quote": "Serve degraded results by doing less work or dropping unimportant traffic. This strategy must be engineered into your service, and can be implemented only if you know which traffic can be degraded and you have the ability to differentiate between the various payloads.",
+            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Silent loss of correctness is worse than an explicit failure.",
-          "reason": "Names the failure mode and required response."
+          "reason": "Names the failure mode and required response.",
+          "binding": {
+            "source_id": "src.sre-cascading",
+            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+            "section": "Load Shedding and Graceful Degradation",
+            "quote": "Complex load shedding and graceful degradation can cause problems themselves—excessive complexity may cause the server to trip into a degraded mode when it is not desired, or enter feedback cycles at undesired times. Design a way to quickly turn off complex graceful degradation or tune parameters if needed.",
+            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "A complete, explicit outage or added capacity may be preferable when no safe mode exists.",
-          "reason": "Names the competing choice and reversal condition."
+          "reason": "Names the competing choice and reversal condition.",
+          "binding": {
+            "source_id": "src.sre-cascading",
+            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+            "section": "Immediate Steps to Address Cascading Failures",
+            "quote": "Dropping load is a big hammer, usually reserved for situations in which you have a true cascading failure on your hands and you cannot fix it by other means.",
+            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+          }
         }
       },
       "decision_evidence": {
@@ -10163,7 +10219,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 4,
+      "bounded_entries": 3,
       "decision": "deepen",
       "rationale": "All four time-budget patterns now have distinct dedicated units; no further page split."
     },
@@ -10396,7 +10452,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Circuit breaker and bulkhead now have two distinct dedicated units."
     },
@@ -10413,7 +10469,7 @@
       ],
       "unit_count": 5,
       "dedicated_units": 5,
-      "bounded_entries": 5,
+      "bounded_entries": 4,
       "decision": "deepen",
       "rationale": "Fallback, degradation, shedding, throttling and rate limiting now have distinct dedicated units with separate trigger and failure contracts."
     },
@@ -10617,12 +10673,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 126,
-    "invariant_supported": 76,
-    "failure_recovery_supported": 71,
-    "alternative_supported": 81,
-    "technical_partial_bounded": 75,
-    "technical_partial": 70,
+    "mechanism_supported": 122,
+    "invariant_supported": 72,
+    "failure_recovery_supported": 67,
+    "alternative_supported": 77,
+    "technical_partial_bounded": 71,
+    "technical_partial": 74,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
