@@ -9,7 +9,7 @@ from validate_ai_reviews import validate
 
 class AIReviewIndexTests(unittest.TestCase):
     def test_saved_reports_match_index(self):
-        self.assertEqual(validate(ROOT), {"reports": 25})
+        self.assertEqual(validate(ROOT), {"reports": 26})
 
 
 if __name__ == "__main__":
