@@ -8207,22 +8207,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "A runtime, versioned value scoped by tenant, user or cohort separates exposure from deployment, with a default and kill switch.",
-          "reason": "Defines the flag mechanism."
+          "reason": "Defines the flag mechanism.",
+          "binding": {
+            "source_id": "src.fowler-feature-toggles",
+            "ledger_record": "read.batch5-fowler-feature-toggles.2026-10-21",
+            "section": "Categories of toggles",
+            "quote": "We've seen the fundamental facility provided by Feature Toggles - being able to ship alternative codepaths within one deployable unit and choose between them at runtime.",
+            "revision": "d4e1a56d2d8c96cdcb278ec7fa16caf9805397e6a91fb862bf8642292a270e8d"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Flags never replace an authorization check.",
-          "reason": "Explicit safety rule separating flags from authorization."
+          "reason": "Fowler text has no authorization-check rule; Permissioning Toggles only expose groups."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "on evaluation failure the default must be the safe branch, not a silent enable.",
-          "reason": "Names flag failure modes."
+          "reason": "Text names carrying cost and Knight Capital but no evaluation-failure default."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A canary or branch-by-abstraction is preferable when the toggle would become permanent configuration.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Text treats canary as a flag application; no branch-by-abstraction recommendation."
         }
       },
       "decision_evidence": {
@@ -8240,7 +8247,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded opening section; flags are defined there, rollout detail sits in later sections."
     },
@@ -8267,22 +8274,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "GitOps treats a versioned desired-state repository as reviewed intent.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.opengitops",
+            "ledger_record": "read.batch5-opengitops.2026-10-21",
+            "section": "Pulled Automatically",
+            "quote": "Software agents automatically pull the desired state declarations from the source.",
+            "revision": "61eb24afa22a5717ddbbc8941e2c10ec4cc2d3b5d7f6f59a407e1a337ed339fe"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Rollback is a revert commit, which needs a linear, reviewable history and an immutable artifact reference.",
-          "reason": "States the invariant."
+          "reason": "States the invariant.",
+          "binding": {
+            "source_id": "src.opengitops",
+            "ledger_record": "read.batch5-opengitops.2026-10-21",
+            "section": "Versioned and Immutable",
+            "quote": "Desired state is stored in a way that enforces immutability, versioning and retains a complete version history.",
+            "revision": "61eb24afa22a5717ddbbc8941e2c10ec4cc2d3b5d7f6f59a407e1a337ed339fe"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Controller outage, drift, repository compromise and stale artifact references are common",
-          "reason": "Names failure and recovery."
+          "reason": "Local representation is landing plus four principles; no controller outage or drift recovery."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A pipeline-driven deployment, manual release or imperative operator may be preferable when imperative one-off changes dominate or no reconciler owner exists.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Local representation has no pipeline-driven, manual or imperative alternative."
         }
       },
       "decision_evidence": {
@@ -8324,22 +8345,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Immutable infrastructure replaces instances from a versioned image or definition instead of mutating running hosts, so each instance is reproducible from a recorded artifact.",
-          "reason": "Defines replacement from a versioned image or definition rather than mutation."
+          "reason": "Defines replacement from a versioned image or definition rather than mutation.",
+          "binding": {
+            "source_id": "src.ibm-immutable-infrastructure",
+            "ledger_record": "read.batch5-ibm-immutable.2026-10-21",
+            "section": "What is immutable infrastructure?",
+            "quote": "Immutable infrastructure is the practice of replacing, not modifying, servers and other IT resources when changes are needed.",
+            "revision": "44075e8bbd9269c29e14d87fa34e51f3efb5593f2e2dbd1a03b925358ae1de72"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Every running instance must be reproducible from a recorded artifact digest, and drift must be detected rather than tolerated.",
-          "reason": "Requires reproducibility from an artifact digest and drift detection."
+          "reason": "Requires reproducibility from an artifact digest and drift detection.",
+          "binding": {
+            "source_id": "src.ibm-immutable-infrastructure",
+            "ledger_record": "read.batch5-ibm-immutable.2026-10-21",
+            "section": "Provisioning with infrastructure as code",
+            "quote": "All infrastructure changes are then documented in version control systems like Git, ensuring they’re tested and reproducible.",
+            "revision": "44075e8bbd9269c29e14d87fa34e51f3efb5593f2e2dbd1a03b925358ae1de72"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled change; record digests and test the rebuild path.",
-          "reason": "Names rebuilt images that diverge and requires digest recording and rebuild tests."
+          "reason": "Names rebuilt images that diverge and requires digest recording and rebuild tests.",
+          "binding": {
+            "source_id": "src.ibm-immutable-infrastructure",
+            "ledger_record": "read.batch5-ibm-immutable.2026-10-21",
+            "section": "Recovery",
+            "quote": "Teams redeploy the previous image rather than debugging and troubleshooting modified servers—greatly reducing the detective work traditionally required when configuration management changes fail.",
+            "revision": "44075e8bbd9269c29e14d87fa34e51f3efb5593f2e2dbd1a03b925358ae1de72"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "choose immutable replacement when reproducibility, an automated replacement path and artifact rollback speed matter",
-          "reason": "Names immutable replacement when reproducibility and fast artifact rollback matter."
+          "reason": "Names immutable replacement when reproducibility and fast artifact rollback matter.",
+          "binding": {
+            "source_id": "src.ibm-immutable-infrastructure",
+            "ledger_record": "read.batch5-ibm-immutable.2026-10-21",
+            "section": "What is immutable infrastructure?",
+            "quote": "Because it’s primarily modifying existing servers, mutable infrastructure can seem more efficient. However, two factors often make immutable infrastructure more practical and preferable.",
+            "revision": "44075e8bbd9269c29e14d87fa34e51f3efb5593f2e2dbd1a03b925358ae1de72"
+          }
         }
       },
       "decision_evidence": {
@@ -10142,11 +10191,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 134,
-    "invariant_supported": 102,
-    "failure_recovery_supported": 100,
-    "alternative_supported": 110,
-    "technical_partial_bounded": 101,
-    "technical_partial": 44,
+    "invariant_supported": 101,
+    "failure_recovery_supported": 98,
+    "alternative_supported": 108,
+    "technical_partial_bounded": 100,
+    "technical_partial": 45,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
