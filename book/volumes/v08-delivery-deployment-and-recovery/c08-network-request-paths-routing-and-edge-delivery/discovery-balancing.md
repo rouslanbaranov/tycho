@@ -215,8 +215,8 @@ Service discovery may publish addresses plus eligibility metadata to a proxy or 
 registry is a control-plane view; it does not prove that an address is currently writable or that a
 caller may commit an effect there.
 
-If membership is stale, continued reachability still cannot establish write authority. Stale
-membership can outlive the registry update. Document who observes updates and how stale membership
+Service discovery assumes hosts come and go in an eventually consistent way. Stale membership
+can outlive the registry update. Document who observes updates and how stale membership
 is detected. Distinguish the discovery control path from data-plane requests that can continue
 against a last-known usable set. A discovery outage, stale
 health signal or fast-error attraction can defeat the last-known set; define the fallback and the

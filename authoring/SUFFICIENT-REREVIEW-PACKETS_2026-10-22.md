@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 132 |
+| Reviewed by independent agent | 128 |
 | Rejected after review | 6 |
 
-Packet statuses: {"page-changed-since-review": 13, "reviewed-by-independent-agent": 132}.
+Packet statuses: {"page-changed-since-review": 17, "reviewed-by-independent-agent": 128}.
 
 ## Review procedure
 
@@ -134,7 +134,7 @@ blank verdict template in the machine-readable file.
 
 - **Client-Side Discovery**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Command Query Responsibility Segregation (CQRS)**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -346,7 +346,7 @@ blank verdict template in the machine-readable file.
 
 - **Load Balancing**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Load Shedding**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -498,11 +498,11 @@ blank verdict template in the machine-readable file.
 
 - **Server-Side Discovery**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Service Discovery**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Service-Oriented Architecture (SOA)**
   Current: pass; re-review: pass; report: reject.

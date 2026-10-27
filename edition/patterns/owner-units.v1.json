@@ -1509,9 +1509,16 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "If membership is stale, continued reachability still cannot establish write authority.",
-          "reason": "Scoped Envoy page discusses eventually consistent membership but not write authority."
+          "state": "supported",
+          "quote": "Service discovery assumes hosts come and go in an eventually consistent way.",
+          "reason": "Envoy states eventual consistency of discovery membership.",
+          "binding": {
+            "source_id": "src.envoy",
+            "ledger_record": "read.envoy-service-discovery.2026-10-21",
+            "section": "On eventually consistent service discovery",
+            "quote": "Envoy assumes that hosts come and go from the mesh in an eventually consistent way.",
+            "revision": "f8e4f3e08d81df8cb182ef8e7b443162d2180d8b2b6b653785722a6e282571af"
+          }
         },
         "failure_recovery": {
           "state": "supported",
@@ -1553,7 +1560,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Discovery is bounded to update boundaries, stale-membership detection and last-known data-plane use."
     },
@@ -10752,7 +10759,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Service discovery, client-side discovery, server-side discovery and load balancing now have four distinct dedicated units."
     },
@@ -10880,11 +10887,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 52,
+    "invariant_supported": 53,
     "failure_recovery_supported": 38,
     "alternative_supported": 49,
-    "technical_partial_bounded": 42,
-    "technical_partial": 98,
+    "technical_partial_bounded": 43,
+    "technical_partial": 97,
     "technical_name_only": 0,
     "technical_sufficient": 5,
     "decision_partial_bounded": 140,
