@@ -32,6 +32,18 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def check_manifest_units(entry, plan_units):
+    require(entry["sources"] == [unit["source_id"] for unit in plan_units],
+            "pilot-sources: " + entry["pattern_id"])
+    require(len(entry["source_units"]) == len(plan_units),
+            "pilot-source-unit-count: " + entry["pattern_id"])
+    for manifest_unit, plan_unit in zip(entry["source_units"], plan_units):
+        for field in ("source_id", "unit", "url", "sections", "status",
+                      "read_record_id", "blocked_reason"):
+            require(manifest_unit.get(field) == plan_unit.get(field),
+                    "pilot-source-unit-" + field + ": " + entry["pattern_id"])
+
+
 def validate(root=ROOT):
     root = Path(root).resolve()
     manifest = load(root / MANIFEST)
@@ -73,9 +85,9 @@ def validate(root=ROOT):
                 "pilot-card-path: " + pid)
         require(entry["card_sha256"] == sha(root / entry["card_path"]),
                 "pilot-card-hash: " + pid)
-        require(entry["sources"] == [unit["source_id"]
-                                     for unit in sources[pid]["required_units"]],
-                "pilot-sources: " + pid)
+        check_manifest_units(entry, sources[pid]["required_units"])
+        require(entry["current_coverage"] == owner["technical_coverage"],
+                "pilot-current-coverage: " + pid)
         record = ledger.get(entry["ledger_record"])
         require(record is not None, "pilot-ledger-missing: " + pid)
         require(record["status"] == "read", "pilot-ledger-status: " + pid)

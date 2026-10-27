@@ -58,6 +58,20 @@ The registry, owner-units and delivery-evidence artifacts may record `sufficient
 when this record exists and matches the current hashes. A stale record does not promote a
 changed page, card or source binding.
 
+## Remediation fan-out
+
+A review finding is not closed when the primary record changes. Update every derived
+copy in the same change: source plan, ledger, pilot manifest, owner units, registry,
+cards, semantic audit, atlas manifest and content revisions. Then regenerate indexes and
+run the validators.
+
+The pilot validator compares the manifest source units and current coverage with the
+source plan and owner units. A stale manifest field is a validator failure, not a note.
+
+Do not use a mutable raw-HTML hash as a revision. Use the committed
+`scripts/source_content_hash.py` canonical text hash, or record an explicit,
+independently checkable representation and extraction procedure.
+
 ## Scope and non-goals
 
 - This rule applies to the pattern atlas entries, not to unrelated book pages.
