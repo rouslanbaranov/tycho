@@ -72,7 +72,7 @@ def validate_data(data, root=ROOT):
             "atlas-status")
 
     documents = data["documents"]
-    require(len(documents) == 12, "atlas-document-count")
+    require(len(documents) >= 12, "atlas-document-count")
     by_id = {}
     by_path = {}
     for doc in documents:

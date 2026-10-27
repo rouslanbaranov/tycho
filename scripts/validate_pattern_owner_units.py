@@ -130,13 +130,14 @@ def card_section_text(chapter_text, slug):
     lines = body.splitlines()
     start = None
     for index, line in enumerate(lines):
-        if line.startswith("### ") and slug_heading(line[4:].strip()) == slug:
+        if any(line.startswith(prefix) and slug_heading(line[len(prefix):].strip()) == slug
+               for prefix in ("### ", "## ", "# ")):
             start = index + 1
             break
     require(start is not None, "owner-units-card-section: " + slug)
     end = len(lines)
     for index in range(start, len(lines)):
-        if lines[index].startswith("### ") or lines[index].startswith("## "):
+        if any(lines[index].startswith(prefix) for prefix in ("### ", "## ", "# ")):
             end = index
             break
     return "\n".join(lines[start:end])
@@ -354,7 +355,10 @@ def validate_data(data, root=ROOT):
                 "owner-units-atlas-section: " + pattern_id)
         require(decision["atlas_section"] == card["atlas_section"],
                 "owner-units-card-section-id: " + pattern_id)
-        card_text = card_section_text(chapter_text, card["atlas_section"])
+        card_source = (root / card["card_path"]) if card.get("card_path") else None
+        card_text = card_section_text(
+            card_source.read_text(encoding="utf-8") if card_source else chapter_text,
+            card["atlas_section"])
         require(decision["question"] == card_field(card_text, "Decision question"),
                 "owner-units-question: " + pattern_id)
         require(decision["competing_alternative"]
