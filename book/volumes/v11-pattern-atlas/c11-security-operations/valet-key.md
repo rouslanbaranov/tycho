@@ -57,7 +57,9 @@ disabled.
 **Failure and recovery.** A leaked key unlocks the target during its validity period; revoke
 or disable it.
 
-**Technical owner.** [Valet Key](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md#valet-key) — scoped credential issuance, enforcement and revocation are bounded, not a key-management guide.
+**Technical owner.** [Valet Key](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md#valet-key)
+— scoped credential issuance, enforcement and revocation are bounded, not a
+key-management guide.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)

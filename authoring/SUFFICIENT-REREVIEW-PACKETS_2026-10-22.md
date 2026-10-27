@@ -585,7 +585,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Valet Key**
-  Current: pass; re-review: pass; report: pass-with-findings.
+  Current: reject; re-review: pass; report: pass-with-findings.
   Status: page-changed-since-review.
 
 - **Vertical Scaling**
