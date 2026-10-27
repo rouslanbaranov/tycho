@@ -43,8 +43,8 @@ content_verified_at: null
 **Identity.** Workload Identity / mTLS; family Security, isolation and operational
 architecture; kind security-pattern; priority core.
 
-**Decision question.** Should workloads authenticate each other with cryptographic
-identities rather than network location?
+**Decision question.** Should workloads use strict mutual TLS with cryptographic identities
+rather than permissive mTLS or network location?
 
 **Good-fit conditions.** A workload identity issuer exists; certificate rotation is
 automated; policy can bind identity to service.
@@ -52,8 +52,8 @@ automated; policy can bind identity to service.
 **Hard contraindications.** Reject when network location is the only available identity
 or when rotation cannot be automated.
 
-**Competing alternative.** Permissive mTLS mode accepts plaintext and mutual TLS traffic
-during migration; use strict mTLS once clients support it.
+**Competing alternative.** Permissive mTLS mode accepts both plaintext and mutual TLS traffic
+at the same time.
 
 **Failure and recovery.** Certificate expiry must be monitored; rotate certificates and
 keys periodically.
