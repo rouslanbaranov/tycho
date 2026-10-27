@@ -83,14 +83,15 @@ def section_text(body, slug):
     lines = body.splitlines()
     start = None
     for index, line in enumerate(lines):
-        if line.startswith("### ") and heading_slugs_text(line[4:]) == slug:
+        if any(line.startswith(prefix) and heading_slugs_text(line[len(prefix):]) == slug
+               for prefix in ("### ", "## ", "# ")):
             start = index + 1
             break
     if start is None:
         return None
     end = len(lines)
     for index in range(start, len(lines)):
-        if lines[index].startswith("### ") or lines[index].startswith("## "):
+        if any(lines[index].startswith(prefix) for prefix in ("### ", "## ", "# ")):
             end = index
             break
     return "\n".join(lines[start:end])
@@ -137,7 +138,13 @@ def validate_data(data, root=ROOT):
             seen.add(pattern_id)
             require(pattern_id in family["pattern_ids"], "card-pattern-family: " + pattern_id)
             require(pattern["atlas_section"] == entry["atlas_section"], "card-anchor-mismatch: " + pattern_id)
-            require(entry["atlas_section"] in chapter_anchors, "card-anchor-missing: " + entry["atlas_section"])
+            card_path = entry.get("card_path", chapter["path"])
+            card_file = root / card_path
+            require(card_file.is_file(), "card-file-missing: " + card_path)
+            card_anchors = heading_slugs(card_file)
+            require(entry["atlas_section"] in card_anchors,
+                    "card-anchor-missing: " + entry["atlas_section"])
+            _, body = split(card_file.read_text(encoding="utf-8"))
             text = section_text(body, entry["atlas_section"])
             require(text is not None, "card-section-missing: " + entry["atlas_section"])
             check_card_text(text, entry["atlas_section"])
@@ -151,12 +158,12 @@ def validate_data(data, root=ROOT):
                 require(owner.is_file() and not owner.is_symlink(), "card-owner-file: " + entry["owner_path"])
                 require(entry["owner_anchor"] in heading_slugs(owner), "card-owner-anchor: " + entry["owner_anchor"])
                 owner_text = owner.read_text(encoding="utf-8")
-                check_backlink(owner_text, chapter["path"], entry["atlas_section"])
+                check_backlink(owner_text, card_path, entry["atlas_section"])
                 require(pattern["technical_owner"]["path"] == entry["owner_path"], "card-registry-owner-path: " + pattern_id)
                 require(pattern["technical_owner"]["anchor"] == entry["owner_anchor"], "card-registry-owner-anchor: " + pattern_id)
                 require(pattern["technical_owner"]["state"] in EVIDENCE_STATES,
                         "card-registry-owner-state: " + pattern_id)
-                check_owner_link(text, chapter["path"], entry["owner_path"], entry["owner_anchor"], root)
+                check_owner_link(text, card_path, entry["owner_path"], entry["owner_anchor"], root)
                 require(pattern["coverage"]["technical"] in EVIDENCE_STATES,
                         "card-registry-technical: " + pattern_id)
                 require(pattern["coverage"]["overall"] in EVIDENCE_STATES,
