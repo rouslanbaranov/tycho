@@ -1,0 +1,457 @@
+{
+  "batch": "B01",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.api-gateway",
+      "catalog_name": "API Gateway",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
+      "owner_heading": "API Gateway",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.microservices-api-gateway.2026-10-21",
+      "url": "https://microservices.io/patterns/apigateway.html",
+      "unit": "API Gateway — pattern page",
+      "sections": [
+        "Context",
+        "Problem",
+        "Forces",
+        "Solution",
+        "Variation: Backends for frontends",
+        "Examples",
+        "Resulting context",
+        "Related patterns",
+        "Known uses",
+        "Example application"
+      ],
+      "revision": "e94bf7ae68567226222138dc2836247873d5908b63bf07ca05207377a9999d4d",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A gateway can centralize routing, quotas and common policy.",
+          "reason": "Explains the gateway's centralizing role for shared edge concerns."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Keep resource authorization at the boundary owning the resource, with documented delegation if a central decision service is used.",
+          "reason": "Requires domain authorization to remain at the resource-owning boundary."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Gateway bypass, configuration drift, a stale route and an outage that blocks every backend are common.",
+          "reason": "Names failure and recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A BFF, a service-mesh sidecar or direct backend exposure with an explicit identity contract may be preferable when the gateway adds a shared bottleneck without a required central policy.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.gateway-routing",
+      "catalog_name": "Gateway Routing",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
+      "owner_heading": "Gateway Routing",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.microsoft-gateway-routing.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/gateway-routing",
+      "unit": "Gateway Routing — pattern page",
+      "sections": [
+        "Gateway Routing pattern",
+        "Context and problem",
+        "Solution",
+        "Multiple disparate services",
+        "Multiple instances of the same service",
+        "Multiple versions of the same service",
+        "Issues and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Related resources"
+      ],
+      "revision": "c2c7ecda427fb76fa98431ccfab5aa20c610e1fc9d2485293625da7e2b435b4f",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Gateway routing is an edge contract over a versioned route table: a gateway matches request attributes to a route and applies policy, each route binds match predicates to a backend and a policy version, and the table changes independently of the backends.",
+          "reason": "Defines the mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Describe separately the externally resolved name, the service membership view, the connection destination and the backend selected for each request.",
+          "reason": "Requires the four routing concerns to remain separately described."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Stale routes, ambiguous matches and bypass around the gateway are common.",
+          "reason": "Names failure and recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A reverse proxy, client-side discovery or a BFF may be preferable when routing policy is simple or the gateway would become a hidden shared dependency.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.gateway-aggregation",
+      "catalog_name": "Gateway Aggregation",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
+      "owner_heading": "Gateway Aggregation",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.microsoft-gateway-aggregation.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/gateway-aggregation",
+      "unit": "Gateway Aggregation — pattern page",
+      "sections": [
+        "Gateway Aggregation pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Next steps",
+        "Related resources"
+      ],
+      "revision": "8c2a339db63a704b42c7cf66dae15cf2603825d934dc54f7dcc0ff061c68a300",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Gateway aggregation composes several owner responses into one client response at the edge.",
+          "reason": "Defines edge-side composition of several owner responses."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Each downstream call carries its own deadline and authorization.",
+          "reason": "Requires every downstream call to carry its own deadline and authorization."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "a gateway retry must not multiply load across every participant",
+          "reason": "Limits gateway retries so one failure does not multiply load across participants."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Client-side composition, a backend for frontend or an API Composition layer with a narrow contract may be preferable",
+          "reason": "Names client composition, a backend for frontend or a narrow API composition layer."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.gateway-offloading",
+      "catalog_name": "Gateway Offloading",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
+      "owner_heading": "Gateway Offloading",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.microsoft-gateway-offloading.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/gateway-offloading",
+      "unit": "Gateway Offloading — pattern page",
+      "sections": [
+        "Gateway Offloading pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Application Gateway with TLS offloading",
+        "Supporting technologies",
+        "Next steps",
+        "Related resources"
+      ],
+      "revision": "dc071313e197819284fabdafe21f0bc0e0525a6bb1a8382f5adb8dceb76d56c9",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "An edge can terminate TLS, validate tokens, compress, cache or enforce quotas before forwarding.",
+          "reason": "Defines the mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Offloading changes the trust boundary: downstream must receive an authenticated identity from a trusted intermediary and still enforce resource authorization.",
+          "reason": "Bounds what the offloaded TLS endpoint identity proves."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Header spoofing, confused-deputy paths and a proxy that becomes the only authorization point are common failures.",
+          "reason": "Names failure and recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A service-mesh sidecar, application-level authorization or direct pass-through may be preferable when the edge cannot attest identity.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.backend-for-frontend-bff",
+      "catalog_name": "Backend for Frontend (BFF)",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+      "owner_heading": "Backend for Frontend (BFF)",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.microsoft-bff.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/backends-for-frontends",
+      "unit": "Backends for Frontend — pattern page",
+      "sections": [
+        "Backends for Frontends pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Flow A for the first page request from the mobile client",
+        "Flow B for the first page cached request from the mobile client",
+        "Flow C for the first request from the desktop client",
+        "Design",
+        "Next steps",
+        "Related resources"
+      ],
+      "revision": "7126f490a1ee27d6bdea832b2a10c965987f4945d8e92d89135e4bfe8add5e70",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A backend for frontend composes the API surface for one client experience. It needs a client owner, a composition contract, a policy for duplicated domain logic and a boundary that prevents the BFF from becoming a second domain authority.",
+          "reason": "Explains per-client composition and the ownership/contract boundary."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Do not use it when one API contract serves all clients or when the BFF would own core business rules.",
+          "reason": "States exclusion preconditions for use."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "The failure path is drift between the BFF and the domain API; version the composition and test the client contract.",
+          "reason": "Names drift and prescribes versioning and client-contract testing."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A shared API with client-side selection is the alternative when the differences are small and can be expressed without a new authority.",
+          "reason": "Names shared API plus client-side selection and the condition reversing the choice."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.api-composition",
+      "catalog_name": "API Composition",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+      "owner_heading": "API Composition",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.microservices-api-composition.2026-10-21",
+      "url": "https://microservices.io/patterns/data/api-composition.html",
+      "unit": "API Composition — pattern page",
+      "sections": [
+        "Pattern: API Composition",
+        "Context",
+        "Problem",
+        "Solution",
+        "Example",
+        "Resulting context",
+        "Related patterns",
+        "See also",
+        "Learn more"
+      ],
+      "revision": "7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "An API composition layer calls several owner APIs for one request and assembles their responses into a single caller-visible result.",
+          "reason": "Defines query-time calls to several owner APIs and assembly of one caller-visible result."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The composed response must declare per-source freshness and what partial failure means, rather than presenting one aggregate result as uniformly current.",
+          "reason": "Requires per-source freshness and an explicit partial-failure meaning."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "One slow or failed participant must not silently disappear from the result; apply per-call deadlines, mark missing parts or fail the composition explicitly.",
+          "reason": "Requires per-call deadlines, missing-part marking or explicit failure."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Build a maintained read model or a client-specific backend for frontend; prefer composition when the sources are authoritative and the caller needs a live view.",
+          "reason": "Names a maintained read model or client-specific backend for frontend."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.reverse-proxy",
+      "catalog_name": "Reverse Proxy",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
+      "owner_heading": "Reverse Proxy",
+      "source_id": "src.envoy",
+      "ledger_record": "read.envoy-http-connection.2026-10-21",
+      "url": "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/http/http_connection_management",
+      "unit": "HTTP connection management — Envoy documentation",
+      "sections": [
+        "HTTP connection management",
+        "HTTP protocols",
+        "HTTP lifecycle",
+        "HTTP header sanitizing",
+        "Route table configuration",
+        "Retry plugin configuration",
+        "Retry configuration examples",
+        "PreviousHostsPredicate",
+        "OmitHostMetadataConfig",
+        "PreviousPrioritiesConfig",
+        "Combined retry policy",
+        "Internal redirects",
+        "Timeouts",
+        "HTTP header map settings"
+      ],
+      "revision": "fb600d4e013c69d80e36491d19bd423ea1ad5917dab450d5fa7052d76b77b6f2",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A reverse proxy accepts client connections and forwards them to a selected backend, hiding topology and optionally terminating TLS.",
+          "reason": "Defines the mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "It must define route identity, peer authentication, forwarded-header policy and backend failure behavior.",
+          "reason": "Bounds what the proxy-terminated client identity establishes."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Proxy bypass, stale routes and trusting a client-supplied identity header are common.",
+          "reason": "Names failure and recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Direct service discovery, a gateway/BFF or a mesh sidecar may be preferable when the proxy adds a shared bottleneck without a required policy function.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.service-discovery",
+      "catalog_name": "Service Discovery",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+      "owner_heading": "Service Discovery",
+      "source_id": "src.envoy",
+      "ledger_record": "read.envoy-service-discovery.2026-10-21",
+      "url": "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/service_discovery",
+      "unit": "Service discovery — Envoy documentation",
+      "sections": [
+        "Service discovery",
+        "Supported service discovery types",
+        "Static",
+        "Strict DNS",
+        "Logical DNS",
+        "Original destination",
+        "Endpoint discovery service (EDS)",
+        "Custom cluster",
+        "On eventually consistent service discovery"
+      ],
+      "revision": "f8e4f3e08d81df8cb182ef8e7b443162d2180d8b2b6b653785722a6e282571af",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Service discovery may publish addresses plus eligibility metadata to a proxy or client.",
+          "reason": "Explains discovery as publishing addresses and eligibility metadata to a consumer."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "If membership is stale, continued reachability still cannot establish write authority.",
+          "reason": "Bounds what stale membership may authorize."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Document who observes updates and how stale membership is detected. Distinguish the discovery control path from data-plane requests that can continue against a last-known usable set.",
+          "reason": "Requires stale-membership detection and separates the control path from last-known data-plane continuity."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes are rare.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.client-side-discovery",
+      "catalog_name": "Client-Side Discovery",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+      "owner_heading": "Client-Side Discovery",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.microservices-client-discovery.2026-10-21",
+      "url": "https://microservices.io/patterns/client-side-discovery.html",
+      "unit": "Client-side service discovery — pattern page",
+      "sections": [
+        "Pattern: Client-side service discovery",
+        "Context",
+        "Problem",
+        "Forces",
+        "Solution",
+        "Examples",
+        "Resulting context",
+        "Related patterns"
+      ],
+      "revision": "f0b2510f0a5ff627999df0247ee49a86a193df7bf55c8c3c40792465eb85be39",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "The caller obtains the membership view from a registry/control plane, caches it and selects a backend.",
+          "reason": "Defines the mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Stale membership can send traffic to a removed instance even when the address remains reachable.",
+          "reason": "Applies the stale-membership safety rule to a client-held view as well."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Bound the cache age, refresh budget and stale-cache alarm, and use a last-known set only for reads with an explicit freshness bound.",
+          "reason": "Requires the client-side observer to detect stale membership and bound continued data-plane use."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes are rare.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.server-side-discovery",
+      "catalog_name": "Server-Side Discovery",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+      "owner_heading": "Server-Side Discovery",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.microservices-server-discovery.2026-10-21",
+      "url": "https://microservices.io/patterns/server-side-discovery.html",
+      "unit": "Server-side service discovery — pattern page",
+      "sections": [
+        "Pattern: Server-side service discovery",
+        "Context",
+        "Problem",
+        "Forces",
+        "Solution",
+        "Examples",
+        "Resulting context",
+        "Related patterns"
+      ],
+      "revision": "b454d07aafdc283ceb7378d097a61e28b2b8013892c83458d49cec384e4d77bb",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A proxy, gateway or platform keeps the membership view and selects a backend for a stable virtual name.",
+          "reason": "Defines the mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Stale membership can keep a removed backend in the selection set even when the proxy is healthy.",
+          "reason": "Applies the stale-membership safety rule to a proxy-held membership view."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Proxy outage, retry amplification and a shared-proxy bottleneck are common; bound retries, expose a degraded path and plan the proxy's own failover.",
+          "reason": "Requires the proxy to detect stale membership and bound last-known data-plane use."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes are rare.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    }
+  ]
+}
