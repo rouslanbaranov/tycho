@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 137 |
+| Reviewed by independent agent | 135 |
 | Rejected after review | 4 |
 
-Packet statuses: {"page-changed-since-review": 8, "reviewed-by-independent-agent": 137}.
+Packet statuses: {"page-changed-since-review": 10, "reviewed-by-independent-agent": 135}.
 
 ## Review procedure
 
@@ -318,7 +318,7 @@ blank verdict template in the machine-readable file.
 
 - **Immutable Infrastructure**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Index Table**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -522,7 +522,7 @@ blank verdict template in the machine-readable file.
 
 - **Sidecar**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Single Flight / Request Coalescing**
   Current: pass; re-review: pass; report: pass-with-findings.

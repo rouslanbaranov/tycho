@@ -162,9 +162,9 @@ it adds a data-plane hop whose latency and outage must be budgeted.
 
 A sidecar runs as a helper process or container beside each service instance and supplies
 networking, policy or telemetry behaviour without changing the application image. The sidecar's
-failure policy must be explicit, and its lifecycle and configuration must have an owner. Coupling
-to the instance is one choice; independent upgrade is another when the sidecar has its own release
-boundary.
+failure policy must be explicit, and each application instance gets its own sidecar instance that
+shares its life cycle. Coupling to the instance is one choice; independent upgrade is another when
+the sidecar has its own release boundary.
 
 A missing or misconfigured sidecar silently removes a control or opens a bypass; readiness must
 include it, and the fail-open or fail-closed choice must be tested. A shared proxy or an in-process
