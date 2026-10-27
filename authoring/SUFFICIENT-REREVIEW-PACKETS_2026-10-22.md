@@ -9,14 +9,14 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 137 |
+| Promoted after remediation | 138 |
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 127 |
-| Rejected after review | 8 |
+| Reviewed by independent agent | 133 |
+| Rejected after review | 7 |
 
-Packet statuses: {"page-changed-since-review": 18, "reviewed-by-independent-agent": 127}.
+Packet statuses: {"page-changed-since-review": 12, "reviewed-by-independent-agent": 133}.
 
 ## Review procedure
 
@@ -42,7 +42,7 @@ blank verdict template in the machine-readable file.
 
 - **Anti-Corruption Layer**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **API Composition**
   Current: pass; re-review: pass; report: None.
@@ -86,7 +86,7 @@ blank verdict template in the machine-readable file.
 
 - **Cache Invalidation**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Cache Stampede Protection**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -393,8 +393,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Parallel Run**
-  Current: reject; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: pass; re-review: pass; report: pass-with-findings.
+  Status: reviewed-by-independent-agent.
 
 - **Partitioning**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -542,7 +542,7 @@ blank verdict template in the machine-readable file.
 
 - **Static Content Hosting**
   Current: pass; re-review: pass; report: reject.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Strangler Fig**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -574,7 +574,7 @@ blank verdict template in the machine-readable file.
 
 - **Transactional Outbox**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **TTL-Based Expiration**
   Current: reject; re-review: pass; report: pass-with-findings.
@@ -586,7 +586,7 @@ blank verdict template in the machine-readable file.
 
 - **Valet Key**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: reviewed-by-independent-agent.
 
 - **Vertical Scaling**
   Current: pass; re-review: pass; report: pass-with-findings.

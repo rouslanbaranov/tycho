@@ -1749,9 +1749,16 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "The handle must identify one recorded operation whose outcome is durable, so a lost reply cannot turn an accepted request into an unknown effect.",
-          "reason": "Source binds duplicate-key idempotency, not the durable handle invariant; no exact handle-durability rule found."
+          "state": "supported",
+          "quote": "A duplicate request must return the existing status resource instead of enqueuing a second work item.",
+          "reason": "Source requires duplicate keys to return the existing status resource.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-async-request-reply.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "If the back end receives a duplicate key, it should return the existing status resource instead of enqueuing a second work item.",
+            "revision": "e87a0d9ec8ed297d180c4f0f3348131f00371b2b0fed97a80ec747689cfcb58a"
+          }
         },
         "failure_recovery": {
           "state": "supported",
@@ -1793,7 +1800,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -10901,11 +10908,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 54,
+    "invariant_supported": 55,
     "failure_recovery_supported": 38,
     "alternative_supported": 50,
-    "technical_partial_bounded": 43,
-    "technical_partial": 96,
+    "technical_partial_bounded": 44,
+    "technical_partial": 95,
     "technical_name_only": 0,
     "technical_sufficient": 6,
     "decision_partial_bounded": 139,

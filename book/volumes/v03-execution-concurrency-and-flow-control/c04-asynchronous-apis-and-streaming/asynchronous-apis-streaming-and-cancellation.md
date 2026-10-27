@@ -112,9 +112,9 @@ source claim.
 ### Asynchronous Request-Reply
 
 An asynchronous request-reply interface accepts a request, returns a durable handle and later
-exposes the terminal result through polling or a callback. The handle must identify one recorded
-operation whose outcome is durable, so a lost reply cannot turn an accepted request into an unknown
-effect.
+exposes the terminal result through polling or a callback. A duplicate request must return the
+existing status resource instead of enqueuing a second work item. The status resource records
+the operation outcome.
 
 A lost or expired reply leaves the caller unable to decide the outcome; keep the operation record
 queryable and reconcile before retrying the original request. A synchronous call with a bounded
