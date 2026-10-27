@@ -9,12 +9,12 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 136 |
+| Promoted after remediation | 137 |
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 132 |
-| Rejected after review | 9 |
+| Rejected after review | 8 |
 
 Packet statuses: {"page-changed-since-review": 13, "reviewed-by-independent-agent": 132}.
 
@@ -585,7 +585,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Valet Key**
-  Current: reject; re-review: pass; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: page-changed-since-review.
 
 - **Vertical Scaling**

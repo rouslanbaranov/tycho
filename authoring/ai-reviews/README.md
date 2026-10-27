@@ -52,3 +52,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 parallel run round 3 | pass | `2026-10-27-parallel-run-review3-codex.md` | `84904118869e13d928eb699301eb53f4b2360e7b3fde5ef29ff144e0644e67ca` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 async request-reply | reject | `2026-10-27-async-request-reply-review-codex.md` | `05cb7aca247305bab1e5fcb8fefc0c95f347416c0990ea5f99d04b53e58a616c` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 valet key split | reject | `2026-10-27-valet-key-split-review-codex.md` | `382038377705bb9e78168280a292e90ad7bd2358eb22db8b00df518080f78891` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 valet key after split | pass | `2026-10-27-valet-key-split-review6-codex.md` | `9ae5b68f13ffd8fe47d410bb2010ad4e561aa2848390d3cef59692a2f38dff04` |
