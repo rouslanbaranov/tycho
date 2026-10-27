@@ -15,8 +15,19 @@ Permitted examples when the authoring session is DeepSeek Harness:
 - Claude Code (Anthropic) in a fresh checkout;
 - another external harness from a third vendor, used read-only.
 
-A DeepSeek `reviewer` subagent does **not** qualify. The reviewer must be a separate
-product and a separate vendor from the authoring harness.
+A DeepSeek `reviewer` subagent does **not** qualify as the final independent review.
+The reviewer must be a separate product and a separate vendor from the authoring
+harness.
+
+## Temporary owner-authorized fallback
+
+When the selected external CLI is unavailable because of a usage limit or outage, the
+owner may authorize a fresh read-only DeepSeek Reviewer agent as a temporary fallback.
+It must be a separate agent, not a fork of the authoring conversation, and must receive
+the same bounded prompt, schema, HEAD and artifact hashes. The report must be labelled
+`provisional-deepseek-fallback`. Such a pass does not satisfy the final independent
+external gate; any promotion must be marked provisional and re-reviewed externally when
+the CLI returns. Owner acceptance must not cite the fallback as final independent review.
 
 ## Reviewer discovery and selection
 

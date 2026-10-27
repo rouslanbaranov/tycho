@@ -105,6 +105,17 @@ tool invocation that retrieves sources, or change.
     through the user: provide the exact prompt and receive the reviewer's raw report.
     If the user cannot provide a qualifying review, record the gate as blocked; never
     waive it.
+
+    **Temporary owner-authorized fallback (2026-10-27).** If the selected external CLI
+    is unavailable because of a usage limit or outage, the owner may authorize a fresh
+    read-only DeepSeek Reviewer agent. It must be a separate agent, not a fork of this
+    conversation, must not see the author's conclusions, and must use the same bounded
+    prompt, schema, HEAD and artifact hashes. Its report is labelled
+    `provisional-deepseek-fallback` and does not satisfy the final independent external
+    gate. A provisional pass may support a promotion only when the promotion record and
+    report are explicitly labelled provisional; external re-review is required when the
+    CLI returns, and owner acceptance must not cite the fallback as final independent
+    review.
 18. **Keep the reviewer independent.** Use a fresh external session, not a fork of this
     conversation. Do not pass the author's conclusions, desired verdict or private context.
     Give the reviewer the repository path, exact HEAD and content commit, bounded scope,
