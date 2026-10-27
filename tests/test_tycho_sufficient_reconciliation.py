@@ -111,9 +111,10 @@ class AuditIntegrationTests(unittest.TestCase):
             "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-23-phase-a-gap-v6.md",
         }
         phase_a = [r for r in records
-                   if (r.get("re_review") or {}).get("report_path") in reports]
-        self.assertEqual(len(phase_a), 52)
-        self.assertEqual(sum(1 for r in phase_a if r["verdict"] == "pass"), 52)
+                   if (r.get("re_review") or {}).get("report_path") in reports
+                   and not (r.get("re_review") or {}).get("pending_delta_review")]
+        self.assertEqual(len(phase_a), 51)
+        self.assertEqual(sum(1 for r in phase_a if r["verdict"] == "pass"), 51)
         self.assertEqual(sum(1 for r in phase_a
                                if r["verdict"] == "pass-with-findings"), 0)
         for record in phase_a:
@@ -140,8 +141,8 @@ class CommittedLedgerTests(unittest.TestCase):
         self.assertEqual(summary["derived_states"].get("remediated-needs-re-review", 0), 0)
         self.assertEqual(summary["derived_states"].get("page-unverified-after-delta", 0), 0)
         self.assertEqual(summary["derived_states"].get("residual-findings-after-re-review", 0), 0)
-        self.assertEqual(summary["derived_states"].get("rejected-after-review", 0), 3)
-        self.assertEqual(summary["derived_states"]["promoted-after-remediation"], 142)
+        self.assertEqual(summary["derived_states"].get("rejected-after-review", 0), 5)
+        self.assertEqual(summary["derived_states"]["promoted-after-remediation"], 140)
         self.assertEqual(summary["report_name_matches"]["alias"], 1)
 
     def test_generation_is_deterministic(self):

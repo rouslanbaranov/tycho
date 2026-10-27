@@ -40,7 +40,7 @@ class PatternSourceTests(unittest.TestCase):
         self.assertEqual(result["read_units"], 154)
         self.assertEqual(result["planned_units"], 0)
         self.assertEqual(result["blocked_units"], 1)
-        self.assertEqual(result["ledger_records"], 126)
+        self.assertEqual(result["ledger_records"], 127)
 
     def test_missing_plan_entry_is_rejected(self):
         plan, ledger, registry, route, sources = self.copy()
