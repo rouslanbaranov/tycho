@@ -1,0 +1,13 @@
+# External AI review — Parallel Run round 3
+
+- Reviewer harness: Codex CLI 0.163.0-alpha.11.2 (separate OpenAI harness)
+- Vendor/model: OpenAI / gpt-5.6-sol
+- Reviewed HEAD: d8d73135ac1897eeada2929a54430e468eea40df
+- Scope: tycho.pattern.parallel-run
+- Access: read-only; no repository writes
+
+## Verbatim report
+
+```json
+{"verdict":"pass","technical":"pass","decision":"pass","entries_reviewed":1,"findings":[{"severity":"minor","pattern_id":"tycho.pattern.parallel-run","dimension":"source-plan unit and ledger record","path":"edition/patterns/reading-ledger.v1.json:5414; edition/patterns/reading-ledger.v1.json:5446; edition/patterns/reading-ledger.v1.json:5448; book/volumes/v11-pattern-atlas/c10-deployment-modernization/README.md:359; sources/register.json:6737","evidence":"The source plan, ledger sections_read array, manifest and source register define a six-section reading scope, but the ledger limitations/read_scope and atlas card still claim that eight sections or all eight served headings were read. All four bound quotes occur within the agreed six sections, so this does not undermine the bounded technical or decision evidence.","required_remediation":"Change the ledger limitations/read_scope and atlas-card source description to six sections, or restore Next step and Related content consistently to every authoritative scope record if eight sections were actually intended."}],"limits":"Read-only review of tycho.pattern.parallel-run at exact HEAD d8d73135ac1897eeada2929a54430e468eea40df. The supplied owner-units and source-plan SHA-256 values matched. Owner-page and atlas-card hashes matched the manifest. The four bindings resolve to the declared MinimumCD ledger record and revision; their sections exist, their rendered quotes are exact, and each quote supports its complete owner-unit claim. The page, card and owner unit consistently restrict eligibility to side-effect-free work and direct side-effecting operations to the cited alternative. The four dimensions jointly support the applicable-under-conditions decision without circularity. Current canonical state remains partial-bounded, awaiting external review, blocked from promotion and without owner acceptance. The live public page was inspected, but its pinned served-byte SHA-256 could not be independently recomputed through the available network path. validate_sufficient_pilot.py and check_boundary.py passed; validators requiring jsonschema could not run because that dependency is unavailable and read-only review prohibited installation. The pre-existing untracked deliverables/ directory was excluded. No repository changes were made."}
+```
