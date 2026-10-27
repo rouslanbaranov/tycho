@@ -9,12 +9,12 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 140 |
+| Promoted after remediation | 141 |
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 141 |
-| Rejected after review | 5 |
+| Rejected after review | 4 |
 
 Packet statuses: {"page-changed-since-review": 4, "reviewed-by-independent-agent": 141}.
 
@@ -573,7 +573,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Transactional Outbox**
-  Current: reject; re-review: pass; report: pass-with-findings.
+  Current: pass; re-review: pass; report: pass-with-findings.
   Status: page-changed-since-review.
 
 - **TTL-Based Expiration**
