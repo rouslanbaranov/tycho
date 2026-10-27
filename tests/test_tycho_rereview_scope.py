@@ -27,7 +27,7 @@ class ScopeManifestTests(unittest.TestCase):
         self.assertEqual(counts["phase_b"], 93)
         self.assertEqual(counts["phase_a_verdicts"],
                          {"pass": 33, "pass-with-findings": 16, "reject": 3})
-        self.assertEqual(counts["phase_b_states"]["promoted-after-remediation"], 87)
+        self.assertEqual(counts["phase_b_states"]["promoted-after-remediation"], 86)
         self.assertEqual(counts["phase_b_states"].get("residual-findings-after-re-review", 0), 0)
 
     def test_current_page_hashes(self):

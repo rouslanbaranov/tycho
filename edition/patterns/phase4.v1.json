@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "6b5aa5576b54d6c9bf2e29055904a72b2db24ef3a299f8f53b63dc4a6cff0c2a",
+    "registry_sha256": "7f2c6783328e8d5d1cb9242b00b7c74e274ff37ee1460c5459beacc376122b94",
     "ledger_sha256": "1ec9f66d679ee6f310f6d054338ed4ffbb73575c3bb8fd3bef6f5de7c4f2d093",
-    "card_batches_sha256": "e94308828c56418c4b2051c1865ce72aafeb378e7220d4fc1826fb4857973930",
-    "route_index_sha256": "489c23387514b6bfbfb208039ac343e840a9353983b6337c74b1bd8d7c530e08",
-    "coverage_sha256": "b8a656c854688040b0f5c31a3b53016a9f3034a8018ff042563286336b3fd733"
+    "card_batches_sha256": "0e30caf8aa9438482c883c023f94f41b673fb8702dc2b90c78abfc20bb1df98b",
+    "route_index_sha256": "02fddda579545fa2984a4063485f4e42dea549d0b8f7c4d17a93af5d69cf33ea",
+    "coverage_sha256": "4d6d625636f4b1a600736713fa9cb04464ec3ab140366d073d00eeb2d4739e37"
   },
   "dimensions": [
     "identity",
@@ -24,12 +24,12 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 437,
+    "pages": 438,
     "entries": 145,
     "cards": 145,
-    "routes": 496,
-    "related_labels": 27,
-    "non_routes": 27,
+    "routes": 493,
+    "related_labels": 26,
+    "non_routes": 26,
     "unresolved_related": 0,
     "retrieval_questions": 145,
     "blocked_entries": 0
@@ -2997,6 +2997,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.066e7bd31c33fd91500bda7e55a3dedb",
+      "path": "book/volumes/v11-pattern-atlas/c10-deployment-modernization/parallel-run.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.chapter.419769c372ccaa569796954878e3bef9",
       "path": "book/volumes/v11-pattern-atlas/c11-security-operations/README.md",
       "kind": "chapter",
@@ -5446,18 +5453,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "sufficient",
+        "technical_owner": "partial",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "sufficient",
-        "decision_coverage": "sufficient"
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ],
       "question": "Should old and new implementations process the same work concurrently for comparison?"
@@ -8040,14 +8047,14 @@
     },
     {
       "pattern_id": "tycho.pattern.parallel-run",
-      "technical": "sufficient",
-      "decision": "sufficient",
-      "overall": "sufficient",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "sufficient",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ]
     },
@@ -10326,21 +10333,6 @@
       "basis": "card-related-entry"
     },
     {
-      "from": "tycho.pattern.parallel-run",
-      "to": "tycho.pattern.controlled-cutover",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.parallel-run",
-      "to": "tycho.pattern.dark-launching-shadow-traffic",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.parallel-run",
-      "to": "tycho.pattern.strangler-fig",
-      "basis": "card-related-entry"
-    },
-    {
       "from": "tycho.pattern.partitioning",
       "to": "tycho.pattern.consistent-hashing",
       "basis": "card-related-entry"
@@ -11359,13 +11351,6 @@
     {
       "from": "tycho.pattern.multi-leader-replication",
       "label": "Conflict Resolution.",
-      "disposition": "non-route",
-      "target": null,
-      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
-    },
-    {
-      "from": "tycho.pattern.parallel-run",
-      "label": "Reconciliation.",
       "disposition": "non-route",
       "target": null,
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"

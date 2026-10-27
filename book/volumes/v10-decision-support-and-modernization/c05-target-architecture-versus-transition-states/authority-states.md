@@ -62,7 +62,7 @@ A target architecture might consist of one improved modular application; a trans
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Parallel Run](../../v11-pattern-atlas/c10-deployment-modernization/README.md#parallel-run) — decision conditions and contraindications.
+> [Parallel Run](../../v11-pattern-atlas/c10-deployment-modernization/parallel-run.md#parallel-run) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.cf0ce38c73e44950aec5a9c2869bee63:2 -->
 ## 2. The fictional migration: moving a public catalogue read model
