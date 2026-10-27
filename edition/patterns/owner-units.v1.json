@@ -8124,8 +8124,7 @@
         "unit_terms": [
           "shuffle shard",
           "random subset",
-          "tenant overlap",
-          "fixed cell"
+          "tenant overlap"
         ]
       },
       "technical_evidence": {
@@ -8166,15 +8165,22 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A fixed cell anchors one tenant to a known home and population boundary.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Default sharding is the baseline; shuffle sharding is an alternative that reduces outage blast radius.",
+          "reason": "Names the alternative sharding strategy and its blast-radius purpose.",
+          "binding": {
+            "source_id": "src.cortex-shuffle-sharding",
+            "ledger_record": "read.batch5-cortex-shuffle.2026-10-21",
+            "section": "Background",
+            "quote": "The goal of shuffle sharding is to provide an alternative sharding strategy to reduce the blast radius of an outage and better isolate tenants.",
+            "revision": "6b895c9acc47cbe24ff4989a5115539b70ea145158b97e70c4417329e3484633"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "shuffle-sharding",
         "question": "Should each tenant be assigned a random subset of shards to reduce overlapping blast radius?",
-        "competing_alternative": "Cell-based partitioning or dedicated shards. Reverse the choice when overlap reduction does not justify assignment complexity.",
+        "competing_alternative": "Default sharding with a fixed shard assignment.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -10816,7 +10822,7 @@
     "mechanism_supported": 110,
     "invariant_supported": 48,
     "failure_recovery_supported": 35,
-    "alternative_supported": 45,
+    "alternative_supported": 46,
     "technical_partial_bounded": 43,
     "technical_partial": 102,
     "technical_name_only": 0,

@@ -191,9 +191,9 @@ Containment after a failed worker requires reassigning affected tenants and rech
 shared dependency graph; replacing the worker alone can preserve the same overlap. Measure
 recovery time and tenant impact, not only steady-state isolation.
 
-A fixed cell anchors one tenant to a known home and population boundary. Shuffle sharding is
-preferable when many tenants share a pool and measured overlap reduces correlated failure without
-dedicating a cell to each one.
+Default sharding is the baseline; shuffle sharding is an alternative that reduces outage blast
+radius. It assigns each tenant a subset of instances and reduces overlapping instances between
+tenants; it does not dedicate a cell to each tenant or guarantee a fixed impact percentage.
 
 ## Navigation
 

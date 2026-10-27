@@ -248,8 +248,7 @@ shards exist to reduce overlap.
 **Hard contraindications.** Reject when there are too few shards, when assignment cannot
 be stable, or when the operational cost of many assignments is high.
 
-**Competing alternative.** Cell-based partitioning or dedicated shards. Reverse the choice
-when overlap reduction does not justify assignment complexity.
+**Competing alternative.** Default sharding with a fixed shard assignment.
 
 **Failure and recovery.** Hot tenants and uneven overlap are common; verify assignment in
 the owner section.
