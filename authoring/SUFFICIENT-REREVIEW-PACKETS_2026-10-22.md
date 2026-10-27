@@ -9,14 +9,14 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 142 |
+| Promoted after remediation | 140 |
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 145 |
-| Rejected after review | 3 |
+| Reviewed by independent agent | 143 |
+| Rejected after review | 5 |
 
-Packet statuses: {"reviewed-by-independent-agent": 145}.
+Packet statuses: {"page-changed-since-review": 2, "reviewed-by-independent-agent": 143}.
 
 ## Review procedure
 
@@ -110,7 +110,7 @@ blank verdict template in the machine-readable file.
 
 - **CDN / Edge Caching**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Cell-Based Architecture**
   Current: pass; re-review: pass; report: reject.
@@ -542,7 +542,7 @@ blank verdict template in the machine-readable file.
 
 - **Static Content Hosting**
   Current: pass; re-review: pass; report: reject.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Strangler Fig**
   Current: pass; re-review: pass; report: pass-with-findings.

@@ -355,7 +355,7 @@ clear browser caches.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-static.2026-10-21: all nine served headings read.
+read record read.static-content-hosting.2026-10-26: all nine served headings read.
 The source is a public pattern/documentation
 unit, not a benchmark.
 
