@@ -9727,40 +9727,19 @@
           }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "It needs a least-privilege scope, an audience, an expiry, a revocation path and an audit trail.",
-          "reason": "Lists the required scope, audience, expiry, revocation and audit properties.",
-          "binding": {
-            "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.batch6-valet.2026-10-21",
-            "section": "Workload design",
-            "quote": "This pattern enables a client to directly access a resource without needing long-lasting or standing credentials. All access requests start with an auditable transaction. The granted access is then limited in both scope and duration. This pattern also makes it easier to revoke the granted access.",
-            "revision": "29af0f5f447a7dfe4e57d6dce33b3740fe58c52c10129a8d16243644b5bbd092"
-          }
+          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The failure path is a leaked or over-scoped token; shorten lifetime, bind audience and scope, and revoke at the authority.",
-          "reason": "Describes the credential failure and its remediation.",
-          "binding": {
-            "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.batch6-valet.2026-10-21",
-            "section": "Issues and considerations",
-            "quote": "If leaked or compromised, the key effectively unlocks the target item and makes it available for malicious use during the validity period. A key can usually be revoked or disabled, depending on how it was issued. Server-side policies can be changed or, the server key it was signed with can be invalidated. Specify a short validity period to minimize the risk of allowing unauthorized operations to take place against the data store.",
-            "revision": "29af0f5f447a7dfe4e57d6dce33b3740fe58c52c10129a8d16243644b5bbd092"
-          }
+          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A mediated gateway is the alternative when the resource cannot enforce scope or when the client cannot protect a credential.",
-          "reason": "Names the competing mechanism and the conditions that favor it.",
-          "binding": {
-            "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.batch6-valet.2026-10-21",
-            "section": "Example",
-            "quote": "Without this pattern, the workload has essentially two options. The first is to provide standing access and configuration to all the clients to perform uploads directly to a storage account. The other is to implement the Gateway Routing pattern to set up an endpoint where clients use proxied access to storage, but this might not be adding additional value to the transaction.",
-            "revision": "29af0f5f447a7dfe4e57d6dce33b3740fe58c52c10129a8d16243644b5bbd092"
-          }
+          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -9778,7 +9757,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Dedicated bounded note under 'Bounded pattern ownership notes'; all four dimensions are stated."
     },
@@ -10065,52 +10044,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A hypothetical target SLO of 99.9% would allow at most 10 failures among 10,000 intents, while this window has 30, **consuming 300% of the target's error allowance**.",
-          "reason": "Shows how an objective converts user intents into an error budget and consumption.",
-          "binding": {
-            "source_id": "src.sre",
-            "ledger_record": "read.batch6-sre-slo.2026-10-21",
-            "section": "Defining Objectives",
-            "quote": "Instead, it is better to allow an error budget—a rate at which the SLOs can be missed—and track that on a daily or weekly basis.",
-            "revision": "60851ff3487eef695bb59143b5123a79af081091ce8bf2909ad83ad924438365"
-          }
+          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Whether user cancellations, blocked abusive traffic, malformed requests and legitimate overload rejections count must be agreed before measurement; exclusion policy cannot change retrospectively to improve the score.",
-          "reason": "States the required exclusions agreement and the no-retrospective-change rule.",
-          "binding": {
-            "source_id": "src.sre",
-            "ledger_record": "read.batch6-sre-slo.2026-10-21",
-            "section": "Defining Objectives",
-            "quote": "For maximum clarity, SLOs should specify how they’re measured and the conditions under which they’re valid.",
-            "revision": "60851ff3487eef695bb59143b5123a79af081091ce8bf2909ad83ad924438365"
-          }
+          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "An instrumentation design that counts only HTTP 2xx responses among requests **admitted into the service**, excluding 500 deliberate overload rejections before the handler, can report misleading health.",
-          "reason": "Names the misleading denominator and required review.",
-          "binding": {
-            "source_id": "src.sre",
-            "ledger_record": "read.batch6-sre-slo.2026-10-21",
-            "section": "Collecting Indicators",
-            "quote": "However, some systems should be instrumented with client -side collection, because not measuring behavior at the client can miss a range of problems that affect users but don’t affect server-side metrics.",
-            "revision": "60851ff3487eef695bb59143b5123a79af081091ce8bf2909ad83ad924438365"
-          }
+          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Metrics or a simpler availability check may be preferable when the user journey is not measurable.",
-          "reason": "Names simpler measurement and the reversal.",
-          "binding": {
-            "source_id": "src.sre",
-            "ledger_record": "read.batch6-sre-slo.2026-10-21",
-            "section": "Indicators",
-            "quote": "Ideally, the SLI directly measures a service level of interest, but sometimes only a proxy is available because the desired measure may be hard to obtain or interpret.",
-            "revision": "60851ff3487eef695bb59143b5123a79af081091ce8bf2909ad83ad924438365"
-          }
+          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -10128,7 +10079,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "The walkthrough owns budget arithmetic and exclusion policy; no dedicated SLO section exists."
     },
@@ -10862,12 +10813,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 111,
-    "invariant_supported": 50,
-    "failure_recovery_supported": 37,
-    "alternative_supported": 47,
-    "technical_partial_bounded": 45,
-    "technical_partial": 100,
+    "mechanism_supported": 110,
+    "invariant_supported": 48,
+    "failure_recovery_supported": 35,
+    "alternative_supported": 45,
+    "technical_partial_bounded": 43,
+    "technical_partial": 102,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

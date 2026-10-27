@@ -67,3 +67,24 @@ Reviewed HEAD: `ca77efd2`. Verdict: reject. No entry is promoted; `sufficient: 0
 ## Limits
 
 Downgrading a dimension is containment, not closure. Closure requires either a narrowed claim or an exact admitted binding, then a fresh external review. The two entries without R5 findings (Valet Key and SLI/SLO and Error Budgets) still need a fresh review before any promotion.
+
+## Focused survivor review — 2026-10-27
+
+Report: `authoring/ai-reviews/2026-10-27-sufficient-survivors-review-codex.md`.
+Reviewed HEAD: `3f965e0d`. Verdict: **reject**.
+
+Both survivors were downgraded:
+
+- Valet Key: invariant, failure_recovery and alternative -> partial;
+- SLI/SLO and Error Budgets: all four dimensions -> partial.
+
+No review-ready entries remain. Other open findings:
+
+- `edition/patterns/sufficient-review-reconciliation.v1.json` still records
+  `derived_state: promoted-after-remediation` for both entries. The reviewer called this an
+  unsupported promotion assertion. It is a historical agent-review reconciliation artifact,
+  not the sufficient promotion file, but the state label must be corrected or explicitly
+  bounded before any later promotion review. **Open.**
+- The SLI/SLO failure_recovery quote transcribes `client -side`; the current public page reads
+  `client-side`. The pinned representation must be checked before changing the exact quote.
+  **Open, minor.**
