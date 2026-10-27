@@ -135,12 +135,11 @@ at-least-once attempts, not a distributed transaction.
 The relay needs bounded attempts and age, a publication key, per-aggregate ordering and a terminal
 quarantine for poison rows. A crash after publish before completion duplicates; after commit before
 publish retries. A consumer still deduplicates by effect identity, and a repair operator needs the
-row, payload digest and attempt history retained for the declared window.
+row, payload digest and attempt history retained for the declared window. The consumer deduplicates
+by message ID or effect identity, so a relay replay remains safe.
 
 Use an outbox when the lost-publication and duplicate-effect risk justifies relay
-complexity. Reverse to
-direct publish with reconciliation only when relay complexity exceeds the risk it removes; CDC or
-transactional messaging may fit when the log is accessible.
+complexity. Event sourcing is an alternative solution.
 
 ### Distributed Workflow Orchestration
 

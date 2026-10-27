@@ -326,8 +326,7 @@ retention are explicit.
 **Hard contraindications.** Reject when the state store cannot share a transaction with an
 outbox, when publication latency is unacceptable, or when no relay is operated.
 
-**Competing alternative.** Publish directly after commit with reconciliation. Reverse the
-choice when relay complexity exceeds the lost-publication and duplicate-effect risk it removes.
+**Competing alternative.** Event sourcing is an alternative solution.
 
 **Failure and recovery.** A crash after publish/before checkpoint duplicates; a crash after
 commit/before publish retries; a poison row can block progress. Bound attempts/age and keep
