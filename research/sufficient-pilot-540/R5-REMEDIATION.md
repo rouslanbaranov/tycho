@@ -88,3 +88,14 @@ No review-ready entries remain. Other open findings:
 - The SLI/SLO failure_recovery quote transcribes `client -side`; the current public page reads
   `client-side`. The pinned representation must be checked before changing the exact quote.
   **Open, minor.**
+
+## Shuffle Sharding focused review — 2026-10-27
+
+Review: `/tmp/shuffle-review.json` at HEAD `73c07e41`; verdict **reject**.
+Findings: unsupported `random subset`/hash-based qualifiers, generalized recovery, and an
+unsupported fixed-shard alternative. The card edits were reverted; all four dimensions are
+`partial`, and Shuffle Sharding is remediation again. The report is retained in the R5
+survivor/batch evidence trail and is not a promotion.
+
+Final batch state after R5 and focused reviews: **0 review-ready**, **0 sufficient**,
+**0 promotions**. All 145 entries are rejected or partial-bounded.

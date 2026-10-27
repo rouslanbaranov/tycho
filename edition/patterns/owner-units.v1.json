@@ -8124,63 +8124,36 @@
         "unit_terms": [
           "shuffle shard",
           "random subset",
-          "tenant overlap"
+          "tenant overlap",
+          "fixed cell"
         ]
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
-          "quote": "A shuffle shard selects a random subset of workers for each tenant",
-          "reason": "Explains the subset selection and partial tenant overlap.",
-          "binding": {
-            "source_id": "src.cortex-shuffle-sharding",
-            "ledger_record": "read.batch5-cortex-shuffle.2026-10-21",
-            "section": "What is shuffle sharding?",
-            "quote": "The idea is to assign each tenant a shard composed of a subset of the Cortex service instances, aiming to minimize the overlapping instances between two different tenants.",
-            "revision": "6b895c9acc47cbe24ff4989a5115539b70ea145158b97e70c4417329e3484633"
-          }
+          "state": "partial",
+          "quote": "",
+          "reason": "Focused external review 2026-10-27: claim qualifiers not supported by the binding."
         },
         "invariant": {
-          "state": "supported",
-          "quote": "Hash-based assignment alone does not prove statistical independence.",
-          "reason": "Safety rule against assuming hash-based independence.",
-          "binding": {
-            "source_id": "src.cortex-shuffle-sharding",
-            "ledger_record": "read.batch5-cortex-shuffle.2026-10-21",
-            "section": "Guaranteed properties",
-            "quote": "Probabilistically and for a large enough cluster, it ensures that every tenant gets a different set of instances, with a reduced number of overlapping instances between two tenants to improve failure isolation.",
-            "revision": "6b895c9acc47cbe24ff4989a5115539b70ea145158b97e70c4417329e3484633"
-          }
+          "state": "partial",
+          "quote": "",
+          "reason": "Focused external review 2026-10-27: claim qualifiers not supported by the binding."
         },
         "failure_recovery": {
-          "state": "supported",
-          "quote": "A failed worker affects every tenant whose subset includes it",
-          "reason": "Names shared-dependency and assignment-stability tests.",
-          "binding": {
-            "source_id": "src.cortex-shuffle-sharding",
-            "ledger_record": "read.batch5-cortex-shuffle.2026-10-21",
-            "section": "What is shuffle sharding?",
-            "quote": "An outage on some Cortex cluster instances/nodes will only affect a subset of tenants.",
-            "revision": "6b895c9acc47cbe24ff4989a5115539b70ea145158b97e70c4417329e3484633"
-          }
+          "state": "partial",
+          "quote": "",
+          "reason": "Focused external review 2026-10-27: claim qualifiers not supported by the binding."
         },
         "alternative": {
-          "state": "supported",
-          "quote": "Default sharding is the baseline; shuffle sharding is an alternative that reduces outage blast radius.",
-          "reason": "Names the alternative sharding strategy and its blast-radius purpose.",
-          "binding": {
-            "source_id": "src.cortex-shuffle-sharding",
-            "ledger_record": "read.batch5-cortex-shuffle.2026-10-21",
-            "section": "Background",
-            "quote": "The goal of shuffle sharding is to provide an alternative sharding strategy to reduce the blast radius of an outage and better isolate tenants.",
-            "revision": "6b895c9acc47cbe24ff4989a5115539b70ea145158b97e70c4417329e3484633"
-          }
+          "state": "partial",
+          "quote": "",
+          "reason": "Focused external review 2026-10-27: claim qualifiers not supported by the binding."
         }
       },
       "decision_evidence": {
         "atlas_section": "shuffle-sharding",
         "question": "Should each tenant be assigned a random subset of shards to reduce overlapping blast radius?",
-        "competing_alternative": "Default sharding with a fixed shard assignment.",
+        "competing_alternative": "Cell-based partitioning or dedicated shards. Reverse the choice when overlap reduction does not justify assignment complexity.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -8192,7 +8165,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded in the comparison section; heading uses 'shuffle shards', not the catalog name."
     },
@@ -10676,7 +10649,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Cells, shuffle sharding and deployment stamps now have three distinct dedicated units."
     },
@@ -10819,12 +10792,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 110,
-    "invariant_supported": 48,
-    "failure_recovery_supported": 35,
-    "alternative_supported": 46,
-    "technical_partial_bounded": 43,
-    "technical_partial": 102,
+    "mechanism_supported": 109,
+    "invariant_supported": 47,
+    "failure_recovery_supported": 34,
+    "alternative_supported": 45,
+    "technical_partial_bounded": 42,
+    "technical_partial": 103,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
