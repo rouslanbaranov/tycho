@@ -167,16 +167,17 @@ measured evidence, and they do not create a new source claim.
 
 ### Valet Key
 
-A valet key is a scoped, time-limited credential that lets a client reach one resource
-directly. It needs a least-privilege scope, an audience, an expiry, a revocation path and
-an audit trail. Use it when direct access offloads a mediator and a scoped token is issued
-by the resource or a separate authority, while the resource enforces that scope. Do not use
-it when every access must be mediated or when a leaked token could exceed the intended
-resource boundary.
+A valet key is a time-limited credential that grants access to specific resources and
+allows only predefined operations. Applications issue keys to clients so the client can
+perform the operation without the application handling the data transfer.
 
-The failure path is a leaked or over-scoped token; shorten lifetime, bind audience and
-scope, and revoke at the authority. A mediated gateway is the alternative when the
-resource cannot enforce scope or when the client cannot protect a credential.
+The key should allow only the actions necessary to complete the operation.
 
-**Limits.** Direct access shifts enforcement to the resource; a token that cannot be
-audience-bound or revoked is a standing data exposure.
+If leaked or compromised, the key unlocks the target item and makes it available for
+malicious use during its validity period; a key can usually be revoked or disabled.
+Applications can invalidate the key when the client reports that the transfer is complete.
+
+The other is to implement the Gateway Routing pattern to set up an endpoint where clients
+use proxied access to storage.
+
+**Limits.** A key that cannot be revoked or audited is a standing exposure.

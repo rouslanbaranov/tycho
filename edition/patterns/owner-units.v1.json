@@ -9700,17 +9700,17 @@
         "line": 168,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "valet key is a scoped, time-limited credential",
-          "least-privilege scope",
-          "revocation path",
-          "mediated gateway"
+          "valet key is a time-limited credential",
+          "predefined operations",
+          "revoked or disabled",
+          "Gateway Routing"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A valet key is a scoped, time-limited credential that lets a client reach one resource directly.",
-          "reason": "Defines the scoped, time-limited direct-access credential.",
+          "quote": "A valet key is a time-limited credential that grants access to specific resources and allows only predefined operations.",
+          "reason": "Defines the time-limited, resource- and operation-scoped credential.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.batch6-valet.2026-10-21",
@@ -9720,25 +9720,46 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "It needs a least-privilege scope, an audience, an expiry, a revocation path and an audit trail.",
-          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "The key should allow only the actions necessary to complete the operation.",
+          "reason": "Limits the key to necessary actions.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch6-valet.2026-10-21",
+            "section": "Issues and considerations",
+            "quote": "Typically, the key should allow the user to only perform the actions necessary to complete the operation",
+            "revision": "29af0f5f447a7dfe4e57d6dce33b3740fe58c52c10129a8d16243644b5bbd092"
+          }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "The failure path is a leaked or over-scoped token; shorten lifetime, bind audience and scope, and revoke at the authority.",
-          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "If leaked or compromised, the key unlocks the target item and makes it available for malicious use during its validity period; a key can usually be revoked or disabled.",
+          "reason": "States leak impact and revocation during validity.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch6-valet.2026-10-21",
+            "section": "Issues and considerations",
+            "quote": "If leaked or compromised, the key effectively unlocks the target item and makes it available for malicious use during the validity period. A key can usually be revoked or disabled, depending on how it was issued.",
+            "revision": "29af0f5f447a7dfe4e57d6dce33b3740fe58c52c10129a8d16243644b5bbd092"
+          }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A mediated gateway is the alternative when the resource cannot enforce scope or when the client cannot protect a credential.",
-          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "The other is to implement the Gateway Routing pattern to set up an endpoint where clients use proxied access to storage.",
+          "reason": "Names the proxied Gateway Routing alternative.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch6-valet.2026-10-21",
+            "section": "Example",
+            "quote": "The other is to implement the Gateway Routing pattern to set up an endpoint where clients use proxied access to storage",
+            "revision": "29af0f5f447a7dfe4e57d6dce33b3740fe58c52c10129a8d16243644b5bbd092"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "valet-key",
         "question": "Should a client receive a scoped, time-limited credential for direct resource access?",
-        "competing_alternative": "Mediated access through a gateway or backend. Reverse the choice when direct access offload is not worth credential risk.",
+        "competing_alternative": "Gateway Routing with proxied access to storage.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -9750,7 +9771,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Dedicated bounded note under 'Bounded pattern ownership notes'; all four dimensions are stated."
     },
@@ -10807,11 +10828,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 47,
-    "failure_recovery_supported": 35,
-    "alternative_supported": 46,
-    "technical_partial_bounded": 42,
-    "technical_partial": 103,
+    "invariant_supported": 48,
+    "failure_recovery_supported": 36,
+    "alternative_supported": 47,
+    "technical_partial_bounded": 43,
+    "technical_partial": 102,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

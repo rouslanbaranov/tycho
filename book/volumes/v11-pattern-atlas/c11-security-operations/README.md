@@ -261,17 +261,16 @@ security-pattern; priority core.
 **Decision question.** Should a client receive a scoped, time-limited credential for
 direct resource access?
 
-**Good-fit conditions.** The resource or a separate authority can issue scoped tokens; the
-resource enforces scope; expiry/revocation are enforced; the client cannot escalate scope.
+**Good-fit conditions.** Access is limited in scope and duration; the key can be revoked or
+disabled; operations are audited.
 
-**Hard contraindications.** Reject when every access must be mediated, when the resource
-cannot enforce scope, or when token leakage would be catastrophic.
+**Hard contraindications.** Reject when access must be mediated, the key cannot be revoked,
+or audit is required and unavailable.
 
-**Competing alternative.** Mediated access through a gateway or backend. Reverse the
-choice when direct access offload is not worth credential risk.
+**Competing alternative.** Gateway Routing with proxied access to storage.
 
-**Failure and recovery.** Token leakage and scope confusion are common; verify boundaries
-in the owner section.
+**Failure and recovery.** A leaked key unlocks the target during its validity period; revoke
+or disable it and keep logs protected.
 
 **Technical owner.** [Valet Key](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md#valet-key) — scoped credential issuance, enforcement and revocation are bounded, not a key-management guide.
 
