@@ -11,6 +11,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import subprocess
 import sys
 
 import reconcile_sufficient_reviews as reconciliation
@@ -24,8 +25,13 @@ BATCH = ROOT / "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md"
 SUFFICIENT = ROOT / (
     "authoring/INDEPENDENT-AGENT-REVIEW-SUFFICIENT-CANDIDATES_2026-10-22.md")
 REBINDS = ROOT / "edition/patterns/section-rebinds.v1.json"
+CARDS = ROOT / "edition/patterns/card-batches.v1.json"
 OUTPUT_JSON = ROOT / "edition/patterns/sufficient-rereview-packets.v1.json"
 OUTPUT_MD = ROOT / "authoring/SUFFICIENT-REREVIEW-PACKETS_2026-10-22.md"
+
+def card_paths():
+    data=json.loads(CARDS.read_text())
+    return {e["pattern_id"]: e.get("card_path") for b in data["batches"] for e in b["entries"] if e.get("card_path")}
 
 CHECKS = [
     "Read the exact owner section and atlas card; do not rely on the summary.",
@@ -148,6 +154,12 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
         "catalog_name": candidate["catalog_name"],
         "owner_path": candidate["owner_path"],
         "owner_heading": candidate["owner_heading"],
+        "card_path": card_paths().get(candidate["pattern_id"]),
+        "card_sha256": (hashlib.sha256((ROOT / card_paths()[candidate["pattern_id"]]).read_bytes()).hexdigest()
+                        if candidate["pattern_id"] in card_paths() else None),
+        "owner_sha256": hashlib.sha256((ROOT / candidate["owner_path"]).read_bytes()).hexdigest(),
+        "head": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
+                               capture_output=True, text=True, check=True).stdout.strip(),
         "source_read": candidate["source_read"],
         "page_sha256": reviewed_sha,
         "current_page_sha256": page_sha,
@@ -170,6 +182,11 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
         "review_checklist": CHECKS,
         "verdict_template": {**TEMPLATE,
                              "page_sha256": reviewed_sha,
+                             "owner_sha256": hashlib.sha256((ROOT / candidate["owner_path"]).read_bytes()).hexdigest(),
+                             "card_sha256": (hashlib.sha256((ROOT / card_paths()[candidate["pattern_id"]]).read_bytes()).hexdigest()
+                                             if candidate["pattern_id"] in card_paths() else None),
+                             "head": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
+                                                    capture_output=True, text=True, check=True).stdout.strip(),
                              "checks": dict(TEMPLATE["checks"])},
     }
 

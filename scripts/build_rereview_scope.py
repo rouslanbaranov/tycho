@@ -67,7 +67,7 @@ def build():
         chapter = batch["chapter"]
         directory = chapters.get(chapter)
         for entry in batch["entries"]:
-            card_path = str(V11 / directory / "README.md") if directory else None
+            card_path = entry.get("card_path") or (str(V11 / directory / "README.md") if directory else None)
             anchor = entry["atlas_section"]
             if card_path:
                 card_text = (ROOT / card_path).read_text(encoding="utf-8")
