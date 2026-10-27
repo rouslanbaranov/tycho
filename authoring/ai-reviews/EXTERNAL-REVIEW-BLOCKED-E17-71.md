@@ -1,3 +1,5 @@
+> Resolved 2026-10-27: policy scoped; no external review was required for this tooling PR. This record is historical.
+
 # External review gate — blocked — E17-71
 
 Status: **blocked by AGENTS 17-21**. No external review has been performed.

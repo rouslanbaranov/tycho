@@ -56,3 +56,25 @@ rebinding labels.
 - The freeze is a derived snapshot, not human review or sufficient coverage.
 - Stale qrels are reported, not repaired.
 - No CI, owner acceptance or quality claim.
+
+## Diff and lock
+
+search_reindex.py diff compares the frozen manifest with current content and
+qrels. It reports added, removed and changed pages plus qrels changes. Exit code
+1 means a difference or stale qrels.
+
+Only one rebuild can publish at a time. The build uses an exclusive
+generated/.search-reindex.lock file and atomically replaces the route index.
+A failed or concurrent build does not publish a partial snapshot.
+
+## Performance
+
+The current 20-query operational sample is in
+[SEARCH-PERFORMANCE-BASELINE-2026-10-27.md](SEARCH-PERFORMANCE-BASELINE-2026-10-27.md).
+It is not a quality or capacity claim; per-query route scanning dominates.
+
+## Post-enrichment
+
+Use [POST-ENRICHMENT-RUNBOOK.md](POST-ENRICHMENT-RUNBOOK.md) for the full
+freeze, diff, re-adjudication, review and merge order.
+

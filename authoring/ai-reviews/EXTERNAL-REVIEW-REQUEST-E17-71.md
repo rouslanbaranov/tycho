@@ -1,3 +1,5 @@
+> Resolved 2026-10-27: AGENTS 17-21 scoped external review to book/atlas changes; PR #552 was tooling and merged without this review. This file is historical.
+
 # External AI review request — E17-71
 
 Status: request only. No external review has been performed.
