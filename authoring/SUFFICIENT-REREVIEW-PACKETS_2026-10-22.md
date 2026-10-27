@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 134 |
+| Reviewed by independent agent | 132 |
 | Rejected after review | 6 |
 
-Packet statuses: {"page-changed-since-review": 11, "reviewed-by-independent-agent": 134}.
+Packet statuses: {"page-changed-since-review": 13, "reviewed-by-independent-agent": 132}.
 
 ## Review procedure
 
@@ -74,7 +74,7 @@ blank verdict template in the machine-readable file.
 
 - **Blue/Green Deployment**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Branch by Abstraction**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -178,7 +178,7 @@ blank verdict template in the machine-readable file.
 
 - **Dark Launching / Shadow Traffic**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Database per Service**
   Current: pass; re-review: pass; report: pass-with-findings.

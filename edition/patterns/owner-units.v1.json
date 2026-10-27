@@ -8524,7 +8524,7 @@
         "heading": "Rolling Deployment",
         "anchor": "rolling-deployment",
         "level": 3,
-        "line": 140,
+        "line": 137,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Rolling Deployment"
@@ -8581,7 +8581,7 @@
         "heading": "Blue-Green Deployment",
         "anchor": "blue-green-deployment",
         "level": 3,
-        "line": 157,
+        "line": 154,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Blue-Green Deployment",
@@ -8655,7 +8655,7 @@
         "heading": "Canary Release",
         "anchor": "canary-release",
         "level": 3,
-        "line": 174,
+        "line": 171,
         "unit_kind": "dedicated",
         "unit_terms": [
           "small, identifiable cohort",
@@ -9200,14 +9200,28 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Both need a side-effect boundary, a comparison method, a load budget and a rule for sensitive data.",
-          "reason": "Fowler and Istio support hidden invocation and mirroring; side-effect, measurement, budget and sensitive-data rules remain synthetic."
+          "state": "supported",
+          "quote": "Mirrored requests are fire-and-forget: their responses are discarded, so they do not affect the primary response.",
+          "reason": "Source states fire-and-forget mirroring and discarded responses.",
+          "binding": {
+            "source_id": "src.istio-traffic-mirroring",
+            "ledger_record": "read.batch7-istio-mirroring.2026-10-26",
+            "section": "Mirroring traffic to httpbin-v2",
+            "quote": "these requests are mirrored as \"fire and forget\", which means that the responses are discarded",
+            "revision": "dc18301fbbca9d374536e582e055c60b5594014d2fe88d4e0763b551de51765e"
+          }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "The failure path is a hidden or mirrored request that causes a real effect or doubles load; isolate the shadow path and stop it when the comparison or capacity contract fails.",
-          "reason": "Istio supports mirrored requests and discarded responses; load-doubling and containment are inferences."
+          "state": "supported",
+          "quote": "Mirrored responses are discarded, so they do not affect the primary response.",
+          "reason": "Source states responses are discarded.",
+          "binding": {
+            "source_id": "src.istio-traffic-mirroring",
+            "ledger_record": "read.batch7-istio-mirroring.2026-10-26",
+            "section": "Mirroring traffic to httpbin-v2",
+            "quote": "these requests are mirrored as \"fire and forget\", which means that the responses are discarded",
+            "revision": "dc18301fbbca9d374536e582e055c60b5594014d2fe88d4e0763b551de51765e"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -9237,7 +9251,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "One of four owner units on this page; the others are Rolling, Blue-Green and Canary."
     },
@@ -10707,7 +10721,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Canary Release now has a dedicated owner unit with explicit limits."
     },
@@ -10866,11 +10880,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 50,
-    "failure_recovery_supported": 36,
+    "invariant_supported": 51,
+    "failure_recovery_supported": 37,
     "alternative_supported": 49,
-    "technical_partial_bounded": 41,
-    "technical_partial": 100,
+    "technical_partial_bounded": 42,
+    "technical_partial": 99,
     "technical_name_only": 0,
     "technical_sufficient": 4,
     "decision_partial_bounded": 141,

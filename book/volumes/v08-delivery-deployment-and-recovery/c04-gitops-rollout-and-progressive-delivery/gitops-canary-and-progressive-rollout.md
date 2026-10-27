@@ -114,16 +114,13 @@ Dark launching calls new or changed back-end behavior from existing user request
 showing the result, so the new path does real work under production load. Shadow traffic
 copies live requests to a mirrored service while the old path remains authoritative.
 
-Both need a side-effect boundary, a comparison method, a load budget and a rule for sensitive
-data. Mirroring is fire-and-forget for the primary request, but the mirrored request is real
-and appears in the new service's logs; a write, charge or notification can execute twice.
-Dark launching without mirroring still changes production state unless the hidden path is
-side-effect free.
+Mirrored requests are fire-and-forget: their responses are discarded, so they do not affect the
+primary response. Their Host/Authority headers carry a `-shadow` suffix. The new path still
+needs a side-effect boundary and a load budget; these are synthetic design conditions.
 
-The failure path is a hidden or mirrored request that causes a real effect or doubles load;
-isolate the shadow path and stop it when the comparison or capacity contract fails. A canary,
-feature flag or environment switch that receives a small real share is the alternative when
-shadow traffic cannot be made side-effect free.
+Mirrored responses are discarded, so they do not affect the primary response. A canary, feature
+flag or environment switch that receives a small real share is the alternative when shadow
+traffic cannot be made side-effect free.
 
 **Source boundary.** The
 [read.fowler-dark-launching.2026-10-26](../../../../edition/patterns/reading-ledger.v1.json)

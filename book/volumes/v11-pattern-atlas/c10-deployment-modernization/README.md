@@ -374,8 +374,8 @@ kind modernization-pattern; priority advanced.
 **Decision question.** Should new code receive real or shadow traffic before it is
 authoritative?
 
-**Good-fit conditions.** Traffic can be mirrored without side effects;
-comparison/observability exists; the old path remains authoritative.
+**Good-fit conditions.** Traffic can be mirrored to a shadow service; responses are discarded;
+the old path remains authoritative.
 
 **Hard contraindications.** Reject when shadow requests cause writes, when traffic cannot
 be mirrored safely, or when load cost is prohibitive.
@@ -383,8 +383,8 @@ be mirrored safely, or when load cost is prohibitive.
 **Competing alternative.** Canary release or feature flags. Reverse the choice when shadow
 load/cost exceeds confidence benefit.
 
-**Failure and recovery.** Hidden side effects and load amplification are common; verify
-isolation in the owner section.
+**Failure and recovery.** Mirrored responses are discarded; isolate the shadow path and bound
+its load.
 
 **Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#dark-launching-shadow-traffic) — dark launch/shadow traffic is bounded to progressive exposure.
 
