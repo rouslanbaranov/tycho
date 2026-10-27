@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 139 |
+| Reviewed by independent agent | 137 |
 | Rejected after review | 4 |
 
-Packet statuses: {"page-changed-since-review": 6, "reviewed-by-independent-agent": 139}.
+Packet statuses: {"page-changed-since-review": 8, "reviewed-by-independent-agent": 137}.
 
 ## Review procedure
 
@@ -94,7 +94,7 @@ blank verdict template in the machine-readable file.
 
 - **Cache-Aside / Lazy Loading**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Canary Release**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -578,7 +578,7 @@ blank verdict template in the machine-readable file.
 
 - **TTL-Based Expiration**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Two-Phase Commit (2PC)**
   Current: pass; re-review: pass; report: pass-with-findings.

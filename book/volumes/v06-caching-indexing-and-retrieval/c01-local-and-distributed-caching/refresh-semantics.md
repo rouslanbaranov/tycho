@@ -134,9 +134,8 @@ TTL-based expiration gives an entry a bounded valid lifetime. **expire-after-wri
 lifetime, the entry can no longer be served as a normal valid hit. The cached copy is not refreshed
 merely because the clock passed; the next reader performs the load or waits for a refresh.
 
-The installed Caffeine version and precise loader/executor policy must be checked before promising
-behavior. Size/weight eviction bounds memory and may remove useful hot entries, creating origin read
-bursts. A TTL shorter than the source's change rate reduces staleness but increases load; a longer TTL
+A TTL reduces the period during which data might be out of date. Size/weight eviction bounds
+memory and may remove useful hot entries, creating origin read bursts. A TTL shorter than the source's change rate reduces staleness but increases load; a longer TTL
 does the opposite. Jitter the expiry across keys to avoid synchronized bursts.
 
 Explicit invalidation or versioned keys may be preferable when the source change must be visible

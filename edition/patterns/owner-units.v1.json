@@ -4804,10 +4804,10 @@
         "line": 131,
         "unit_kind": "dedicated",
         "unit_terms": [
+          "TTL-based expiration",
           "expire-after-write",
-          "installed Caffeine",
           "Size/weight eviction",
-          "Explicit invalidation"
+          "bounded staleness"
         ]
       },
       "technical_evidence": {
@@ -4824,9 +4824,16 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "The installed Caffeine version and precise loader/executor policy must be checked before promising behavior.",
-          "reason": "Source has no installed-version or loader/executor precondition."
+          "state": "supported",
+          "quote": "A TTL reduces the period during which data might be out of date.",
+          "reason": "Bounds staleness by time.",
+          "binding": {
+            "source_id": "src.microsoft-caching-guidance",
+            "ledger_record": "read.batch3-ms-caching.2026-10-21",
+            "section": "Considerations for using caching",
+            "quote": "Many caching systems let you configure the cache to expire data, which reduces the period during which data might be out of date.",
+            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+          }
         },
         "failure_recovery": {
           "state": "supported",
@@ -4868,7 +4875,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded because the heading describes eviction/refresh, not TTL by name."
     },
@@ -10602,7 +10609,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Cache-aside and TTL expiration now have separate dedicated units."
     },
@@ -10852,11 +10859,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 49,
+    "invariant_supported": 50,
     "failure_recovery_supported": 37,
     "alternative_supported": 48,
-    "technical_partial_bounded": 44,
-    "technical_partial": 101,
+    "technical_partial_bounded": 45,
+    "technical_partial": 100,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
