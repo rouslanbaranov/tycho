@@ -2798,22 +2798,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A quarantine queue receives a message after its retry or age policy is exhausted, retaining payload, headers and failure context.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-dlq.2026-10-21",
+            "section": "Solution (unlabelled)",
+            "quote": "When a messaging system determines that it cannot or should not deliver a message, it may elect to move the message to a Dead Letter Channel .",
+            "revision": "714f6babd327e622695d9be989c93c704d23b034cb2e0fcc1065a0eaa203a278"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Retrying cannot repair an invalid schema or a permanently rejected target.",
-          "reason": "States that retry cannot repair invalid schema or permanent target rejection."
+          "reason": "Page does not state permanent schema/target failure separation."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Separate transient, permanent and unknown outcomes; bound attempts and age; keep diagnostic evidence without leaking payload.",
-          "reason": "Requires separating transient, permanent and unknown outcomes with bounded attempts and evidence."
+          "reason": "Requires separating transient, permanent and unknown outcomes with bounded attempts and evidence.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-dlq.2026-10-21",
+            "section": "Example: Dead Letter Queue in Amazon SQS",
+            "quote": "Each time this happens, the message's receive count is increased. When this count reaches a configured limit, the message is considered undeliverable and placed in a designated Dead Letter Queue.",
+            "revision": "714f6babd327e622695d9be989c93c704d23b034cb2e0fcc1065a0eaa203a278"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "When failure is deterministic or evidence cannot be retained safely, prefer bounded retry with audit, drop with a record, or a repair table/outbox.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Page lists related patterns without bounded-retry/audit comparison."
         }
       },
       "decision_evidence": {
@@ -2831,7 +2845,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Poison-work subsection treats the DLQ as holding state; routing and retention mechanics are not described."
     },
@@ -2858,22 +2872,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A server-side cursor plus retained messages lets an offline consumer resume after reconnect.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-durable.2026-10-21",
+            "section": "Solution (unheaded)",
+            "quote": "A durable subscription saves messages for an inactive subscriber and delivers these saved messages when the subscriber reconnects.",
+            "revision": "d8697f78f17e355548692ad6ed8459e2fe3932ab1119d7b613c029774e0f2139"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Delivery guarantees differ by broker and configuration.",
-          "reason": "Notes that delivery guarantees vary by broker and configuration."
+          "reason": "Page does not state broker/config-dependent delivery guarantees."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Resume is bounded only by retention, acknowledgement timeout and replay policy.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Page does not state retention, ack-timeout or replay bounds."
         },
         "alternative": {
           "state": "supported",
           "quote": "Ephemeral pub/sub fits a notification whose loss while offline is acceptable. A recoverable business task needs a durable consumer or another persisted queue, not a best-effort subscription alone.",
-          "reason": "Contrasts ephemeral pub/sub with a durable consumer or persisted queue for recoverable tasks."
+          "reason": "Contrasts ephemeral pub/sub with a durable consumer or persisted queue for recoverable tasks.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-durable.2026-10-21",
+            "section": "Solution (unheaded)",
+            "quote": "A connected subscriber acts the same whether its subscription is durable or non-durable. The difference is in how the messaging system behaves when the subscriber is disconnected.",
+            "revision": "d8697f78f17e355548692ad6ed8459e2fe3932ab1119d7b613c029774e0f2139"
+          }
         }
       },
       "decision_evidence": {
@@ -2891,7 +2919,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "JetStream subsection explains persistent consumers but not retention or offline subscription semantics."
     },
@@ -2918,22 +2946,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "describes recording processed message IDs under a consumer identity in the same database transaction as the business update, so redelivery cannot apply it twice under that local model.",
-          "reason": "Explains recording processed message IDs atomically with the consumer's business update."
+          "reason": "Explains recording processed message IDs atomically with the consumer's business update.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-idempotent.2026-10-21",
+            "section": "Solution (unlabelled)",
+            "quote": "Idempotency can be achieved through two primary means: Explicit \"de-duping\", i.e. the removal of duplicate messages.",
+            "revision": "e9c278723f6c5bdcab0fdd9c410e8a17bc4eda0b2f63aefb8fe4afb22d76a86d"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Atomic (consumer, event/effect ID) uniqueness with business update",
-          "reason": "Requires atomic consumer/event uniqueness with the business update."
+          "reason": "Page has no atomic (consumer,event) uniqueness with business update."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A marker written before a separate external effect can lose it on crash; a marker written after can duplicate it. The consumer must use the external capability's idempotency/reconciliation boundary.",
-          "reason": "Describes crash windows and the external reconciliation boundary."
+          "reason": "Page has no crash window or external reconciliation boundary."
         },
         "alternative": {
           "state": "supported",
           "quote": "A business-key upsert, a conditional write or the downstream API's idempotency key may be preferable when no local processed-message table is available.",
-          "reason": "Names competing dedup mechanisms and the reversal."
+          "reason": "Names competing dedup mechanisms and the reversal.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-idempotent.2026-10-21",
+            "section": "Solution (unlabelled)",
+            "quote": "Idempotency can be achieved through two primary means: Explicit \"de-duping\", i.e. the removal of duplicate messages. Defining the message semantics to support idempotency.",
+            "revision": "e9c278723f6c5bdcab0fdd9c410e8a17bc4eda0b2f63aefb8fe4afb22d76a86d"
+          }
         }
       },
       "decision_evidence": {
@@ -2951,7 +2993,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section 5 explicitly describes the Idempotent Consumer model and its crash windows."
     },
@@ -2978,22 +3020,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A resequencer restores an intended order from messages that arrive out of order.",
-          "reason": "Defines restoring intended order from out-of-order arrivals."
+          "reason": "Defines restoring intended order from out-of-order arrivals.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-resequencer.2026-10-21",
+            "section": "Solution (unheaded)",
+            "quote": "Use a stateful filter, a Resequencer , to collect and re-order messages so that they can be published to the output channel in a specified order.",
+            "revision": "cafe3058fa70fe3bda25f83941e1ac604875e172d2388f6a334c7ff84327f42f"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs a sequence domain, a bounded buffer, a gap timeout and a policy for missing or duplicate sequence numbers.",
-          "reason": "Requires sequence domain, bounded buffer, gap timeout and missing/duplicate policy."
+          "reason": "Requires sequence domain, bounded buffer, gap timeout and missing/duplicate policy.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-resequencer.2026-10-21",
+            "section": "Solution explanation",
+            "quote": "The Resequencer contains in internal buffer to store out-of-sequence messages until a complete sequence is obtained.",
+            "revision": "cafe3058fa70fe3bda25f83941e1ac604875e172d2388f6a334c7ff84327f42f"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The failure path is a missing sequence that blocks later messages; release the buffer after a declared timeout or fail the affected partition.",
-          "reason": "Names a missing sequence blocking later messages and requires timeout release or partition failure."
+          "reason": "Page has no missing-sequence timeout or partition failure rule."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A partitioned consumer that preserves order within a key is the alternative when global order is unnecessary.",
-          "reason": "Contrasts partitioned per-key ordering when global order is unnecessary."
+          "reason": "Page does not name key-ordered partitioned consumers."
         }
       },
       "decision_evidence": {
@@ -10200,7 +10256,7 @@
       ],
       "unit_count": 11,
       "dedicated_units": 11,
-      "bounded_entries": 5,
+      "bounded_entries": 4,
       "decision": "deepen",
       "rationale": "All eleven messaging patterns now have dedicated units covering delivery semantics, consumer identity, routing, filtering and the bridge failure domain; no shared unit remains."
     },
@@ -10231,7 +10287,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 4,
+      "bounded_entries": 3,
       "decision": "deepen",
       "rationale": "DLQ, claim check, correlation, request-reply and workflow-failure gates now have five dedicated units."
     },
@@ -10541,11 +10597,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 127,
-    "invariant_supported": 82,
-    "failure_recovery_supported": 77,
-    "alternative_supported": 85,
-    "technical_partial_bounded": 81,
-    "technical_partial": 64,
+    "invariant_supported": 79,
+    "failure_recovery_supported": 74,
+    "alternative_supported": 83,
+    "technical_partial_bounded": 78,
+    "technical_partial": 67,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
