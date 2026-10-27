@@ -12,7 +12,7 @@ perspectives:
 summary: "Decision card for Anti-Corruption Layer; bounded owner evidence and explicit limits."
 route_hints:
   questions:
-    - "Should a translation layer protect the domain model from a"
+    - "Should a boundary translate between a legacy or external model with different semantics?"
   prerequisites:
     - "tycho.chapter.e996607f707421ca388796732547cafd"
   related_ids:
@@ -43,8 +43,7 @@ content_verified_at: null
 **Identity.** Anti-Corruption Layer; alias ACL, translation layer; family Application
 architecture and boundaries; kind integration-pattern; priority core.
 
-**Decision question.** Should a translation layer protect the domain model from a
-legacy or external model with different semantics?
+**Decision question.** Should a boundary translate between a legacy or external model with different semantics?
 
 **Good-fit conditions.** The external model has different meanings or invariants; the
 domain must remain independent of vendor or legacy types; coexistence is transitional;

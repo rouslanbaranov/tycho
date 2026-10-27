@@ -9,12 +9,12 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 137 |
+| Promoted after remediation | 136 |
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 126 |
-| Rejected after review | 8 |
+| Rejected after review | 9 |
 
 Packet statuses: {"page-changed-since-review": 19, "reviewed-by-independent-agent": 126}.
 
@@ -41,7 +41,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Anti-Corruption Layer**
-  Current: pass; re-review: pass; report: pass-with-findings.
+  Current: reject; re-review: pass; report: pass-with-findings.
   Status: page-changed-since-review.
 
 - **API Composition**
