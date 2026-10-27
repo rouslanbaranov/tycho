@@ -70,3 +70,20 @@ Residual findings:
 R2 accepts retaining the rejected/blocked pilot; it does not authorize promotion. Any
 future promotion requires new evidence and its own review. The R2 revision gap is now
 addressed by a documented canonical-text hash, not a sufficient claim.
+
+## R3 review — 2026-10-27
+
+Report: `authoring/ai-reviews/2026-10-27-sufficient-r3-codex.md`.
+SHA-256: `0b1ca9965cc40f8522a8f6994a3bb27ea76c5eb99af1dc56d0957c975d4a718d`.
+Reviewed HEAD: `7482e650`.
+
+Verdict: **pass-with-findings** for the focused R2-01..R2-04 remediation. The six
+technical promotion verdicts remain **reject**; decision verdicts are pass. No entry is
+promoted; `sufficient: 0`.
+
+R3-01, non-blocking: three other cards on the shared C11 page still described the ASVS
+overview and fourteen headings while citing the full PDF record. Corrected: the three
+notes now name the full 120-page ASVS 5.0.0 PDF, V1-V17 and appendices A-E.
+
+The R2 residuals are closed for the six-entry scope. Future promotion still needs
+positive technical evidence, not only decision passes.

@@ -140,8 +140,8 @@ common; deny by default, test indirect paths and keep a bounded audited break-gl
 **Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#zero-trust-architecture) — policy enforcement points and trust assumptions are bounded; network architecture is owner-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: all fourteen headings read. The page
-is an overview: it has no Levels or Verification Requirements headings. The source is a public
+read record read.batch6-asvs.2026-10-21: full 120-page ASVS 5.0.0 PDF read;
+V1-V17 and appendices A-E. The source is a public
 pattern/specification
 unit, not a benchmark.
 
@@ -173,8 +173,8 @@ in the owner section.
 **Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#least-privilege) — permission scope and review cadence are bounded; entitlement catalogue is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: all fourteen headings read. The page
-is an overview: it has no Levels or Verification Requirements headings.
+read record read.batch6-asvs.2026-10-21: full 120-page ASVS 5.0.0 PDF read;
+V1-V17 and appendices A-E.
 The source is a public pattern/specification
 unit, not a benchmark.
 
@@ -308,8 +308,8 @@ in the owner section.
 **Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#multitenant-isolation-1) — tenant boundary and isolation evidence are bounded; infrastructure tenancy is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: all fourteen headings read. The page
-is an overview: it has no Levels or Verification Requirements headings.
+read record read.batch6-asvs.2026-10-21: full 120-page ASVS 5.0.0 PDF read;
+V1-V17 and appendices A-E.
 The source is a public pattern/specification
 unit, not a benchmark.
 
