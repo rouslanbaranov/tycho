@@ -118,9 +118,8 @@ Mirrored requests are fire-and-forget: their responses are discarded, so they do
 primary response. Their Host/Authority headers carry a `-shadow` suffix. The new path still
 needs a side-effect boundary and a load budget; these are synthetic design conditions.
 
-Mirrored responses are discarded, so they do not affect the primary response. Inspect the
-mirrored service access logs to detect failures. A canary release is the alternative when the
-decision depends on a user choice.
+Mirrored responses are discarded, so they do not affect the primary response. A worrying performance impact can be switched off with a feature flag before users notice.
+A canary release is the alternative when the decision depends on a user choice.
 
 **Source boundary.** The
 [read.fowler-dark-launching.2026-10-26](../../../../edition/patterns/reading-ledger.v1.json)
