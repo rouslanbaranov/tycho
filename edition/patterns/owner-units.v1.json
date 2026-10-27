@@ -6743,22 +6743,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Shedding requires one named bottleneck and an admission point close to it.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Utilization Signals",
+            "quote": "Our implementation of task-level overload protection is based on the notion of utilization . In many cases, the utilization is just a measurement of the CPU rate (i.e., the current CPU rate divided by the total CPUs reserved for the task), but in some cases we also factor in measurements such as the portion of the memory reserved that is currently being used. As utilization approaches configured thresholds, we start rejecting requests based on their criticality (higher thresholds for higher criticalities).",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "A load balancer rejecting traffic without that link merely relocates the queue.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Conclusions",
+            "quote": "However, these mechanisms depend on the propagation of state over a distributed system. While they perform reasonably well in the general case, real-world application has resulted in a small number of situations where they work imperfectly. As a result, we consider it critical to ensure that individual tasks are protected against overload.",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The policy owner defines criticality classes, tenant fairness and the share of work that may be refused.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Criticality",
+            "quote": "When a customer runs out of global quota, a backend task will only reject requests of a given criticality if it's already rejecting all requests of all lower criticalities (in fact, the per-customer limits that our system supports, described earlier, can be set per criticality).",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Those are product choices that deserve review outside an incident.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Criticality",
+            "quote": "We found that four values were sufficiently robust to model almost every service. We've had various discussions on proposals to add more values, because doing so would allow us to classify requests more finely. However, defining additional values would require more resources to operate various criticality-aware systems.",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
         }
       },
       "decision_evidence": {
@@ -6803,22 +6831,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "Throttling slows work that has already been admitted; it does not decide who deserves service.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Client-Side Throttling",
+            "quote": "When a client detects that a significant portion of its recent requests have been rejected due to \"out of quota\" errors, it starts self-regulating and caps the amount of outgoing traffic it generates. Requests above the cap fail locally without even reaching the network.",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "The invariant is that every admitted class has a bounded wait and a declared rejection point; no class waits without a deadline.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Client-Side Throttling",
+            "quote": "Clients can continue to issue requests to the backend until requests is K times as large as accepts . Once that cutoff is reached, the client begins to self-regulate and new requests are rejected locally (i.e., at the client) with the probability calculated in Client request rejection probability .",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A finite buffer and an upstream backpressure signal make pacing enforceable.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "SRE overload chapter has no buffer/backpressure failure rule."
         },
         "alternative": {
           "state": "supported",
           "quote": "Rejecting excess work or adding capacity may be cheaper than delaying everyone.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Handling Overload Errors",
+            "quote": "Even if a backend is only slightly overloaded, a client request is often better served if the backend rejects retry and new requests equally and quickly. These requests can then be retried immediately on a different backend task that may have spare resources.",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
         }
       },
       "decision_evidence": {
@@ -10675,7 +10724,7 @@
     "embedded_units": 0,
     "mechanism_supported": 122,
     "invariant_supported": 72,
-    "failure_recovery_supported": 67,
+    "failure_recovery_supported": 66,
     "alternative_supported": 77,
     "technical_partial_bounded": 71,
     "technical_partial": 74,
