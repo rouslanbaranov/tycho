@@ -31,3 +31,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 focused survivors (2 entries) | reject | `2026-10-27-sufficient-survivors-review-codex.md` | `23896ff428ea860da5a556dede13dbed55caf09fcd631ab8ead45d200eddcf13` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 static content hosting round 2 | reject | `2026-10-27-static-content-hosting-review2-codex.md` | `aa5a1550da7dafe2ada45a26093ba8e6b571bffd81c45c79971de18ff4fb1a4f` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 static content hosting round 3 | reject | `2026-10-27-static-content-hosting-review3-codex.md` | `520600735f49e8e434aeb0048a00b5679a795b4c877103c014f4386124ce96f5` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 static content hosting round 4 | reject | `2026-10-27-static-content-hosting-review4-codex.md` | `b531ce8b0146d06973ea677221091782eb45397aeabdc1ff7960c7fe60212e40` |
