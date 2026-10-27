@@ -4106,24 +4106,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A write-through path updates the cache and the authoritative store in one controlled sequence, so a later read can use the cached copy.",
-          "reason": "Defines a controlled cache-and-store update sequence."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A write must not be acknowledged before both sides reach the declared state, or an explicit reconciliation must repair a partial write.",
-          "reason": "Forbids acknowledging before both sides reach the declared state or an explicit reconciliation."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Failure between the two updates leaves cache and store divergent; version the value and retry or invalidate with an audit trail of the failed write.",
-          "reason": "Names partial-write divergence and requires versioning plus retry or audited invalidation."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Write-behind or cache-aside with invalidation reduces write latency; choose write-through when read-after-write freshness outweighs the extra write cost.",
-          "reason": "Contrasts write-behind or cache-aside invalidation for lower write latency."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit."
         }
       },
       "decision_evidence": {
@@ -4141,7 +4141,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -4166,24 +4166,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A write-behind cache acknowledges a write after placing it in a pending buffer and flushes it to durable storage asynchronously.",
-          "reason": "Defines asynchronous flush from a pending write buffer."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "If the buffer has its own durable or replicated record separate from the cache, cache loss is recoverable and the acknowledged write survives.",
-          "reason": "Requires a durable or replicated buffer separate from the cache for acknowledged writes."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "If that buffer is the cache itself, cache loss can discard acknowledged writes; that is the card's hard contraindication.",
-          "reason": "Names cache loss discarding acknowledged writes as the hard contraindication."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Write-through acknowledges only after both sides update; prefer write-behind when write throughput dominates and a measured loss window is acceptable for at-risk writes, not for durable acknowledged writes.",
-          "reason": "Contrasts write-through acknowledgement after both sides update."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit."
         }
       },
       "decision_evidence": {
@@ -4201,7 +4201,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -4223,24 +4223,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A write-around policy writes directly to the authoritative store and does not populate the cache, leaving later reads to fill it.",
-          "reason": "Defines direct store writes without cache population."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A cached copy must be invalidated or versioned at the update, or a later read can restore a value older than the committed write.",
-          "reason": "Requires invalidation or versioning at update to prevent older reads."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "the policy requires reliable invalidation or versioning at the update and a read test immediately after a write.",
-          "reason": "Requires reliable invalidation/versioning and a post-write read test."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Write-through keeps the cache current at the cost of write amplification; choose write-around when write volume is high and later reads can tolerate a refill.",
-          "reason": "Contrasts write-through write amplification with later refill tolerance."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit."
         }
       },
       "decision_evidence": {
@@ -4258,7 +4258,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -4402,22 +4402,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "Caching an absent result can protect against repeated misses for nonexistent IDs. But it creates a freshness question: if a new object is created, a cached not-found may hide it.",
-          "reason": "Explains what negative caching does and its freshness exposure."
+          "reason": "Explains what negative caching does and its freshness exposure.",
+          "binding": {
+            "source_id": "src.google-cdn-negative-caching",
+            "ledger_record": "read.batch3-google-negative.2026-10-21",
+            "section": "Use negative caching",
+            "quote": "Negative caching lets you set a different time to live (TTL) for each status code. The reason to do this is to apply fine-grained control over caching for common errors or redirects. This can reduce the load on your origins and improve the end-user experience by reducing response latency.",
+            "revision": "a8965b0a185de2ca1f52a47fafa7c8db5660222ea2016910bb93297cc1596f70"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A cached negative must never become a universal statement that an object does not exist for all authorized principals if visibility varies by principal or tenant.",
-          "reason": "States a hard safety rule for tenant/principal-scoped visibility."
+          "reason": "Source describes per-status-code TTLs, not principal/tenant visibility scoping."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A stale *allow* or *deny* decision can have more serious authorization consequences than an old description.",
-          "reason": "Names stale allow/deny authorization risk and revocation-path consistency; detection procedure is operational."
+          "reason": "Source does not address stale allow/deny authorization decisions."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "otherwise use a short TTL, bypass, or a per-principal key",
-          "reason": "Names the bypass, per-principal-key and short-TTL alternatives."
+          "reason": "Source offers TTL tuning and exclusion, not visibility-scoped alternatives."
         }
       },
       "decision_evidence": {
@@ -4435,7 +4442,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Heading names the pattern; the section is a policy checklist, not an algorithm."
     },
@@ -4460,24 +4467,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A cache stampede occurs when many concurrent readers miss or decide that a cached value needs refreshing, then issue many redundant expensive origin loads.",
-          "reason": "Defines the mechanism and its origin-load consequence."
+          "reason": "Source unit has no stampede, coalescing, lease or jitter passage."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A stampede policy must bound concurrent origin loads per key and total source work, and stale-while-revalidate is only valid when the operation accepts the stale value.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Source covers update concurrency, not concurrent origin-load bounds."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "An expired lease can release a second refresh while the first is still writing; jittered TTLs do not protect one extremely hot key.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Source covers cache unavailability but not refresh-lease failure."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A distributed refresh lease or request coalescing is preferable when one key dominates and stale data is acceptable for the operation.",
-          "reason": "Names distributed lease/coalescing and the hot-key condition."
+          "reason": "Source mentions shorter TTL/bypass, not distributed leases or coalescing."
         }
       },
       "decision_evidence": {
@@ -4495,7 +4502,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "No dedicated heading; section 2 is the only section that explains stampedes and countermeasures."
     },
@@ -4520,24 +4527,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Single-flight may deduplicate only loads triggered inside one process.",
-          "reason": "Explains in-process deduplication of concurrent refresh requests and its scope limit."
+          "reason": "Source unit contains no coalescing/request-deduplication passage."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "That does not, by itself, provide global cross-replica coalescing or make the stale value safe for sensitive decisions.",
-          "reason": "States the scope guarantee: no cross-replica coalescing and no safety for sensitive decisions."
+          "reason": "Source unit contains no coalescing/request-deduplication passage."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A coalesced call can fail after the leader has committed an external effect; the followers need the same outcome record, not a fresh retry.",
-          "reason": "Names leader failure after effect and the required shared outcome."
+          "reason": "Source unit contains no coalescing/request-deduplication passage."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A distributed refresh lease is preferable when duplicate concurrent refreshes across instances matter, with its lease-expiry and fencing costs.",
-          "reason": "Names the distributed lease and its costs."
+          "reason": "Source unit contains no coalescing/request-deduplication passage."
         }
       },
       "decision_evidence": {
@@ -4555,7 +4562,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Shares section 2 with cache-stampede-protection; section 5 only names 'Coalesced authoritative load'."
     },
@@ -4579,22 +4586,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Stale-while-revalidate serves the current stale value while one owner refreshes it in the background, within a bounded stale window.",
-          "reason": "Defines serving stale data during one bounded background refresh."
+          "reason": "Defines serving stale data during one bounded background refresh.",
+          "binding": {
+            "source_id": "src.rfc5861",
+            "ledger_record": "read.batch3-rfc5861.2026-10-21",
+            "section": "1. Introduction",
+            "quote": "The stale-while-revalidate HTTP Cache-Control extension allows a cache to immediately return a stale response while it revalidates it in the background, thereby hiding latency (both in the network and on the server) from clients.",
+            "revision": "1193f1c8710af162e1b9fb4250d79bc6dd26497df4caeeaaa8bcb2fefdd2529e"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "The stale window and the refresh owner must be bounded and observable, and a failed refresh must not extend the window indefinitely.",
-          "reason": "Requires a bounded observable stale window and refresh owner."
+          "reason": "Requires a bounded observable stale window and refresh owner.",
+          "binding": {
+            "source_id": "src.rfc5861",
+            "ledger_record": "read.batch3-rfc5861.2026-10-21",
+            "section": "3. The stale-while-revalidate Cache-Control Extension",
+            "quote": "If delta-seconds passes without the cached entity being revalidated, it SHOULD NOT continue to be served stale, absent other information.",
+            "revision": "1193f1c8710af162e1b9fb4250d79bc6dd26497df4caeeaaa8bcb2fefdd2529e"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A failing refresh keeps serving the same stale value; cap the stale age, surface refresh failures and fall back to a blocking read when the bound is reached.",
-          "reason": "Names repeated stale service and requires a stale-age cap, failure surfacing and blocking fallback."
+          "reason": "Names repeated stale service and requires a stale-age cap, failure surfacing and blocking fallback.",
+          "binding": {
+            "source_id": "src.rfc5861",
+            "ledger_record": "read.batch3-rfc5861.2026-10-21",
+            "section": "3.1. Example",
+            "quote": "If validation is inconclusive, or if there is not traffic that triggers it, after 30 seconds the stale-while- revalidate function will cease to operate, and the cached response will be \"truly\" stale (i.e., the next request will block and be handled normally).",
+            "revision": "1193f1c8710af162e1b9fb4250d79bc6dd26497df4caeeaaa8bcb2fefdd2529e"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "A blocking refresh guarantees freshness at the cost of latency; choose stale-while-revalidate only when the declared stale window is acceptable to the reader.",
-          "reason": "Contrasts blocking refresh for stronger freshness."
+          "reason": "Contrasts blocking refresh for stronger freshness.",
+          "binding": {
+            "source_id": "src.rfc5861",
+            "ledger_record": "read.batch3-rfc5861.2026-10-21",
+            "section": "3.1. Example",
+            "quote": "If the window is too small, or traffic is too sparse, some requests will fall outside of it, and block until the server can validate the cached response.",
+            "revision": "1193f1c8710af162e1b9fb4250d79bc6dd26497df4caeeaaa8bcb2fefdd2529e"
+          }
         }
       },
       "decision_evidence": {
@@ -4636,22 +4671,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A multi-level cache keeps a fast local tier in front of a shared tier, trading fewer remote reads for more places that can hold a stale copy.",
-          "reason": "Defines a local tier in front of a shared tier."
+          "reason": "Defines a local tier in front of a shared tier.",
+          "binding": {
+            "source_id": "src.hazelcast",
+            "ledger_record": "read.batch3-hazelcast-near.2026-10-21",
+            "section": "Near Cache",
+            "quote": "This cache maintains copies of distributed data in local memory for very fast access.",
+            "revision": "7b005e21be9446a60b04cd62f4c49357cc43af78d35fce610c32d0e8942de4b9"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Every tier must receive the invalidation, or each tier must carry a bounded staleness contract and a version check.",
-          "reason": "Requires invalidation at every tier or a bounded staleness contract and version check."
+          "reason": "Source names invalidation-event loss but not a per-tier version check; event loss detection is the stated remedy."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Tier divergence serves different values from different processes; version keys and measure the propagation delay of each invalidation path.",
-          "reason": "Names tier divergence and requires version keys and propagation-delay measurement."
+          "reason": "Names tier divergence and requires version keys and propagation-delay measurement.",
+          "binding": {
+            "source_id": "src.hazelcast",
+            "ledger_record": "read.batch3-hazelcast-near.2026-10-21",
+            "section": "Eventual Consistency",
+            "quote": "After detection of an invalidation loss, stale data is made unreachable and Near Cache's get calls to that data are directed to the underlying IMap/JCache to fetch the fresh data.",
+            "revision": "7b005e21be9446a60b04cd62f4c49357cc43af78d35fce610c32d0e8942de4b9"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "One shared cache keeps a single copy but pays remote latency; add a local tier when the measured remote-read cost exceeds the staleness and invalidation effort.",
-          "reason": "Contrasts one shared cache with a measured local tier."
+          "reason": "Source names local Near Cache for read-heavy data, not a single shared-tier comparator or measurement rule."
         }
       },
       "decision_evidence": {
@@ -4669,7 +4718,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -4696,22 +4745,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "An edge can reduce distance and origin work, but only for responses it may reuse.",
-          "reason": "Explains edge reuse as the mechanism and its cacheability precondition."
+          "reason": "Explains edge reuse as the mechanism and its cacheability precondition.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch3-ms-static.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Consider using a CDN to cache content near clients and reduce requests to the storage origin.",
+            "revision": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The cache key, freshness policy and authorization boundary must agree.",
-          "reason": "States the agreement required for correct edge reuse."
+          "reason": "Source binds cache keys and lifetimes but states protected-download authorization separately."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A misclassified response can serve one user's private data to another, and a purge can lag the origin.",
-          "reason": "Names privacy and purge failure and the required test."
+          "reason": "Names privacy and purge failure and the required test.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch3-ms-static.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Changing, deleting, or restricting access to origin content doesn't invalidate cached copies. Purge caches when you need to, but account for propagation time and remember that CDN purges don't clear browser caches.",
+            "revision": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A direct origin or a private cache may be preferable when every response is user-specific or the purge contract cannot be enforced.",
-          "reason": "Names direct origin/private cache and the reversal."
+          "reason": "Source states a per-request personalization exclusion, not a private-cache or purge-contract alternative."
         }
       },
       "decision_evidence": {
@@ -4729,7 +4792,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "The cacheability contract is the bounded owner for edge reuse; origin recovery sits in a separate section."
     },
@@ -9388,7 +9451,7 @@
       ],
       "unit_count": 6,
       "dedicated_units": 6,
-      "bounded_entries": 6,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Local and distributed cache patterns now have distinct dedicated units with authority, freshness and durability contracts."
     },
@@ -9416,7 +9479,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Stampede protection and single-flight now have separate dedicated units with scope limits."
     },
@@ -9538,7 +9601,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "CDN edge caching and static content hosting now have two distinct dedicated units."
     },
@@ -9651,12 +9714,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 144,
-    "invariant_supported": 127,
-    "failure_recovery_supported": 127,
-    "alternative_supported": 134,
-    "technical_partial_bounded": 127,
-    "technical_partial": 18,
+    "mechanism_supported": 139,
+    "invariant_supported": 119,
+    "failure_recovery_supported": 121,
+    "alternative_supported": 126,
+    "technical_partial_bounded": 119,
+    "technical_partial": 26,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

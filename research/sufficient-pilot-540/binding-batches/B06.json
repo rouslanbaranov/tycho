@@ -22,24 +22,28 @@
       "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Single-flight may deduplicate only loads triggered inside one process.",
-          "reason": "Explains in-process deduplication of concurrent refresh requests and its scope limit."
+          "reason": "Source unit contains no coalescing/request-deduplication passage.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "That does not, by itself, provide global cross-replica coalescing or make the stale value safe for sensitive decisions.",
-          "reason": "States the scope guarantee: no cross-replica coalescing and no safety for sensitive decisions."
+          "reason": "Source unit contains no coalescing/request-deduplication passage.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A coalesced call can fail after the leader has committed an external effect; the followers need the same outcome record, not a fresh retry.",
-          "reason": "Names leader failure after effect and the required shared outcome."
+          "reason": "Source unit contains no coalescing/request-deduplication passage.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A distributed refresh lease is preferable when duplicate concurrent refreshes across instances matter, with its lease-expiry and fencing costs.",
-          "reason": "Names the distributed lease and its costs."
+          "reason": "Source unit contains no coalescing/request-deduplication passage.",
+          "has_binding": false
         }
       }
     },
@@ -68,22 +72,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Stale-while-revalidate serves the current stale value while one owner refreshes it in the background, within a bounded stale window.",
-          "reason": "Defines serving stale data during one bounded background refresh."
+          "reason": "Defines serving stale data during one bounded background refresh.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "The stale window and the refresh owner must be bounded and observable, and a failed refresh must not extend the window indefinitely.",
-          "reason": "Requires a bounded observable stale window and refresh owner."
+          "reason": "Requires a bounded observable stale window and refresh owner.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A failing refresh keeps serving the same stale value; cap the stale age, surface refresh failures and fall back to a blocking read when the bound is reached.",
-          "reason": "Names repeated stale service and requires a stale-age cap, failure surfacing and blocking fallback."
+          "reason": "Names repeated stale service and requires a stale-age cap, failure surfacing and blocking fallback.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A blocking refresh guarantees freshness at the cost of latency; choose stale-while-revalidate only when the declared stale window is acceptable to the reader.",
-          "reason": "Contrasts blocking refresh for stronger freshness."
+          "reason": "Contrasts blocking refresh for stronger freshness.",
+          "has_binding": true
         }
       }
     },
@@ -118,22 +126,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A multi-level cache keeps a fast local tier in front of a shared tier, trading fewer remote reads for more places that can hold a stale copy.",
-          "reason": "Defines a local tier in front of a shared tier."
+          "reason": "Defines a local tier in front of a shared tier.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Every tier must receive the invalidation, or each tier must carry a bounded staleness contract and a version check.",
-          "reason": "Requires invalidation at every tier or a bounded staleness contract and version check."
+          "reason": "Source names invalidation-event loss but not a per-tier version check; event loss detection is the stated remedy.",
+          "has_binding": false
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "Tier divergence serves different values from different processes; version keys and measure the propagation delay of each invalidation path.",
-          "reason": "Names tier divergence and requires version keys and propagation-delay measurement."
+          "reason": "Names tier divergence and requires version keys and propagation-delay measurement.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "One shared cache keeps a single copy but pays remote latency; add a local tier when the measured remote-read cost exceeds the staleness and invalidation effort.",
-          "reason": "Contrasts one shared cache with a measured local tier."
+          "reason": "Source names local Near Cache for read-heavy data, not a single shared-tier comparator or measurement rule.",
+          "has_binding": false
         }
       }
     },
@@ -162,22 +174,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "An edge can reduce distance and origin work, but only for responses it may reuse.",
-          "reason": "Explains edge reuse as the mechanism and its cacheability precondition."
+          "reason": "Explains edge reuse as the mechanism and its cacheability precondition.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The cache key, freshness policy and authorization boundary must agree.",
-          "reason": "States the agreement required for correct edge reuse."
+          "reason": "Source binds cache keys and lifetimes but states protected-download authorization separately.",
+          "has_binding": false
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A misclassified response can serve one user's private data to another, and a purge can lag the origin.",
-          "reason": "Names privacy and purge failure and the required test."
+          "reason": "Names privacy and purge failure and the required test.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A direct origin or a private cache may be preferable when every response is user-specific or the purge contract cannot be enforced.",
-          "reason": "Names direct origin/private cache and the reversal."
+          "reason": "Source states a per-request personalization exclusion, not a private-cache or purge-contract alternative.",
+          "has_binding": false
         }
       }
     }
