@@ -43,8 +43,7 @@ content_verified_at: null
 **Identity.** Workload Identity / mTLS; family Security, isolation and operational
 architecture; kind security-pattern; priority core.
 
-**Decision question.** Should workloads use strict mutual TLS rather than permissive mutual
-TLS during migration?
+**Decision question.** Should workloads use strict mutual TLS or permissive mutual TLS?
 
 **Good-fit conditions.** A workload identity issuer exists; certificate rotation is
 automated; policy can bind identity to service.
@@ -53,7 +52,7 @@ automated; policy can bind identity to service.
 or when rotation cannot be automated.
 
 **Competing alternative.** Permissive mTLS mode accepts both plaintext and mutual TLS traffic
-at the same time; use it only while legacy clients require plaintext.
+at the same time.
 
 **Failure and recovery.** Certificate expiry must be monitored; rotate certificates and
 keys periodically.
