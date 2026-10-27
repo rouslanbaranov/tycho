@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "6b5aa5576b54d6c9bf2e29055904a72b2db24ef3a299f8f53b63dc4a6cff0c2a",
+    "registry_sha256": "d3eb248549194e6759f2f403abe2367ee3a3b61bcffd557d02ed79053b6ed413",
     "ledger_sha256": "1ec9f66d679ee6f310f6d054338ed4ffbb73575c3bb8fd3bef6f5de7c4f2d093",
-    "card_batches_sha256": "352c1f5516eb067a2cb455c6b1647fc4a647753c9c2ccc43f780d4c95bafbbc4",
-    "route_index_sha256": "ab6022bc4aebbc50b97148b1ec093263e10a60e91e1ab68768ed38c1526e4253",
-    "coverage_sha256": "7f3f28e7f029e1f597751590a7eca3d752c3b6bbbb5bab30524549275975801d"
+    "card_batches_sha256": "e94308828c56418c4b2051c1865ce72aafeb378e7220d4fc1826fb4857973930",
+    "route_index_sha256": "48dca4d75a5e9a2fea09f5fd5893380ed5b90cd578bae113c8871dc19bcfb3ab",
+    "coverage_sha256": "06fcf7133a34cc3266882b85121d5e4258a591ca07b4fdfbe1acecae7fbf33f1"
   },
   "dimensions": [
     "identity",
@@ -24,12 +24,12 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 436,
+    "pages": 437,
     "entries": 145,
     "cards": 145,
-    "routes": 499,
-    "related_labels": 28,
-    "non_routes": 28,
+    "routes": 496,
+    "related_labels": 27,
+    "non_routes": 27,
     "unresolved_related": 0,
     "retrieval_questions": 145,
     "blocked_entries": 0
@@ -2927,6 +2927,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.849bdcae7fb65f6daa4d9db920961789",
+      "path": "book/volumes/v11-pattern-atlas/c01-application-boundaries/anti-corruption-layer.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.chapter.9825cb82eb2142754c638aea1ba8d845",
       "path": "book/volumes/v11-pattern-atlas/c02-api-communication/README.md",
       "kind": "chapter",
@@ -3151,18 +3158,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "sufficient",
+        "technical_owner": "partial",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "sufficient",
-        "decision_coverage": "sufficient"
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ],
       "question": "Should a translation layer protect the domain model from a legacy or external model with different semantics?"
@@ -6889,14 +6896,14 @@
     },
     {
       "pattern_id": "tycho.pattern.anti-corruption-layer",
-      "technical": "sufficient",
-      "decision": "sufficient",
-      "overall": "sufficient",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "sufficient",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ]
     },
@@ -8781,21 +8788,6 @@
     {
       "from": "tycho.pattern.ambassador",
       "to": "tycho.pattern.sidecar",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.anti-corruption-layer",
-      "to": "tycho.pattern.domain-driven-design-bounded-context",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.anti-corruption-layer",
-      "to": "tycho.pattern.hexagonal-architecture-ports-and-adapters",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.anti-corruption-layer",
-      "to": "tycho.pattern.strangler-fig",
       "basis": "card-related-entry"
     },
     {
@@ -11248,13 +11240,6 @@
     {
       "from": "tycho.pattern.ambassador",
       "label": "Service Mesh",
-      "disposition": "non-route",
-      "target": null,
-      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
-    },
-    {
-      "from": "tycho.pattern.anti-corruption-layer",
-      "label": "Adapter.",
       "disposition": "non-route",
       "target": null,
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"

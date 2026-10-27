@@ -61,7 +61,7 @@ content_verified_at: null
 
 <!-- /tycho-question-source -->
 
-> **Pattern atlas:** [Anti-Corruption Layer](../../v11-pattern-atlas/c01-application-boundaries/README.md#anti-corruption-layer) — decision conditions and contraindications.
+> **Pattern atlas:** [Anti-Corruption Layer](../../v11-pattern-atlas/c01-application-boundaries/anti-corruption-layer.md#anti-corruption-layer) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.31c8e450f78c451d90cb6090df330c5a:0 -->
 ## Purpose and mission
 

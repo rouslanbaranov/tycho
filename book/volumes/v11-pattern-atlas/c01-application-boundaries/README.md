@@ -494,39 +494,7 @@ study.
 
 ### Anti-Corruption Layer
 
-**Identity.** Anti-Corruption Layer; alias ACL, translation layer; family Application
-architecture and boundaries; kind integration-pattern; priority core.
-
-**Decision question.** Should a translation layer protect the domain model from a
-legacy or external model with different semantics?
-
-**Good-fit conditions.** The external model has different meanings or invariants; the
-domain must remain independent of vendor or legacy types; coexistence is transitional;
-the mapping and its errors can be owned and tested.
-
-**Hard contraindications.** Reject the claim when the models already align; when the
-layer adds no semantic translation; when latency or data duplication violates a hard
-constraint; when the mapping has no owner; or when the ACL would become a second domain
-model.
-
-**Competing alternative.** No ACL when the new and legacy systems have no significant
-semantic differences.
-
-**Failure and recovery.** The ACL can become a single point of failure; use retry, circuit
-breaker, bulkhead and health endpoint monitoring.
-
-**Technical owner.** [Anti-Corruption Layer](../../v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md#anti-corruption-layer).
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.microsoft-acl.2026-10-21`: all nine served headings read. This is a
-vendor pattern page, not a comparative study.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Domain-Driven Design / Bounded Context; Hexagonal Architecture;
-Strangler Fig; Adapter.
-
+See the [dedicated Anti-Corruption Layer card](anti-corruption-layer.md).
 ## Chapter result and counterexample
 
 Twelve cards establish a conditional decision route. Four have dedicated owners and
