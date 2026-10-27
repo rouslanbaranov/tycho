@@ -139,6 +139,8 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
         status = "reviewed-by-independent-agent"
     else:
         status = "ready-for-independent-rereview"
+    delta = record.get("delta_review") or {}
+    current_verdict = delta.get("verdict") or record["verdict"]
     return {
         "pattern_id": candidate["pattern_id"],
         "catalog_name": candidate["catalog_name"],
@@ -149,7 +151,7 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
         "current_page_sha256": page_sha,
         "disk_sha256": disk_sha,
         "packet_status": status,
-        "current_verdict": record["verdict"],
+        "current_verdict": current_verdict,
         "original_findings": record.get("findings", 0),
         "remediated": record.get("remediated", False),
         "re_reviewed": record.get("re_reviewed", False),

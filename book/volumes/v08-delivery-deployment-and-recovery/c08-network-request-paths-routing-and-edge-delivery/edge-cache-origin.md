@@ -41,7 +41,8 @@
   "evidence_scope": {
     "source_ids": [
       "src.rfc9111-enrichment",
-      "src.sre-frontend-enrichment"
+      "src.sre-frontend-enrichment",
+      "src.microsoft-cloud-patterns"
     ],
     "claim_ids": [],
     "status": "source-linked",
@@ -155,6 +156,8 @@ boundary must agree, especially for private assets signed at the edge. Changing,
 restricting access to origin content doesn't invalidate cached copies. Purge caches when you
 need to, but account for propagation time and remember that CDN purges don't clear browser
 caches.
+
+Source: `read.static-content-hosting.2026-10-26` (Microsoft static content hosting pattern).
 
 Retained versions and edge copies carry storage, egress and purge cost; a second origin or
 duplicated manifest needs one version authority, or the rollback path becomes ambiguous.
