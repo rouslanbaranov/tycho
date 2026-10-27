@@ -9123,12 +9123,12 @@
         "mechanism": {
           "state": "supported",
           "quote": "Parallel run processes the same work in old and new implementations and compares the results while the old path remains authoritative.",
-          "reason": "MinimumCD describes duplicate processing and result comparison against the incumbent path.",
+          "reason": "Source section defines dual execution, comparison and incumbent-only return.",
           "binding": {
             "source_id": "src.minimumcd-parallel-run",
             "ledger_record": "read.minimumcd-parallel-run.2026-10-26",
             "section": "What is a parallel run?",
-            "quote": "A parallel run executes the old and new code paths against the same production input, but only returns the old result to the caller.",
+            "quote": "A parallel run wraps a call so both the current implementation and a candidate replacement execute against identical production input. The caller always receives the current implementation’s result. The harness captures and compares the candidate’s result, but never returns it.",
             "revision": "e8cf036da19b3f03456a0eb2aa735d1f8d6a738a46449f451a509395d95fc832"
           }
         },
@@ -9146,8 +9146,8 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A candidate failure must never affect the response; keep the old authority until cutover.",
-          "reason": "Source requires candidate failures not to affect the primary response.",
+          "quote": "A candidate failure must never affect the response.",
+          "reason": "Source states candidate failure isolation.",
           "binding": {
             "source_id": "src.minimumcd-parallel-run",
             "ledger_record": "read.minimumcd-parallel-run.2026-10-26",
@@ -9177,8 +9177,8 @@
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.fowler-strangler.2026-10-21",
-        "source_id": "src.fowler-strangler",
+        "ledger_record": "read.minimumcd-parallel-run.2026-10-26",
+        "source_id": "src.minimumcd-parallel-run",
         "unit_type": "article",
         "status": "read",
         "card_citation": true

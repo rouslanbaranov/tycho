@@ -132,9 +132,9 @@ measured evidence, and they do not create a new source claim.
 Parallel run processes the same work in old and new implementations and compares the
 results while the old path remains authoritative. Parallel run must not execute both
 implementations when the operation has side effects, such as sending an email or charging a
-card. Use it when output equality can be checked and duplicate effects can be suppressed.
+card. Use it for side-effect-free logic when output equality can be checked.
 
-A candidate failure must never affect the response; keep the old authority until cutover.
+A candidate failure must never affect the response. Keep the old authority until cutover.
 For operations with side effects, use branch by abstraction with a smaller, monitored rollout
 instead.
 

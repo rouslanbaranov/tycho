@@ -339,11 +339,11 @@ modernization-pattern; priority core.
 **Decision question.** Should old and new implementations process the same work
 concurrently for comparison?
 
-**Good-fit conditions.** Outputs can be compared safely; side effects are controlled; the
-old path remains authoritative until cutover.
+**Good-fit conditions.** Outputs are side-effect-free and comparable; the old path remains
+authoritative until cutover.
 
-**Hard contraindications.** Reject when duplicate side effects cannot be suppressed, when
-comparison is meaningless, or when cost is prohibitive.
+**Hard contraindications.** Reject for side-effecting operations, when comparison is
+meaningless, or when cost is prohibitive.
 
 **Competing alternative.** Branch by abstraction with a smaller, monitored rollout.
 
