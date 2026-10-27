@@ -91,8 +91,15 @@ tool invocation that retrieves sources, or change.
     is an AI review performed in a separate harness from a different vendor than the
     authoring agent: for example ChatGPT (OpenAI) or Claude Code (Anthropic) when the
     authoring session is DeepSeek Harness. Do not use the DeepSeek `reviewer` preset, a
-    subagent of this session, the same vendor or the authoring agent as the reviewer. If
-    no qualifying reviewer is available, record the gate as blocked; never waive it.
+    subagent of this session, the same vendor or the authoring agent as the reviewer.
+    Before hand-off, discover qualifying local CLIs: search `PATH` and installed app
+    bundles, and verify a non-interactive read-only mode and existing authentication.
+    If several CLIs are available, ask the user which to use. If the chosen CLI exposes
+    model selection, list its available models and ask the user which model to use. Do
+    not select a CLI or model silently. If no CLI is available, use a manual hand-off
+    through the user: provide the exact prompt and receive the reviewer's raw report.
+    If the user cannot provide a qualifying review, record the gate as blocked; never
+    waive it.
 18. **Keep the reviewer independent.** Use a fresh external session, not a fork of this
     conversation. Do not pass the author's conclusions, desired verdict or private context.
     Give the reviewer the repository path, exact HEAD and content commit, bounded scope,
