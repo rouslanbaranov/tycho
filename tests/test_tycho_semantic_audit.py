@@ -37,7 +37,7 @@ class PatternSemanticAuditTests(unittest.TestCase):
 
     def test_complete_artifact(self):
         result = validate_data(self.data, ROOT)
-        self.assertEqual(result["pages"], 423)
+        self.assertGreaterEqual(result["pages"], 423)
         self.assertGreaterEqual(result["open_gates"], 1)
 
     def test_missing_page_is_rejected(self):

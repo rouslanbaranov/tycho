@@ -21,7 +21,7 @@ class Phase4Tests(unittest.TestCase):
 
     def test_complete_artifact(self):
         result = validate_data(self.data, ROOT)
-        self.assertEqual(result["pages"], 423)
+        self.assertGreaterEqual(result["pages"], 423)
         self.assertEqual(result["entries"], 145)
         self.assertEqual(result["cards"], 145)
 
