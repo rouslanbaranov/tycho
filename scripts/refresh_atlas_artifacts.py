@@ -151,6 +151,24 @@ def main():
     if deeper:
         print("candidate threshold not met:", ", ".join(deeper))
         return 1
+    def pilot_manifest(data):
+        cards = {}
+        batches = json.loads((ROOT / "edition/patterns/card-batches.v1.json").read_text())
+        for batch in batches["batches"]:
+            for entry in batch["entries"]:
+                if entry.get("card_path"):
+                    cards[entry["pattern_id"]] = entry["card_path"]
+        for entry in data.get("entries", []):
+            card = cards.get(entry["pattern_id"], entry.get("card_path"))
+            if card and (ROOT / card).is_file():
+                entry["card_path"] = card
+                entry["card_sha256"] = sha(ROOT / card)
+            owner = entry.get("owner_path")
+            if owner and (ROOT / owner).is_file():
+                entry["owner_page_sha256"] = sha(ROOT / owner)
+    if (ROOT / "research/sufficient-pilot-540/manifest.json").is_file():
+        sync_json("research/sufficient-pilot-540/manifest.json", pilot_manifest)
+
     run("scripts/build_rereview_scope.py", "--write")
     run("scripts/build_rereview_packets.py")
     print("atlas artifacts refreshed")
