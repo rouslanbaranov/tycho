@@ -6330,22 +6330,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "Grow the delay after each failure, cap it and add jitter so clients do not synchronize.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.resilience4j",
+            "ledger_record": "read.batch4-r4j-retry.2026-10-21",
+            "section": "Use a custom IntervalFunction",
+            "quote": "IntervalFunction intervalWithCustomExponentialBackoff = IntervalFunction .ofExponentialBackoff(IntervalFunction.DEFAULT_INITIAL_INTERVAL, 2d);",
+            "revision": "afa81b6647292d1e276178d8dc5f22a0d72fc389b5b96e01fafaed8e2380a204"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Budget retries per dependency and caller class in addition to a service-wide cap",
-          "reason": "States retry preconditions and bounded budgets that must hold."
+          "reason": "Resilience4j page configures attempts/waits only; no budget, deadline, overload or alternative rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "When the budget is exhausted, return the overload result and let the caller choose fail-fast or queue; do not retry a permanent failure or an operation without effect identity.",
-          "reason": "Describes broad-overload detection and containment by returning an explicit result instead of retrying."
+          "reason": "Resilience4j page configures attempts/waits only; no budget, deadline, overload or alternative rule."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "When the budget is exhausted, return the overload result and let the caller choose fail-fast or queue; do not retry a permanent failure or an operation without effect identity.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Resilience4j page configures attempts/waits only; no budget, deadline, overload or alternative rule."
         }
       },
       "decision_evidence": {
@@ -6363,7 +6370,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Owner unit adds per-dependency/per-caller budgets alongside a service-wide cap, attempt/outcome labels, a healthy-window reset and server-pushback stop; the formula is stated at deadlines-retries.md:180-181."
     },
@@ -6387,22 +6394,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "Jitter randomizes each retry delay so independent clients do not retry in lockstep, spreading attempts across a window or adding a random offset to an exponential base.",
-          "reason": "Defines randomized retry delays that break client lockstep."
+          "reason": "Defines randomized retry delays that break client lockstep.",
+          "binding": {
+            "source_id": "src.resilience4j",
+            "ledger_record": "read.batch4-r4j-retry.2026-10-21",
+            "section": "Use a custom IntervalFunction",
+            "quote": "IntervalFunction randomWaitInterval = IntervalFunction .ofRandomized();",
+            "revision": "afa81b6647292d1e276178d8dc5f22a0d72fc389b5b96e01fafaed8e2380a204"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Every attempt must consume the same end-to-end deadline and attempt budget, so added delay cannot extend the caller's useful completion window.",
-          "reason": "Requires every attempt to share the end-to-end deadline and budget."
+          "reason": "Resilience4j page configures attempts/waits only; no budget, deadline, overload or alternative rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Synchronized retries convert a brief failure into a sustained overload; compare actual attempt counts and retry arrivals with the planned budget and stop the retry policy when pushback persists.",
-          "reason": "Names synchronized retry overload and requires comparing attempts and arrivals with the budget."
+          "reason": "Resilience4j page configures attempts/waits only; no budget, deadline, overload or alternative rule."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Retry without jitter at a single layer, or do not retry at all when the failure is non-retryable; add jitter when many clients share the same dependency and retry signal.",
-          "reason": "Contrasts unjittered single-layer retry or no retry for non-retryable failures."
+          "reason": "Resilience4j page configures attempts/waits only; no budget, deadline, overload or alternative rule."
         }
       },
       "decision_evidence": {
@@ -6420,7 +6434,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -7030,24 +7044,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A priority queue is a broker-side ordering policy",
-          "reason": "Explains capacity reservation, class overtaking and the starvation risk a priority queue creates."
+          "reason": "Local representation is a Cloudflare challenge page; the RabbitMQ unit text is absent."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The queue must define class levels, per-level capacity and the broker's actual priority support.",
-          "reason": "States that criticality must be authenticated and propagated to each downstream hop."
+          "reason": "Local representation is a Cloudflare challenge page; the RabbitMQ unit text is absent."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Add aging or a maximum-wait rule so low classes make progress",
-          "reason": "Names starvation and requires max-wait, starvation and isolation rules to contain it."
+          "reason": "Local representation is a Cloudflare challenge page; the RabbitMQ unit text is absent."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "An admission-controlled FIFO or separate lanes per class avoids starvation when priority is unverifiable.",
-          "reason": "Names the competing queue policies and reversal condition."
+          "reason": "Local representation is a Cloudflare challenge page; the RabbitMQ unit text is absent."
         }
       },
       "decision_evidence": {
@@ -7065,7 +7079,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded in the queue/limit/priority section; heading is not the catalog name."
     },
@@ -7092,22 +7106,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "A **hedged request** sends an additional equivalent read to another viable replica when an earlier attempt appears unexpectedly slow, then uses an acceptable response and cancels remaining attempts.",
-          "reason": "Defines the trigger, replica choice, response selection and cancellation."
+          "reason": "Defines the trigger, replica choice, response selection and cancellation.",
+          "binding": {
+            "source_id": "src.morning-paper-tail-at-scale",
+            "ledger_record": "read.batch4-hedged.2026-10-21",
+            "section": "The Tail at Scale",
+            "quote": "1) Hedged requests : send the same requests to multiple servers, and use whatever response comes back first.",
+            "revision": "99b13cb7f3a928be08f051af10fcaa8887011ffab3c12a392ce93e32153b9809"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Hedge delayed reads | Equivalent replicas; bounded speculative budget; cancellation; measured independent tails | Shared bottleneck, expensive writes, inconsistent replicas",
-          "reason": "Lists the required preconditions and contraindications for hedging."
+          "reason": "Lists the required preconditions and contraindications for hedging.",
+          "binding": {
+            "source_id": "src.morning-paper-tail-at-scale",
+            "ledger_record": "read.batch4-hedged.2026-10-21",
+            "section": "The Tail at Scale",
+            "quote": "This approach limits the additional load to approximately 5% while substantially shortening the tail latency.",
+            "revision": "99b13cb7f3a928be08f051af10fcaa8887011ffab3c12a392ce93e32153b9809"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Hedging can double work exactly when a shared dependency is saturated; it also risks duplicate side effects if the read is not truly equivalent.",
-          "reason": "Names the doubled-work and duplicate-effect failure modes."
+          "reason": "Names the doubled-work and duplicate-effect failure modes.",
+          "binding": {
+            "source_id": "src.morning-paper-tail-at-scale",
+            "ledger_record": "read.batch4-hedged.2026-10-21",
+            "section": "The Tail at Scale",
+            "quote": "To avoid doubling or tripling your computation load though, don’t send the hedging requests straight away: defer sending a secondary request until the first request has been outstanding for more than the 95th-percentile expected latency for this class of requests.",
+            "revision": "99b13cb7f3a928be08f051af10fcaa8887011ffab3c12a392ce93e32153b9809"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Retry with jitter, improve the slow path, or parallelize truly independent reads may be preferable when replicas share a bottleneck or the operation is not safely repeatable.",
-          "reason": "Names the competing mitigations and reversal condition."
+          "reason": "Names the competing mitigations and reversal condition.",
+          "binding": {
+            "source_id": "src.morning-paper-tail-at-scale",
+            "ledger_record": "read.batch4-hedged.2026-10-21",
+            "section": "The Tail at Scale",
+            "quote": "2) Tied requests : instead of delaying before sending out hedged requests, enqueue requests simulateously on multiple servers, but tie them together but telling each server who else also has this in their queue. When the first server processes the request, it tells the others to cancel it from their queues.",
+            "revision": "99b13cb7f3a928be08f051af10fcaa8887011ffab3c12a392ce93e32153b9809"
+          }
         }
       },
       "decision_evidence": {
@@ -10268,7 +10310,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 3,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "All four time-budget patterns now have distinct dedicated units; no further page split."
     },
@@ -10722,12 +10764,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 122,
-    "invariant_supported": 72,
-    "failure_recovery_supported": 66,
-    "alternative_supported": 77,
-    "technical_partial_bounded": 71,
-    "technical_partial": 74,
+    "mechanism_supported": 121,
+    "invariant_supported": 69,
+    "failure_recovery_supported": 63,
+    "alternative_supported": 74,
+    "technical_partial_bounded": 68,
+    "technical_partial": 77,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
