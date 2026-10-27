@@ -29,7 +29,10 @@ The authoring agent must locate a qualifying local CLI before preparing a hand-o
 2. If more than one qualifying CLI is available, ask the user which CLI to use. Do not
    choose silently.
 3. If the selected CLI supports model selection, obtain its available model list, give
-   that list to the user, and ask which model to use. Record the chosen model.
+   that list to the user, and ask which model to use. Record the chosen model. Once the
+   user has selected a CLI and/or model, remember the choice for the current session and
+   reuse it for later reviews; ask again only if it becomes unavailable, fails, or the
+   user requests a change.
 4. If no qualifying CLI is available, use a manual hand-off through the user: provide the
    exact self-contained prompt and receive the reviewer's raw report. If the user cannot
    supply a qualifying review, mark the gate blocked; never substitute a same-vendor

@@ -96,7 +96,10 @@ tool invocation that retrieves sources, or change.
     bundles, and verify a non-interactive read-only mode and existing authentication.
     If several CLIs are available, ask the user which to use. If the chosen CLI exposes
     model selection, list its available models and ask the user which model to use. Do
-    not select a CLI or model silently. If no CLI is available, use a manual hand-off
+    not select a CLI or model silently. Once the user selects a CLI and/or model, record
+    the choice in session state and reuse it for every later review in the same session;
+    do not ask again unless the choice is unavailable, fails, or the user requests a
+    change. If no CLI is available, use a manual hand-off
     through the user: provide the exact prompt and receive the reviewer's raw report.
     If the user cannot provide a qualifying review, record the gate as blocked; never
     waive it.
