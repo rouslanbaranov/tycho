@@ -39,3 +39,5 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 transactional outbox round 4 | pass | `2026-10-27-transactional-outbox-review4-codex.md` | `e7d894774c096dcb54a5d1dbdd4817f8d88671c91e6e1f42e88032765b8408db` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 valet key round 3 | reject | `2026-10-27-valet-key-review3-codex.md` | `733227f644caf5e4ae8f846f84b3082b12e50d41204a4135a814263ea72afa92` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 valet key round 4 | pass | `2026-10-27-valet-key-review4-codex.md` | `2aab633fc5a566532cc3973814f5803143cc979368a5ffd5855e22d4cdbe77ff` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 cache | pass | `2026-10-27-cache-invalidation-review-codex.md` | `26323bcdf779dbca8db2f9e4abe439affd94bb24143896d02df314d12b139a0b` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 ttl | reject | `2026-10-27-ttl-expiration-review-codex.md` | `06e0574b1134e12c6549f3725a8022e4cb947ec2029aa64bf92b6c56fc18404b` |

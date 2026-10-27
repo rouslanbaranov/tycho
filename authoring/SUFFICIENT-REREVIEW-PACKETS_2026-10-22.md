@@ -9,12 +9,12 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 142 |
+| Promoted after remediation | 141 |
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 137 |
-| Rejected after review | 3 |
+| Rejected after review | 4 |
 
 Packet statuses: {"page-changed-since-review": 8, "reviewed-by-independent-agent": 137}.
 
@@ -577,7 +577,7 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **TTL-Based Expiration**
-  Current: pass; re-review: pass; report: pass-with-findings.
+  Current: reject; re-review: pass; report: pass-with-findings.
   Status: page-changed-since-review.
 
 - **Two-Phase Commit (2PC)**
