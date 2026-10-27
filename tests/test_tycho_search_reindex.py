@@ -59,6 +59,18 @@ class SearchReindexTests(unittest.TestCase):
             report = search_reindex.check(ROOT)
         self.assertIn("index-stale", report["issues"])
 
+    def test_check_reports_changed_qrels_file(self):
+        original = search_reindex.sha
+
+        def fake(path):
+            if str(path).endswith("corpus-qrels.v2.json"):
+                return "0" * 64
+            return original(path)
+
+        with patch.object(search_reindex, "sha", side_effect=fake):
+            report = search_reindex.check(ROOT)
+        self.assertIn("qrels-stale", report["issues"])
+
 
 if __name__ == "__main__":
     unittest.main()
