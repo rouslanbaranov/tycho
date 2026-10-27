@@ -141,8 +141,8 @@ class CommittedLedgerTests(unittest.TestCase):
         self.assertEqual(summary["derived_states"].get("remediated-needs-re-review", 0), 0)
         self.assertEqual(summary["derived_states"].get("page-unverified-after-delta", 0), 0)
         self.assertEqual(summary["derived_states"].get("residual-findings-after-re-review", 0), 0)
-        self.assertEqual(summary["derived_states"].get("rejected-after-review", 0), 4)
-        self.assertEqual(summary["derived_states"]["promoted-after-remediation"], 141)
+        self.assertEqual(summary["derived_states"].get("rejected-after-review", 0), 3)
+        self.assertEqual(summary["derived_states"]["promoted-after-remediation"], 142)
         self.assertEqual(summary["report_name_matches"]["alias"], 1)
 
     def test_generation_is_deterministic(self):
