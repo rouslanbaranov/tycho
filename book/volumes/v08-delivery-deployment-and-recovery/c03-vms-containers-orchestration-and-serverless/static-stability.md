@@ -164,8 +164,7 @@ it adds a data-plane hop whose latency and outage must be budgeted.
 
 A sidecar is a colocated helper service beside the application instance, is not part of the
 application, and can supply proxying or logging behaviour. Each application instance gets its
-own sidecar instance that shares its life cycle. The sidecar remains a separate process from
-the application and is scheduled beside it. Startup and shutdown ordering between the
+own sidecar instance that shares its life cycle. Startup and shutdown ordering between the
 application and its sidecar must avoid races.
 
 A language-specific library or traditional extension offers deeper integration and less network

@@ -427,11 +427,11 @@ deployment-pattern; priority core.
 **Decision question.** Should auxiliary runtime behavior run in a colocated helper beside
 the main workload rather than inside it?
 
-**Good-fit conditions.** The helper is colocated with the application instance; process
-isolation is useful; the platform can schedule and manage it.
+**Good-fit conditions.** The helper is colocated with the application instance and shares
+its lifecycle; the platform can schedule and manage it.
 
 **Hard contraindications.** Reject when a language-specific library or traditional
-extension provides the needed behavior with less operational overhead.
+extension offers deeper integration and lower network overhead.
 
 **Competing alternative.** A language-specific library or traditional extension when
 deeper integration and lower network overhead matter.
