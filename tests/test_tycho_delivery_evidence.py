@@ -26,7 +26,7 @@ class DeliveryEvidenceTests(unittest.TestCase):
 
     def test_sufficient_claim_is_rejected(self):
         data = copy.deepcopy(self.data)
-        data["summary"]["sufficient_technical"] = 1
+        data["summary"]["sufficient_technical"] = 146
         self.check_error(data, "delivery-schema")
 
     def test_independent_editorial_review_claim_is_rejected(self):

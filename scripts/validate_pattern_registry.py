@@ -30,7 +30,7 @@ SEVERITY = {
     "missing": 6,
     "not-yet-assessed": 7,
 }
-EVIDENCE_STATES = ("partial-reviewed", "partial-bounded", "partial")
+EVIDENCE_STATES = ("sufficient", "partial-reviewed", "partial-bounded", "partial")
 
 
 def require(ok, message):

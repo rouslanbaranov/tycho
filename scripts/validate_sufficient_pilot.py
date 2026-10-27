@@ -129,6 +129,10 @@ def validate(root=ROOT):
     require(set(planned) == set(patterns) - seen, "pilot-plan-partition")
     for pid in planned:
         owner = owners[pid]
+        if pid in promoted:
+            require(owner["technical_coverage"] == "sufficient",
+                    "batch-promoted-coverage: " + pid)
+            continue
         if planned_status[pid] == "remediation":
             require(owner["technical_coverage"] in ("partial", "partial-bounded"),
                     "batch-remediation-coverage: " + pid)
