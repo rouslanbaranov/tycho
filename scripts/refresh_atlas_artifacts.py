@@ -125,6 +125,14 @@ def main():
             data["snapshot"]["route_index_snapshot"] = route_snapshot
         sync_json("evaluation/" + name, qrels)
 
+    qrels_sha = sha(ROOT / "evaluation/corpus-qrels.v2.json")
+
+    def agentic(data):
+        if isinstance(data.get("source"), dict):
+            data["source"]["sha256"] = qrels_sha
+    if (ROOT / "evaluation/agentic-qrels.v1.json").is_file():
+        sync_json("evaluation/agentic-qrels.v1.json", agentic)
+
     registry_sha = sha(ROOT / "edition/patterns/registry.v1.json")
     for path in ("edition/patterns/source-plan.v1.json", "edition/atlas-manifest.json"):
         def bind(data):

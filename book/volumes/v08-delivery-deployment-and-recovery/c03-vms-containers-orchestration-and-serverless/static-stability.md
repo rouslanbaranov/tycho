@@ -27,6 +27,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.aws-static-stability"
+    - "src.microsoft-cloud-patterns"
   claim_ids: []
   status: "source-linked"
   notes: "Bounded question from tycho.page.ea94649bfd8c4be183f9114618d7ccaa; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -160,20 +161,18 @@ it adds a data-plane hop whose latency and outage must be budgeted.
 
 ### Sidecar
 
-A sidecar runs as a helper process or container beside each service instance and supplies
-networking, policy or telemetry behaviour without changing the application image. The sidecar's
-failure policy must be explicit, and each application instance gets its own sidecar instance that
-shares its life cycle. Coupling to the instance is one choice; independent upgrade is another when
-the sidecar has its own release boundary.
+A sidecar runs as a colocated helper process or container beside the application instance and
+can supply proxying or logging behaviour. Each application instance gets its own sidecar
+instance that shares its life cycle. The sidecar remains a separate process from the application
+and is scheduled beside it. Startup and shutdown ordering between the application and its sidecar
+must avoid races.
 
-A missing or misconfigured sidecar silently removes a control or opens a bypass; readiness must
-include it, and the fail-open or fail-closed choice must be tested. A shared proxy or an in-process
-library provides the same control without per-instance overhead; choose a sidecar when per-instance
-isolation or independent upgrade matters.
+A library or traditional extension provides the same helper behaviour without a separate process
+and its network overhead; choose a sidecar when process isolation is required.
 
-**Limits.** A sidecar cannot isolate a compromised shared kernel, replace host-level policy or
-remove the per-instance resource and upgrade cost. Its failure mode must include
-control-plane unavailability.
+**Limits.** A sidecar cannot isolate a compromised shared kernel or replace host-level policy.
+Synthetic deployment note: record the application and sidecar images as one tested compatibility
+pair, and include both in the rollback plan.
 
 ### Immutable Infrastructure
 

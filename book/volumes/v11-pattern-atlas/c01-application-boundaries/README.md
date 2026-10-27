@@ -428,20 +428,17 @@ deployment-pattern; priority core.
 process/container beside the main workload, rather than inside it or in a separate
 remote service?
 
-**Good-fit conditions.** Cross-cutting behavior is reusable across heterogeneous
-runtimes; the platform can schedule and manage sidecars; independent lifecycle and
-failure isolation are useful; resource overhead is acceptable.
+**Good-fit conditions.** The helper shares the application instance lifecycle; process
+isolation is useful; the platform can schedule and manage sidecars.
 
-**Hard contraindications.** Reject the claim for a simple application without a
-sidecar-capable platform, when startup ordering and resource limits cannot be managed,
-or when the sidecar becomes a hidden monolith with tightly coupled lifecycle.
+**Hard contraindications.** Reject when the helper must outlive or be upgraded
+independently of the application instance.
 
-**Competing alternative.** An in-process library, an ambassador proxy or a node agent.
-Reverse the choice when sidecar overhead and operational complexity exceed reuse.
+**Competing alternative.** An in-process library or traditional extension when the
+helper can share the application process.
 
-**Failure and recovery.** Resource contention, startup ordering and version skew are
-common. Recovery requires health checks and explicit lifecycle ownership; the technical
-owner section states the remaining limits.
+**Failure and recovery.** Startup and shutdown ordering between the application and
+sidecar must avoid races.
 
 **Technical owner.** [Sidecar](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#sidecar) — sidecar lifecycle, proxy data plane and coupling are bounded, not a service-mesh guide.
 
@@ -452,9 +449,9 @@ and problem", "Solution", "Problems and considerations", "When to use this patte
 "Workload design", "Example", "Next steps", "Related resource". This is a vendor
 pattern page, not a comparative study.
 
-**Decision state.** `applicable-under-conditions`.
+**Related entries.** Ambassador; Service Mesh; Immutable Infrastructure.
 
-**Related entries.** Ambassador; Service Mesh; Modular Monolith; Deployment Stamps.
+**Decision state.** `applicable-under-conditions`.
 
 ### Ambassador
 

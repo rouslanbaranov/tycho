@@ -717,7 +717,7 @@
         "heading": "Sidecar",
         "anchor": "sidecar",
         "level": 3,
-        "line": 161,
+        "line": 162,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Sidecar"
@@ -726,8 +726,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A sidecar runs as a helper process or container beside each service instance and supplies networking, policy or telemetry behaviour without changing the application image.",
-          "reason": "Defines a per-instance helper for networking, policy or telemetry.",
+          "quote": "A sidecar runs as a colocated helper process or container beside the application instance and can supply proxying or logging behaviour.",
+          "reason": "Source supports colocated helper processes and proxying/logging.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-sidecar.2026-10-21",
@@ -739,7 +739,7 @@
         "invariant": {
           "state": "supported",
           "quote": "Each application instance gets its own sidecar instance that shares its life cycle.",
-          "reason": "Binds the sidecar lifecycle to its application instance.",
+          "reason": "Source binds the sidecar lifecycle to its application instance.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-sidecar.2026-10-21",
@@ -750,8 +750,8 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A missing or misconfigured sidecar silently removes a control or opens a bypass; readiness must include it, and the fail-open or fail-closed choice must be tested.",
-          "reason": "Names missing or misconfigured sidecars and requires readiness and fail-mode tests.",
+          "quote": "Startup and shutdown ordering between the application and its sidecar must avoid races.",
+          "reason": "Source supports startup, termination ordering and shutdown races.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-sidecar.2026-10-21",
@@ -762,8 +762,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A shared proxy or an in-process library provides the same control without per-instance overhead; choose a sidecar when per-instance isolation or independent upgrade matters.",
-          "reason": "Contrasts a shared proxy or in-process library.",
+          "quote": "A library or traditional extension provides the same helper behaviour without a separate process and its network overhead; choose a sidecar when process isolation is required.",
+          "reason": "Source compares a library or traditional extension with sidecar overhead.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-sidecar.2026-10-21",
@@ -776,7 +776,7 @@
       "decision_evidence": {
         "atlas_section": "sidecar",
         "question": "Should auxiliary runtime behavior run in a colocated process/container beside the main workload, rather than inside it or in a separate remote service?",
-        "competing_alternative": "An in-process library, an ambassador proxy or a node agent. Reverse the choice when sidecar overhead and operational complexity exceed reuse.",
+        "competing_alternative": "An in-process library or traditional extension when the helper can share the application process.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -802,7 +802,7 @@
         "heading": "Ambassador",
         "anchor": "ambassador",
         "level": 3,
-        "line": 145,
+        "line": 146,
         "unit_kind": "dedicated",
         "unit_terms": [
           "proxy or sidecar",
@@ -8884,7 +8884,7 @@
         "heading": "Immutable Infrastructure",
         "anchor": "immutable-infrastructure",
         "level": 3,
-        "line": 178,
+        "line": 177,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Immutable Infrastructure"
